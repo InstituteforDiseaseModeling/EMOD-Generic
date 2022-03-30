@@ -1,13 +1,14 @@
 {
     "Default_Config_Path": "../../defaults/hiv_default_config.json",
     "parameters": {
-        "x_Base_Population": 0.0001,
         "Config_Name": "37_HIV_Risk_Groups_Property_Changer",
         "Demographics_Filenames": [
             "../input/SA_UN_demographics_extrapolated_WithProperties_Smoothed_with_RiskGroup.json",
             "../input/PFA_overlay.json",
             "PFA_Concurrency.json"
         ],
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Run_Number": 36,
         "Simulation_Duration": 10,
         "Simulation_Timestep": 1,
@@ -18,6 +19,7 @@
         "_____________REPLICATION_AND_DRUGS___________": "",
         "_____________REPORTING___________": "",
         "_____________SIMULATION___________": "",
-        "_____________TRANSMISSION___________": ""
+        "_____________TRANSMISSION___________": "",
+        "x_Base_Population": 0.0001
     }
 }

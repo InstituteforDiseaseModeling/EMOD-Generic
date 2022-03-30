@@ -1,8 +1,13 @@
 #!/usr/bin/python
 
-import json
+
 import dtk_test.dtk_sft as sft
-import numpy as np
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
+
 import math
 import dtk_test.dtk_ImportPressure_Support as ips
 

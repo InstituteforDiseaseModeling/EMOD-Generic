@@ -1,17 +1,6 @@
 {
-    "Header": {
-        "DateTime": "Sat Mar 19 09:03:57 2016",
-        "DTK_Version": "5633 ' Mar  3 2016",
-        "Report_Type": "InsetChart",
-        "Report_Version": "3.2",
-        "Start_Time": 0,
-        "Simulation_Timestep": 1,
-        "Timesteps": 7300,
-        "Channels": 24
-    },
     "Channels": {
         "Active Informal Relationships": {
-            "Units": "Relationships",
             "Data": [
                 32,
                 62,
@@ -7313,10 +7302,10 @@
                 1057,
                 1051,
                 1052
-            ]
+            ],
+            "Units": "Relationships"
         },
         "Active Marital Relationships": {
-            "Units": "Relationships",
             "Data": [
                 46,
                 96,
@@ -14618,10 +14607,10 @@
                 922,
                 921,
                 924
-            ]
+            ],
+            "Units": "Relationships"
         },
         "Active Transitory Relationships": {
-            "Units": "Relationships",
             "Data": [
                 33,
                 76,
@@ -21923,10 +21912,10 @@
                 551,
                 549,
                 554
-            ]
+            ],
+            "Units": "Relationships"
         },
         "Births": {
-            "Units": "Births",
             "Data": [
                 0,
                 0,
@@ -29228,10 +29217,10 @@
                 1394,
                 1394,
                 1394
-            ]
+            ],
+            "Units": "Births"
         },
         "Campaign Cost": {
-            "Units": "USD",
             "Data": [
                 0,
                 0,
@@ -36533,10 +36522,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "USD"
         },
         "Cumulative Infections": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -43838,10 +43827,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Disease Deaths": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -51143,10 +51132,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Exposed Population": {
-            "Units": "Exposed Fraction",
             "Data": [
                 0,
                 0,
@@ -58448,10 +58437,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "Exposed Fraction"
         },
         "Infected": {
-            "Units": "Infected Fraction",
             "Data": [
                 0,
                 0,
@@ -65753,10 +65742,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "Infected Fraction"
         },
         "Infectious Population": {
-            "Units": "Infectious Fraction",
             "Data": [
                 0,
                 0,
@@ -73058,10 +73047,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "Infectious Fraction"
         },
         "New Infections": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -80363,10 +80352,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Number of Circumcised Males": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -87668,10 +87657,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Number of Individuals Ever in a Relationship": {
-            "Units": "",
             "Data": [
                 112,
                 238,
@@ -94973,10 +94962,10 @@
                 1307,
                 1307,
                 1307
-            ]
+            ],
+            "Units": ""
         },
         "Paired People": {
-            "Units": "People",
             "Data": [
                 111,
                 234,
@@ -102278,10 +102267,10 @@
                 1239,
                 1234,
                 1237
-            ]
+            ],
+            "Units": "People"
         },
         "Post-Debut Population": {
-            "Units": "",
             "Data": [
                 758,
                 758,
@@ -109583,10 +109572,10 @@
                 1308,
                 1308,
                 1308
-            ]
+            ],
+            "Units": ""
         },
         "Prevalence (Females, 15-49)": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -116888,10 +116877,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Prevalence (Males, 15-49)": {
-            "Units": "",
             "Data": [
                 0,
                 0,
@@ -124193,10 +124182,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
-        "Prevalence among Sexually Active (Adults)": {
-            "Units": "",
+        "Prevalence among Sexually Active": {
             "Data": [
                 0,
                 0,
@@ -131498,10 +131487,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": ""
         },
         "Recovered Population": {
-            "Units": "Recovered (Immune) Fraction",
             "Data": [
                 0,
                 0,
@@ -138803,10 +138792,10 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "Recovered (Immune) Fraction"
         },
         "Single Post-Debut Men": {
-            "Units": "People",
             "Data": [
                 318,
                 256,
@@ -146108,10 +146097,10 @@
                 20,
                 23,
                 21
-            ]
+            ],
+            "Units": "People"
         },
         "Single Post-Debut Women": {
-            "Units": "People",
             "Data": [
                 329,
                 268,
@@ -153413,10 +153402,10 @@
                 49,
                 51,
                 50
-            ]
+            ],
+            "Units": "People"
         },
         "Statistical Population": {
-            "Units": "Population",
             "Data": [
                 1388,
                 1388,
@@ -160718,10 +160707,10 @@
                 2361,
                 2361,
                 2361
-            ]
+            ],
+            "Units": "Population"
         },
         "Susceptible Population": {
-            "Units": "Susceptible Fraction",
             "Data": [
                 1,
                 1,
@@ -168023,10 +168012,10 @@
                 1,
                 1,
                 1
-            ]
+            ],
+            "Units": "Susceptible Fraction"
         },
         "Waning Population": {
-            "Units": "Waning Immunity Fraction",
             "Data": [
                 0,
                 0,
@@ -175328,7 +175317,18 @@
                 0,
                 0,
                 0
-            ]
+            ],
+            "Units": "Waning Immunity Fraction"
         }
+    },
+    "Header": {
+        "Channels": 24,
+        "DTK_Version": "5633 ' Mar  3 2016",
+        "DateTime": "Sat Mar 19 09:03:57 2016",
+        "Report_Type": "InsetChart",
+        "Report_Version": "3.2",
+        "Simulation_Timestep": 1,
+        "Start_Time": 0,
+        "Timesteps": 7300
     }
 }

@@ -3,10 +3,8 @@
     "Events": [
         {
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 0.0005,
+                "Demographic_Coverage": 0.05,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
@@ -16,7 +14,7 @@
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Start_Day": 1,
+            "Start_Day": 10,
             "class": "CampaignEvent"
         }
     ],

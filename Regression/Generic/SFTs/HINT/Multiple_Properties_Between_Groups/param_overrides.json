@@ -1,0 +1,50 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_2groups_2_properties_overlay.json",
+                "../../demographics_10000_overlay.json"
+            ],
+            "Enable_Demographics_Reporting": 1,
+            "IMMUNITY": {
+                "Enable_Immune_Decay": 1,
+                "Enable_Immunity": 0,
+                "Post_Infection_Acquisition_Multiplier": 1,
+                "Post_Infection_Transmission_Multiplier": 1
+            },
+            "MORTALITY": {
+                "Enable_Natural_Mortality": 1,
+                "Post_Infection_Mortality_Multiplier": 1
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 5,
+                "Infectious_Period_Constant": 60,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Symptomatic_Infectious_Offset": 0
+            }
+        },
+        "FUDGE_FACTORS": {
+            "x_Other_Mortality": 0
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 1
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "NoCustomReports",
+            "Enable_Property_Output": 1
+        },
+        "PRIMARY": {
+            "Config_Name": "HINT_Single_Route_Multiple_Properties_Between_Groups",
+            "Geography": "SamplesInput",
+            "Simulation_Duration": 60
+        },
+        "logLevel_Individual": "DEBUG",
+        "Temporary_MigrationModel": {
+            "Roundtrip_Waypoints": 5
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

@@ -1,9 +1,14 @@
 #!/usr/bin/python
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 from dtk_test.dtk_General_Support import ConfigKeys, CampaignKeys, DemographicsKeys, InsetKeys
-import numpy as np
+
 from scipy import stats
 import dtk_test.dtk_HINT_Support as hint_support
 """

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -34,19 +34,19 @@ namespace Kernel
         , contagionDecayRate( 1.0f )
         , populationSize( 0.0f )
         , populationSizeByGroup()
-        , antigenCount(0)
-        , substrainCount(0)
+        , cladeCount(0)
+        , genomeCount(0)
         , normalizeByTotalPopulation(true)
-        , antigenWasShed()
-        , substrainWasShed()
-        , newlyDepositedContagionByAntigenAndGroup()
-        , currentContagionByAntigenAndSourceGroup()
-        , currentContagionByAntigenAndDestinationGroup()
-        , forceOfInfectionByAntigenAndGroup()
-        , newContagionByAntigenGroupAndSubstrain()
-        , currentContagionByAntigenSourceGroupAndSubstrain()
-        , currentContagionByAntigenDestinationGroupAndSubstrain()
-        , forceOfInfectionByAntigenGroupAndSubstrain()
+        , cladeWasShed()
+        , genomeWasShed()
+        , newlyDepositedContagionByCladeAndGroup()
+        , currentContagionByCladeAndSourceGroup()
+        , currentContagionByCladeAndDestinationGroup()
+        , forceOfInfectionByCladeAndGroup()
+        , newContagionByCladeGroupAndGenome()
+        , currentContagionByCladeSourceGroupAndGenome()
+        , currentContagionByCladeDestinationGroupAndGenome()
+        , forceOfInfectionByCladeGroupAndGenome()
         , tag("contact")
     {
     }
@@ -135,43 +135,43 @@ namespace Kernel
         populationSizeByGroup[membership.group] += delta;
     }
 
-    void StrainAwareTransmissionGroups::Build(float contagionDecayRate, int numberOfStrains, int numberOfSubstrains)
+    void StrainAwareTransmissionGroups::Build(float contagionDecayRate, int numberOfClades, int numberOfGenomes)
     {
         buildScalingMatrix();
         this->contagionDecayRate = contagionDecayRate;
-        allocateAccumulators(numberOfStrains, numberOfSubstrains);
+        allocateAccumulators(numberOfClades, numberOfGenomes);
 
-        LOG_DEBUG_F("Built %d groups with %d strains and %d substrains.\n", getGroupCount(), numberOfStrains, numberOfSubstrains);
+        LOG_DEBUG_F("Built %d groups with %d clades and %d genomes.\n", getGroupCount(), numberOfClades, numberOfGenomes);
     }
 
-    void StrainAwareTransmissionGroups::allocateAccumulators( NaturalNumber numberOfStrains, NaturalNumber numberOfSubstrains )
+    void StrainAwareTransmissionGroups::allocateAccumulators( NaturalNumber numberOfClades, NaturalNumber numberOfGenomes )
     {
         LOG_VALID( "AllocateAccumulators called.\n" );
-        antigenCount = numberOfStrains;
-        substrainCount = numberOfSubstrains;
+        cladeCount  = numberOfClades;
+        genomeCount = numberOfGenomes;
 
-        antigenWasShed.resize(antigenCount);
-        substrainWasShed.resize(antigenCount);
+        cladeWasShed.resize(cladeCount);
+        genomeWasShed.resize(cladeCount);
 
-        newlyDepositedContagionByAntigenAndGroup.resize(antigenCount);
-        currentContagionByAntigenAndSourceGroup.resize(antigenCount);
-        currentContagionByAntigenAndDestinationGroup.resize(antigenCount);
-        forceOfInfectionByAntigenAndGroup.resize(antigenCount);
-        newContagionByAntigenGroupAndSubstrain.resize(antigenCount);
-        currentContagionByAntigenSourceGroupAndSubstrain.resize(antigenCount);
-        currentContagionByAntigenDestinationGroupAndSubstrain.resize(antigenCount);
-        forceOfInfectionByAntigenGroupAndSubstrain.resize(antigenCount);
-        for (size_t iAntigen = 0; iAntigen < antigenCount; ++iAntigen)
+        newlyDepositedContagionByCladeAndGroup.resize(cladeCount);
+        currentContagionByCladeAndSourceGroup.resize(cladeCount);
+        currentContagionByCladeAndDestinationGroup.resize(cladeCount);
+        forceOfInfectionByCladeAndGroup.resize(cladeCount);
+        newContagionByCladeGroupAndGenome.resize(cladeCount);
+        currentContagionByCladeSourceGroupAndGenome.resize(cladeCount);
+        currentContagionByCladeDestinationGroupAndGenome.resize(cladeCount);
+        forceOfInfectionByCladeGroupAndGenome.resize(cladeCount);
+        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
             size_t groupCount = getGroupCount();
-            newlyDepositedContagionByAntigenAndGroup[iAntigen].resize(groupCount);
-            currentContagionByAntigenAndSourceGroup[iAntigen].resize(groupCount);
-            currentContagionByAntigenAndDestinationGroup[iAntigen].resize(groupCount);
-            forceOfInfectionByAntigenAndGroup[iAntigen].resize(groupCount);
-            newContagionByAntigenGroupAndSubstrain[iAntigen].resize(groupCount);
-            currentContagionByAntigenSourceGroupAndSubstrain[iAntigen].resize(groupCount);
-            currentContagionByAntigenDestinationGroupAndSubstrain[iAntigen].resize(groupCount);
-            forceOfInfectionByAntigenGroupAndSubstrain[iAntigen].resize(groupCount);
+            newlyDepositedContagionByCladeAndGroup[iClade].resize(groupCount);
+            currentContagionByCladeAndSourceGroup[iClade].resize(groupCount);
+            currentContagionByCladeAndDestinationGroup[iClade].resize(groupCount);
+            forceOfInfectionByCladeAndGroup[iClade].resize(groupCount);
+            newContagionByCladeGroupAndGenome[iClade].resize(groupCount);
+            currentContagionByCladeSourceGroupAndGenome[iClade].resize(groupCount);
+            currentContagionByCladeDestinationGroupAndGenome[iClade].resize(groupCount);
+            forceOfInfectionByCladeGroupAndGenome[iClade].resize(groupCount);
         }
 
         populationSizeByGroup.resize(getGroupCount());
@@ -181,29 +181,28 @@ namespace Kernel
     {
         if ( amount > 0 )
         {
-            int iAntigen    = strain.GetAntigenID();
-            int substrainId = strain.GetGeneticID();
-            // REMOVE? LOG_DEBUG_F("%s: iAntigen = %d, substrainId = %d\n", __FUNCTION__, iAntigen, substrainId);
+            int iClade    = strain.GetCladeID();
+            int genomeId  = strain.GetGeneticID();
 
-            if ( iAntigen >= antigenCount )
+            if ( iClade >= cladeCount )
             {
                 ostringstream msg;
-                msg << "Strain antigen ID (" << iAntigen << ") >= configured number of strains (" << antigenCount << ").\n";
-                throw new OutOfRangeException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str(), float(iAntigen), float(antigenCount) );
+                msg << "Strain clade ID (" << iClade << ") >= configured number of clades (" << cladeCount << ").\n";
+                throw new OutOfRangeException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str(), float(iClade), float(cladeCount) );
             }
 
-            antigenWasShed[iAntigen]                = true;
-            substrainWasShed[iAntigen].insert(substrainId);
+            cladeWasShed[iClade]                = true;
+            genomeWasShed[iClade].insert(genomeId);
 
             GroupIndex iGroup = membership.group;
-            newlyDepositedContagionByAntigenAndGroup[iAntigen][iGroup] += amount;
-            newContagionByAntigenGroupAndSubstrain[iAntigen][iGroup][substrainId] += amount;
+            newlyDepositedContagionByCladeAndGroup[iClade][iGroup] += amount;
+            newContagionByCladeGroupAndGenome[iClade][iGroup][genomeId] += amount;
 
-            LOG_VALID_F( "(%s) DepositContagion (antigen = %d, route = 0, group = %d [substrain = %d]) increased by %f\n",
+            LOG_VALID_F( "(%s) DepositContagion (clade = %d, route = 0, group = %d [genome = %d]) increased by %f\n",
                             tag.c_str(),
-                            iAntigen,
+                            iClade,
                             iGroup,
-                            substrainId,
+                            genomeId,
                             amount );
         }
     }
@@ -211,18 +210,18 @@ namespace Kernel
     void StrainAwareTransmissionGroups::ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t membership, float deltaTee, TransmissionRoute::Enum txRoute) const
     {
         //LOG_DEBUG_F( "ExposeToContagion\n" );
-        for (int iAntigen = 0; iAntigen < antigenCount; iAntigen++)
+        for (int iClade = 0; iClade < cladeCount; iClade++)
         {
             float forceOfInfection = 0.0f;
-            const ContagionAccumulator_t& forceOfInfectionByGroup = forceOfInfectionByAntigenAndGroup[iAntigen];
+            const ContagionAccumulator_t& forceOfInfectionByGroup = forceOfInfectionByCladeAndGroup[iClade];
 
             size_t iGroup = membership.group;
             forceOfInfection = forceOfInfectionByGroup[iGroup];
 
             if ((forceOfInfection > 0) && (candidate != nullptr))
             {
-                LOG_DEBUG_F("ExposureToContagion: [Antigen:%d] Route:0, Group:%d, exposure qty = %f\n", iAntigen, iGroup, forceOfInfection );
-                SubstrainPopulationImpl contagionPopulation(pRNG, iAntigen, forceOfInfection, forceOfInfectionByAntigenGroupAndSubstrain[iAntigen][iGroup]);
+                LOG_DEBUG_F("ExposureToContagion: [Clade:%d] Route:0, Group:%d, exposure qty = %f\n", iClade, iGroup, forceOfInfection );
+                GenomePopulationImpl contagionPopulation(pRNG, iClade, forceOfInfection, forceOfInfectionByCladeGroupAndGenome[iClade][iGroup]);
                 candidate->Expose((IContagionPopulation*)&contagionPopulation, deltaTee, txRoute );
             }
         }
@@ -233,9 +232,9 @@ namespace Kernel
         std::vector<size_t> indices;
         getGroupIndicesForProperty( property_value, propertyToValuesMap, indices );
         float total = 0.0f;
-        for (size_t iAntigen = 0; iAntigen < antigenCount; ++iAntigen)
+        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
-            const auto& contagion = forceOfInfectionByAntigenAndGroup[iAntigen];
+            const auto& contagion = forceOfInfectionByCladeAndGroup[iClade];
             total += std::accumulate(indices.begin(), indices.end(), 0.0f, [&](float init, size_t index) { return init + contagion[index]; });
         }
 
@@ -244,26 +243,26 @@ namespace Kernel
 
     void StrainAwareTransmissionGroups::CorrectInfectivityByGroup(float infectivityMultiplier, TransmissionGroupMembership_t membership)
     {
-        // By antigen (substrains aggregated)
-        for (int iAntigen = 0; iAntigen < antigenCount; iAntigen++)
+        // By clade (genomes aggregated)
+        for (int iClade = 0; iClade < cladeCount; iClade++)
         {
             int iGroup = membership.group;
-            LOG_DEBUG_F("CorrectInfectivityByGroup: [Antigen:%d] Route:0, Group:%d, ContagionBefore = %f, infectivityMultiplier = %f\n", iAntigen, iGroup, newlyDepositedContagionByAntigenAndGroup[iAntigen][iGroup], infectivityMultiplier);
-            newlyDepositedContagionByAntigenAndGroup[iAntigen][iGroup] *= infectivityMultiplier;
-            LOG_DEBUG_F("CorrectInfectivityByGroup: [Antigen:%d] Route:0, Group:%d, ContagionAfter = %f\n", iAntigen, iGroup, newlyDepositedContagionByAntigenAndGroup[iAntigen][iGroup]);
+            LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d] Route:0, Group:%d, ContagionBefore = %f, infectivityMultiplier = %f\n", iClade, iGroup, newlyDepositedContagionByCladeAndGroup[iClade][iGroup], infectivityMultiplier);
+            newlyDepositedContagionByCladeAndGroup[iClade][iGroup] *= infectivityMultiplier;
+            LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d] Route:0, Group:%d, ContagionAfter = %f\n", iClade, iGroup, newlyDepositedContagionByCladeAndGroup[iClade][iGroup]);
         }
 
-        // By individual substrain
-        for (int iAntigen = 0; iAntigen < antigenCount; iAntigen++)
+        // By individual genome
+        for (int iClade = 0; iClade < cladeCount; iClade++)
         {
-            GroupSubstrainMap_t& shedAntigen = newContagionByAntigenGroupAndSubstrain[iAntigen];
+            GroupGenomeMap_t& shedClade = newContagionByCladeGroupAndGenome[iClade];
             int iGroup = membership.group;
-            for (auto& entry : shedAntigen[iGroup])
+            for (auto& entry : shedClade[iGroup])
             {
-                uint32_t substrainId = entry.first;
-                LOG_DEBUG_F("CorrectInfectivityByGroup: [Antigen:%d][Route:0][Group:%d][Substrain:%d], ContagionBefore = %f, infectivityMultiplier = %f\n", iAntigen, iGroup, substrainId, shedAntigen[iGroup][substrainId], infectivityMultiplier);
+                uint32_t genomeId = entry.first;
+                LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d][Route:0][Group:%d][Genome:%d], ContagionBefore = %f, infectivityMultiplier = %f\n", iClade, iGroup, genomeId, shedClade[iGroup][genomeId], infectivityMultiplier);
                 entry.second *= infectivityMultiplier;
-                LOG_DEBUG_F("CorrectInfectivityByGroup: [Antigen:%d][Route:0][Group:%d][Substrain:%d], ContagionAfter  = %f\n", iAntigen, iGroup, substrainId, shedAntigen[iGroup][substrainId]);
+                LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d][Route:0][Group:%d][Genome:%d], ContagionAfter  = %f\n", iClade, iGroup, genomeId, shedClade[iGroup][genomeId]);
             }
         }
     }
@@ -275,53 +274,53 @@ namespace Kernel
         float additionalContagion = infectivityAddition;
 
         if ( (infectivityAddition != 0.0f) &&
-             ((getGroupCount() > 1) || (antigenCount > 1) || (substrainCount > 1)) )
+             ((getGroupCount() > 1) || (cladeCount > 1) || (genomeCount > 1)) )
         {
-            LOG_WARN_F( "StrainAwareTransmissionGroups::EndUpdate() infectivityAddition != 0 (%f actual), but one or more of # HINT groups (%d), antigen count (%d), or substrain count (%d) is > 1. Using 0 for additional contagion.\n",
-                        infectivityAddition, getGroupCount(), antigenCount, substrainCount );
+            LOG_WARN_F( "StrainAwareTransmissionGroups::EndUpdate() infectivityAddition != 0 (%f actual), but one or more of # HINT groups (%d), clade count (%d), or genome count (%d) is > 1. Using 0 for additional contagion.\n",
+                        infectivityAddition, getGroupCount(), cladeCount, genomeCount );
             additionalContagion = 0.0f;
         }
 
-        for (size_t iAntigen = 0; iAntigen < antigenCount; ++iAntigen)
+        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
             size_t groupCount = getGroupCount();
             for (size_t iGroup = 0; iGroup < groupCount; ++iGroup)
             {
-                LOG_VALID_F( "(%s) New contagion (antigen = %d, route = 0, group = %d) = %f\n", tag.c_str(), iAntigen, iGroup, newlyDepositedContagionByAntigenAndGroup[iAntigen][iGroup] );
-                for (const auto& entry : newContagionByAntigenGroupAndSubstrain[iAntigen][iGroup])
+                LOG_VALID_F( "(%s) New contagion (clade = %d, route = 0, group = %d) = %f\n", tag.c_str(), iClade, iGroup, newlyDepositedContagionByCladeAndGroup[iClade][iGroup] );
+                for (const auto& entry : newContagionByCladeGroupAndGenome[iClade][iGroup])
                 {
-                    LOG_VALID_F( "(%s) New contagion (antigen = %d, route = 0, group = %d, substrain = %d) = %f\n", tag.c_str(), iAntigen, iGroup, entry.first, entry.second );
+                    LOG_VALID_F( "(%s) New contagion (clade = %d, route = 0, group = %d, genome = %d) = %f\n", tag.c_str(), iClade, iGroup, entry.first, entry.second );
                 }
-                LOG_VALID_F( "(%s) Current contagion [source] (antigen = %d, route = 0, group = %d) = %f\n", tag.c_str(), iAntigen, iGroup, currentContagionByAntigenAndSourceGroup[iAntigen][iGroup] );
-                for (const auto& entry : currentContagionByAntigenSourceGroupAndSubstrain[iAntigen][iGroup])
+                LOG_VALID_F( "(%s) Current contagion [source] (clade = %d, route = 0, group = %d) = %f\n", tag.c_str(), iClade, iGroup, currentContagionByCladeAndSourceGroup[iClade][iGroup] );
+                for (const auto& entry : currentContagionByCladeSourceGroupAndGenome[iClade][iGroup])
                 {
-                    LOG_VALID_F( "(%s) Current contagion [source] (antigen = %d, route = 0, group = %d, substrain = %d) = %f\n", tag.c_str(), iAntigen, iGroup, entry.first, entry.second );
+                    LOG_VALID_F( "(%s) Current contagion [source] (clade = %d, route = 0, group = %d, genome = %d) = %f\n", tag.c_str(), iClade, iGroup, entry.first, entry.second );
                 }
             }
         }
 
-        // For each antigen...
-        for (size_t iAntigen = 0; iAntigen < antigenCount; ++iAntigen)
+        // For each clade...
+        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
-            auto& refCurrentContagionForAntigenBySourceGroup                  = currentContagionByAntigenAndSourceGroup[iAntigen];
-            auto& refCurrentContagionForAntigenByDestinationGroup             = currentContagionByAntigenAndDestinationGroup[iAntigen];
-            auto& refCurrentContagionForAntigenBySourceGroupAndSubstrain      = currentContagionByAntigenSourceGroupAndSubstrain[iAntigen];
-            auto& refCurrentContagionForAntigenByDestinationGroupAndSubstrain = currentContagionByAntigenDestinationGroupAndSubstrain[iAntigen];
-            auto& refNewlyDepositedContagionForAntigenByGroup                 = newlyDepositedContagionByAntigenAndGroup[iAntigen];
-            auto& refForceOfInfectionForAntigenByGroup                        = forceOfInfectionByAntigenAndGroup[iAntigen];
-            auto& refNewContagionForAntigenByGroupAndSubstrain                = newContagionByAntigenGroupAndSubstrain[iAntigen];
-            auto& refForceOfInfectionForAntigenByGroupAndSubstrain            = forceOfInfectionByAntigenGroupAndSubstrain[iAntigen];
+            auto& refCurrentContagionForCladeBySourceGroup                  = currentContagionByCladeAndSourceGroup[iClade];
+            auto& refCurrentContagionForCladeByDestinationGroup             = currentContagionByCladeAndDestinationGroup[iClade];
+            auto& refCurrentContagionForCladeBySourceGroupAndGenome         = currentContagionByCladeSourceGroupAndGenome[iClade];
+            auto& refCurrentContagionForCladeByDestinationGroupAndGenome    = currentContagionByCladeDestinationGroupAndGenome[iClade];
+            auto& refNewlyDepositedContagionForCladeByGroup                 = newlyDepositedContagionByCladeAndGroup[iClade];
+            auto& refForceOfInfectionForCladeByGroup                        = forceOfInfectionByCladeAndGroup[iClade];
+            auto& refNewContagionForCladeByGroupAndGenome                   = newContagionByCladeGroupAndGenome[iClade];
+            auto& refForceOfInfectionForCladeByGroupAndGenome               = forceOfInfectionByCladeGroupAndGenome[iClade];
 
             // Decay previously accumulated contagion and add in newly deposited contagion for each source group:
             float decayFactor = 1.0f - contagionDecayRate;
             LOG_VALID_F ( "(%s) Decay rate for route 0 = %f => decay factor = %f\n", tag.c_str(), contagionDecayRate, decayFactor );
-            vectorScalarMultiply( refCurrentContagionForAntigenBySourceGroup, decayFactor );
-            vectorElementAdd( refCurrentContagionForAntigenBySourceGroup, refNewlyDepositedContagionForAntigenByGroup );
-            vectorScalarAdd( refCurrentContagionForAntigenBySourceGroup, additionalContagion );
+            vectorScalarMultiply( refCurrentContagionForCladeBySourceGroup, decayFactor );
+            vectorElementAdd( refCurrentContagionForCladeBySourceGroup, refNewlyDepositedContagionForCladeByGroup );
+            vectorScalarAdd( refCurrentContagionForCladeBySourceGroup, additionalContagion );
 
             // We just added this to the current contagion accumulator. Clear it out.
             size_t groupCount = getGroupCount();
-            memset( refNewlyDepositedContagionForAntigenByGroup.data(), 0, groupCount * sizeof(float) );
+            memset( refNewlyDepositedContagionForCladeByGroup.data(), 0, groupCount * sizeof(float) );
 
             // Current contagion (by group which deposited it) is up to date and new contagion by group is reset.
 
@@ -329,9 +328,9 @@ namespace Kernel
             for (size_t iGroup = 0; iGroup < groupCount; ++iGroup)
             {
                 const MatrixRow_t& betaVector = scalingMatrix[iGroup];
-                float accumulatedContagion = vectorDotProduct( refCurrentContagionForAntigenBySourceGroup, betaVector );
-                LOG_VALID_F("(%s) Adding %f to %f contagion [antigen:%d,route:0,group:%d]\n", tag.c_str(), accumulatedContagion, 0.0f, iAntigen, iGroup);
-                refCurrentContagionForAntigenByDestinationGroup[iGroup] = accumulatedContagion;
+                float accumulatedContagion = vectorDotProduct( refCurrentContagionForCladeBySourceGroup, betaVector );
+                LOG_VALID_F("(%s) Adding %f to %f contagion [clade:%d,route:0,group:%d]\n", tag.c_str(), accumulatedContagion, 0.0f, iClade, iGroup);
+                refCurrentContagionForCladeByDestinationGroup[iGroup] = accumulatedContagion;
             }
 
             // Current contagion (by receiving group) is up to date (based on current contagion from source groups).
@@ -341,109 +340,109 @@ namespace Kernel
                 // Update effective contagion (force of infection) by destination group:
                 float population = (normalizeByTotalPopulation ? populationSize : populationSizeByGroup[iGroup]);
                 float normalization = ((population == 0.0f) ? 0.0f : 1.0f/population);
-                LOG_VALID_F( "(%s) Normalization (%s) for group %d is %f based on population %f\n", tag.c_str(), (normalizeByTotalPopulation ? "total population" : "group population"), iGroup, normalization, population );
-                LOG_VALID_F( "(%s) Contagion for [antigen:%d,route:0] population scaled by %f\n", tag.c_str(), iAntigen, population);
+                LOG_VALID_F( "(%s) Normalization (%s) for group %d is %f based on population %f\n", tag.c_str(), (normalizeByTotalPopulation ? "total population" : "group population"), iGroup, normalization, population);
+                LOG_VALID_F( "(%s) Contagion for [clade:%d,route:0] population scaled by %f\n", tag.c_str(), iClade, population);
 
-                refForceOfInfectionForAntigenByGroup[iGroup] = refCurrentContagionForAntigenByDestinationGroup[iGroup]
+                refForceOfInfectionForCladeByGroup[iGroup] = refCurrentContagionForCladeByDestinationGroup[iGroup]
                                                                 * infectivityMultiplier
                                                                 * normalization;
+                LOG_VALID_F("(%s) Normalized contagion for group %d is %f and seasonally scaled by %f\n", tag.c_str(), iGroup, float(refCurrentContagionForCladeByDestinationGroup[iGroup]) * normalization, infectivityMultiplier);
             }
 
             // Force of infection for each group (current contagion * correction * normalization) is up to date.
 
             for (size_t iGroup = 0; iGroup < groupCount; ++iGroup)
             {
-                // Decay previously accumulated contagion and add in newly deposited contagion by substrain
-                auto& refCurrentContagionForAntigenAndSourceGroupBySubstrain = refCurrentContagionForAntigenBySourceGroupAndSubstrain[iGroup];
-                auto& refNewContagionForAntigenAndGroupBySubstrain           = refNewContagionForAntigenByGroupAndSubstrain[iGroup];
+                // Decay previously accumulated contagion and add in newly deposited contagion by genome
+                auto& refCurrentContagionForCladeAndSourceGroupByGenome    = refCurrentContagionForCladeBySourceGroupAndGenome[iGroup];
+                auto& refNewContagionForCladeAndGroupByGenome              = refNewContagionForCladeByGroupAndGenome[iGroup];
 
                 // Decay previously accumulated contagion:
                 if ( decayFactor > 0.0f )
                 {
-                    for (auto& entry : refCurrentContagionForAntigenAndSourceGroupBySubstrain)
+                    for (auto& entry : refCurrentContagionForCladeAndSourceGroupByGenome)
                     {
-                        // entry = pair<substrainId, contagion>
+                        // entry = pair<genomeId, contagion>
                         entry.second *= decayFactor;
-                        // TODO - consider a threshold below which we stop tracking this strain (i.e. remove the entry from the map)
                     }
                 }
                 else
                 {
-                    refCurrentContagionForAntigenAndSourceGroupBySubstrain.clear();
+                    refCurrentContagionForCladeAndSourceGroupByGenome.clear();
                 }
 
                 // Current contagion (by source group) has been decayed.
 
                 // Add in newly deposited contagion:
-                for (auto& entry : refNewContagionForAntigenAndGroupBySubstrain)
+                for (auto& entry : refNewContagionForCladeAndGroupByGenome)
                 {
-                    auto substrainId = entry.first;
+                    auto genomeId    = entry.first;
                     auto contagion   = entry.second;
-                    refCurrentContagionForAntigenAndSourceGroupBySubstrain[substrainId] += (contagion + additionalContagion);
+                    refCurrentContagionForCladeAndSourceGroupByGenome[genomeId] += (contagion + additionalContagion);
                 }
 
-                // Current contagion, per substrain, (by source group) has been updated from new contagion, per substrain, (by source group)
+                // Current contagion, per genome, (by source group) has been updated from new contagion, per genome, (by source group)
 
-                // We just added this to the current substrain contagion accumulator, clear it out.
-                refNewContagionForAntigenAndGroupBySubstrain.clear();
+                // We just added this to the current genome contagion accumulator, clear it out.
+                refNewContagionForCladeAndGroupByGenome.clear();
             }
 
             for (size_t iGroup = 0; iGroup < groupCount; ++iGroup)
             {
-                auto& refCurrentContagionForAntigenAndDestinationGroupBySubstrain = refCurrentContagionForAntigenByDestinationGroupAndSubstrain[iGroup];
+                auto& refCurrentContagionForCladeAndDestinationGroupByGenome = refCurrentContagionForCladeByDestinationGroupAndGenome[iGroup];
 
                 const MatrixRow_t& betaVector = scalingMatrix[iGroup];
 
                 // We are going to transfer accumulated contagion to this structure, clear it out.
-                refCurrentContagionForAntigenAndDestinationGroupBySubstrain.clear();
+                refCurrentContagionForCladeAndDestinationGroupByGenome.clear();
 
-                // Update accumulated contagion, by substrain, indexed by destination group:
+                // Update accumulated contagion, by genome, indexed by destination group:
                 for (size_t srcGroup = 0; srcGroup < groupCount; ++srcGroup)
                 {
                     float beta = betaVector[srcGroup];
-                    for (const auto& entry : refCurrentContagionForAntigenBySourceGroupAndSubstrain[srcGroup])
+                    for (const auto& entry : refCurrentContagionForCladeBySourceGroupAndGenome[srcGroup])
                     {
-                        auto substrain = entry.first;
+                        auto genome    = entry.first;
                         auto contagion = entry.second;
-                        refCurrentContagionForAntigenAndDestinationGroupBySubstrain[substrain] += contagion * beta;
+                        refCurrentContagionForCladeAndDestinationGroupByGenome[genome] += contagion * beta;
                     }
                 }
 
-                // Current contagion, per substrain, (by receiving group), has been updated (based on current contagion from source groups).
+                // Current contagion, per genome, (by receiving group), has been updated (based on current contagion from source groups).
 
                 // Update effective contagion (force of infection):
-                auto& refForceOfInfectionForAntigenAndGroupBySubstrain = refForceOfInfectionForAntigenByGroupAndSubstrain[iGroup];
+                auto& refForceOfInfectionForCladeAndGroupByGenome = refForceOfInfectionForCladeByGroupAndGenome[iGroup];
                 // We are going to set current force of infection from current accumulated contagion, clear it out.
-                refForceOfInfectionForAntigenAndGroupBySubstrain.clear();
+                refForceOfInfectionForCladeAndGroupByGenome.clear();
 
                 float population = (normalizeByTotalPopulation ? populationSize : populationSizeByGroup[iGroup]);
                 float normalization = ((population == 0.0f) ? 0.0f : 1.0f/population);
 
-                for (const auto& entry : refCurrentContagionForAntigenAndDestinationGroupBySubstrain)
+                for (const auto& entry : refCurrentContagionForCladeAndDestinationGroupByGenome)
                 {
-                    auto substrain = entry.first;
+                    auto genome    = entry.first;
                     auto contagion = entry.second;
-                    refForceOfInfectionForAntigenAndGroupBySubstrain[substrain] = contagion * infectivityMultiplier * normalization;
+                    refForceOfInfectionForCladeAndGroupByGenome[genome] = contagion * infectivityMultiplier * normalization;
                 }
 
-                // Force of infection, per substrain, for each group (current contagion * correction * normalization) is up to date.
+                // Force of infection, per genome, for each group (current contagion * correction * normalization) is up to date.
             }
         }
 
-        for (size_t iAntigen = 0; iAntigen < antigenCount; ++iAntigen)
+        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
             size_t groupCount = getGroupCount();
             for (size_t iGroup = 0; iGroup < groupCount; ++iGroup)
             {
-                LOG_VALID_F( "(%s) Current contagion [dest] (antigen = %d, route = 0, group = %d) = %f\n", tag.c_str(), iAntigen, iGroup, currentContagionByAntigenAndDestinationGroup[iAntigen][iGroup] );
-                for (const auto& entry : currentContagionByAntigenDestinationGroupAndSubstrain[iAntigen][iGroup])
+                LOG_VALID_F( "(%s) Current contagion [dest] (clade = %d, route = 0, group = %d) = %f\n", tag.c_str(), iClade, iGroup, currentContagionByCladeAndDestinationGroup[iClade][iGroup] );
+                for (const auto& entry : currentContagionByCladeDestinationGroupAndGenome[iClade][iGroup])
                 {
-                    LOG_VALID_F( "(%s) Current contagion [dest] (antigen = %d, route = 0, group = %d, substrain = %d) = %f\n", tag.c_str(), iAntigen, iGroup, entry.first, entry.second );
+                    LOG_VALID_F( "(%s) Current contagion [dest] (clade = %d, route = 0, group = %d, genome = %d) = %f\n", tag.c_str(), iClade, iGroup, entry.first, entry.second );
                 }
-                LOG_VALID_F( "(%s) Force of infection (antigen = %d, route = 0, group = %d) = %f\n", tag.c_str(), iAntigen, iGroup, forceOfInfectionByAntigenAndGroup[iAntigen][iGroup] );
-                for (const auto& entry : forceOfInfectionByAntigenGroupAndSubstrain[iAntigen][iGroup])
+                LOG_VALID_F( "(%s) Force of infection (clade = %d, route = 0, group = %d) = %f\n", tag.c_str(), iClade, iGroup, forceOfInfectionByCladeAndGroup[iClade][iGroup] );
+                for (const auto& entry : forceOfInfectionByCladeGroupAndGenome[iClade][iGroup])
                 {
-                    LOG_VALID_F( "(%s) Force of infection (antigen = %d, route = 0, group = %d, substrain = %d) = %f\n", tag.c_str(), iAntigen, iGroup, entry.first, entry.second );
+                    LOG_VALID_F( "(%s) Force of infection (clade = %d, route = 0, group = %d, genome = %d) = %f\n", tag.c_str(), iClade, iGroup, entry.first, entry.second );
                 }
             }
         }
@@ -455,11 +454,11 @@ namespace Kernel
     {
         float contagion = 0.0f;
 
-        for (auto& forceOfInfectionForAntigenByGroup : forceOfInfectionByAntigenAndGroup)
+        for (auto& forceOfInfectionForCladeByGroup : forceOfInfectionByCladeAndGroup)
         {
-            for (float forceOfInfectionForAntigenAndGroup : forceOfInfectionForAntigenByGroup)
+            for (float forceOfInfectionForCladeAndGroup : forceOfInfectionForCladeByGroup)
             {
-                contagion += forceOfInfectionForAntigenAndGroup;
+                contagion += forceOfInfectionForCladeAndGroup;
             }
         }
 
@@ -470,9 +469,9 @@ namespace Kernel
     {
         float contagion = 0.0f;
 
-        for (auto& forceOfInfectionForAntigenByGroup : forceOfInfectionByAntigenAndGroup)
+        for (auto& forceOfInfectionForCladeByGroup : forceOfInfectionByCladeAndGroup)
         {
-            float forceOfInfection = forceOfInfectionForAntigenByGroup[ membership.group ];
+            float forceOfInfection = forceOfInfectionForCladeByGroup[ membership.group ];
             contagion += forceOfInfection;
         }
 
@@ -489,76 +488,76 @@ namespace Kernel
 // NOTYET        return GetTotalContagionForGroup( txGroups );
 // NOTYET    }
 
-    BEGIN_QUERY_INTERFACE_BODY(StrainAwareTransmissionGroups::SubstrainPopulationImpl)
-    END_QUERY_INTERFACE_BODY(StrainAwareTransmissionGroups::SubstrainPopulationImpl)
+    BEGIN_QUERY_INTERFACE_BODY(StrainAwareTransmissionGroups::GenomePopulationImpl)
+    END_QUERY_INTERFACE_BODY(StrainAwareTransmissionGroups::GenomePopulationImpl)
 
-    StrainAwareTransmissionGroups::SubstrainPopulationImpl::SubstrainPopulationImpl(
+    StrainAwareTransmissionGroups::GenomePopulationImpl::GenomePopulationImpl(
         RANDOMBASE* prng,
-	int _antigenId,
-	float _quantity,
-	const SubstrainMap_t& _substrainDistribution
+    int   _cladeId,
+    float _quantity,
+    const GenomeMap_t& _genomeDistribution
     )
         : pRNG( prng )
-        , antigenId(_antigenId)
+        , cladeId(_cladeId)
         , contagionQuantity(_quantity)
-        , substrainDistribution(_substrainDistribution)
+        , genomeDistribution(_genomeDistribution)
     {
     }
 
-    AntigenId StrainAwareTransmissionGroups::SubstrainPopulationImpl::GetAntigenID( void ) const
+    int StrainAwareTransmissionGroups::GenomePopulationImpl::GetCladeID( void ) const
     {
-        return AntigenId(antigenId);
+        return cladeId;
     }
 
     // This function is stupid because only needed so I can make IStrainIdentity a base class of IContagionPopulation
-    AntigenId StrainAwareTransmissionGroups::SubstrainPopulationImpl::GetGeneticID( void ) const
+    int StrainAwareTransmissionGroups::GenomePopulationImpl::GetGeneticID( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
-        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for SubstrainPopulationImpl" );
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
     }
 
-    float StrainAwareTransmissionGroups::SubstrainPopulationImpl::GetTotalContagion( void ) const
+    float StrainAwareTransmissionGroups::GenomePopulationImpl::GetTotalContagion( void ) const
     {
         return contagionQuantity;
     }
 
-    void StrainAwareTransmissionGroups::SubstrainPopulationImpl::ResolveInfectingStrain( IStrainIdentity* strainId ) const
+    void StrainAwareTransmissionGroups::GenomePopulationImpl::ResolveInfectingStrain( IStrainIdentity* strainId ) const
     {
         LOG_VALID_F( "%s\n", __FUNCTION__ );
         float totalRawContagion = 0.0f;
-        for (auto& entry : substrainDistribution)
+        for (auto& entry : genomeDistribution)
         {
             totalRawContagion += entry.second;
         }
 
         if (totalRawContagion == 0.0f) {
-            LOG_WARN_F( "Found no raw contagion for antigen=%d (%f total contagion)\n", antigenId, contagionQuantity);
+            LOG_WARN_F( "Found no raw contagion for clade=%d (%f total contagion)\n", cladeId, contagionQuantity);
         }
 
         float rand = pRNG->e();
         float target = totalRawContagion * rand;
         float contagionSeen = 0.0f;
-        int substrainId = 0;
+        int   genomeId = 0;
 
-        strainId->SetAntigenID(antigenId);
+        strainId->SetCladeID(cladeId);
 
-        for (auto& entry : substrainDistribution)
+        for (auto& entry : genomeDistribution)
         {
             float contagion = entry.second;
             if (contagion > 0.0f)
             {
-                substrainId = entry.first;
+                genomeId = entry.first;
                 contagionSeen += contagion;
                 if (contagionSeen >= target)
                 {
-                    LOG_DEBUG_F( "Selected strain id %d\n", substrainId );
-                    strainId->SetGeneticID(substrainId); // ????
+                    LOG_DEBUG_F( "Selected strain genetic id %d\n", genomeId );
+                    strainId->SetGeneticID(genomeId); // ????
                     return;
                 }
             }
         }
 
-        LOG_WARN_F( "Ran off the end of the distribution (rounding error?). Using last valid sub-strain we saw: %d\n", substrainId );
-        strainId->SetGeneticID(substrainId);
+        LOG_WARN_F( "Ran off the end of the distribution (rounding error?). Using last valid genome we saw: %d\n", genomeId );
+        strainId->SetGeneticID(genomeId);
     }
 }

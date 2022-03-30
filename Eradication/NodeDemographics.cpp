@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -19,6 +19,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "NodeProperties.h"
 #include "INodeContext.h"
+#include <iomanip>
 
 #define EPSILON (FLT_EPSILON)
 
@@ -471,18 +472,6 @@ void NodeDemographicsFactory::Initialize( const ::Configuration* config,
                 }
                 JsonObjectDemog metadata = json["Metadata"] ;
 
-                if( !metadata.Contains( "NodeCount" ) )
-                {
-                    throw NodeDemographicsFormatErrorException( __FILE__, __LINE__, __FUNCTION__, demo_filename.c_str(), "Missing the 'Metadata.NodeCount' object." );
-                }
-
-                int nodecount = metadata.GetInt("NodeCount");
-                if( nodecount <= 0 )
-                {
-                    std::stringstream msg ;
-                    msg << "'NodeCount' = " << nodecount << ".  It must be positive." ;
-                    throw NodeDemographicsFormatErrorException( __FILE__, __LINE__, __FUNCTION__, demo_filename.c_str(), msg.str().c_str() );
-                }
                 SetIdReference( layer, demo_filename, metadata );
 
                 // ------------------------------------------------------------------
@@ -928,8 +917,9 @@ NodeDemographics* NodeDemographicsFactory::CreateNodeDemographics( JsonObjectDem
 
 JsonObjectDemog NodeDemographicsFactory::CreateDefaultNodeDemograhics( ExternalNodeId_t nodeid )
 {
-    float lat = (nodeid % torus_size) * 0.008333 /* 30 arcsecs */;
-    float lon = (nodeid / torus_size) * 0.008333 /* 30 arcsecs */;
+    uint32_t i_loc = nodeid - 1;
+    float lat = (i_loc % torus_size) * 0.008333 /* 30 arcsecs */;
+    float lon = (i_loc / torus_size) * 0.008333 /* 30 arcsecs */;
 
     std::stringstream ss;
     ss << "{ \"NodeID\": " << nodeid << ", \"NodeAttributes\": { \"Latitude\": " << lat << ", \"Longitude\": " << lon << " } }";
@@ -1279,8 +1269,21 @@ NodeDemographicsDistribution* NodeDemographicsDistribution::CreateDistribution( 
                 total_pop_groups *= num_elements;
 
                 pop_groups.push_back(std::vector<double>());
-                for(int j = 0; j < pop_groups_orig[i].size(); j++)
+                for( int j = 0; j < pop_groups_orig[i].size(); j++ )
                     pop_groups[i].push_back(float(pop_groups_orig[i][j].AsDouble()));
+
+                // check if PopulationGroups are sorted in ascending order by checking if left number is greater or equal to right number
+                // greater_equal(){if (arg1 >= arg2) return TRUE; else return FALSE;}
+                auto itr = std::adjacent_find( pop_groups[i].begin(), pop_groups[i].end(), std::greater_equal<float>() );
+                if( itr != pop_groups[i].end() )
+                {
+                    std::stringstream msg;
+                    msg << demographics.GetJsonKey() << " for NodeID=" << demographics.GetNodeID() << ". 'PopulationGroups' must be sorted in ascending order.\n";
+                    msg << std::fixed << "[ ";
+                    for( const double& s : pop_groups[i] ) { msg << s << " "; }    //print vector elements
+                    msg << " ]";
+                    throw Kernel::InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "UNKNOWN", msg.str().c_str());
+                }
             }
 
             for(int axis = 0; axis < num_axes; axis++)

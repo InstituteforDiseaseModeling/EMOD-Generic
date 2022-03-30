@@ -32,6 +32,8 @@
             "Enable_Demographics_Risk": 0,
             "Enable_Immune_Decay": 1,
             "Enable_Initial_Susceptibility_Distribution": 0,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 1,
             "Minimum_Adult_Age_Years": 15,
             "SAMPLING": {
@@ -55,14 +57,13 @@
             "x_Other_Mortality": 1,
             "x_Regional_Migration": 1,
             "x_Sea_Migration": 1,
-            "x_Temporary_Larval_Habitat": 1
+            "x_Larval_Habitats": 1
         },
         "GENERAL": {
             "Config_Name": "",
             "Custom_Coordinator_Events": [],
             "Custom_Individual_Events": [],
             "Custom_Node_Events": [],
-            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Coinfection": 0,
             "Enable_Disease_Mortality": 0,
             "Geography": "SamplesInput",
@@ -89,17 +90,14 @@
             "Post_Infection_Mortality_Multiplier": 1,
             "Post_Infection_Transmission_Multiplier": 1,
             "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_OFF",
-            "Susceptibility_Scale_Type": "CONSTANT_SUSCEPTIBILITY",
             "Transmission_Blocking_Immunity_Decay_Rate": 0,
             "Transmission_Blocking_Immunity_Duration_Before_Decay": 0
         },
         "INFECTION": {
             "Enable_Superinfection": 0,
+            "Incubation_Period_Constant": 0.0,
             "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
-            "Max_Individual_Infections": 3,
-            "Number_Basestrains": 1,
-            "Number_Substrains": 2,
-            "Incubation_Period_Constant": 0.0
+            "Max_Individual_Infections": 3
         },
         "INTERVENTIONS": {
             "Campaign_Filename": "campaign.json",
@@ -122,7 +120,6 @@
         },
         "TB": {
             "Enable_Maternal_Protection": 0,
-            "Enable_Susceptibility_Scaling": 0,
             "TBHIV_Drug_Params": {
                 "CDCDrug": {
                     "TB_Drug_Cure_Rate": 0.1,

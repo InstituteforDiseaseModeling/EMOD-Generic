@@ -5,14 +5,16 @@
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Enable_Demographics_Builtin": 0,
             "Enable_Demographics_Reporting": 1,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "Sample_Rate_Birth": 1
         },
         "DISEASE": {
             "Base_Infectivity": 3.5,
             "Enable_Immune_Decay": 0,
-            "Infectious_Period_Exponential": 4,
-            "Incubation_Period_Constant": 0
+            "Incubation_Period_Constant": 0,
+            "Infectious_Period_Exponential": 4
         },
         "OUTPUT": {
             "Enable_Demographics_Reporting": 0,

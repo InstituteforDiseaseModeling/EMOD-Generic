@@ -1,0 +1,23 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "demographics_multiplenodes.json"
+            ],
+            "Enable_Demographics_Reporting": 1,
+            "x_Base_Population": 0.01
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 1e-10,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "ImportPressure/MultipleNodes",
+            "Geography": "",
+            "Simulation_Duration": 1000
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

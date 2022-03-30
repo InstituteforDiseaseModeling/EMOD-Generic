@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -22,12 +22,13 @@ namespace Kernel {
         ReportSTI();
         static IReport* ReportSTI::CreateReport() { return new ReportSTI(); }
 
-        virtual void LogIndividualData( IIndividualHuman* individual );
-        virtual void EndTimestep( float currentTime, float dt );
+        virtual void LogIndividualData( IIndividualHuman* individual ) override;
+        virtual void LogNodeData( INodeContext* pNC ) override;
+        virtual void EndTimestep( float currentTime, float dt ) override;
 
     protected:
-        virtual void populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map );
-        virtual void postProcessAccumulatedData();
+        virtual void populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map ) override;
+        virtual void postProcessAccumulatedData() override;
 
         unsigned int num_marrieds;
         unsigned int num_singles;

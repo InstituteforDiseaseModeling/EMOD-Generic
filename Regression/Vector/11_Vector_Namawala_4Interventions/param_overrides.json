@@ -24,6 +24,8 @@
         },
         "PRIMARY": {
             "Config_Name": "11_Vector_Namawala_4Interventions",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 21,
             "Simulation_Duration": 730

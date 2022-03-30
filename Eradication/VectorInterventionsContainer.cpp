@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -140,7 +140,10 @@ namespace Kernel
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "p_susc", "IVectorSusceptibilityContext", "ISusceptibilityContext" );
         }
 
+        // Subtract the last person's contribution to the group before re-adding it with the updated biting rate
+        parent->UpdateGroupPopulation(-1.0f);
         p_susc_vector->SetRelativeBitingRate( rate );
+        parent->UpdateGroupPopulation(1.0f);
     }
 
     void VectorInterventionsContainer::InfectiousLoopUpdate( float dt )

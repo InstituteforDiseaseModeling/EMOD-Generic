@@ -1,50 +1,49 @@
 {
-    "Use_Defaults": 1,
-    "Campaign_Name": "Generic HIV Outbreak", 
-    "Events": 
-    [
+    "Campaign_Name": "Generic HIV Outbreak",
+    "Events": [
         {
             "Description": "Initial STI outbreak",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-
-            "Nodeset_Config": { "class": "NodeSetAll" },
-
             "Event_Coordinator_Config": {
-                "Intervention_Config": {
-                    "class": "ModifyStiCoInfectionStatus",
-                    "New_STI_CoInfection_Status": 1
-                },
-                "Target_Demographic": "Everyone",
-                "Property_Restrictions": [ "Risk:HIGH" ],
                 "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "New_STI_CoInfection_Status": 1,
+                    "class": "ModifyStiCoInfectionStatus"
+                },
+                "Property_Restrictions": [
+                    "Risk:HIGH"
+                ],
+                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }
-        },
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "Outbreak",
-            "Start_Day": 365,
-
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
             "Event_Coordinator_Config": {
-                "Intervention_Config": {
-                    "Event_Name": "Outbreak (not used)", 
-                    "Antigen": 0, 
-                    "Genome": 0, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1,
-                    "class": "OutbreakIndividual"
-                }, 
-                "Target_Demographic": "Everyone", 
-                "Property_Restrictions": [ "Risk:HIGH" ],
                 "Demographic_Coverage": 0.5,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Travel_Linked": 0 
-            }
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Property_Restrictions": [
+                    "Risk:HIGH"
+                ],
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 365,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -12,12 +12,15 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <string>
 #include <list>
 #include <vector>
+#include "Configure.h"
 
 namespace Kernel
 {
     class IndividualHuman;
     struct IJsonObjectAdapter;
     class JSerializer;
+    class IPKey;
+    class IPKeyValueContainer;
 }
 
 
@@ -47,4 +50,12 @@ namespace ReportUtilities
     void AddVector( std::vector<std::vector<double>>& rThis,                           const std::vector<std::vector<double>>& rThat );
     void AddVector( std::vector<std::vector<std::vector<double>>>& rThis,              const std::vector<std::vector<std::vector<double>>>& rThat );
     void AddVector( std::vector<std::vector<std::vector<std::vector<double>>>>& rThis, const std::vector<std::vector<std::vector<std::vector<double>>>>& rThat );
+
+    std::string GetIPColumnHeader( const char* pColumnPrefix,
+                                   const Kernel::jsonConfigurable::tDynamicStringSet& rPropertiesToReport );
+    std::string GetIPData( const Kernel::IPKeyValueContainer& rContainer,
+                           const std::vector<Kernel::IPKey>& rKeysToReport );
+    std::vector<Kernel::IPKey> GetKeys( const Kernel::jsonConfigurable::tDynamicStringSet& rPropertiesToReport,
+                                        const char* pParamName );
+
 };

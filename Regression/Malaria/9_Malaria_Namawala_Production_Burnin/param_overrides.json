@@ -24,6 +24,8 @@
     },
     "PRIMARY": {
         "Config_Name": "9_Malaria_Namawala_Production_Burnin",
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Run_Number": 110,
         "Simulation_Duration": 1825

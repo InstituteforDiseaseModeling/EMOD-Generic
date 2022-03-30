@@ -1,7 +1,6 @@
 {
     "Default_Config_Path": "../../defaults/hiv_default_config.json",
     "parameters": {
-        "x_Base_Population": 0.0001,
         "Config_Name": "38_HIV_Risk_Stratification",
         "Demographics_Filenames": [
             "../input/SA_UN_demographics_extrapolated_WithProperties_Smoothed_with_RiskGroup.json",
@@ -11,6 +10,8 @@
             "PFA_Concurrency.json"
         ],
         "Enable_Property_Output": 1,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Run_Number": 36,
         "Simulation_Duration": 3650,
         "Simulation_Timestep": 1,
@@ -22,6 +23,7 @@
         "_____________REPORTING___________": "",
         "_____________SIMULATION___________": "",
         "_____________TRANSMISSION___________": "",
-        "logLevel_PropertyValueChanger": "DEBUG"
+        "logLevel_PropertyValueChanger": "DEBUG",
+        "x_Base_Population": 0.0001
     }
 }

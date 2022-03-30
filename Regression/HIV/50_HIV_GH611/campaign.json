@@ -1,27 +1,25 @@
 {
-    "Use_Defaults": 1, 
     "Events": [
         {
-            "class": "CampaignEvent", 
-            "Event_Name": "Epidemic seeding 0.1 of population", 
-            "Start_Day": 1, 
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.1,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Epidemic seeding 0.1 of population",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator", 
-                "Target_Demographic": "Everyone", 
-                "Demographic_Coverage": 0.1, 
-                "Travel_Linked": 0, 
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual", 
-                    "Event_Name": "Outbreak (not used)", 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1, 
-                    "Antigen": 0, 
-                    "Genome": 0
-                }
-            }
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

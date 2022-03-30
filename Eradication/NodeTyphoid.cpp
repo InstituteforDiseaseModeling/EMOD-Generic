@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -79,8 +79,8 @@ namespace Kernel
 
     void NodeTyphoid::SetupIntranodeTransmission()
     {
-        LOG_DEBUG_F("Number of basestrains: %d\n", InfectionConfig::number_basestrains);
-        LOG_DEBUG_F("Number of substrains:  %d\n", InfectionConfig::number_substrains);
+        LOG_DEBUG_F("Number of clades: %d\n",   InfectionConfig::number_clades);
+        LOG_DEBUG_F("Number of genomes:  %d\n", InfectionConfig::number_genomes);
         NodeEnvironmental::SetupIntranodeTransmission();
     }
 
@@ -154,10 +154,11 @@ namespace Kernel
         auto contagionByRouteMap = GetContagionByRoute();
         for( auto map_iter: contagionByRouteMap  )
         {
-            auto route = map_iter.first;
-            auto contagion = map_iter.second;
+            const auto& routeName = map_iter.first;
+            auto contagion        = map_iter.second;
+
             // The math below is for ENVIRO ONLY (though contact is closely similar)
-            if( route == ENVIRONMENTAL )
+            if( routeName == ENVIRONMENTAL )
             {
                 auto max_poss_exposures = 3.0f; // what to put here???
                 NonNegativeFloat infects = 1.0f-pow( 1.0f + contagion * ( pow( 2.0f, (1/IndividualHumanTyphoid::alpha) ) -1.0f )/IndividualHumanTyphoid::N50, -IndividualHumanTyphoid::alpha ); // Dose-response for prob of infection

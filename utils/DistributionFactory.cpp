@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -110,7 +110,9 @@ namespace Kernel
                 return distribution;
             }
             default:
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "DistributionFunction does not exist." );
+                std::stringstream ss;
+                ss << "Error while creating distribution: " << base_parameter_name.c_str() << "_Distribution. Distribution does not exist or is not initialized.";
+                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
     }
 

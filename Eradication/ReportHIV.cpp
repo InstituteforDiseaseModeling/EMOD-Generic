@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -27,7 +27,8 @@ namespace Kernel {
 
     static const char* _num_hiv_acute_label          = "Number of (untreated) Individuals with Acute HIV";
     static const char* _num_hiv_latent_label         = "Number of (untreated) Individuals with Latent HIV";
-    static const char* _num_hiv_aids_label           = "Number of (untreated) Individuals with AIDS";
+    static const char* _num_hiv_untreated_aids_label = "Number of (untreated) Individuals with AIDS";
+    static const char* _num_hiv_treated_aids_label   = "Number of (treated) Individuals with AIDS";
     static const char* _num_hiv_cd4_hi_on_ART_label  = "Number of Individuals HIV+ w/ CD4 >= 200 (on-ART)";
     static const char* _num_hiv_cd4_hi_non_ART_label = "Number of Individuals HIV+ w/ CD4 >= 200 (non-ART)";
     static const char* _num_hiv_cd4_lo_on_ART_label  = "Number of Individuals HIV+ w/ CD4 < 200 (on-ART)";
@@ -47,7 +48,8 @@ namespace Kernel {
     ReportHIV::ReportHIV()
         : num_acute(0)
         , num_latent(0)
-        , num_aids(0)
+        , num_aids_without(0)
+        , num_aids_with(0)
         , num_hiv_cd4_lo_non_ART(0)
         , num_hiv_cd4_hi_non_ART(0)
         , num_hiv_cd4_lo_on_ART(0)
@@ -83,7 +85,8 @@ namespace Kernel {
         ReportSTI::populateSummaryDataUnitsMap(units_map);
         units_map[ _num_hiv_acute_label          ] = "";
         units_map[ _num_hiv_latent_label         ] = "";
-        units_map[ _num_hiv_aids_label           ] = "";
+        units_map[ _num_hiv_untreated_aids_label ] = "";
+        units_map[ _num_hiv_treated_aids_label   ] = "";
         units_map[ _num_hiv_cd4_hi_non_ART_label ] = "";
         units_map[ _num_hiv_cd4_hi_on_ART_label  ] = "";
         units_map[ _num_hiv_cd4_lo_non_ART_label ] = "";
@@ -212,7 +215,10 @@ namespace Kernel {
                 break;
 
                 case HIVInfectionStage::AIDS:
-                    num_aids += mcw;
+                    if( hiv_individual->GetHIVInterventionsContainer()->OnArtQuery() )
+                        num_aids_with += mcw;
+                    else
+                        num_aids_without += mcw;
                 break;
 
                 case HIVInfectionStage::ON_ART:
@@ -239,7 +245,8 @@ namespace Kernel {
 
         Accumulate( _num_hiv_acute_label, num_acute );
         Accumulate( _num_hiv_latent_label, num_latent );
-        Accumulate( _num_hiv_aids_label, num_aids );
+        Accumulate( _num_hiv_untreated_aids_label, num_aids_without );
+        Accumulate( _num_hiv_treated_aids_label, num_aids_with );
         Accumulate( _num_hiv_cd4_hi_non_ART_label, num_hiv_cd4_hi_non_ART );
         Accumulate( _num_hiv_cd4_hi_on_ART_label, num_hiv_cd4_hi_on_ART );
         Accumulate( _num_hiv_cd4_lo_non_ART_label, num_hiv_cd4_lo_non_ART );
@@ -262,9 +269,10 @@ namespace Kernel {
             }
         }
                  
-        num_acute =  0;
+        num_acute = 0;
         num_latent = 0;
-        num_aids =   0;
+        num_aids_without = 0;
+        num_aids_with = 0;
         num_hiv_cd4_lo_non_ART = 0;
         num_hiv_cd4_lo_on_ART = 0;
         num_hiv_cd4_hi_non_ART = 0;
@@ -303,6 +311,14 @@ namespace Kernel {
             event_counter_vector[ trigger.GetIndex() ]++ ;
         }
         return true ;
+    }
+
+    void ReportHIV::postProcessAccumulatedData()
+    {
+        ReportSTI::postProcessAccumulatedData();
+        channelDataMap.RemoveChannel( _exposed_pop_label );
+        channelDataMap.RemoveChannel( _recovered_pop_label );
+        channelDataMap.RemoveChannel( _waning_pop_label );
     }
 }
 

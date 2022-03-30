@@ -1,7 +1,12 @@
 #!/usr/bin/python
 
-import json
+
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 from scipy import stats
 
 KEY_TYPHOID_EXPOSURE_LAMBDA = "Typhoid_Exposure_Lambda"

@@ -1,8 +1,13 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_TBHIV_Support as dts
 
 matches = [ "truly cleared", "Time:" ]
@@ -124,7 +129,7 @@ def create_report_file( clearance_times, param_obj, report_name, stdout_days, in
     with open(report_name, "w") as outfile:
         outfile.write("Cleared infections: {0} \n".format(len(clearance_times)))
 
-        # success = sft.test_exponential( numpy.array( clearance_times ).astype(float), param_obj["TB_Drug_Cure_Rate_HIV"] )
+        # success = sft.test_exponential( np.array( clearance_times ).astype(float), param_obj["TB_Drug_Cure_Rate_HIV"] )
         success = sft.test_exponential(clearance_times,
                                            param_obj["TB_Drug_Cure_Rate_HIV"],
                                            outfile, integers=True, roundup=True, round_nearest=False)

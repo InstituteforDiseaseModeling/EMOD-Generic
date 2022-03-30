@@ -24,6 +24,8 @@
         },
         "PRIMARY": {
             "Config_Name": "26_Vector_An_arabiensis_MultipleHabitats_Oviposition",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 47,
             "Simulation_Duration": 730

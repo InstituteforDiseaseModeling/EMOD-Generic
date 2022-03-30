@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -35,9 +35,12 @@ namespace Kernel
         virtual bool Configure( const Configuration* config ) override;
 
         static bool enable_disease_mortality;
+
         static float symptomatic_infectious_offset;
-        static unsigned int number_basestrains;
-        static unsigned int number_substrains; // genetic variants
+
+        static bool enable_strain_tracking;
+        static unsigned int number_clades;
+        static unsigned int number_genomes;
 
     protected:
         friend class Infection;

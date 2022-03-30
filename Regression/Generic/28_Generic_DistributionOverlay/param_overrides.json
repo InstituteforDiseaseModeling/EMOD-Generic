@@ -11,40 +11,42 @@
                 "generic_scenarios_demographics.json",
                 "demog/generic_scenarios_demographics_overlay.json"
             ],
-            "MORTALITY": {
-                "Mortality_Time_Course": "MORTALITY_AFTER_INFECTIOUS",
-                "Mortality_Blocking_Immunity_Duration_Before_Decay": 90
-            },
+            "Enable_Demographics_Birth": 1,
             "IMMUNITY": {
-                "Transmission_Blocking_Immunity_Decay_Rate": 0.01,
-                "Acquisition_Blocking_Immunity_Duration_Before_Decay": 90,
-                "Transmission_Blocking_Immunity_Duration_Before_Decay": 90,
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.01,
-                "Enable_Immune_Decay": 0
+                "Acquisition_Blocking_Immunity_Duration_Before_Decay": 90,
+                "Enable_Immune_Decay": 0,
+                "Transmission_Blocking_Immunity_Decay_Rate": 0.01,
+                "Transmission_Blocking_Immunity_Duration_Before_Decay": 90
+            },
+            "MORTALITY": {
+                "Mortality_Blocking_Immunity_Duration_Before_Decay": 90,
+                "Mortality_Time_Course": "MORTALITY_AFTER_INFECTIOUS"
             },
             "SAMPLING": {
                 "Sample_Rate_Birth": 1
-            },
-            "Enable_Demographics_Birth": 1
+            }
         },
         "DISEASE": {
-            "INFECTIOUSNESS": {
-                "Base_Infectivity": 2.5
-            },
             "INCUBATION": {
                 "Incubation_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
                 "Incubation_Period_Exponential": 3
+            },
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 2.5
             }
         },
-        "PRIMARY": {
-            "Run_Number": 1,
-            "Simulation_Duration": 3650,
-            "Config_Name": "28_Generic_DistributionOverlay",
-            "Geography": "SamplesInput"
-        },
         "FUDGE_FACTORS": {
-            "x_Other_Mortality": 10,
-            "x_Birth": 10
+            "x_Birth": 10,
+            "x_Other_Mortality": 10
+        },
+        "PRIMARY": {
+            "Config_Name": "28_Generic_DistributionOverlay",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
+            "Geography": "SamplesInput",
+            "Run_Number": 1,
+            "Simulation_Duration": 3650
         }
     }
 }

@@ -73,9 +73,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.03,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -98,9 +96,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.01,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -123,9 +119,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.02,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -147,9 +141,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.015,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -307,7 +299,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -409,7 +403,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -454,7 +450,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -634,7 +632,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -905,7 +905,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -994,6 +996,7 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "ARTStaging3",
+                        "Delay_Period_Constant": 1,
                         "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:LostForever",
@@ -1005,8 +1008,7 @@
                         "Max_Entries": 1,
                         "Muxer_Name": "ARTStaging",
                         "New_Property_Value": "InterventionStatus:ARTStaging",
-                        "class": "HIVMuxer",
-                        "Delay_Period_Constant": 1
+                        "class": "HIVMuxer"
                     },
                     "Trigger_Condition_List": [
                         "ARTStaging2"
@@ -1281,6 +1283,7 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "OnPreART1",
+                        "Delay_Period_Constant": 182,
                         "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:LostForever",
@@ -1290,8 +1293,7 @@
                         "Max_Entries": 1,
                         "Muxer_Name": "PreART",
                         "New_Property_Value": "InterventionStatus:OnPreART",
-                        "class": "HIVMuxer",
-                        "Delay_Period_Constant": 182
+                        "class": "HIVMuxer"
                     },
                     "Trigger_Condition_List": [
                         "OnPreART0"

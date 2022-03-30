@@ -5,21 +5,22 @@
         ".logLevel_Simulation": "WARNING",
         ".logLevel_StandardEventCoordinator": "DEBUG",
         ".logLevel_default": "DEBUG",
-        "x_Base_Population": 1e-05,
         "Base_Year": 1990,
         "Config_Name": "32_HIV_ARTStagingByCD4Diagnostic",
-        "Demographics_Filenames": [
-            "../input/SA_UN_demographics_extrapolated_WithProperties_Smoothed.json",
-            "../input/InterventionStatus_HasActiveTB_overlay.json",
-            "../input/PFA_overlay.json"
-        ],
-        "Enable_Birth": 0,
         "Custom_Individual_Events": [
             "HIVDiagnosedEligibleForART",
             "HIVPositiveHIVTest",
             "HIVNeedsHIVTest",
             "HIVNegativeHIVTest"
         ],
+        "Demographics_Filenames": [
+            "../input/SA_UN_demographics_extrapolated_WithProperties_Smoothed.json",
+            "../input/InterventionStatus_HasActiveTB_overlay.json",
+            "../input/PFA_overlay.json"
+        ],
+        "Enable_Birth": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "HIVNeedsHIVTest",
@@ -46,6 +47,7 @@
         "____________REPORTING___________": "",
         "____________SIMULATION___________": "",
         "____________TRANSMISSION___________": "",
+        "x_Base_Population": 1e-05,
         "x_Birth": 20.025
     }
 }

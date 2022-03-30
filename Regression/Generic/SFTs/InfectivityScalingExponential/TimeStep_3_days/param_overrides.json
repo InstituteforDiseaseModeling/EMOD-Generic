@@ -1,0 +1,31 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_100_overlay.json"
+            ],
+            "IMMUNITY": {
+                "Enable_Immune_Decay": 1,
+                "Enable_Immunity": 0
+            },
+            "Population_Scale_Type": "FIXED_SCALING"
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 2,
+                "Infectious_Period_Constant": 400,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Infectivity_Scale_Type": "EXPONENTIAL_FUNCTION_OF_TIME"
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "InfectivityScalingExponential/TimeStep_3_days",
+            "Geography": "",
+            "Simulation_Duration": 400,
+            "Simulation_Timestep": 3
+        },
+        "logLevel_Individual": "VALID"
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

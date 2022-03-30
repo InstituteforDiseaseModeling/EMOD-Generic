@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
-import json
+
 import datetime
 import time
 import math
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 
 KEY_START_TIME = "Start_Time"

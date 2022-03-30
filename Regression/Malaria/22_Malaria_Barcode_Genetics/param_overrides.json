@@ -15,8 +15,8 @@
             "Namawala_single_node_demographics.immunity.json"
         ],
         "Enable_Birth": 1,
-        "Enable_Initial_Susceptibility_Distribution": 1,
         "Enable_Initial_Prevalence": 1,
+        "Enable_Initial_Susceptibility_Distribution": 1,
         "Enable_Natural_Mortality": 1,
         "Enable_Nondisease_Mortality": 1,
         "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_COMPLEX"
@@ -30,10 +30,13 @@
         "Antibody_Memory_Level": 0.3,
         "Antigen_Switch_Rate": 5e-09,
         "Base_Gametocyte_Production_Rate": 0.1,
+        "Custom_Individual_Events": [
+            "Received_Treatment",
+            "Received_RCD_Drugs"
+        ],
         "Falciparum_MSP_Variants": 100,
         "Falciparum_Nonspecific_Types": 20,
-        "Falciparum_PfEMP1_Variants": 1000,
-        "Custom_Individual_Events": [ "Received_Treatment", "Received_RCD_Drugs"]
+        "Falciparum_PfEMP1_Variants": 1000
     },
     "Malaria_Drug_Params": {
         "DHA": {
@@ -99,13 +102,14 @@
         "Config_Name": "22_Malaria_Barcode_Genetics",
         "Custom_Reports_Filename": "custom_reports.json",
         "Enable_Interventions": 1,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Run_Number": 2,
         "Simulation_Duration": 1095
     },
     "STRAIN_TRACKING": {
-        "Number_Basestrains": 2,
-        "Genome_Markers" : [
+        "Genome_Markers": [
             "gm01",
             "gm02",
             "gm03",
@@ -130,10 +134,11 @@
             "gm22",
             "gm23",
             "gm24"
-        ]
+        ],
+        "Number_of_Clades": 2
     },
     "VECTOR": {
         "Vector_Sampling_Type": "TRACK_ALL_VECTORS",
-        "x_Temporary_Larval_Habitat": 0.02
+        "x_Larval_Habitats": 0.02
     }
 }

@@ -14,8 +14,8 @@
             },
             "INFECTIOUSNESS": {
                 "Base_Infectivity": 1e-07,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Infectious_Period_Constant": 2
+                "Infectious_Period_Constant": 2,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "INTRANODE_TRANSMISSION": {
@@ -26,9 +26,11 @@
         },
         "PRIMARY": {
             "Config_Name": "61_Generic_SimpleBoosterVaccine_WaningMap",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 2,
-            "Simulation_Duration": 20
+            "Simulation_Duration": 150
         }
     }
 }

@@ -428,6 +428,7 @@
                     "mortdecayoffset"  : 0.6,
                     "immune_failage"   : 0,
                     "demographic_risk"                   : 0.7,
+                    "is_symptomatic"                     : true,
                     "days_between_symptomatic_and_death" : 9.9,
                     "sqrtCD4_Current"                    : 8.8,
                     "sqrtCD4_Rate"                       : 7.7,
@@ -454,7 +455,7 @@
                         "StateChange":1,
                         "infection_strain":
                         {
-                            "antigenID":5,
+                            "cladeID":5,
                             "geneticID":4
                         },
                         "m_is_symptomatic"    : true,
@@ -489,7 +490,7 @@
                         "StateChange":2,
                         "infection_strain":
                         {
-                            "antigenID":4,
+                            "cladeID":4,
                             "geneticID":5
                         },
                         "m_is_symptomatic"    : true,
@@ -1018,7 +1019,7 @@
                 "StateChange":1,
                 "infection_strain":
                 {
-                    "antigenID":5,
+                    "cladeID":5,
                     "geneticID":4
                 },
                 "m_is_symptomatic"    : true,
@@ -1050,6 +1051,7 @@
                 "mortdecayoffset"  : 0.26,
                 "immune_failage"   : 0,
                 "demographic_risk"                   : 0.27,
+                "is_symptomatic"                     : true,
                 "days_between_symptomatic_and_death" : 9.9,
                 "sqrtCD4_Current"                    : 8.8,
                 "sqrtCD4_Rate"                       : 7.7,
@@ -2164,7 +2166,7 @@
                         "StateChange":1,
                         "infection_strain":
                         {
-                            "antigenID":5,
+                            "cladeID":5,
                             "geneticID":4
                         },
                         "m_is_symptomatic"    : true,
@@ -2187,7 +2189,7 @@
                         "StateChange":2,
                         "infection_strain":
                         {
-                            "antigenID":4,
+                            "cladeID":4,
                             "geneticID":5
                         },
                         "m_is_symptomatic"    : true,
@@ -2577,7 +2579,7 @@
                 "StateChange":1,
                 "infection_strain":
                 {
-                    "antigenID":5,
+                    "cladeID":5,
                     "geneticID":4
                 },
                 "m_is_symptomatic"    : true,
@@ -2781,7 +2783,7 @@
                 "StateChange":2,
                 "infection_strain":
                 {
-                    "antigenID":8,
+                    "cladeID":8,
                     "geneticID":9
                 },
                 "m_is_symptomatic"    : true,
@@ -2807,7 +2809,7 @@
                 "StateChange":2,
                 "infection_strain":
                 {
-                    "antigenID":8,
+                    "cladeID":8,
                     "geneticID":9
                 },
                 "m_is_symptomatic"    : true,

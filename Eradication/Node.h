@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -42,6 +42,7 @@ namespace Kernel
     class  NodeEventContextHost;
     struct ISimulation;
     struct IMigrationInfoFactory;
+    struct IDistribution;
 
     class IDMAPI Node : public INodeContext, public JsonConfigurable
     {
@@ -132,7 +133,7 @@ namespace Kernel
         virtual void AddDefaultRoute( void );
         virtual void AddRoute( const std::string& rRouteName );
         virtual void BuildTransmissionRoutes( float contagionDecayRate );
-        virtual bool IsValidTransmissionRoute( string& transmissionRoute );
+        virtual bool IsValidTransmissionRoute( const string& transmissionRoute );
 
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override;
 
@@ -171,10 +172,7 @@ namespace Kernel
 
         virtual void ManageFamilyTrip( float currentTime, float dt );
 
-    private:
-
     protected:
-
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
@@ -193,6 +191,9 @@ namespace Kernel
         // Do not access these directly but use the access methods above.
         float _latitude;
         float _longitude;
+        IDistribution* distribution_migration;
+        IDistribution* distribution_demographic_risk;
+        IDistribution* distribution_susceptibility;
 
     protected:
         // Enum type name                            Enum variable name                         Name in config.json
@@ -200,11 +201,6 @@ namespace Kernel
         PopulationDensityInfectivityCorrection::Enum population_density_infectivity_correction; // Population_Density_Infectivity_Correction
         DistributionType::Enum                       age_initialization_distribution_type;      // Age_Initialization_Distribution_Type
         PopulationScaling::Enum                      population_scaling;                        // POPULATION_SCALING
-        SusceptibilityScalingType::Enum              susceptibility_scaling_type;               // Susceptibility_Scaling_Type
-
-        // Susceptibility modifiers
-        bool  susceptibility_scaling;
-        float susceptibility_scaling_rate;
         float susceptibility_dynamic_scaling;
 
         // Node properties
@@ -291,23 +287,14 @@ namespace Kernel
         bool enable_natural_mortality;
         bool enable_maternal_infection_transmission;
         bool enable_initial_prevalence;
+        int  init_prev_clade;
+        int  init_prev_genome;
         bool enable_infectivity_reservoir;
         bool vital_birth;
         VitalBirthDependence::Enum                           vital_birth_dependence;                           // Vital_Birth_Dependence
         VitalBirthTimeDependence::Enum                       vital_birth_time_dependence;                      //Time dependence in Birth Rate
         float x_birth;
         float x_othermortality;
-
-        // Cached values to be used when initializing new individuals
-        DistributionFunction::Enum susceptibility_dist_type ;
-        float susceptibility_dist1 ;
-        float susceptibility_dist2 ;
-        DistributionFunction::Enum risk_dist_type ;
-        float risk_dist1 ;
-        float risk_dist2 ;
-        DistributionFunction::Enum migration_dist_type ;
-        float migration_dist1 ;
-        float migration_dist2 ;
 
         InfectivityScaling::Enum                             infectivity_scaling;                              // Infectivity_Scale_Type
 

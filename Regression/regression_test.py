@@ -86,7 +86,11 @@ def read_regression_files(suites):
     for suite in suites:
         if os.path.isdir(suite) and os.path.exists(os.path.join(suite, "param_overrides.json")):
             print("You specified a directory - " + suite)
-            add_regression_tests(regression_list_json, [{"path": suite}])
+            root = "tests"
+            # if this is single directory, determine if regression (tests) or science by presence of output/InsetChart.json
+            if not os.path.exists( os.path.join( suite, "output/InsetChart.json") ):
+                root = "science"
+            add_regression_tests(regression_list_json, [{"path": suite}], root)
         else:
             if not suite.endswith(".json"):
                 suite_file = suite + ".json"
@@ -172,6 +176,9 @@ def get_test_config(path, test_type, report):
     if test_type == "pymod":
         return setup_pymod_directory( os.path.dirname( path ) )
     else:
+        if os.path.exists( path ) == False:
+            print( "Scenario folder {0} not found.".format( path ) )
+            return None
         param_overrides_filename = os.path.join(path, "param_overrides.json")
         if os.path.exists(param_overrides_filename):
             return flatten_test_config(param_overrides_filename, test_type, report)
@@ -196,6 +203,8 @@ def flatten_test_config(filename, test_type, report):
     try:
         if os.path.exists(filename):
             return ru.flattenConfig(filename)
+        else:
+            print( "{0} does not exist, while trying to flatten.".format( filename ) )
     except:
         print("Unexpected error while flattening config: {} - {}".format(sys.exc_info()[0], sys.exc_info()[1]))
         report.addErroringTest(filename, "Error flattening config.", "(no simulation directory created).", test_type)
@@ -621,7 +630,8 @@ def main():
     science = "science" in test_type
     sweep = "sweep" in test_type
 
-    ru.version_string = get_exe_version(params.executable_path)
+    if test_type != "pymod":
+        ru.version_string = get_exe_version(params.executable_path)
 
     # create report
     report = regression_report.Report(params, ru.version_string)

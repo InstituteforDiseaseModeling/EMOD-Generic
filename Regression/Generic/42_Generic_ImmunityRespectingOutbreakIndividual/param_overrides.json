@@ -7,6 +7,8 @@
                 "../00_Generic_Default/demographics.json"
             ],
             "Enable_Demographics_Reporting": 1,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 0,
@@ -24,8 +26,8 @@
             },
             "INFECTIOUSNESS": {
                 "Base_Infectivity": 1e-10,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Infectious_Period_Constant": 1
+                "Infectious_Period_Constant": 1,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "PRIMARY": {

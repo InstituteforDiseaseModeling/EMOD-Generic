@@ -20,7 +20,8 @@
             "Enable_Initial_Susceptibility_Distribution": 0,
             "Enable_Maternal_Protection": 0,
             "Enable_Natural_Mortality": 1,
-            "Enable_Susceptibility_Scaling": 0,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 1,
             "Minimum_Adult_Age_Years": 15,
             "Mortality_Time_Course": "DAILY_MORTALITY",
@@ -32,8 +33,6 @@
             "Infection_Updates_Per_Timestep": 1,
             "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
             "Infectious_Period_Exponential": 4,
-            "Infectious_Period_Mean": 12,
-            "Infectious_Period_Std_Dev": 10,
             "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
             "Male_To_Female_Relative_Infectivity_Ages": [
                 15,
@@ -84,8 +83,6 @@
             "Migration_Model": "NO_MIGRATION",
             "Node_Grid_Size": 0.042,
             "Num_Cores": 1,
-            "Number_Basestrains": 1,
-            "Number_Substrains": 1,
             "Population_Density_Infectivity_Correction": "CONSTANT_INFECTIVITY",
             "Population_Scale_Type": "FIXED_SCALING",
             "Post_Infection_Acquisition_Multiplier": 0,
@@ -93,7 +90,6 @@
             "Post_Infection_Transmission_Multiplier": 0,
             "Serialization_Type": "NONE",
             "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_OFF",
-            "Susceptibility_Scale_Type": "CONSTANT_SUSCEPTIBILITY",
             "Transmission_Blocking_Immunity_Decay_Rate": 0.1,
             "Transmission_Blocking_Immunity_Duration_Before_Decay": 60
         },
@@ -118,7 +114,6 @@
         "____________SIMULATION___________": {
             "Base_Year": 1960.5,
             "Campaign_Filename": "campaign.json",
-            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Aging": 1,
             "Enable_Interventions": 1,
             "Run_Number": 1,
@@ -139,8 +134,8 @@
             "Condom_Transmission_Blocking_Probability": 0.9,
             "Enable_Coital_Dilution": 0,
             "Enable_Maternal_Infection_Transmission": 0,
-            "Maternal_Infection_Transmission_Probability": 0,
-            "Incubation_Period_Constant": 0
+            "Incubation_Period_Constant": 0,
+            "Maternal_Infection_Transmission_Probability": 0
         }
     }
 }

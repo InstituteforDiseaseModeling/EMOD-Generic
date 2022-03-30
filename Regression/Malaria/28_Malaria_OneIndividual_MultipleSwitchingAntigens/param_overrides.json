@@ -19,12 +19,12 @@
         }
     },
     "DEMOGRAPHICS": {
-        "x_Base_Population": 0.001,
         "Demographics_Filenames": [
             "Namawala_single_node_demographics.json"
         ],
         "Enable_Initial_Prevalence": 1,
-        "Population_Scale_Type": "FIXED_SCALING"
+        "Population_Scale_Type": "FIXED_SCALING",
+        "x_Base_Population": 0.001
     },
     "Default_Config_Path": "../../defaults/malaria_default_config.json",
     "GENERAL_DISEASE": {
@@ -43,6 +43,8 @@
     },
     "PRIMARY": {
         "Config_Name": "28_Malaria_OneIndividual_MultipleSwitchingAntigens",
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Run_Number": 102,
         "Simulation_Duration": 5000

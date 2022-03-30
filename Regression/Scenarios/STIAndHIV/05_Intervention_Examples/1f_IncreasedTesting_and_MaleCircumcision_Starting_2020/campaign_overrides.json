@@ -50,7 +50,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Target_Demographic": "ExplicitGender",

@@ -11,11 +11,11 @@
         },
         "DISEASE": {
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 270,
+            "Infectious_Period_Constant": 7,
             "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
             "Mortality_Blocking_Immunity_Decay_Rate": 0.1,
             "Mortality_Blocking_Immunity_Duration_Before_Decay": 270,
-            "Transmission_Blocking_Immunity_Duration_Before_Decay": 270,
-            "Infectious_Period_Constant": 7
+            "Transmission_Blocking_Immunity_Duration_Before_Decay": 270
         },
         "MIGRATION": {
             "AIR": {
@@ -44,6 +44,8 @@
         },
         "PRIMARY": {
             "Config_Name": "32_Generic_Seattle_CoverageByNode",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Seattle",
             "Node_Grid_Size": 0.009,
             "Run_Number": 120,

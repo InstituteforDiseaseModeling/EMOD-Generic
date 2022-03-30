@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -101,9 +101,7 @@ namespace Kernel
 
     IArchive& JsonFullWriter::operator&(uint64_t& u64)
     {
-#if defined(WIN32)
         m_writer->Uint64(u64);
-#endif
         return *this;
     }
 
@@ -127,9 +125,8 @@ namespace Kernel
 
     IArchive& JsonFullWriter::operator&( jsonConfigurable::ConstrainedString& cs )
     {
-#if defined(WIN32)
-        this->operator&( (std::string)cs );
-#endif
+        std::string tmp(cs);
+        this->operator&( tmp );
         return *this;
     }
 

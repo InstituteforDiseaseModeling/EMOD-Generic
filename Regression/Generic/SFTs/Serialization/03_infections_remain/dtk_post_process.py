@@ -1,7 +1,12 @@
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import os.path as path
 import dtk_test.dtk_serialization_support as d_ss
-import json
+
 
 def application(output_folder="output", config_filename="config.json",
                 report_name=sft.sft_output_filename, debug=False):
@@ -71,7 +76,8 @@ if __name__=="__main__":
     p.add_argument('-o', '--output', default="output", help="Folder to load outputs from (output)")
     p.add_argument('-c', '--configname', default="config.json", help="config filename (config.json")
     p.add_argument('-r', '--reportname', default=sft.sft_output_filename, help="report filename ({0})".format(sft.sft_output_filename))
+    p.add_argument('-d', '--debug', action='store_true', help="Turns on debugging")
     args = p.parse_args()
 
     application(output_folder=args.output, report_name=args.reportname, config_filename=args.configname,
-                debug=True)
+                debug=args.debug)

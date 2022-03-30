@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -218,22 +218,22 @@ namespace Kernel
 
         VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_sampling_type;
         if ( (vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER || vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT) &&
-              InfectionConfig::number_basestrains > 1 &&
-              InfectionConfig::number_substrains  > 1 )
+              InfectionConfig::number_clades > 1 &&
+              InfectionConfig::number_genomes  > 1 )
         {
             // Ideally error messages would all be in Exceptions.cpp
             std::ostringstream msg;
             msg << "Strain tracking is only fully supported for the individual (not cohort) vector model."
                 << " Simulations will run for cohort models, but all vector-to-human transmission defaults to strain=(0,0)." 
-                << " Specified values for InfectionConfig::number_basestrains = " << InfectionConfig::number_basestrains << " and number_substrains = " << InfectionConfig::number_substrains
+                << " Specified values for InfectionConfig::number_clades = " << InfectionConfig::number_clades << " and number_genomes = " << InfectionConfig::number_genomes
                 << " are not allowed. They may only be set to 1 for the cohort model.  To use the individual vector model, switch vector sampling type to TRACK_ALL_VECTORS or SAMPLE_IND_VECTORS."
                 << std::endl;
             LOG_ERR( msg.str().c_str() );
             std::ostringstream err_msg;
-            err_msg << InfectionConfig::number_basestrains << " and " << InfectionConfig::number_substrains;
+            err_msg << InfectionConfig::number_clades << " and " << InfectionConfig::number_genomes;
             throw IncoherentConfigurationException(
                 __FILE__, __LINE__, __FUNCTION__,
-                "InfectionConfig::number_basestrains > 1 and number_substrains > 1",
+                "InfectionConfig::number_clades > 1 and number_genomes > 1",
                 err_msg.str().c_str(),
                 "vector_sampling_type",
                 VectorSamplingType::pairs::lookup_key( vector_sampling_type )
@@ -650,8 +650,8 @@ for (auto pop : m_vectorpopulations)
 
     void NodeVector::BuildTransmissionRoutes( float /* contagionDecayRate */ )
     {
-        transmissionGroups->Build( 1.0f, InfectionConfig::number_basestrains, InfectionConfig::number_substrains );
-        txOutdoor->Build( 1.0f, InfectionConfig::number_basestrains, InfectionConfig::number_substrains );
+        transmissionGroups->Build( 1.0f, InfectionConfig::number_clades, InfectionConfig::number_genomes );
+        txOutdoor->Build( 1.0f, InfectionConfig::number_clades, InfectionConfig::number_genomes );
     }
 
     void NodeVector::DepositFromIndividual(
@@ -660,7 +660,7 @@ for (auto pop : m_vectorpopulations)
         TransmissionGroupMembership_t shedder,
         TransmissionRoute::Enum route)
     {
-        LOG_DEBUG_F( "deposit from individual: antigen index =%d, substain index = %d, quantity = %f, route = %d\n", strainIDs.GetAntigenID(), strainIDs.GetGeneticID(), contagion_quantity, uint32_t(route) );
+        LOG_DEBUG_F( "deposit from individual: clade index =%d, substain index = %d, quantity = %f, route = %d\n", strainIDs.GetCladeID(), strainIDs.GetGeneticID(), contagion_quantity, uint32_t(route) );
 
         switch (route)
         {

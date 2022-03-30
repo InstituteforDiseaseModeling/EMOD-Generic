@@ -1,32 +1,29 @@
 {
     "Campaign_Name": "Initial Seeding",
-    "Events": 
-    [
+    "Events": [
         {
-            "Event_Name": "Outbreak",
-            "class": "CampaignEvent",
-            "Start_Day": 20,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList", 
-                "Node_List": [ 5 ]
-            }, 
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
-                "Target_Demographic": "ExplicitAgeRangesAndGender", 
-                "Target_Gender": "Male", 
-                "Target_Age_Min": 40, 
-                "Target_Age_Max": 80, 
-                "Intervention_Config": 
-                {
-                    "Antigen": 0,
-                    "Genome": 0,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
                     "Outbreak_Source": "PrevalenceIncrease",
-                    "class": "OutbreakIndividual",
-                    "Incubation_Period_Override": 0
-                }
-            }
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Age_Max": 80,
+                "Target_Age_Min": 40,
+                "Target_Demographic": "ExplicitAgeRangesAndGender",
+                "Target_Gender": "Male",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "Node_List": [
+                    5
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
         }
     ],
     "Use_Defaults": 1

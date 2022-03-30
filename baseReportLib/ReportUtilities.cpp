@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -305,5 +305,46 @@ namespace ReportUtilities
         {
             AddVector( rThis[ i ], rThat[ i ] );
         }
+    }
+
+    std::string GetIPColumnHeader( const char* pColumnPrefix,
+                                   const Kernel::jsonConfigurable::tDynamicStringSet& rPropertiesToReport )
+    {
+        std::stringstream header;
+        for( const auto& prop : rPropertiesToReport )
+        {
+            header << "," << pColumnPrefix << prop;
+        }
+        return header.str();
+    }
+
+    std::string GetIPData( const Kernel::IPKeyValueContainer& rContainer,
+                           const std::vector<Kernel::IPKey>& rKeysToReport )
+    {
+        std::stringstream header;
+        for( const auto& key : rKeysToReport )
+        {
+            header << "," << rContainer.Get( key ).GetValueAsString();
+        }
+        return header.str();
+    }
+
+    std::vector<Kernel::IPKey> GetKeys( const Kernel::jsonConfigurable::tDynamicStringSet& rPropertiesToReport,
+                                        const char* pParamName )
+    {
+        std::vector<IPKey> keys_to_report;
+        for( auto key_name : rPropertiesToReport )
+        {
+            IndividualProperty* p_ip = IPFactory::GetInstance()->GetIP( key_name, pParamName, false );
+            if( p_ip == nullptr )
+            {
+                std::stringstream ss;
+                ss << "The IP Key (" << key_name << ") specified in '" << pParamName << "' is unknown.\n"
+                    << "Valid values are: " << IPFactory::GetInstance()->GetKeysAsString();
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+            }
+            keys_to_report.push_back( p_ip->GetKey<IPKey>() );
+        }
+        return keys_to_report;
     }
 }

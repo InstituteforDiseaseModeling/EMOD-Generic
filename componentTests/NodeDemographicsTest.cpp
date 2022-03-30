@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -293,18 +293,6 @@ SUITE(NodeDemographicsTest)
     {
         TestHelper_FormatException( __LINE__, "demographics_TestNoMetadata.json", 
                                               "Failed to parse incoming text. Name of an object member must be a string at character=2 / line number=1" );
-    }
-
-    TEST_FIXTURE(NodeDemographicsFactoryFixture, TestNoNodeCount)
-    {
-        TestHelper_FormatException( __LINE__, "demographics_TestNoNodeCount.json", 
-                                              "Format error encountered loading demographics file (testdata/NodeDemographicsTest/demographics_TestNoNodeCount.json).  Missing the 'Metadata.NodeCount' object." );
-    }
-
-    TEST_FIXTURE(NodeDemographicsFactoryFixture, TestZeroNodecount)
-    {
-        TestHelper_FormatException( __LINE__, "demographics_TestZeroNodeCount.json", 
-                                              "Format error encountered loading demographics file (testdata/NodeDemographicsTest/demographics_TestZeroNodeCount.json).  'NodeCount' = 0.  It must be positive." );
     }
 
     TEST_FIXTURE(NodeDemographicsFactoryFixture, TestMissingIdReference)
@@ -905,6 +893,114 @@ SUITE(NodeDemographicsTest)
         CHECK( *p_nd_e != *p_nd_a );
         CHECK( *p_nd_f != *p_nd_a );
         CHECK( *p_nd_g != *p_nd_a );
+    }
+
+    TEST(TestNodeDemographicsDistributionMortalitySorted)
+    {
+        std::string dist_str = "";
+        dist_str += "{";
+        dist_str += "\"AxisNames\": [ \"gender\", \"age\" ],";
+        dist_str += "\"AxisScaleFactors\": [ 1, 365 ],";
+        dist_str += "\"PopulationGroups\": [";
+        dist_str += "    [ 0, 1 ],";
+        dist_str += "    [ 0, 200, 100 ]";   //not sorted
+        dist_str += "],";
+        dist_str += "\"ResultScaleFactor\": 0.1,";
+        dist_str += "\"ResultValues\": [";
+        dist_str += "    [ 0, 20.0, 400.0 ],";
+        dist_str += "    [ 0, 30.0, 500.0 ]";
+        dist_str += "]";
+        dist_str += "}";
+
+        JsonObjectDemog dist_json_1;
+        dist_json_1.Parse(dist_str.c_str());
+
+        std::map<std::string, std::string> string_table;
+        string_table["NumDistributionAxes"] = "NumDistributionAxes";
+        string_table["AxisNames"] = "AxisNames";
+        string_table["AxisUnits"] = "AxisUnits";
+        string_table["AxisScaleFactors"] = "AxisScaleFactors";
+        string_table["NumPopulationGroups"] = "NumPopulationGroups";
+        string_table["PopulationGroups"] = "PopulationGroups";
+        string_table["ResultUnits"] = "ResultUnits";
+        string_table["ResultScaleFactor"] = "ResultScaleFactor";
+        string_table["ResultValues"] = "ResultValues";
+        string_table["DistributionValues"] = "DistributionValues";
+
+        suids::suid node_suid;
+        node_suid.data = 1;
+        INodeContextFake parent(node_suid);
+        std::vector<std::string> AxisNames{ "gender", "age" };
+
+        unique_ptr<NodeDemographics> p_nd_1(NodeDemographicsFactory::CreateNodeDemographics(dist_json_1, &string_table, &parent, 1, "MortalityDistribution", "IndividualAttribute"));       
+        try {
+            unique_ptr<NodeDemographicsDistribution> p_dist_a(NodeDemographicsDistribution::CreateDistribution(*p_nd_1, AxisNames));
+            CHECK_LN(false, __LINE__); // shouldn't get here
+        }
+        catch( DetailedException& e )
+        {
+            std::string msg = e.GetMsg();
+            bool passed = msg.find("sorted in ascending order") != string::npos;
+            if( !passed )
+            {
+                PrintDebug(msg);
+            }
+            CHECK_LN(passed, __LINE__);
+        }
+    }
+
+    TEST( TestNodeDemographicsDistributionMortalityStrictlySorted )
+    {
+        std::string dist_str = "";
+        dist_str += "{";
+        dist_str += "\"AxisNames\": [ \"gender\", \"age\" ],";
+        dist_str += "\"AxisScaleFactors\": [ 1, 365 ],";
+        dist_str += "\"PopulationGroups\": [";
+        dist_str += "    [ 0, 1 ],";
+        dist_str += "    [ 0, 100, 100 ]";   // equal elements; thus, not sorted
+        dist_str += "],";
+        dist_str += "\"ResultScaleFactor\": 0.1,";
+        dist_str += "\"ResultValues\": [";
+        dist_str += "    [ 0, 20.0, 400.0 ],";
+        dist_str += "    [ 0, 30.0, 500.0 ]";
+        dist_str += "]";
+        dist_str += "}";
+
+        JsonObjectDemog dist_json_1;
+        dist_json_1.Parse( dist_str.c_str() );
+
+        std::map<std::string, std::string> string_table;
+        string_table["NumDistributionAxes"] = "NumDistributionAxes";
+        string_table["AxisNames"] = "AxisNames";
+        string_table["AxisUnits"] = "AxisUnits";
+        string_table["AxisScaleFactors"] = "AxisScaleFactors";
+        string_table["NumPopulationGroups"] = "NumPopulationGroups";
+        string_table["PopulationGroups"] = "PopulationGroups";
+        string_table["ResultUnits"] = "ResultUnits";
+        string_table["ResultScaleFactor"] = "ResultScaleFactor";
+        string_table["ResultValues"] = "ResultValues";
+        string_table["DistributionValues"] = "DistributionValues";
+
+        suids::suid node_suid;
+        node_suid.data = 1;
+        INodeContextFake parent( node_suid );
+        std::vector<std::string> AxisNames{ "gender", "age" };
+
+        unique_ptr<NodeDemographics> p_nd_1( NodeDemographicsFactory::CreateNodeDemographics( dist_json_1, &string_table, &parent, 1, "MortalityDistribution", "IndividualAttribute" ) );
+        try {
+            unique_ptr<NodeDemographicsDistribution> p_dist_a( NodeDemographicsDistribution::CreateDistribution( *p_nd_1, AxisNames ) );
+            CHECK_LN( false, __LINE__ ); // shouldn't get here
+        }
+        catch( DetailedException& e )
+        {
+            std::string msg = e.GetMsg();
+            bool passed = msg.find( "sorted in ascending order" ) != string::npos;
+            if( !passed )
+            {
+                PrintDebug( msg );
+            }
+            CHECK_LN( passed, __LINE__ );
+        }
     }
 
     TEST(TestNodeDemographicsDistributionEquality)

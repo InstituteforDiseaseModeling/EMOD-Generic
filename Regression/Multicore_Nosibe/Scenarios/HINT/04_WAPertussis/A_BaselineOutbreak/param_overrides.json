@@ -83,6 +83,8 @@
         },
         "PRIMARY": {
             "Config_Name": "HINT_WAPertussis_BaselineOutbreak -- multicore",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "SamplesInput",
             "Node_Grid_Size": 0.009,
             "Run_Number": 999,

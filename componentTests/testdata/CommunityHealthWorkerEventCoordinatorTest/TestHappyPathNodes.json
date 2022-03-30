@@ -7,7 +7,7 @@
     "Amount_In_Shipment": 10,
     "Max_Stock": 12,
     "Initial_Amount_Distribution": "CONSTANT_DISTRIBUTION",
-    "Initial_Amount": 6,
+    "Initial_Amount_Constant": 6,
     "Trigger_Condition_List": [
         "ListenForEvent"
     ],

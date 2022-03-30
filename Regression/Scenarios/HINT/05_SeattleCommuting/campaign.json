@@ -8,11 +8,9 @@
                 "Include_Arrivals": 0,
                 "Include_Departures": 0,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
                     "Incubation_Period_Override": 0,
+                    "class": "OutbreakIndividual",
                     "outbreak_source": "ImportCases"
                 },
                 "Number_Repetitions": 1,

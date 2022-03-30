@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -29,7 +29,7 @@ namespace Kernel
         static const EventTrigger& Births;
         static const EventTrigger& EveryUpdate;
         static const EventTrigger& EveryTimeStep;
-        static const EventTrigger& NewInfectionEvent;
+        static const EventTrigger& NewInfection;
         static const EventTrigger& TBActivation;
         static const EventTrigger& NewClinicalCase;
         static const EventTrigger& NewSevereCase;
@@ -39,7 +39,6 @@ namespace Kernel
         static const EventTrigger& TBActivationSmearPos;
         static const EventTrigger& TBActivationSmearNeg;
         static const EventTrigger& TBActivationExtrapulm;
-        static const EventTrigger& TBActivationPostRelapse;
         static const EventTrigger& TBPendingRelapse;
         static const EventTrigger& TBActivationPresymptomatic;
         static const EventTrigger& TestPositiveOnSmear;

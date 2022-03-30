@@ -15,7 +15,9 @@
                 },
                 "Property_Restrictions_Within_Node": [
                     {
-                        "Accessibility": "Yes"
+                        "Restrictions": [
+                            "Accessibility:Yes"
+                        ]
                     }
                 ],
                 "Target_Demographic": "Everyone",
@@ -43,7 +45,9 @@
                     "Demographic_Coverage": 1.0,
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Target_Demographic": "Everyone",
@@ -109,6 +113,7 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "HCTTestingLoop1",
+                        "Delay_Period_Constant": 365,
                         "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:LostForever",
@@ -121,8 +126,7 @@
                         "Max_Entries": 1,
                         "Muxer_Name": "HCTTestingLoop",
                         "New_Property_Value": "InterventionStatus:HCTTestingLoop",
-                        "class": "HIVMuxer",
-                        "Delay_Period_Constant": 365
+                        "class": "HIVMuxer"
                     },
                     "Trigger_Condition_List": [
                         "HCTTestingLoop3"

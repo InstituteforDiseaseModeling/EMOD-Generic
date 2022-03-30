@@ -212,16 +212,13 @@ if 'Disease' in env and len(env['Disease']) > 0:
 
 if os.sys.platform == 'win32':
     if disease != "Typhoid":
-        OptionalScript('reporters/SConscript_Generic_AgeAtInfection')
-        OptionalScript('reporters/SConscript_Generic_AgeAtInfectionHistogram')
         OptionalScript('reporters/SConscript_Generic_Basic')
         OptionalScript('reporters/SConscript_Generic_EventCounter')
         OptionalScript('reporters/SConscript_Generic_HumanMigrationTracking')
-        OptionalScript('reporters/SConscript_Generic_KmlDemo')
         OptionalScript('reporters/SConscript_Generic_NodeDemographics')
 
     if( (disease == "ALL") or (disease == "HIV") ):
-        OptionalScript('reporters/SConscript_HIV_WHO2015')
+        pass
 
     if( (disease == "ALL") or (disease == "Malaria") ):
         OptionalScript('reporters/SConscript_Malaria_Filtered')
@@ -235,17 +232,12 @@ if os.sys.platform == 'win32':
         OptionalScript('reporters/SConscript_Malaria_VectorStatsMalaria')
 
     if( (disease == "ALL") or (disease == "Polio") ):
-        OptionalScript('reporters/SConscript_Polio_IndividualInfections')
-        OptionalScript('reporters/SConscript_Polio_Survey')
-        OptionalScript('reporters/SConscript_Polio_VirusPopulation')
+        pass
 
     if( (disease == "ALL") or (disease == "TBHIV") ):
-        OptionalScript('reporters/SConscript_TBHIV_Basic')
         OptionalScript('reporters/SConscript_TBHIV_ByAge')
 
     if( (disease == "ALL") or (disease == "STI") or (disease == "HIV") ):
-        OptionalScript('reporters/SConscript_STI_RelationshipMigrationTracking')
-        OptionalScript('reporters/SConscript_STI_RelationshipQueue')
         OptionalScript('reporters/SConscript_STI_RelationshipCensus')
 
     if( (disease == "ALL") or (disease == "Vector") or (disease == "Malaria") ):

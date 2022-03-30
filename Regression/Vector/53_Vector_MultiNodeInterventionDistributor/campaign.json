@@ -1,74 +1,82 @@
 {
-    "Campaign_Name": "Empty Campaign", 
+    "Campaign_Name": "Empty Campaign",
     "Events": [
         {
-            "COMMENT1" : "Demonstrate the distribution of two individual-level interventions.",
-            "COMMENT2" : "Should see in ReportEventRecorder one PropertyChange event for each PVC_Distributed event.",
-
-            "class": "CampaignEvent",
-            "Start_Day": 10, 
-            "Nodeset_Config": { "class": "NodeSetAll"  }, 
+            "COMMENT1": "Demonstrate the distribution of two individual-level interventions.",
+            "COMMENT2": "Should see in ReportEventRecorder one PropertyChange event for each PVC_Distributed event.",
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "MultiInterventionDistributor",
                     "Intervention_List": [
                         {
-                            "class": "PropertyValueChanger",
-                            "Target_Property_Key" : "Risk",
-                            "Target_Property_Value" : "HIGH",
-                            "Daily_Probability" : 1.0,
-                            "Maximum_Duration" : 0,
-                            "Revert" : 0
-                        }, 
+                            "Daily_Probability": 1.0,
+                            "Maximum_Duration": 0,
+                            "Revert": 0,
+                            "Target_Property_Key": "Risk",
+                            "Target_Property_Value": "HIGH",
+                            "class": "PropertyValueChanger"
+                        },
                         {
-                            "class": "BroadcastEvent",
-                            "Broadcast_Event": "PVC_Distributed"
+                            "Broadcast_Event": "PVC_Distributed",
+                            "class": "BroadcastEvent"
                         }
-                    ]
-                }
-            }
+                    ],
+                    "class": "MultiInterventionDistributor"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "COMMENT1" : "Demonstrate the distribution of two node-level interventions.",
-            "COMMENT2" : "Should see in ReportNodeDemographics the NodeProperties change and reduction in number of vectors shortly after day 300.",
-
-            "class": "CampaignEvent",
-            "Start_Day": 300, 
-            "Nodeset_Config": { "class": "NodeSetAll"  }, 
-            "Node_Property_Restrictions": [ {"InterventionStatus": "NONE" } ], 
+            "COMMENT1": "Demonstrate the distribution of two node-level interventions.",
+            "COMMENT2": "Should see in ReportNodeDemographics the NodeProperties change and reduction in number of vectors shortly after day 300.",
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "MultiNodeInterventionDistributor",
                     "Node_Intervention_List": [
                         {
-                            "class": "SpaceSpraying",
-                            "Cost_To_Consumer": 1.0, 
-                            "Habitat_Target": "ALL_HABITATS", 
-                            "Spray_Kill_Target": "SpaceSpray_Indoor",
+                            "Cost_To_Consumer": 1.0,
+                            "Habitat_Target": "ALL_HABITATS",
                             "Killing_Config": {
-                                "class": "WaningEffectExponential",
+                                "Decay_Time_Constant": 90,
                                 "Initial_Effect": 1.0,
-                                "Decay_Time_Constant": 90
-                            }, 
+                                "class": "WaningEffectExponential"
+                            },
                             "Reduction_Config": {
-                                "class": "WaningEffectExponential",
+                                "Decay_Time_Constant": 90,
                                 "Initial_Effect": 1.0,
-                                "Decay_Time_Constant": 90
-                            }
-                        }, 
+                                "class": "WaningEffectExponential"
+                            },
+                            "Spray_Kill_Target": "SpaceSpray_Indoor",
+                            "class": "SpaceSpraying"
+                        },
                         {
-                            "class": "NodePropertyValueChanger",
-                            "Target_NP_Key_Value": "InterventionStatus:RECENT_SPRAY", 
-                            "Daily_Probability": 1.0, 
-                            "Maximum_Duration": 0, 
-                            "Revert": 90
+                            "Daily_Probability": 1.0,
+                            "Maximum_Duration": 0,
+                            "Revert": 90,
+                            "Target_NP_Key_Value": "InterventionStatus:RECENT_SPRAY",
+                            "class": "NodePropertyValueChanger"
                         }
+                    ],
+                    "class": "MultiNodeInterventionDistributor"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Node_Property_Restrictions": [
+                {
+                    "Restrictions": [
+                        "InterventionStatus:NONE"
                     ]
                 }
-            }
+            ],
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 300,
+            "class": "CampaignEvent"
         }
-    ], 
+    ],
     "Use_Defaults": 1
 }

@@ -53,6 +53,8 @@
         "PRIMARY": {
             "Config_Name": "23_Malaria_Intervention_RTSSVaccine -- multicore -- Madagascar_Nosibe",
             "Enable_Demographics_Reporting": 0,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Madagascar_Nosibe",
             "Run_Number": 1,
             "Simulation_Duration": 180

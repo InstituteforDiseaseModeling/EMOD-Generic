@@ -35,7 +35,7 @@
                 "Intervention_Config": {
                     "class": "NodeLevelHealthTriggeredIV",
                     "Trigger_Condition_List": [
-                        "NewInfectionEvent"
+                        "NewInfection"
                     ],
                     "Demographic_Coverage": 1.0,
                     "Actual_IndividualIntervention_Config": {

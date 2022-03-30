@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -77,9 +77,6 @@ namespace Kernel
         , population_density_infectivity_correction( PopulationDensityInfectivityCorrection::CONSTANT_INFECTIVITY )
         , age_initialization_distribution_type(DistributionType::DISTRIBUTION_OFF)
         , population_scaling(PopulationScaling::USE_INPUT_FILE)
-        , susceptibility_scaling_type( SusceptibilityScalingType::CONSTANT_SUSCEPTIBILITY )
-        , susceptibility_scaling( false )
-        , susceptibility_scaling_rate( 1.0f )
         , susceptibility_dynamic_scaling( 1.0f )
         , suid(_suid)
         , birthrate(DEFAULT_BIRTHRATE)
@@ -143,15 +140,8 @@ namespace Kernel
         , vital_birth_time_dependence(VitalBirthTimeDependence::NONE)
         , x_birth(1.0f)
         , x_othermortality(1.0f)
-        , susceptibility_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , susceptibility_dist1(0.0f)
-        , susceptibility_dist2(0.0f)
-        , risk_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , risk_dist1(0.0f)
-        , risk_dist2(0.0f)
-        , migration_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , migration_dist1(0.0f)
-        , migration_dist2(0.0f)
+        , init_prev_clade(0)
+        , init_prev_genome(0)
         , infectivity_scaling(InfectivityScaling::CONSTANT_INFECTIVITY)
         , routes()
         , infectivity_sinusoidal_forcing_amplitude( 1.0f )
@@ -178,6 +168,9 @@ namespace Kernel
         , m_IndividualHumanSuidGenerator(0,0)
         , symptomatic( 0.0f )
         , newly_symptomatic( 0.0f )
+        , distribution_migration( nullptr )
+        , distribution_demographic_risk( nullptr )
+        , distribution_susceptibility( nullptr )
     {
         SetContextTo(_parent_sim);  // TODO - this should be a virtual function call, but it isn't because the constructor isn't finished running yet.
         setupEventContextHost();
@@ -197,9 +190,6 @@ namespace Kernel
         , population_density_infectivity_correction( PopulationDensityInfectivityCorrection::CONSTANT_INFECTIVITY )
         , age_initialization_distribution_type(DistributionType::DISTRIBUTION_OFF)
         , population_scaling(PopulationScaling::USE_INPUT_FILE)
-        , susceptibility_scaling_type( SusceptibilityScalingType::CONSTANT_SUSCEPTIBILITY )
-        , susceptibility_scaling( false )
-        , susceptibility_scaling_rate( 1.0f )
         , susceptibility_dynamic_scaling( 1.0f )
         , suid()
         , birthrate(DEFAULT_BIRTHRATE)
@@ -263,15 +253,8 @@ namespace Kernel
         , vital_birth_time_dependence(VitalBirthTimeDependence::NONE)
         , x_birth(1.0f)
         , x_othermortality(1.0f)
-        , susceptibility_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , susceptibility_dist1(0.0f)
-        , susceptibility_dist2(0.0f)
-        , risk_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , risk_dist1(0.0f)
-        , risk_dist2(0.0f)
-        , migration_dist_type(DistributionFunction::CONSTANT_DISTRIBUTION)
-        , migration_dist1(0.0f)
-        , migration_dist2(0.0f)
+        , init_prev_clade(0)
+        , init_prev_genome(0)
         , infectivity_scaling(InfectivityScaling::CONSTANT_INFECTIVITY)
         , routes()
         , infectivity_sinusoidal_forcing_amplitude( 1.0f )
@@ -297,7 +280,10 @@ namespace Kernel
         , m_pRng( nullptr )
         , m_IndividualHumanSuidGenerator(0,0)
         , symptomatic( 0.0f )
-        ,newly_symptomatic( 0.0f )
+        , newly_symptomatic( 0.0f )
+        , distribution_migration( nullptr )
+        , distribution_demographic_risk( nullptr )
+        , distribution_susceptibility( nullptr )
     {
         setupEventContextHost();
     }
@@ -388,11 +374,6 @@ namespace Kernel
         initConfig( "Death_Rate_Dependence", vital_death_dependence, config, MetadataDescriptor::Enum(Death_Rate_Dependence_DESC_TEXT, Death_Rate_Dependence_DESC_TEXT, MDD_ENUM_ARGS(VitalDeathDependence)), "Enable_Natural_Mortality" ); // node only (move) 
         LOG_DEBUG_F( "Death_Rate_Dependence configured as %s\n", VitalDeathDependence::pairs::lookup_key( vital_death_dependence ) );
 
-        // Susceptibility scaling options
-        initConfigTypeMap("Enable_Susceptibility_Scaling", &susceptibility_scaling, Enable_Susceptibility_Scaling_DESC_TEXT, false);
-        initConfig("Susceptibility_Scaling_Type", susceptibility_scaling_type, config, MetadataDescriptor::Enum("Susceptibility_Scaling_Type", Susceptibility_Scaling_Type_DESC_TEXT, MDD_ENUM_ARGS(SusceptibilityScalingType)),"Enable_Susceptibility_Scaling");
-        initConfigTypeMap("Susceptibility_Scaling_Rate", &susceptibility_scaling_rate, Susceptibility_Scaling_Rate_DESC_TEXT, 0.0f, FLT_MAX, 0.0f, "Susceptibility_Scaling_Type", "LOG_LINEAR_FUNCTION_OF_TIME");
-
         initConfig( "Age_Initialization_Distribution_Type", age_initialization_distribution_type, config, MetadataDescriptor::Enum(Age_Initialization_Distribution_Type_DESC_TEXT, Age_Initialization_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionType)) );
 
         initConfig( "Infectivity_Scale_Type", infectivity_scaling, config, MetadataDescriptor::Enum("infectivity_scaling", Infectivity_Scale_Type_DESC_TEXT, MDD_ENUM_ARGS(InfectivityScaling)) );
@@ -458,10 +439,6 @@ namespace Kernel
     {
         Configure( EnvPtr->Config );
 
-        if(susceptibility_scaling_type == SusceptibilityScalingType::LOG_LINEAR_FUNCTION_OF_TIME)
-        {
-            susceptibility_dynamic_scaling = 0.0f; // set susceptibility to zero so it may ramp up over time according to the scaling function
-        }
     }
 
     void Node::setupEventContextHost()
@@ -473,10 +450,6 @@ namespace Kernel
                                MigrationStructure::Enum ms,
                                const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
     {
-        migration_dist_type = DistributionFunction::CONSTANT_DISTRIBUTION ;
-        migration_dist1 = 0.0 ;
-        migration_dist2 = 0.0 ;
-
         if( ms != MigrationStructure::NO_MIGRATION )
         {
             migration_info = migration_factory->CreateMigrationInfo( this, rNodeIdSuidMap );
@@ -485,17 +458,17 @@ namespace Kernel
             if( migration_info->IsHeterogeneityEnabled() )
             {
                 LOG_DEBUG( "Parsing MigrationHeterogeneityDistribution\n" );
-                migration_dist_type = (DistributionFunction::Enum)(demographics["IndividualAttributes"]["MigrationHeterogeneityDistributionFlag"].AsInt());
-                migration_dist1     = (float)                     (demographics["IndividualAttributes"]["MigrationHeterogeneityDistribution1"   ].AsDouble());
-                migration_dist2     = (float)                     (demographics["IndividualAttributes"]["MigrationHeterogeneityDistribution2"   ].AsDouble());
+                DistributionFunction::Enum migration_dist_type = (DistributionFunction::Enum)(demographics["IndividualAttributes"]["MigrationHeterogeneityDistributionFlag"].AsInt());
+                float migration_dist1     = (float) (demographics["IndividualAttributes"]["MigrationHeterogeneityDistribution1"   ].AsDouble());
+                float migration_dist2     = (float) (demographics["IndividualAttributes"]["MigrationHeterogeneityDistribution2"   ].AsDouble());
 
-                std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( migration_dist_type ) );
-                distribution->SetParameters( migration_dist1, migration_dist2, 0.0 );
+                distribution_migration = DistributionFactory::CreateDistribution( migration_dist_type );
+                distribution_migration->SetParameters( migration_dist1, migration_dist2, 0.0 );
                 
                 for( auto ind : this->individualHumans )
                 {
                     // this is only done during initialization.  During the sim, configureAndAddNewIndividual() will set this
-                    float temp_migration = distribution->Calculate( GetRng() );
+                    float temp_migration = distribution_migration->Calculate( GetRng() );
                     ind->SetMigrationModifier( temp_migration );
                 }
             }                          
@@ -637,9 +610,9 @@ namespace Kernel
 
     void Node::BuildTransmissionRoutes( float contagionDecayRate )
     {
-        NaturalNumber antigenCount = InfectionConfig::number_basestrains;
-        NaturalNumber substrainCount = InfectionConfig::number_substrains;
-        transmissionGroups->Build( contagionDecayRate, antigenCount, substrainCount );
+        NaturalNumber cladeCount  = InfectionConfig::number_clades;
+        NaturalNumber genomeCount = InfectionConfig::number_genomes;
+        transmissionGroups->Build( contagionDecayRate, cladeCount, genomeCount );
     }
 
     void Node::SetupIntranodeTransmission()
@@ -652,20 +625,32 @@ namespace Kernel
 
             for( auto p_ip : IPFactory::GetInstance()->GetIPList() )
             {
-                if( p_ip->GetIntraNodeTransmission( GetExternalID() ).HasMatrix() )
+                auto hint = p_ip->GetIntraNodeTransmission( GetExternalID() );
+                auto matrix = hint.GetMatrix();
+
+                if ( matrix.size() > 0 )
                 {
-                    std::string routeName = p_ip->GetIntraNodeTransmission( GetExternalID() ).GetRouteName();
-
+                    std::string routeName = hint.GetRouteName();
                     AddRoute( routeName );
-
                     transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
                                                      p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
-                                                     p_ip->GetIntraNodeTransmission( GetExternalID() ).GetMatrix() );
-                                                     
+                                                     matrix );
+                }
+                else if ( hint.GetRouteToMatrixMap().size() > 0 )
+                {
+                    for (auto entry : hint.GetRouteToMatrixMap())
+                    {
+                        std::string routeName = entry.first;
+                        auto& matrix = entry.second;
+                        AddRoute( routeName );
+                        transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
+                                                         p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
+                                                         matrix );
+                    }
                 }
                 else //HINT is enabled, but no transmission matrix is detected
                 {
-                    AddDefaultRoute();
+                    // This is okay. We don't need every IP to participate in HINT.
                 }
             }
         }
@@ -736,7 +721,7 @@ namespace Kernel
 
     void Node::DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route )
     {
-        LOG_DEBUG_F("deposit from individual: antigen index =%d, substain index = %d, quantity = %f\n", strain_IDs.GetAntigenID(), strain_IDs.GetGeneticID(), contagion_quantity);
+        LOG_DEBUG_F("deposit from individual: clade index =%d, genome index = %d, quantity = %f\n", strain_IDs.GetCladeID(), strain_IDs.GetGeneticID(), contagion_quantity);
         transmissionGroups->DepositContagion( strain_IDs, contagion_quantity, individual );
     }
     
@@ -874,6 +859,16 @@ namespace Kernel
             PreUpdate();
 
             individual->Update(GetTime().time, dt);
+        }
+
+        // -------------------------------------------------------------------------------------------------
+        // --- Break out the updating of the reports to be after all of the individuals have been updated.
+        // --- This is particularly important to diseases based on relationships.  When we collect data on
+        // --- a relationships (i.e. discordant vs concordant), we want both individuals to have been updated.
+        // -------------------------------------------------------------------------------------------------
+        for( int i = 0 ; i < individualHumans.size() ; ++i )
+        {
+            IIndividualHuman* individual = individualHumans[i];
 
             // JPS: Should we do this later, after updateVitalDynamics() instead?  
             //      That way we could track births in the report class instead of having to do it in Node...
@@ -964,16 +959,6 @@ namespace Kernel
             else
             {
                 ++iHuman;
-            }
-        }
-
-        if(susceptibility_scaling_type == SusceptibilityScalingType::LOG_LINEAR_FUNCTION_OF_TIME)
-        {
-            susceptibility_dynamic_scaling += dt*susceptibility_scaling_rate;
-
-            if(susceptibility_dynamic_scaling > 1.0f)
-            {
-                susceptibility_dynamic_scaling = 1.0f;
             }
         }
 
@@ -1454,7 +1439,7 @@ namespace Kernel
             LOG_DEBUG("Parsing IndividualAttributes->PrevalenceDistribution2 tag in node demographics file.\n");
             float prevdist2 = float(demographics["IndividualAttributes"]["PrevalenceDistribution2"].AsDouble());
 
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( prevalence_distribution_type ) );
+            IDistribution* distribution( DistributionFactory::CreateDistribution( prevalence_distribution_type ) );
             distribution->SetParameters( prevdist1, prevdist2, 0.0 );
             initial_prevalence = distribution->Calculate( GetRng() );
         }
@@ -1590,7 +1575,11 @@ namespace Kernel
 
             if (SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_SIMPLE)
             {
-                susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
+                DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
+                distribution_susceptibility = DistributionFactory::CreateDistribution( susceptibility_dist_type );
+
+                float susceptibility_dist1 = 0.0;
+                float susceptibility_dist2 = 0.0;
 
                 // Only allowing FIXED(0), UNIFORM(1), and BIMODAL(6)
                 if(susceptibility_dist_type == 0)
@@ -1611,6 +1600,8 @@ namespace Kernel
                 {
                     throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "SusceptibilityDistributionFlag must be set to 0, 1, or 6.");
                 }
+
+                distribution_susceptibility->SetParameters( susceptibility_dist1, susceptibility_dist2, 0.0 );
             }
             else if (SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_COMPLEX)
             {
@@ -1622,9 +1613,12 @@ namespace Kernel
         {
             LOG_DEBUG( "Parsing RiskDistribution\n" );
 
-            risk_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["RiskDistributionFlag"].AsInt());
-            risk_dist1     =                      float(demographics["IndividualAttributes"]["RiskDistribution1"   ].AsDouble());
-            risk_dist2     =                      float(demographics["IndividualAttributes"]["RiskDistribution2"   ].AsDouble());
+            DistributionFunction::Enum risk_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["RiskDistributionFlag"].AsInt());
+            float risk_dist1 =                          float(demographics["IndividualAttributes"]["RiskDistribution1"].AsDouble());
+            float risk_dist2 =                          float(demographics["IndividualAttributes"]["RiskDistribution2"].AsDouble());
+
+            distribution_demographic_risk = DistributionFactory::CreateDistribution( risk_dist_type );
+            distribution_demographic_risk->SetParameters( risk_dist1, risk_dist2, 0.0 );
         }
 
         if(enable_infectivity_reservoir)
@@ -1656,6 +1650,24 @@ namespace Kernel
                 }
             }
         }
+
+        if (enable_initial_prevalence)
+        {
+            LOG_DEBUG( "Parsing InitialPrevalenceClade and InitialPrevalenceGenome\n" );
+
+            init_prev_clade  = 0;
+            init_prev_genome = 0;
+
+            if(demographics["IndividualAttributes"].Contains("InitialPrevalenceClade"))
+            {
+                init_prev_clade  = static_cast<int>(demographics["IndividualAttributes"]["InitialPrevalenceClade"].AsInt());
+            }
+            if(demographics["IndividualAttributes"].Contains("InitialPrevalenceGenome"))
+            {
+                init_prev_genome = static_cast<int>(demographics["IndividualAttributes"]["InitialPrevalenceGenome"].AsInt());
+            }
+        }
+
     }
 
     // This function adds newborns to the node according to behavior determined by the settings of various flags:
@@ -1905,9 +1917,8 @@ namespace Kernel
         }
         case DistributionType::DISTRIBUTION_SIMPLE:
         {
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( susceptibility_dist_type ) );
-            distribution->SetParameters( susceptibility_dist1, susceptibility_dist2, 0.0 );
-            temp_susceptibility = distribution->Calculate( GetRng() );
+            release_assert( distribution_susceptibility );
+            temp_susceptibility = distribution_susceptibility->Calculate( GetRng() );
             LOG_VALID_F( "creating individual with age = %f and susceptibility = %f\n", ind_init_age, temp_susceptibility );
             break;
         }
@@ -1969,17 +1980,16 @@ namespace Kernel
         if (enable_demographics_risk)
         {
             // set heterogeneous risk
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( risk_dist_type ) );
-            distribution->SetParameters( risk_dist1, risk_dist2, 0.0 );
-            temp_risk = distribution->Calculate( GetRng() );
+            release_assert( distribution_demographic_risk );
+            temp_risk = distribution_demographic_risk->Calculate( GetRng() );
         }
 
         if( (migration_info != nullptr) && migration_info->IsHeterogeneityEnabled() )
         {
-            // This is not done during initialization but other times when the individual is created.           
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( migration_dist_type ) );
-            distribution->SetParameters( migration_dist1, migration_dist2, 0.0 );
-            temp_risk = distribution->Calculate( GetRng() );
+            // This is not done during initialization but other times when the individual is created.
+            release_assert( distribution_migration );
+
+            temp_risk = distribution_migration->Calculate( GetRng() );
         }
 
 
@@ -2003,8 +2013,9 @@ namespace Kernel
         IIndividualHuman* new_individual = createHuman( m_IndividualHumanSuidGenerator(), mc_weight, initial_age, gender ); // initial_infections isn't needed here if SetInitialInfections function is used
 
         // EAW: is there a reason that the contents of the two functions below aren't absorbed into CreateHuman?  this whole process seems very convoluted.
+        StrainIdentity init_prevalence_strain( init_prev_clade, init_prev_genome, GetRng() );
         new_individual->SetParameters( this, 1.0, susceptibility_parameter, risk_parameter, migration_heterogeneity);// default values being used except for total number of communities
-        new_individual->SetInitialInfections(initial_infections);
+        new_individual->SetInitialInfections(initial_infections, &init_prevalence_strain);
         new_individual->UpdateGroupMembership();
         new_individual->UpdateGroupPopulation(1.0f);
 
@@ -2082,7 +2093,7 @@ namespace Kernel
             LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution2 tag in node demographics file.\n" );
             float agedist2 = float(demographics["IndividualAttributes"]["AgeDistribution2"].AsDouble());
 
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( age_distribution_type ) );
+            IDistribution* distribution( DistributionFactory::CreateDistribution( age_distribution_type ) );
             distribution->SetParameters( agedist1, agedist2, 0.0 );
             age = distribution->Calculate( GetRng() );
         }
@@ -2284,8 +2295,6 @@ namespace Kernel
 
         new_infections += monte_carlo_weight; 
         Cumulative_Infections += monte_carlo_weight; 
-        event_context_host->TriggerObservers( ih->GetEventContext(), EventTrigger::NewInfectionEvent );
-
         newInfectedPeopleAgeProduct += monte_carlo_weight * float(ih->GetAge());
     }
 
@@ -2610,10 +2619,23 @@ namespace Kernel
         return GET_CONFIGURABLE(SimulationConfig);
     }
 
-    bool Node::IsValidTransmissionRoute( string& transmissionRoute )
+    bool Node::IsValidTransmissionRoute( const string& transmissionRoute )
     {
-        std::transform(transmissionRoute.begin(), transmissionRoute.end(), transmissionRoute.begin(), ::tolower);
-        bool isValid = ((transmissionRoute == "contact") || (transmissionRoute == "environmental"));
+        static std::string route;
+        bool isValid = false;
+
+        if ( route.length() == 0 )
+        {
+            // If we have not seen a route name yet, anything is fair game.
+            isValid = true;
+            route = transmissionRoute;
+        }
+        else
+        {
+            // If we have seen a route name previously, subsequent route names must match.
+            isValid = (transmissionRoute == route);
+        }
+
         return isValid;
     }
 
@@ -2671,12 +2693,7 @@ namespace Kernel
                 string route_name = p_ip->GetIntraNodeTransmission( GetExternalID() ).GetRouteName();
                 if( !IsValidTransmissionRoute( route_name ) )
                 {
-                    ostringstream message;
-                    message << "HINT Configuration: Unsupported route '" << route_name << "'." << endl;
-                    message << "For generic/TB sims, only \"contact\" route (contagion is reset at each timestep) is supported." << endl;
-                    message << "For environmental/polio sims, we support \"contact\" (contagion is reset at each timestep) and \"environmental\" (fraction of contagion carried over to next time step = 1 - Node_Contagion_Decay_Rate." << endl;
-                    message << "For malaria sims, transmissionMatrix is not supported (yet)." << endl;
-                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, message.str().c_str());
+                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "All HINT route names must match for GENERIC_SIM.\n" );
                 }
 
                 oneOrMoreMatrices = true;
@@ -2711,10 +2728,6 @@ namespace Kernel
             ar.labelElement("ind_sampling_type")                            & (uint32_t&)node.ind_sampling_type;
             ar.labelElement("population_density_infectivity_correction")    & (uint32_t&)node.population_density_infectivity_correction;
             ar.labelElement("age_initialization_distribution_type")         & (uint32_t&)node.age_initialization_distribution_type;
-
-            ar.labelElement("susceptibility_scaling_type")  & (uint32_t&)node.susceptibility_scaling_type;
-            ar.labelElement("susceptibility_scaling")       & node.susceptibility_scaling;
-            ar.labelElement("susceptibility_scaling_rate")  & node.susceptibility_scaling_rate;
 
             ar.labelElement("base_sample_rate") & node.base_sample_rate;
 
@@ -2796,15 +2809,9 @@ namespace Kernel
             ar.labelElement("infectionrate") & node.infectionrate;
             ar.labelElement("mInfectivity") & node.mInfectivity;
             ar.labelElement("prob_maternal_transmission") & node.prob_maternal_infection_transmission;
-            ar.labelElement("susceptibility_dist_type") & (uint32_t&)node.susceptibility_dist_type;
-            ar.labelElement("susceptibility_dist1") & node.susceptibility_dist1;
-            ar.labelElement("susceptibility_dist2") & node.susceptibility_dist2;
-            ar.labelElement("risk_dist_type") & (uint32_t&)node.risk_dist_type;
-            ar.labelElement("risk_dist1") & node.risk_dist1;
-            ar.labelElement("risk_dist2") & node.risk_dist2;
-            ar.labelElement("migration_dist_type") & (uint32_t&)node.migration_dist_type;
-            ar.labelElement("migration_dist1") & node.migration_dist1;
-            ar.labelElement("migration_dist2") & node.migration_dist2;
+            ar.labelElement("distribution_migration") & node.distribution_migration;
+            ar.labelElement("distribution_demographic_risk") & node.distribution_demographic_risk;
+            ar.labelElement("distribution_susceptibility") & node.distribution_susceptibility;
             ar.labelElement("routes") & node.routes;
             ar.labelElement("bSkipping") & node.bSkipping;
         }

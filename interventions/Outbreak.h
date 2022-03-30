@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -26,7 +26,7 @@ namespace Kernel
 
     struct IOutbreak : public ISupports
     {
-        virtual int GetAntigen() const = 0;
+        virtual int GetClade() const = 0;
         virtual int GetGenome() const = 0;
         virtual float GetImportAge() const = 0;
         virtual ~IOutbreak() { }; // needed for cleanup via interface pointer
@@ -49,12 +49,12 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreak
-        virtual int GetAntigen() const  { return antigen; }
+        virtual int GetClade() const  { return clade; }
         virtual int GetGenome() const  { return genome; }
         virtual float GetImportAge() const { return import_age; }
 
     protected:
-        int antigen;
+        int clade;
         int genome;
         float import_age;
         int num_cases_per_node;

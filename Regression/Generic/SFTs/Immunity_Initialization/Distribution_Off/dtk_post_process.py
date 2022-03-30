@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_Immunity_Initialization_Support as dtk_iis
 
 
@@ -83,8 +88,9 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', default="config.json", help="Config name to load (config.json)")
     parser.add_argument('-j', '--jsonreport', default="InsetChart.json", help="Json report to load (InsetChart.json)")
     parser.add_argument('-r', '--reportname', default=sft.sft_output_filename, help="Report file to generate")
+    parser.add_argument('-d', '--debug', action='store_true', help="Turns on debugging")
     args = parser.parse_args()
 
     application(output_folder=args.output, config_filename=args.config,
                 jsonreport_name=args.jsonreport,
-                report_name=args.reportname, debug=True)
+                report_name=args.reportname, debug=args.debug)

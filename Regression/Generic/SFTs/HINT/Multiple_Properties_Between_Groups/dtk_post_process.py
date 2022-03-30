@@ -1,9 +1,14 @@
 #!/usr/bin/python
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 from dtk_test.dtk_General_Support import ConfigKeys, CampaignKeys, DemographicsKeys, InsetKeys
-import numpy as np
+
 from scipy import stats
 import dtk_test.dtk_HINT_Support as hint_support
 """
@@ -240,7 +245,7 @@ def application( output_folder="output", stdout_filename="test.txt",
                  property_report_name="PropertyReport.json",
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
-                 debug=True):
+                 debug=False):
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

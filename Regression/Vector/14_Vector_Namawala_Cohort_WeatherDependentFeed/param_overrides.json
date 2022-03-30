@@ -24,6 +24,8 @@
         },
         "PRIMARY": {
             "Config_Name": "14_Vector_Namawala_Cohort_WeatherDependentFeed",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 52,
             "Simulation_Duration": 730

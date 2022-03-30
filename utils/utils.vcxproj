@@ -225,7 +225,6 @@
     <ClInclude Include="Configure.h" />
     <ClInclude Include="Coredump.h" />
     <ClInclude Include="Debug.h" />
-    <ClInclude Include="DistributionsConfigurable.h" />
     <ClInclude Include="EnumSupport.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="EventTrigger.h" />

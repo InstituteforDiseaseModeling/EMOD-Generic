@@ -7,16 +7,14 @@
             "Rainfall_Filename": "Garki_single_rainfall1.bin",
             "Relative_Humidity_Filename": "Garki_single_humidity.bin"
         },
-        "DEMOGRAPHICS": { 
-            "Demographics_Filenames": ["Garki_single_demographics.json"],
-            "Enable_Birth": 1,
-            "Enable_Maternal_Protection": 0,
+        "DEMOGRAPHICS": {
             "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
             "Demographics_Filenames": [
                 "Garki_single_demographics.json"
             ],
             "Enable_Birth": 1,
             "Enable_Initial_Prevalence": 1,
+            "Enable_Maternal_Protection": 0,
             "Enable_Natural_Mortality": 1,
             "Population_Scale_Type": "FIXED_SCALING"
         },
@@ -52,6 +50,8 @@
         },
         "PRIMARY": {
             "Config_Name": "VectorAndMalaria_8_Garki_IRSMDA",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Garki_Single",
             "Run_Number": 1,
             "Simulation_Duration": 3650,

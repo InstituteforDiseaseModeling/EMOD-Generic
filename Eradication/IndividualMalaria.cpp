@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -410,7 +410,7 @@ namespace Kernel
                 if (gc1==gc2)
                 {
                     strain_weight = pow( float(gc1->second) / float(m_female_gametocytes), 2 );
-                    DepositFractionalContagionByStrain( weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetAntigenID(), gc1->first.GetGeneticID() );
+                    DepositFractionalContagionByStrain( weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetCladeID(), gc1->first.GetGeneticID() );
                     continue;
                 }
 
@@ -428,25 +428,25 @@ namespace Kernel
                 }
 
                 // Deposit fractional infectiousness to each of indoor and outdoor pools
-                if ( gc1->first.GetAntigenID() == gc2->first.GetAntigenID() )
+                if ( gc1->first.GetCladeID() == gc2->first.GetCladeID() )
                 {
-                    DepositFractionalContagionByStrain( weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetAntigenID(), geneticID );
+                    DepositFractionalContagionByStrain( weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetCladeID(), geneticID );
                 }
                 else
                 {
-                    // Deposit half the weight to each if antigenIDs are different.  
-                    // Note that geneticID is not outcrossed independently for the different antigen IDs.
-                    DepositFractionalContagionByStrain( 0.5f * weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetAntigenID(), geneticID );
-                    DepositFractionalContagionByStrain( 0.5f * weighted_infectiousnesss * strain_weight, ivie, gc2->first.GetAntigenID(), geneticID );
-                    LOG_DEBUG_F("Depositing contagion with antigenIDs %d and %d for geneticID=%d\n", gc1->first.GetAntigenID(), gc2->first.GetAntigenID(), geneticID);
+                    // Deposit half the weight to each if cladeIDs are different.  
+                    // Note that geneticID is not outcrossed independently for the different clade IDs.
+                    DepositFractionalContagionByStrain( 0.5f * weighted_infectiousnesss * strain_weight, ivie, gc1->first.GetCladeID(), geneticID );
+                    DepositFractionalContagionByStrain( 0.5f * weighted_infectiousnesss * strain_weight, ivie, gc2->first.GetCladeID(), geneticID );
+                    LOG_DEBUG_F("Depositing contagion with cladeIDs %d and %d for geneticID=%d\n", gc1->first.GetCladeID(), gc2->first.GetCladeID(), geneticID);
                 }
             }
         }
     }
 
-    void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, float antigenID, float geneticID)
+    void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, float cladeID, float geneticID)
     {
-        StrainIdentity id = StrainIdentity(antigenID, geneticID);
+        StrainIdentity id = StrainIdentity(cladeID, geneticID);
         parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  NodeVector::human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
         parent->DepositFromIndividual( id, weight*ivie->GetblockOutdoorVectorTransmit(), NodeVector::human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
     }
@@ -494,7 +494,7 @@ namespace Kernel
         for (auto inf : infections)
         {
             inf->GetInfectiousStrainID(&strain);
-            strainIds.push_back( std::make_pair( strain.GetAntigenID(), strain.GetGeneticID() ) );
+            strainIds.push_back( std::make_pair( strain.GetCladeID(), strain.GetGeneticID() ) );
         }
         return strainIds;
     }

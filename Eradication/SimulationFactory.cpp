@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -194,30 +194,36 @@ namespace Kernel
             switch (sim_type)
             {
                 case SimType::GENERIC_SIM:
+                    // No fixed parameters to set
                     newsim = Simulation::CreateSimulation(EnvPtr->Config);
                 break;
 #if defined(ENABLE_ENVIRONMENTAL)
                 case SimType::ENVIRONMENTAL_SIM:
+                    // No fixed parameters to set
                     newsim = SimulationEnvironmental::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #if defined( ENABLE_POLIO)
                 case SimType::POLIO_SIM:
+                    SimulationPolio::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationPolio::CreateSimulation(EnvPtr->Config);
                 break;
 #endif        
 #if defined( ENABLE_TYPHOID)
                 case SimType::TYPHOID_SIM:
+                    SimulationTyphoid::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationTyphoid::CreateSimulation(EnvPtr->Config);
                 break;
 #endif        
 #ifndef DISABLE_VECTOR
                 case SimType::VECTOR_SIM:
+                    // No fixed parameters to set
                     newsim = SimulationVector::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #ifndef DISABLE_MALARIA
                 case SimType::MALARIA_SIM:
+                    SimulationMalaria::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationMalaria::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
@@ -231,27 +237,32 @@ namespace Kernel
 
 #ifndef DISABLE_TBHIV
                 case SimType::TBHIV_SIM:
+                    // No fixed parameters to set
                     newsim = SimulationTBHIV::CreateSimulation(EnvPtr->Config);
                 break;
 #endif // TBHIV
 
 #ifndef DISABLE_STI
                 case SimType::STI_SIM:
+                    // No fixed parameters to set
                     newsim = SimulationSTI::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #ifndef DISABLE_HIV 
                 case SimType::HIV_SIM:
+                    SimulationHIV::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationHIV::CreateSimulation(EnvPtr->Config);
                 break;
 #endif // HIV
 #ifdef ENABLE_DENGUE
                 case SimType::DENGUE_SIM:
+                    SimulationDengue::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationDengue::CreateSimulation(EnvPtr->Config);
                 break;
 #endif 
 #ifdef ENABLE_PYTHON_FEVER 
                 case SimType::PY_SIM:
+                    // No fixed parameters to set
                     newsim = SimulationPy::CreateSimulation(EnvPtr->Config);
                 break;
 #endif

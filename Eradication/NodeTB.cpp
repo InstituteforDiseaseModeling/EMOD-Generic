@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -57,52 +57,6 @@ namespace Kernel
         return IndividualHumanCoInfection::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    void NodeTB::OnNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih)
-    {
-        // Trigger any node level HTI
-
-        IIndividualHumanTB2 *tb_ind= nullptr;
-        if( ih->QueryInterface( GET_IID( IIndividualHumanTB2 ), (void**) &tb_ind ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "ih", "IndividualHuman", "IIndividualHumanTB2" );
-        }
-
-        switch (inf_state_change)
-        {
-        //  Latent infection that became active pre-symptomatic
-        case InfectionStateChange::TBActivationPresymptomatic:
-            event_context_host->TriggerObservers(ih->GetEventContext(), EventTrigger::TBActivationPresymptomatic);
-            break;
-
-        //  Active pre-symptomatic infection to active symptomatic
-        //NOTE: The infection state change is disaggregated by smear status during the symptomatic phase, but the trigger TBActivation is hooked up to all disease presentations.
-        //NOTE: Also if it is a relapse, it does not disaggregate by smear status
-        case InfectionStateChange::TBActivation:
-        case InfectionStateChange::TBActivationSmearPos:
-        case InfectionStateChange::TBActivationSmearNeg:
-        case InfectionStateChange::TBActivationExtrapulm:
-            if ( tb_ind->HasEverRelapsedAfterTreatment() )
-            {
-                 event_context_host->TriggerObservers(ih->GetEventContext(), EventTrigger::TBActivationPostRelapse);
-            }
-            else
-            {
-                event_context_host->TriggerObservers(ih->GetEventContext(), EventTrigger::TBActivation);
-            }
-            break;
-
-        //  Infection got treatment and is now pending relapse - trigger goes off if you are ON OR OFF DRUGS.
-        case InfectionStateChange::ClearedPendingRelapse:
-            event_context_host->TriggerObservers(ih->GetEventContext(), EventTrigger::TBPendingRelapse);
-            break;
-
-        // no other infection state change is connected to a trigger, no trigger goes off in this time step
-        default:
-            //do nothing
-            break;
-        }
-    }
-
     ITransmissionGroups* NodeTB::CreateTransmissionGroups()
     {
         return TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
@@ -110,10 +64,10 @@ namespace Kernel
 
     void NodeTB::BuildTransmissionRoutes( float contagionDecayRate )
     {
-        int max_antigens = InfectionConfig::number_basestrains;
-        int max_genomes = InfectionConfig::number_substrains;
-        LOG_DEBUG_F("max_antigens %f, max_genomes %f", max_antigens, max_genomes);
-        transmissionGroups->Build( contagionDecayRate, max_antigens, max_genomes ); 
+        int max_clades  = InfectionConfig::number_clades;
+        int max_genomes = InfectionConfig::number_genomes;
+        LOG_DEBUG_F("max_clades %f, max_genomes %f", max_clades, max_genomes);
+        transmissionGroups->Build( contagionDecayRate, max_clades, max_genomes ); 
     }
 
     void NodeTB::resetNodeStateCounters(void)

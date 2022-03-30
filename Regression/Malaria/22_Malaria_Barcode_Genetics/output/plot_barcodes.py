@@ -6,7 +6,7 @@ import random
 
 def strain2color(strain):
 
-    antigenID=strain[0]
+    cladeID=strain[0]
     geneticID=strain[1]
 
     B_MASK = 255
@@ -17,7 +17,7 @@ def strain2color(strain):
     g = (geneticID & G_MASK)>>8
     b = geneticID & B_MASK
 
-    if antigenID > 0:
+    if cladeID > 0:
         return [c/256. for c in [r,g,b]]
     else:
         return [0.5*(0.7+c/256.) for c in [r,g,b]] # mix 50-50 with light neutral color for more pleasing palette?

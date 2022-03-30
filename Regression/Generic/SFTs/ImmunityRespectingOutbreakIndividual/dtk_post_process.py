@@ -1,8 +1,13 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 
 KEY_NEW_INFECTIONS = "New Infections"
@@ -57,7 +62,7 @@ def parse_json_report(output_folder="output", propertyreport_name="InsetChart.js
 
     return report_data_obj
 
-def load_campaign_file(campaign_filename="campaign.json", debug = False):
+def load_campaign_file(campaign_filename="campaign.json", debug=False):
     """reads campaign file and populates campaign_obj
 
     :param campaign_filename: campaign.json file
@@ -108,7 +113,7 @@ def application( output_folder="output", stdout_filename="test.txt",
                  demographics_filename = "../../demographics.json",
                  propertyreport_name="InsetChart.json",
                  report_name=sft.sft_output_filename,
-                 debug=True):
+                 debug=False):
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

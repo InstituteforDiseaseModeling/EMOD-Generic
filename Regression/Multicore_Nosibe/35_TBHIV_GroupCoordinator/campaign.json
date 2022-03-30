@@ -7,8 +7,6 @@
                 "Include_Arrivals": 0,
                 "Include_Departures": 0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
                 },

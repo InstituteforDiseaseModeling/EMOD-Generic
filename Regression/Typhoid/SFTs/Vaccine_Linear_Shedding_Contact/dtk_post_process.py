@@ -4,10 +4,15 @@
 # "Number of New Acute Infections" channel in InsetChart.json
 # note:"Enable_Vital_Dynamics": 0
 
-import json
+
 import datetime
 import time
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 
 def application(do_not_use):

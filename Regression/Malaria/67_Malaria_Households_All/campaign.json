@@ -60,8 +60,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Outbreak_Source": "ImportCases",
                     "class": "OutbreakIndividual"
                 },
@@ -82,14 +80,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 8,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -109,13 +107,13 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_Before_Leaving_Constant": 0,
                     "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 9,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100,
-                    "Duration_Before_Leaving_Constant": 0
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -135,14 +133,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 10,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -162,14 +160,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 50,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -189,14 +187,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 40,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -216,14 +214,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 30,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,
@@ -243,14 +241,14 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
                     "Duration_Before_Leaving_Distribution": "GAUSSIAN_DISTRIBUTION",
                     "Duration_Before_Leaving_Gaussian_Mean": 50,
                     "Duration_Before_Leaving_Gaussian_Std_Dev": 15,
                     "Is_Moving": 0,
                     "NodeID_To_Migrate_To": 20,
-                    "class": "MigrateIndividuals",
-                    "Duration_At_Node_Constant": 100
+                    "class": "MigrateIndividuals"
                 },
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 1,

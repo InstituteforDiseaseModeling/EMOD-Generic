@@ -1,6 +1,9 @@
 {
-    "Property_Restrictions_Within_Node" : 
-    [
-        { "Location": "URBAN" }
+    "Property_Restrictions_Within_Node": [
+        {
+            "Restrictions": [
+                "Location:URBAN"
+            ]
+        }
     ]
 }

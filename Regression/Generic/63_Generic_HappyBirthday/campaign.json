@@ -1,25 +1,26 @@
 {
-    "Use_Defaults": 1,
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "HappyBirthday" ],
+                    "Actual_IndividualIntervention_Config": {
+                        "Outbreak_Source": "PrevalenceIncrease",
+                        "class": "OutbreakIndividual"
+                    },
                     "Demographic_Coverage": 1.0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "OutbreakIndividual",
-                        "Antigen": 0,
-                        "Genome": 0,
-                        "Outbreak_Source": "PrevalenceIncrease"
-                    }
-                }
-            }
+                    "Trigger_Condition_List": [
+                        "HappyBirthday"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -42,7 +42,7 @@ namespace Kernel
         //eventTriggerList.push_back( IndividualEventTriggerType::NonDiseaseDeaths );
         if( !JsonConfigurable::_dryrun )
         {
-            eventTriggerList.push_back( EventTrigger::NewInfectionEvent );
+            eventTriggerList.push_back( EventTrigger::NewInfection );
         }
 
         ZERO_ARRAY( population );
@@ -349,9 +349,9 @@ namespace Kernel
         std::string reportingBucket = dynamic_cast<IIndividualHumanContext*>(context)->GetPropertyReportString();
         auto rbi = bucketToIdMap.at( reportingBucket );
 
-        if( StateChange == EventTrigger::NewInfectionEvent )
+        if( StateChange == EventTrigger::NewInfection )
         {
-            LOG_DEBUG_F( "NewInfectionEvent for individual %lu with age(bin) %d and gender %d.\n", context->GetSuid().data, age_bin, gender );
+            LOG_DEBUG_F( "NewInfection for individual %lu with age(bin) %d and gender %d.\n", context->GetSuid().data, age_bin, gender );
             newly_infected[ gender ][ age_bin ][ rbi ] += mc_weight;
             prePatent_inc[ gender ][ age_bin ][ rbi ] += mc_weight;
         }

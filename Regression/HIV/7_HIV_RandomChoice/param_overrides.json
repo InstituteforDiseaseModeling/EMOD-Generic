@@ -3,9 +3,10 @@
     "parameters": {
         ".logLevel_StandardEventCoordinator": "DEBUG",
         ".logLevel_default": "DEBUG",
-        "x_Base_Population": 0.0001,
         "Config_Name": "7_HIV_RandomChoice",
         "Enable_Birth": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "OnART0",
@@ -32,6 +33,7 @@
         "____________REPORTING___________": "",
         "____________SIMULATION___________": "",
         "____________TRANSMISSION___________": "",
-        "logLevel_HIVRandomChoice": "DEBUG"
+        "logLevel_HIVRandomChoice": "DEBUG",
+        "x_Base_Population": 0.0001
     }
 }

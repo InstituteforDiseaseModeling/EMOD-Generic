@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -20,13 +20,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SimulationConfig.h"
 #include "StrainIdentity.h"
 #include "IdmString.h"
-#include "Node.h" // for number_substrains. Move to StrainIdentity
 #include "RANDOM.h"
 
 SETUP_LOGGING( "OutbreakIndividual" )
 
 // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->number_substrains in DLL
+// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
 
 namespace Kernel
 {
@@ -41,7 +40,7 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(OutbreakIndividual)
 
     OutbreakIndividual::OutbreakIndividual()
-        : antigen(0)
+        : clade(0)
         , genome(0)
         , ignoreImmunity( true )
         , incubation_period_override(-1)
@@ -51,12 +50,9 @@ namespace Kernel
         initSimTypes( 11, "GENERIC_SIM" , "VECTOR_SIM" , "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM" );
     }
 
-    bool
-    OutbreakIndividual::Configure(
-        const Configuration * inputJson
-    )
+    bool OutbreakIndividual::Configure(const Configuration * inputJson)
     {
-        ConfigureAntigen( inputJson );
+        ConfigureClade( inputJson );
         ConfigureGenome( inputJson );
 
         // --------------------------------------------------------------
@@ -66,9 +62,9 @@ namespace Kernel
         return JsonConfigurable::Configure( inputJson );
     }
 
-    void OutbreakIndividual::ConfigureAntigen( const Configuration * inputJson )
+    void OutbreakIndividual::ConfigureClade( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Antigen", &antigen, Antigen_DESC_TEXT, 0, 10, 0 );
+        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
     }
 
     void OutbreakIndividual::ConfigureGenome( const Configuration * inputJson )
@@ -110,7 +106,7 @@ namespace Kernel
         StrainIdentity *outbreakIndividual_strainID = nullptr;
 
         // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        // NO usage of GET_CONFIGURABLE(SimulationConfig)->number_substrains in DLL
+        // NO usage of GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
         IGlobalContext *pGC = nullptr;
         const SimulationConfig* simConfigObj = nullptr;
         if (s_OK == context->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
@@ -122,14 +118,12 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
         }
 
-        //if (( antigen < 0 ) || ( antigen >= simConfigObj->number_basestrains ))
-        if( antigen < 0 )
+        if( clade < 0 )
         {
-            //throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "antigen", antigen, "number_basestrains", simConfigObj->number_basestrains );
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "antigen", antigen, 0 );
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "clade", clade, 0 );
         }
 
-        outbreakIndividual_strainID = _new_ StrainIdentity( antigen, genome, pIndiv->GetRng() );
+        outbreakIndividual_strainID = _new_ StrainIdentity( clade, genome, pIndiv->GetRng() );
 
         return outbreakIndividual_strainID;
     }

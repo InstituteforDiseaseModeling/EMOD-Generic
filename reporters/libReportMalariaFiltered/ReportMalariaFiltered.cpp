@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -19,6 +19,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "VectorPopulation.h"
 #include "IMigrate.h"
 #include "INodeContext.h"
+#include "SimulationConfig.h"
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // !!! CREATING NEW REPORTS
@@ -117,10 +118,21 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "End_Day", m_EndDay );
             }
+
+            const SimulationConfig *config = static_cast<const SimulationConfig*>(EnvPtr->getSimulationConfig());
+            float sim_start_time = config->starttime;
+            float sim_duration = config->Sim_Duration;
+            if (m_StartDay > sim_start_time + sim_duration)
+            {
+                throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "Start_Time + Simulation_Duration", sim_start_time + sim_duration);
+            }
+
             for( auto node_id : valid_external_node_id_list )
             {
                 m_NodesToInclude.insert( std::make_pair( node_id, true ) );
             }
+
+            channelDataMap.SetStartTime(m_StartDay);
         }
         return ret;
     }

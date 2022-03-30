@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_TBHIV_Support as dts
-import numpy
+
 import math
 
 matches = [ "Died from active disease on drugs", "Time:" ]
@@ -135,7 +140,7 @@ def create_report_file(drug_start_timestep, disease_deaths, cum_deaths, deaths, 
                 outfile.write("BAD: ks test reuslt is False.\n")
             size = len(death_times)
             scale = 1.0 / drug_mortality_rate_HIV
-            dist_exponential_np = numpy.random.exponential(scale, size)
+            dist_exponential_np = np.random.exponential(scale, size)
             dist_exponential_np = [math.ceil(x) for x in dist_exponential_np]
             sft.plot_data_sorted(death_times, dist_exponential_np,
                               label1="death times", label2="numpy data",

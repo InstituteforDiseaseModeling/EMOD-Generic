@@ -1,0 +1,31 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_100_overlay.json"
+            ],
+            "Enable_Vital_Dynamics": 1,
+            "IMMUNITY": {
+                "Enable_Immune_Decay": 1
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.2,
+                "Infectious_Period_Exponential": 1825,
+                "Infectivity_Scale_Type": "SINUSOIDAL_FUNCTION_OF_TIME"
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "InfectivityScalingSinusoidal/TimeStep_1_days_phase_90",
+            "Geography": "",
+            "Simulation_Duration": 1825
+        },
+        "logLevel_Individual": "DEBUG",
+        "Temporary_Infectivity_Sinusoidal": {
+            "Infectivity_Sinusoidal_Forcing_Phase": 90
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

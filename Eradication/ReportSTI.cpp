@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -13,6 +13,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ReportSTI.h"
 #include "IIndividualHumanSTI.h"
 #include "IRelationship.h"
+#include "INodeContext.h"
+#include "INodeSTI.h"
+#include "IRelationshipManager.h"
 
 SETUP_LOGGING( "ReportSTI" )
 
@@ -20,7 +23,7 @@ SETUP_LOGGING( "ReportSTI" )
 
 namespace Kernel {
 
-static const char* _sexually_active_prevalence_label = "Prevalence among Sexually Active (Adults)";
+static const char* _sexually_active_prevalence_label = "Prevalence among Sexually Active";
 static const char* _sexually_active_universe_label = "Number of Individuals Ever in a Relationship";
 
 static const char* _predebut_label      = "Pre-debut Individuals";
@@ -145,10 +148,6 @@ static NaturalNumber num_adults_not_related = 0;
             if (relationships.size() > 0)
             {
                 num_paired++;
-                for (auto relationship : relationships)
-                {
-                    num_rels[ int(relationship->GetType()) ]++;
-                }
             }
             else
             {
@@ -166,6 +165,28 @@ static NaturalNumber num_adults_not_related = 0;
         if( sti_individual->IsCircumcised() )
         {
             num_circumcised_males += mcw;
+        }
+    }
+
+    void ReportSTI::LogNodeData( INodeContext* pNC )
+    {
+        Report::LogNodeData( pNC );
+
+        INodeSTI* p_node_sti = nullptr;
+        if( pNC->QueryInterface( GET_IID( INodeSTI ), (void**)&p_node_sti ) != s_OK )
+        {
+            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pNC", "INodeSTI", "INodeContext" );
+        }
+
+        IRelationshipManager* p_rel_mgr = p_node_sti->GetRelationshipManager();
+        const tNodeRelationshipType& r_rel_id_to_rel_map = p_rel_mgr->GetNodeRelationships();
+
+        for( auto& r_entry : r_rel_id_to_rel_map )
+        {
+            if( r_entry.second->GetState() == RelationshipState::NORMAL )
+            {
+                num_rels[ int(r_entry.second->GetType()) ]++;
+            }
         }
     }
 
@@ -219,7 +240,6 @@ static NaturalNumber num_adults_not_related = 0;
         normalizeChannel( _ymi, _ymc );
         normalizeChannel( _yfi, _yfc );
         channelDataMap.RemoveChannel( _hum_infectious_res_label      );
-        channelDataMap.RemoveChannel( _log_prev_label                );
         channelDataMap.RemoveChannel( _infection_rate_label          );
         channelDataMap.RemoveChannel( _ymc      );
         channelDataMap.RemoveChannel( _yfc      );

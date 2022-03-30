@@ -264,9 +264,7 @@
   <ItemGroup>
     <None Include="..\cajun\include\cast.inl" />
     <None Include="..\utils\config_params.rc" />
-    <None Include="..\utils\missing_config_params.rc" />
     <None Include="..\utils\iv_params.rc" />
-    <None Include="..\utils\missing_iv_params.rc" />
     <None Include="..\utils\polio_params.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,12 +1,13 @@
 {
-    "Default_Config_Path": "../../defaults/typhoid_default_config.json", 
+    "Default_Config_Path": "../../defaults/typhoid_default_config.json",
     "parameters": {
-        "Simulation_Duration": 365, 
-        "Config_Name": "Typhoid_SingleIndividualOutbreakSeries", 
-        "Typhoid_Protection_Per_Infection": 1, 
-        "Typhoid_Chronic_Infectivity": 40, 
-        "x_Base_Population": 1e-05, 
-        "Typhoid_Contact_Exposure_Rate": 0.001, 
-        "Environmental_Incubation_Period": 24
+        "Config_Name": "Typhoid_SingleIndividualOutbreakSeries",
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
+        "Simulation_Duration": 365,
+        "Typhoid_Chronic_Infectivity": 40,
+        "Typhoid_Contact_Exposure_Rate": 0.001,
+        "Typhoid_Protection_Per_Infection": 1,
+        "x_Base_Population": 1e-05
     }
 }

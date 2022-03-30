@@ -1,10 +1,15 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_TBHIV_Support as dts
-import numpy
+
 import math
 
 matches = ["TB drug deactivated my",
@@ -155,7 +160,7 @@ def create_report_file(drug_start_timestep, inactivation_times, active_count, in
                 outfile.write("BAD: ks test for rate {} is False.\n".format(drug_inactivation_rate))
             size = len(inactivation_times)
             scale = 1.0 / drug_inactivation_rate
-            dist_exponential_np = numpy.random.exponential(scale, size)
+            dist_exponential_np = np.random.exponential(scale, size)
             dist_exponential_np = [math.ceil(x) for x in dist_exponential_np]
             sft.plot_data_sorted(inactivation_times, dist_exponential_np,
                               label1="test times", label2="numpy data",

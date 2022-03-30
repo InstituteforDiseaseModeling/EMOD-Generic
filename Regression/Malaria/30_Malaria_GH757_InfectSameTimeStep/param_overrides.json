@@ -29,6 +29,8 @@
         "PRIMARY": {
             "Config_Name": "30_Malaria_GH757_InfectSameTimeStep",
             "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Test",
             "Run_Number": 4,
             "Simulation_Duration": 30,
@@ -40,6 +42,7 @@
             "Base_Sporozoite_Survival_Fraction": 1.0,
             "Enable_Vector_Mortality": 1,
             "Human_Feeding_Mortality": 0.0,
+            "Incubation_Period_Constant": 0,
             "Infection_Updates_Per_Timestep": 1,
             "Vector_Sampling_Type": "TRACK_ALL_VECTORS",
             "Vector_Species_Names": [
@@ -69,8 +72,7 @@
                     "Nighttime_Feeding_Fraction": 1.0,
                     "Transmission_Rate": 1.0
                 }
-            },
-            "Incubation_Period_Constant": 0
+            }
         }
     }
 }

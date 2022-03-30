@@ -5,13 +5,14 @@
         ".logLevel_Simulation": "WARNING",
         ".logLevel_StandardEventCoordinator": "DEBUG",
         ".logLevel_default": "DEBUG",
-        "x_Base_Population": 1e-05,
         "Base_Year": 1980,
         "Config_Name": "10_HIV_SigmoidByYearAndSex",
-        "Enable_Birth": 0,
         "Custom_Individual_Events": [
             "OnART0"
         ],
+        "Enable_Birth": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "OnART0",
@@ -30,6 +31,7 @@
         "____________REPLICATION_AND_DRUGS___________": "",
         "____________REPORTING___________": "",
         "____________SIMULATION___________": "",
-        "____________TRANSMISSION___________": ""
+        "____________TRANSMISSION___________": "",
+        "x_Base_Population": 1e-05
     }
 }

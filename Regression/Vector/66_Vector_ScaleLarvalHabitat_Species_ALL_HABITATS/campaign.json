@@ -1,0 +1,76 @@
+{
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Larval_Habitat_Multiplier": {
+                        "LarvalHabitatMultiplier": [
+                            {
+                                "Factor": 1,
+                                "Habitat": "TEMPORARY_RAINFALL",
+                                "Species": "arabiensis"
+                            }
+                        ]
+                    },
+                    "class": "ScaleLarvalHabitat"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 400,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Larval_Habitat_Multiplier": {
+                        "LarvalHabitatMultiplier": [
+                            {
+                                "Factor": 0.5,
+                                "Habitat": "TEMPORARY_RAINFALL",
+                                "Species": "arabiensis"
+                            },
+                            {
+                                "Factor": 0,
+                                "Habitat": "WATER_VEGETATION",
+                                "Species": "funestus"
+                            }
+                        ]
+                    },
+                    "class": "ScaleLarvalHabitat"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 800,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Larval_Habitat_Multiplier": {
+                        "LarvalHabitatMultiplier": [
+                            {
+                                "Factor": 0,
+                                "Habitat": "ALL_HABITATS",
+                                "Species": "ALL_SPECIES"
+                            }
+                        ]
+                    },
+                    "class": "ScaleLarvalHabitat"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1200,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

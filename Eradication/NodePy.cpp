@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -74,7 +74,7 @@ namespace Kernel
     {
         //transmissionGroups = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::MultiRouteGroups );
         transmissionGroups = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups );
-        LOG_DEBUG_F("Number of basestrains: %d\n", GET_CONFIGURABLE(SimulationConfig)->number_basestrains);
+        LOG_DEBUG_F("Number of clades: %d\n", GET_CONFIGURABLE(SimulationConfig)->number_clades);
 
         if( demographics.Contains( IP_KEY ) && GET_CONFIGURABLE(SimulationConfig)->heterogeneous_intranode_transmission_enabled)
         {
@@ -153,7 +153,7 @@ namespace Kernel
             routes.push_back(string( ROUTE_NAME_CONTACT ));
         }
 
-        transmissionGroups->Build(decayMap, GET_CONFIGURABLE(SimulationConfig)->number_basestrains, GET_CONFIGURABLE(SimulationConfig)->number_substrains);
+        transmissionGroups->Build(decayMap, GET_CONFIGURABLE(SimulationConfig)->number_clades, GET_CONFIGURABLE(SimulationConfig)->number_genomes);
     }
 #endif 
 

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -55,7 +55,7 @@ namespace Kernel
         float larvalDensityMortalityScalar;
         float larvalDensityMortalityOffset;
 
-        float x_tempLarvalHabitat;
+        float x_LarvalHabitats;
 
         jsonConfigurable::tDynamicStringSet vector_species_names;
         std::map< std::string, VectorSpeciesParameters * > vspMap;
@@ -90,7 +90,7 @@ namespace Kernel
         , larval_rainfall_mortality_threshold(1.0f)
         , larvalDensityMortalityScalar(10.0f)
         , larvalDensityMortalityOffset(0.1f)
-        , x_tempLarvalHabitat(1.0f)
+        , x_LarvalHabitats(1.0f)
         , vector_species_names()
         , vspMap()
         {

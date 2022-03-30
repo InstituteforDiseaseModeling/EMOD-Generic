@@ -1,134 +1,134 @@
 {
-    "comment":"The first three blocks set up the toggling of IPs and broadcast an event to start surveillance. Then symptomatic individuals are counted and diagnosed.",
-    "Events": [       
+    "Events": [
         {
-            "comment": "Change NewlySymptomatic property to YES when NewlySymptomatic event occurs",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "NewlySymptomatic" ],
-                    "Demographic_Coverage": 1.0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "PropertyValueChanger",
-                        "Disqualifying_Properties": [ ], 
+                    "Actual_IndividualIntervention_Config": {
+                        "Disqualifying_Properties": [],
                         "New_Property_Value": "",
-                        "Target_Property_Key" : "IsSymptomatic",
-                        "Target_Property_Value" : "YES"
-                    }
-                }
-            }
-        },
-        {
-            "comment": "Change NewlySymptomatic property to NO when SymptomaticCleared event occurs",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "SymptomaticCleared" ],
+                        "Target_Property_Key": "IsSymptomatic",
+                        "Target_Property_Value": "YES",
+                        "class": "PropertyValueChanger"
+                    },
                     "Demographic_Coverage": 1.0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "PropertyValueChanger",
-                        "Disqualifying_Properties": [ ], 
-                        "New_Property_Value": "",
-                        "Target_Property_Key" : "IsSymptomatic",
-                        "Target_Property_Value" : "NO"
-                    }
-                }
-            }
-        },
-        {
-            "comment": "Broadcast Event to start Surveillance",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
-            "Event_Coordinator_Config": {
-                "class": "BroadcastCoordinatorEvent",
-                "Coordinator_Name" : "Coordnator_1",
-                "Cost_To_Consumer" : 10,
-                "Broadcast_Event" : "Start_ACF"
-            }
-        },
-        {
-            "comment": "Started by Broadcast_Event Start_ACF",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
-            "Event_Coordinator_Config": {
-                "class": "SurveillanceEventCoordinator",
-                "Coordinator_Name" : "ACF_Counter",
-                "Start_Trigger_Condition_List" : [ "Start_ACF" ],
-                "Stop_Trigger_Condition_List" : [ ],
-                "Duration" : 40,
-                "Incidence_Counter" : {
-                    "Counter_Type" : "PERIODIC",
-                    "Counter_Period" : 2,
-                    "Counter_Event_Type" : "INDIVIDUAL",
-                    "Trigger_Condition_List" : ["NewlySymptomatic"],
-                    "Node_Property_Restrictions" : [],
-                    "Property_Restrictions_Within_Node" : [],
-                    "Target_Demographic": "Everyone",
-                    "Demographic_Coverage" : 1.0
+                    "Trigger_Condition_List": [
+                        "NewlySymptomatic"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
-                "Responder" : {
-                    "Threshold_Type" : "COUNT",
-                    "Action_List" :
-                    [
-                        {
-                            "Threshold" : 2,
-                            "Event_Type" : "INDIVIDUAL",
-                            "Event_To_Broadcast" : "Ind_Start_Diagnosis_2"
-                        },
-                        {
-                            "Threshold" : 4,
-                            "Event_Type" : "INDIVIDUAL",
-                            "Event_To_Broadcast" : "Ind_Start_Diagnosis_4"
-                        }
-                    ]
-                }
-            }            
-        },
-        {
-            "comment": "Infect individuals (start outbreak)",
-            "class": "CampaignEvent",
-            "Start_Day": 2,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Change NewlySymptomatic property to YES when NewlySymptomatic event occurs"
+        },
+        {
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "Disqualifying_Properties": [],
+                        "New_Property_Value": "",
+                        "Target_Property_Key": "IsSymptomatic",
+                        "Target_Property_Value": "NO",
+                        "class": "PropertyValueChanger"
+                    },
+                    "Demographic_Coverage": 1.0,
+                    "Trigger_Condition_List": [
+                        "SymptomaticCleared"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Change NewlySymptomatic property to NO when SymptomaticCleared event occurs"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Broadcast_Event": "Start_ACF",
+                "Coordinator_Name": "Coordnator_1",
+                "Cost_To_Consumer": 10,
+                "class": "BroadcastCoordinatorEvent"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Broadcast Event to start Surveillance"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Coordinator_Name": "ACF_Counter",
+                "Duration": 40,
+                "Incidence_Counter": {
+                    "Counter_Event_Type": "INDIVIDUAL",
+                    "Counter_Period": 2,
+                    "Counter_Type": "PERIODIC",
+                    "Demographic_Coverage": 1.0,
+                    "Node_Property_Restrictions": [],
+                    "Property_Restrictions_Within_Node": [],
+                    "Target_Demographic": "Everyone",
+                    "Trigger_Condition_List": [
+                        "NewlySymptomatic"
+                    ]
+                },
+                "Responder": {
+                    "Action_List": [
+                        {
+                            "Event_To_Broadcast": "Ind_Start_Diagnosis_2",
+                            "Event_Type": "INDIVIDUAL",
+                            "Threshold": 2
+                        },
+                        {
+                            "Event_To_Broadcast": "Ind_Start_Diagnosis_4",
+                            "Event_Type": "INDIVIDUAL",
+                            "Threshold": 4
+                        }
+                    ],
+                    "Threshold_Type": "COUNT"
+                },
+                "Start_Trigger_Condition_List": [
+                    "Start_ACF"
+                ],
+                "Stop_Trigger_Condition_List": [],
+                "class": "SurveillanceEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Started by Broadcast_Event Start_ACF"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.06,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
-        },        
-        {
-            "comment": "Diagnose all individuals with NewlySymptomatic:YES, with a 50% chance to detect infection",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 2,
             "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "comment": "Infect individuals (start outbreak)"
+        },
+        {
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "Ind_Start_Diagnosis_2" ],
-                    "Property_Restrictions": [ "IsSymptomatic:YES" ],
-                    "Demographic_Coverage": 1.0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                       "Base_Sensitivity": 0.5,
+                    "Actual_IndividualIntervention_Config": {
+                        "Base_Sensitivity": 0.5,
                         "Base_Specificity": 1.0,
                         "Cost_To_Consumer": 0.0,
                         "Days_To_Diagnosis": 1.0,
@@ -136,10 +136,26 @@
                         "Positive_Diagnosis_Event": "TestedPositive",
                         "Treatment_Fraction": 1.0,
                         "class": "SimpleDiagnostic"
-                    }
-                }
-            }
-        }  
+                    },
+                    "Demographic_Coverage": 1.0,
+                    "Property_Restrictions": [
+                        "IsSymptomatic:YES"
+                    ],
+                    "Trigger_Condition_List": [
+                        "Ind_Start_Diagnosis_2"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Diagnose all individuals with NewlySymptomatic:YES, with a 50% chance to detect infection"
+        }
     ],
-    "Use_Defaults": 1
+    "Use_Defaults": 1,
+    "comment": "The first three blocks set up the toggling of IPs and broadcast an event to start surveillance. Then symptomatic individuals are counted and diagnosed."
 }

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -190,7 +190,7 @@ namespace Kernel
         StrainIdentity newStrainId;
         if (infstrain != nullptr)
         {
-            infstrain->ResolveInfectingStrain(&newStrainId); // get the substrain ID
+            infstrain->ResolveInfectingStrain(&newStrainId); // get the genome ID
         }
 
         int numInfs = infectioncount_tb;
@@ -503,7 +503,7 @@ namespace Kernel
         StrainIdentity strainIDs;
 
         //GHH had to add contagionpopulation.h to header for this section to work 
-        strainIDs.SetAntigenID(cp->GetAntigenID()); // find antigenID of the strain to get infectivity from, is the individual already infected by the contagion of this antigen type?  
+        strainIDs.SetCladeID(cp->GetCladeID()); // find cladeID of the strain to get infectivity from, is the individual already infected by the contagion of this clade type?  
         ISusceptibilityTB* pISTB = NULL;
         if (s_OK != susceptibility_tb->QueryInterface(GET_IID(ISusceptibilityTB), (void**) &pISTB) )
         {
@@ -535,14 +535,14 @@ namespace Kernel
         }
         else
         {
-            if (!InfectionExistsForThisStrain(&strainIDs)) // no existing infection of this antigenic type, so determine infection from exposure
+            if (!InfectionExistsForThisStrain(&strainIDs)) // no existing infection of this clade type, so determine infection from exposure
             {
                 //GHH temp changed to susceptibility_tb since this is for pools, which is specific for infectiousness, 
                 //deal with HIV later (it has no strain tracking now anyways)
                 float prob = EXPCDF( -cp->GetTotalContagion()*dt*suscept_mod*interventions->GetInterventionReducedAcquire() );
                 if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
                 {
-                    cp->ResolveInfectingStrain(&strainIDs); // get the substrain ID
+                    cp->ResolveInfectingStrain(&strainIDs); // get the genome ID
                     AcquireNewInfection(&strainIDs);
                 }
             }
@@ -553,7 +553,7 @@ namespace Kernel
                 if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
                 {
                     cp->ResolveInfectingStrain(&strainIDs);
-                    AcquireNewInfection(&strainIDs); // superinfection of this antigenic type
+                    AcquireNewInfection(&strainIDs); // superinfection of this clade type
                 }
             }
         }

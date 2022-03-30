@@ -1,17 +1,8 @@
 ## V2.20
 
-The EMOD v2.20 release includes support for typhoid disease modeling, including new campaign classes: **EnvironmentalDiagnostic**, **TyphoidCarrierDiagnostic**, **TyphoidVaccine**, and **TyphoidWASH**. 
-
-**ImmunityBloodTest** was added for identifying whether an individual’s immunity meets a specified threshold and then broadcasts an event based on the results. This new campaign class can be used with all supported disease modeling sim types. 
-
-**InterventionForCurrentPartners** can be used with STI and HIV sim types and provides a mechanism for the partners of individuals in the care system to also seek care. 
-
-**OutbreakIndividualTBorHIV** extends **OutbreakIndividual** and allows for specifying HIV or a specific strain of infection for TB. 
-
+The EMOD v2.20 release includes support for typhoid disease modeling, including new campaign classes: **EnvironmentalDiagnostic**, **TyphoidVaccine**, and **TyphoidWASH**. **ImmunityBloodTest** was added for identifying whether an individual’s immunity meets a specified threshold and then broadcasts an event based on the results. This new campaign class can be used with all supported disease modeling sim types. **InterventionForCurrentPartners** can be used with STI and HIV sim types and provides a mechanism for the partners of individuals in the care system to also seek care.
 In addition, configuration and campaign parameters that set the type of distribution (uniform, Gaussian, etc.) of infectiousness, incubation period, and delivery of interventions have been refactored. The number of distributions available and naming conventions used are now consistent across the configuration and campaign files. This change does not affect the distributions used in the demographics files.
-
-A beta release of new campaign classes (not yet fully tested) are included to support surveillance of events, where events are listened to, detected, and broadcast when a threshold has been met. These classes include: **BroadcastCoordinatorEvent**, **BroadcastNodeEvent**, **DelayEventCoordinator**,  **SurveillanceEventCoordinator**, and **TriggeredEventCoordinator**.
-
+A beta release of new campaign classes (not yet fully tested) are included to support surveillance of events, where events are listened to, detected, and broadcast when a threshold has been met. These classes include: **BroadcastCoordinatorEvent**, **BroadcastNodeEvent**, **DelayEventCoordinator**, **SurveillanceEventCoordinator**, and **TriggeredEventCoordinator**.
 
 ### New configuration parameters
 
@@ -22,7 +13,6 @@ For the generic simulation type, the following new configuration parameters are 
 + **Enable_Abort_Zero_Infectivity**: Controls whether or not the simulation should be ended when total infectivity falls to zero. Supported only in single-node simulations.
 + **Random_Number_Generator_Policy**: The policy that determines if random numbers are generated for objects in a simulation on a per-core or per-node basis.
 + **Enable_Random_Generator_From_Serialized_Population**: The type of random number generator to use for objects in a simulation. Must set the RNG seed in **Run_Number**.
-
 
 ### New configuration parameters (Distribution)
 
@@ -65,7 +55,6 @@ For the generic simulation type, the following new configuration parameters are 
 + **Incubation_Period_Log_Normal_Mean**: The mean of the incubation period when **Incubation_Period_Distribution** is set to LOG_NORMAL_DISTRIBUTION.
 + **Infectious_Period_Log_Normal_Mean**: The mean of the infectious period when **Infectious_Period_Distribution** is set to LOG_NORMAL_DISTRIBUTION.
 
-
 ### New configuration parameters (Beta)
 
 Note: These configuration parameters are currently in beta release and have not yet been fully tested.
@@ -85,13 +74,11 @@ For the generic simulation type, the following new configuration parameters are 
 + **Report_Node_Event_Recorder_Stats_By_IPs**: Specifies an array of (optional) individual property keys, as defined in **IndividualProperties** in the demographics file, to be added to the ReportNodeEventRecorder.csv output report. For each key:value pair there will be two additional columns (Key:Value:NumIndividuals, Key:Value:NumInfected) added to the report. For example, with a Risk property key assigned the values of LOW and HIGH there would then be four additional columns (Risk:LOW:NumIndividuals, Risk:LOW:NumInfected, Risk:HIGH:NumIndividuals, Risk:HIGH:NumInfected). An empty array equals no additional columns added.
 + **Report_Node_Event_Recorder_Ignore_Events_In_List**: If set to false (0), only the node events listed in the **Report_Node_Event_Recorder_Events** array will be included in the ReportNodeEventRecorder.csv output report. If set to true (1), only the node events listed in the array will be excluded, and all other node events will be included. If you want to return all node events from the simulation, leave the node events array empty.
 
-
 ### New demographics parameters
 
 + **InfectivityReservoirEndTime**: The ending of the exogeneous reservoir of infectivity. This parameter is conditional upon the configuration parameter, **Enable_Infectivity_Reservoir**, being enabled (set to 1).
 + **InfectivityReservoirSize**: The quantity-per-timestep added to the total infectivity present in a node; it is equivalent to the expected number of additional infections in a node, per timestep. For example, if timestep is equal to a day, then setting **InfectivityReservoirSize** to a value of 0.1 would introduce an infection every 10 days from the exogenous reservoir. This parameter is conditional upon the configuration parameter, **Enable_Infectivity_Reservoir**, being enabled (set to 1).
 + **InfectivityReservoirStartTime**: The beginning of the exogeneous reservoir of infectivity. This parameter is conditional upon the configuration parameter, **Enable_Infectivity_Reservoir**, being enabled (set to 1).
-
 
 ### New campaign parameters
 
@@ -101,25 +88,21 @@ The following campaign classes are new and can be used in the (specified) models
 
 The **ImmunityBloodTest** intervention class identifies whether an individual’s immunity meets a specified threshold (as set with the **Positive_Threshold_AcquisitionImmunity** campaign parameter) and then broadcasts an event based on the results; positive has immunity while negative does not.
 
+
 ### InterventionForCurrentPartners (HIV, STI)
 
 The **InterventionForCurrentPartners** intervention class provides a mechanism for the partners of individuals in the care system to also seek care. Partners do not need to seek testing at the same time; a delay may occur between the initial test and the partner’s test. If a relationship has been paused, such as when a partner migrates to a different node, the partner will not be contacted.
 
-### OutbreakIndividualTBorHIV (tuberculosis)
-
-The **OutbreakIndividualTBorHIV** class extends **OutbreakIndividual** class and allows for specifying HIV or a specific strain of infection for TB.
 
 ### EnvironmentalDiagnostic (typhoid)
 
 The **EnvironmentalDiagnostic** intervention class identifies contaminated locations by sampling the environment, comparing the value to a threshold, and broadcasting either a positive or negative node event.
 
-### TyphoidCarrierDiagnostic (typhoid)
-
-The **TyphoidCarrierDiagnostic** class extends **SimpleDiagnostic** class and allows for positive test diagnostic when an individual is a chronic typhoid carrier.
 
 ### TyphoidVaccine (typhoid)
 
 The **TyphoidVaccine** intervention class identifies contaminated locations by sampling the environment, comparing the value to a threshold, and broadcasting either a positive or negative node event.
+
 
 ### TyphoidWASH (typhoid)
 
@@ -134,19 +117,23 @@ The following Beta campaign classes are new and can be used in the (specified) m
 
 ### BroadcastCoordinatorEvent (generic)
 
-The **BroadcastCoordinatorEvent** coordinator class broadcasts the event you specify. This can be used with the campaign class, **SurveillanceEventCoordinator**, that can monitor and listen for events received from **BroadcastCoordinatorEvent** and then perform an action based on the broadcasted event. You can also use this for the reporting of the broadcasted events by setting the configuration parameters, **Report_Node_Event_Recorder** and **Report_Surveillance_Event_Recorder**, which listen to events to be recorded.
+The **BroadcastCoordinatorEvent** coordinator class broadcasts the event you specify. This can be used with the campaign class, **SurveillanceEventCoordinator**, that can monitor and listen for events received from **BroadcastCoordinatorEvent** and then perform an action based on the broadcasted event. You can also use this for the reporting of the broadcasted events by setting the configuraton parameters, **Report_Node_Event_Recorder** and **Report_Surveillance_Event_Recorder**, which listen to events to be recorded.
+
 
 ### BroadcastNodeEvent (generic)
 
-The **BroadcastNodeEvent** coordinator class broadcasts node events. This can be used with the campaign class, **SurveillanceEventCoordinator**, that can monitor and listen for events received from **BroadcastNodeEvent** and then perform an action based on the broadcasted event. You can also use this for the reporting of the broadcasted events by setting the configuration parameters, **Report_Node_Event_Recorder** and **Report_Surveillance_Event_Recorder**, which listen to events to be recorded.
+The **BroadcastNodeEvent** coordinator class broadcasts node events. This can be used with the campaign class, **SurveillanceEventCoordinator**, that can monitor and listen for events received from **BroadcastNodeEvent** and then perform an action based on the broadcasted event. You can also use this for the reporting of the broadcasted events by setting the configuraton parameters, **Report_Node_Event_Recorder** and **Report_Surveillance_Event_Recorder**, which listen to events to be recorded.
+
 
 ### DelayEventCoordinator (generic)
 
 The **DelayEventCoordinator** coordinator class insert delays into coordinator event chains. This campaign event is typically used with **BroadcastCoordinatorEvent** to broadcast events after the delays.
 
+
 ### SurveillanceEventCoordinator (generic)
 
 The **SurveillanceEventCoordinator** coordinator class listens for and detects events happening and then responds with broadcasted events when a threshold has been met. This campaign event is typically used with other classes, such as **BroadcastCoordinatorEvent**, **TriggeredEventCoordinator**, and **DelayEventCoordinator**.
+
 
 ### TriggeredEventCoordinator (generic)
 

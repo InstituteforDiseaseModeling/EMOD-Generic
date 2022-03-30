@@ -14,11 +14,14 @@
                 "HCTTestingLoop2",
                 "HCTTestingLoop3"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Run_Number": 1,
             "Simulation_Duration": 3000
         },
         "STI": {
-            "Report_Relationship_Start": 1
+            "Report_Relationship_Start": 1,
+            "Report_Relationship_Start_Individual_Properties": []
         }
     }
 }

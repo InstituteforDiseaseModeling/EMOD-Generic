@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -185,7 +185,7 @@ namespace Kernel
         {
             VectorHabitatType::Enum type = habitat_param.first;
             IVectorHabitat* habitat = ivnc->GetVectorHabitatBySpeciesAndType( species_ID, type, habitat_param.second );
-            float max_larval_capacity = habitat->GetMaximumLarvalCapacity() * params()->vector_params->x_tempLarvalHabitat * ivnc->GetLarvalHabitatMultiplier(type,species_ID);
+            float max_larval_capacity = habitat->GetMaximumLarvalCapacity() * params()->vector_params->x_LarvalHabitats * ivnc->GetLarvalHabitatMultiplier(type,species_ID);
 
             habitat->SetMaximumLarvalCapacity( max_larval_capacity );
 
@@ -655,7 +655,7 @@ namespace Kernel
 
             LOG_DEBUG_F( "Vector->Human [%s] infectiousness (aka bite) of strain %d, 'population' %d, xmod %f.\n",
                          (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) ? "indoor" : "outdoor",
-                         strain.GetAntigenID(),
+                         strain.GetCladeID(),
                          attemptFeed,
                          species()->transmissionmod );
 

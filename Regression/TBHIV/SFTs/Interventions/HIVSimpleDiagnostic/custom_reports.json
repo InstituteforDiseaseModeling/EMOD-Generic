@@ -1,7 +1,6 @@
 {
     "Custom_Reports" : 
     {
-        ".Use_Explicit_Dlls" : 1,
         "ReportEventCounter" :
         {
             "Enabled" : 1,

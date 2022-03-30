@@ -5,8 +5,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.0005,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
                 },
@@ -24,12 +22,12 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "class": "SimpleVaccine",
-		    "Waning_Config": {
-		        "Initial_Rate": 0.8,
-			"Box_Duration": 1000,
-			"class": "WaningEffectBox"
-		    }
+                    "Waning_Config": {
+                        "Box_Duration": 1000,
+                        "Initial_Rate": 0.8,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -45,7 +43,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                    "Antigen": 1,
+                    "Clade": 1,
                     "Genome": 0,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"

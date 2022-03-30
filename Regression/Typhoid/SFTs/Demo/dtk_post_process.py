@@ -1,12 +1,17 @@
 #!/usr/bin/python
 
 import re
-import json
+
 import math
 import pdb
 import os
 import dtk_test.dtk_plot_wrapper as plot_wrapper
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 # C version: infectiousness = exp( -1 * _infectiousness_param_1 * pow(duration - _infectiousness_param_2,2) ) / _infectiousness_param_3;
 

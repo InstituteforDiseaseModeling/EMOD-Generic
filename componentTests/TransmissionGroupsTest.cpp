@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -50,8 +50,8 @@ SUITE(TransmissionGroupsTest)
                 MatrixRow_t{ 0.0f,   0.5f,   0.5f,   0.0f },
                 MatrixRow_t{ 0.0f,   0.125f, 0.125f, 0.75f } }
             , p_simulation_config( new SimulationConfig() )
-            , number_basestrains_save( InfectionConfig::number_basestrains )
-            , number_substrains_save( InfectionConfig::number_substrains )
+            , number_clades_save( InfectionConfig::number_clades )
+            , number_genomes_save( InfectionConfig::number_genomes )
         {
             /* Set up environment: */
             JsonConfigurable::ClearMissingParameters();
@@ -68,14 +68,14 @@ SUITE(TransmissionGroupsTest)
             std::map<std::string, float> location_ip_values{ {bothell, 0.25f}, {bellevue, 0.25f }, {redmond, 0.25f}, {renton, 0.25f} };
             IPFactory::GetInstance()->AddIP(1, location, location_ip_values);
 
-            InfectionConfig::number_basestrains = 2;
-            InfectionConfig::number_substrains  = 2;
+            InfectionConfig::number_clades = 2;
+            InfectionConfig::number_genomes  = 2;
         }
 
         ~TransmissionGroupsTestFixture()
         {
-            InfectionConfig::number_basestrains = number_basestrains_save;
-            InfectionConfig::number_substrains  = number_substrains_save;
+            InfectionConfig::number_clades  = number_clades_save;
+            InfectionConfig::number_genomes = number_genomes_save;
 
             IPFactory::DeleteFactory();
             Environment::Finalize();
@@ -94,8 +94,8 @@ SUITE(TransmissionGroupsTest)
         SimulationConfig* p_simulation_config;
         PSEUDO_DES rng;
 
-        uint32_t number_basestrains_save;
-        uint32_t number_substrains_save;
+        uint32_t number_clades_save;
+        uint32_t number_genomes_save;
     };
 
     TEST_FIXTURE(TransmissionGroupsTestFixture, TestStrainAwareTxGroupsSingleProperty)

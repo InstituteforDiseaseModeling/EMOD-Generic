@@ -4,10 +4,8 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.001,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
                     "Incubation_Period_Override": 0,
+                    "class": "OutbreakIndividual",
                     "outbreak_source": "PrevalenceIncrease"
                 },
                 "Target_Demographic": "Everyone",

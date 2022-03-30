@@ -75,8 +75,6 @@
                         "Outbreak_Source": "PrevalenceIncrease",
                         "class": "OutbreakIndividual"
                     },
-                    "Delay_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
-                    "Delay_Period_Exponential": 25,
                     "Event_Or_Config": "Config",
                     "class": "SimpleHealthSeekingBehavior"
                 },

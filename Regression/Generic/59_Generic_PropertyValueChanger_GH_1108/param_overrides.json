@@ -47,15 +47,17 @@
         },
         "PRIMARY": {
             "Config_Name": "59_Generic_PropertyValueChanger",
+            "Custom_Individual_Events": [
+                "Change_Low_To_High"
+            ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "SamplesInput",
             "Listed_Events": [
                 "Change_Low_To_High"
             ],
             "Run_Number": 2,
-            "Simulation_Duration": 70,
-            "Custom_Individual_Events": [
-                "Change_Low_To_High"
-            ]
+            "Simulation_Duration": 70
         }
     }
 }

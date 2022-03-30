@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -39,6 +39,7 @@ namespace Kernel
         float m_factor;
         VectorHabitatType::Enum m_habitat_name;
         std::string m_species;
+        bool m_configured;
     };
 
     class LHMSpecList : public JsonConfigurableCollection<LarvalHabitatMultiplierSpec>
@@ -73,13 +74,14 @@ namespace Kernel
         void SetMultiplier( VectorHabitatType::Enum, float multiplier );
         void SetAsReduction( const LarvalHabitatMultiplier& rRegularLHM );
         void SetExternalNodeId(ExternalNodeId_t externalNodeId);
+        float GetDefaultValue() const;
 
     private:
         void ProcessMultipliers(LHMSpecList &spec_list);
         bool EntryAffectsHabitatAndSpecies(LarvalHabitatMultiplierSpec * entry, 
                                            VectorHabitatType::Enum habitat_type,
                                            const std::string & species_name);
-        void UnsetAllFactors(LHMSpecList &spec_list);
+        void UnsetAllFactors();
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details

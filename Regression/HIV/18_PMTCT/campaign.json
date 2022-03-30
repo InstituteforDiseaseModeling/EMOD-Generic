@@ -1,48 +1,45 @@
 {
-    "Use_Defaults": 1,
     "Campaign_Name": "DrawBlood validation",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Event_Name": "Outbreak",
-            "Start_Day": 2,
-            ".class": "CampaignEventByYear",
             ".Start_Year": 1980,
-            "Nodeset_Config": {
-                "class": "NodeSetAll"
-            },
+            ".class": "CampaignEventByYear",
             "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.3,
                 "Intervention_Config": {
                     "Event_Name": "Outbreak (not used)",
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "Outbreak_Source": "PrevalenceIncrease",
                     "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.3,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Travel_Linked": 0
-            }
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 2,
+            "class": "CampaignEvent"
         },
         {
-            "Event_Name": "Nevarapine",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
-                        "class": "PMTCT",
-                        "Efficacy": 0.5
+                        "Efficacy": 0.5,
+                        "class": "PMTCT"
                     },
+                    "Duration": 365,
                     "Trigger_Condition_List": [
                         "FourteenWeeksPregnant"
                     ],
-                    "Duration": 365,
                     "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
+            "Event_Name": "Nevarapine",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
@@ -50,22 +47,22 @@
             "class": "CampaignEvent"
         },
         {
-            "Event_Name": "Nevarapine",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
-                        "class": "PMTCT",
-                        "Efficacy": 0.3
+                        "Efficacy": 0.3,
+                        "class": "PMTCT"
                     },
+                    "Duration": 365,
                     "Trigger_Condition_List": [
                         "FourteenWeeksPregnant"
                     ],
-                    "Duration": 365,
                     "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
+            "Event_Name": "Nevarapine",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
@@ -73,27 +70,28 @@
             "class": "CampaignEvent"
         },
         {
-            "Event_Name": "Nevarapine",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
+                "Duration": 365,
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
-                        "class": "PMTCT",
-                        "Efficacy": 0.9
+                        "Efficacy": 0.9,
+                        "class": "PMTCT"
                     },
                     "Trigger_Condition_List": [
                         "FourteenWeeksPregnant"
                     ],
                     "class": "NodeLevelHealthTriggeredIV"
                 },
-                "Duration": 365,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
+            "Event_Name": "Nevarapine",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 600,
             "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

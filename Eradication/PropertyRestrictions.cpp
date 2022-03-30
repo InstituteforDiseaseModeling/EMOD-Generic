@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -15,9 +15,38 @@ SETUP_LOGGING( "PropertyRestrictions" )
 
 namespace Kernel
 {
+    BEGIN_QUERY_INTERFACE_BODY(PropertyRestriction)
+    END_QUERY_INTERFACE_BODY(PropertyRestriction)
+
+    bool PropertyRestriction::Configure(const Configuration* config)
+    {
+        initConfigTypeMap("Restrictions", &m_restrictions, "");
+
+        bool result = JsonConfigurable::Configure(config);
+
+        if (!JsonConfigurable::_dryrun && result)
+        {
+            m_configured = true;
+        }
+
+        return result;
+    }
+    
+        std::vector<std::string> const & PropertyRestriction::GetRestrictions() const
+    {
+        release_assert(m_configured);
+        return m_restrictions;
+    }
+
+    template<class Key, class KeyValue, class Container>
+    PropertyRestriction* PropertyRestrictions<Key, KeyValue, Container>::CreateObject()
+    {
+        return new PropertyRestriction();
+    }
+
     template<class Key, class KeyValue, class Container>
     PropertyRestrictions<Key,KeyValue,Container>::PropertyRestrictions()
-    : JsonConfigurable()
+    : JsonConfigurableCollection("PropertyRestrictions")
     , _restrictions()
     {
     }
@@ -31,6 +60,8 @@ namespace Kernel
     template<class Key, class KeyValue, class Container>
     void PropertyRestrictions<Key, KeyValue, Container>::ConfigureFromJsonAndKey( const Configuration * inputJson, const std::string& key )
     {
+        JsonConfigurableCollection::ConfigureFromJsonAndKey(inputJson, key);
+
         // Make this optional.
         if( inputJson->Exist( key ) == false )
         {
@@ -39,59 +70,25 @@ namespace Kernel
 
         // We have a list of json objects. The format/logic is as follows. For input:
         // [
-        //  { "Character": "Good", "Income": "High" },
-        //  { "Character": "Bad", "Income": "Low" }
+        //  {"Restrictions": ["Character:Good", "Income:High"]},
+        //  {"Restrictions": ["Character:Bad",  "Income:Low" ]}
         // ]
         // We give the intervention if the individuals has
         // Good Character AND High Income OR Bad Character AND Low Income.
         // So we AND together the elements of each json object and OR together these 
         // calculated truth values of the elements of the json array.
-        json::QuickInterpreter s2sarray = (*inputJson)[key].As<json::Array>();
-        for( int idx=0; idx < (*inputJson)[key].As<json::Array>().Size(); idx++ )
+        for (auto& outer_restriction : m_Collection)
         {
+            const std::vector<std::string> & inner_restrictions = outer_restriction->GetRestrictions();
             Container container;
-
-            auto json_map = s2sarray[idx].As<json::Object>();
-            for( auto data = json_map.Begin();
-                      data != json_map.End();
-                      ++data )
+            
+            for (auto& restriction : inner_restrictions)
             {
-                std::string key = data->name;
-                std::string value = (std::string)s2sarray[idx][key].As< json::String >();
-                KeyValue kv( key, value );
-                container.Add( kv );
+                KeyValue kv(restriction);
+                container.Add(kv);
             }
-            _restrictions.push_back( container );
+            _restrictions.push_back(container);
         }
-    }
-
-    template<class Key, class KeyValue, class Container>
-    json::QuickBuilder PropertyRestrictions<Key, KeyValue, Container>::GetSchema()
-    {
-        json::QuickBuilder schema( GetSchemaBase() );
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-
-        // this is kind of hacky, but there only two types right now.
-        if( std::string( typeid(Key).name() ) == "class Kernel::IPKey" )
-        {
-            schema[ tn ] = json::String( "idmType:PropertyRestrictions" );
-        }
-        else
-        {
-            schema[ tn ] = json::String( "idmType:NodePropertyRestrictions" );
-        }
-        schema[ ts ] = json::Array();
-        schema[ ts ][0] = json::Object();
-        schema[ ts ][0]["<key>"] = json::Object();
-        schema[ ts ][0]["<key>"][ "type" ] = json::String( "Constrained String" );
-        schema[ ts ][0]["<key>"][ "constraints" ] = json::String( Key::GetConstrainedStringConstraintKey() );
-        schema[ ts ][0]["<key>"][ "description" ] = json::String( Key::GetConstrainedStringDescriptionKey() );
-        schema[ ts ][0]["<value>"] = json::Object();
-        schema[ ts ][0]["<value>"][ "type" ] = json::String( "String" );
-        schema[ ts ][0]["<value>"][ "constraints" ] = json::String( Key::GetConstrainedStringConstraintValue()  );
-        schema[ ts ][0]["<value>"][ "description" ] = json::String( Key::GetConstrainedStringDescriptionValue() );
-        return schema;
     }
 
     template<class Key, class KeyValue, class Container>

@@ -2,101 +2,99 @@
     "Events": [
         {
             "COMMENT": "Infect the one person that lives in Node 1",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1.0,
-                "Number_Repetitions": -1,
-                "Timesteps_Between_Repetitions": -1,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
-                }
-            }
+                },
+                "Number_Repetitions": -1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": -1,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
             "COMMENT": "Have the one person that lives in Node 1 (who happens to be infected) move to Node 2.",
-            "class": "CampaignEvent",
-            "Start_Day": 16,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Residents_Only": 1,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "class": "MigrateIndividuals",
-                    "NodeID_To_Migrate_To": 2,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_At_Node_Constant": 100,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
                     "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 100
-                }
-            }
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 2,
+                    "class": "MigrateIndividuals"
+                },
+                "Target_Demographic": "Everyone",
+                "Target_Residents_Only": 1,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 16,
+            "class": "CampaignEvent"
         },
         {
             "COMMENT": "Move the resident of Node 2 (not infected) to Node 1 and see him get infected when he should not.",
-            "class": "CampaignEvent",
-            "Start_Day": 18,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    2
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Residents_Only": 1,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "class": "MigrateIndividuals",
-                    "NodeID_To_Migrate_To": 1,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_At_Node_Constant": 1,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
                     "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 1
-                }
-            }
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 1,
+                    "class": "MigrateIndividuals"
+                },
+                "Target_Demographic": "Everyone",
+                "Target_Residents_Only": 1,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    2
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 18,
+            "class": "CampaignEvent"
         },
         {
             "COMMENT": "Kill the vector to ensure even it cannot cause an infection.",
-            "class": "CampaignEvent",
-            "Start_Day": 19,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "InsectKillingFence",
                     "Cost_To_Consumer": 1.0,
                     "Killing_Config": {
-                        "class": "WaningEffectConstant",
-                        "Initial_Effect": 1.0
-                    }
-                }
-            }
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffectConstant"
+                    },
+                    "class": "InsectKillingFence"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 19,
+            "class": "CampaignEvent"
         }
     ],
     "Use_Defaults": 1

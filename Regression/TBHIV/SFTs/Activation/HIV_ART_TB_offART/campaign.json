@@ -5,8 +5,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Infection_Type": "HIV",
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividualTBorHIV"
@@ -84,16 +82,14 @@
                     "Actual_IndividualIntervention_Config": {
                         "Actual_IndividualIntervention_Configs": [
                             {
-                                "Antigen": 0,
-                                "Genome": 0,
                                 "Infection_Type": "TB",
                                 "Outbreak_Source": "PrevalenceIncrease",
                                 "class": "OutbreakIndividualTBorHIV"
                             }
                         ],
+                        "Delay_Period_Constant": 3,
                         "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                        "class": "DelayedIntervention",
-                        "Delay_Period_Constant": 3
+                        "class": "DelayedIntervention"
                     },
                     "Duration": -1,
                     "Trigger_Condition_List": [
@@ -125,9 +121,9 @@
                                 "class": "ARTDropout"
                             }
                         ],
+                        "Delay_Period_Constant": 5,
                         "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                        "class": "DelayedIntervention",
-                        "Delay_Period_Constant": 5
+                        "class": "DelayedIntervention"
                     },
                     "Duration": -1,
                     "Trigger_Condition_List": [

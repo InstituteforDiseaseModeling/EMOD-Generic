@@ -1,4 +1,9 @@
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_serialization_support as d_ss
 
 def application(output_folder="output", config_filename="config.json",

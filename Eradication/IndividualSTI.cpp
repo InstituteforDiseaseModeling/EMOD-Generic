@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -357,9 +357,9 @@ namespace Kernel
         {
             StrainIdentity strainId;
             // The ContagionProbability object can give us the ID of the Infector (Depositor)
-            // We store this as the heretofore unused "Antigen ID" of the Infecting Strain.
-            cp->ResolveInfectingStrain(&strainId); // get the substrain ID
-            strainId.SetAntigenID(pCP_as_Probs->GetInfectorID());
+            // We store this as the heretofore unused "Clade ID" of the Infecting Strain.
+            cp->ResolveInfectingStrain(&strainId); // get the clade and genome IDs
+            strainId.SetCladeID(pCP_as_Probs->GetInfectorID());
             AcquireNewInfection( &strainId );
         }
     }
@@ -623,18 +623,18 @@ namespace Kernel
         // Let's just put some paranoid code to make sure that we are in relationship with an infected individual
         if( infstrain )
         {
-            LOG_INFO_F( "(EEL) individual %lu infected by relationship partner %lu\n", GetSuid().data, infstrain->GetAntigenID() );
+            LOG_INFO_F( "(EEL) individual %lu infected by relationship partner %lu\n", GetSuid().data, infstrain->GetCladeID() );
         }
         else
         {
             LOG_INFO_F( "(EEL) individual %lu infected, but relationship partner cannot be identified\n", GetSuid().data );
         }
 
-        if( infstrain && infstrain->GetAntigenID() == 0 )
+        if( infstrain && infstrain->GetCladeID() == 0 )
         {
             release_assert( infstrain );
-            LOG_INFO_F( "(EEL) individual %lu infected by relationship partner %lu\n", GetSuid().data, infstrain->GetAntigenID() );
-            if( infstrain->GetAntigenID() == 0 )
+            LOG_INFO_F( "(EEL) individual %lu infected by relationship partner %lu\n", GetSuid().data, infstrain->GetCladeID() );
+            if( infstrain->GetCladeID() == 0 )
             {
                 // Can't throw exception because there are even non-outbreak cases where this is valid (e.g., infecting relationship ended this time step
                 LOG_DEBUG_F( "%s: individual %lu got infected but not in relationship with an infected individual (num relationships=%d). OK if PrevIncrease Outbreak.!!!\n",

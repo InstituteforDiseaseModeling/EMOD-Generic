@@ -1,0 +1,41 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_4groups_2seed_overlay.json"
+            ],
+            "IMMUNITY": {
+                "Post_Infection_Acquisition_Multiplier": 0.8,
+                "Post_Infection_Transmission_Multiplier": 1
+            },
+            "MORTALITY": {
+                "Enable_Natural_Mortality": 1
+            },
+            "Population_Scale_Type": "FIXED_SCALING",
+            "SAMPLING": {
+                "Sample_Rate_Birth": 2
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.5,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
+            }
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 1
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "NoCustomReports",
+            "Enable_Property_Output": 1
+        },
+        "PRIMARY": {
+            "Config_Name": "SimpleBoosterVaccine/Transmission_BoostNaturalImmunity",
+            "Geography": "Namawala",
+            "Simulation_Duration": 15
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

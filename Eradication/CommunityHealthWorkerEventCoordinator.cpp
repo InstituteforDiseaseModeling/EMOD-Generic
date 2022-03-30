@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -84,7 +84,7 @@ namespace Kernel
         initConfigTypeMap("Amount_In_Shipment",      &m_AmountInShipment,         CHW_Amount_In_Shipment_DESC_TEXT,      0,        INT_MAX, INT_MAX );
         initConfigTypeMap("Max_Stock",               &m_MaxStock,                 CHW_Max_Stock_DESC_TEXT,               0,        INT_MAX, INT_MAX );
 
-        DistributionFunction::Enum initial_amount_function( DistributionFunction::CONSTANT_DISTRIBUTION );
+        DistributionFunction::Enum initial_amount_function( DistributionFunction::NOT_INITIALIZED );
         initConfig( "Initial_Amount_Distribution", initial_amount_function, inputJson, MetadataDescriptor::Enum("Initial_Amount_Distribution_Type", CHW_Initial_Amount_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)) );
 
         m_pInitialAmount = DistributionFactory::CreateDistribution( this, initial_amount_function, "Initial_Amount", inputJson );

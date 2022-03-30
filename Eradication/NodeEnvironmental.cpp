@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -76,7 +76,7 @@ namespace Kernel
                 << environmental_cutoff_days
                 << ") must be < 365. Equals "
                 << environmental_ramp_up_duration + environmental_ramp_down_duration + environmental_cutoff_days
-                << ".";
+                << ".\n";
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
         return ret;
@@ -136,14 +136,15 @@ namespace Kernel
 
     void NodeEnvironmental::BuildTransmissionRoutes( float contagionDecayRate )
     {
-        LOG_DEBUG_F("Number of basestrains: %d\n", InfectionConfig::number_basestrains);
-        transmissionGroups->Build( contagionDecayRate, InfectionConfig::number_basestrains, InfectionConfig::number_substrains );
-        txEnvironment->Build( node_contagion_decay_fraction, InfectionConfig::number_basestrains, InfectionConfig::number_substrains );
+        LOG_DEBUG_F("Number of clades: %d\n", InfectionConfig::number_clades);
+        transmissionGroups->Build( contagionDecayRate, InfectionConfig::number_clades, InfectionConfig::number_genomes );
+        txEnvironment->Build( node_contagion_decay_fraction, InfectionConfig::number_clades, InfectionConfig::number_genomes );
     }
 
-    bool NodeEnvironmental::IsValidTransmissionRoute( string& transmissionRoute )
+    bool NodeEnvironmental::IsValidTransmissionRoute( const string& transmissionRoute )
     {
         bool isValid = ((transmissionRoute == CONTACT) || (transmissionRoute == ENVIRONMENTAL));
+
         return isValid;
     }
 
@@ -179,22 +180,22 @@ namespace Kernel
             if ((nDayOfYear >= peak_start_day-ramp_up_days) && ( nDayOfYear < peak_start_day))
             { // beginning of wastewater irrigation
                 amplification=((nDayOfYear- (peak_start_day-ramp_up_days))+ OFFSET )*(slope_up);
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage A: ramping up." );
+                LOG_DEBUG_F( "Seasonal Amplification 1 stage A: ramping up.\n" );
             }
             else if ((peak_start_day - peak_end_day >= 0) && ((nDayOfYear >= peak_start_day)  || (nDayOfYear<=peak_end_day)))
             { // peak of wastewater irrigation
                 amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage B: peak amp plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 1 stage B: peak amp plateau.\n" );
             }
             else if ((peak_start_day - peak_end_day < 0) && (nDayOfYear >= peak_start_day) && (nDayOfYear <= peak_end_day))
             { // peak of wastewater irrigation
                 amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage C: peak amp plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 1 stage C: peak amp plateau.\n" );
             }
             else if ((peak_end_day + ramp_down_days < DAYSPERYEAR) && (nDayOfYear > peak_end_day) && (nDayOfYear <= (peak_end_day+ramp_down_days)))
             {
                 amplification= peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage D: slope down." );
+                LOG_DEBUG_F( "Seasonal Amplification 1 stage D: slope down.\n" );
             }
             else if ((peak_end_day + ramp_down_days >= DAYSPERYEAR) && ((nDayOfYear > peak_end_day) || (nDayOfYear < ramp_down_days - (DAYSPERYEAR- peak_end_day))))
             {
@@ -202,17 +203,17 @@ namespace Kernel
                 if (nDayOfYear > peak_end_day)
                 {
                     amplification = peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(i): slope down." );
+                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(i): slope down.\n" );
                 }
                 if (nDayOfYear < ramp_down_days - (DAYSPERYEAR - peak_end_day))
                 {
                     amplification = peak_amplification - (((DAYSPERYEAR-peak_end_day)+nDayOfYear- OFFSET )*slope_down);
-                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(ii): slope down." );
+                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(ii): slope down.\n" );
                 }
             }
             else
             {
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage F: zero amp plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 1 stage F: zero amp plateau.\n" );
             }
         }
         else if (peak_start_day - ramp_up_days <= 0)
@@ -222,28 +223,28 @@ namespace Kernel
                 if (nDayOfYear >= peak_start_day-ramp_up_days+DAYSPERYEAR)
                 {
                     amplification= (nDayOfYear - (peak_start_day-ramp_up_days+DAYSPERYEAR)+ OFFSET )*(slope_up);
-                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(i): ramping up." );
+                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(i): ramping up.\n" );
                 }
                 else if (nDayOfYear < peak_start_day)
                 {
                     amplification= (((ramp_up_days-peak_start_day) + nDayOfYear)  +  OFFSET )*(slope_up);
-                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(ii): ramping up." );
+                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(ii): ramping up.\n" );
                 }
             }
             if ((peak_start_day - peak_end_day > 0) && ((nDayOfYear >= peak_start_day)  || (nDayOfYear<=peak_end_day)))
             { // peak of wastewater irrigation
                 amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage B: peak plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 2 stage B: peak plateau.\n" );
             }
             else if ((peak_start_day - peak_end_day < 0) && (nDayOfYear >= peak_start_day) && (nDayOfYear <= peak_end_day))
             { // peak of wastewater irrigation
                 amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage C: peak plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 2 stage C: peak plateau.\n" );
             }
             else if ((nDayOfYear > peak_end_day) && (nDayOfYear <= (peak_end_day+ramp_down_days)) )
             { // end of wastewater irrigation
                 amplification= peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage D: bottom plateau." );
+                LOG_DEBUG_F( "Seasonal Amplification 2 stage D: bottom plateau.\n" );
             }
         }
 
@@ -288,7 +289,7 @@ namespace Kernel
                 }
                 else //HINT is enabled, but no transmission matrix is detected
                 {
-                    // This is okay. It is not required for all IndividualProperties to participate in HINT.
+                    // This is okay. We don't need every IP to participate in HINT. 
                 }
             }
         }
@@ -305,7 +306,7 @@ namespace Kernel
 
     void NodeEnvironmental::DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route )
     {
-        LOG_DEBUG_F( "deposit from individual: antigen index =%d, substain index = %d, quantity = %f, route = %d\n", strain_IDs.GetAntigenID(), strain_IDs.GetGeneticID(), contagion_quantity, uint32_t(route) );
+        LOG_DEBUG_F( "deposit from individual: clade index =%d, genome index = %d, quantity = %f, route = %d\n", strain_IDs.GetCladeID(), strain_IDs.GetGeneticID(), contagion_quantity, uint32_t(route) );
 
         switch (route)
         {
@@ -325,10 +326,8 @@ namespace Kernel
 
     float NodeEnvironmental::GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value )
     {
-        float contagion = nanf("NAN");
-
         ITransmissionGroups* txGroups = (route == CONTACT) ? transmissionGroups : txEnvironment;
-        contagion = txGroups->GetContagionByProperty( property_value );
+        float contagion = txGroups->GetContagionByProperty( property_value );
 
         return contagion;
     }

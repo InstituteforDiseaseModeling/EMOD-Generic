@@ -1,40 +1,32 @@
 {
     "Campaign_Name": "Initial Seeding",
     "Events": [
-        { 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.0001,
                 "Include_Arrivals": 0,
                 "Include_Departures": 0,
-                "Intervention_Config": 
-                { 
-                    "Antigen": 0,
-                    "Genome": 0,
+                "Intervention_Config": {
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 260,
-                "Timesteps_Between_Repetitions": 7,
                 "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Event_Name": "Outbreak",
-            "Nodeset_Config": 
-            { 
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 1,
             "class": "CampaignEvent"
         },
-        { 
-            "Event_Name": "SIA Calendar", 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.01,
-                "Intervention_Config": 
-                { 
+                "Intervention_Config": {
                     "Cost_To_Consumer": 0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Primary_Decay_Time_Constant": 1825,
@@ -46,25 +38,22 @@
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 0,
                 "Travel_Linked": 0,
-                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config": 
-            { 
+            "Event_Name": "SIA Calendar",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 100,
             "class": "CampaignEvent"
         },
-        { 
-            "Event_Name": "SIA Calendar", 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.05,
-                "Intervention_Config": 
-                { 
+                "Intervention_Config": {
                     "Cost_To_Consumer": 0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Primary_Decay_Time_Constant": 1825,
@@ -76,25 +65,22 @@
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 0,
                 "Travel_Linked": 0,
-                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config": 
-            { 
+            "Event_Name": "SIA Calendar",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 200,
             "class": "CampaignEvent"
         },
-        { 
-            "Event_Name": "SIA Calendar", 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.1,
-                "Intervention_Config": 
-                { 
+                "Intervention_Config": {
                     "Cost_To_Consumer": 0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Primary_Decay_Time_Constant": 1825,
@@ -106,25 +92,22 @@
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 0,
                 "Travel_Linked": 0,
-                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config": 
-            { 
+            "Event_Name": "SIA Calendar",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 400,
             "class": "CampaignEvent"
         },
-        { 
-            "Event_Name": "SIA Calendar", 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.2,
-                "Intervention_Config": 
-                { 
+                "Intervention_Config": {
                     "Cost_To_Consumer": 0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Primary_Decay_Time_Constant": 1825,
@@ -136,25 +119,22 @@
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 0,
                 "Travel_Linked": 0,
-                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config": 
-            { 
+            "Event_Name": "SIA Calendar",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 800,
             "class": "CampaignEvent"
         },
-        { 
-            "Event_Name": "SIA Calendar", 
-            "Event_Coordinator_Config": 
-            { 
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
-                "Intervention_Config": 
-                { 
+                "Intervention_Config": {
                     "Cost_To_Consumer": 0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Primary_Decay_Time_Constant": 1825,
@@ -166,13 +146,13 @@
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 0,
                 "Travel_Linked": 0,
-                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config": 
-            { 
+            "Event_Name": "SIA Calendar",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
             "Start_Day": 1200,

@@ -9,6 +9,8 @@
         },
         "PRIMARY": {
             "Config_Name": "34_Generic_Namawala",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 180

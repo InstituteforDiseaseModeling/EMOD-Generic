@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -38,6 +38,7 @@ namespace Kernel
         , max_duration(0.0f)
         , action_timer(0.0f)
         , reversion_timer(0.0f)
+        , distribution( DistributionFactory::CreateDistribution ( DistributionFunction::EXPONENTIAL_DISTRIBUTION ) )
     {
     }
 
@@ -49,6 +50,7 @@ namespace Kernel
         , max_duration( rThat.max_duration )
         , action_timer( 0.0f )
         , reversion_timer( rThat.reversion_timer )
+        , distribution( DistributionFactory::CreateDistribution ( DistributionFunction::EXPONENTIAL_DISTRIBUTION ) )
     {
     }
 
@@ -77,8 +79,7 @@ namespace Kernel
     bool NodePropertyValueChanger::Distribute( INodeEventContext *pNodeEventContext, IEventCoordinator2 *pEC )
     {
         if( probability < 1.0 )
-        {
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( DistributionFunction::EXPONENTIAL_DISTRIBUTION ) );
+        {            
             distribution->SetParameters( (double)probability, (double)0.0, (double)0.0 );
             action_timer = distribution->Calculate( pNodeEventContext->GetRng() );
 

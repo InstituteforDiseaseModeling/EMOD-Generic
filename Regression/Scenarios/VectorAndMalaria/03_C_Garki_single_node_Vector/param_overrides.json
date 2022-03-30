@@ -27,6 +27,8 @@
         },
         "PRIMARY": {
             "Config_Name": "VectorAndMalaria_3C_Garki_single_node_Vector",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Garki_Single",
             "Run_Number": 1,
             "Simulation_Duration": 3650,

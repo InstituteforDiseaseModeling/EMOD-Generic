@@ -1,69 +1,59 @@
 {
-    "Use_Defaults": 1,
-    "Campaign_Name": "DrawBlood validation", 
+    "Campaign_Name": "DrawBlood validation",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Event_Name": "Outbreak",
-            "Start_Day": 1,
-
-            ".class": "CampaignEventByYear",
             ".Start_Year": 1980,
-
+            ".class": "CampaignEventByYear",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.3,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-
-            "Event_Coordinator_Config": {
-                "Intervention_Config": {
-                    "Event_Name": "Outbreak (not used)", 
-                    "Antigen": 0, 
-                    "Genome": 0, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1,
-                    "class": "OutbreakIndividual"
-                }, 
-                "Target_Demographic": "Everyone", 
-                "Demographic_Coverage": 0.3,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Travel_Linked": 0 
-            }
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 360,
-
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "CD4Diagnostic",
+                "Intervention_Config": {
                     "CD4_Thresholds": [
                         {
-                            "Low": 100,
+                            "Event": "CD4Measured0",
                             "High": 500,
-                            "Event": "CD4Measured0"
+                            "Low": 100
                         },
                         {
-                            "Low": 500,
+                            "Event": "CD4Measured1",
                             "High": 530,
-                            "Event": "CD4Measured1"
+                            "Low": 500
                         },
                         {
-                            "Low": 530,
+                            "Event": "CD4Measured2",
                             "High": 600,
-                            "Event": "CD4Measured2"
+                            "Low": 530
                         }
-                    ]
-                }
-            }
+                    ],
+                    "class": "CD4Diagnostic"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 360,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

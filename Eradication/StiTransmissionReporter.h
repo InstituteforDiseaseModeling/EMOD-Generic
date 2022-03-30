@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISimulation.h"
 #include "IIndividualHuman.h"
 #include "ExternalNodeId.h"
+#include "Properties.h"
 
 namespace Kernel
 {
@@ -34,6 +35,7 @@ namespace Kernel
         bool source_has_sti;
         bool source_is_superspreader;
         float source_infection_age;
+        IPKeyValueContainer source_ip;
         unsigned long destination_id;
         bool destination_is_infected;
         unsigned int destination_gender;
@@ -45,6 +47,7 @@ namespace Kernel
         unsigned int destination_is_circumcised;
         bool destination_has_sti;
         bool destination_is_superspreader;
+        IPKeyValueContainer destination_ip;
     };
 
     struct IIndividualHumanSTI;
@@ -55,8 +58,10 @@ namespace Kernel
         static IReport* Create(ISimulation* simulation);
 
         // IReport
-        virtual void BeginTimestep();
-        virtual void EndTimestep( float currentTime, float dt );
+        virtual bool Configure( const Configuration* inputJson ) override;
+        virtual void Initialize( unsigned int nrmSize ) override;
+        virtual void BeginTimestep() override;
+        virtual void EndTimestep( float currentTime, float dt ) override;
 
     protected:
         StiTransmissionReporter();
@@ -76,5 +81,7 @@ namespace Kernel
 
         // member variables
         std::vector<StiTransmissionInfo> report_data;
+        jsonConfigurable::tDynamicStringSet properties_to_report;
+        std::vector<IPKey> keys_to_report;
     };
 }

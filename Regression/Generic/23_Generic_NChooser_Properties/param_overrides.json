@@ -1,15 +1,19 @@
 {
-    "Default_Config_Path": "../../defaults/generic_default_config.json", 
+    "Default_Config_Path": "../../defaults/generic_default_config.json",
     "parameters": {
-        "Config_Name": "23_Generic_NChooser_Properties", 
-        "Geography": "SamplesInput", 
-        "Simulation_Duration": 120, 
-        "Run_Number": 1,
-        "x_Base_Population": 1.0, 
-        "Demographics_Filenames": [ "NChooser_demographics_with_properties.json" ],
+        "Config_Name": "23_Generic_NChooser_Properties",
         "Custom_Individual_Events": [
             "Vaccinated",
             "VaccineExpired"
-        ]
+        ],
+        "Demographics_Filenames": [
+            "NChooser_demographics_with_properties.json"
+        ],
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
+        "Geography": "SamplesInput",
+        "Run_Number": 1,
+        "Simulation_Duration": 120,
+        "x_Base_Population": 1.0
     }
 }

@@ -1,119 +1,97 @@
-
-{ 
-    "Use_Defaults": 1,
-        "Campaign_Name": "Cohort of newborns all born in 2020",
-        "Events": [
-        { 
-            "class": "CampaignEventByYear",
+{
+    "Campaign_Name": "Cohort of newborns all born in 2020",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.5,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Event_Name": "Initialize HIV infection at age 20",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Start_Year": 2020,
-            "Nodeset_Config": 
-            { 
-                "class": "NodeSetAll"
-            },
-            "Event_Coordinator_Config":
-            { 
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
+            "class": "CampaignEventByYear"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.5,
+                "Intervention_Config": {
+                    "class": "ARTBasic"
+                },
+                "Target_Demographic": "Everyone",
                 "Travel_Linked": 0,
-                "Intervention_Config": 
-                { 
-                    "class": "OutbreakIndividual",
-                    "Event_Name": "Outbreak (not used)",
-                    "Outbreak_Source": "PrevalenceIncrease",
-                    "Incubation_Period_Override": 1,
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
-         },
-        { 
-            "class": "CampaignEventByYear",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Event_Name": "Half initiate ART",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Start_Year": 2021,
-            "Nodeset_Config": 
-            { 
+            "class": "CampaignEventByYear"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "ARTBasic"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Everyone initiates ART",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config":
-            { 
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.5,
-                "Travel_Linked": 0,
-                "Intervention_Config": 
-                { 
-                "class": "ARTBasic"
-                }
-            }
-        },
-              { 
-            "class": "CampaignEventByYear",
-            "Event_Name": "Everyone initiates ART",
             "Start_Year": 2030,
-            "Nodeset_Config": 
-            { 
-                "class": "NodeSetAll"
-            },
-            "Event_Coordinator_Config":
-            { 
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1,
-                "Travel_Linked": 0,
-                "Intervention_Config": 
-                { 
-                "class": "ARTBasic"
-                }
-            }
+            "class": "CampaignEventByYear"
         },
-       { 
-            "class": "CampaignEventByYear",
-            "Event_Name": "Initialize HIV infection at age 50",
-            "Start_Year": 2050,
-            "Nodeset_Config": 
-            { 
-                "class": "NodeSetAll"
-            },
-            "Event_Coordinator_Config":
-            { 
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Travel_Linked": 0,
-                "Intervention_Config": 
-                { 
-                    "class": "OutbreakIndividual",
+                "Intervention_Config": {
                     "Event_Name": "Outbreak (not used)",
-                    "Outbreak_Source": "PrevalenceIncrease",
                     "Incubation_Period_Override": 1,
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
-         },
-              { 
-            "class": "CampaignEventByYear",
-            "Event_Name": "Everyone initiates ART",
-            "Start_Year": 2051,
-            "Nodeset_Config": 
-            { 
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Initialize HIV infection at age 50",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config":
-            { 
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
+            "Start_Year": 2050,
+            "class": "CampaignEventByYear"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "ARTBasic"
+                },
+                "Target_Demographic": "Everyone",
                 "Travel_Linked": 0,
-                "Intervention_Config": 
-                { 
-                "class": "ARTBasic"
-                }
-            }
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Everyone initiates ART",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Year": 2051,
+            "class": "CampaignEventByYear"
         }
-         
-   
-    ]
+    ],
+    "Use_Defaults": 1
 }

@@ -19,7 +19,7 @@
                 "Airport": 0, 
                 "Region": 1, 
                 "Seaport": 0, 
-                "InitialPopulation": 5, 
+                "InitialPopulation": 100, 
                 "BirthRate": 0.0000548
             }, 
             "IndividualAttributes": {

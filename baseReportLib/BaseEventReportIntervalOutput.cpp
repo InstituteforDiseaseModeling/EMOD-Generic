@@ -1,7 +1,7 @@
 
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -76,7 +76,7 @@ namespace Kernel
         release_assert( m_pMulticoreDataExchange );
 
         initConfigTypeMap( "Reporting_Interval", &m_reporting_interval, Reporting_Interval_DESC_TEXT, 1, 1000000, 1000000);
-        initConfigTypeMap( "Max_Number_Reports", &m_max_number_reports, Max_Number_Reports_DESC_TEXT, 0, 1000000, 1);
+        initConfigTypeMap( "Max_Number_Reports", &m_max_number_reports, Max_Number_Reports_DESC_TEXT, 1, 1000000, 1);
         initConfigTypeMap( "Pretty_Format",      &m_PrettyFormat,       Pretty_Format_DESC_TEXT, false );
 
         bool ret = BaseEventReport::Configure( inputJson );

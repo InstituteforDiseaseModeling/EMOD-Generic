@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -21,7 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 SETUP_LOGGING( "Outbreak" )
 
 // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->number_substrains in DLL
+// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
 
 #define MAX_INDIVIDUAL_AGE_IN_YRS (120)
 
@@ -42,15 +42,12 @@ namespace Kernel
     Outbreak::Outbreak() : import_age(DAYSPERYEAR)
     {
         initSimTypes( 10, "GENERIC_SIM" , "VECTOR_SIM" , "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM" );
-        initConfigTypeMap( "Antigen", &antigen, Antigen_DESC_TEXT, 0, 10, 0 );
+        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
         initConfigTypeMap( "Genome",  &genome,  Genome_DESC_TEXT, -1, 16777216, 0 );
         initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT,-1, INT_MAX, -1);
     }
 
-    bool
-    Outbreak::Configure(
-        const Configuration * inputJson
-    )
+    bool Outbreak::Configure(const Configuration * inputJson)
     {
         initConfigTypeMap( "Number_Cases_Per_Node",  &num_cases_per_node,  Num_Import_Cases_Per_Node_DESC_TEXT, 0, INT_MAX, 1 );
         initConfigTypeMap( "Import_Age", &import_age, Import_Age_DESC_TEXT, 0, MAX_INDIVIDUAL_AGE_IN_YRS*DAYSPERYEAR, DAYSPERYEAR );
@@ -89,7 +86,7 @@ namespace Kernel
         StrainIdentity *outbreak_strainID = nullptr;
 
         // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        // NO usage of GET_CONFIGURABLE(SimulationConfig)->number_substrains in DLL
+        // NO usage of GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
         IGlobalContext *pGC = nullptr;
         const SimulationConfig* simConfigObj = nullptr;
         if (s_OK == context->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
@@ -101,14 +98,12 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
         }
 
-        //if (( antigen < 0 ) || ( antigen >= simConfigObj->number_basestrains ))
-        if( antigen < 0 )
+        if( clade < 0 )
         {
-            //throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "antigen", antigen, "number_basestrains", simConfigObj->number_basestrains );
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "antigen", antigen, 0 );
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "clade", clade, 0 );
         }
 
-        outbreak_strainID = _new_ StrainIdentity(antigen, genome);
+        outbreak_strainID = _new_ StrainIdentity(clade, genome);
 
         return outbreak_strainID;
     }
@@ -119,7 +114,7 @@ namespace Kernel {
     template<class Archive>
     void serialize(Archive &ar, Outbreak &ob, const unsigned int v)
     {
-        ar & ob.antigen;
+        ar & ob.clade;
         ar & ob.genome;
         ar & ob.import_age;
     }

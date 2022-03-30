@@ -7,9 +7,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.3,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -30,6 +28,7 @@
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
                     "Broadcast_Event": "HIVNeedsHIVTest",
+                    "Delay_Period_Constant": 2,
                     "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                     "Disqualifying_Properties": [
                         "InterventionStatus:InterventionStatus_1",
@@ -38,8 +37,7 @@
                     ],
                     "New_Property_Value": "InterventionStatus:InterventionStatus_4",
                     "Single_Use": 1,
-                    "class": "HIVDelayedIntervention",
-                    "Delay_Period_Constant": 2
+                    "class": "HIVDelayedIntervention"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -78,6 +78,7 @@ public:
     void SetAugmentor( IChannelDataMapOutputAugmentor* pAugmentor ) { p_output_augmentor = pAugmentor; }
 
     void SetStartStopYears( float start, float stop );
+    void SetStartTime(float time);
 
     typedef std::map<  std::string, channel_data_t > channel_data_map_t;
     typedef std::pair< std::string, channel_data_t > channel_data_map_element_t;
@@ -88,4 +89,5 @@ private:
     IChannelDataMapOutputAugmentor* p_output_augmentor ;
     float start_year;
     float stop_year;
+    float start_time;
 };

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -81,7 +81,7 @@ namespace Kernel
                 {
                     if (tmp_infectiousnessOral > 0.0f)
                     {
-                        LOG_DEBUG_F("Depositing %f to route %s: (antigen=%d, substain=%d)\n", tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetAntigenID(), tmp_strainID.GetGeneticID());
+                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
                         infectiousness += infection->GetInfectiousnessByRoute(string("contact"));
                     }
@@ -90,7 +90,7 @@ namespace Kernel
                 {
                     if (tmp_infectiousnessFecal > 0.0f)
                     {
-                        LOG_DEBUG_F("Depositing %f to route %s: (antigen=%d, substain=%d)\n", tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetAntigenID(), tmp_strainID.GetGeneticID());    
+                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());    
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL );
                         infectiousness += infection->GetInfectiousnessByRoute(string("environmental"));
                     }
@@ -145,17 +145,13 @@ namespace Kernel
                 infectingStrain.SetGeneticID( 2 );
                 exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTDOOR;
             }
-            else if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL)
-            {
-                infectingStrain.SetGeneticID( 0 );
-            }
             else if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_CONTACT)
             {
                 infectingStrain.SetGeneticID( 1 );
             }
-            else
-            {
-                // #pragma message( "TODO - " __FUNCTION__ )
+            else    // if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL)
+            { 
+                infectingStrain.SetGeneticID( 0 );
             }
 
             IndividualHuman::AcquireNewInfection( &infectingStrain, incubation_period_override );

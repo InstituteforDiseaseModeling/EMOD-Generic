@@ -1,50 +1,52 @@
 {
-    "Use_Defaults": 1,
     "Campaign_Name": "",
     "Events": [
         {
             "Description": "All males broadcast HIVNeedsMaleCircumcision",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Broadcast_Event": "HIVNeedsMaleCircumcision",
+                    "class": "BroadcastEvent"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Male",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "ExplicitGender",
-                "Target_Gender": "Male",
-                "Demographic_Coverage": 1,
-                "Intervention_Config": {
-                    "class": "BroadcastEvent",
-                    "Broadcast_Event": "HIVNeedsMaleCircumcision"
-                }
-            }
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
             "Description": "Only Accessibility:Yes receives MaleCircumcision",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
-            "Nodeset_Config": {
-                "class": "NodeSetAll"
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
+                    "Actual_IndividualIntervention_Config": {
+                        "Circumcision_Reduced_Acquire": 0.6,
+                        "class": "MaleCircumcision"
+                    },
+                    "Property_Restrictions_Within_Node": [
+                        {
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
+                        }
+                    ],
                     "Trigger_Condition_List": [
                         "HIVNeedsMaleCircumcision"
                     ],
-                    "Property_Restrictions_Within_Node": [
-                        {
-                            "Accessibility": "Yes"
-                        }
-                    ],
-                    "Actual_IndividualIntervention_Config": {
-                        "class": "MaleCircumcision",
-                        "Circumcision_Reduced_Acquire": 0.6
-                    }
-                }
-            }
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

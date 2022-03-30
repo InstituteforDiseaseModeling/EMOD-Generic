@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -175,17 +175,17 @@ namespace Kernel
 
     TransmissionGroupsBase::ContagionPopulationImpl::ContagionPopulationImpl( IStrainIdentity * strain, float quantity )
     : contagionQuantity(quantity)
-    , antigenId( strain->GetAntigenID() )
+    , cladeId( strain->GetCladeID() )
     {
-        LOG_DEBUG_F( "Creating contagion population with antigen id %d and quantity %f\n", antigenId, contagionQuantity );
+        LOG_DEBUG_F( "Creating contagion population with clade id %d and quantity %f\n", cladeId, contagionQuantity );
     }
 
-    AntigenId TransmissionGroupsBase::ContagionPopulationImpl::GetAntigenID() const
+    int TransmissionGroupsBase::ContagionPopulationImpl::GetCladeID() const
     {
-        return antigenId;
+        return cladeId;
     }
 
-    AntigenId TransmissionGroupsBase::ContagionPopulationImpl::GetGeneticID() const
+    int TransmissionGroupsBase::ContagionPopulationImpl::GetGeneticID() const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for ContagionPopulationImpl" );
@@ -198,7 +198,7 @@ namespace Kernel
 
     void TransmissionGroupsBase::ContagionPopulationImpl::ResolveInfectingStrain( IStrainIdentity* strainId ) const
     {
-        strainId->SetAntigenID(antigenId);
+        strainId->SetCladeID(cladeId);
         strainId->SetGeneticID(0);
     }
 

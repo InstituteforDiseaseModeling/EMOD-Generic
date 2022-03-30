@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2016 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -35,8 +35,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "GenomeMarkers.h"
 #include "MalariaParameters.h"
 #include "MalariaDrugTypeParameters.h"
-#include "Infection.h"
 #endif
+
+#include "Infection.h"
 
 #ifdef ENABLE_POLIO
 #include "PolioParameters.h"
@@ -71,7 +72,6 @@ SimulationConfig* SimulationConfigFactory::CreateInstance(Configuration * config
     release_assert(SimConfig);
     if (SimConfig)
     {           
-        SimConfig->SetFixedParameters(config);
         if (SimConfig->Configure(config))
         {
             SimConfig->AddRef();
@@ -106,45 +106,6 @@ SimulationConfig::~SimulationConfig()
 {
 }
 
-void SimulationConfig::SetFixedParameters(Configuration * inputJson)
-{
-    SimType::Enum sim_type;
-    initConfig("Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType))); // simulation only (???move)
-
-    switch (sim_type)
-    {
-    case SimType::MALARIA_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Maternal_Protection", 0 );
-        break;
-    case SimType::HIV_SIM:
-        inputJson->Add("Enable_Disease_Mortality", 1);
-        inputJson->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
-        inputJson->Add("Enable_Immune_Decay", 0);   //must exist because Enable_Immunity: 1
-        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 0); //must exist because Enable_Immunity: 1
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
-        inputJson->Add("Enable_Vital_Dynamics", 1);
-        break;
-    case SimType::TYPHOID_SIM:
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 0);  //must exist because fixed-off and depends on Enable_Birth
-        break;
-    case SimType::DENGUE_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
-        break;
-    case SimType::POLIO_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 1);
-        inputJson->Add("Enable_Superinfection", 1);
-        inputJson->Add("Enable_Disease_Mortality", 1);
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 0); //must exist because fixed-off and depends on Enable_Birth
-        break;
-    }
-}
-
 bool SimulationConfig::Configure(const Configuration * inputJson)
 {
     LOG_DEBUG( "Configure\n" );
@@ -165,7 +126,6 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
     initConfigTypeMap( "Simulation_Duration", &Sim_Duration, Simulation_Duration_DESC_TEXT, 0.0f, 1000000.0f, 1.0f ); // 'global'? (controller only)
     initConfigTypeMap( "Simulation_Timestep", &Sim_Tstep,    Simulation_Timestep_DESC_TEXT, 0.0f, 1000000.0f, 1.0f ); // 'global'? (controller only)
     initConfigTypeMap( "Start_Time",          &starttime,    Start_Time_DESC_TEXT,          0.0f, 1000000.0f, 1.0f ); // simulation only (actually Climate also!)
-    initConfigTypeMap( "Config_Name",         &ConfigName,   Config_Name_DESC_TEXT );
 
     bool demographics_builtin = false;
     initConfigTypeMap( "Enable_Demographics_Builtin",               &demographics_builtin,    Enable_Demographics_Builtin_DESC_TEXT, false ); // 'global' (3 files)
@@ -270,36 +230,11 @@ SimulationConfig::SimulationConfig()
     , default_node_population( 1000 )
     , lloffset(0) 
     , interventions(false)
-    , airtemperature(-42.0f)
-    , landtemperature(-42.0f)
-    , rainfall(-42.0f)
-    , humidity(-42.0f)
-    , airtemperature_offset(-42.0f)
-    , landtemperature_offset(-42.0f)
-    , rainfall_scale_factor(-42.0f)
-    , humidity_scale_factor(-42.0f)
-    , airtemperature_variance(-42.0f)
-    , landtemperature_variance(-42.0f)
-    , rainfall_variance_enabled(false)
-    , humidity_variance(-42.0f)
     , heterogeneous_intranode_transmission_enabled(false)
     , Sim_Duration(-42.0f)
     , Sim_Tstep(-42.0f)
     , starttime(0.0f)
     , node_grid_size(0.0f)
-    , Run_Number(-42)
-    , ConfigName("UNSPECIFIED")
-    , airmig_filename("UNSPECIFIED")
-    , campaign_filename("UNSPECIFIED")
-    , climate_airtemperature_filename("UNSPECIFIED")
-    , climate_koppen_filename("UNSPECIFIED")
-    , climate_landtemperature_filename("UNSPECIFIED")
-    , climate_rainfall_filename("UNSPECIFIED")
-    , climate_relativehumidity_filename("UNSPECIFIED")
-    , loadbalance_filename("UNSPECIFIED")
-    , localmig_filename("UNSPECIFIED")
-    , regionmig_filename("UNSPECIFIED")
-    , seamig_filename("UNSPECIFIED")
     , m_jsonConfig(nullptr)
     , vector_params(nullptr)
     , malaria_params(nullptr)
@@ -363,7 +298,7 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
     initConfigTypeMap( "Enable_Vector_Aging",                 &(vector_params->vector_aging),                        Enable_Vector_Aging_DESC_TEXT, false );
     initConfig( "Temperature_Dependent_Feeding_Cycle", vector_params->temperature_dependent_feeding_cycle, inputJson, MetadataDescriptor::Enum(Temperature_Dependent_Feeding_Cycle_DESC_TEXT, Temperature_Dependent_Feeding_Cycle_DESC_TEXT, MDD_ENUM_ARGS(TemperatureDependentFeedingCycle)) ); // vector pop only
 
-    initConfigTypeMap( "Mean_Egg_Hatch_Delay",                       &(vector_params->meanEggHatchDelay),                   Mean_Egg_Hatch_Delay_DESC_TEXT, 0, 120, 0 );
+    initConfigTypeMap( "Mean_Egg_Hatch_Delay",                       &(vector_params->meanEggHatchDelay),                   Mean_Egg_Hatch_Delay_DESC_TEXT, 0, 120, 0, "Egg_Hatch_Delay_Distribution", "EXPONENTIAL_DISTRIBUTION" );
     initConfigTypeMap( "Wolbachia_Mortality_Modification",           &(vector_params->WolbachiaMortalityModification),      Wolbachia_Mortality_Modification_DESC_TEXT, 0, 100, 1 );
     initConfigTypeMap( "Wolbachia_Infection_Modification",           &(vector_params->WolbachiaInfectionModification),      Wolbachia_Infection_Modification_DESC_TEXT, 0, 100, 1 );
 
@@ -371,10 +306,10 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
 
     initConfigTypeMap( "Temporary_Habitat_Decay_Factor",   &(vector_params->tempHabitatDecayScalar),        Temporary_Habitat_Decay_Factor_DESC_TEXT,   0.001f,    100.0f, 0.05f );
     initConfigTypeMap( "Semipermanent_Habitat_Decay_Rate", &(vector_params->semipermanentHabitatDecayRate), Semipermanent_Habitat_Decay_Rate_DESC_TEXT, 0.0001f,   100.0f, 0.01f );
-    initConfigTypeMap( "Rainfall_In_mm_To_Fill_Swamp",     &(vector_params->mmRainfallToFillSwamp),         Rainfall_In_mm_To_Fill_Swamp_DESC_TEXT,        1.0f, 10000.0f, 1000.0f );
+    initConfigTypeMap( "Rainfall_In_mm_To_Fill_Swamp",     &(vector_params->mmRainfallToFillSwamp),         Rainfall_In_mm_To_Fill_Swamp_DESC_TEXT,     1.0f,    10000.0f, 1000.0f, "Simulation_Type", "VECTOR_SIM, MALARIA_SIM, DENGUE_SIM" );
 
     // This is a key parameter for the mosquito ecology and can vary quite a lot
-    initConfigTypeMap( "x_Temporary_Larval_Habitat", &(vector_params->x_tempLarvalHabitat), x_Temporary_Larval_Habitat_DESC_TEXT, 0.0f, 10000.0f, 1.0f ); // should this be renamed vector_weight?
+    initConfigTypeMap( "x_Larval_Habitats", &(vector_params->x_LarvalHabitats), x_Larval_Habitats_DESC_TEXT, 0.0f, 10000.0f, 1.0f );
 
     vector_params->vector_species_names.value_source = "Vector_Species_Params.*";
     initConfigTypeMap( "Vector_Species_Names", &(vector_params->vector_species_names), Vector_Species_Names_DESC_TEXT );
@@ -473,9 +408,9 @@ void SimulationConfig::MalariaCheckConfig( const Configuration* inputJson )
                                                     "Genome_Markers can only be used with individual vectors (i.e. TRACK_ALL_VECTORS or SAMPLE_IND_VECTORS)." );
         }
 
-        // number_substrains is not configured from the JSON like the other diseases
+        // number_genomes is not configured from the JSON like the other diseases
         // TBD: Would really like to not do it this way, setting node variable from here. TBD revisit.
-        InfectionConfig::number_substrains = malaria_params->pGenomeMarkers->Initialize( malaria_params->genome_marker_names );
+        InfectionConfig::number_genomes = malaria_params->pGenomeMarkers->Initialize( malaria_params->genome_marker_names );
 
         json::Object mdp = (*EnvPtr->Config)["Malaria_Drug_Params"].As<Object>();
         json::Object::const_iterator itMdp;
@@ -513,8 +448,8 @@ void SimulationConfig::MalariaAddSchema( json::QuickBuilder& retJson )
 void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
 {
 #ifdef ENABLE_POLIO
-    InfectionConfig::number_basestrains = 6; // would like to move this here to NodePolio but too late
-    InfectionConfig::number_substrains = 256;
+    InfectionConfig::number_clades   =   6; // would like to move this here to NodePolio but too late
+    InfectionConfig::number_genomes  = 256;
 
     initConfig( "Evolution_Polio_Clock_Type", polio_params->evolution_polio_clock_type, inputJson, MetadataDescriptor::Enum(Evolution_Polio_Clock_Type_DESC_TEXT, Evolution_Polio_Clock_Type_DESC_TEXT, MDD_ENUM_ARGS(EvolutionPolioClockType)) ); // infection (polio) only
     initConfig( "VDPV_Virulence_Model_Type",  polio_params->VDPV_virulence_model_type,  inputJson, MetadataDescriptor::Enum(VDPV_Virulence_Model_Type_DESC_TEXT,  VDPV_Virulence_Model_Type_DESC_TEXT,  MDD_ENUM_ARGS(VDPVVirulenceModelType))  ); // susceptibility polio only
@@ -632,9 +567,9 @@ void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
 
     initConfigTypeMap( "Excrement_Load", &(polio_params->excrement_load), Excrement_Load_DESC_TEXT, 0.0f, 1000.0f, 300.0f );
 
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV1", &tmpSubstrainInfectivityString[0], Substrain_Relative_Infectivity_String_VDPV1_DESC_TEXT );
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV2", &tmpSubstrainInfectivityString[1], Substrain_Relative_Infectivity_String_VDPV2_DESC_TEXT );
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV3", &tmpSubstrainInfectivityString[2], Substrain_Relative_Infectivity_String_VDPV3_DESC_TEXT );
+    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV1", &tmpGenomeInfectivityString[0], Substrain_Relative_Infectivity_String_VDPV1_DESC_TEXT );
+    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV2", &tmpGenomeInfectivityString[1], Substrain_Relative_Infectivity_String_VDPV2_DESC_TEXT );
+    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV3", &tmpGenomeInfectivityString[2], Substrain_Relative_Infectivity_String_VDPV3_DESC_TEXT );
 
     initConfigTypeMap( "Sabin1_Site_Reversion_Rates", &tmpSiteRatesStrings[0], Sabin1_Site_Reversion_Rates_DESC_TEXT );
     initConfigTypeMap( "Sabin2_Site_Reversion_Rates", &tmpSiteRatesStrings[1], Sabin2_Site_Reversion_Rates_DESC_TEXT );
@@ -644,9 +579,9 @@ void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
     initConfigTypeMap( "Vaccine_Genome_OPV2", &(polio_params->vaccine_genome_OPV2), Vaccine_Genome_OPV2_DESC_TEXT, 0, 1023, 1 );
     initConfigTypeMap( "Vaccine_Genome_OPV3", &(polio_params->vaccine_genome_OPV3), Vaccine_Genome_OPV3_DESC_TEXT, 0, 1023, 1 );
 
-    polio_params->vaccine_strains[0] = new StrainIdentity(PolioVirusTypes::VRPV1,0); // sets antigenID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
-    polio_params->vaccine_strains[1] = new StrainIdentity(PolioVirusTypes::VRPV2,0); // sets antigenID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
-    polio_params->vaccine_strains[2] = new StrainIdentity(PolioVirusTypes::VRPV3,0); // sets antigenID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
+    polio_params->vaccine_strains[0] = new StrainIdentity(PolioVirusTypes::VRPV1,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
+    polio_params->vaccine_strains[1] = new StrainIdentity(PolioVirusTypes::VRPV2,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
+    polio_params->vaccine_strains[2] = new StrainIdentity(PolioVirusTypes::VRPV3,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
 
     polio_params->vaccine_strains[0]->SetGeneticID( polio_params->vaccine_genome_OPV1 ); // user-configuration of Sabin genome in OPV, default is zero
     polio_params->vaccine_strains[1]->SetGeneticID( polio_params->vaccine_genome_OPV2 ); // user-configuration of Sabin genome in OPV, default is zero
@@ -657,9 +592,9 @@ void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
 void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
 {
 #ifdef ENABLE_POLIO
-    unsigned int number_substrains = 256;
-    std::vector<float> dummyvect(number_substrains , 1.0f);
-    polio_params->substrainRelativeInfectivity.resize(number_substrains, dummyvect);
+    unsigned int number_genomes = 256;
+    std::vector<float> dummyvect(number_genomes , 1.0f);
+    polio_params->genomeRelativeInfectivity.resize(number_genomes, dummyvect);
 
     // reversion rates for Sabin attenuating sites
     for(int i=0; i<3; ++i)
@@ -668,7 +603,7 @@ void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
         int ptrPosition;
         const char * readStr = tmpSiteRatesStrings[i].c_str();
         float data;
-        size_t maximum_index = 1 + int(log(float(number_substrains)) / log(2.0f));
+        size_t maximum_index = 1 + int(log(float(number_genomes)) / log(2.0f));
         vector<float> tmp_sabin_rates;
         tmp_sabin_rates.resize(maximum_index);
 
@@ -701,22 +636,22 @@ void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
     {
         int nDataRead = 0;
         int ptrPosition;
-        const char * readStr = tmpSubstrainInfectivityString[i].c_str();
+        const char * readStr = tmpGenomeInfectivityString[i].c_str();
         float data;
-        size_t maximum_index = polio_params->substrainRelativeInfectivity[i].size();
+        size_t maximum_index = polio_params->genomeRelativeInfectivity[i].size();
         while (sscanf_s(readStr, "%g%n", &data,  &ptrPosition) == 1)
         {
             if (nDataRead < maximum_index)
             {
-                polio_params->substrainRelativeInfectivity[i][nDataRead] = data;
+                polio_params->genomeRelativeInfectivity[i][nDataRead] = data;
             }
             readStr += ptrPosition;
             ++nDataRead;
         }
 
-        if (nDataRead != number_substrains)
+        if (nDataRead != number_genomes)
         {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead", nDataRead, "number_substrains", number_substrains );
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead", nDataRead, "number_genomes", number_genomes );
         }
     }
     polio_params->decayRatePassiveImmunity = log(2.0f) / polio_params->maternalAbHalfLife; // (days) decayrate=log(2.0)/halflife; Ogra 1968, Warren 1964, Dexiang1956, Plotkin 1959

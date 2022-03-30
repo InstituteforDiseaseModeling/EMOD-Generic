@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -27,8 +27,8 @@ SUITE( GenomeMarkersTest )
         names.push_back( "Marker5" );
 
         GenomeMarkers gm;
-        int num_substrains = gm.Initialize( names );
-        CHECK_EQUAL( 32, num_substrains );
+        int num_permutation = gm.Initialize( names );
+        CHECK_EQUAL( 32, num_permutation );
 
         CHECK_EQUAL( 5, gm.Size() );
         const std::set<std::string>& r_name_set = gm.GetNameSet();
@@ -324,8 +324,8 @@ SUITE( GenomeMarkersTest )
         names.push_back( "D" );
 
         GenomeMarkers gm;
-        int num_substrains = gm.Initialize( names );
-        CHECK_EQUAL( 16, num_substrains );
+        int num_permutation = gm.Initialize( names );
+        CHECK_EQUAL( 16, num_permutation );
 
         std::vector<std::pair<std::string,uint32_t>> combos = gm.CreatePossibleCombinations();
 

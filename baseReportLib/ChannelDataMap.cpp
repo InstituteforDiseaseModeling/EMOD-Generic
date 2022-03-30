@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -37,6 +37,7 @@ ChannelDataMap::ChannelDataMap()
     , p_output_augmentor(nullptr)
     , start_year( -FLT_MAX )
     , stop_year( FLT_MAX )
+    , start_time( -FLT_MAX )
 {
 }
 
@@ -282,6 +283,11 @@ void ChannelDataMap::SetStartStopYears( float start, float stop )
     stop_year = stop;
 }
 
+void ChannelDataMap::SetStartTime(float time)
+{
+    start_time = time;
+}
+
 void ChannelDataMap::WriteOutput( 
     const std::string& filename, 
     std::map<std::string, std::string>& units_map )
@@ -321,7 +327,9 @@ void ChannelDataMap::WriteOutput(
     pIJsonObj->Insert("DTK_Version",         dtk_ver.str().c_str());
     pIJsonObj->Insert("Report_Type",         "InsetChart");
     pIJsonObj->Insert("Report_Version",      "3.2");
-    pIJsonObj->Insert("Start_Time",          (*EnvPtr->Config)["Start_Time"         ].As<Number>() );
+    float cfg_start_time = (*EnvPtr->Config)["Start_Time"].As<Number>();
+    float _start_time = start_time > -FLT_MAX ? start_time : cfg_start_time;
+    pIJsonObj->Insert("Start_Time",          _start_time);
     if( start_year > -FLT_MAX )
     {
         pIJsonObj->Insert("Report_Start_Year", start_year );

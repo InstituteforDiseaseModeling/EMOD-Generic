@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -52,7 +52,7 @@ namespace Kernel
     bool BitingRisk::Configure( const Configuration * inputJson )
     {
         float param1_risk = 0.0, param2_risk = 0.0;
-        DistributionFunction::Enum risk_distribution_function(DistributionFunction::CONSTANT_DISTRIBUTION);
+        DistributionFunction::Enum risk_distribution_function(DistributionFunction::NOT_INITIALIZED);
         initConfig("Risk_Distribution", risk_distribution_function, inputJson, MetadataDescriptor::Enum("Risk_Distribution_Type", BR_Risk_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)));
         m_Distribution = DistributionFactory::CreateDistribution( this, risk_distribution_function, "Risk", inputJson );
        

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -16,7 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IReport.h"
 #include "NoCrtWarnings.h"
 
-#define DLL_LOG(lvl, x, ...)   do { if((EnvPtr !=nullptr) && EnvPtr->Log->CheckLogLevel(Logger::lvl, "DllInterfaceHelper"))  EnvPtr->Log->Log(Logger::lvl, "DllInterfaceHelper", x, ##__VA_ARGS__); } while(0)
+#define DLL_LOG(lvl, x, ...)   do { if((EnvPtr !=nullptr) && (EnvPtr->Log !=nullptr) && EnvPtr->Log->CheckLogLevel(Logger::lvl, "DllInterfaceHelper"))  EnvPtr->Log->Log(Logger::lvl, "DllInterfaceHelper", x, ##__VA_ARGS__); } while(0)
 
 
 namespace Kernel

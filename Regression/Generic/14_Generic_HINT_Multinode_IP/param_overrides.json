@@ -40,6 +40,8 @@
         "PRIMARY": {
             "Config_Name": "14_Generic_HINT_Multinode_IP",
             "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "SamplesInput",
             "Run_Number": 2,
             "Simulation_Duration": 150

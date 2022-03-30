@@ -1,40 +1,37 @@
 {
-     "Use_Defaults": 1,
-     "Campaign_Name": "Generic Seattle Regression Campaign", 
-     "Events": [
+    "Campaign_Name": "Generic Seattle Regression Campaign",
+    "Events": [
         {
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 1.0, 
+                "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Cost_To_Consumer": 10.0, 
-                    "Prime_Acquire": 0.1,
-                    "Prime_Transmit": 0.2, 
-                    "Prime_Mortality": 0.3,
                     "Boost_Acquire": 0.7,
-                    "Boost_Transmit": 0.5,
                     "Boost_Mortality": 1.0,
-                    "Boost_Threshold_Acquire": 0.0,                    
-                    "Boost_Threshold_Transmit": 0.0,                    
+                    "Boost_Threshold_Acquire": 0.0,
                     "Boost_Threshold_Mortality": 0.0,
+                    "Boost_Threshold_Transmit": 0.0,
+                    "Boost_Transmit": 0.5,
+                    "Cost_To_Consumer": 10.0,
+                    "Prime_Acquire": 0.1,
+                    "Prime_Mortality": 0.3,
+                    "Prime_Transmit": 0.2,
                     "class": "IndividualImmunityChanger"
-                }, 
-                "Target_Demographic": "Everyone", 
+                },
+                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 1, 
+            },
+            "Start_Day": 1,
             "class": "CampaignEvent"
         },
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
-                    "Ignore_Immunity": 0
+                    "Ignore_Immunity": 0,
+                    "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -48,37 +45,35 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 1.0, 
+                "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Cost_To_Consumer": 10.0, 
-                    "Prime_Acquire": 0.1,
-                    "Prime_Transmit": 0.2, 
-                    "Prime_Mortality": 0.3,
                     "Boost_Acquire": 0.7,
-                    "Boost_Transmit": 0.7,
                     "Boost_Mortality": 1.0,
-                    "Boost_Threshold_Acquire": 0.2,                    
-                    "Boost_Threshold_Transmit": 0.1,                    
+                    "Boost_Threshold_Acquire": 0.2,
                     "Boost_Threshold_Mortality": 0.1,
+                    "Boost_Threshold_Transmit": 0.1,
+                    "Boost_Transmit": 0.7,
+                    "Cost_To_Consumer": 10.0,
+                    "Prime_Acquire": 0.1,
+                    "Prime_Mortality": 0.3,
+                    "Prime_Transmit": 0.2,
                     "class": "IndividualImmunityChanger"
-                }, 
-                "Target_Demographic": "Everyone", 
+                },
+                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 10, 
+            },
+            "Start_Day": 10,
             "class": "CampaignEvent"
         },
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
-                    "Ignore_Immunity": 0
+                    "Ignore_Immunity": 0,
+                    "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -92,37 +87,35 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 1.0, 
+                "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Cost_To_Consumer": 10.0, 
-                    "Prime_Acquire": 0.1,
-                    "Prime_Transmit": 0.2, 
-                    "Prime_Mortality": 0.3,
                     "Boost_Acquire": 0.7,
-                    "Boost_Transmit": 0.7,
                     "Boost_Mortality": 1.0,
-                    "Boost_Threshold_Acquire": 0.1,                    
-                    "Boost_Threshold_Transmit": 0.1,                    
+                    "Boost_Threshold_Acquire": 0.1,
                     "Boost_Threshold_Mortality": 0.1,
+                    "Boost_Threshold_Transmit": 0.1,
+                    "Boost_Transmit": 0.7,
+                    "Cost_To_Consumer": 10.0,
+                    "Prime_Acquire": 0.1,
+                    "Prime_Mortality": 0.3,
+                    "Prime_Transmit": 0.2,
                     "class": "IndividualImmunityChanger"
-                }, 
-                "Target_Demographic": "Everyone", 
+                },
+                "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 20, 
+            },
+            "Start_Day": 20,
             "class": "CampaignEvent"
         },
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
-                    "Ignore_Immunity": 0
+                    "Ignore_Immunity": 0,
+                    "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -134,5 +127,6 @@
             "Start_Day": 25,
             "class": "CampaignEvent"
         }
-     ]
+    ],
+    "Use_Defaults": 1
 }

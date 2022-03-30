@@ -19,7 +19,7 @@
                         "Births",
                         "EveryUpdate",
                         "EveryTimeStep",
-                        "NewInfectionEvent",
+                        "NewInfection",
                         "NewClinicalCase",
                         "NewSevereCase",
                         "DiseaseDeaths",
@@ -108,7 +108,7 @@
                   "class": "NodeSetAll"
                 },
                 "Event_Trigger_List": [
-                  "NewInfectionEvent",
+                  "NewInfection",
                   "Received_Treatment",
                   "Received_RCD_Drugs"
                 ],

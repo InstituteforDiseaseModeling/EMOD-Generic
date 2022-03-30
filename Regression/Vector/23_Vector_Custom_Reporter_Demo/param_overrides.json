@@ -24,6 +24,8 @@
         "PRIMARY": {
             "Config_Name": "23_Vector_Custom_Reporter_Demo",
             "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Simulation_Duration": 730
         }

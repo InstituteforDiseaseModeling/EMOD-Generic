@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -122,8 +122,9 @@ namespace Kernel
     void IndividualHumanVector::UpdateGroupPopulation(float size_changes)
     {
         // Update nodepool population for both human-vector and vector-human since we use the same normalization for both
-        parent->UpdateTransmissionGroupPopulation({{"indoor","human"},{"outdoor","human"}}, size_changes, this->GetMonteCarloWeight());
-        LOG_DEBUG_F("updated population for both human and vector, with size change %f and monte carlo weight %f.\n", size_changes, this->GetMonteCarloWeight());
+        float host_vector_weight = float(GetMonteCarloWeight() * GetRelativeBitingRate());
+        parent->UpdateTransmissionGroupPopulation({{"indoor","human"},{"outdoor","human"}}, size_changes, host_vector_weight);
+        LOG_DEBUG_F("updated population for both human and vector, with size change %f and monte carlo weight %f.\n", size_changes, host_vector_weight);
     }
 
     void IndividualHumanVector::ApplyTotalBitingExposure()

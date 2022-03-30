@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -54,7 +54,7 @@ namespace Kernel
     float InfectionTBConfig::TB_Drug_Efficacy_Multiplier_Relapsed = 0.0f;
     float InfectionTBConfig::TB_MDR_Fitness_Multiplier = 0.0f;
     float InfectionTBConfig::TB_relapsed_to_active_rate = 0.0f;
-    DistributionFunction::Enum InfectionTBConfig::TB_active_period_distribution = DistributionFunction::EXPONENTIAL_DISTRIBUTION;
+    DistributionFunction::Enum InfectionTBConfig::TB_active_period_distribution = DistributionFunction::NOT_INITIALIZED;
     float InfectionTBConfig::TB_active_period_std_dev = 0.0f;
     map <float,float> InfectionTBConfig::CD4_map;
     vector <float> InfectionTBConfig::CD4_strata_act_vec;
@@ -309,14 +309,6 @@ namespace Kernel
 
         _immunity->InitNewInfection();
 
-        if (InfectionConfig::incubation_distribution->GetType() != DistributionFunction::EXPONENTIAL_DISTRIBUTION )
-        {
-            LOG_DEBUG("TB incubation timers will use exponential distributions in spite of 'incubation_distribution' settings\n");
-        }
-        if (InfectionConfig::infectious_distribution->GetType() != InfectionTBConfig::TB_active_period_distribution)
-        {
-            LOG_DEBUG("TB active period timers will use the TB_active_period_distribution, NOT the infectious_distribution \n");
-        }
         InitializeLatentInfection(_immunity);
 
     }

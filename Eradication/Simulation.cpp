@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -647,6 +647,10 @@ namespace Kernel
                 p_cr_config = Configuration::CopyFromElement( (*p_config)["Custom_Reports"], p_config->GetDataLocation() );
                 delete p_config ;
             }
+            else
+            {
+                throw Kernel::FileNotFoundException(__FILE__, __LINE__, __FUNCTION__, custom_reports_filename.c_str());
+            }
         }
 
         return p_cr_config ;
@@ -661,6 +665,29 @@ namespace Kernel
                                 (int(p_cr_config->operator[]( "Use_Explicit_Dlls" ).As<json::Number>()) != 1) ;
 
         LOG_INFO_F("Found %d Custom Report DLL's to consider loading, load_all_reports=%d\n", rReportInstantiatorMap.size(), load_all_reports );
+
+        // Verify that a DLL exists for each report defined in the custom reports file
+        if( p_cr_config )
+        {
+            auto custom_reports_config = p_cr_config->As<json::Object>();
+            for( auto it = custom_reports_config.Begin(); it != custom_reports_config.End(); ++it )
+            {
+                std::string reportname(it->name);
+                if( reportname != "Use_Explicit_Dlls" &&  rReportInstantiatorMap.find( reportname ) == rReportInstantiatorMap.end() )
+                {
+                    //check if report is enabled
+                    json::QuickInterpreter dll_data = p_cr_config->operator[]( reportname ).As<json::Object>();
+                    if( int( dll_data["Enabled"].As<json::Number>() ) != 0 )
+                    {
+                        //Dll not found
+                        std::stringstream ss;
+                        ss << reportname << " (dll)";
+                        throw Kernel::FileNotFoundException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+                    }                    
+                }
+            }
+        }
+
         for( auto ri_entry : rReportInstantiatorMap )
         {
             std::string class_name = ri_entry.first ;

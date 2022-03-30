@@ -1,75 +1,65 @@
 {
-    "Use_Defaults": 1,
-    "Campaign_Name": "DrawBlood validation", 
+    "Campaign_Name": "DrawBlood validation",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Event_Name": "Outbreak",
-            "Start_Day": 1,
-
-            ".class": "CampaignEventByYear",
             ".Start_Year": 1980,
-
+            ".class": "CampaignEventByYear",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.3,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-
-            "Event_Coordinator_Config": {
-                "Intervention_Config": {
-                    "Event_Name": "Outbreak (not used)", 
-                    "Antigen": 0, 
-                    "Genome": 0, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1,
-                    "class": "OutbreakIndividual"
-                }, 
-                "Target_Demographic": "Everyone", 
-                "Demographic_Coverage": 0.3,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Travel_Linked": 0 
-            }
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 360,
-
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "AgeDiagnostic",
+                "Intervention_Config": {
                     "Age_Thresholds": [
                         {
-                            "Low": 0,
+                            "Event": "AgeMeasured0",
                             "High": 15,
-                            "Event": "AgeMeasured0"
+                            "Low": 0
                         },
                         {
-                            "NOTE": "Age ranges need not be exclusive.  This event and the next will ffire for a 20 year old.",
-                            "Low": 15,
+                            "Event": "AgeMeasured1",
                             "High": 25,
-                            "Event": "AgeMeasured1"
-                        },
-                        {
                             "Low": 15,
-                            "High": 50,
-                            "Event": "AgeMeasured2"
+                            "NOTE": "Age ranges need not be exclusive.  This event and the next will ffire for a 20 year old."
                         },
                         {
-                            "Low": 50,
+                            "Event": "AgeMeasured2",
+                            "High": 50,
+                            "Low": 15
+                        },
+                        {
+                            "Event": "AgeMeasured3",
                             "High": 100,
-                            "Event": "AgeMeasured3"
+                            "Low": 50
                         }
-                    ]
-                }
-            }
+                    ],
+                    "class": "AgeDiagnostic"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 360,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

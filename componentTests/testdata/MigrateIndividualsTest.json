@@ -4,8 +4,8 @@
     "NodeID_To_Migrate_To": 2,
     "Is_Family_Trip": 0,
     "Is_Moving": 0,
-    "Duration_At_Node_Mean": 9.0,
-    "Duration_At_Node_Std_Dev": 2.0,
+    "Duration_At_Node_Gaussian_Mean": 9.0,
+    "Duration_At_Node_Gaussian_Std_Dev": 2.0,
     "Duration_Before_Leaving_Constant": 77.0,
     "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
     "Duration_At_Node_Distribution": "GAUSSIAN_DISTRIBUTION"

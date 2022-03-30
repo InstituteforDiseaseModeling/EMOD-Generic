@@ -4,9 +4,9 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Risk_Constant": 0.1,
                     "Risk_Distribution": "CONSTANT_DISTRIBUTION",
-                    "class": "BitingRisk",
-                    "Risk_Constant": 0.1
+                    "class": "BitingRisk"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -19,15 +19,47 @@
         },
         {
             "Event_Coordinator_Config": {
+                "Distributions": [
+                    {
+                        "Age_Ranges_Years": [
+                            {
+                                "Max": 125,
+                                "Min": 0
+                            }
+                        ],
+                        "End_Day": 3,
+                        "Num_Targeted": [
+                            2000
+                        ],
+                        "Property_Restrictions_Within_Node": [],
+                        "Start_Day": 1
+                    }
+                ],
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "class": "NChooserEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 2,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Risk_Constant": 1,
                     "Risk_Distribution": "CONSTANT_DISTRIBUTION",
-                    "class": "BitingRisk",
-                    "Risk_Constant": 1
+                    "class": "BitingRisk"
                 },
                 "Property_Restrictions_Within_Node": [
                     {
-                        "Risk": "HIGH"
+                        "Restrictions": [
+                            "Risk:HIGH"
+                        ]
                     }
                 ],
                 "Target_Demographic": "Everyone",

@@ -128,7 +128,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -208,7 +210,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [

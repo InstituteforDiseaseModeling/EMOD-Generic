@@ -13,10 +13,15 @@ if __name__ == '__main__':
     os.chdir(str(Path(sys.argv[0]).parent))
     sys.path.append( str(Path('../../../shared_embedded_py_scripts').resolve().absolute()) )
 
-import json
+
 import math
 import dtk_test.dtk_sft as sft
-import numpy as np
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
+
 
 
 def application(report_file, debug = False):

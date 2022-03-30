@@ -11,6 +11,8 @@
         "Enable_Maternal_Infection_Transmission": 1,
         "Enable_Maternal_Protection": 0,
         "Enable_Natural_Mortality": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 1,
         "Maternal_Infection_Transmission_Probability": 1,
         "x_Birth": 1,

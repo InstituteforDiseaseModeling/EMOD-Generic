@@ -1,124 +1,100 @@
 {
-    "Use_Defaults": 1,
-    "Campaign_Name": "HIV Outbreak via Prevalence Increase", 
+    "Campaign_Name": "HIV Outbreak via Prevalence Increase",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Event_Name": "Outbreak",
-            "Start_Day": 3,
-
-            ".class": "CampaignEventByYear",
             ".Start_Year": 1980,
-
+            ".class": "CampaignEventByYear",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-
+            "Start_Day": 3,
+            "class": "CampaignEvent"
+        },
+        {
             "Event_Coordinator_Config": {
-                "Intervention_Config": {
-                    "Antigen": 0, 
-                    "Event_Name": "Outbreak (not used)", 
-                    "Genome": 0, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1,
-                    "class": "OutbreakIndividual"
-                }, 
-                "Target_Demographic": "Everyone", 
-                "Demographic_Coverage": 1,
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Travel_Linked": 0 
-            }
-        },
-
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "Male circumcision for initial population", 
-            "Start_Day": 1,
-
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "ExplicitGender",
-                "Target_Gender" : "Male",
                 "Demographic_Coverage": 0.5,
-                "Intervention_Config":
-                {
-                    "class": "MaleCircumcision",
-                    "Circumcision_Reduced_Acquire": 0.6
-                }
-            }
-        },
-
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "HIVNeedsMaleCircumcision: Hand out MaleCircumcision",
-            "Start_Day": 1,
-            "Nodeset_Config":
-            {
+                "Intervention_Config": {
+                    "Circumcision_Reduced_Acquire": 0.6,
+                    "class": "MaleCircumcision"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Male",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Male circumcision for initial population",
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "HIVNeedsMaleCircumcision" ],
-                    "Target_Demographic": "ExplicitGender",
-                    "Target_Gender" : "Male",
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "MaleCircumcision",
-                        "Circumcision_Reduced_Acquire": 0.6
-                    }
-                }
-            }
-        },
-
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "Male circumcision at birth", 
             "Start_Day": 1,
-
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone", 
-                "Property_Restrictions": [],
-
-                "Intervention_Config":
-                {
-                    "class": "BirthTriggeredIV",
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "Circumcision_Reduced_Acquire": 0.6,
+                        "class": "MaleCircumcision"
+                    },
                     "Target_Demographic": "ExplicitGender",
-                    "Target_Gender" : "Male",
-                    "Demographic_Coverage": 1,
-                    "Actual_IndividualIntervention_Config": 
-                    {
-                        "class": "HIVSigmoidByYearAndSexDiagnostic",
+                    "Target_Gender": "Male",
+                    "Trigger_Condition_List": [
+                        "HIVNeedsMaleCircumcision"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "HIVNeedsMaleCircumcision: Hand out MaleCircumcision",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
                         "Days_To_Diagnosis": 0,
                         "Disqualifying_Properties": [],
                         "New_Property_Value": "InterventionStatus:None",
-
-                        "Ramp_Min": 0.05,
-                        "Ramp_Max": 0.60,
+                        "Positive_Diagnosis_Event": "HIVNeedsMaleCircumcision",
+                        "Ramp_Max": 0.6,
                         "Ramp_MidYear": 2000,
+                        "Ramp_Min": 0.05,
                         "Ramp_Rate": 1,
-                        "Positive_Diagnosis_Event": "HIVNeedsMaleCircumcision"
-                    }
-                }
-            }
+                        "class": "HIVSigmoidByYearAndSexDiagnostic"
+                    },
+                    "Demographic_Coverage": 1,
+                    "Target_Demographic": "ExplicitGender",
+                    "Target_Gender": "Male",
+                    "class": "BirthTriggeredIV"
+                },
+                "Property_Restrictions": [],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Male circumcision at birth",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         }
-
-    ]
+    ],
+    "Use_Defaults": 1
 }

@@ -7,6 +7,8 @@
                 "../../HIV/input/PFA_overlay.json",
                 "PFA_overlay_Assort_STI.json"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "MORTALITY": {
                 "Base_Mortality": 0.01,
@@ -29,7 +31,8 @@
             "Simulation_Duration": 1500
         },
         "STI": {
-            "Report_Relationship_Start": 1
+            "Report_Relationship_Start": 1,
+            "Report_Relationship_Start_Individual_Properties": []
         }
     }
 }

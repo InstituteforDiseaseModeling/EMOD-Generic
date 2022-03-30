@@ -1,108 +1,124 @@
 {
-    "COMMENT" : "Infect 10% with gm1, ..., 10% with gm4.  We should see the infections develop multiple markers.",
-    "Use_Defaults": 1,
+    "COMMENT": "Infect 10% with gm1, ..., 10% with gm4.  We should see the infections develop multiple markers.",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [ 1 ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ ] 
-                }
-            }
+                    "Genome_Markers": [],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [ 2 ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "A" ] 
-                }
-            }
+                    "Genome_Markers": [
+                        "A"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    2
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [ 3 ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "B" ] 
-                }
-            }
+                    "Genome_Markers": [
+                        "B"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    3
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [ 4 ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "A", "B" ] 
-                }
-            }
+                    "Genome_Markers": [
+                        "A",
+                        "B"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    4
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1,
+                    "Dont_Allow_Duplicates": 1,
+                    "Dosing_Type": "FullTreatmentCourse",
+                    "Drug_Type": "Chloroquine",
+                    "class": "AntimalarialDrug"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1,
+                    2,
+                    3,
+                    4
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 30,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [ 1,2,3,4 ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1,
-                "Intervention_Config": {
-                     "class": "AntimalarialDrug",
-                     "Dont_Allow_Duplicates" : 1,
-                     "Cost_To_Consumer": 1, 
-                     "Dosing_Type": "FullTreatmentCourse", 
-                     "Drug_Type": "Chloroquine"
-                }
-            }
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

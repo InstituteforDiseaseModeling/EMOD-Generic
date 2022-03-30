@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -815,7 +815,7 @@ namespace Kernel
         else if( trigger == EventTrigger::STINewInfection )
         {
             // ---------------------------------------------------------------------------------------
-            // --- GH-573 - change from NewInfectionEvent to STINewInfection
+            // --- GH-573 - change from NewInfection to STINewInfection
             // --- This change was not made during this bug fix but it is related.
             // --- From the commit "The problem turned out to be that a couple could consumate,
             // --- a partner would decide to migrate and terminate the relationship, and then
@@ -823,7 +823,7 @@ namespace Kernel
             // --- We added this new event so we could capture the state of the person when
             // --- the infection occured.  One should note that one of the people in the relationship
             // --- might not have had their age updated and could appear in a different age bin.
-            // --- This did not occur when using NewInfectionEvent.
+            // --- This did not occur when using NewInfection.
             // ---------------------------------------------------------------------------------------
             data.newly_infected += mc_weight;
             AddTransmittedData( context );

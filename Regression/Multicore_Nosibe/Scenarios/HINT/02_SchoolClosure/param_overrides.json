@@ -2,7 +2,6 @@
     "Default_Config_Path": "defaults/generic_scenario_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
-            "x_Base_Population": 10,
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
                 "Madagascar_Nosibe_2.5arcmin_demographics.json",
@@ -23,7 +22,8 @@
             "Population_Scale_Type": "FIXED_SCALING",
             "SAMPLING": {
                 "Sample_Rate_Birth": 1
-            }
+            },
+            "x_Base_Population": 10
         },
         "DISEASE": {
             "INCUBATION": {
@@ -74,6 +74,8 @@
         },
         "PRIMARY": {
             "Config_Name": "HINT_SchoolClosure -- multicore -- Madagascar_Nosibe",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Madagascar_Nosibe",
             "Run_Number": 1,
             "Simulation_Duration": 150

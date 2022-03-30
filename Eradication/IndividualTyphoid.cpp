@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -407,9 +407,8 @@ namespace Kernel
                         throw CalculatedValueOutOfRangeException( __FILE__, __LINE__, __FUNCTION__, "prob (of exposure)", prob, 1.0 );
                     }
                 }
-                LOG_VALID_F( "Exposing individual %d age %f on route 'environment': prob=%f, infects=%f, immunity=%f, num_exposures=%d, exposure=%f, environment=%f, iv_mult=%f.\n",
-                             GetSuid().data, GetAge(), float(prob), float(infects), float(immunity), int(number_of_exposures), float(exposure), float(exposure), exa
-                           );
+                LOG_VALID_F( "Exposing individual %d age %f on route 'environment': prob=%f, infects=%f, immunity=%f, num_exposures=%d, exposure=%f, environment=%f, iv_mult=%f, dose_attenuation=%f \n",
+                             GetSuid().data, GetAge(), float(prob), float(infects), float(immunity), int(number_of_exposures), float(exposure), float(cp->GetTotalContagion()), exa, eda);
 
                 bool acquire = false; 
                 if ( IndividualHumanConfig::enable_skipping )
@@ -553,7 +552,7 @@ namespace Kernel
                 infectiousness += val;
                 StrainIdentity tmp_strainID;
                 release_assert( transmissionGroupMembershipByRoute.find( route ) != transmissionGroupMembershipByRoute.end() );
-                LOG_DEBUG_F("Depositing %f to route %s: (antigen=%d, substain=%d)\n", val, route.c_str(), tmp_strainID.GetAntigenID(), tmp_strainID.GetGeneticID());
+                LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, route.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                 parent->DepositFromIndividual( tmp_strainID, (float) val, &transmissionGroupMembershipByRoute.at( route ) );
                 //Py_DECREF( vars );
                 //Py_DECREF( py_existing_id_str );
@@ -589,8 +588,8 @@ namespace Kernel
                     float tmp_infectiousnessOral = m_mc_weight * infection->GetInfectiousness() * cda * irt;
                     if (tmp_infectiousnessOral > 0.0f)
                     {
-                        LOG_VALID_F("Individual %d depositing %f to route %s: (antigen=%d, substrain=%d) at time %f in state %s. Intervention factor %f.\n",
-                                    GetSuid().data, tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetAntigenID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep), state_to_report.c_str(), cda
+                        LOG_VALID_F("Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s. Intervention factor %f.\n",
+                                    GetSuid().data, tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep), state_to_report.c_str(), cda
                                    );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
                     } 
@@ -603,8 +602,8 @@ namespace Kernel
                         auto typhoid_node_event = (NodeTyphoidEventContextHost*)(parent->GetEventContext());
                         auto eda = typhoid_node_event->GetEnviroDepositAttenuation( GetProperties() ); 
                         tmp_infectiousnessFecal *= eda;
-                        LOG_VALID_F( "Individual %d depositing %f to route %s: (antigen=%d, substrain=%d) at time %f in state %s..\n",
-                                     GetSuid().data, tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetAntigenID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep)
+                        LOG_VALID_F( "Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s..\n",
+                                     GetSuid().data, tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep)
                                    );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL );
                         ///LOG_DEBUG_F("contagion= %f\n", cp->GetTotalContagion());

@@ -60,6 +60,8 @@
     },
     "PRIMARY": {
         "Config_Name": "17_Malaria_Namawala_AgeConcentrationDrugs_NO_CAMPAIGN_CONST_CLIMATE",
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Run_Number": 67,
         "Simulation_Duration": 365

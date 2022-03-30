@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -34,7 +34,6 @@ static const std::string _report_name        ( "InsetChart.json" );
 const string Report::_new_infections_label   ( "New Infections" );
 const string Report::_infected_fraction_label( "Infected Fraction" );
 const string Report::_hum_infectious_res_label( "Human Infectious Reservoir" );
-const string Report::_log_prev_label( "Log Prevalence" );
 const string Report::_infection_rate_label( "Daily (Human) Infection Rate" );
 //const string Report::_aoi_label( "Mean Age Of Infection" );
 
@@ -147,7 +146,6 @@ Report::populateSummaryDataUnitsMap(
     units_map[_stat_pop_label]                  = "Population";
     units_map["Births"]                         = "Births";
     units_map["Infected"]                       = _infected_fraction_label;
-    units_map[_log_prev_label]                  = "Log Prevalence";
     units_map["Rainfall"]                       = "mm/day";
     units_map["Temperature"]                    = "degrees C";
     units_map[_new_infections_label]            = "";
@@ -179,8 +177,6 @@ Report::postProcessAccumulatedData()
     normalizeChannel( _infection_rate_label, float(_nrmSize) );
 
     // add derived channels
-    addDerivedLogScaleSummaryChannel("Infected", _log_prev_label);
-
     NormalizeSEIRWChannels();
 }
 

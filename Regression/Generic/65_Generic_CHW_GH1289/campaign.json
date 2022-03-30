@@ -4,23 +4,22 @@
             "Event_Coordinator_Config": {
                 "Amount_In_Shipment": 1000,
                 "Days_Between_Shipments": 30,
-                "Max_Distributed_Per_Day": 50,
+                "Demographic_Coverage": 1,
                 "Duration": 700,
-                "Waiting_Period": 7,
-                "Max_Stock": 1000,
+                "Initial_Amount_Constant": 500,
                 "Initial_Amount_Distribution": "CONSTANT_DISTRIBUTION",
                 "Intervention_Config": {
                     "Intervention_List": [
                         {
-                            "class": "SimpleVaccine",
                             "Cost_To_Consumer": 1,
-                            "Vaccine_Type": "AcquisitionBlocking",
-                            "Vaccine_Take": 1,
                             "Efficacy_Is_Multiplicative": 1,
+                            "Vaccine_Take": 1,
+                            "Vaccine_Type": "AcquisitionBlocking",
                             "Waning_Config": {
-                                "class": "WaningEffectConstant",
-                                "Initial_Effect": 0.9
-                            }
+                                "Initial_Effect": 0.9,
+                                "class": "WaningEffectConstant"
+                            },
+                            "class": "SimpleVaccine"
                         },
                         {
                             "Broadcast_Event": "Received_Treatment",
@@ -37,19 +36,22 @@
                     ],
                     "class": "MultiInterventionDistributor"
                 },
+                "Max_Distributed_Per_Day": 50,
+                "Max_Stock": 1000,
                 "Property_Restrictions_Within_Node": [
                     {
-                        "DrugStatus": "None"
+                        "Restrictions": [
+                            "DrugStatus:None"
+                        ]
                     }
                 ],
-                "Demographic_Coverage": 1,
                 "Target_Demographic": "Everyone",
                 "Target_Residents_Only": 0,
                 "Trigger_Condition_List": [
                     "HappyBirthday"
                 ],
-                "class": "CommunityHealthWorkerEventCoordinator",
-                "Initial_Amount_Constant": 500
+                "Waiting_Period": 7,
+                "class": "CommunityHealthWorkerEventCoordinator"
             },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
@@ -58,22 +60,20 @@
             "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 50,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.01,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "PrevalenceIncrease",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 50,
+            "class": "CampaignEvent"
         }
     ],
     "Use_Defaults": 1

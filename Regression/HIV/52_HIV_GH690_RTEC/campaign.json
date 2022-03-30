@@ -1,60 +1,58 @@
 {
-    "Use_Defaults": 1, 
     "Events": [
         {
-            "class": "CampaignEvent", 
-            "Start_Day": 365, 
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.25,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Male",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator", 
-                "Target_Demographic": "ExplicitGender", 
-                "Target_Gender": "Male", 
-                "Demographic_Coverage": 0.25, 
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual", 
-                    "Antigen": 0, 
-                    "Genome": 0, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
-                    "Incubation_Period_Override": 1
-                }
-            }
-        }, 
+            },
+            "Start_Day": 365,
+            "class": "CampaignEvent"
+        },
         {
-            "Event_Coordinator_Config__KP1": "", 
             "Event_Coordinator_Config": {
+                "End_Year": 1960,
                 "Intervention_Config": {
-                    "class": "MaleCircumcision", 
-                    "Cost_To_Consumer": 10.0, 
-                    "Circumcision_Reduced_Acquire": 0.6, 
-                    "Distributed_Event_Trigger": "VMMC_1", 
-                    "Intervention_Name": "MC_1"
-                }, 
-                "Target_Demographic": "ExplicitGender", 
-                "Target_Gender": "Male", 
-                "Target_Disease_State": "Everyone", 
-                "Update_Period": 60, 
-                "End_Year": 1960, 
+                    "Circumcision_Reduced_Acquire": 0.6,
+                    "Cost_To_Consumer": 10.0,
+                    "Distributed_Event_Trigger": "VMMC_1",
+                    "Intervention_Name": "MC_1",
+                    "class": "MaleCircumcision"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Disease_State": "Everyone",
+                "Target_Gender": "Male",
                 "Time_Value_Map": {
                     "Times": [
-                        1962, 
-                        1964, 
+                        1962,
+                        1964,
                         1966
-                    ], 
+                    ],
                     "Values": [
-                        0.1, 
-                        0.5, 
+                        0.1,
+                        0.5,
                         0.9
                     ]
-                }, 
+                },
+                "Update_Period": 60,
                 "class": "ReferenceTrackingEventCoordinator"
-            }, 
+            },
+            "Event_Coordinator_Config__KP1": "",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Year": 1962, 
+            },
+            "Start_Year": 1962,
             "class": "CampaignEventByYear"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

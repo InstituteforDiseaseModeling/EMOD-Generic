@@ -2,8 +2,10 @@
     "Default_Config_Path": "../../defaults/sti_default_config.json",
     "parameters": {
         "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
-        "x_Base_Population": 1,
         "Config_Name": "83_STI_GH1240_STIDebut",
+        "Custom_Individual_Events": [
+            "PersonDebuted"
+        ],
         "Demographics_Filenames": [
             "demographics_STIDebut.json",
             "../../HIV/input/PFA_overlay.json"
@@ -11,9 +13,8 @@
         "Disable_IP_Whitelist": 1,
         "Enable_Birth": 0,
         "Enable_Natural_Mortality": 0,
-        "Custom_Individual_Events": [
-            "PersonDebuted"
-        ],
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "STIDebut",
@@ -27,6 +28,7 @@
         "Sexual_Debut_Age_Male_Weibull_Heterogeneity": 0.0,
         "Sexual_Debut_Age_Male_Weibull_Scale": 14.95,
         "Sexual_Debut_Age_Min": 14.95,
-        "Simulation_Duration": 90
+        "Simulation_Duration": 90,
+        "x_Base_Population": 1
     }
 }

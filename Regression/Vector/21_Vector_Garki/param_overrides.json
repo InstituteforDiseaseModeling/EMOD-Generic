@@ -63,6 +63,8 @@
         },
         "PRIMARY": {
             "Config_Name": "21_Vector_Garki",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Garki",
             "Node_Grid_Size": 0.009,
             "Run_Number": 26,

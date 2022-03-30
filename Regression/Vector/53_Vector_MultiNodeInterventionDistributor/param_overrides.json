@@ -24,13 +24,15 @@
         },
         "PRIMARY": {
             "Config_Name": "53_Vector_MultiNodeInterventionDistributor",
-            "Custom_Reports_Filename": "custom_reports.json",
-            "Enable_Demographics_Reporting": 0,
-            "Enable_Property_Output": 1,
-            "Geography": "Garki",
             "Custom_Individual_Events": [
                 "PVC_Distributed"
             ],
+            "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Demographics_Reporting": 0,
+            "Enable_Property_Output": 1,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
+            "Geography": "Garki",
             "Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "PropertyChange",

@@ -97,7 +97,7 @@
             "infectious_timer": 2, 
             "duration": 3, 
             "infection_strain": {
-                "antigenID": 205343152, 
+                "cladeID": 205343152, 
                 "geneticID": 0
             }
         }

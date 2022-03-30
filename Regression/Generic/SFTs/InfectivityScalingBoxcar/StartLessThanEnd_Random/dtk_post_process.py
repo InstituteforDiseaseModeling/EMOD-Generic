@@ -2,6 +2,11 @@
 
 import dtk_test.dtk_InfectivityScalingBoxcar_Support as isb_support
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 KEY_SIMULATION_TIMESTEP = "Simulation_Timestep"
 

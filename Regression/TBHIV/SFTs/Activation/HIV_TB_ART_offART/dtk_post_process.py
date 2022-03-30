@@ -1,11 +1,16 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
-import numpy as np
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
+
 from scipy import stats
-import numpy as np
+
 
 TB_CD4_ACTIVATION_VECTOR = "TB_CD4_Activation_Vector"
 TB_CD4_STRATA_ACTIVATION = "CD4_Strata_Activation"

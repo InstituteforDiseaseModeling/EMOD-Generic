@@ -33,7 +33,7 @@
           "infectiousnessByRoute":[],
           "StateChange":0,
           "infection_strain":{
-            "antigenID":0,
+            "cladeID":0,
             "geneticID":0
           },
           "m_is_symptomatic"    : true,

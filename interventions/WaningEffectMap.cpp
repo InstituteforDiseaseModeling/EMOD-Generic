@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -116,6 +116,11 @@ namespace Kernel
     void WaningEffectMapAbstract::UpdateEffect()
     {
         float multiplier = GetMultiplier( m_TimeSinceStart );
+        // We do not allow "negative waninng" aka amplification.
+        if( multiplier > 1.0f )
+        {
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "multiplier", multiplier, 1.0f );
+        }
 
         currentEffect = multiplier * m_EffectOriginal;
         LOG_DEBUG_F( "currentEffect = %f.\n", currentEffect );

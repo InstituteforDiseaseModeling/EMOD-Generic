@@ -24,6 +24,8 @@
         },
         "PRIMARY": {
             "Config_Name": "16_Vector_Release_Sterile_Male_Cohort",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 37,
             "Simulation_Duration": 730

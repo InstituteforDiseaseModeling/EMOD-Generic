@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -41,6 +41,7 @@ namespace Kernel
         , max_duration(0.0f)
         , action_timer(0.0f)
         , reversion_timer(0.0f)
+        , distribution( DistributionFactory::CreateDistribution( DistributionFunction::EXPONENTIAL_DISTRIBUTION) )
     {
         //std::cout << __FUNCTION__ << ":" << __LINE__ << std::endl;
         // done in base class ctor, not needed here.
@@ -57,6 +58,7 @@ namespace Kernel
         , max_duration( rThat.max_duration )
         , action_timer( 0.0f )
         , reversion_timer( rThat.reversion_timer )
+        , distribution( DistributionFactory::CreateDistribution( DistributionFunction::EXPONENTIAL_DISTRIBUTION ) )
     {
     }
 
@@ -111,9 +113,8 @@ namespace Kernel
     )
     {
         if( probability < 1.0 )
-        {
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( DistributionFunction::EXPONENTIAL_DISTRIBUTION ) );
-            distribution->SetParameters( (double) probability, 0, 0 );
+        {           
+            distribution->SetParameters( (double)probability, 0, 0 );
             action_timer = distribution->Calculate( context->GetParent()->GetRng() );
             
             if( action_timer > max_duration )

@@ -20,13 +20,14 @@
     "PRIMARY": {
         "Config_Name": "20_Malaria_Strain_Tracking",
         "Enable_Interventions": 1,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Run_Number": 55,
         "Simulation_Duration": 1095
     },
     "STRAIN_TRACKING": {
-        "Number_Basestrains": 2,
-        "Number_Substrains": 1
+        "Number_of_Clades": 2
     },
     "VECTOR": {
         "Vector_Sampling_Type": "TRACK_ALL_VECTORS"

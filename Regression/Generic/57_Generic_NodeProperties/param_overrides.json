@@ -12,6 +12,8 @@
         "Demographics_Filenames": [
             "demographics_node_properties.json"
         ],
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "SamplesInput",
         "Incubation_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
         "Incubation_Period_Exponential": 3,

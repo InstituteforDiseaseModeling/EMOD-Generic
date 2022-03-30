@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -141,7 +141,7 @@ namespace Kernel {
         }
     }
 
-    void RelationshipGroups::Build( float contagionDecayRate, int numberOfStrains, int numberOfSubstrains )
+    void RelationshipGroups::Build( float contagionDecayRate, int numberOfClades, int numberOfGenomes )
     {
         infectors.clear();
         LOG_DEBUG( "Clearing propertyValueToIndexMap: should be done once each timestep, but NO more.\n" );
@@ -433,10 +433,10 @@ namespace Kernel {
         return _infector;
     }
 
-    int /*AntigenId*/ DiscreteContagionPopulation::GetAntigenID( void )
+    int DiscreteContagionPopulation::GetCladeID( void )
     const
     {
-        return _antigen;
+        return _clade;
     }
 
     void RelationshipGroups::LogActivity(

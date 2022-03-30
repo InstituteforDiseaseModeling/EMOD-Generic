@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -33,7 +33,7 @@ namespace Kernel
     const EventTrigger& EventTrigger::Births                     = EventTriggerFactory::CreateBuiltInEventTrigger( "Births"                    );
     const EventTrigger& EventTrigger::EveryUpdate                = EventTriggerFactory::CreateBuiltInEventTrigger( "EveryUpdate"               );
     const EventTrigger& EventTrigger::EveryTimeStep              = EventTriggerFactory::CreateBuiltInEventTrigger( "EveryTimeStep"             );
-    const EventTrigger& EventTrigger::NewInfectionEvent          = EventTriggerFactory::CreateBuiltInEventTrigger( "NewInfectionEvent"         );
+    const EventTrigger& EventTrigger::NewInfection          = EventTriggerFactory::CreateBuiltInEventTrigger( "NewInfection"         );
     const EventTrigger& EventTrigger::TBActivation               = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivation"              );
     const EventTrigger& EventTrigger::NewClinicalCase            = EventTriggerFactory::CreateBuiltInEventTrigger( "NewClinicalCase"           );
     const EventTrigger& EventTrigger::NewSevereCase              = EventTriggerFactory::CreateBuiltInEventTrigger( "NewSevereCase"             );
@@ -43,7 +43,6 @@ namespace Kernel
     const EventTrigger& EventTrigger::TBActivationSmearPos       = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationSmearPos"      );
     const EventTrigger& EventTrigger::TBActivationSmearNeg       = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationSmearNeg"      );
     const EventTrigger& EventTrigger::TBActivationExtrapulm      = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationExtrapulm"     );
-    const EventTrigger& EventTrigger::TBActivationPostRelapse    = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationPostRelapse"   );
     const EventTrigger& EventTrigger::TBPendingRelapse           = EventTriggerFactory::CreateBuiltInEventTrigger( "TBPendingRelapse"          );
     const EventTrigger& EventTrigger::TBActivationPresymptomatic = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationPresymptomatic");
     const EventTrigger& EventTrigger::TestPositiveOnSmear        = EventTriggerFactory::CreateBuiltInEventTrigger( "TestPositiveOnSmear"       );

@@ -1,98 +1,92 @@
 {
-    "Use_Defaults": 1,
     "Events": [
         {
-            "comment": "Have people go to Hospital node (=4) when they are sick.",
-            "class": "CampaignEvent",
-            "Start_Day": 1,
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Actual_NodeIntervention_Config": {
+                        "Duration_At_Node_Constant": 10,
+                        "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                        "Duration_Before_Leaving_Constant": 0,
+                        "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                        "Is_Moving": 0,
+                        "NodeID_To_Migrate_To": 4,
+                        "class": "MigrateFamily"
+                    },
+                    "Demographic_Coverage": 1.0,
+                    "Trigger_Condition_List": [
+                        "NewInfection"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Intervention_Config": {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [
-                        "NewInfectionEvent"
-                    ],
-                    "Demographic_Coverage": 1.0,
-                    "Actual_NodeIntervention_Config": {
-                        "class": "MigrateFamily",
-                        "NodeID_To_Migrate_To": 4,
-                        "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
-                        "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                        "Is_Moving": 0,
-                        "Duration_Before_Leaving_Constant": 0,
-                        "Duration_At_Node_Constant": 10
-                    }
-                }
-            }
+            "Start_Day": 1,
+            "class": "CampaignEvent",
+            "comment": "Have people go to Hospital node (=4) when they are sick."
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
-                "class": "NodeSetNodeList",
                 "Node_List": [
                     1
-                ]
+                ],
+                "class": "NodeSetNodeList"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Incubation_Period_Override": 0,
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 30,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
-                "class": "NodeSetNodeList",
                 "Node_List": [
                     2
-                ]
+                ],
+                "class": "NodeSetNodeList"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Incubation_Period_Override": 0,
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 30,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 50,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    3
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividual",
                     "Incubation_Period_Override": 0,
                     "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    3
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 50,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

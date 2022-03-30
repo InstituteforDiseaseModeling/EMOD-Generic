@@ -1,95 +1,95 @@
-{  
-    "Campaign_Name":"Cascade of care sample",
-    "Events":[  
-        {  
-            "Event_Coordinator_Config":{
-                "Demographic_Coverage": 1.0,            
-                "Intervention_Config":{  
-                    "Actual_NodeIntervention_Config":{
-                        "Antigen":0,
-                        "Genome":0,
-                        "class":"Outbreak"
+{
+    "Campaign_Name": "Cascade of care sample",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Actual_NodeIntervention_Config": {
+                        "class": "Outbreak"
                     },
-                    "Trigger_Condition_List": [ "TBTestPositive" ],
-                    "Demographic_Coverage":1,
-                    "class":"NodeLevelHealthTriggeredIV"
+                    "Demographic_Coverage": 1,
+                    "Trigger_Condition_List": [
+                        "TBTestPositive"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
-                "Target_Demographic":"Everyone",
-                "class":"StandardInterventionDistributionEventCoordinator"
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config":{  
-                "class":"NodeSetAll"
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
             },
-            "Start_Day":1,
-            "class":"CampaignEvent"
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
-        {  
-            "Event_Coordinator_Config":{  
-                "Demographic_Coverage":0.001,
-                "Intervention_Config":{  
-                    "Antigen":0,
-                    "Genome":0,
-                    "Outbreak_Source":"PrevalenceIncrease",
-                    "class":"OutbreakIndividual",
-                    "Incubation_Period_Override": 0
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.001,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
                 },
-                "Target_Demographic":"Everyone",
-                "class":"StandardInterventionDistributionEventCoordinator"
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Event_Name":"Outbreak",
-            "Nodeset_Config":{  
-                "class":"NodeSetAll"
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
             },
-            "Start_Day":10,
-            "class":"CampaignEvent"
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
-        {  
-            "Event_Coordinator_Config":{  
-                "Demographic_Coverage":1.0,
-                "Intervention_Name":"Test and treat- test",
-                "Intervention_Config":{  
-                    "class":"SimpleDiagnostic",
-                    "Base_Sensitivity":1.0,
-                    "Base_Specificity":1.0,
-                    "Cost_To_Consumer":0,
-                    "Days_To_Diagnosis":1.0,
-                    "Dont_Allow_Duplicates":0,
-                    "Event_Or_Config":"Event",
-                    "Positive_Diagnosis_Event":"TBTestPositive",
-                    "Intervention_Name":"Diagnostic_Sample",
-                    "Treatment_Fraction":1
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Base_Sensitivity": 1.0,
+                    "Base_Specificity": 1.0,
+                    "Cost_To_Consumer": 0,
+                    "Days_To_Diagnosis": 1.0,
+                    "Dont_Allow_Duplicates": 0,
+                    "Event_Or_Config": "Event",
+                    "Intervention_Name": "Diagnostic_Sample",
+                    "Positive_Diagnosis_Event": "TBTestPositive",
+                    "Treatment_Fraction": 1,
+                    "class": "SimpleDiagnostic"
                 },
-                "Target_Demographic":"Everyone",
-                "class":"StandardInterventionDistributionEventCoordinator"
+                "Intervention_Name": "Test and treat- test",
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config":{  
-                "class":"NodeSetAll"
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
             },
-            "Start_Day":20,
-            "class":"CampaignEvent"
+            "Start_Day": 20,
+            "class": "CampaignEvent"
         },
-        {  
-            "Event_Coordinator_Config":{  
-                "Demographic_Coverage":1.0,
-                "Intervention_Config":{  
-                    "Actual_IndividualIntervention_Config":{  
-                        "Intervention_Name":"Treatment_broadcast",
-                        "Broadcast_Event":"TBTestNegative",
-                        "class":"BroadcastEvent"
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "Broadcast_Event": "TBTestNegative",
+                        "Intervention_Name": "Treatment_broadcast",
+                        "class": "BroadcastEvent"
                     },
-                    "Trigger_Condition_List": [ "TBTestPositive" ],
-                    "Demographic_Coverage":1.0,
-                    "class":"NodeLevelHealthTriggeredIV"
+                    "Demographic_Coverage": 1.0,
+                    "Trigger_Condition_List": [
+                        "TBTestPositive"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
-                "Target_Demographic":"Everyone",
-                "class":"StandardInterventionDistributionEventCoordinator"
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
             },
-            "Nodeset_Config":{  
-                "class":"NodeSetAll"
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
             },
-            "Start_Day":1000,
-            "class":"CampaignEvent"
+            "Start_Day": 1000,
+            "class": "CampaignEvent"
         }
     ],
-    "Use_Defaults":1
+    "Use_Defaults": 1
 }

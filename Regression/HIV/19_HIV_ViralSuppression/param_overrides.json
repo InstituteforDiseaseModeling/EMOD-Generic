@@ -1,12 +1,13 @@
 {
-    "Default_Config_Path": "../../defaults/hiv_default_config.json",
     "Custom_Individual_Events": [
         "OnART1"
     ],
+    "Default_Config_Path": "../../defaults/hiv_default_config.json",
     "parameters": {
         "ART_Viral_Suppression_Multiplier": 0.3,
-        "x_Base_Population": 0.0001,
         "Config_Name": "19_HIV_ViralSuppression",
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Simulation_Duration": 2000,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",
@@ -14,6 +15,7 @@
         "____________RARELY_CHANGED___________": "",
         "____________REPORTING___________": "",
         "____________SIMULATION___________": "",
-        "____________TRANSMISSION___________": ""
+        "____________TRANSMISSION___________": "",
+        "x_Base_Population": 0.0001
     }
 }

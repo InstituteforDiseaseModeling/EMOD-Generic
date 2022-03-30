@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -64,7 +64,7 @@ namespace Kernel
         DistributionConfigure(inputJson);
         InterventionConfigure(inputJson);
 
-        DistributionFunction::Enum delay_function( DistributionFunction::CONSTANT_DISTRIBUTION );
+        DistributionFunction::Enum delay_function( DistributionFunction::NOT_INITIALIZED );
         initConfig( "Delay_Period_Distribution", delay_function, inputJson, MetadataDescriptor::Enum( "Delay_Distribution", DI_Delay_Distribution_DESC_TEXT, MDD_ENUM_ARGS( DistributionFunction ) ) );
         delay_distribution = DistributionFactory::CreateDistribution( this, delay_function, "Delay_Period", inputJson );
 

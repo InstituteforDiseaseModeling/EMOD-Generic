@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -139,6 +139,7 @@ namespace Kernel
     }
 
     bool ignoreParameter( const json::QuickInterpreter * pJson, const char * condition_key, const char * condition_value = nullptr );
+    std::pair<std::string, std::string> getCondition( const json::QuickInterpreter jsonObj );
 
     class IDMAPI JsonConfigurable : public IConfigurable
     {
@@ -548,15 +549,24 @@ namespace Kernel
         {
             T min = (T)jsonObj["min"].As<json::Number>();
             T max = (T)jsonObj["max"].As<json::Number>();
+            T default_val = (T)jsonObj["default"].As<json::Number>();
 
             // min and max values are included in the range of valid numbers 
             if ( value > max )
             {
+                if(value == default_val )
+                {
+                    throw Kernel::ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), value, min, max, getCondition( jsonObj ).second.c_str() );
+                }
                 throw Kernel::ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), value, max );
             }
 
             if ( value < min )
             {
+                if( value == default_val )
+                {
+                    throw Kernel::ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), value, min, max, getCondition( jsonObj ).second.c_str() );
+                }
                 throw Kernel::ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), value, min );
             }
         }

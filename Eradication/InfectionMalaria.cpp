@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -102,11 +102,20 @@ namespace Kernel
     {
     }
 
-    bool
-    InfectionMalariaConfig::Configure(
-        const Configuration * config
-    )
+    bool InfectionMalariaConfig::Configure(const Configuration * config)
     {
+        // Malaria sims implement a customized version of strain tracking. Default behavior is disallowed.
+        if(InfectionConfig::enable_strain_tracking)
+        {
+            std::stringstream ss;
+            ss << "Malaria simulations cannot select Enable_Strain_Tracking.";
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+        }
+        else
+        {
+            initConfigTypeMap("Number_of_Clades", &InfectionConfig::number_clades, Number_of_Clades_DESC_TEXT,   1,  10,   1);
+        }
+
         initConfig( "Malaria_Strain_Model", malaria_strains, config, MetadataDescriptor::Enum("malaria_strains", Malaria_Strain_Model_DESC_TEXT, MDD_ENUM_ARGS(MalariaStrains)) ); // 'global'
         initConfig( "Parasite_Switch_Type", parasite_switch_type, config, MetadataDescriptor::Enum("parasite_switch_type", Parasite_Switch_Type_DESC_TEXT, MDD_ENUM_ARGS(ParasiteSwitchType)) ); // infection (malaria) only 
 
@@ -166,8 +175,8 @@ namespace Kernel
     {
         // Set up infection strain
         CreateInfectionStrain(_infstrain);
-        // AntigenID carries drug resistance information
-        drugResistanceFlag = infection_strain->GetAntigenID();
+        // CladeID carries drug resistance information
+        drugResistanceFlag = infection_strain->GetCladeID();
 
         // Here we set the antigenic repertoire of the infection
         // Can be completely distinct strains, or partially overlapping repertoires of antigens

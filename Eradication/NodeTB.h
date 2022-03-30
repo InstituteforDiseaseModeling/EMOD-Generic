@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -42,8 +42,6 @@ namespace Kernel
         virtual ITransmissionGroups* CreateTransmissionGroups() override;
         virtual void BuildTransmissionRoutes( float contagionDecayRate ) override;
         virtual void resetNodeStateCounters(void) override;
-
-        virtual void OnNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih);
 
         virtual IIndividualHuman* addNewIndividual(
             float monte_carlo_weight = 1.0,

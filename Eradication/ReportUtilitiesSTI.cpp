@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -58,11 +58,11 @@ namespace ReportUtilitiesSTI
         infection->GetInfectiousStrainID(&si);
 
         // NOTE: Right now we re-use the Generic StrainIdentity object and store 
-        // the InfectorID as the AntigenID (which is really just the arbitrary 
+        // the InfectorID as the CladeID (which is really just the arbitrary 
         // major id of the strain to my thinking). In the future, each disease 
         // could sub-class StrainIdentity (like we do with other major classes)
         // and put InfectorID in it's own field for HIV's purposes.
-        auto infector = si.GetAntigenID();
+        auto infector = si.GetCladeID();
         if( infector == 0 )
         {
             // could be outbreak or maternal transmission

@@ -1,7 +1,7 @@
 #include "Exceptions.h"
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -293,18 +293,36 @@ namespace Kernel {
     {
         std::ostringstream _tmp_msg;
         _tmp_msg << "ConfigurationRangeException: "
-                 << what()
-                 << "Configuration variable " 
-                 << GET_VAR_NAME(var_name)
-                 << " with value " 
-                 << var_value 
-                 << " out of range: "
-                 << ( (var_value<test_value) ? "less than " : "greater than " )  //value can only be smaller or greater. Exception is only triggered when x < min or x > max
-                 << test_value
-                 << ".";
+            << what()
+            << "Configuration variable "
+            << GET_VAR_NAME( var_name )
+            << " with value "
+            << var_value
+            << " out of range: "
+            << ((var_value < test_value) ? "less than " : "greater than ")  //value can only be smaller or greater. Exception is only triggered when x < min or x > max
+            << test_value
+            << ".";
         _msg = _tmp_msg.str();
     }
-    
+
+
+    ConfigurationRangeException::ConfigurationRangeException( const char * file_name, int line_num, const char * func_name, const char* var_name, float var_value, float min, float max, const char * condition )
+        : DetailedException( file_name, line_num, func_name )
+    {
+        std::ostringstream _tmp_msg;
+        _tmp_msg << "ConfigurationRangeException: "
+            << what()
+            << "Configuration variable "
+            << GET_VAR_NAME( var_name )
+            << ( ( !condition || condition == '\0') ?  "" : " for " + std::string(condition))
+            << " with value " << var_value
+            << " out of range. "
+            << "It is possible that you did not define this where it was expected - this parameter has no valid default and must be explicitly defined to a value between "
+            << min << " and " << max << ". \n";
+        _msg = _tmp_msg.str();
+    }
+
+
     DllLoadingException::DllLoadingException( const char * file_name, int line_num, const char * func_name, const char * msg )
     : DetailedException( file_name, line_num, func_name )
     {

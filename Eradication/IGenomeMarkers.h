@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -14,7 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     // An IGenomeMarkers maintains the relationship between the name of marker and the "bit" used
-    // to represent that marker in a strain of an infection.  An infection strain has antigen
+    // to represent that marker in a strain of an infection.  An infection strain has clade
     // and genetic components where the bits of these components provide information about
     // the makeup of the infection.  These genome markers are bits in the genetic component
     // of the strain.  This class is important in developing a mapping between the bit and

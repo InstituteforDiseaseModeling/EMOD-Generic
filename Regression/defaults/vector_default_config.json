@@ -51,7 +51,8 @@
             "Enable_Initial_Prevalence": 0,
             "Enable_Initial_Susceptibility_Distribution": 0,
             "Enable_Maternal_Protection": 0,
-            "Enable_Susceptibility_Scaling": 0,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 1,
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.01,
@@ -61,7 +62,6 @@
                 "Post_Infection_Acquisition_Multiplier": 1,
                 "Post_Infection_Transmission_Multiplier": 1,
                 "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_OFF",
-                "Susceptibility_Scale_Type": "CONSTANT_SUSCEPTIBILITY",
                 "Transmission_Blocking_Immunity_Decay_Rate": 0.01,
                 "Transmission_Blocking_Immunity_Duration_Before_Decay": 90
             },
@@ -96,8 +96,8 @@
             "Enable_Infectivity_Reservoir": 0,
             "Enable_Superinfection": 1,
             "INCUBATION": {
-                "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Incubation_Period_Constant": 25
+                "Incubation_Period_Constant": 25,
+                "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION"
             },
             "INFECTIOUSNESS": {
                 "Base_Infectivity": 1,
@@ -120,7 +120,7 @@
             "x_Other_Mortality": 1,
             "x_Regional_Migration": 1,
             "x_Sea_Migration": 1,
-            "x_Temporary_Larval_Habitat": 1
+            "x_Larval_Habitats": 1
         },
         "HPC": {
             "Load_Balance_Filename": "",
@@ -128,17 +128,13 @@
             "Num_Cores": 1
         },
         "INTRANODE_TRANSMISSION": {
-            "Enable_Default_Shedding_Function": 1,
-            "Enable_Heterogeneous_Intranode_Transmission": 0,
-            "Pool_Transmission_Mode": "ENVIRONMENTAL_AND_CONTACT_TRANSMISSION"
+            "Enable_Heterogeneous_Intranode_Transmission": 0
         },
         "MALARIA": {},
         "MIGRATION": {
             "Migration_Model": "NO_MIGRATION"
         },
-        "NEEDED_BUT_NOT_USED": {
-            "Individual_PK_Heterogeneity": 0
-        },
+        "NEEDED_BUT_NOT_USED": {},
         "NEEDED_BUT_NOT_USEFUL": {},
         "OUTPUT": {
             "Custom_Reports_Filename": "",
@@ -153,8 +149,6 @@
         "POLIO": {},
         "PRIMARY": {
             "Config_Name": "NO_DEFAULT_CONFIG_NAME",
-            "Enable_Termination_On_Zero_Total_Infectivity": 0,
-            "Enable_Absolute_Time": "NO",
             "Geography": "NO_DEFAULT_CONFIG_GEOGRAPHY",
             "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
@@ -168,17 +162,13 @@
         "SERIALIZATION": {
             "Serialization_Type": "NONE"
         },
-        "STRAIN_TRACKING": {
-            "Number_Basestrains": 1,
-            "Number_Substrains": 1
-        },
+        "STRAIN_TRACKING": {},
         "VECTOR": {
             "Age_Dependent_Biting_Risk_Type": "OFF",
             "EGGS": {
                 "Egg_Hatch_Delay_Distribution": "NO_DELAY",
                 "Egg_Hatch_Density_Dependence": "NO_DENSITY_DEPENDENCE",
                 "Egg_Saturation_At_Oviposition": "SATURATION_AT_OVIPOSITION",
-                "Enable_Delayed_Hatching_When_Habitat_Dries_Up": 0,
                 "Enable_Drought_Egg_Hatch_Delay": 0,
                 "Enable_Egg_Mortality": 0,
                 "Enable_Temperature_Dependent_Egg_Hatching": 0,

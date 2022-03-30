@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -26,12 +26,6 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(HIVRandomChoice, HIVSimpleDiagnostic)
 
     IMPLEMENT_FACTORY_REGISTERED(HIVRandomChoice)
-
-    HIVRandomChoice::HIVRandomChoice()
-    : HIVSimpleDiagnostic()
-    {
-        initSimTypes(1, "HIV_SIM" ); // just limiting this to HIV for release
-    }
 
     bool HIVRandomChoice::Configure( const Configuration* inputJson )
     {
@@ -60,11 +54,11 @@ namespace Kernel
 
         float total = 0.0;
 
-
         for (int i = 0; i < names.size(); i++)
         {
             EventTrigger event = EventTriggerFactory::GetInstance()->CreateTrigger("Choices", names[i]);
             float probability = values[i];
+
             event_names.push_back(event);
             event_probabilities.push_back(probability);
             total += probability;

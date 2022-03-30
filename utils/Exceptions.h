@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -104,6 +104,7 @@ namespace Kernel {
     {
     public:
         ConfigurationRangeException( const char * file_name, int line_num, const char * function_name, const char* var_name, float var_value, float test_value );
+        ConfigurationRangeException( const char * file_name, int line_num, const char * func_name, const char* var_name, float var_value, float min, float max, const char * condition );
     };
 
     // All failures for dll loading operations.

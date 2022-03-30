@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2017 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -26,5 +26,6 @@ namespace Kernel
         virtual void               ApplyARTOnset() = 0;
         virtual ProbabilityNumber  GetPrognosisCompletedFraction() const = 0;
         virtual void               TerminateSuppression( float days_till_death ) = 0;
+        virtual bool               IsSymptomatic() const = 0;
     };
 }

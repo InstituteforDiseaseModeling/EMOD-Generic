@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -58,7 +58,6 @@ namespace Kernel
 
             for( auto& species : GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_species_names )
             {
-                // Set the value to -1 first, which we will overwrite with a specified or default value later
                 species_map.insert( std::make_pair( species, m_DefaultValue) );
             }
 
@@ -87,6 +86,11 @@ namespace Kernel
         }
     }
 
+    float LarvalHabitatMultiplier::GetDefaultValue() const
+    {
+        return m_DefaultValue;
+    }
+
     void LarvalHabitatMultiplier::SetAsReduction( const LarvalHabitatMultiplier& rRegularLHM )
     {
         release_assert( this->m_Multiplier.size() == rRegularLHM.m_Multiplier.size() );
@@ -100,7 +104,16 @@ namespace Kernel
                 // --- If we are calling this method, then "this" object must be used for reduction,
                 // --- so we convert the values from the standard multiplier
                 // ---------------------------------------------------------------------------------
-                species_entry.second = 1.0 - rRegularLHM.m_Multiplier.at(vht_entry.first).at(species_entry.first);
+                float reduction = rRegularLHM.m_Multiplier.at(vht_entry.first).at(species_entry.first);
+                
+                // Special case: check for the value of this species with ALL_HABITATS. If it's not default, use that value instead
+                float all_habitats_reduction = rRegularLHM.m_Multiplier.at(VectorHabitatType::Enum::ALL_HABITATS).at(species_entry.first);
+                if (all_habitats_reduction != rRegularLHM.GetDefaultValue())
+                {
+                    reduction = all_habitats_reduction;
+                }
+
+                species_entry.second = 1.0 - reduction;
             }
         }
     }
@@ -114,7 +127,7 @@ namespace Kernel
             (spec_habitat == habitat_type);
     }
 
-    void LarvalHabitatMultiplier::UnsetAllFactors(LHMSpecList &spec_list)
+    void LarvalHabitatMultiplier::UnsetAllFactors()
     {
         // For each habitat type...
         for (auto& vht_entry : m_Multiplier)
@@ -134,7 +147,7 @@ namespace Kernel
     void LarvalHabitatMultiplier::ProcessMultipliers(LHMSpecList &spec_list)
     {
         // Un-set all factors (set to -1) so that we can determine whether they've been set or not
-        UnsetAllFactors(spec_list);
+        UnsetAllFactors();
 
         // For each habitat type...
         for (auto& vht_entry : m_Multiplier)
@@ -218,6 +231,7 @@ namespace Kernel
         , m_factor(1.0f)
         , m_habitat_name(VectorHabitatType::Enum::ALL_HABITATS)
         , m_species("ALL_SPECIES")
+        , m_configured(false)
     {
     }
 
@@ -227,21 +241,31 @@ namespace Kernel
         initConfigTypeMap("Factor", &m_factor, LHMSpec_Factor_DESC_TEXT, 0, FLT_MAX, 1.0f);
         initConfigTypeMap("Species", &m_species, LHMSpec_Species_DESC_TEXT);
 
-        return JsonConfigurable::Configure(config);
+        bool result = JsonConfigurable::Configure(config);
+
+        if (!JsonConfigurable::_dryrun && result)
+        {
+            m_configured = true;
+        }
+
+        return result;
     }
 
     float LarvalHabitatMultiplierSpec::GetFactor() const 
     { 
+        release_assert(m_configured);
         return m_factor; 
     }
 
     VectorHabitatType::Enum LarvalHabitatMultiplierSpec::GetHabitat() const 
     { 
+        release_assert(m_configured);
         return m_habitat_name;
     }
 
     std::string LarvalHabitatMultiplierSpec::GetSpecies() const 
     { 
+        release_assert(m_configured);
         return m_species; 
     }
     

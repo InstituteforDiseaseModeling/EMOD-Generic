@@ -6,6 +6,8 @@
             "Demographics_Filenames": [
                 "generic_scenarios_demographics.json"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.0056,

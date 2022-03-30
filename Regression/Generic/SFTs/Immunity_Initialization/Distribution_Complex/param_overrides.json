@@ -1,0 +1,34 @@
+{
+    "parameters": {
+        "CAMPAIGNS": {
+            "Enable_Interventions": 0
+        },
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "complex_immunity_overlay.json"
+            ],
+            "IMMUNITY": {
+                "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_COMPLEX"
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 1e-10,
+                "Infectious_Period_Exponential": 4
+            }
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "NoCustomReports"
+        },
+        "PRIMARY": {
+            "Config_Name": "Immune Initialization Distribution Complex",
+            "Geography": "",
+            "Simulation_Duration": 1
+        },
+        "Temporary_MaternalProtection": {
+            "logLevel_Susceptibility": "VALID"
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

@@ -27,6 +27,8 @@
         },
         "PRIMARY": {
             "Config_Name": "VectorAndMalaria_3B_Muheza_Vector",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Muheza",
             "Run_Number": 1,
             "Simulation_Duration": 3650,

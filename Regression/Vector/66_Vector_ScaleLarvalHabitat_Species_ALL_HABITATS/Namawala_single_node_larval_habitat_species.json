@@ -1,0 +1,23 @@
+{
+    "Metadata": {
+        "Author": "jsteinkraus",
+        "DateCreated": "Sun Sep 25 23:19:55 2011",
+        "IdReference": "Gridded world grump2.5arcmin",
+        "NodeCount": 1,
+        "Tool": "convertdemog.py"
+    },
+    "Nodes": [
+        {
+            "NodeAttributes": {
+                "LarvalHabitatMultiplier": [
+                    {
+                        "Factor": 10.0,
+                        "Habitat": "TEMPORARY_RAINFALL",
+                        "Species": "gambiae"
+                    }
+                ]
+            },
+            "NodeID": 340461476
+        }
+    ]
+}

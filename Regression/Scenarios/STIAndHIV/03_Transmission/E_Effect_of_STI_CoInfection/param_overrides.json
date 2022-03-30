@@ -3,7 +3,6 @@
     "parameters": {
         "____________DEMOGRAPHICS___________": {
             "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
-            "x_Base_Population": 1,
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
             "Demographics_Filenames": [
@@ -11,7 +10,8 @@
                 "pfa_simple.json",
                 "PFA_overlay_rates_03.json"
             ],
-            "Enable_Natural_Mortality": 1
+            "Enable_Natural_Mortality": 1,
+            "x_Base_Population": 1
         },
         "____________INTRAHOST___________": {
             "AIDS_Stage_Infectivity_Multiplier": 1,
@@ -39,6 +39,8 @@
         },
         "____________SIMULATION___________": {
             "Base_Year": 2020,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Simulation_Duration": 3650,
             "Simulation_Timestep": 30.41667
         },

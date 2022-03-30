@@ -4,7 +4,6 @@
         "DEMOGRAPHICS": {
             "Acquisition_Blocking_Immunity_Decay_Rate": 0.1,
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 0,
-            "Infectious_Period_Exponential": 30,
             "Base_Infectivity": 0.5,
             "Base_Mortality": 0,
             "Demographics_Filenames": [
@@ -13,11 +12,14 @@
             "Enable_Demographics_Reporting": 0,
             "Enable_Immune_Decay": 1,
             "Enable_Natural_Mortality": 0,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
+            "Incubation_Period_Constant": 2,
+            "Infectious_Period_Exponential": 30,
             "Sample_Rate_Birth": 1,
             "Transmission_Blocking_Immunity_Decay_Rate": 0.1,
-            "Transmission_Blocking_Immunity_Duration_Before_Decay": 0,
-            "Incubation_Period_Constant": 2
+            "Transmission_Blocking_Immunity_Duration_Before_Decay": 0
         },
         "MIGRATION": {
             "Air_Migration_Filename": "",
@@ -52,12 +54,12 @@
             "Config_Name": "70_Generic_RngPerNode",
             "Custom_Reports_Filename": "custom_reports.json",
             "Geography": "MigrationTest",
-            "Simulation_Duration": 30,
-            "Simulation_Timestep": 1,
-            "Random_Number_Generator_Type": "USE_AES_COUNTER",
+            "Num_Cores": 4,
             "Random_Number_Generator_Policy": "ONE_PER_NODE",
+            "Random_Number_Generator_Type": "USE_AES_COUNTER",
             "Run_Number": 1,
-            "Num_Cores": 4
+            "Simulation_Duration": 30,
+            "Simulation_Timestep": 1
         }
     }
 }

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -248,8 +248,7 @@ namespace Kernel
 
             if( days_till_death <= days_between_symptomatic_and_death ) 
             {
-                IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
-                broadcaster->TriggerObservers( parent->GetEventContext(), EventTrigger::NewlySymptomatic );
+                is_symptomatic = true;
                 days_between_symptomatic_and_death = -FLT_MAX;
             }
         }
@@ -317,6 +316,7 @@ namespace Kernel
     void SusceptibilityHIV::UpdateSymptomaticPresentationTime()
     {
         // Calculate symptomatic presentation time 
+        is_symptomatic = false;
         days_between_symptomatic_and_death = parent->GetRng()->Weibull2( SusceptibilityHIVConfig::days_between_symptomatic_and_death_lambda,
                                                                          SusceptibilityHIVConfig::days_between_symptomatic_and_death_inv_kappa );
 
@@ -423,6 +423,11 @@ namespace Kernel
         LOG_DEBUG_F( "After terminating suppression, individual %d will be symptomatic %f days before death\n", parent->GetSuid().data, days_between_symptomatic_and_death );
     }
 
+    bool SusceptibilityHIV::IsSymptomatic() const
+    {
+        return is_symptomatic;
+    }
+
     float SusceptibilityHIV::GetCD4count() const
     {
         return pow(sqrtCD4_Current, 2);
@@ -433,6 +438,7 @@ namespace Kernel
     SusceptibilityHIV::SusceptibilityHIV()
         : SusceptibilitySTI()
         , hiv_parent( nullptr )
+        , is_symptomatic( false )
         , days_between_symptomatic_and_death(0)
         , sqrtCD4_Current( 0 )
         , sqrtCD4_Rate( UNINITIALIZED_RATE )
@@ -445,6 +451,7 @@ namespace Kernel
     SusceptibilityHIV::SusceptibilityHIV(IIndividualHumanContext *context)
         : SusceptibilitySTI(context)
         , hiv_parent( nullptr )
+        , is_symptomatic( false )
         , days_between_symptomatic_and_death(0)
         , sqrtCD4_Current( 0 )
         , sqrtCD4_Rate( UNINITIALIZED_RATE )
@@ -459,6 +466,7 @@ namespace Kernel
     {
         SusceptibilitySTI::serialize( ar, obj );
         SusceptibilityHIV& suscep = *obj;
+        ar.labelElement("is_symptomatic"                    ) & suscep.is_symptomatic;
         ar.labelElement("days_between_symptomatic_and_death") & suscep.days_between_symptomatic_and_death;
         ar.labelElement("sqrtCD4_Current"                   ) & suscep.sqrtCD4_Current;
         ar.labelElement("sqrtCD4_Rate"                      ) & suscep.sqrtCD4_Rate;

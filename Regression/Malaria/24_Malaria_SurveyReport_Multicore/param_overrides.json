@@ -98,7 +98,7 @@
             "New_Infections",
             "Prevalence",
             "Adult_Vectors",
-            "New_Diagnostic_Prevalence", 
+            "New_Diagnostic_Prevalence",
             "New_Clinical_Cases"
         ]
     },
@@ -106,14 +106,15 @@
         "Config_Name": "24_Malaria_SurveyrReport_Multicore",
         "Custom_Reports_Filename": "custom_reports.json",
         "Enable_Interventions": 1,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Num_Cores": 8,
         "Run_Number": 68,
         "Simulation_Duration": 85
     },
     "STRAIN_TRACKING": {
-        "Number_Basestrains": 2,
-        "Genome_Markers" : [
+        "Genome_Markers": [
             "gm01",
             "gm02",
             "gm03",
@@ -138,10 +139,11 @@
             "gm22",
             "gm23",
             "gm24"
-        ]
+        ],
+        "Number_of_Clades": 2
     },
     "VECTOR": {
         "Vector_Sampling_Type": "TRACK_ALL_VECTORS",
-        "x_Temporary_Larval_Habitat": 0.02
+        "x_Larval_Habitats": 0.02
     }
 }

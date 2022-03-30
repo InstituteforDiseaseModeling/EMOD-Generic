@@ -8,6 +8,11 @@ if __name__ == '__main__':
     sys.path.append( str(Path('../../../../shared_embedded_py_scripts').resolve().absolute()) )
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 import pandas as pd
 from dtk_test.dtk_General_Support import ConfigKeys
@@ -166,7 +171,10 @@ def create_report_file(param_obj, stdout_df, report_name, debug):
                     t, day_in_year, t % sft.DAYS_IN_YEAR))
                 day_in_year = t % sft.DAYS_IN_YEAR
             day_in_year -= adjust_time
-            day_in_year %= sft.DAYS_IN_YEAR
+            # allow day_in_year = 365, in this case, we can get the correct values when peak_duration = 1 and rampup = 364
+            if day_in_year != sft.DAYS_IN_YEAR:
+                day_in_year %= sft.DAYS_IN_YEAR
+
             # Environment Ramp Up
             if cutoff_endtime < day_in_year < peak_starttime:
                 expected_amplification = day_in_year / ramp_up
@@ -202,11 +210,11 @@ def application( output_folder="output", stdout_filename="test.txt", config_file
                  report_name=sft.sft_output_filename,
                  debug=False):
     if debug:
-        print( "output_folder: " + output_folder )
-        print( "stdout_filename: " + stdout_filename+ "\n" )
-        print( "config_filename: " + config_filename + "\n" )
-        print( "report_name: " + report_name + "\n" )
-        print( "debug: " + str(debug) + "\n" )
+        print("output_folder: " + output_folder )
+        print("stdout_filename: " + stdout_filename+ "\n" )
+        print("config_filename: " + config_filename + "\n" )
+        print("report_name: " + report_name + "\n" )
+        print("debug: " + str(debug) + "\n" )
 
     sft.wait_for_done(stdout_filename)
 

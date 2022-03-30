@@ -8,6 +8,8 @@
                 "../../HIV/input/PFA_overlay_commercial.json",
                 "PFA_Commercial_HighConcurrency.json"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "MORTALITY": {
                 "Base_Mortality": 0.01,
@@ -31,6 +33,7 @@
         "PRIMARY": {
             "Config_Name": "82_STI_Commercial_Multiple_Entry",
             "Report_Relationship_Start": 1,
+            "Report_Relationship_Start_Individual_Properties": [],
             "Simulation_Duration": 50
         }
     }

@@ -270,7 +270,6 @@
     <ClInclude Include="..\interventions\IHealthSeekingBehavior.h" />
     <ClInclude Include="..\interventions\ImmunityBloodTest.h" />
     <ClInclude Include="..\interventions\ImportPressure.h" />
-    <ClInclude Include="..\interventions\IndividualEnvironmental.h" />
     <ClInclude Include="..\interventions\IndividualImmunityChanger.h" />
     <ClInclude Include="..\interventions\IndividualRepellent.h" />
     <ClInclude Include="..\interventions\InputEIR.h" />
@@ -288,7 +287,6 @@
     <ClInclude Include="..\interventions\MultiEffectVaccine.h" />
     <ClInclude Include="..\interventions\MultiInterventionDistributor.h" />
     <ClInclude Include="..\interventions\MultiNodeInterventionDistributor.h" />
-    <ClInclude Include="..\interventions\NLHTIVNode.h" />
     <ClInclude Include="..\interventions\NodeLevelHealthTriggeredIV.h" />
     <ClInclude Include="..\interventions\NodeLevelHealthTriggeredIVScaleUpSwitch.h" />
     <ClInclude Include="..\interventions\NodePropertyValueChanger.h" />
@@ -302,15 +300,11 @@
     <ClInclude Include="..\interventions\RTSSVaccine.h" />
     <ClInclude Include="..\interventions\ScaleLarvalHabitat.h" />
     <ClInclude Include="..\interventions\SimpleBoosterVaccine.h" />
-    <ClInclude Include="..\interventions\SimulationEnvironmental.h" />
     <ClInclude Include="..\interventions\SmearDiagnostics.h" />
     <ClInclude Include="..\interventions\STIBarrier.h" />
     <ClInclude Include="..\interventions\StiCoInfectionDiagnostic.h" />
     <ClInclude Include="..\interventions\STIIsPostDebut.h" />
     <ClInclude Include="..\interventions\TBHIVConfigurableTBdrug.h" />
-    <ClInclude Include="..\interventions\TyphoidCarrierClear.h" />
-    <ClInclude Include="..\interventions\TyphoidCarrierDiagnostic.h" />
-    <ClInclude Include="..\interventions\TyphoidVaccine.h" />
     <ClInclude Include="..\interventions\TyphoidWASH.h" />
     <ClInclude Include="..\interventions\UsageDependentBednet.h" />
     <ClInclude Include="..\interventions\Vaccine.h" />
@@ -322,11 +316,6 @@
     <ClInclude Include="..\interventions\WaningEffectMapCount.h" />
     <ClInclude Include="..\interventions\WaningEffectMapSeasonal.h" />
     <ClInclude Include="..\interventions\WaningEffectRandomBox.h" />
-    <ClInclude Include="..\utils\DistributionBase.h" />
-    <ClInclude Include="..\utils\Distributions.h" />
-    <ClInclude Include="..\utils\DistributionFactory.h" />
-    <ClInclude Include="..\utils\IPiecewiseDistribution.h" />
-    <ClInclude Include="..\utils\PiecewiseDistributionBase.h" />
     <ClInclude Include="..\utils\Types.h" />
     <ClInclude Include="Assortivity.h" />
     <ClInclude Include="AssortivityFactory.h" />
@@ -338,7 +327,6 @@
     <ClInclude Include="BinnedReportPy.h" />
     <ClInclude Include="BinnedReportSTI.h" />
     <ClInclude Include="BinnedReportTB.h" />
-    <ClInclude Include="BinnedReportTyphoid.h" />
     <ClInclude Include="BroadcasterImpl.h" />
     <ClInclude Include="BroadcasterImplTemplate.h" />
     <ClInclude Include="BroadcastCoordinatorEvent.h" />
@@ -575,7 +563,6 @@
     <ClInclude Include="SusceptibilityVector.h" />
     <ClInclude Include="TBContexts.h" />
     <ClInclude Include="TBDrugTypeParameters.h" />
-    <ClInclude Include="TBHIVContexts.h" />
     <ClInclude Include="TBHIVDrugTypeParameters.h" />
     <ClInclude Include="TBHIVParameters.h" />
     <ClInclude Include="TBInterventionsContainer.h" />
@@ -584,8 +571,6 @@
     <ClInclude Include="TransmissionGroupsBase.h" />
     <ClInclude Include="TransmissionGroupsFactory.h" />
     <ClInclude Include="TriggeredEventCoordinator.h" />
-    <ClInclude Include="TyphoidInterventionsContainer.h" />
-    <ClInclude Include="TyphoidDefs.h" />
     <ClInclude Include="TyphoidReportEventRecorder.h" />
     <ClInclude Include="Vector.h" />
     <ClInclude Include="VectorCohort.h" />
@@ -662,7 +647,6 @@
     <ClCompile Include="..\interventions\MultiEffectVaccine.cpp" />
     <ClCompile Include="..\interventions\MultiInterventionDistributor.cpp" />
     <ClCompile Include="..\interventions\MultiNodeInterventionDistributor.cpp" />
-    <ClCompile Include="..\interventions\NLHTIVNode.cpp" />
     <ClCompile Include="..\interventions\NodeLevelHealthTriggeredIV.cpp" />
     <ClCompile Include="..\interventions\NodeLevelHealthTriggeredIVScaleUpSwitch.cpp" />
     <ClCompile Include="..\interventions\NodePropertyValueChanger.cpp" />
@@ -707,7 +691,6 @@
     <ClCompile Include="BinnedReportPy.cpp" />
     <ClCompile Include="BinnedReportSTI.cpp" />
     <ClCompile Include="BinnedReportTB.cpp" />
-    <ClCompile Include="BinnedReportTyphoid.cpp" />
     <ClCompile Include="BroadcasterImpl.cpp" />
     <ClCompile Include="BroadcastCoordinatorEvent.cpp" />
     <ClCompile Include="CalendarEventCoordinator.cpp" />

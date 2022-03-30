@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -54,15 +54,15 @@ namespace Kernel
 
         private:
             // IContagionPopulation implementation
-            virtual AntigenId GetAntigenID( void ) const override;
-            virtual AntigenId GetGeneticID( void ) const override; // Hmm.... not sure about this
-            virtual void SetAntigenID(int in_antigenID) override {}; // Hmm.... not sure about this
+            virtual int  GetCladeID( void ) const override;
+            virtual int  GetGeneticID( void ) const override; // Hmm.... not sure about this
+            virtual void SetCladeID(int in_cladeID) override {}; // Hmm.... not sure about this
             virtual void SetGeneticID(int in_geneticID) override {}; // Hmm.... not sure about this
             virtual float GetTotalContagion( void ) const override;
             virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 
             float contagionQuantity;
-            int antigenId;
+            int cladeId;
         };
 
     protected:
@@ -134,7 +134,7 @@ namespace Kernel
 
         // ITransmissionGroups implementation
         virtual void AddProperty(const string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) {}
-        virtual void Build(float contagionDecayRate, int numberOfAntigens = 1, int numberOfSubstrains = 1) {}
+        virtual void Build(float contagionDecayRate, int numberOfClades = 1, int numberOfGenomes = 1) {}
         virtual void GetGroupMembershipForProperties(const tProperties& properties) const { }
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) {}
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const {}

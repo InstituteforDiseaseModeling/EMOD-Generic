@@ -25,13 +25,15 @@
         },
         "PRIMARY": {
             "Config_Name": "52_Vector_UsageDependentBednet",
-            "Geography": "Namawala",
             "Custom_Individual_Events": [
                 "Bednet_Got_New_One",
                 "Bednet_Using",
                 "Bednet_Discarded",
                 "Bednet_Using_Num_2"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
+            "Geography": "Namawala",
             "Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "Bednet_Got_New_One",

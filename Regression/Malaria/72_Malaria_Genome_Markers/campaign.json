@@ -1,82 +1,86 @@
 {
-    "COMMENT" : "Infect 10% with gm1, ..., 10% with gm4.  We should see the infections develop multiple markers.",
-    "Use_Defaults": 1,
+    "COMMENT": "Infect 10% with gm1, ..., 10% with gm4.  We should see the infections develop multiple markers.",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "Genome_Markers": [
+                        "gm1"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.01,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "gm1" ] 
-                }
-            }
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "Genome_Markers": [
+                        "gm2"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.01,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "gm2" ] 
-                }
-            }
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "Genome_Markers": [
+                        "gm3"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.01,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "gm3" ] 
-                }
-            }
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Start_Day": 10,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "Genome_Markers": [
+                        "gm4"
+                    ],
+                    "class": "OutbreakIndividualMalaria"
+                },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 0.01,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividualMalaria",
-                    "Antigen": 0,
-                    "Genome_Markers": [ "gm4" ] 
-                }
-            }
+            "Start_Day": 10,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

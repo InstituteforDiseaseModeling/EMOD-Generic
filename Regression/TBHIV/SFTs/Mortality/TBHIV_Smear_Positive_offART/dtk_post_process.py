@@ -1,9 +1,14 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
-import numpy as np
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
+
 
 COINFECTION_MORTALITY_RATE_OFF_ART = "CoInfection_Mortality_Rate_Off_ART"
 COINFECTION_MORTALITY_RATE_ON_ART = "CoInfection_Mortality_Rate_On_ART"

@@ -8,15 +8,13 @@
             "Relative_Humidity_Filename": "Namawala_single_node_relative_humidity_daily.bin"
         },
         "DEMOGRAPHICS": {
-            "Demographics_Filenames": ["Namawala_single_node_demographics.json"],
-            "Enable_Birth": 1,
-            "Enable_Maternal_Protection": 0,
             "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
             "Demographics_Filenames": [
                 "Namawala_single_node_demographics.json"
             ],
             "Enable_Birth": 1,
             "Enable_Initial_Prevalence": 1,
+            "Enable_Maternal_Protection": 0,
             "Enable_Natural_Mortality": 1,
             "Population_Scale_Type": "FIXED_SCALING"
         },
@@ -50,6 +48,8 @@
         },
         "PRIMARY": {
             "Config_Name": "VectorAndMalaria_2_Namawala_Full_Malaria_Model",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 3650,

@@ -1,39 +1,41 @@
 {
-    "Default_Config_Path": "../../defaults/sti_default_config.json", 
+    "Default_Config_Path": "../../defaults/sti_default_config.json",
     "parameters": {
-        "Report_Event_Recorder_Events": [
-            "Yikes_Toddler_Is_Post_Debut", 
-            "Phew_Toddler_Is_Not_Post_Debut", 
-            "Teen_Is_Post_Debut", 
-            "Teen_Is_Pre_Debut", 
-            "Post_Debut_On_Debut", 
-            "ERROR_Pre_Debut_On_Debut",
-            "STIDebut"
-        ], 
-        "Config_Name": "55_STI_IsPostDebut", 
+        "Config_Name": "55_STI_IsPostDebut",
+        "Custom_Individual_Events": [
+            "Yikes_Toddler_Is_Post_Debut",
+            "Phew_Toddler_Is_Not_Post_Debut",
+            "Teen_Is_Post_Debut",
+            "Teen_Is_Pre_Debut",
+            "Post_Debut_On_Debut",
+            "ERROR_Pre_Debut_On_Debut"
+        ],
+        "Enable_Birth": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Event_Trigger_List": [
-            "Yikes_Toddler_Is_Post_Debut", 
-            "Phew_Toddler_Is_Not_Post_Debut", 
-            "Teen_Is_Post_Debut", 
-            "Teen_Is_Pre_Debut", 
-            "Post_Debut_On_Debut", 
+            "Yikes_Toddler_Is_Post_Debut",
+            "Phew_Toddler_Is_Not_Post_Debut",
+            "Teen_Is_Post_Debut",
+            "Teen_Is_Pre_Debut",
+            "Post_Debut_On_Debut",
             "ERROR_Pre_Debut_On_Debut",
             "STIDebut"
-        ], 
-        "Report_Event_Recorder": 1, 
+        ],
+        "Report_Event_Recorder": 1,
+        "Report_Event_Recorder_Events": [
+            "Yikes_Toddler_Is_Post_Debut",
+            "Phew_Toddler_Is_Not_Post_Debut",
+            "Teen_Is_Post_Debut",
+            "Teen_Is_Pre_Debut",
+            "Post_Debut_On_Debut",
+            "ERROR_Pre_Debut_On_Debut",
+            "STIDebut"
+        ],
         "Report_Event_Recorder_Ignore_Events_In_List": 0,
         "Report_Event_Recorder_Individual_Properties": [],
-        "Enable_Birth": 0,
-        "Simulation_Duration": 90, 
-        "x_Base_Population": 1e-04, 
-        "Run_Number": 9, 
-        "Custom_Individual_Events": [
-            "Yikes_Toddler_Is_Post_Debut", 
-            "Phew_Toddler_Is_Not_Post_Debut", 
-            "Teen_Is_Post_Debut", 
-            "Teen_Is_Pre_Debut", 
-            "Post_Debut_On_Debut", 
-            "ERROR_Pre_Debut_On_Debut"
-        ]
+        "Run_Number": 9,
+        "Simulation_Duration": 90,
+        "x_Base_Population": 0.0001
     }
 }

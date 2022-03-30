@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -104,6 +104,11 @@ namespace Kernel
     {
         m_pSTIInterventionsContainer = _new_ HIVInterventionsContainer();
         interventions = m_pSTIInterventionsContainer;
+    }
+
+    bool IndividualHumanHIV::IsSymptomatic() const
+    {
+        return hiv_susceptibility->IsSymptomatic();
     }
 
     bool IndividualHumanHIV::HasHIV() const

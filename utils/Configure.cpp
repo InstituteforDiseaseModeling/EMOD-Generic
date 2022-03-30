@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -60,7 +60,7 @@ namespace Kernel
                 {
                     release_assert( condition_value );
                     // condition_value is not null, so it's a string (enum); let's read it.
-                    auto c_value_from_config = (std::string) c_value.As<json::String>();
+                    auto c_value_from_config = GET_CONFIG_STRING(pJson, condition_key);
                     LOG_DEBUG_F( "string/enum condition_value (from config.json) = %s. Will check if matches schema condition_value (raw) = %s\n", c_value_from_config.c_str(), condition_value );
                     // see if schema condition value is multiples...
                     auto c_values = IdmString( condition_value ).split( ',' );
@@ -99,20 +99,12 @@ namespace Kernel
     {
         if( schema.Exist( "depends-on" ) )
         {
-            auto condition = json_cast<const json::Object&>(schema["depends-on"]);
-            std::string condition_key = condition.Begin()->name;
-            std::string condition_value_str = "";
-            const char * condition_value = nullptr;
-            try {
-                condition_value_str = (std::string) (json::QuickInterpreter( condition )[ condition_key ]).As<json::String>();
-                condition_value = condition_value_str.c_str();
-                LOG_DEBUG_F( "schema condition value appears to be string/enum: %s.\n", condition_value );
-            }
-            catch(...)
-            {
-                //condition_value = std::to_string( (int) (json::QuickInterpreter( condition )[ condition_key ]).As<json::Number>() );
-                LOG_DEBUG_F( "schema condition value appears to be bool, not string.\n" );
-            }
+            auto condition = getCondition( schema );
+            std::string condition_key = std::get<0>( condition );
+            std::string condition_value_str = std::get<1>( condition );
+            
+            const char * condition_value = condition_value_str.empty() ? nullptr : condition_value_str.c_str();
+            
 
             if( ignoreParameter( pJson, condition_key.c_str(), condition_value ) )
             { 
@@ -127,6 +119,30 @@ namespace Kernel
             LOG_DEBUG_F( "There is no dependency for this param.\n" );
         }
         return false;
+    }
+
+    std::pair<std::string, std::string> getCondition( const json::QuickInterpreter jsonObj )
+    {
+        std::string condition_value_str = "";
+        std::string condition_key;
+
+        if( jsonObj.Exist( "depends-on" ) )
+        {
+            auto condition = json_cast<const json::Object&>(jsonObj["depends-on"]);
+            condition_key = condition.Begin()->name;
+            const char * condition_value = nullptr;
+            try {
+                condition_value_str = (std::string) (json::QuickInterpreter( condition )[condition_key]).As<json::String>();
+                condition_value = condition_value_str.c_str();
+                LOG_DEBUG_F( "schema condition value appears to be string/enum: %s.\n", condition_value );
+            }
+            catch( ... )
+            {
+                //condition_value = std::to_string( (int) (json::QuickInterpreter( condition )[ condition_key ]).As<json::Number>() );
+                LOG_DEBUG_F( "schema condition value appears to be bool, not string.\n" );
+            }
+        }
+        return std::make_pair( condition_key, condition_value_str );
     }
 
     /// NodeSetConfig
@@ -1505,6 +1521,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
+                    EnforceParameterRange<float>( key, val, schema );
                     LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
@@ -1582,6 +1599,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
+                    EnforceParameterRange<float>( key, val, schema );
                     LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }

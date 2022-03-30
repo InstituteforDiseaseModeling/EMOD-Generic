@@ -1,1 +1,423 @@
-{"Header":{"DateTime":"Fri Nov 16 14:04:26 2018","DTK_Version":"4385 2706_IsSymptomatic_rebase (48f3fd5) Nov 16 2018 13:59:04","Report_Type":"InsetChart","Report_Version":"3.2","Start_Time":0,"Simulation_Timestep":1,"Timesteps":7,"Channels":36,"Base_Year":1960.5},"Channels":{"Active COMMERCIAL Relationships":{"Units":"Relationships","Data":[0,0,0,0,0,0,0]},"Active INFORMAL Relationships":{"Units":"Relationships","Data":[0,0,4,4,6,6,6]},"Active MARITAL Relationships":{"Units":"Relationships","Data":[0,0,0,0,0,0,0]},"Active TRANSITORY Relationships":{"Units":"Relationships","Data":[2,2,2,4,4,6,8]},"Births":{"Units":"Births","Data":[0,0,0,0,0,0,0]},"Campaign Cost":{"Units":"USD","Data":[0,1739,1739,1739,1739,1739,1739]},"Disease Deaths":{"Units":"","Data":[0,0,0,0,0,0,0]},"Exposed Population":{"Units":"Exposed Fraction","Data":[0,0,0,0,0,0,0]},"Infected":{"Units":"Infected Fraction","Data":[0,0,0,0,0,0,0]},"Infectious Population":{"Units":"Infectious Fraction","Data":[0,0,0,0,0,0,0]},"New Infections":{"Units":"","Data":[0,0,0,0,0,0,0]},"Newly Symptomatic":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of (untreated) Individuals with AIDS":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of (untreated) Individuals with Acute HIV":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of (untreated) Individuals with Latent HIV":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of ART dropouts (cumulative)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Circumcised Males":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Events":{"Units":"","Data":[10,1744,12,9,8,9,13]},"Number of Individuals Ever in a Relationship":{"Units":"","Data":[2,2,6,8,10,12,14]},"Number of Individuals HIV+ w/ CD4 < 200 (non-ART)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Individuals HIV+ w/ CD4 < 200 (on-ART)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Individuals HIV+ w/ CD4 >= 200 (non-ART)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Individuals HIV+ w/ CD4 >= 200 (on-ART)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Number of Individuals on ART":{"Units":"","Data":[0,0,0,0,0,0,0]},"Paired People":{"Units":"People","Data":[2,2,6,8,10,12,14]},"Post-Debut Population":{"Units":"","Data":[995,995,995,995,995,995,995]},"Prevalence (Females, 15-49)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Prevalence (Males, 15-49)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Prevalence among Sexually Active (Adults)":{"Units":"","Data":[0,0,0,0,0,0,0]},"Recovered Population":{"Units":"Recovered (Immune) Fraction","Data":[0,0,0,0,0,0,0]},"Single Post-Debut Men":{"Units":"People","Data":[504,504,502,501,500,499,498]},"Single Post-Debut Women":{"Units":"People","Data":[489,489,487,486,485,484,483]},"Statistical Population":{"Units":"Population","Data":[1739,1739,1739,1739,1739,1739,1739]},"Susceptible Population":{"Units":"Susceptible Fraction","Data":[1,1,1,1,1,1,1]},"Symptomatic Population":{"Units":"","Data":[0,0,0,0,0,0,0]},"Waning Population":{"Units":"Waning Immunity Fraction","Data":[0,0,0,0,0,0,0]}}}
+{
+    "Channels": {
+        "Active COMMERCIAL Relationships": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": "Relationships"
+        },
+        "Active INFORMAL Relationships": {
+            "Data": [
+                0,
+                0,
+                2,
+                2,
+                3,
+                3,
+                3
+            ],
+            "Units": "Relationships"
+        },
+        "Active MARITAL Relationships": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": "Relationships"
+        },
+        "Active TRANSITORY Relationships": {
+            "Data": [
+                1,
+                1,
+                1,
+                2,
+                2,
+                3,
+                4
+            ],
+            "Units": "Relationships"
+        },
+        "Births": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": "Births"
+        },
+        "Campaign Cost": {
+            "Data": [
+                0,
+                1739,
+                1739,
+                1739,
+                1739,
+                1739,
+                1739
+            ],
+            "Units": "USD"
+        },
+        "Disease Deaths": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Infected": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": "Infected Fraction"
+        },
+        "Infectious Population": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": "Infectious Fraction"
+        },
+        "New Infections": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Newly Symptomatic": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of (treated) Individuals with AIDS": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of (untreated) Individuals with AIDS": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of (untreated) Individuals with Acute HIV": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of (untreated) Individuals with Latent HIV": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of ART dropouts (cumulative)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Circumcised Males": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Events": {
+            "Data": [
+                10,
+                1744,
+                12,
+                9,
+                8,
+                9,
+                13
+            ],
+            "Units": ""
+        },
+        "Number of Individuals Ever in a Relationship": {
+            "Data": [
+                2,
+                2,
+                6,
+                8,
+                10,
+                12,
+                14
+            ],
+            "Units": ""
+        },
+        "Number of Individuals HIV+ w/ CD4 < 200 (non-ART)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Individuals HIV+ w/ CD4 < 200 (on-ART)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Individuals HIV+ w/ CD4 >= 200 (non-ART)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Individuals HIV+ w/ CD4 >= 200 (on-ART)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Number of Individuals on ART": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Paired People": {
+            "Data": [
+                2,
+                2,
+                6,
+                8,
+                10,
+                12,
+                14
+            ],
+            "Units": "People"
+        },
+        "Post-Debut Population": {
+            "Data": [
+                995,
+                995,
+                995,
+                995,
+                995,
+                995,
+                995
+            ],
+            "Units": ""
+        },
+        "Prevalence (Females, 15-49)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Prevalence (Males, 15-49)": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Prevalence among Sexually Active": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        },
+        "Single Post-Debut Men": {
+            "Data": [
+                504,
+                504,
+                502,
+                501,
+                500,
+                499,
+                498
+            ],
+            "Units": "People"
+        },
+        "Single Post-Debut Women": {
+            "Data": [
+                489,
+                489,
+                487,
+                486,
+                485,
+                484,
+                483
+            ],
+            "Units": "People"
+        },
+        "Statistical Population": {
+            "Data": [
+                1739,
+                1739,
+                1739,
+                1739,
+                1739,
+                1739,
+                1739
+            ],
+            "Units": "Population"
+        },
+        "Susceptible Population": {
+            "Data": [
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            "Units": "Susceptible Fraction"
+        },
+        "Symptomatic Population": {
+            "Data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+            ],
+            "Units": ""
+        }
+    },
+    "Header": {
+        "Base_Year": 1960.5,
+        "Channels": 34,
+        "DTK_Version": "0 unknown-branch (unknown) Jun 25 2019 07:12:34",
+        "DateTime": "Tue Jun 25 14:44:32 2019",
+        "Report_Type": "InsetChart",
+        "Report_Version": "3.2",
+        "Simulation_Timestep": 1,
+        "Start_Time": 0,
+        "Timesteps": 7
+    }
+}

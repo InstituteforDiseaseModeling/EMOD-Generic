@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanSTI.h"
 #include "IRelationship.h"
 #include "IInfection.h"
+#include "ReportUtilities.h"
 #include "ReportUtilitiesSTI.h"
 #include "IndividualEventContext.h"
 #include "StrainIdentity.h"
@@ -31,12 +32,29 @@ namespace Kernel
     StiTransmissionReporter::StiTransmissionReporter()
         : BaseTextReportEvents("TransmissionReport.csv")
         , report_data()
+        , properties_to_report()
+        , keys_to_report()
     {
         eventTriggerList.push_back( EventTrigger::STINewInfection );
     }
 
     StiTransmissionReporter::~StiTransmissionReporter()
     {
+    }
+
+    bool StiTransmissionReporter::Configure( const Configuration* inputJson )
+    {
+        properties_to_report.value_source = IPKey::GetConstrainedStringConstraintKey();
+        initConfigTypeMap( "Report_Transmission_Individual_Properties", &properties_to_report, Report_Transmission_Individual_Properties_DESC_TEXT, "Report_Transmission" );
+
+        bool ret = JsonConfigurable::Configure( inputJson );
+        return ret;
+    }
+
+    void StiTransmissionReporter::Initialize( unsigned int nrmSize )
+    {
+        keys_to_report = ReportUtilities::GetKeys( properties_to_report, "Report_Transmission_Individual_Properties" );
+        BaseTextReportEvents::Initialize( nrmSize );
     }
 
     bool StiTransmissionReporter::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
@@ -113,6 +131,9 @@ namespace Kernel
 
         info.source_infection_age                       = -42;
 
+        info.source_ip                                  = p_sti_source->GetPropertiesConst();
+
+
         // DESTINATION
         info.destination_id                             = individual->GetSuid().data;
         info.destination_is_infected                    = (individual->GetInfections().size() > 0); // see GitHub-589 - Remove m_is_infected
@@ -126,6 +147,7 @@ namespace Kernel
         info.destination_is_circumcised                 = p_sti_dest->IsCircumcised();
         info.destination_has_sti                        = p_sti_dest->HasSTICoInfection();
         info.destination_is_superspreader               = p_sti_dest->IsBehavioralSuperSpreader();
+        info.destination_ip                             = p_sti_dest->GetPropertiesConst();
 
         CollectOtherData( info.rel_id, p_sti_source, p_sti_dest );
 
@@ -137,33 +159,36 @@ namespace Kernel
     std::string StiTransmissionReporter::GetHeader() const
     {
         std::stringstream header ;
-        header 
-            << "SIM_TIME" << ','
-            << "YEAR" << ','
-            << "NODE_ID" << ','
-            << "SRC_ID" << ','
-            << "SRC_INFECTED" << ','
-            << "SRC_GENDER" << ','
-            << "SRC_AGE" << ','
-            << "SRC_current_relationship_count" << ','
-            << "SRC_lifetime_relationship_count" << ','
-            << "SRC_relationships_in_last_6_months" << ','
-            << "SRC_FLAGS" << ','
-            << "SRC_CIRCUMSIZED" << ','
-            << "SRC_STI" << ','
-            << "SRC_SUPERSPREADER" << ','
-            << "SRC_INF_AGE" << ','
-            << "DEST_ID" << ','
-            << "DEST_INFECTED" << ','
-            << "DEST_GENDER" << ','
-            << "DEST_AGE" << ','
-            << "DEST_current_relationship_count" << ','
-            << "DEST_lifetime_relationship_count" << ','
-            << "DEST_relationships_in_last_6_months" << ','
-            << "DEST_FLAGS" << ','
-            << "DEST_CIRCUMSIZED" << ','
-            << "DEST_STI" << ','
-            << "DEST_SUPERSPREADER" ;
+        header     << "SIM_TIME"
+            << "," << "YEAR"
+            << "," << "NODE_ID"
+            << "," << "SRC_ID"
+            << "," << "SRC_INFECTED"
+            << "," << "SRC_GENDER"
+            << "," << "SRC_AGE"
+            << "," << "SRC_current_relationship_count"
+            << "," << "SRC_lifetime_relationship_count"
+            << "," << "SRC_relationships_in_last_6_months"
+            << "," << "SRC_FLAGS"
+            << "," << "SRC_CIRCUMCISED"
+            << "," << "SRC_STI"
+            << "," << "SRC_SUPERSPREADER"
+            << "," << "SRC_INF_AGE"
+                   << ReportUtilities::GetIPColumnHeader( "SRC_", properties_to_report )
+            << "," << "DEST_ID"
+            << "," << "DEST_INFECTED"
+            << "," << "DEST_GENDER"
+            << "," << "DEST_AGE"
+            << "," << "DEST_current_relationship_count"
+            << "," << "DEST_lifetime_relationship_count"
+            << "," << "DEST_relationships_in_last_6_months"
+            << "," << "DEST_FLAGS"
+            << "," << "DEST_CIRCUMCISED"
+            << "," << "DEST_STI"
+            << "," << "DEST_SUPERSPREADER"
+                   << ReportUtilities::GetIPColumnHeader( "DEST_", properties_to_report )
+            ;
+
         return header.str();
     }
 
@@ -180,34 +205,36 @@ namespace Kernel
         for (auto& entry : report_data)
         {
             GetOutputStream() 
-                << entry.time << ','
-                << entry.year << ','
-                << entry.node_id << ','
-                << entry.source_id << ','
-                << entry.source_is_infected << ','
-                << entry.source_gender << ','
-                << entry.source_age << ','
-                << entry.source_current_relationship_count << ','
-                << entry.source_lifetime_relationship_count << ','
-                << entry.source_relationships_in_last_6_months << ','
-                << entry.source_extrarelational_flags << ','
-                << entry.source_is_circumcised << ','
-                << entry.source_has_sti << ','
-                << entry.source_is_superspreader << ','
-                << entry.source_infection_age << ','
-                << entry.destination_id << ','
-                << entry.destination_is_infected << ','
-                << entry.destination_gender << ','
-                << entry.destination_age << ','
-                << entry.destination_current_relationship_count << ','
-                << entry.destination_lifetime_relationship_count << ','
-                << entry.destination_relationships_in_last_6_months << ','
-                << entry.destination_extrarelational_flags << ','
-                << entry.destination_is_circumcised << ','
-                << entry.destination_has_sti << ','
-                << entry.destination_is_superspreader
-                << GetOtherData( entry.rel_id )
-                << endl;
+                       << entry.time
+                << "," << entry.year
+                << "," << entry.node_id
+                << "," << entry.source_id
+                << "," << entry.source_is_infected
+                << "," << entry.source_gender
+                << "," << entry.source_age
+                << "," << entry.source_current_relationship_count
+                << "," << entry.source_lifetime_relationship_count
+                << "," << entry.source_relationships_in_last_6_months
+                << "," << entry.source_extrarelational_flags
+                << "," << entry.source_is_circumcised
+                << "," << entry.source_has_sti
+                << "," << entry.source_is_superspreader
+                << "," << entry.source_infection_age
+                       << ReportUtilities::GetIPData( entry.source_ip, keys_to_report )
+                << "," << entry.destination_id
+                << "," << entry.destination_is_infected
+                << "," << entry.destination_gender
+                << "," << entry.destination_age
+                << "," << entry.destination_current_relationship_count
+                << "," << entry.destination_lifetime_relationship_count
+                << "," << entry.destination_relationships_in_last_6_months
+                << "," << entry.destination_extrarelational_flags
+                << "," << entry.destination_is_circumcised
+                << "," << entry.destination_has_sti
+                << "," << entry.destination_is_superspreader
+                       << ReportUtilities::GetIPData( entry.destination_ip, keys_to_report )
+                       << GetOtherData( entry.rel_id )
+                       << endl;
         }
 
         BaseTextReport::EndTimestep( currentTime, dt );

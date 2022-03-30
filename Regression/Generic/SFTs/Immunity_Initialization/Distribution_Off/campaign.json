@@ -5,11 +5,9 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
-                    "Ignore_Immunity": 0
-					},
+                    "Ignore_Immunity": 0,
+                    "class": "OutbreakIndividual"
+                },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
             },

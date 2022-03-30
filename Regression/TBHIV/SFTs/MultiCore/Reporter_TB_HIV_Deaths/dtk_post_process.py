@@ -1,11 +1,16 @@
 #!/usr/bin/python
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import dtk_test.dtk_TBHIV_Reporter_Support as trs
 import dtk_test.dtk_TBHIV_Multicore_Support as tms
-import json
+
 import math
-import numpy as np
+
 import platform
 
 """

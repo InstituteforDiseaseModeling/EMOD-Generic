@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2016 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -209,7 +209,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         eventTriggerList.push_back(EventTrigger::TBFailedDrugRegimen);
         eventTriggerList.push_back(EventTrigger::OpportunisticInfectionDeath);
         eventTriggerList.push_back(EventTrigger::ProviderOrdersTBTest);
-        eventTriggerList.push_back(EventTrigger::NewInfectionEvent);
+        eventTriggerList.push_back(EventTrigger::NewInfection);
 
         
         return ret;
@@ -639,7 +639,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         {
             TBFailedTreatment[age_group] += mc_weight;
         }
-        else if (trigger == EventTrigger::NewInfectionEvent)
+        else if (trigger == EventTrigger::NewInfection)
         {
             NewInfections[age_group] += mc_weight; 
         }

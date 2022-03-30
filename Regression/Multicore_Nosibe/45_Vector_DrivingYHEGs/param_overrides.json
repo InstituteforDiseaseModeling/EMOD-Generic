@@ -35,10 +35,10 @@
     "Default_Config_Path": "../../defaults/vector_default_config.json",
     "GENERAL_DISEASE": {
         "Base_Infectivity": 1,
+        "Incubation_Period_Constant": 25,
         "Infection_Updates_Per_Timestep": 1,
         "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
-        "Infectious_Period_Exponential": 180,
-        "Incubation_Period_Constant": 25
+        "Infectious_Period_Exponential": 180
     },
     "HPC": {
         "Load_Balance_Filename": "Madagascar_Nosibe_2.5arcmin_load_balancing_8procs.bin",
@@ -89,6 +89,8 @@
     "PRIMARY": {
         "Config_Name": "45_Vector_DrivingYHEGs -- multicore -- Madagascar_Nosibe",
         "Enable_Demographics_Reporting": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Madagascar_Nosibe",
         "Run_Number": 36,
         "Simulation_Duration": 730,

@@ -14,7 +14,7 @@
                     "Node_IDs_Of_Interest" : [1,2]
                 },
                 {
-                    "Start_Day" : 0,
+                    "Start_Day" : 20,
                     "End_Day": 100,
                     "Report_File_Name" : "Rank1_Nodes3n4.json",
                     "Node_IDs_Of_Interest" : [3,4]

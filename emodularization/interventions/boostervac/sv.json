@@ -1,0 +1,11 @@
+{
+    "Waning_Config": {
+        "class": "WaningEffectBox",
+        "Initial_Effect" : 1.0,
+        "Box_Duration" : 730
+    },
+    "Vaccine_Take": 1,
+    "Vaccine_Type": "AcquisitionBlocking",
+    "class": "SimpleVaccine"
+}
+

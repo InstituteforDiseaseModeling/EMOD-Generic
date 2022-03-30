@@ -84,13 +84,12 @@
             "ENUMS": {
                 "Simulation_Type": "TBHIV_SIM"
             },
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Test",
             "Node_Grid_Size": 0.009,
             "Run_Number": 10400,
             "Simulation_Duration": 500
-        },
-        "STRAIN_TRACKING": {
-            "Number_Substrains": 2
         },
         "TB": {
             "TB_Active_Cure_Rate": 1e-09,

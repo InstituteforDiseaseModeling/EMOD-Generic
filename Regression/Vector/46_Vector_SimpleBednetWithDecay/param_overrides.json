@@ -11,6 +11,8 @@
                 "Namawala_single_node_demographics.json"
             ],
             "Enable_Initial_Prevalence": 1,
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "Population_Scale_Type": "FIXED_SCALING"
         },
@@ -20,7 +22,7 @@
             "Geography": "Namawala",
             "Run_Number": 27,
             "Simulation_Duration": 1095,
-            "x_Temporary_Larval_Habitat": 0.1
+            "x_Larval_Habitats": 0.1
         },
         "Vector_Species_Names": [
             "gambiae"

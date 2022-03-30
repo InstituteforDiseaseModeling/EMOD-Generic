@@ -1,13 +1,10 @@
 {
-     "Use_Defaults": 1,
-     "Campaign_Name": "Generic Seattle Regression Campaign", 
-     "Events": [
+    "Campaign_Name": "Generic Seattle Regression Campaign",
+    "Events": [
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
@@ -22,39 +19,39 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 1.0, 
+                "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Cost_To_Consumer": 10.0, 
-                    "Vaccine_Take": 1, 
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Prime_Effect": 0.2,
                     "Boost_Effect": 0.6,
                     "Boost_Threshold": 0.0,
+                    "Cost_To_Consumer": 10.0,
+                    "Prime_Effect": 0.2,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
                     "Waning_Config": {
-                        "Box_Duration": 10, 
-                        "Initial_Effect": 1, 
+                        "Box_Duration": 10,
+                        "Initial_Effect": 1,
                         "class": "WaningEffectBox"
-                    }, 
+                    },
                     "class": "SimpleBoosterVaccine"
-                }, 
+                },
+                "Property_Restrictions": [
+                    "QualityOfCare:2_Test"
+                ],
                 "Target_Demographic": "Everyone",
-				"Property_Restrictions": [ "QualityOfCare:2_Test" ],				
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 5, 
+            },
+            "Start_Day": 5,
             "class": "CampaignEvent"
         },
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
-                    "class": "OutbreakIndividual",
-                    "Ignore_Immunity": 0
+                    "Ignore_Immunity": 0,
+                    "class": "OutbreakIndividual"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -66,5 +63,6 @@
             "Start_Day": 7,
             "class": "CampaignEvent"
         }
-     ]
+    ],
+    "Use_Defaults": 1
 }

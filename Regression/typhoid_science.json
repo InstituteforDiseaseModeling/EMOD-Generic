@@ -1,5 +1,13 @@
 {
      "science": [
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/CDEquals0" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakDurationEquals1" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartAt0" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUD" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUDplusCD" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUDplusCDplusRDD" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/RDDEqualsSmall" },
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/RUDEqualsSmall" },
         { "path" : "Typhoid/SFTs/AcuSubcToChrSusTransition" },
         { "path" : "Typhoid/SFTs/AcuToChrTransitionProbability/00_year_bucket" },
         { "path" : "Typhoid/SFTs/AcuToChrTransitionProbability/10_year_bucket" },
@@ -31,7 +39,7 @@
         { "path" : "Typhoid/SFTs/ReportTyphoidByAgeAndGender/PopulationAndPrevalence" },
         { "path" : "Typhoid/SFTs/SeasonalAttenuation" },
         { "path" : "Typhoid/SFTs/SheddingMultiroute" },
-		{ "path" : "Typhoid/SFTs/TyphoidCarrierClear" },
+        { "path" : "Typhoid/SFTs/TyphoidCarrierClear" },
         { "path" : "Typhoid/SFTs/SubcToChrTransitionProbability/00_year_bucket" },
         { "path" : "Typhoid/SFTs/SubcToChrTransitionProbability/10_year_bucket" },
         { "path" : "Typhoid/SFTs/SubcToChrTransitionProbability/20_year_bucket" },
@@ -46,17 +54,10 @@
         { "path" : "Typhoid/SFTs/Vaccine_Linear_Exposures_Contact" },
         { "path" : "Typhoid/SFTs/Vaccine_Linear_Exposures_Environmental" },
         { "path" : "Typhoid/SFTs/Vaccine_Linear_Shedding_Contact" },
-        { "path" : "Typhoid/SFTs/Vaccine_Linear_Shedding_Environmental" }
+        { "path" : "Typhoid/SFTs/Vaccine_Linear_Shedding_Environmental" },
+        { "path" : "Typhoid/SFTs/ChronicCarrierDiagnostic" }
     ], 
     "suspended_tests": [
-	    { "path" : "Typhoid/SFTs/SeasonalAttenuation/CDEquals0" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakDurationEquals1" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartAt0" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUD" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUDplusCD" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartEqualsRUDplusCDplusRDD" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/RDDEquals0" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation/RUDEquals0" },
         { "path" : "Typhoid/SFTs/AcuteTreatment" }
     ]
 }

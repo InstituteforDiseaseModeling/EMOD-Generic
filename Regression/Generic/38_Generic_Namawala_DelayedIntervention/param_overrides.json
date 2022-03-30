@@ -9,13 +9,15 @@
         },
         "DISEASE": {
             "Base_Infectivity": 0.001,
-            "x_Base_Population": 10.0,
+            "Incubation_Period_Constant": 0,
             "Infectious_Period_Exponential": 1,
             "Population_Scale_Type": "FIXED_SCALING",
-            "Incubation_Period_Constant": 0
+            "x_Base_Population": 10.0
         },
         "PRIMARY": {
             "Config_Name": "38_Generic_Namawala_DelayedIntervention",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Simulation_Duration": 250
         },

@@ -5,8 +5,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Import_Age": 10000,
                     "Incubation_Period_Override": 1,
                     "Number_Cases_Per_Node": 10,
@@ -30,8 +28,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Infection_Type": "HIV",
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividualTBorHIV"

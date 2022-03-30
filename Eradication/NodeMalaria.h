@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BoostLibWrapper.h"
 
 #include "Common.h"
-
 #include "MalariaContexts.h"
 #include "NodeVector.h"
 
@@ -90,5 +89,6 @@ namespace Kernel
         virtual void Initialize() override;
 
         virtual INodeContext *getContextPointer() override { return static_cast<INodeContext*>(this); }
+        IDistribution* distribution_susceptibility;
     };
 }

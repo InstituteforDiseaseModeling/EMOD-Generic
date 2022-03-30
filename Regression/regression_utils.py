@@ -66,6 +66,11 @@ def flattenConfig( configjson_path, new_config_name="config" ):
     # get defaults from config.json and synthesize output from default and overrides
     if "Default_Config_Path" in configjson_flat:
         default_config_path = configjson_flat["Default_Config_Path"]
+        stripped_path = default_config_path.strip()
+        if stripped_path != default_config_path:
+            print("Warning: config parameter 'Default_Config_Path' has leading or trailing whitespace in value \"{0}\"."
+                  " Trimming whitespace and continuing.".format(default_config_path))
+            default_config_path = stripped_path
 
         try:
             # This code has always worked by treating the default_configpath as relative the Regression directory.
@@ -94,6 +99,10 @@ def flattenConfig( configjson_path, new_config_name="config" ):
     # messing with anything else downstream now that it is flattened
     if "Default_Config_Path" in configjson["parameters"]:
         configjson["parameters"].pop("Default_Config_Path")
+
+    # There are no custom reports for Linux so, check if dlls exist will fail
+    if os.name == "posix":
+        del configjson["parameters"]["Custom_Reports_Filename"]
 
     # let's write out a flat version in case someone wants
     # to use regression examples as configs for debug mode
@@ -340,6 +349,7 @@ def touch_file(filename):
     """Update a file's last modification date by opening/closing it"""
     with open(filename, "a"):
         os.utime(filename, None)
+
 
 def files_are_identical(source, target):
     """

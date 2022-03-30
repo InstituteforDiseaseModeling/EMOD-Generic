@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -73,6 +73,16 @@ namespace Kernel
         }
 
         return newsimulation;
+    }
+
+    void SimulationHIV::SetFixedParameters(::Configuration * config)
+    {
+        config->Add("Enable_Disease_Mortality", 1);
+        config->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
+        config->Add("Enable_Immune_Decay", 0);   //must exist because Enable_Immunity: 1
+        config->Add("Enable_Initial_Susceptibility_Distribution", 0); //must exist because Enable_Immunity: 1
+        config->Add("Enable_Maternal_Infection_Transmission", 1);
+        config->Add("Enable_Vital_Dynamics", 1);
     }
 
     void

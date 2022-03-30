@@ -1,29 +1,27 @@
 {
-     "Use_Defaults": 1,
-     "Campaign_Name": "Generic Seattle Regression Campaign", 
-     "Events": [
-          {
-               "class": "CampaignEvent",
-               "Start_Day": 1, 
-               "Nodeset_Config": {
-                    "class": "NodeSetAll"
-               }, 
-               "Event_Coordinator_Config": {
-                    "Target_Demographic": "ExplicitAgeRanges", 
-                    "Target_Age_Min": 15,
-                    "Target_Age_Max": 35,
-                    "Demographic_Coverage": 0.25,
-                    "class": "StandardInterventionDistributionEventCoordinator",
-                    "Travel_Linked": 0,
-                    "Intervention_Config": {
-                         "class": "OutbreakIndividual",
-                         "Incubation_Period_Override": 0,
-                         "Event_Name": "Outbreak (not used)", 
-                         "Outbreak_Source": "PrevalenceIncrease", 
-                         "Antigen": 0, 
-                         "Genome": 0
-                    } 
-               }
-          }
-     ]
+    "Campaign_Name": "Generic Seattle Regression Campaign",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.25,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Age_Max": 35,
+                "Target_Age_Min": 15,
+                "Target_Demographic": "ExplicitAgeRanges",
+                "Travel_Linked": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
 }

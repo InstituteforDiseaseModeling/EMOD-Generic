@@ -1,25 +1,28 @@
 {
-    "Default_Config_Path": "defaults/sti_scenario_default_config.json", 
+    "Default_Config_Path": "defaults/sti_scenario_default_config.json",
     "parameters": {
+        "Coital_Dilution_Factor_2_Partners": 0.5,
+        "Coital_Dilution_Factor_3_Partners": 0.33,
+        "Coital_Dilution_Factor_4_Plus_Partners": 0.25,
         "Config_Name": "01I_Coital_Dilution",
-
-        "Run_Number" : 210,
-        "Simulation_Duration": 730,
-        "Demographics_Filenames": ["uniform_demographics.json","pfa_simple.json","PFA_overlay_rates.json","PFA_Concurrency.json"],
-        "x_Base_Population": 0.002, 
+        "Demographics_Filenames": [
+            "uniform_demographics.json",
+            "pfa_simple.json",
+            "PFA_overlay_rates.json",
+            "PFA_Concurrency.json"
+        ],
+        "Enable_Coital_Dilution": 1,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 0,
-
-        "Enable_Coital_Dilution": 1, 
-        "Coital_Dilution_Factor_2_Partners": 0.5, 
-        "Coital_Dilution_Factor_3_Partners": 0.33, 
-        "Coital_Dilution_Factor_4_Plus_Partners": 0.25, 
-
-        "Report_Coital_Acts": 1, 
-
+        "Report_Coital_Acts": 1,
+        "Run_Number": 210,
         "Sexual_Debut_Age_Female_Weibull_Heterogeneity": 0,
         "Sexual_Debut_Age_Female_Weibull_Scale": 0,
         "Sexual_Debut_Age_Male_Weibull_Heterogeneity": 0,
         "Sexual_Debut_Age_Male_Weibull_Scale": 0,
-        "Sexual_Debut_Age_Min": 0
+        "Sexual_Debut_Age_Min": 0,
+        "Simulation_Duration": 730,
+        "x_Base_Population": 0.002
     }
 }

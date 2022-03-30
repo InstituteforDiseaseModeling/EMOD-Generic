@@ -14,13 +14,15 @@
             "PFA_Concurrency.json"
         ],
         "Enable_Disease_Mortality": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 0,
         "Immunity_Mortality_Factor": 0.5,
+        "Incubation_Period_Constant": 1,
         "Infectious_Period_Gaussian_Mean": 120,
         "Min_Days_Between_Adding_Relationships": 1,
         "Report_Relationship_Start": 0,
         "Simulation_Duration": 100,
-        "x_Base_Population": 0.0001,
-        "Incubation_Period_Constant": 1
+        "x_Base_Population": 0.0001
     }
 }

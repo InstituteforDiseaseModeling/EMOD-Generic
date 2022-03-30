@@ -1,258 +1,246 @@
 {
-    "Use_Defaults": 1,
     "Events": [
         {
-            "comment": "See that the family leaves node 1 and goes to node 26 all togehter.  They should return 10 days later - not a move.",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Duration_At_Node_Constant": 10,
+                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_Before_Leaving_Constant": 0,
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 26,
+                    "class": "MigrateFamily"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 5,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Intervention_Config": {
-                    "class": "MigrateFamily",
-                    "NodeID_To_Migrate_To": 26,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
-                    "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 10
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "See that the family leaves node 1 and goes to node 26 all togehter.  They should return 10 days later - not a move."
         },
         {
-            "comment": "No one should be in node 1 so outbreak does nothing.",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 10,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "No one should be in node 1 so outbreak does nothing."
         },
         {
-            "comment": "Family should have returned to node 1 so outbreak in node 26 does nothing.",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    26
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 20,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    26
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "Family should have returned to node 1 so outbreak in node 26 does nothing."
         },
         {
-            "comment": "Send family in node 1 to node 26 - not a move",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "Duration_At_Node_Constant": 20,
+                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_Before_Leaving_Constant": 0,
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 26,
+                    "class": "MigrateFamily"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 30,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Intervention_Config": {
-                    "class": "MigrateFamily",
-                    "NodeID_To_Migrate_To": 26,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
-                    "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 20
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "Send family in node 1 to node 26 - not a move"
         },
         {
-            "comment": "Try to move the residents in node 26 to node 7.  Since the only people in node 26 should be the family visiting from node 1, no one should move to node 7.",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Duration_At_Node_Constant": 999,
+                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_Before_Leaving_Constant": 0,
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 7,
+                    "class": "MigrateIndividuals"
+                },
+                "Target_Demographic": "Everyone",
+                "Target_Residents_Only": 1,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    26
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 40,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    26
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Residents_Only": 1,
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "MigrateIndividuals",
-                    "NodeID_To_Migrate_To": 7,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
-                    "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 999
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "Try to move the residents in node 26 to node 7.  Since the only people in node 26 should be the family visiting from node 1, no one should move to node 7."
         },
         {
-            "comment": "Since no one should have moved to node 7, an outbreak there does nothing.",
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    7
+                ],
+                "class": "NodeSetNodeList"
+            },
             "Start_Day": 45,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    7
-                ]
-            },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "class": "CampaignEvent",
+            "comment": "Since no one should have moved to node 7, an outbreak there does nothing."
         },
         {
-            "comment": "Have the family in node 1 MOVE to node 26.  Duration_At_Node should not do anything",
-            "class": "CampaignEvent",
-            "Start_Day": 60,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    1
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
                 "Intervention_Config": {
-                    "class": "MigrateFamily",
-                    "NodeID_To_Migrate_To": 26,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_At_Node_Constant": 0,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Duration_Before_Leaving_Constant": 0,
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
                     "Is_Moving": 1,
-                    "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 0
-                }
-            }
-        },
-        {
-            "comment": "An outbreak in node 1 does nothing because everyone moved even though Duration_At_Node = 0.",
-            "class": "CampaignEvent",
-            "Start_Day": 62,
+                    "NodeID_To_Migrate_To": 26,
+                    "class": "MigrateFamily"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
-                "class": "NodeSetNodeList",
                 "Node_List": [
                     1
-                ]
+                ],
+                "class": "NodeSetNodeList"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 60,
+            "class": "CampaignEvent",
+            "comment": "Have the family in node 1 MOVE to node 26.  Duration_At_Node should not do anything"
         },
         {
-            "comment": "Try to migrate the residents in node 26 to node 7.  Since the people are now residents, they should move to node 7.",
-            "class": "CampaignEvent",
-            "Start_Day": 65,
-            "Nodeset_Config": {
-                "class": "NodeSetNodeList",
-                "Node_List": [
-                    26
-                ]
-            },
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Residents_Only": 1,
-                "Target_Demographic": "Everyone",
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "class": "MigrateIndividuals",
-                    "NodeID_To_Migrate_To": 7,
-                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [
+                    1
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 62,
+            "class": "CampaignEvent",
+            "comment": "An outbreak in node 1 does nothing because everyone moved even though Duration_At_Node = 0."
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Duration_At_Node_Constant": 999,
                     "Duration_At_Node_Distribution": "CONSTANT_DISTRIBUTION",
-                    "Is_Moving": 0,
                     "Duration_Before_Leaving_Constant": 0,
-                    "Duration_At_Node_Constant": 999
-                }
-            }
-        },
-        {
-            "comment": "An outbreak in node 26 does nothing since everyone moved to node 7.",
-            "class": "CampaignEvent",
-            "Start_Day": 70,
+                    "Duration_Before_Leaving_Distribution": "CONSTANT_DISTRIBUTION",
+                    "Is_Moving": 0,
+                    "NodeID_To_Migrate_To": 7,
+                    "class": "MigrateIndividuals"
+                },
+                "Target_Demographic": "Everyone",
+                "Target_Residents_Only": 1,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
-                "class": "NodeSetNodeList",
                 "Node_List": [
                     26
-                ]
+                ],
+                "class": "NodeSetNodeList"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 65,
+            "class": "CampaignEvent",
+            "comment": "Try to migrate the residents in node 26 to node 7.  Since the people are now residents, they should move to node 7."
         },
         {
-            "comment": "Now that people are in node 7, the outbreak there does something",
-            "class": "CampaignEvent",
-            "Start_Day": 80,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
-                "class": "NodeSetNodeList",
+                "Node_List": [
+                    26
+                ],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 70,
+            "class": "CampaignEvent",
+            "comment": "An outbreak in node 26 does nothing since everyone moved to node 7."
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Outbreak_Source": "ImportCases",
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
                 "Node_List": [
                     7
-                ]
+                ],
+                "class": "NodeSetNodeList"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone",
-                "Demographic_Coverage": 1.0,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Outbreak_Source": "ImportCases",
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 80,
+            "class": "CampaignEvent",
+            "comment": "Now that people are in node 7, the outbreak there does something"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

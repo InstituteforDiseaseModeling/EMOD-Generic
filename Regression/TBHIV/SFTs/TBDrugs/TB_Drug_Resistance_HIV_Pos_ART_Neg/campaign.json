@@ -4,17 +4,15 @@
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Infection_Type": "TB",
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividualTBorHIV"
                 },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Event_Name": "Seeding the TB epidemic at time 1",
@@ -27,14 +25,14 @@
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Intervention_Config": {
                     "Remaining_Doses": 1,
                     "TB_Drug_Name": "ACFDOTS",
                     "class": "TBHIVConfigurableTBdrug"
                 },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Event_Name": "Configurable AntiTBDrug: InterventionUnderTest",
@@ -47,17 +45,15 @@
         {
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
-                "Number_Repetitions": 1,
-                "Timesteps_Between_Repetitions": 0,
-                "Target_Demographic": "Everyone",
                 "Intervention_Config": {
-                    "Antigen": 0,
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Infection_Type": "HIV",
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividualTBorHIV"
                 },
+                "Number_Repetitions": 1,
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 0,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Event_Name": "Seeding HIV",

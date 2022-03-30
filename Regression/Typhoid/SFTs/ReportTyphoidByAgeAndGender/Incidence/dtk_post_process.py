@@ -10,11 +10,16 @@
 #       As a result, we could record a prepat event for someone age X and then if they had
 #       their birthday before becoming acute, they would roll up in the next age bin for the acute incidence.
 
-import json
+
 import math
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import csv
-import numpy as np
+
 
 
 def application(report_file, debug=False):

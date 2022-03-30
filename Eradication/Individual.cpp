@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -554,13 +554,13 @@ namespace Kernel
         }
     }
 
-    void IndividualHuman::SetInitialInfections(int init_infs)
+    void IndividualHuman::SetInitialInfections(int init_infs, const IStrainIdentity *infstrain)
     {
         if (init_infs)
         {
             for (int i = 0; i < init_infs; i++)
             {
-                AcquireNewInfection();
+                AcquireNewInfection(infstrain);
             }
         }
     }
@@ -685,6 +685,11 @@ namespace Kernel
                     ++it;
                 }
 
+                if ( IndividualHumanConfig::enable_immunity )
+                {
+                    susceptibility->Update(infection_timestep);      // Immunity update: mainly decay of immunity
+                }
+
                 m_newly_symptomatic = !prev_symptomatic && IsSymptomatic();
                 if( m_newly_symptomatic )
                 {
@@ -696,10 +701,6 @@ namespace Kernel
                     broadcaster->TriggerObservers( GetEventContext(), EventTrigger::SymptomaticCleared );
                 }
 
-                if ( IndividualHumanConfig::enable_immunity )
-                {
-                    susceptibility->Update(infection_timestep);      // Immunity update: mainly decay of immunity
-                }
                 if (StateChange == HumanStateChange::KilledByInfection)
                 {
                     break; // If individual died, no need to keep simulating infections.
@@ -738,6 +739,15 @@ namespace Kernel
         if (StateChange == HumanStateChange::None && IndividualHumanConfig::migration_structure) // Individual can't migrate if they're already dead
         {
             CheckForMigration(currenttime, dt);
+        }
+
+        if( (m_new_infection_state == NewInfectionState::NewInfection) ||
+            (m_new_infection_state == NewInfectionState::NewAndDetected) )
+        {
+            if( broadcaster )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::NewInfection );
+            }
         }
     }
 
@@ -1166,10 +1176,9 @@ namespace Kernel
         StrainIdentity newStrainId;
         if( cp != nullptr )
         {
-            cp->ResolveInfectingStrain( &newStrainId ); // get the substrain ID
+            cp->ResolveInfectingStrain( &newStrainId ); // get the clade and genome ID
         }
 
-        //LOG_DEBUG_F( "AcquireNewInfection: id=%lu, group_id=%d\n", GetSuid().data, ( transmissionGroupMembership.size() ? transmissionGroupMembership.at(0) : nullptr ) );
         int numInfs = int(infections.size());
         if ( (IndividualHumanConfig::superinfection && (numInfs < IndividualHumanConfig::max_ind_inf)) || (numInfs == 0) )
         {
@@ -1189,7 +1198,7 @@ namespace Kernel
             IIndividualTriggeredInterventionConsumer * pITIC = nullptr;
             if (s_OK == GetInterventionsContext()->QueryInterface(GET_IID(IIndividualTriggeredInterventionConsumer), (void**)&pITIC) )
             {
-                pITIC->TriggerObservers( GetEventContext(), EventTrigger::NewInfectionEvent );
+                pITIC->TriggerObservers( GetEventContext(), EventTrigger::NewInfection );
             }
 #endif
         }

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -69,6 +69,7 @@ namespace Kernel
         virtual void  ApplyARTOnset() override;
         virtual ProbabilityNumber GetPrognosisCompletedFraction() const override;
         virtual void  TerminateSuppression(float days_till_death) override;
+        virtual bool IsSymptomatic() const override;
 
     protected:
         //disease specific params 
@@ -82,6 +83,7 @@ namespace Kernel
         void UpdateSymptomaticPresentationTime();
 
         // additional members of SusceptibilityHIV (params)
+        bool is_symptomatic;
         float days_between_symptomatic_and_death;   // Days before death to broadcast NewlySymptomatic
 
         float sqrtCD4_Current;          // Current sqrt( CD4count )

@@ -23,8 +23,9 @@
         "Custom_Reports_Filename": "custom_reports.json",
         "Enable_Default_Reporting": 1,
         "Enable_Demographics_Reporting": 0,
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Python_Script_Path": "SHARED",
-        "Serialization_Type": "TIMESTEP",
         "Serialization_Time_Steps": [
             23,
             24,
@@ -71,6 +72,7 @@
             65,
             66
         ],
+        "Serialization_Type": "TIMESTEP",
         "Simulation_Duration": 66
     }
 }

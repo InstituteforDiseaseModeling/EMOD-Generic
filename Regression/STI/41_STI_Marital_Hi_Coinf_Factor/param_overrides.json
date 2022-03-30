@@ -9,6 +9,8 @@
                 "PFA_overlay_rates.json",
                 "PFA_Concurrency.json"
             ],
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 0,
             "MORTALITY": {
                 "Base_Mortality": 0.01,
@@ -29,8 +31,6 @@
             "Config_Name": "41_STI_Marital_Hi_Coinf_Factor",
             "Simulation_Duration": 1500
         },
-        "STI": {
-            "STI_Coinfection_Probability": 1.0
-        }
+        "STI": {}
     }
 }

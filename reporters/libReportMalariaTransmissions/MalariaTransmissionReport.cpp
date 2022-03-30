@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -191,7 +191,7 @@ GetReportInstantiator( report_instantiator_function_t* pif )
         LOG_DEBUG_F("==> Notified of %s event by %d-year old individual (suid=%d).\n",
             StateChange.c_str(), (int)(age / DAYSPERYEAR), id);
 
-        if(trigger == EventTrigger::NewInfectionEvent)
+        if(trigger == EventTrigger::NewInfection)
         {
             // ---------- Find ID of acquired infection
             MalariaIndividualInfo info = MalariaIndividualInfo(context);
@@ -199,7 +199,7 @@ GetReportInstantiator( report_instantiator_function_t* pif )
             {
                 throw IllegalOperationException(
                     __FILE__, __LINE__, __FUNCTION__,
-                    "Notified of NewInfectionEvent by individual with empty infections list.");
+                    "Notified of NewInfection by individual with empty infections list.");
             }
             uint32_t acInfId_ = info.infections.front()->id;  // most recent: IndividualHuman::AcquireNewInfection does push_front
 

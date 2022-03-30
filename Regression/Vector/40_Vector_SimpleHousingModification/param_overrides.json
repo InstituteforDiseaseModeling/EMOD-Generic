@@ -13,10 +13,12 @@
         },
         "PRIMARY": {
             "Config_Name": "40_Vector_SimpleHousingModification",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 360,
-            "x_Temporary_Larval_Habitat": 0.1
+            "x_Larval_Habitats": 0.1
         },
         "VECTOR": {
             "Vector_Species_Names": [

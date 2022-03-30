@@ -1,85 +1,75 @@
 {
-    "Use_Defaults": 1,
     "Events": [
         {
-            "Event_Name": "Outbreak", 
-            "class": "CampaignEvent",
-            "Start_Day": 0, 
-            "Nodeset_Config": {
-                "class": "NodeSetAll"
-            }, 
             "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone", 
                 "Demographic_Coverage": 0.1,
                 "Intervention_Config": {
-                    "class": "OutbreakIndividual",
                     "Outbreak_Source": "ImportCases",
-                    "Antigen": 0, 
-                    "Genome": 0
-                }
-            }
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
         },
         {
-            "Event_Name": "Broadcast to Other Households If Person Infected", 
-            "class": "CampaignEvent",
-            "Start_Day": 0,
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition": "NewClinicalCase",
-                    "Blackout_Event_Trigger" : "Blackout",
-                    "Blackout_Period" : 0.0,
-                    "Blackout_On_First_Occurrence":0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "BroadcastEventToOtherNodes",
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
                         "Event_Trigger": "VaccinateNeighbors",
-                        "Include_My_Node" : 1,
-                        "Node_Selection_Type" : "DISTANCE_AND_MIGRATION",
-                        "Max_Distance_To_Other_Nodes_Km" : 1
-                    }
-                }
-            }
+                        "Include_My_Node": 1,
+                        "Max_Distance_To_Other_Nodes_Km": 1,
+                        "Node_Selection_Type": "DISTANCE_AND_MIGRATION",
+                        "class": "BroadcastEventToOtherNodes"
+                    },
+                    "Blackout_Event_Trigger": "Blackout",
+                    "Blackout_On_First_Occurrence": 0,
+                    "Blackout_Period": 0.0,
+                    "Trigger_Condition": "NewClinicalCase",
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Broadcast to Other Households If Person Infected",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
         },
         {
-            "Event_Name": "Get Vaccinated If Neighbor Infected", 
-            "class": "CampaignEvent",
-            "Start_Day": 0,
-            "Nodeset_Config":
-            {
-                "class": "NodeSetAll"
-            }, 
-            "Event_Coordinator_Config": 
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "Cost_To_Consumer": 10,
+                        "Dont_Allow_Duplicates": 1,
+                        "Dosing_Type": "FullTreatmentParasiteDetect",
+                        "Drug_Type": "Chloroquine",
+                        "class": "AntimalarialDrug"
+                    },
+                    "Blackout_Event_Trigger": "Blackout",
+                    "Blackout_On_First_Occurrence": 0,
+                    "Blackout_Period": 0.0,
                     "Trigger_Condition": "TriggerString",
                     "Trigger_Condition_String": "VaccinateNeighbors",
-                    "Blackout_Event_Trigger" : "Blackout",
-                    "Blackout_Period" : 0.0,
-                    "Blackout_On_First_Occurrence":0,
-                    "Actual_IndividualIntervention_Config":
-                    {
-                         "class": "AntimalarialDrug",
-                         "Cost_To_Consumer": 10, 
-                         "Dosing_Type": "FullTreatmentParasiteDetect", 
-                         "Drug_Type": "Chloroquine", 
-                         "Dont_Allow_Duplicates" : 1
-                    }
-                }
-            }
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Get Vaccinated If Neighbor Infected",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

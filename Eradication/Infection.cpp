@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -32,8 +32,9 @@ namespace Kernel
     float InfectionConfig::base_infectivity = 1.0f;
     float InfectionConfig::base_mortality = 1.0f;
     bool  InfectionConfig::enable_disease_mortality = false;
-    unsigned int InfectionConfig::number_basestrains = 1;
-    unsigned int InfectionConfig::number_substrains = 0;
+    bool  InfectionConfig::enable_strain_tracking   = false;
+    unsigned int InfectionConfig::number_clades   = 1;
+    unsigned int InfectionConfig::number_genomes  = 1;
     
     // symptomatic
     float InfectionConfig::symptomatic_infectious_offset = FLT_MAX; //disabled
@@ -51,25 +52,36 @@ namespace Kernel
         initConfigTypeMap("Base_Infectivity", &base_infectivity, Base_Infectivity_DESC_TEXT, 0.0f, 1000.0f, 0.3f, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,TBHIV_SIM,PY_SIM,HIV_SIM");// should default change depending on disease?
        
         // Configure incubation period
-        DistributionFunction::Enum incubation_period_function(DistributionFunction::CONSTANT_DISTRIBUTION);
+        DistributionFunction::Enum incubation_period_function( DistributionFunction::NOT_INITIALIZED );
         initConfig("Incubation_Period_Distribution", incubation_period_function, config, MetadataDescriptor::Enum("Incubation_Period_Distribution", Incubation_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)));
         incubation_distribution = DistributionFactory::CreateDistribution( this, incubation_period_function, "Incubation_Period", config );
         
         // Configure infectious duration using depends-on.
-        DistributionFunction::Enum infectious_distribution_function(DistributionFunction::CONSTANT_DISTRIBUTION);
+        DistributionFunction::Enum infectious_distribution_function( DistributionFunction::NOT_INITIALIZED );
         initConfig("Infectious_Period_Distribution", infectious_distribution_function, config, MetadataDescriptor::Enum("Infectious_Period_Distribution", Infectious_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)), "Simulation_Type", "GENERIC_SIM, POLIO_SIM, VECTOR_SIM, ENVIRONMENTAL_SIM, PY_SIM, STI_SIM");
-        infectious_distribution = DistributionFactory::CreateDistribution( this, infectious_distribution_function, "Infectious_Period", config );
+
+        if( infectious_distribution_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun )
+        {
+            // Infectious_Period_Distribution is a required parameter for several sims, if this parameter is not set then it is not required for the current sim
+            infectious_distribution = DistributionFactory::CreateDistribution( this, infectious_distribution_function, "Infectious_Period", config );
+        }
 
         // Symptomatic
         initConfigTypeMap( "Symptomatic_Infectious_Offset", &symptomatic_infectious_offset, Symptomatic_Infectious_Offset_DESC_TEXT, -FLT_MAX, FLT_MAX, FLT_MAX, "Simulation_Type", "GENERIC_SIM" ); //FLT_MAX Individual never becomes symptomatic
 
-        initConfigTypeMap( "Number_Basestrains", &number_basestrains, Number_Basestrains_DESC_TEXT, 1,       10,   1 );
-        if( !JsonConfigurable::_dryrun && GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::MALARIA_SIM ) // Don't want this even in schema for MALARIA_SIM. TBD.
-        {
-            initConfigTypeMap( "Number_Substrains", &number_substrains, Number_Substrains_DESC_TEXT, 1, 16777216, 256 );
-        }
+        // Strain tracking
+        int log2genomes = 0;
+        initConfigTypeMap("Enable_Strain_Tracking",            &enable_strain_tracking,  Enable_Strain_Tracking_DESC_TEXT,            false);
+        initConfigTypeMap("Number_of_Clades",                  &number_clades,           Number_of_Clades_DESC_TEXT,                      1,  10,   1, "Enable_Strain_Tracking");
+        initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,             Log2_Number_of_Genomes_per_Clade_DESC_TEXT,      0,  24,   0, "Enable_Strain_Tracking");
 
-        return JsonConfigurable::Configure( config );
+        // Process configuration
+        bool bRet = JsonConfigurable::Configure( config );
+
+        // Post-process values
+        number_genomes = number_genomes << log2genomes;
+
+        return bRet;
     }
 
     Infection::Infection()
@@ -231,9 +243,9 @@ namespace Kernel
 
         if (infstrain != nullptr)
         {
-            infection_strain->SetAntigenID( infstrain->GetAntigenID() );
+            infection_strain->SetCladeID( infstrain->GetCladeID() );
             infection_strain->SetGeneticID( infstrain->GetGeneticID() );
-            // otherwise, using the default antigenID and substrainID from the StrainIdentity constructor
+            // otherwise, using the default cladeID and genomeID from the StrainIdentity constructor
         }
     }
 
@@ -246,7 +258,7 @@ namespace Kernel
     void Infection::GetInfectiousStrainID( IStrainIdentity* infstrain ) 
     {
         // Really want to make this cloning an internal StrainIdentity function
-        infstrain->SetAntigenID( infection_strain->GetAntigenID() );
+        infstrain->SetCladeID( infection_strain->GetCladeID() );
         infstrain->SetGeneticID( infection_strain->GetGeneticID() );
     }
 
@@ -326,6 +338,6 @@ namespace Kernel
     bool
     Infection::StrainMatches( IStrainIdentity * pStrain )
     {
-        return( infection_strain->GetAntigenID() == pStrain->GetAntigenID() );
+        return( infection_strain->GetCladeID() == pStrain->GetCladeID() );
     }
 }

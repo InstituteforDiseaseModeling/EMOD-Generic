@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -70,7 +70,7 @@ namespace Kernel
         const std::string param_constant( param_name + "_Constant" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_constant.c_str(), &m_Param1, Distribution_Constant_DESC_TEXT, 0.0f, FLT_MAX, 6.0f, distribution_name.c_str(), "CONSTANT_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_constant.c_str(), &m_Param1, Distribution_Constant_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "CONSTANT_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }
 
@@ -102,7 +102,7 @@ namespace Kernel
         const std::string param_exponential( param_name + "_Exponential" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_exponential.c_str(), &m_Param1, Distribution_Exponential_DESC_TEXT, 0.0f, FLT_MAX, 6.0f, distribution_name.c_str(), "EXPONENTIAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_exponential.c_str(), &m_Param1, Distribution_Exponential_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "EXPONENTIAL_DISTRIBUTION" );
         bool ret = pParent->JsonConfigurable::Configure( config );
 
         if( !JsonConfigurable::_dryrun && ret )
@@ -142,8 +142,8 @@ namespace Kernel
         const std::string param_gaussian_std_dev( param_name + "_Gaussian_Std_Dev" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_gaussian_mean.c_str(), &m_Param1, Distribution_Gaussian_Mean_DESC_TEXT, 0.0f, FLT_MAX, 6.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_gaussian_std_dev.c_str(), &m_Param2, Distribution_Gaussian_Std_Dev_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_gaussian_mean.c_str(), &m_Param1, Distribution_Gaussian_Mean_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_gaussian_std_dev.c_str(), &m_Param2, Distribution_Gaussian_Std_Dev_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }
 
@@ -174,7 +174,7 @@ namespace Kernel
         const std::string param_poisson_mean( param_name + "_Poisson_Mean" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_poisson_mean.c_str(), &m_Param1, Distribution_Poisson_Mean_DESC_TEXT, 0.0f, FLT_MAX, 6.0f, distribution_name.c_str(), "POISSON_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_poisson_mean.c_str(), &m_Param1, Distribution_Poisson_Mean_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "POISSON_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }
 
@@ -208,8 +208,8 @@ namespace Kernel
         const std::string param_log_normal_sigma( param_name + "_Log_Normal_Sigma" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_log_normal_mu.c_str(), &m_Param1, Distribution_LogNormal_Mu_DESC_TEXT, -FLT_MAX, FLT_MAX, 6.0f, distribution_name.c_str(), "LOG_NORMAL_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_log_normal_sigma.c_str(), &m_Param2, Distribution_LogNormal_Sigma_DESC_TEXT, -FLT_MAX, FLT_MAX, 1.0f, distribution_name.c_str(), "LOG_NORMAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_log_normal_mu.c_str(), &m_Param1, Distribution_LogNormal_Mu_DESC_TEXT, -FLT_MAX, FLT_MAX/2.0, FLT_MAX, distribution_name.c_str(), "LOG_NORMAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_log_normal_sigma.c_str(), &m_Param2, Distribution_LogNormal_Sigma_DESC_TEXT, -FLT_MAX, FLT_MAX/2.0, FLT_MAX, distribution_name.c_str(), "LOG_NORMAL_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }
 
@@ -245,8 +245,8 @@ namespace Kernel
         const std::string param_kappa( param_name + "_Kappa" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_lambda.c_str(), &m_Param1, Distribution_Weibull_Lambda_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "WEIBULL_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_kappa.c_str(), &m_Param2, Distribution_Weibull_Kappa_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "WEIBULL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_lambda.c_str(), &m_Param1, Distribution_Weibull_Lambda_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "WEIBULL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_kappa.c_str(), &m_Param2, Distribution_Weibull_Kappa_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "WEIBULL_DISTRIBUTION" );
 
         return pParent->JsonConfigurable::Configure( config );
     }
@@ -281,8 +281,8 @@ namespace Kernel
         const std::string param_peak_2_value( param_name + "_Peak_2_Value" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_proportion_0.c_str(), &m_Param1, Distribution_Dual_Constant_Proportion_0_DESC_TEXT, 0.0f, 1.0f, 1.0f, distribution_name.c_str(), "DUAL_CONSTANT_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_peak_2_value.c_str(), &m_Param2, Distribution_Dual_Constant_Peak_2_Value_DESC_TEXT, 0, FLT_MAX, 1.0f, distribution_name.c_str(), "DUAL_CONSTANT_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_proportion_0.c_str(), &m_Param1, Distribution_Dual_Constant_Proportion_0_DESC_TEXT, 0.0f, 1.0f, -1.0f, distribution_name.c_str(), "DUAL_CONSTANT_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_peak_2_value.c_str(), &m_Param2, Distribution_Dual_Constant_Peak_2_Value_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "DUAL_CONSTANT_DISTRIBUTION" );
 
         bool ret = pParent->JsonConfigurable::Configure( config );
 
@@ -325,9 +325,9 @@ namespace Kernel
         const std::string param_proportion_1( param_name + "_Proportion_1" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_mean_1.c_str(), &m_Param1, Distribution_DualExponential_Mean_1_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_mean_2.c_str(), &m_Param2, Distribution_DualExponential_Mean_2_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_proportion_1.c_str(), &m_Param3, Distribution_DualExponential_Proportion_1_DESC_TEXT, 0.0f, 1.0f, 1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_mean_1.c_str(), &m_Param1, Distribution_DualExponential_Mean_1_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_mean_2.c_str(), &m_Param2, Distribution_DualExponential_Mean_2_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_proportion_1.c_str(), &m_Param3, Distribution_DualExponential_Proportion_1_DESC_TEXT, 0.0f, 1.0f, -1.0f, distribution_name.c_str(), "DUAL_EXPONENTIAL_DISTRIBUTION" );
 
         bool configured = pParent->JsonConfigurable::Configure( config );
 
@@ -369,8 +369,8 @@ namespace Kernel
         const std::string param_max( param_name + "_Max" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_min.c_str(), &m_Param1, Distribution_Uniform_Min_DESC_TEXT, 0.0f, FLT_MAX, 0.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
-        pParent->initConfigTypeMap( param_max.c_str(), &m_Param2, Distribution_Uniform_Max_DESC_TEXT, 0.0f, FLT_MAX, 1.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_min.c_str(), &m_Param1, Distribution_Uniform_Min_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_max.c_str(), &m_Param2, Distribution_Uniform_Max_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }  
 

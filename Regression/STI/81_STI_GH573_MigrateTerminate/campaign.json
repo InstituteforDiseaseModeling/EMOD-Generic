@@ -1,29 +1,27 @@
 {
     "Events": [
         {
-            ".Start_Year": 1980, 
-            ".class": "CampaignEventByYear", 
+            ".Start_Year": 1980,
+            ".class": "CampaignEventByYear",
             "Event_Coordinator_Config": {
-                "Demographic_Coverage": 0.5, 
+                "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                    "Antigen": 0, 
-                    "Event_Name": "Outbreak (not used)", 
-                    "Genome": 0, 
-                    "Incubation_Period_Override": 1, 
-                    "Outbreak_Source": "PrevalenceIncrease", 
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
-                }, 
-                "Target_Demographic": "Everyone", 
-                "Travel_Linked": 0, 
+                },
+                "Target_Demographic": "Everyone",
+                "Travel_Linked": 0,
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
-            "Event_Name": "Outbreak", 
+            },
+            "Event_Name": "Outbreak",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 1, 
+            },
+            "Start_Day": 1,
             "class": "CampaignEvent"
         }
-    ], 
+    ],
     "Use_Defaults": 1
 }

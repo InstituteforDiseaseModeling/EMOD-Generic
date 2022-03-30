@@ -15,17 +15,19 @@
         },
         "DISEASE": {
             "INCUBATION": {
-                "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Incubation_Period_Constant": 0
+                "Incubation_Period_Constant": 0,
+                "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION"
             },
             "INFECTIOUSNESS": {
                 "Base_Infectivity": 0.0003653,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Infectious_Period_Constant": 50000
+                "Infectious_Period_Constant": 50000,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "PRIMARY": {
             "Config_Name": "07_SI",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "SamplesInput",
             "Run_Number": 1,
             "Simulation_Duration": 36500,

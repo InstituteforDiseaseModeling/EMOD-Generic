@@ -8,12 +8,10 @@
                 "Include_Arrivals": 0,
                 "Include_Departures": 0,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak",
-                    "Genome": 0,
+                    "Incubation_Period_Override": 0,
                     "Outbreak_Source": "ImportCases",
-                    "class": "OutbreakIndividual",
-                    "Incubation_Period_Override": 0
+                    "class": "OutbreakIndividual"
                 },
                 "Number_Repetitions": 10,
                 "Target_Age_Max": 100,

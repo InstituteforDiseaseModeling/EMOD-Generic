@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -183,12 +183,12 @@ namespace Kernel {
 
         initConfig( "Climate_Update_Resolution", climate_update_resolution, config, MetadataDescriptor::Enum("climate_update_resolution", Climate_Update_Resolution_DESC_TEXT, MDD_ENUM_ARGS(ClimateUpdateResolution)), "Climate_Model", "CLIMATE_CONSTANT,CLIMATE_BY_DATA,CLIMATE_KOPPEN" );
 
-        initConfigTypeMap( "Air_Temperature_Filename", &climate_airtemperature_filename, Air_Temperature_Filename_DESC_TEXT, "air_temp.json", "Climate_Model", "CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Land_Temperature_Filename", &climate_landtemperature_filename, Land_Temperature_Filename_DESC_TEXT, "land_temp.json", "Climate_Model", "CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Rainfall_Filename", &climate_rainfall_filename, Rainfall_Filename_DESC_TEXT, "rainfall.json", "Climate_Model", "CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Relative_Humidity_Filename", &climate_relativehumidity_filename, Relative_Humidity_Filename_DESC_TEXT, "rel_hum.json", "Climate_Model", "CLIMATE_BY_DATA" );
+        initConfigTypeMap( "Air_Temperature_Filename", &climate_airtemperature_filename, Air_Temperature_Filename_DESC_TEXT, "_add-your-air-temperature-file_.bin", "Climate_Model", "CLIMATE_BY_DATA" );
+        initConfigTypeMap( "Land_Temperature_Filename", &climate_landtemperature_filename, Land_Temperature_Filename_DESC_TEXT, "_add-your-land-temp-file_.bin", "Climate_Model", "CLIMATE_BY_DATA" );
+        initConfigTypeMap( "Rainfall_Filename", &climate_rainfall_filename, Rainfall_Filename_DESC_TEXT, "_add-your-rainfall-file_.bin", "Climate_Model", "CLIMATE_BY_DATA" );
+        initConfigTypeMap( "Relative_Humidity_Filename", &climate_relativehumidity_filename, Relative_Humidity_Filename_DESC_TEXT, "_add-your-relative-humidity-file__hum.bin", "Climate_Model", "CLIMATE_BY_DATA" );
 
-        initConfigTypeMap( "Koppen_Filename", &climate_koppen_filename, Koppen_Filename_DESC_TEXT,"koppen_climate.json", "Climate_Model", "CLIMATE_KOPPEN" );
+        initConfigTypeMap( "Koppen_Filename", &climate_koppen_filename, Koppen_Filename_DESC_TEXT,"_add-your-koppen-climate-file_.json", "Climate_Model", "CLIMATE_KOPPEN" );
 
         return JsonConfigurable::Configure( config );
     }

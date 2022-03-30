@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -598,6 +598,22 @@ set<string> GET_CONFIG_STRING_SET(const QuickInterpreter* parameter_source, cons
     return values;
 }
 
+std::string& ltrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    str.erase(0, str.find_first_not_of(chars));
+    return str;
+}
+
+std::string& rtrim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    str.erase(str.find_last_not_of(chars) + 1);
+    return str;
+}
+
+std::string& trim(std::string& str, const std::string& chars = "\t\n\v\f\r ")
+{
+    return ltrim(rtrim(str, chars), chars);
+}
 
 string GET_CONFIG_STRING(const QuickInterpreter* parameter_source, const char *name)
 {
@@ -618,6 +634,13 @@ string GET_CONFIG_STRING(const QuickInterpreter* parameter_source, const char *n
 
     try {
         value = (string)((*parameter_source)[name].As<json::String>());
+        string trimmed = value;
+        trim(trimmed);
+        if (value != trimmed)
+        {
+            LOG_WARN_F("Parameter '%s' has value \"%s\" with leading or trailing whitespace. Trimming whitespace and continuing.\n", name, value.c_str(), __FUNCTION__);
+        }
+        value = trimmed;
     }
     catch( json::Exception )
     {

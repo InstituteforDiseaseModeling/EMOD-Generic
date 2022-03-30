@@ -8,6 +8,11 @@
 from dtk_test.dtk_Typhoid_SFT_Support import SubcToChr as STC
 from dtk_test.dtk_Typhoid_SFT_Support import ConfigParameters as ConfigParameters
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 def application(output_folder="output", stdout_filename=sft.sft_test_filename,
                  config_filename="config.json",

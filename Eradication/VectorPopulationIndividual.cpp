@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -520,7 +520,7 @@ namespace Kernel
     void VectorPopulationIndividual::ExposeCohortList( const IContagionPopulation* cp, VectorCohortVector_t& list, float success_prob, float infection_prob )
     {
         StrainIdentity strainID;
-        strainID.SetAntigenID(cp->GetAntigenID());
+        strainID.SetCladeID(cp->GetCladeID());
 
         float x_infectionWolbachia = 1.0;
         for (auto exposed : list)

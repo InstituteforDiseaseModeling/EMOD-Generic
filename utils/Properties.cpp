@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -691,34 +691,54 @@ namespace Kernel
                 std::cout << "Did NOT find 'Matrix' key." << std::endl;
                 // Going to assume we have "version 2" format (multiroute), which is a map of routes to Matrices. Possible values are: "contact" and "environmental".
                 std::set< std::string > routeNames { "contact", "environmental" };
+
+                // We will do some work here for the sake of our users - if they
+                // capitalize (or camel case?) their route names, we will still
+                // be able to use them.
+                std::map<std::string, std::string> keyMap;
+                for (auto iterator = rDemog[ IP_TM_KEY ].Begin(); iterator != rDemog[ IP_TM_KEY ].End(); ++iterator)
+                {
+                    std::string key(iterator.GetKey());
+                    std::string keyLower(key);
+                    std::transform(keyLower.begin(), keyLower.end(), keyLower.begin(), ::tolower);
+                    keyMap[ keyLower ] = key;
+                }
+
                 for( auto route : routeNames )
                 {
-                    if( rDemog[ IP_TM_KEY ].Contains( route.c_str() ) )
-                    { 
-                        if( rDemog[ IP_TM_KEY ][ route.c_str() ].Contains( IP_TM_MATRIX_KEY ) )
+                    // route is already lowercase, see if one of the keys from the JSON (lowercase) in the keyMap matches.
+                    if ( keyMap.find(route) != keyMap.end() )
+                    {
+                        // Get the route name as specified by the user (and in the JSON), it might not be lowercase.
+                        std::string userRouteName( keyMap[route] );
+
+                        // Use the user route name to index into the JSON.
+                        if( rDemog[ IP_TM_KEY ][ userRouteName.c_str() ].Contains( IP_TM_MATRIX_KEY ) )
                         {
                             std::cout << "Found 'Matrix' key under route." << std::endl;
-                            ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ route.c_str() ][ IP_TM_MATRIX_KEY ], numValues );
-                            //m_RouteToMatrixMap.insert( std::make_pair( route, m_Matrix.back() ) );
+                            // Use the user route name to index into the JSON.
+                            ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ userRouteName.c_str() ][ IP_TM_MATRIX_KEY ], numValues );
+                            // Store the result, for internal use, using the lowercase version of the route name.
                             m_RouteToMatrixMap[ route ] = m_Matrix;
                             m_Matrix.clear();
                         }
                     }
                 }
-                return;
             }
-
-            if( rDemog[ IP_TM_KEY ].Contains( IP_TM_ROUTE_KEY ) )
+            else
             {
-                std::cout << "Found 'Route' key." << std::endl;
-                m_RouteName =  rDemog[ IP_TM_KEY ][ IP_TM_ROUTE_KEY ].AsString();
-                std::transform(m_RouteName.begin(), m_RouteName.end(), m_RouteName.begin(), ::tolower);
+                if( rDemog[ IP_TM_KEY ].Contains( IP_TM_ROUTE_KEY ) )
+                {
+                    std::cout << "Found 'Route' key." << std::endl;
+                    m_RouteName =  rDemog[ IP_TM_KEY ][ IP_TM_ROUTE_KEY ].AsString();
+                    std::transform(m_RouteName.begin(), m_RouteName.end(), m_RouteName.begin(), ::tolower);
+                }
+                else 
+                {
+                    LOG_WARN_F("Missing '%s' in demographics for property '%s'. Will use default route 'contact'.\n",IP_TM_ROUTE_KEY, rKeyStr.c_str());
+                }
+                ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ IP_TM_MATRIX_KEY ], numValues );
             }
-            else 
-            {
-                LOG_WARN_F("Missing '%s' in demographics for property '%s'. Will use default route 'contact'.\n",IP_TM_ROUTE_KEY, rKeyStr.c_str());
-            }
-            ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ IP_TM_MATRIX_KEY ], numValues );
         }
     }
 

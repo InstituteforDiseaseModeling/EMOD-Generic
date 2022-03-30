@@ -1,24 +1,22 @@
 {
-    "Use_Defaults": 1,
-    "Campaign_Name": "DrawBlood validation", 
+    "Campaign_Name": "DrawBlood validation",
     "Events": [
         {
-            "class": "CampaignEvent",
-            "Start_Day": 100,
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.3,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config": {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "Everyone", 
-                "Demographic_Coverage": 0.3,
-                "Intervention_Config": {
-                    "class": "OutbreakIndividual",
-                    "Antigen": 0, 
-                    "Genome": 0, 
-                    "Incubation_Period_Override": 1
-                }
-            }
+            "Start_Day": 100,
+            "class": "CampaignEvent"
         }
-    ]
+    ],
+    "Use_Defaults": 1
 }

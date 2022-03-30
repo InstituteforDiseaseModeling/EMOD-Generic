@@ -59,6 +59,8 @@
         },
         "PRIMARY": {
             "Config_Name": "PrimaryScenarios_1A_Namawala3Vectors_lowEIR -- multicore -- Madagascar_Nosibe",
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Madagascar_Nosibe",
             "Run_Number": 1,
             "Simulation_Duration": 3650,
@@ -66,7 +68,7 @@
             "Start_Time": 0
         },
         "SCALE_FACTORS": {
-            "x_Temporary_Larval_Habitat": 0.1
+            "x_Larval_Habitats": 0.1
         },
         "VECTOR": {
             "SPECIES": {

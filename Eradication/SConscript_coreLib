@@ -232,7 +232,6 @@ else:
                         
     typhoidSrcFiles = environmentalSrcFiles + [
                             # Typhoid
-                            "BinnedReportTyphoid.cpp",
                             "CampaignEventByYear.cpp",
                             "IndividualTyphoid.cpp",
                             "InfectionTyphoid.cpp",

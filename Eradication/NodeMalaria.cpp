@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -30,18 +30,25 @@ namespace Kernel
         HANDLE_INTERFACE(INodeMalaria)
     END_QUERY_INTERFACE_DERIVED(NodeMalaria, NodeVector)
 
-    NodeMalaria::NodeMalaria() : NodeVector(),
-        m_Parasite_positive(0),
-        m_Log_parasites(0),
-        m_Fever_positive(0),
-        m_New_Clinical_Cases(0),
-        m_New_Severe_Cases(0),
-        m_Parasite_Prevalence(0),
-        m_New_Diagnostic_Positive(0),
-        m_New_Diagnostic_Prevalence(0),
-        m_Geometric_Mean_Parasitemia(0),
-        m_Fever_Prevalence(0),
-        m_Maternal_Antibody_Fraction(0)
+    NodeMalaria::NodeMalaria() : NodeVector()
+        , m_Parasite_positive(0)
+        , m_Log_parasites(0)
+        , m_Fever_positive(0)
+        , m_New_Clinical_Cases(0)
+        , m_New_Severe_Cases(0)
+        , m_Parasite_Prevalence(0)
+        , m_New_Diagnostic_Positive(0)
+        , m_New_Diagnostic_Prevalence(0)
+        , m_Geometric_Mean_Parasitemia(0)
+        , m_Fever_Prevalence(0)
+        , m_Maternal_Antibody_Fraction(0)
+        , MSP_mean_antibody_distribution( nullptr )
+        , nonspec_mean_antibody_distribution( nullptr )
+        , PfEMP1_mean_antibody_distribution( nullptr )
+        , MSP_variance_antibody_distribution( nullptr )
+        , nonspec_variance_antibody_distribution( nullptr )
+        , PfEMP1_variance_antibody_distribution( nullptr )
+        , distribution_susceptibility( nullptr )
     {
         delete event_context_host;
         NodeMalaria::setupEventContextHost();    // This is marked as a virtual function, but isn't virtualized here because we're still in the ctor.
@@ -60,12 +67,13 @@ namespace Kernel
     , m_Geometric_Mean_Parasitemia(0)
     , m_Fever_Prevalence(0)
     , m_Maternal_Antibody_Fraction(0)
-    , MSP_mean_antibody_distribution(nullptr)
+    , MSP_mean_antibody_distribution( nullptr )
     , nonspec_mean_antibody_distribution( nullptr )
     , PfEMP1_mean_antibody_distribution( nullptr )
     , MSP_variance_antibody_distribution( nullptr )
     , nonspec_variance_antibody_distribution( nullptr )
     , PfEMP1_variance_antibody_distribution( nullptr )
+    , distribution_susceptibility( nullptr )
     {
         delete event_context_host;
         NodeMalaria::setupEventContextHost();    // This is marked as a virtual function, but isn't virtualized here because we're still in the ctor.
@@ -117,9 +125,12 @@ namespace Kernel
     {
         // For MALARIA sims, SusceptibilityDistributionFlag, SusceptibilityDistribution1, SusceptibilityDistribution2
         // map to Innate_Immune_Variation (e.g. variable pyrogenic threshold, cytokine killing)
-        susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
-        susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
-        susceptibility_dist2 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
+        DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
+        float susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
+        float susceptibility_dist2 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
+
+        distribution_susceptibility = DistributionFactory::CreateDistribution( susceptibility_dist_type );
+        distribution_susceptibility->SetParameters( susceptibility_dist1, susceptibility_dist2, 0.0 );
 
         MSP_mean_antibody_distribution         = NodeDemographicsDistribution::CreateDistribution(demographics["MSP_mean_antibody_distribution"],         "age");
         nonspec_mean_antibody_distribution     = NodeDemographicsDistribution::CreateDistribution(demographics["nonspec_mean_antibody_distribution"],     "age");
@@ -133,28 +144,11 @@ namespace Kernel
     {
         float temp_susceptibility = 1.0;
 
-        switch( SusceptibilityConfig::susceptibility_initialization_distribution_type )
-        {
-        case DistributionType::DISTRIBUTION_COMPLEX:
-        {
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( susceptibility_dist_type ) );
-            distribution->SetParameters( susceptibility_dist1, susceptibility_dist2, 0.0 );
-            temp_susceptibility = distribution->Calculate( GetRng() );
-            LOG_VALID_F( "creating individual with age = %f and susceptibility = %f\n", ind_init_age, temp_susceptibility );
-            break;
-        }
-        case DistributionType::DISTRIBUTION_SIMPLE:
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", "DISTRIBUTION_SIMPLE", "Simulation_Type", "MALARIA_SIM");
+        release_assert( SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_COMPLEX );
+        release_assert( distribution_susceptibility );
 
-        case DistributionType::DISTRIBUTION_OFF:
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", "DISTRIBUTION_OFF", "Simulation_Type", "MALARIA_SIM");
-
-        default:
-            if( !JsonConfigurable::_dryrun )
-            {
-                throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", SusceptibilityConfig::susceptibility_initialization_distribution_type, DistributionType::pairs::lookup_key( SusceptibilityConfig::susceptibility_initialization_distribution_type ) );
-            }
-        }
+        temp_susceptibility = distribution_susceptibility->Calculate( GetRng() );
+        LOG_VALID_F( "creating individual with age = %f and susceptibility = %f\n", ind_init_age, temp_susceptibility );
 
         return temp_susceptibility;
     }

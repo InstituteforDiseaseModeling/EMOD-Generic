@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -93,9 +93,10 @@ SUITE(MathFunctionsTest)
         float d1 = 1.0f / decay_length_1;
         float d2 = 1.0f / decay_length_2;
 
+        std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION ) );
+
         for( int i = 0; i < 1000; ++i )
-        {
-            std::unique_ptr<IDistribution> distribution( DistributionFactory::CreateDistribution( DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION ) );
+        {            
             distribution->SetParameters( d1, d2, percentage_is_1 );
             double duration = distribution->Calculate( m_pRNG );
 

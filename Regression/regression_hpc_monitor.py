@@ -64,9 +64,6 @@ class HpcMonitor(regression_local_monitor.Monitor):
                
             return int(num_cores)
     
-        input_dir = ".;"
-        if "Geography" in self.config_json["parameters"]:
-            input_dir += os.path.join( self.params.input_root, self.config_json["parameters"]["Geography"] )
         sim_dir = self.sim_root + "\\" + self.sim_timestamp   # can't use os.path.join() here because on linux it'll give us the wrong dir-separator...
         if self.suffix is not None:
             job_name = self.config_json["parameters"]["Config_Name"].replace( ' ', '_' ) + "_" + self.suffix + "_(" + self.sim_timestamp + ")"
@@ -97,6 +94,7 @@ class HpcMonitor(regression_local_monitor.Monitor):
         #eradication.exe commandline
         eradication_bin = self.config_json['bin_path']
         eradication_options = {}
+        input_dir = self.get_input_path_from_geog( self.params.input_root )
         if "Eradication" in eradication_bin:
             eradication_options = { '--config':'config.json', '--input-path':input_dir, '--progress':' ' }
 
@@ -124,9 +122,9 @@ class HpcMonitor(regression_local_monitor.Monitor):
         jobsubmit_params = [mpi_command.Commandline]
         jobsubmit_command = clg.CommandlineGenerator(jobsubmit_bin, self.options, jobsubmit_params)
 
-        #print( 'simulation command line:', eradication_command.Commandline )
-        #print( 'mpiexec command line:   ', mpi_command.Commandline )
-        #print( 'job submit command line:', jobsubmit_command.Commandline )
+        # print( 'simulation command line:', eradication_command.Commandline )
+        # print( 'mpiexec command line:   ', mpi_command.Commandline )
+        # print( 'job submit command line:', jobsubmit_command.Commandline )
 
         hpc_command_line = jobsubmit_command.Commandline
         if self.scenario_type != 'tests':

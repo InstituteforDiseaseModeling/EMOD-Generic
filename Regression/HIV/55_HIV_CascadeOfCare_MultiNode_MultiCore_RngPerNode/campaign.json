@@ -7,9 +7,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                    "Antigen": 0,
                     "Event_Name": "Outbreak (not used)",
-                    "Genome": 0,
                     "Incubation_Period_Override": 1,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
@@ -50,7 +48,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -73,8 +73,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "HCTUptakePostDebut1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 1,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -142,7 +142,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -165,8 +167,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "HCTTestingLoop1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 1,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -212,7 +214,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -235,11 +239,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU0",
                             "ARTStaging0"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -255,7 +257,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -278,11 +282,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU1",
                             "HCTTestingLoop4"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -298,7 +300,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -321,8 +325,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "HCTTestingLoop1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 365,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -368,7 +372,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -391,11 +397,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU3",
                             "ARTStaging0"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -411,7 +415,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -439,7 +445,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -510,7 +518,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -533,11 +543,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU5",
                             "ARTStaging0"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -554,7 +562,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -591,7 +601,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -614,11 +626,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU7",
                             "ARTStaging0"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -635,7 +645,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -658,8 +670,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "ARTStaging1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 1,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -704,7 +716,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -800,7 +814,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -823,11 +839,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU8",
                             "ARTStaging4"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -842,7 +856,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -865,8 +881,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "ARTStaging5",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 7,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -938,7 +954,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -961,8 +979,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "LinkingToPreART1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 7,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART",
@@ -1005,7 +1023,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1034,7 +1054,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1057,8 +1079,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "OnPreART1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 182,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
                             "InterventionStatus:LinkingToART"
@@ -1088,11 +1110,9 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "LTFU10",
                             "OnPreART2"
                         ],
                         "Choice_Probabilities": [
-                            0,
                             1
                         ],
                         "Disqualifying_Properties": [
@@ -1105,7 +1125,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1139,7 +1161,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1202,7 +1226,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1225,12 +1251,10 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Choice_Names": [
-                            "OnPreART5",
-                            "OnPreART0"
+                            "OnPreART5"
                         ],
                         "Choice_Probabilities": [
-                            1,
-                            0
+                            1
                         ],
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART",
@@ -1242,7 +1266,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1271,7 +1297,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1294,8 +1322,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "LinkingToART1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 14,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [
                             "InterventionStatus:OnART"
                         ],
@@ -1334,7 +1362,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1363,7 +1393,9 @@
                     },
                     "Property_Restrictions_Within_Node": [
                         {
-                            "Accessibility": "Yes"
+                            "Restrictions": [
+                                "Accessibility:Yes"
+                            ]
                         }
                     ],
                     "Trigger_Condition_List": [
@@ -1386,8 +1418,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Broadcast_Event": "OnART1",
-                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Delay_Period_Constant": 1,
+                        "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
                         "Disqualifying_Properties": [],
                         "Max_Entries": 1,
                         "Muxer_Name": "OnART",

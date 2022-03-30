@@ -1,8 +1,13 @@
 #!/usr/bin/python
 
-import json
+
 import os.path as path
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 import dtk_test.dtk_SimpleBoosterVaccine_Support as sbvs
 
@@ -68,7 +73,7 @@ def parse_json_report(output_folder="output", propertyreport_name="PropertyRepor
 
     return report_data_obj
 
-def calc_tb_effect(debug = False):
+def calc_tb_effect(debug=False):
     """
     calculate the expected TransmissionBlocking effect before outbreak.
     :param debug:
@@ -158,7 +163,7 @@ def application( output_folder="output", stdout_filename="test.txt",
                  demographics_filename = "../../demographics.json",
                  propertyreport_name="PropertyReport.json",
                  report_name=sft.sft_output_filename,
-                 debug=True):
+                 debug=False):
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -137,6 +137,13 @@ namespace Kernel
         }
 
         return newsimulation;
+    }
+
+    void SimulationMalaria::SetFixedParameters(::Configuration * config)
+    {
+        config->Add("Enable_Immunity", 1);
+        config->Add("Enable_Immune_Decay", 1);
+        config->Add("Enable_Maternal_Protection", 0);
     }
 
     bool SimulationMalaria::ValidateConfiguration(const ::Configuration *config)

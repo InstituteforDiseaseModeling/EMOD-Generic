@@ -1,153 +1,145 @@
-{ 
-    "Use_Defaults": 1,
+{
     "Campaign_Name": "37_HIV_Risk_Groups_Property_Changer",
-    "Events": 
-    [
+    "Events": [
         {
-            "class": "CampaignEvent",
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Event_Name": "Outbreak (not used)",
+                    "Incubation_Period_Override": 1,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Property_Restrictions": [
+                    "Risk:HIGH"
+                ],
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Male",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
             "Event_Name": "Epidemic seeding in HIGH Risk Males",
-            "Start_Day": 365,
-            "Nodeset_Config":
-            {
+            "Nodeset_Config": {
                 "class": "NodeSetAll"
             },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
-                "Target_Demographic": "ExplicitGender",
-                "Target_Gender": "Male",
-                "Demographic_Coverage": 1,
-                "Property_Restrictions" : [ "Risk:HIGH" ],
-                "Intervention_Config":
-                {
-                    "class": "OutbreakIndividual",
-                    "Event_Name": "Outbreak (not used)",
-                    "Outbreak_Source": "PrevalenceIncrease",
-                    "Incubation_Period_Override": 1,
-                    "Antigen": 0,
-                    "Genome": 0
-                }
-            }
+            "Start_Day": 365,
+            "class": "CampaignEvent"
         },
-
-
         {
-            "Event_Name": "5% Males get HIGH risk",
-            "Start_Day": 1,
-            "class": "CampaignEvent",
-            "Nodeset_Config": { "class": "NodeSetAll" },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.05,
+                "Intervention_Config": {
+                    "Broadcast_Event": "LTFU0",
+                    "class": "BroadcastEvent"
+                },
                 "Target_Demographic": "ExplicitGender",
                 "Target_Gender": "Male",
-                "Intervention_Config":
-                {
-                    "class": "BroadcastEvent",
-                    "Broadcast_Event": "LTFU0"
-                }
-            }
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "5% Males get HIGH risk",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
-            "Event_Name": "15% Females get HIGH risk",
-            "Start_Day": 1,
-            "class": "CampaignEvent",
-            "Nodeset_Config": { "class": "NodeSetAll" },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.15,
+                "Intervention_Config": {
+                    "Broadcast_Event": "LTFU0",
+                    "class": "BroadcastEvent"
+                },
                 "Target_Demographic": "ExplicitGender",
                 "Target_Gender": "Female",
-                "Intervention_Config":
-                {
-                    "class": "BroadcastEvent",
-                    "Broadcast_Event": "LTFU0"
-                }
-            }
-        },
-
-
-
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "Births --> NeedsRiskHIGH",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "15% Females get HIGH risk",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Start_Day": 1,
-            "Nodeset_Config":
-            { "class": "NodeSetAll" },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "Births" ],
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "HIVPiecewiseByYearAndSexDiagnostic",
-                        "Disqualifying_Properties": [  ],
-                        "New_Property_Value": "",
-                        "Time_Value_Map" :
-                        {
-                            "Times":  [ 0   ],
-                            "Values": [ 0.05]
-                        },
-                        "Interpolation_Order": 1,
-                        "Female_Multiplier": 3,
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "Disqualifying_Properties": [],
                         "Event_Or_Config": "Event",
-                        "Positive_Diagnosis_Event": "LTFU0"
-                    }
-                }
-            }
-        },
-
-        {
-            "class": "CampaignEvent",
-            "Event_Name": "LTFU0: Change to HIGH Risk group",
+                        "Female_Multiplier": 3,
+                        "Interpolation_Order": 1,
+                        "New_Property_Value": "",
+                        "Positive_Diagnosis_Event": "LTFU0",
+                        "Time_Value_Map": {
+                            "Times": [
+                                0
+                            ],
+                            "Values": [
+                                0.05
+                            ]
+                        },
+                        "class": "HIVPiecewiseByYearAndSexDiagnostic"
+                    },
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Births --> NeedsRiskHIGH",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Start_Day": 1,
-            "Nodeset_Config":
-            { "class": "NodeSetAll" },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "LTFU0" ],
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "PropertyValueChanger",
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
                         "Target_Property_Key": "Risk",
-                        "Target_Property_Value": "HIGH"
-                    }
-                }
-            }
+                        "Target_Property_Value": "HIGH",
+                        "class": "PropertyValueChanger"
+                    },
+                    "Trigger_Condition_List": [
+                        "LTFU0"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "LTFU0: Change to HIGH Risk group",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         },
         {
-            "class": "CampaignEvent",
-            "Event_Name": "LTFU0: Change to HIGH Risk group",
-            "Start_Day": 1,
-            "Nodeset_Config":
-            { "class": "NodeSetAll" },
-            "Event_Coordinator_Config":
-            {
-                "class": "StandardInterventionDistributionEventCoordinator",
+            "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
-                "Intervention_Config":
-                {
-                    "class": "NodeLevelHealthTriggeredIV",
-                    "Trigger_Condition_List": [ "LTFU0" ],
-                    "Actual_IndividualIntervention_Config":
-                    {
-                        "class": "ModifyStiCoInfectionStatus",
-                        "New_STI_CoInfection_Status": 1
-                    }
-                }
-            }
+                "Intervention_Config": {
+                    "Actual_IndividualIntervention_Config": {
+                        "New_STI_CoInfection_Status": 1,
+                        "class": "ModifyStiCoInfectionStatus"
+                    },
+                    "Trigger_Condition_List": [
+                        "LTFU0"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "LTFU0: Change to HIGH Risk group",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
         }
-
-    ]
+    ],
+    "Use_Defaults": 1
 }

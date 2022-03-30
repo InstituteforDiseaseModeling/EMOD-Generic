@@ -24,14 +24,14 @@ static const char* BUILD_DATE = __DATE__ " " __TIME__;
 #endif
 
 #define    MAJOR_VERSION    2
-#define    MINOR_VERSION    20
+#define    MINOR_VERSION    21
 #ifndef REVISION_NUMBER
-#define    REVISION_NUMBER  00
+#define    REVISION_NUMBER  0
 #endif
 #define    BUILD_NUMBER     0
 
 #ifndef BUILDER_NAME
-#define    BUILDER_NAME     "dlukacevic"
+#define    BUILDER_NAME     "anonymous"
 #endif
 
 #define FULL_VERSION_WITH_SVN       XSTRINGIFY(MAJOR_VERSION) "." XSTRINGIFY(MINOR_VERSION) "." XSTRINGIFY(REVISION_NUMBER)

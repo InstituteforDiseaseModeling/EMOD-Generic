@@ -1,6 +1,11 @@
 #!/usr/bin/python
 
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 import math
 import dtk_test.dtk_General_Support as General_Support
 from dtk_test.dtk_General_Support import ConfigKeys, InsetKeys

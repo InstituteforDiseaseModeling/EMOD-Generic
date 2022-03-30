@@ -2,6 +2,11 @@
 
 import dtk_test.dtk_ImportPressure_Support as ips
 import dtk_test.dtk_sft as sft
+import json
+np=sft.np
+with open("config.json") as infile:
+    run_number=json.load(infile)['parameters']['Run_Number']
+np.random.seed(run_number)
 
 KEY_NEW_INFECTIONS = "New Infections"
 KEY_STATISTICAL_POPULATION = "Statistical Population"

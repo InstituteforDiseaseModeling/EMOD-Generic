@@ -5,6 +5,7 @@
         { "path" : "Vector/1_Vector_Sandbox" },
         { "path" : "Vector/3_Vector_Namawala_SugarTrap_EveryDayFeed" },
         { "path" : "Malaria/1_Malaria_Sandbox" },
+        { "path" : "Polio/49_Polio_Bihar_Simplest" },
         { "path" : "STI/52_STI_All_Rel_Types_Assortivity_Prop_Location_Matrix" },
         { "path" : "TBHIV/30_MadagascarTBHIV" },
         { "path" : "HIV/12_HIV_CascadeOfCare"}

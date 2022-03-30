@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -27,7 +27,7 @@ namespace Kernel
 
     struct IOutbreakIndividual : public ISupports
     {
-        virtual int GetAntigen() const = 0;
+        virtual int GetClade() const = 0;
         virtual int GetGenome() const = 0;
         virtual ~IOutbreakIndividual() { }; // needed for cleanup via interface pointer
     };
@@ -49,17 +49,17 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreakIndividual
-        virtual int GetAntigen() const  { return antigen; }
+        virtual int GetClade()  const  { return clade; }
         virtual int GetGenome() const  { return genome; }
 
         // other methods
-        virtual void ConfigureAntigen( const Configuration * inputJson );
+        virtual void ConfigureClade( const Configuration * inputJson );
         virtual void ConfigureGenome( const Configuration * inputJson );
 
     protected:
         const StrainIdentity* GetNewStrainIdentity(INodeEventContext *context, IIndividualHumanContext* pIndiv);
 
-        int antigen;
+        int clade;
         int genome;
         bool ignoreImmunity;
         int incubation_period_override;

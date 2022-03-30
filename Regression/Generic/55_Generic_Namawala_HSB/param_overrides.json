@@ -9,11 +9,13 @@
         },
         "DISEASE": {
             "Base_Infectivity": 1e-05,
-            "x_Base_Population": 10.0,
+            "Incubation_Period_Constant": 0,
             "Infectious_Period_Exponential": 10000,
             "Population_Scale_Type": "FIXED_SCALING",
-            "Incubation_Period_Constant": 0
+            "x_Base_Population": 10.0
         },
+        "Enable_Strain_Tracking": 0,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 0,
         "PRIMARY": {
             "Config_Name": "55_Generic_Namawala_HSB",

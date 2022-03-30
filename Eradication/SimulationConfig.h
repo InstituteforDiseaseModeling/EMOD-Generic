@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2019 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -103,24 +103,6 @@ namespace Kernel
         int infection_updates_per_tstep;
         bool interventions;
 
-        // constant climate params
-        float          airtemperature;
-        float          landtemperature;
-        float          rainfall;
-        float          humidity;
-
-        // scale params
-        float          airtemperature_offset;
-        float          landtemperature_offset;
-        float          rainfall_scale_factor;
-        float          humidity_scale_factor;
-
-        // stochasticity params
-        float          airtemperature_variance;
-        float          landtemperature_variance;
-        bool           rainfall_variance_enabled;
-        float          humidity_variance;
-
         // flag for heterogeneity in mixing (true) or uniform mixing (false)
         bool heterogeneous_intranode_transmission_enabled;
 
@@ -128,20 +110,6 @@ namespace Kernel
         float Sim_Tstep;
         float starttime;
         float node_grid_size;
-        int Run_Number;
-
-        std::string ConfigName;
-        std::string airmig_filename;
-        std::string campaign_filename;
-        std::string climate_airtemperature_filename;
-        std::string climate_koppen_filename;
-        std::string climate_landtemperature_filename;
-        std::string climate_rainfall_filename;
-        std::string climate_relativehumidity_filename;
-        std::string loadbalance_filename;
-        std::string localmig_filename;
-        std::string regionmig_filename;
-        std::string seamig_filename;
 
         VectorParameters*  vector_params;
         MalariaParameters* malaria_params;
@@ -156,8 +124,6 @@ namespace Kernel
         virtual QuickBuilder SimulationConfig::GetSchema() override;
 
         const Configuration* GetJsonConfigObj() const { return m_jsonConfig; }
-
-        void SetFixedParameters(Configuration * inputJson);
 
     protected:
 
@@ -178,7 +144,7 @@ namespace Kernel
         void PolioInitConfig( const Configuration* inputJson );
         void PolioCheckConfig( const Configuration* inputJson );
         void PolioAddSchema( json::QuickBuilder& retJson );
-        std::string tmpSubstrainInfectivityString[3];
+        std::string tmpGenomeInfectivityString[3];
         std::string tmpSiteRatesStrings[3];
 
         void TBHIVInitConfig( const Configuration* inputJson );
