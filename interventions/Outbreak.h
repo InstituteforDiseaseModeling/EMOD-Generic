@@ -59,7 +59,5 @@ namespace Kernel
         int genome;
         float import_age;
         int num_cases_per_node;
-
-        int incubation_period_override;
     };
 }

@@ -184,7 +184,7 @@ namespace Kernel
         return susceptibilitylist;
     }
 
-    void IndividualHumanCoInfection::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void IndividualHumanCoInfection::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
         LOG_DEBUG( "AcquireNewInfection\n" );
         StrainIdentity newStrainId;
@@ -228,7 +228,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanCoInfection::AcquireNewInfectionHIV( const IStrainIdentity *infstrain, int incubation_period_override ) 
+    void IndividualHumanCoInfection::AcquireNewInfectionHIV( const IStrainIdentity *infstrain, float incubation_period_override ) 
     {
         LOG_DEBUG( "AcquireNewInfectionHIV\n" );
         //code is nearly duplicate to AcquireNewInfection but only gives new infection to HIV(the non-transmitting infection)
@@ -243,14 +243,14 @@ namespace Kernel
 
         //Don't give HIV to someone TWICE
 
-        if (HasHIV() )
+        if ( HasHIV() )
         {
             return;
         }
 
         Infection* newinf = createInfection( parent->GetNextInfectionSuid()  );
 
-        IInfectionHIV* pinfectionHIV = NULL;
+        IInfectionHIV* pinfectionHIV = nullptr;
         //this should always be true, just use for debugging
         if (s_OK == newinf->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfectionHIV) )
         {
@@ -263,7 +263,7 @@ namespace Kernel
             infectioncount_hiv++;
             LifeCourseLatencyUpdateAll();
             
-            IIndividualHumanHIV* hiv_person = NULL;
+            IIndividualHumanHIV* hiv_person = nullptr;
 
             if (s_OK != this->QueryInterface(GET_IID(IIndividualHumanHIV), (void **) &hiv_person) )
             {
@@ -545,7 +545,7 @@ namespace Kernel
                 HasLatentInfection() &&
                 !(GetTBInfection()->IsFastProgressor() || GetTBInfection()->IsPendingRelapse()) )
             {
-                float dt_true =   GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep; //Needed to get the timestep due to dt = 0 flag
+                float dt_true = parent->GetTime().GetTimeDelta();
                 float prob = EXPCDF( -cp->GetTotalContagion()*dt_true*suscept_mod*interventions->GetInterventionReducedAcquire() );
                 if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
                 {

@@ -51,16 +51,12 @@ namespace Kernel
 
     BEGIN_QUERY_INTERFACE_BODY( DistributionPiecewiseLinearConfigurable )
     END_QUERY_INTERFACE_BODY( DistributionPiecewiseLinearConfigurable )
-    
 
-    
+
     // ---------- DistributionFunctionConfigurable::CONSTANT_DISTRIBUTION -------
-    //GET_SCHEMA_STATIC_WRAPPER_IMPL( DistributionConstantConfigurable, DistributionConstantConfigurable )
     DistributionConstantConfigurable::DistributionConstantConfigurable()
         : DistributionConstant()
-    {
-        m_Param1 = 6.0;
-    }
+    { }
 
     DistributionConstantConfigurable::~DistributionConstantConfigurable()
     { }
@@ -86,13 +82,10 @@ namespace Kernel
     }
 
 
-
     //---------------- DistributionFunctionConfigurable::EXPONENTIAL_DISTRIBUTION  -------------------
     DistributionExponentialConfigurable::DistributionExponentialConfigurable( )
         : DistributionExponential()
-    {
-        m_Param1 = 6.0;
-    }
+    { }
 
     DistributionExponentialConfigurable::~DistributionExponentialConfigurable()
     { }
@@ -102,12 +95,12 @@ namespace Kernel
         const std::string param_exponential( param_name + "_Exponential" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_exponential.c_str(), &m_Param1, Distribution_Exponential_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "EXPONENTIAL_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_exponential.c_str(), &m_Param1, Distribution_Exponential_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "EXPONENTIAL_DISTRIBUTION" );
         bool ret = pParent->JsonConfigurable::Configure( config );
 
         if( !JsonConfigurable::_dryrun && ret )
         {
-	        m_Param1 = ( double )1.0 / (double)m_Param1; //convert parameter to a rate
+            m_Param1 = 1.0f/m_Param1;
         }
         return ret;
     }
@@ -124,14 +117,10 @@ namespace Kernel
     }
 
 
-
     //---------------- DistributionFunctionConfigurable::GAUSSIAN_DISTRIBUTION  -------------------
     DistributionGaussianConfigurable::DistributionGaussianConfigurable( )
         : DistributionGaussian()
-    {
-        m_Param1 = 6.0;
-        m_Param2 = 1.0;
-    }
+    { }
 
     DistributionGaussianConfigurable::~DistributionGaussianConfigurable()
     { }
@@ -142,7 +131,7 @@ namespace Kernel
         const std::string param_gaussian_std_dev( param_name + "_Gaussian_Std_Dev" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigTypeMap( param_gaussian_mean.c_str(), &m_Param1, Distribution_Gaussian_Mean_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_gaussian_mean.c_str(),    &m_Param1, Distribution_Gaussian_Mean_DESC_TEXT,       0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
         pParent->initConfigTypeMap( param_gaussian_std_dev.c_str(), &m_Param2, Distribution_Gaussian_Std_Dev_DESC_TEXT, FLT_MIN, FLT_MAX, -1.0f, distribution_name.c_str(), "GAUSSIAN_DISTRIBUTION" );
         return pParent->JsonConfigurable::Configure( config );
     }
@@ -162,9 +151,7 @@ namespace Kernel
     //---------------- DistributionFunctionConfigurable::POISSON_DISTRIBUTION  -------------------
     DistributionPoissonConfigurable::DistributionPoissonConfigurable( )
         : DistributionPoisson()
-    {
-        m_Param1 = 6.0;
-    }
+    { }
 
     DistributionPoissonConfigurable::~DistributionPoissonConfigurable()
     { }
@@ -190,14 +177,10 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionLogNormal  -------------------
+    //---------------- DistributionFunctionConfigurable::LOG_NORMAL_DISTRIBUTION  -------------------
     DistributionLogNormalConfigurable::DistributionLogNormalConfigurable( )
         : DistributionLogNormal()
-    {
-        m_Param1 = 6.0;
-        m_Param2 = 1.0;
-    }
-
+    { }
 
     DistributionLogNormalConfigurable::~DistributionLogNormalConfigurable()
     { }
@@ -225,19 +208,13 @@ namespace Kernel
     }
 
 
-
     //---------------- DistributionFunctionConfigurable::WEIBULL  -------------------
     DistributionWeibullConfigurable::DistributionWeibullConfigurable( )
         : DistributionWeibull()
-    {
-        m_Param1 = 1.0;
-        m_Param2 = 1.0;
-    }
-
+    { }
 
     DistributionWeibullConfigurable::~DistributionWeibullConfigurable()
-    {
-    }
+    { }
 
     bool DistributionWeibullConfigurable::Configure( JsonConfigurable* pParent, std::string& param_name, const Configuration* config )
     {
@@ -266,14 +243,10 @@ namespace Kernel
     //---------------- DistributionFunctionConfigurable::DUAL_CONSTANT_DISTRIBUTION  -------------------
     DistributionDualConstantConfigurable::DistributionDualConstantConfigurable( )
         : DistributionDualConstant()
-    {
-        m_Param1 = 1.0;
-        m_Param2 = 1.0;
-    }
+    { }
 
     DistributionDualConstantConfigurable::~DistributionDualConstantConfigurable()
-    {
-    }
+    { }
 
     bool DistributionDualConstantConfigurable::Configure( JsonConfigurable* pParent, std::string& param_name, const Configuration* config )
     {
@@ -286,9 +259,9 @@ namespace Kernel
 
         bool ret = pParent->JsonConfigurable::Configure( config );
 
-        if (( m_Param1 < 0 || m_Param1 > 1 || m_Param2 < 0 ))
+        if (( m_Param1 < 0.0f || m_Param1 > 1.0f || m_Param2 < 0.0f ))
         {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Parameters for Bimodal distribution are not valid." );
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Parameters for Dual Constant distribution are not valid." );
         }
 
         return ret;
@@ -309,11 +282,7 @@ namespace Kernel
     //---------------- DistributionFunctionConfigurable::DUAL_EXPONENTIAL_DISTRIBUTION -------------------
     DistributionDualExponentialConfigurable::DistributionDualExponentialConfigurable( )
         : DistributionDualExponential()
-    {
-        m_Param1 = 1.0;
-        m_Param2 = 1.0;
-        m_Param3 = 1.0;
-    }
+    { }
 
     DistributionDualExponentialConfigurable::~DistributionDualExponentialConfigurable()
     { }
@@ -333,8 +302,8 @@ namespace Kernel
 
         if( configured && !JsonConfigurable::_dryrun )
         {
-	        m_Param1 = ( double )1.0 / (double)m_Param1;
-	        m_Param2 = ( double )1.0 / (double)m_Param2;
+            m_Param1 = 1.0f / m_Param1;
+            m_Param2 = 1.0f / m_Param2;
         }
         return configured;
     }
@@ -351,14 +320,10 @@ namespace Kernel
     }
 
 
-
     //---------------- DistributionFunctionConfigurable::UNIFORM  -------------------
     DistributionUniformConfigurable::DistributionUniformConfigurable( )
         : DistributionUniform()
-    {
-        m_Param1 = 0.0;
-        m_Param2 = 1.0;
-    }
+    { }
 
     DistributionUniformConfigurable::~DistributionUniformConfigurable()
     { }
@@ -371,8 +336,14 @@ namespace Kernel
 
         pParent->initConfigTypeMap( param_min.c_str(), &m_Param1, Distribution_Uniform_Min_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
         pParent->initConfigTypeMap( param_max.c_str(), &m_Param2, Distribution_Uniform_Max_DESC_TEXT, 0.0f, FLT_MAX, -1.0f, distribution_name.c_str(), "UNIFORM_DISTRIBUTION" );
+
+        if ( m_Param1 > m_Param2 )
+        {
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "In Uniform distribution, Max cannot be less than Min." );
+        }
+
         return pParent->JsonConfigurable::Configure( config );
-    }  
+    }
 
     IDistribution* DistributionUniformConfigurable::Clone() const
     {
@@ -441,5 +412,5 @@ namespace Kernel
     {
         DistributionPiecewiseLinear::serialize( ar, obj );
     }
-   
+
 }

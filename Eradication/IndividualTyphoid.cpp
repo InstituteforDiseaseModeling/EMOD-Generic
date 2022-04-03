@@ -692,9 +692,9 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanTyphoid::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void IndividualHumanTyphoid::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
-        if(IsInfected() )
+        if( IsInfected() )
         {
             return;
         }

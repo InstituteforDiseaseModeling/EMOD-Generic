@@ -194,7 +194,8 @@ namespace Kernel
 
         // IEventCoordinator methods
         virtual void SetContextTo( ISimulationEventContext *isec ) override;
-        virtual void CheckStartDay( float campaignStartDay ) const override { };
+        virtual void CheckStartDay( float campaignStartDay ) const override;
+        virtual void InitializeTiming( const IdmDateTime& ) override;
         virtual void AddNode( const suids::suid& suid ) override;
         virtual void Update( float dt ) override;
         virtual void ConsiderResponding();

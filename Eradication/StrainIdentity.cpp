@@ -57,6 +57,12 @@ namespace Kernel {
     {
     }
 
+    std::string StrainIdentity::GetName(void) const
+    {
+        // Strain name determined by clade and genome
+        return (std::to_string(cladeID) + "_" + std::to_string(geneticID));
+    }
+
     int StrainIdentity::GetCladeID(void) const
     {
         return cladeID;

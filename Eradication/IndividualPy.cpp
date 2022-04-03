@@ -284,7 +284,7 @@ namespace Kernel
         return IndividualHuman::Update( currenttime, dt);
     }
 
-    void IndividualHumanPy::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void IndividualHumanPy::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
         LOG_DEBUG_F("AcquireNewInfection: route %d\n", _routeOfInfection);
         IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );

@@ -24,6 +24,7 @@ namespace Kernel
         virtual ~StrainIdentity(void);
 
         // IStrainIdentity methods
+        std::string  GetName(void) const override;
         virtual int  GetCladeID(void) const override;
         virtual int  GetGeneticID(void) const override;
         virtual void SetCladeID(int in_cladeID) override;

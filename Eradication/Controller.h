@@ -44,7 +44,6 @@ public:
     virtual ~DefaultController() {}
 
 protected:
-
     template <class SimulationT> 
     bool execute_internal();
 

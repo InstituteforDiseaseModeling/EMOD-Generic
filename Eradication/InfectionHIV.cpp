@@ -55,6 +55,15 @@ namespace Kernel
     {
         LOG_DEBUG("Configure\n");
 
+        // HIV infections use Base Infectivity as the mean of a log normal distribution with Heterogeneous_Infectiousness_LogNormal_Scale as the sigma parameter.
+        // Use of m_hetero_infectivity_multiplier should be removed before enabling Base Infectivity from a distribution.
+        if( JsonConfigurable::_dryrun == false && InfectionConfig::infectivity_distribution->GetType() != DistributionFunction::CONSTANT_DISTRIBUTION )
+        {
+            std::ostringstream msg;
+            msg << "Base_Infectivity_Distribution other than CONSTANT_DISTRIBUTION not currently supported for HIV infections.";
+            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
         //read in configs here   
         initConfigTypeMap( "Acute_Duration_In_Months", &acute_duration_in_months, Acute_Duration_In_Months_DESC_TEXT, 0.0f, 5.0f, 2.9f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
         initConfigTypeMap( "AIDS_Duration_In_Months", &AIDS_duration_in_months, AIDS_Duration_In_Months_DESC_TEXT, 7.0f, 12.0f, 9.0f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
@@ -223,14 +232,13 @@ namespace Kernel
                    );
     }
 
-    void InfectionHIV::SetParameters( IStrainIdentity* infstrain, int incubation_period_override)
+    void InfectionHIV::SetParameters( IStrainIdentity* infstrain, float incubation_period_override)
     {
-        LOG_DEBUG_F( "New HIV infection for individual %d; incubation_period_override = %d.\n", parent->GetSuid().data, incubation_period_override );
-        // Don't call down into baseclass. Copied two lines below to repro required functionality.
-        incubation_timer = incubation_period_override;
+        // Don't call down into baseclass.
         CreateInfectionStrain(infstrain);
+        incubation_timer = -1.0f;
 
-        if( incubation_period_override == 0 )
+        if( incubation_period_override == 0.0f )
         {
             // This means we're part of an outbreak. Fastforward infection. 
             float fast_forward = HIV_duration_until_mortality_without_TB * parent->GetRng()->e(); // keep this as member?
@@ -240,9 +248,11 @@ namespace Kernel
             LOG_DEBUG_F( "Individual is outbreak seed, fast forward infection by %f.\n", fast_forward );
             SetStageFromDuration();
         }
+        LOG_DEBUG_F( "New HIV infection for individual %d; incubation_period_override = %d.\n", parent->GetSuid().data, incubation_period_override );
+
         total_duration = HIV_duration_until_mortality_without_TB;
         // now we have 3 variables doing the same thing?
-        infectiousness = InfectionConfig::base_infectivity;
+        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() );
         StateChange    = InfectionStateChange::None;
     }
 
@@ -472,9 +482,7 @@ namespace Kernel
         m_time_infected = human_parent->GetParent()->GetTime().time;
     }
 
-    float
-    InfectionHIV::GetWHOStage()
-    const
+    float InfectionHIV::GetWHOStage() const
     {
         // DJK TODO: Needs to return float that interpolates stages, e.g. for weight.  partial not used. <ERAD-1860>
         float ret = MAX_WHO_HIV_STAGE-1;
@@ -509,26 +517,6 @@ namespace Kernel
         
         ret += partial;
 
-#if 0
-        std::ostringstream msg;
-        msg << "Looks like we are in WHO stage "
-            << (int) ret 
-            << " with remainder "
-            << (float) partial
-            << " based on prognosis fraction of "
-            << (float) fractionOfPrognosisCompleted
-            << " and stage fractions/cum fractions of: ";
-        float cum = 0.0f;
-        for( int idx=0; idx<3; idx++ )
-        {
-            msg << m_fraction_of_prognosis_spent_in_stage[idx] << "/";
-            cum += m_fraction_of_prognosis_spent_in_stage[idx];
-            msg << cum << " -- ";
-        }
-        msg << std::endl;
-        //LOG_DEBUG_F( "Looks like we are in WHO stage %d with remainder %f based on prognosis fraction of %f.\n", (int) stage, (float) partial, (float) fractionOfPrognosisCompleted );
-        LOG_DEBUG_F( msg.str().c_str() );
-#endif
         LOG_DEBUG_F( "%s returning %f for individual %d\n", __FUNCTION__, ret, parent->GetSuid().data );
         return ret;
     }

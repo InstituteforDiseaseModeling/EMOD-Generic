@@ -96,7 +96,7 @@ namespace Kernel
         virtual void UpdateInfectiousness(float dt) override;
         virtual void UpdateInfectiousnessSTI(std::vector<act_prob_t> &act_prob_vec, unsigned int rel_id) override;
 
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1 ) override;
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
 
         virtual bool AvailableForRelationship(RelationshipType::Enum) const override;
 

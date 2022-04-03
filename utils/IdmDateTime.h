@@ -18,8 +18,6 @@ class BaseChannelReport;
 
 namespace Kernel {
 
-    // Adding this simple utility class. Only used by HIV. Only going to month resolution
-    // for now since that's all that's needed. Could move this to utils perhaps.
     struct IDMAPI IdmDateTime
     {
         friend class Simulation;
@@ -28,13 +26,14 @@ namespace Kernel {
         friend class CampaignEventByYear;
         friend class SimulationTyphoid;
         friend class ReportTyphoidByAgeAndGender;
-        public:
+
+    public:
         IdmDateTime()
-        {
-            time = 0;
-            timestep = 0;
-            _base_year = 0;
-        }
+        : time(0.0f)
+        , timestep(0)
+        , _base_year(0.0f)
+        , time_delta(0.0f)
+        { }
 
         explicit IdmDateTime( NonNegativeFloat start_time )
         {
@@ -82,10 +81,10 @@ namespace Kernel {
             return _base_year + time/DAYSPERYEAR;
         }
     
-        void Update( NonNegativeFloat dt )
+        void Update()
         {
             timestep ++;
-            time += dt;
+            time += time_delta;
         }
 
         float TimeAsSimpleTimestep() const
@@ -103,11 +102,21 @@ namespace Kernel {
             return _base_year;
         }
 
+        float GetTimeDelta() const
+        {
+            return time_delta;
+        }
+
+        void SetTimeDelta(float time_delta_in)
+        {
+            time_delta = time_delta_in;
+        }
+
         NaturalNumber timestep;
         NonNegativeFloat time;
 
-        private:
+    private:
         NonNegativeFloat _base_year;
-
+        float time_delta;
     };
 }

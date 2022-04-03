@@ -152,22 +152,22 @@ namespace Kernel
         IndividualHuman::Expose( cp, dt, transmissionRoute );
     }
 
-    void IndividualHumanEnvironmental::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void IndividualHumanEnvironmental::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
         if ( infstrain )
         {
             StrainIdentity infectingStrain;
             infstrain->ResolveInfectingStrain( &infectingStrain );
-            if ( incubation_period_override == 0 )
+            if ( incubation_period_override == 0.0f )
             {
                 infectingStrain.SetGeneticID( 2 );
-                exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTDOOR;
+                exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTBREAK;
             }
             else if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_CONTACT)
             {
                 infectingStrain.SetGeneticID( 1 );
             }
-            else    // if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL)
+            else // TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL
             { 
                 infectingStrain.SetGeneticID( 0 );
             }

@@ -191,7 +191,7 @@ namespace Kernel
                 Configuration *event_config = Configuration::CopyFromElement( events[k], campaign->GetDataLocation() );
                 release_assert( event_config );
 
-                CampaignEvent *ce = CampaignEventFactory::CreateInstance(event_config);
+                CampaignEvent *ce = CampaignEventFactory::CreateInstance(event_config, this);
                 if (ce)
                 {
                     ce->CheckForValidNodeIDs(nodeIds_demographics);

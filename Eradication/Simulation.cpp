@@ -209,7 +209,14 @@ namespace Kernel
 
     bool Simulation::Configure( const Configuration * inputJson )
     {
+        LOG_DEBUG("Configure\n");
+
+        // Temporary configuration values
+        float sim_delta_time = 0.0f;
+
         initConfig( "Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum("sim_type", Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
+
+        initConfigTypeMap( "Simulation_Timestep", &sim_delta_time,  Simulation_Timestep_DESC_TEXT, 0.0f, FLT_MAX, 1.0f );
 
         initConfigTypeMap( "Enable_Termination_On_Zero_Total_Infectivity",  &enable_termination_on_zero_total_infectivity,  Enable_Termination_On_Zero_Total_Infectivity_DESC_TEXT,  false );
         initConfigTypeMap( "Enable_Default_Reporting",       &enable_default_report,          Enable_Default_Reporting_DESC_TEXT,       true  );
@@ -241,6 +248,7 @@ namespace Kernel
         }
 
         bool ret = JsonConfigurable::Configure( inputJson );
+
         if( ret || JsonConfigurable::_dryrun )
         {
             if( create_rng_from_serialized_data && !inputJson->Exist( "Serialized_Population_Filenames" ) )
@@ -257,12 +265,6 @@ namespace Kernel
             }
         }
 
-        if(enable_termination_on_zero_total_infectivity && EnvPtr->MPI.NumTasks > 1)
-        {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Termination_On_Zero_Total_Infectivity", 1, "number of processes",
-                                                    EnvPtr->MPI.NumTasks , "Multi-core simulation abort conditions are not currently supported." );
-        }
-
         if( !JsonConfigurable::_dryrun && 
             ((GET_CONFIGURABLE(SimulationConfig)->starttime + GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) < min_sim_endtime) )
         {
@@ -271,11 +273,15 @@ namespace Kernel
                                                    "Start_Time + Simulation_Duration must be greater than Minimum_End_Time." );
         }
 
+        // Set configuration from temporary values
+        currentTime.SetTimeDelta(sim_delta_time);
+
         // convert vector into queue
         for( auto elem : py_inproc_tsteps_tmp_vec )
         {
             py_inproc_tsteps.push( elem );
         }
+
         return ret;
     }
 
@@ -287,15 +293,20 @@ namespace Kernel
         if(enable_termination_on_zero_total_infectivity && currentTime.time > min_sim_endtime)
         {
             // Accumulate node infectivity
-            float totInfVal = 0.0f;
+            float totInfVal         = 0.0f;
+            float totInfVal_unified = 0.0f;
+
             for (auto iterator = nodes.rbegin(); iterator != nodes.rend(); ++iterator)
             {
                 INodeContext* n = iterator->second;
                 totInfVal += n->GetInfectivity();
             }
 
+            // Accumulate infectivity from all cores
+            EnvPtr->MPI.p_idm_mpi->Allreduce_SUM(&totInfVal, &totInfVal_unified, 1);
+
             // Abort on zero infectivity
-            if(totInfVal == 0.0f)
+            if(totInfVal_unified == 0.0f)
             {
                 LOG_INFO("Zero infectivity at current time-step; simulation aborting.\n");
                 abortSim = true;
@@ -366,7 +377,7 @@ namespace Kernel
         Reports_CreateBuiltIn();
         Reports_ConfigureBuiltIn();
         Reports_CreateCustom();
-        Reports_FindReportsCollectingIndividualData( 0.0, 0.0 );
+        Reports_FindReportsCollectingIndividualData();
     }
 
     INodeInfo* Simulation::CreateNodeInfo()
@@ -414,7 +425,7 @@ namespace Kernel
         }
 
         loadBalanceFilename  = Environment::FindFileOnPath( loadbalance_filename  );
-        currentTime.time    = m_simConfigObj->starttime;
+        currentTime.time     = m_simConfigObj->starttime;
     }
 
     void Simulation::initSimulationState()
@@ -614,7 +625,7 @@ namespace Kernel
         Reports_Instantiate( report_instantiator_map );
     }
 
-    void Simulation::Reports_FindReportsCollectingIndividualData( float currentTime, float dt )
+    void Simulation::Reports_FindReportsCollectingIndividualData()
     {
         // ---------------------------------------------------------------------
         // --- Get the subset of reports that are collecting individual data
@@ -624,7 +635,7 @@ namespace Kernel
         individual_data_reports.clear();
         for( auto report : reports )
         {
-            if( report->IsCollectingIndividualData( currentTime, dt ) )
+            if( report->IsCollectingIndividualData( currentTime.time, currentTime.GetTimeDelta() ) )
             {
                 individual_data_reports.push_back( report );
             }
@@ -748,11 +759,11 @@ namespace Kernel
         JsonConfigurable::_useDefaults = cachedValue;
     }
 
-    void Simulation::Reports_UpdateEventRegistration( float _currentTime, float dt )
+    void Simulation::Reports_UpdateEventRegistration()
     {
         for (auto report : reports)
         {
-            report->UpdateEventRegistration( _currentTime, dt, node_event_context_list, event_context_host );
+            report->UpdateEventRegistration( currentTime.time, currentTime.GetTimeDelta(), node_event_context_list, event_context_host );
         }
     }
 
@@ -765,12 +776,12 @@ namespace Kernel
         }
     }
 
-    void Simulation::Reports_EndTimestep( float _currentTime, float dt )
+    void Simulation::Reports_EndTimestep()
     {
         for (auto report : reports)
         {
             release_assert(report);
-            report->EndTimestep( _currentTime, dt );
+            report->EndTimestep( currentTime.time, currentTime.GetTimeDelta() );
         }
     }
 
@@ -824,37 +835,16 @@ namespace Kernel
     //   Every timestep Update() method
     //------------------------------------------------------------------
 
-// Use with __try {} __except(filter(GetExceptionCode(), GetExceptionInformation())) { MPI_Abort(EnvPtr->world, -1); }
-//
-//    static char* section;
-//
-//    static int filter(unsigned int code, struct _EXCEPTION_POINTERS* ep)
-//    {
-//        cout << '[' << EnvPtr->MPI.Rank << "] " << "Section: " << section << endl; cout.flush();
-//        cout << '[' << EnvPtr->MPI.Rank << "] " << "Exception code      = " << code << endl; cout.flush();
-//        cout << '[' << EnvPtr->MPI.Rank << "] " << "EP.ExceptionCode    = " << ep->ExceptionRecord->ExceptionCode << endl; cout.flush();
-//        cout << '[' << EnvPtr->MPI.Rank << "] " << "EP.ExceptionAddress = " << ep->ExceptionRecord->ExceptionAddress << endl; cout.flush();
-//
-//        void* callers[32];
-//        auto frames = CaptureStackBackTrace( 0, 32, callers, nullptr);
-//        for (size_t i = 0; i < frames; i++) {
-//            cout << '[' << i << "] " << callers[i] << endl;
-//        }
-//        cout.flush();
-//
-//        return EXCEPTION_EXECUTE_HANDLER;
-//    }
-
-    void Simulation::Update(float dt)
+    void Simulation::Update()
     {
-        Reports_UpdateEventRegistration( currentTime.time, dt );
-        Reports_FindReportsCollectingIndividualData( currentTime.time, dt );
+        Reports_UpdateEventRegistration();
+        Reports_FindReportsCollectingIndividualData();
 
         // -----------------
         // --- Update Events
         // -----------------
         release_assert(event_context_host);
-        event_context_host->Update(dt);
+        event_context_host->Update(currentTime.GetTimeDelta());
 
         Reports_BeginTimestep();
 
@@ -866,7 +856,7 @@ namespace Kernel
             INodeContext* n = iterator->second;
             release_assert(n);
             n->AddEventsFromOtherNodes(node_events_to_be_processed[n->GetSuid()]);
-            n->Update(dt);
+            n->Update(currentTime.GetTimeDelta());
 
             Reports_LogNodeData(n);
         }
@@ -888,19 +878,18 @@ namespace Kernel
         // -------------------
         // --- Increment Time
         // -------------------
-        currentTime.Update( dt );
+        currentTime.Update();
 
         // ----------------------------------------------------------
         // --- Output Information for the end of the update/timestep
         // ----------------------------------------------------------
         PrintTimeAndPopulation();
 
-        Reports_EndTimestep( currentTime.time, dt );
+        Reports_EndTimestep();
 
         // Call out to Embedded Python IN-processing script if any
         // Check if time now elapsed is greater than next timestep in 
         // Python_Inprocessing_Tsteps array.
-        LOG_DEBUG_F( "current tstep = %d, next ep4 tstep = %d.\n", int(currentTime.timestep), py_inproc_tsteps.front() );
         if( py_inproc_tsteps.size() > 0 && currentTime.timestep > py_inproc_tsteps.front() )
         {
             auto newCampaignFilename = Kernel::PythonSupport::RunPyFunction( std::to_string( currentTime.time ), Kernel::PythonSupport::SCRIPT_IN_PROCESS );
@@ -1324,10 +1313,6 @@ namespace Kernel
 
                 migratingIndividualQueues[myRank].clear();
 
-                //if ( EnvPtr->Log->CheckLogLevel(Logger::VALIDATION, _module) ) {
-                //    _write_json( int(currentTime.time), EnvPtr->MPI.Rank, myRank, "self", static_cast<IArchive*>(writer.get())->GetBuffer(), static_cast<IArchive*>(writer.get())->GetBufferSize() );
-                //}
-
                 auto reader = make_shared<BinaryArchiveReader>(static_cast<IArchive*>(writer.get())->GetBuffer(), static_cast<IArchive*>(writer.get())->GetBufferSize());
                 (*static_cast<IArchive*>(reader.get())) & migratingIndividualQueues[myRank];
                 for (auto individual : migratingIndividualQueues[myRank])
@@ -1526,33 +1511,8 @@ namespace Kernel
         }
 
         if ((sim.serializationMask & SerializationFlags::Properties) != 0) {
-// clorton          ar.labelElement("nodeRankMap") & sim.nodeRankMap;
-// clorton          ar.labelElement("node_event_context_list") & sim.node_event_context_list;
-// clorton          ar.labelElement("nodeid_suid_map") & sim.nodeid_suid_map;
-// clorton          ar.labelElement("migratingIndividualQueues") & sim.migratingIndividualQueues;
-// clorton          ar.labelElement("m_simConfigObj") & sim.m_simConfigObj;
-// clorton          ar.labelElement("m_interventionFactoryObj") & sim.m_interventionFactoryObj;
-// clorton          ar.labelElement("demographicsContext") & sim.demographicsContext;
-// clorton          ar.labelElement("nodeSuidGenerator") & sim.nodeSuidGenerator;
             ar.labelElement("loadBalanceFilename") & sim.loadBalanceFilename;
-// clorton          ar.labelElement("rng") & sim.rng;
-// clorton          ar.labelElement("reports") & sim.reports;
-// clorton          ar.labelElement("individual_data_reports") & sim.individual_data_reports;
-// clorton          ar.labelElement("reportClassCreator") & sim.reportClassCreator;
-// clorton          ar.labelElement("binnedReportClassCreator") & sim.binnedReportClassCreator;
-// clorton          ar.labelElement("spatialReportClassCreator") & sim.spatialReportClassCreator;
-// clorton          ar.labelElement("propertiesReportClassCreator") & sim.propertiesReportClassCreator;
-// clorton          ar.labelElement("demographicsReportClassCreator") & sim.demographicsReportClassCreator;
-// clorton          ar.labelElement("eventReportClassCreator") & sim.eventReportClassCreator;
-// clorton          ar.labelElement("nodeEventReportClassCreator") & sim.nodeEventReportClassCreator;
-// clorton          ar.labelElement("coordinatorEventReportClassCreator") & sim.coordinatorEventReportClassCreator;
-// clorton          ar.labelElement("event_coordinators") & sim.event_coordinators;
-// clorton          ar.labelElement("campaign_events") & sim.campaign_events;
-// clorton          ar.labelElement("event_context_host") & sim.event_context_host;
-// clorton          ar.labelElement("currentTime") & sim.currentTime;
             ar.labelElement("campaign_filename") & sim.campaign_filename;
-// clorton          ar.labelElement("demographics_factory") & sim.demographics_factory;
-// clorton          ar.labelElement("new_node_observers") & sim.new_node_observers;
         }
     }
 

@@ -129,9 +129,7 @@ namespace Kernel
 
     float DistributionGaussian::Calculate( RANDOMBASE* pRNG ) const
     {
-        double value = pRNG->eGaussNonNeg( m_Param1, m_Param2 );
-        //if ( value < 0.0 ) { value = 0.0; }
-        return value;
+        return pRNG->eGaussNonNeg( m_Param1, m_Param2 );
     }
 
     IDistribution* DistributionGaussian::Clone() const

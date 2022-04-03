@@ -2,7 +2,7 @@
 
 import sys
 import os
-import syslog
+#import syslog
 import json
 import random
 import string
@@ -43,11 +43,12 @@ def create_person_callback( mcw, age, gender ):
     person["sex"]=gender
 
     #syslog.syslog( syslog.LOG_INFO, "[PY] Creating human with age = {0}, gender = {1}.".format( age, gender ) )
-    print( syslog.LOG_INFO, "[PY] Creating human with age = {0}, gender = {1}.".format( age, gender ) )
+    print( "[PY] Creating human with age = {0}, gender = {1}.".format( age, gender ) )
     new_id = gi.create( ( gender, age, mcw ) ) 
     person["id"]=new_id
     human_pop.append( person )
-    syslog.syslog( syslog.LOG_INFO, "Human population now = {0}.".format( len( human_pop ) ) )
+    #syslog.syslog( syslog.LOG_INFO, "Human population now = {0}.".format( len( human_pop ) ) )
+    print( "Human population now = {0}.".format( len( human_pop ) ) )
     if age == 0:
         month_step = int( timestep/30.0 )
         print( "Made a baby on timestep {0}/month {1}.".format( str( timestep ), str( month_step ) ) )
@@ -132,7 +133,7 @@ def get_infectiousness( age_of_infection ):
 def run( from_script = False ):
     global human_pop # make sure Python knows to use module-level variable human_pop
     del human_pop[:]
-    syslog.syslog( syslog.LOG_INFO, "We cleared out human_pop. Should get populated via populate_from_files and callback..." )
+    #syslog.syslog( syslog.LOG_INFO, "We cleared out human_pop. Should get populated via populate_from_files and callback..." )
 
     # set creation callback
     nd.set_callback( create_person_callback )
@@ -145,7 +146,7 @@ def run( from_script = False ):
     nd.set_conceive_baby_callback( conceive_baby_callback )
     nd.set_update_preg_callback( update_pregnancy_callback )
 
-    syslog.syslog( syslog.LOG_INFO, "Update fertility & mortality of population of size {0} for 1 year.".format( len( human_pop ) ) )
+    #syslog.syslog( syslog.LOG_INFO, "Update fertility & mortality of population of size {0} for 1 year.".format( len( human_pop ) ) )
     graveyard = []
     for t in range(0,2*365): # for one year
         global timestep
@@ -166,21 +167,24 @@ def run( from_script = False ):
         if t == iv_timestep:
             for human in human_pop:
                 hum_id = human["id"]
+                # This is how you distribute an intervention (in this case a vaccine) to someone
                 vaccine = iv.get_intervention()
                 gi.give_intervention( ( hum_id, vaccine ) )
 
-        syslog.syslog( syslog.LOG_INFO, "Updating individuals (exposing) at timestep {0}.".format( t ) )
+        #syslog.syslog( syslog.LOG_INFO, "Updating individuals (exposing) at timestep {0}.".format( t ) )
+        #print( "Updating individuals (exposing) at timestep {0}.".format( t ) )
         for human in human_pop:
             hum_id = human["id"]
             gi.update2( hum_id ) # this should do exposure
 
             if gi.is_dead( hum_id ):
-                syslog.syslog( syslog.LOG_INFO, "Individual {0} died.".format( hum_id ) )
+                #syslog.syslog( syslog.LOG_INFO, "Individual {0} died.".format( hum_id ) )
                 graveyard.append( human )
                 try:
                     human_pop.pop( hum_id )
                 except Exception as ex:
-                    syslog.syslog( syslog.LOG_INFO, "Exception trying to remove individual from python list: " + str( ex ) )
+                    #syslog.syslog( syslog.LOG_INFO, "Exception trying to remove individual from python list: " + str( ex ) )
+                    print( "Exception trying to remove individual from python list: " + str( ex ) )
 
             # TESTING THIS
             ipm = gi.is_possible_mother( hum_id )

@@ -81,7 +81,7 @@ namespace Kernel
         return newqueue;
     }
 
-    void VectorCohortIndividual::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void VectorCohortIndividual::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
         if ( state != VectorStateEnum::STATE_ADULT )
         {

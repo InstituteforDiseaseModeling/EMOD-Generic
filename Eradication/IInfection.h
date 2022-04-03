@@ -21,18 +21,18 @@ namespace Kernel
     struct IInfection : ISerializable
     {
         virtual suids::suid GetSuid() const = 0;
-        virtual void Update(float, ISusceptibilityContext* = nullptr) = 0;
+        virtual void Update( float, ISusceptibilityContext* = nullptr ) = 0;
         virtual InfectionStateChange::_enum GetStateChange() const = 0;
         virtual float GetInfectiousness() const = 0;
 
-        virtual float GetInfectiousnessByRoute( const std::string& route) const = 0;
-        virtual void GetInfectiousStrainID(IStrainIdentity*) = 0;
+        virtual float GetInfectiousnessByRoute( const std::string& route ) const = 0;
+        virtual void GetInfectiousStrainID( IStrainIdentity* ) = 0;
         virtual const IStrainIdentity* GetStrain() const  = 0;
 
         virtual bool IsActive() const = 0;
         virtual NonNegativeFloat GetDuration() const = 0;
         virtual void SetContextTo(IIndividualHumanContext*) = 0;
-        virtual void SetParameters(IStrainIdentity* infstrain=nullptr, int incubation_period_override = -1 ) = 0;
+        virtual void SetParameters( IStrainIdentity* infstrain=nullptr, float incubation_period_override = -1.0f ) = 0;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) = 0;
         virtual bool StrainMatches( IStrainIdentity * pStrain ) = 0;
         virtual bool IsSymptomatic() const = 0;

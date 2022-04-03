@@ -77,6 +77,12 @@ namespace Kernel
         return retValue;
     }
 
+    void BroadcastCoordinatorEvent::CheckStartDay( float campaignStartDay ) const
+    { }
+
+    void BroadcastCoordinatorEvent::InitializeTiming( const IdmDateTime& currentTime)
+    { }
+
     void BroadcastCoordinatorEvent::SetContextTo( ISimulationEventContext *isec )
     {
         m_Parent = isec;

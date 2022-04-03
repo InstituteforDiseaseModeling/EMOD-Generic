@@ -371,7 +371,6 @@ namespace Kernel
             StrainIdentity strainId;
             // The ContagionProbability object can give us the ID of the Infector (Depositor)
             // We store this as the heretofore unused "Clade ID" of the Infecting Strain.
-            cp->ResolveInfectingStrain(&strainId); // get the clade and genome IDs
             strainId.SetCladeID(pCP_as_Probs->GetInfectorID());
             AcquireNewInfection( &strainId );
         }
@@ -629,7 +628,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanSTI::AcquireNewInfection( const IStrainIdentity *infstrain, int incubation_period_override )
+    void IndividualHumanSTI::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
     {
         int numInfs = int(infections.size());
         if( (numInfs >= IndividualHumanConfig::max_ind_inf) ||

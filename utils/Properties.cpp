@@ -20,6 +20,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "Common.h"
 #include "RANDOM.h"
+#include "Configuration.h"
 
 SETUP_LOGGING( "Properties" )
 
@@ -138,6 +139,27 @@ namespace Kernel
     // ------------------------------------------------------------------------
     // --- IPTransition
     // ------------------------------------------------------------------------
+
+    float GetConfigValue( const std::string& rParamName )
+    {
+        float val = 0.0;
+        if( (EnvPtr != nullptr) && (EnvPtr->Config != nullptr) && EnvPtr->Config->Exist( rParamName.c_str() ) )
+        {
+            val = (*EnvPtr->Config)[  rParamName.c_str()  ].As<Number>();
+        }
+        return val;
+    }
+
+    float GetStartTime()
+    {
+        return GetConfigValue( "Start_Time" );
+    }
+
+    float GetTimeStepDuration()
+    {
+        return GetConfigValue( "Simulation_Timestep" );
+    }
+
 #define UNKNOWN ("UNKNOWN")
 
     IPTransition::IPTransition()
@@ -382,9 +404,11 @@ namespace Kernel
 
         ret_list.push_back( campaign_event );
 
+        float start_time = GetStartTime();
+
         std::string to_value_str = m_To.GetValueAsString();
         if( (m_Type == IP_TRANS_TYPE_VALUE_AGE) ||
-            ((m_Type == IP_TRANS_TYPE_VALUE_TIMESTEP) && (m_Start == 0.0) &&
+            ((m_Type == IP_TRANS_TYPE_VALUE_TIMESTEP) && (m_Start == start_time) &&
                                                          (rKey.ToString() == IP_AGE_BIN_PROPERTY) &&
                                                          (to_value_str.find(IP_AGE_BIN_VALUE_0) !=  std::string::npos) ) )
         {
@@ -405,7 +429,7 @@ namespace Kernel
             // --- Copy the original campaign event
             // ------------------------------------
             campaign_event_birth.Parse( campaign_event.ToString().c_str() );
-            campaign_event_birth.Add("Start_Day", 0.0 );
+            campaign_event_birth.Add("Start_Day", start_time );
 
             // --------------------------------------------------
             // --- Get the standard event coordinator and replace
@@ -990,6 +1014,9 @@ namespace Kernel
 
     void IndividualProperty::CreateAgeBinTransitions()
     {
+        float start_time = GetStartTime();
+        float dt = GetTimeStepDuration();
+
         int index = 0;
         for( auto to_kv : m_Values )
         {
@@ -997,13 +1024,25 @@ namespace Kernel
             float max_age_years = 0.0 ;
             ExtractAges( to_kv, &min_age_years, &max_age_years );
 
-            IPTransition* p_tran = new IPTransition( IPKeyValue(), to_kv, IP_TRANS_TYPE_VALUE_TIMESTEP, 1.0, 0.0, -1.0, 1.0, 0.0, max_age_years, true, min_age_years, max_age_years );
+            IPTransition* p_tran = new IPTransition( IPKeyValue(), to_kv,
+                                                     IP_TRANS_TYPE_VALUE_TIMESTEP,
+                                                     1.0,
+                                                     start_time, -1.0,
+                                                     1.0, 0.0,
+                                                     max_age_years, true,
+                                                     min_age_years, max_age_years );
             m_Transitions.push_back( p_tran );
 
             if( index > 0 )
             {
                 // Give people calendars to move to next bucket.
-                IPTransition* p_tran2 = new IPTransition( IPKeyValue(), to_kv, IP_TRANS_TYPE_VALUE_AGE, 1.0, 1.0, -1.0, 1.0, 0.0, min_age_years, true, 0.0, min_age_years );
+                IPTransition* p_tran2 = new IPTransition( IPKeyValue(), to_kv,
+                                                          IP_TRANS_TYPE_VALUE_AGE,
+                                                          1.0,
+                                                          (start_time+dt), -1.0,
+                                                          1.0, 0.0,
+                                                          min_age_years, true,
+                                                          0.0, min_age_years );
                 m_Transitions.push_back( p_tran2 );
             }
             index++;

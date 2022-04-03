@@ -39,7 +39,7 @@ namespace Kernel
         virtual void SetForwardCD4(std::vector<float> & )  = 0;
         virtual void SetForwardTBAct( std::vector<float> & ) = 0;
         virtual void InitiateART() = 0; 
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) = 0;
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
         virtual void SetTBActivationVector( const std::vector<float>& ) = 0;
         virtual void LifeCourseLatencyUpdateAll() = 0;
 
@@ -122,8 +122,8 @@ namespace Kernel
         static void InitializeStaticsCoInfection( const Configuration* config );
 
         // Infections and Susceptibility
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) override;
-        virtual void AcquireNewInfectionHIV( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1); // does not override
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
+        virtual void AcquireNewInfectionHIV( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ); // does not override
         virtual bool IsSymptomatic() const override { return false; };
         virtual void CreateSusceptibility(float=1.0, float=1.0) override;
         virtual void UpdateInfectiousness(float dt) override;

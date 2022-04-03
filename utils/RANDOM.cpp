@@ -21,17 +21,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <tmmintrin.h> // _mm_shuffle_epi8
 #endif
 
-#define PI_F 3.1415927f
-
-#define PRNG_COUNT  (1<<20) // Let's start with ~1 million
 
 namespace Kernel
 {
 // ----------------------------------------------------------------------------
 // --- RANDOMBASE
 // ----------------------------------------------------------------------------
-
-double RANDOMBASE::cdf_random_num_precision = 0.01; // precision of random number obtained from a cumulative probability function
 
 RANDOMBASE::RANDOMBASE( size_t nCache )
     : cache_count( nCache )
@@ -169,9 +164,6 @@ void RANDOMBASE::fill_bits()
     assert(false);
 }
 
-#define FLOAT_EXP   8
-#define DOUBLE_EXP 11
-
 void RANDOMBASE::bits_to_float()
 {
     __m128i m = _mm_set1_epi32(0x007FFFFF);
@@ -269,6 +261,88 @@ float RANDOMBASE::eGaussNonNeg(float mu, float sig)
             retv = (retv > 0.0f) ? retv : 0.0f;
         }
     }
+
+    return retv;
+}
+
+// Gamma-distributed random number
+float RANDOMBASE::rand_gamma(float k, float theta)
+{
+    float retv = 0.0f;
+    float b,c,U,V,X,Y;
+
+    if(k <= 0.0f || theta <= 0.0f)
+    {
+        // Invalid input; return error (-1.0f)
+        retv = -1.0f;
+    }
+    else if(k == HUGE_VALF || theta == HUGE_VALF)
+    {
+        // Invalid input; return error (-1.0f)
+        retv = -1.0f;
+    }
+
+    // Switch approximations based on shape factor
+    if (k == 1.0f)
+    {
+        retv = -logf(e());
+    }
+    else if (k < 1.0f)
+    {
+        for (;;)
+        {
+            U = e();
+            V = -logf(e());
+            if (U <= (1.0f-k))
+            {
+                X = powf(U, 1.0f/k);
+                if (X <= V)
+                {
+                    retv = X;
+                    break;
+                }
+            }
+            else
+            {
+                Y = -logf((1.0f-U)/k);
+                X = powf(1.0f-k+k*Y, 1.0f/k);
+                if (X <= (V+Y))
+                {
+                    retv = X;
+                    break;
+                }
+            }
+        }
+    }
+    else
+    {
+        b = k-1.0f/3.0f;
+        c = 1.0f/sqrtf(9.0f*b);
+        for (;;)
+        {
+            do
+            {
+                X = static_cast<float>(eGauss());
+                V = 1.0f+c*X;
+            } while (V <= 0.0f);
+
+            V = V*V*V;
+            U = e();
+            if (U < (1.0f-0.0331f*X*X*X*X))
+            {
+                retv = b*V;
+                break;
+            }
+            if (logf(U) < 0.5f*X*X + b*(1.0f-V+logf(V)))
+            {
+                retv = b*V;
+                break;
+            }
+        }
+    }
+
+    // Account for scaling
+    retv *= theta;
 
     return retv;
 }
@@ -626,69 +700,6 @@ std::vector<uint64_t> RANDOMBASE::multinomial_approx( uint64_t N, const std::vec
     }
 
     return subsets;
-}
-
-// M Behrend
-// gamma-distributed random number
-// shape constant k=2
-
-double RANDOMBASE::rand_gamma( double mean )
-{
-
-    if( mean <= 0 )
-    {
-        return 0;
-    }
-    double q = e(); // get a uniform random number
-
-    double p1 = 0; // guess random variable interval
-    double p2 = mean;
-    double p_left; // temp variable
-    double slope;
-    double delta_p;
-    double delta_cdf;
-
-    do
-    {
-        delta_cdf = q - gamma_cdf( p2, mean );
-        slope = (gamma_cdf( p2, mean ) - gamma_cdf( p1, mean )) / (p2 - p1);
-        delta_p = delta_cdf / slope;
-
-        if( delta_p > 0 )
-        {
-            p1 = p2;
-            p2 = p2 + delta_p;
-        }
-        else
-        {
-            p2 = p2 + delta_p;
-            if( p2 < p1 )
-            {
-                p_left = p2;
-                p2 = p1;
-                p1 = p_left;
-            }
-        }
-    } while( fabs( delta_cdf ) > cdf_random_num_precision );
-
-    return p2;
-}
-
-double RANDOMBASE::gamma_cdf( double x, double mean )
-{
-    double theta = mean / 2;
-    double cdf = 1 - (x / theta + 1) * exp( -x / theta );
-
-    if( x < 0 )
-    {
-        cdf = 0;
-    }
-    return cdf;
-}
-
-double RANDOMBASE::get_cdf_random_num_precision()
-{
-    return cdf_random_num_precision;
 }
 
 LINEAR_CONGRUENTIAL::LINEAR_CONGRUENTIAL( uint32_t iSequence, size_t nCache )

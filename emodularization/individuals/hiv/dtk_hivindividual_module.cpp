@@ -323,17 +323,6 @@ updateMain(PyObject* self, PyObject* args)
     Py_RETURN_NONE;
 }
 
-/*
-static PyObject*
-setEnumParam(PyObject* self, PyObject* args)
-{
-    char * param_name;
-    person->Update( 0.0f, 1.0f );
-
-    Py_RETURN_NONE;
-}
-*/
-
 static PyObject*
 getAge(PyObject* self, PyObject* args)
 {
@@ -606,19 +595,6 @@ forceInfect(PyObject* self, PyObject* args)
 static PyObject*
 giveIntervention(PyObject *self, PyObject *args)
 {
-#if 0
-    PyObject* opaque_intervention = NULL;
-    int id = 1;
-    if( !PyArg_ParseTuple(args, "(iO)", &id, &opaque_intervention ) )
-    {
-        std::cout << "Failed to parse id and/or pointer for giveIV." << std::endl;
-    }
-    // This val thing is a little funny. It's from tutorial and I haven't dug into it.
-    IDistributableIntervention* f = (IDistributableIntervention*)PyCapsule_GetPointer(opaque_intervention, nullptr );
-    dynamic_cast<IInterventionConsumer*>(population[ id ]->GetHIVInterventionsContainer())->GiveIntervention( f );
-    // The DTK usually distributes interventions by calling iv->Distribute( individual ) but here
-    // I'm skipping that step and calling individual->GiveIV( iv )
-#endif
     Py_RETURN_NONE;
 }
 

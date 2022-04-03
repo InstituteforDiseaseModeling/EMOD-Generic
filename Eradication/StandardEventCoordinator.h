@@ -39,7 +39,8 @@ namespace Kernel
 
         // IEventCoordinator
         virtual void SetContextTo(ISimulationEventContext *isec);
-        virtual void CheckStartDay( float campaignStartDay ) const override {};
+        virtual void CheckStartDay( float campaignStartDay ) const override;
+        virtual void InitializeTiming( const IdmDateTime& ) override;
 
         virtual void AddNode( const suids::suid& node_suid);
 

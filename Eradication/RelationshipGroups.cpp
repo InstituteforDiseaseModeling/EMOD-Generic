@@ -425,26 +425,53 @@ namespace Kernel {
     unsigned int RelationshipGroups::_tail = 0;
     RelationshipGroups::LogEntry RelationshipGroups::_log[GRP_LOG_COUNT];
 
-    // return male id
-    NaturalNumber
-    DiscreteContagionPopulation::GetInfectorID( void )
-    const
+    NaturalNumber DiscreteContagionPopulation::GetInfectorID( void ) const
     {
         return _infector;
     }
 
-    int DiscreteContagionPopulation::GetCladeID( void )
-    const
+    std::string DiscreteContagionPopulation::GetName( void ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    int DiscreteContagionPopulation::GetCladeID( void ) const
     {
         return _clade;
     }
 
-    void RelationshipGroups::LogActivity(
-        unsigned int _action,
-        unsigned int _actor,
-        unsigned int _index,
-        float _amount
-        )
+    int DiscreteContagionPopulation::GetGeneticID( void ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    void DiscreteContagionPopulation::SetCladeID( int in_cladeID )
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    void DiscreteContagionPopulation::SetGeneticID( int in_geneticID )
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    float DiscreteContagionPopulation::GetTotalContagion( void ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    void DiscreteContagionPopulation::ResolveInfectingStrain( IStrainIdentity* strainId ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
+    }
+
+    void RelationshipGroups::LogActivity( unsigned int _action, unsigned int _actor, unsigned int _index, float _amount )
     {
         _log[_head].action = _action;
         _log[_head].actor  = _actor;

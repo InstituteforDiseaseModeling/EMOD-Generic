@@ -54,10 +54,11 @@ namespace Kernel
 
         private:
             // IContagionPopulation implementation
+            virtual std::string GetName( void ) const override;
             virtual int  GetCladeID( void ) const override;
-            virtual int  GetGeneticID( void ) const override; // Hmm.... not sure about this
-            virtual void SetCladeID(int in_cladeID) override {}; // Hmm.... not sure about this
-            virtual void SetGeneticID(int in_geneticID) override {}; // Hmm.... not sure about this
+            virtual int  GetGeneticID( void ) const override;
+            virtual void SetCladeID(int in_cladeID) override;
+            virtual void SetGeneticID(int in_geneticID) override;
             virtual float GetTotalContagion( void ) const override;
             virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 

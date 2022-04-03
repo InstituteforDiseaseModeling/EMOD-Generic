@@ -109,17 +109,27 @@ protected:
     ChannelInfo births_info;
     ChannelInfo campaign_cost_info;
     ChannelInfo disease_deaths_info;
+    ChannelInfo exposed_info;
     ChannelInfo human_infectious_reservoir_info;
     ChannelInfo infection_rate_info;
+    ChannelInfo infectious_info;
+    ChannelInfo immunized_info;
     ChannelInfo land_temperature_info;
     ChannelInfo new_infections_info;
     ChannelInfo new_reported_infections_info;
     ChannelInfo population_info;
     ChannelInfo prevalence_info;
     ChannelInfo rainfall_info;
+    ChannelInfo recovered_info;
     ChannelInfo relative_humidity_info;
+    ChannelInfo susceptible_info;
 
     // counters for LogIndividualData stuff
+    float exposed;
+    float immunized;
+    float infectious;
+    float recovered;
+    float susceptible;
     float new_infections;
     float new_reported_infections;
     float disease_deaths;

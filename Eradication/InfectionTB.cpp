@@ -74,6 +74,15 @@ namespace Kernel
     {
         LOG_DEBUG("Configure\n");
 
+        // TB infections re-assign infectiousness from Base Infectivity at the start of both active pre-symptomatic and active phases;
+        // Need to verify if value can be different before enabling Base Infectivity from a distribution.
+        if( JsonConfigurable::_dryrun == false && InfectionConfig::infectivity_distribution->GetType() != DistributionFunction::CONSTANT_DISTRIBUTION )
+        {
+            std::ostringstream msg;
+            msg << "Base_Infectivity_Distribution other than CONSTANT_DISTRIBUTION not currently supported for TB infections.";
+            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
         // TB infections use Genome to represent drug resistance with the TBInfectionDrugResistance ENUM type.
         InfectionConfig::number_genomes  = 2;
 
@@ -178,7 +187,7 @@ namespace Kernel
         m_duration_since_init_infection = 0.0f;
     }
 
-    void InfectionTB::SetParameters(IStrainIdentity* infstrain, int incubation_period_override)
+    void InfectionTB::SetParameters(IStrainIdentity* infstrain, float incubation_period_override)
     {
         LOG_DEBUG_F( "New TB infection for individual %d; incubation_period_override = %d.\n", parent->GetSuid().data, incubation_period_override );
         CreateInfectionStrain(infstrain);
@@ -457,7 +466,7 @@ namespace Kernel
         duration = 0.0f;
 
         // Set infectiousness
-        infectiousness = InfectionConfig::base_infectivity * InfectionTBConfig::TB_active_presymptomatic_infectivity_multiplier * immunityTB->GetCoughInfectiousness();
+        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() ) * InfectionTBConfig::TB_active_presymptomatic_infectivity_multiplier * immunityTB->GetCoughInfectiousness();
 
         //fitness penalty for MDR
         if ( infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant ) 
@@ -545,7 +554,7 @@ namespace Kernel
 
         float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * idvie->GetInterventionReducedMortality();
 
-        infectiousness = InfectionConfig::base_infectivity * immunityTB->GetCoughInfectiousness();
+        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() ) * immunityTB->GetCoughInfectiousness();
 
         //fitness penalty for MDR
         if ( infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant ) 
@@ -921,8 +930,7 @@ namespace Kernel
 
     InfectionTB::~InfectionTB(void) { }
     
-    bool
-    InfectionTB::IsActive() const
+    bool InfectionTB::IsActive() const
     {
         return m_is_active;
     }
@@ -965,7 +973,13 @@ namespace Kernel
     bool InfectionTB::IsSymptomatic() const 
     { 
         return m_shows_symptoms; 
-    }    
+    }
+
+    float InfectionTB::GetInfectiousness() const
+    {
+        // Return unmodified infectiousness; custon incubation timer handling 
+        return infectiousness;
+    }
 
     TBInfectionState::Enum InfectionTB::GetInfectionState() const
     {

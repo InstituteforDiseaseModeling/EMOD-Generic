@@ -20,17 +20,17 @@
                 "Region": 1, 
                 "Seaport": 0, 
                 "InitialPopulation": 10000, 
-                "BirthRate": 0.0000548
+                "BirthRate": 0.0
             }, 
             "IndividualAttributes": {
-                "AgeDistributionFlag": 3, 
-                "AgeDistribution1": 0.000118, 
-                "AgeDistribution2": 0, 
+                "AgeDistributionFlag": 1,
+                "AgeDistribution1": 0,
+                "AgeDistribution2": 500,
                 "PrevalenceDistributionFlag": 0, 
                 "PrevalenceDistribution1": 0.0, 
                 "PrevalenceDistribution2": 0.0, 
-                "SusceptibilityDistributionFlag": 0, 
-                "SusceptibilityDistribution1": 1, 
+                "SusceptibilityDistributionFlag": 1, 
+                "SusceptibilityDistribution1": 0, 
                 "SusceptibilityDistribution2": 0, 
                 "RiskDistributionFlag": 0, 
                 "RiskDistribution1": 1, 
@@ -51,8 +51,8 @@
                     "ResultUnits": "deaths per day",
                     "ResultScaleFactor": 1,
                     "ResultValues": [
-                        [ 0.0000548 ],
-                        [ 0.0000548 ]
+                        [ 0.0000 ],
+                        [ 0.0000 ]
                     ]
                 }
             }

@@ -26,6 +26,7 @@ namespace Kernel
         : StandardInterventionDistributionEventCoordinator( false )//false=don't use standard demographic coverage
         , year2ValueMap()
         , end_year(0.0)
+        , update_period(DAYSPERYEAR)
     {
     }
 
@@ -44,24 +45,14 @@ namespace Kernel
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ReferenceTrackingEventCoordinator can only be used in STI, HIV, and TYPHOID simulations." );
         }
 
-        float update_period = DAYSPERYEAR;
         initConfigComplexType("Time_Value_Map", &year2ValueMap, RTEC_Time_Value_Map_DESC_TEXT );
         initConfigTypeMap(    "Update_Period",  &update_period, RTEC_Update_Period_DESC_TEXT, 1.0,      10*DAYSPERYEAR, DAYSPERYEAR );
         initConfigTypeMap(    "End_Year",       &end_year,      RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
 
         auto ret = StandardInterventionDistributionEventCoordinator::Configure( inputJson );
         num_repetitions = -1; // unlimited
-        if( JsonConfigurable::_dryrun == false )
-        {
-            float dt = GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep;
-            tsteps_between_reps = update_period/dt; // this won't be precise, depending on math.
-            if( tsteps_between_reps <= 0.0 )
-            {
-                // don't let this be zero or it will only update one time
-                tsteps_between_reps = 1;
-            }
-        }
-        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator configured with update_period = %f, end_year = %f, and tsteps_between_reps (derived) = %d.\n", update_period, end_year, tsteps_between_reps );
+
+        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator configured with update_period = %f, end_year = %f, and tsteps_between_reps = %d.\n", update_period, end_year, tsteps_between_reps );
         return ret;
     }
 
@@ -79,6 +70,20 @@ namespace Kernel
             LOG_WARN_F( "Campaign starts on year %f (day=%f). A ReferenceTrackingEventCoordinator has a Time_Value_Map that starts on year %f.\n",
                         campaign_start_year, campaignStartDay, year2ValueMap.begin()->first );
         }
+    }
+
+    void ReferenceTrackingEventCoordinator::InitializeTiming( const IdmDateTime& currentTime )
+    {
+        // this won't be precise, depending on math.
+        tsteps_between_reps = update_period / currentTime.GetTimeDelta(); 
+        if( tsteps_between_reps <= 0 )
+        {
+            // don't let this be zero or it will only update one time
+            tsteps_between_reps = 1;
+        }
+        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator initialized tsteps_between_reps (derived) = %d.\n", tsteps_between_reps );
+
+        return;
     }
 
     void ReferenceTrackingEventCoordinator::InitializeRepetitions( const Configuration* inputJson )

@@ -112,6 +112,11 @@ namespace IdmMpi
             MPI_Reduce((void*)pSendBuff, (void*)pReceiveBuff, size, MPI_FLOAT, MPI_SUM, 0, MPI_COMM_WORLD);
         }
 
+        virtual void Allreduce_SUM( float* pSendBuff, float* pReceiveBuff, int size )
+        {
+            MPI_Allreduce((void*)pSendBuff, (void*)pReceiveBuff, size, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
+        }
+
         virtual void GatherToRoot( const std::string& rToSend, std::string& rReceived )
         {
             int32_t length = int32_t(rToSend.size());
@@ -223,6 +228,11 @@ namespace IdmMpi
         }
 
         virtual void Reduce( float* pSendBuff, float* pReceiveBuff, int size ) override
+        {
+            memcpy( pReceiveBuff, pSendBuff, size*sizeof(float) );
+        }
+
+        virtual void Allreduce_SUM( float* pSendBuff, float* pReceiveBuff, int size ) override
         {
             memcpy( pReceiveBuff, pSendBuff, size*sizeof(float) );
         }

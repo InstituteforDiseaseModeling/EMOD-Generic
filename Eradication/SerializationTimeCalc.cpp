@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SerializationTimeCalc.h"
 #include "Log.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 
 using namespace Kernel;
 
@@ -21,11 +20,8 @@ GET_SCHEMA_STATIC_WRAPPER_IMPL(SerializationTimeCalc, SerializationTimeCalc)
 BEGIN_QUERY_INTERFACE_BODY(SerializationTimeCalc)
 END_QUERY_INTERFACE_BODY(SerializationTimeCalc)
 
-std::deque<int32_t> SerializationTimeCalc::GetSerializedTimeSteps(int32_t steps)
+std::deque<int32_t> SerializationTimeCalc::GetSerializedTimeSteps(int32_t steps, float start_time, float step_size)
 {
-    float start_time = GET_CONFIGURABLE(SimulationConfig)->starttime;
-    float step_size = GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep;
-
     std::vector<int32_t> timesteps;
     switch (m_serialization_type)
     {

@@ -41,7 +41,6 @@ namespace Kernel
         : clade(0)
         , genome(0)
         , import_age(DAYSPERYEAR)
-        , incubation_period_override(-1)
         , num_cases_per_node(0)
     {
         // Schema documentation
@@ -53,7 +52,6 @@ namespace Kernel
         initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
         initConfigTypeMap( "Genome",  &genome,  Genome_DESC_TEXT, 0, 16777215, 0, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,AIRBORNE_SIM,POLIO_SIM,TBHIV_SIM,STI_SIM,HIV_SIM,PY_SIM,DENGUE_SIM,MALARIA_SIM" );
         initConfigTypeMap( "Import_Age", &import_age, Import_Age_DESC_TEXT, 0, MAX_HUMAN_AGE*DAYSPERYEAR, DAYSPERYEAR );
-        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT,-1, INT_MAX, -1);
         initConfigTypeMap( "Number_Cases_Per_Node",  &num_cases_per_node,  Num_Import_Cases_Per_Node_DESC_TEXT, 0, INT_MAX, 1 );
 
         // --------------------------------------------------------------

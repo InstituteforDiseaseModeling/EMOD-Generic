@@ -115,9 +115,8 @@ namespace Kernel
 
     IArchive& BinaryArchiveWriter::operator&( jsonConfigurable::ConstrainedString& cs )
     {
-#if defined(WIN32)
-        this->operator&( (std::string)cs );
-#endif
+        std::string tmp(cs);
+        this->operator&( tmp );
         return *this;
     }
 

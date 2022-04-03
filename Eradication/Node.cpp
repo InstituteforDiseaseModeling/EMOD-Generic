@@ -314,28 +314,6 @@ namespace Kernel
     Node::~Node()
     {
         if (suid.data % 10 == 0) LOG_INFO_F("Freeing Node %d \n", suid.data);
-
-        /* Let all of this dangle, we're about to exit the process...
-        for (auto individual : individualHumans)
-        {
-            delete individual;
-        }
-
-        individualHumans.clear();
-        home_individual_ids.clear();
-
-        if (transmissionGroups) delete transmissionGroups;
-        if (migration_info)     delete migration_info;
-
-        delete event_context_host;
-
-        delete SusceptibilityDistribution;
-        delete FertilityDistribution;
-        delete MortalityDistribution;
-        delete MortalityDistributionMale;
-        delete MortalityDistributionFemale;
-        delete AgeDistribution;
-        */
     }
 
     float Node::GetLatitudeDegrees()
@@ -937,7 +915,8 @@ namespace Kernel
                 if ( current_mc_weight == 1.0f/base_sample_rate )
                 {
                     bool  is_immune         =  individual->GetAcquisitionImmunity() < immune_threshold_for_downsampling && 
-                                              !individual->IsInfected();
+                                              !individual->IsInfected() &&
+                                               individual->GetAge() > individual->GetImmuneFailAgeAcquire();
                     float desired_mc_weight = 1.0f/float( adjustSamplingRateByImmuneState( base_sample_rate, is_immune ) );
                     if ( desired_mc_weight > current_mc_weight )
                     {
@@ -1068,9 +1047,6 @@ namespace Kernel
                                                                    infectivity_sinusoidal_phase );
         }
 
-        infectionrate *= infectivity_multiplication;
-        mInfectivity  *= infectivity_multiplication;
-
         // Incorporate additive infectivity
         float infectivity_addition = 0.0f;
 
@@ -1086,6 +1062,9 @@ namespace Kernel
 
         mInfectivity  += infectivity_addition;
         infectionrate += infectivity_addition / statPop;
+
+        infectionrate *= infectivity_multiplication;
+        mInfectivity  *= infectivity_multiplication;
 
         transmissionGroups->EndUpdate(infectivity_multiplication, infectivity_addition);
 
@@ -1128,7 +1107,6 @@ namespace Kernel
     void Node::updatePopulationStatistics(float dt)
     {
         std::string  uID;
-        int          clade, genome;
         float        mcw, t_inf;
 
         for (auto individual : individualHumans)
@@ -1138,20 +1116,21 @@ namespace Kernel
             accumulateIndividualPopulationStatistics(dt, individual);
 
             // Reporting for strain tracking
-            mcw = individual->GetMonteCarloWeight();
             for (auto infection : individual->GetInfections())
             {
-                t_inf      = infection->GetInfectiousness();
-                clade      = infection->GetStrain()->GetCladeID();
-                genome     = infection->GetStrain()->GetGeneticID();
-                uID        = std::to_string(clade) + "_" + std::to_string(genome);
-                // Initialize vector if not present
+                uID     = infection->GetStrain()->GetName();
+                t_inf   = infection->GetInfectiousness();
+                mcw     = individual->GetMonteCarloWeight();
+
+                // Initialize maps if not present
                 if(strain_map_data.count(uID) == 0)
                 {
-                    strain_map_clade[uID]  = clade;
-                    strain_map_genome[uID] = genome;
+                    strain_map_clade[uID]  = infection->GetStrain()->GetCladeID();
+                    strain_map_genome[uID] = infection->GetStrain()->GetGeneticID();
                     strain_map_data[uID]   = std::vector<float> {0.0f, 0.0f, 0.0f};
                 }
+
+                // Record data
                 strain_map_data[uID][INDEX_RST_TOT_INF] += mcw;             // Total infections
                 if(t_inf > 0.0f)
                 {
@@ -2179,25 +2158,6 @@ namespace Kernel
             temp_infs = 1;
         }
 
-        if (SusceptibilityConfig::enable_initial_susceptibility_distribution)
-        {
-            // set initial immunity (or heterogeneous innate immunity in derived malaria code)
-            temp_susceptibility = drawInitialSusceptibility(ind_init_age);
-
-            // Range checking here because this function doesn't get overridden in 
-            // disease-specific builds (unlike drawInitialSusceptibility)
-            if(temp_susceptibility > 1.0)
-            {
-                LOG_WARN_F("Initial susceptibility to infection of %5.3f > 1.0; reset to 1.0\n", temp_susceptibility);
-                temp_susceptibility = 1.0;
-            }
-            else if (temp_susceptibility < 0.0)
-            {
-                LOG_WARN_F("Initial susceptibility to infection of %5.3f < 0.0; reset to 0.0\n", temp_susceptibility);
-                temp_susceptibility = 0.0;
-            }
-        }
-
         if (enable_demographics_risk)
         {
             // set heterogeneous risk
@@ -2212,7 +2172,6 @@ namespace Kernel
 
             temp_risk = distribution_migration->Calculate( GetRng() );
         }
-
 
         IIndividualHuman* tempind = addNewIndividual(ind_MCweight, ind_init_age, temp_gender, temp_infs, temp_susceptibility, temp_risk, temp_migration);
 
@@ -2836,6 +2795,11 @@ namespace Kernel
     INodeContext *Node::getContextPointer()    { return this; }
 
     float Node::GetBasePopulationScaleFactor()  const { return population_scaling_factor; }
+
+    const std::vector<IIndividualHuman*>& Node::GetHumans() const
+    {
+        return individualHumans;
+    }
 
     const SimulationConfig* Node::params() const
     {

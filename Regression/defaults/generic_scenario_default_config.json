@@ -79,7 +79,8 @@
                 "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION"
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.3,
+                "Base_Infectivity_Constant": 0.3,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
                 "Infectious_Period_Exponential": 7,
                 "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
@@ -97,11 +98,11 @@
         "FUDGE_FACTORS": {
             "x_Air_Migration": 1,
             "x_Birth": 1,
+            "x_Larval_Habitats": 1,
             "x_Local_Migration": 1,
             "x_Other_Mortality": 1,
             "x_Regional_Migration": 1,
-            "x_Sea_Migration": 1,
-            "x_Larval_Habitats": 1
+            "x_Sea_Migration": 1
         },
         "HPC": {
             "Load_Balance_Filename": "",

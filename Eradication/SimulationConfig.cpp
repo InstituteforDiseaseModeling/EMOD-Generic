@@ -106,61 +106,6 @@ SimulationConfig::~SimulationConfig()
 {
 }
 
-#if 0
-void SimulationConfig::SetFixedParameters(Configuration * inputJson)
-{
-    SimType::Enum sim_type;
-    initConfig("Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType))); // simulation only (???move)
-
-    switch (sim_type)
-    {
-    case SimType::MALARIA_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Maternal_Protection", 0 );
-        break;
-    case SimType::HIV_SIM:
-        inputJson->Add("Enable_Disease_Mortality", 1);
-        inputJson->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
-        inputJson->Add("Enable_Immune_Decay", 0);   //must exist because Enable_Immunity: 1
-        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 0); //must exist because Enable_Immunity: 1
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
-        inputJson->Add("Enable_Vital_Dynamics", 1);
-        break;
-    case SimType::TYPHOID_SIM:
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 0);  //must exist because fixed-off and depends on Enable_Birth
-        break;
-    case SimType::DENGUE_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Maternal_Protection", 0 );
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
-        break;
-    case SimType::POLIO_SIM:
-        inputJson->Add("Enable_Immunity", 1);
-        inputJson->Add("Enable_Immune_Decay", 1);
-        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 1);
-        inputJson->Add("Enable_Superinfection", 1);
-        inputJson->Add("Enable_Maternal_Infection_Transmission", 0); //must exist because fixed-off and depends on Enable_Birth
-        break;
-    }
-
-//    // Assume that the listed Enable parameters are implied false if missing; does not require enable_defaults to be set.
-//    std::vector<string> assume_false;
-//    assume_false.push_back("Enable_Strain_Tracking");
-//    assume_false.push_back("Enable_Termination_On_Zero_Total_Infectivity");
-//
-//    for(std::vector<string>::iterator it = assume_false.begin(); it != assume_false.end(); ++it)
-//    {
-//        if(!inputJson->Exist(*it))
-//        {
-//            inputJson->Add(*it, 0 );
-//        }
-//    }
-}
-#endif
-
-
 bool SimulationConfig::Configure(const Configuration * inputJson)
 {
     LOG_DEBUG( "Configure\n" );
@@ -169,17 +114,12 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
 
     m_jsonConfig = inputJson;
 
-    // --------------------------------------------------
-    // --- Define the parameters to be read from the JSON
-    // --------------------------------------------------
-
     // ------
     // Generic Parameters
     // ------
     initConfig( "Simulation_Type", sim_type,  inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
 
     initConfigTypeMap( "Simulation_Duration", &Sim_Duration, Simulation_Duration_DESC_TEXT, 0.0f, 1000000.0f, 1.0f ); // 'global'? (controller only)
-    initConfigTypeMap( "Simulation_Timestep", &Sim_Tstep,    Simulation_Timestep_DESC_TEXT, 0.0f, 1000000.0f, 1.0f ); // 'global'? (controller only)
     initConfigTypeMap( "Start_Time",          &starttime,    Start_Time_DESC_TEXT,          0.0f, 1000000.0f, 1.0f ); // simulation only (actually Climate also!)
 
     bool demographics_builtin = false;
@@ -287,7 +227,6 @@ SimulationConfig::SimulationConfig()
     , interventions(false)
     , heterogeneous_intranode_transmission_enabled(false)
     , Sim_Duration(-42.0f)
-    , Sim_Tstep(-42.0f)
     , starttime(0.0f)
     , node_grid_size(0.0f)
     , m_jsonConfig(nullptr)
@@ -386,12 +325,6 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
 void SimulationConfig::VectorCheckConfig( const Configuration* inputJson )
 {
 #ifndef DISABLE_VECTOR
-    /*if( Sim_Tstep != 1.0f )
-    {
-        // There has not been sufficient testing for vector related simulations when dt != 1.
-        throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "Vector-based simulations assume that the Simulation_Timestep = 1" );
-    }*/
-
     if( vector_params->vector_species_names.empty() )
     {
         LOG_WARN("The simulation is being run without any mosquitoes!  Unless this was intentional, please specify the name of one or more vector species in the 'Vector_Species_Names' array and their associated vector species parameters.\n\n                     ,-.\n         `._        /  |        ,\n            `--._  ,   '    _,-'\n     _       __  `.|  / ,--'\n      `-._,-'  `-. \\ : /\n           ,--.-.-`'.'.-.,_-\n         _ `--'-'-;.'.'-'`--\n     _,-' `-.__,-' / : \\\n                _,'|  \\ `--._\n           _,--'   '   .     `-.\n         ,'         \\  |        `\n                     `-'\n\n");

@@ -59,7 +59,7 @@ namespace Kernel
         virtual ~InfectionMalaria();
 
         // TODO - becomes part of initialize?
-        virtual void SetParameters(IStrainIdentity* _infstrain=nullptr, int incubation_period_override = -1 ) override;
+        virtual void SetParameters(IStrainIdentity* _infstrain=nullptr, float incubation_period_override = -1.0f ) override;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
 
         virtual void Update(float, ISusceptibilityContext* = nullptr) override;

@@ -32,12 +32,13 @@ namespace Kernel {
         virtual ~DiscreteContagionPopulation() {}
 
         // IContagionPopulation
+        virtual std::string GetName( void ) const override;
         virtual int GetCladeID( void ) const override;
-        virtual int GetGeneticID( void ) const override { return -1; }
-        virtual void SetCladeID(int in_cladeID) override {}
-        virtual void SetGeneticID(int in_geneticID) override {}
-        virtual float GetTotalContagion( void ) const override { return 0; }
-        virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override { }
+        virtual int GetGeneticID( void ) const override;
+        virtual void SetCladeID(int in_cladeID) override;
+        virtual void SetGeneticID(int in_geneticID) override;
+        virtual float GetTotalContagion( void ) const override;
+        virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 
         // IContagionProbabilities
         virtual NaturalNumber GetInfectorID( void ) const override;

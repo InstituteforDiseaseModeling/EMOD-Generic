@@ -46,7 +46,8 @@ namespace Kernel
     using namespace std;
     // CampaignEventFactory
     ICampaignEventFactory * CampaignEventFactory::_instance = nullptr;
-    CampaignEvent* CampaignEventFactory::CreateInstance(const Configuration * config)
+
+    CampaignEvent* CampaignEventFactory::CreateInstance(const Configuration * config, ISimulationEventContext *isec )
     {
         CampaignEvent *ce = CreateInstanceFromSpecs<CampaignEvent>(config, getRegisteredClasses(), false);
         release_assert(ce);
@@ -82,6 +83,9 @@ namespace Kernel
 
             // make sure the start day for the coordinator makes sense
             ce->event_coordinator->CheckStartDay( ce->GetStartDay() );
+
+            // InitializeTiming was added to give the event coordinator access to the simulation date-time object during campaign event creation.
+            ce->event_coordinator->InitializeTiming( isec->GetSimulationTime() );
         }
         return ce;
     }

@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <iomanip> //setw(), setfill()
 #include <algorithm>
 #include <deque>
+#include <functional>
 
 #include "BoostLibWrapper.h"
 #include "FileSystem.h"
@@ -23,6 +24,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SimulationFactory.h"
 #include "Simulation.h"
 #include "IdmMpi.h"
+
+#include "Instrumentation.h"
+#include "StatusReporter.h"
 
 #ifndef _DLLS_
 #include "SimulationMalaria.h"
@@ -42,7 +46,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 using namespace Kernel;
 
 SETUP_LOGGING( "Controller" )
-
 
 // more static polymorphism that is temporary until we determine why
 // boost refuses to register the sim type with the archive
@@ -96,13 +99,6 @@ bool call_templated_functor_with_sim_type_hack(ControllerExecuteFunctorT &cef)
 #endif
 }
 
-#include "Instrumentation.h"
-#include "StatusReporter.h"
-
-#include <functional>
-
-void StepSimulation(ISimulation* sim, float dt);
-
 typedef enum {
     paused,
     stepping,
@@ -114,7 +110,7 @@ tPlayback playback = playing;
 
 // Basic simulation main loop with reporting
 template <class SimulationT> 
-void RunSimulation(SimulationT &sim, int steps, float dt)
+void RunSimulation(SimulationT &sim, int steps)
 {
     LOG_DEBUG( "RunSimulation\n" );
 
@@ -122,7 +118,7 @@ void RunSimulation(SimulationT &sim, int steps, float dt)
     stc.Configure(EnvPtr->Config);
 
     // Calculate the sorted set of time steps to serialize
-    std::deque< int32_t > serialization_time_steps = stc.GetSerializedTimeSteps(steps);
+    std::deque< int32_t > serialization_time_steps = stc.GetSerializedTimeSteps(steps, sim.GetSimulationTime().time, sim.GetSimulationTime().GetTimeDelta());
 
     for (int t = 0; t < steps; t++)
     {
@@ -132,7 +128,8 @@ void RunSimulation(SimulationT &sim, int steps, float dt)
             serialization_time_steps.pop_front();
         }
 
-        StepSimulation(&sim, dt);
+        sim.Update();
+        EnvPtr->Log->Flush();
 
         if (EnvPtr->MPI.Rank == 0)
         {
@@ -156,31 +153,22 @@ void RunSimulation(SimulationT &sim, int steps, float dt)
 // note: this version passes a branch_duration that counts only timesteps taken within itself
 // if branches have more complicated logic, we may want to put some of that outside.
 template <class SimulationT>
-void RunSimulation(SimulationT &sim, std::function<bool(SimulationT &, float)> termination_predicate) // TODO: add support for 'dt' to this version
+void RunSimulation(SimulationT &sim, std::function<bool(SimulationT &, float)> termination_predicate)
 {
     LOG_DEBUG( "RunSimulation\n" );
 
-    float branch_begin = sim.GetSimulationTime();
-    float branch_time  = 0;
-    float dt           = float(GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep);
+    float branch_begin = sim.GetSimulationTime().time;
 
-    while(!termination_predicate(sim, branch_time))
+    while(!termination_predicate(sim, (sim.GetSimulationTime().time-branch_begin)))
     {
-        StepSimulation(&sim, dt);
-        branch_time = sim.GetSimulationTime() - branch_begin;
+        sim.Update();
+        EnvPtr->Log->Flush();
 
         if(sim.TimeToStop())
         {
             break;
         }
     }
-}
-
-void StepSimulation(ISimulation* sim, float dt)
-{
-    sim->Update(dt);
-
-    EnvPtr->Log->Flush();
 }
 
 // ******** WARNING *********
@@ -277,8 +265,7 @@ bool DefaultController::execute_internal()
         }
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        float dt = GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep;
-        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration)/dt;
+        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) / sim->GetSimulationTime().GetTimeDelta();
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;
@@ -287,13 +274,13 @@ bool DefaultController::execute_internal()
         {
             int cycle_steps = min(remaining_steps, max(1, simulation_steps));
             if (cycle_steps > 0)
-                RunSimulation(*sim, cycle_steps, dt);
+                RunSimulation(*sim, cycle_steps);
 
             remaining_steps -= cycle_steps;
         }
 #else
         LOG_INFO( "Execute<> Calling RunSimulation.\n" );
-        RunSimulation(*sim, simulation_steps, dt);
+        RunSimulation(*sim, simulation_steps);
 #endif
         sim->WriteReportsData();
 
@@ -321,7 +308,6 @@ bool DefaultController::execute_internal()
     
     return false;
 }
-
 
 bool DefaultController::execute_internal()
 {
@@ -369,8 +355,7 @@ bool DefaultController::execute_internal()
         }
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        float dt = GET_CONFIGURABLE(SimulationConfig)->Sim_Tstep;
-        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration)/dt;
+        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) / sim->GetSimulationTime().GetTimeDelta();;
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;
@@ -379,13 +364,13 @@ bool DefaultController::execute_internal()
         {
             int cycle_steps = min(remaining_steps, max(1, simulation_steps));
             if (cycle_steps > 0)
-                RunSimulation(*sim, cycle_steps, dt);
+                RunSimulation(*sim, cycle_steps);
 
             remaining_steps -= cycle_steps;
         }
 #else // _DLLS_
         LOG_INFO( "Execute_internal(): Calling RunSimulation.\n" );
-        RunSimulation(*sim, simulation_steps, dt);
+        RunSimulation(*sim, simulation_steps);
 #endif
         sim->WriteReportsData();
 

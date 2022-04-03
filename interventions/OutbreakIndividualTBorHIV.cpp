@@ -43,10 +43,7 @@ namespace Kernel
         initSimTypes(1, "TBHIV_SIM");
     }
 
-    bool
-    OutbreakIndividualTBorHIV::Configure(
-        const Configuration * inputJson
-    )
+    bool OutbreakIndividualTBorHIV::Configure( const Configuration * inputJson )
     {
         bool ret = initConfig("Infection_Type", infection_type, inputJson, MetadataDescriptor::Enum("Infection_Type", "TB =1 or HIV = 0", MDD_ENUM_ARGS(TBHIVInfectionType)) );
 

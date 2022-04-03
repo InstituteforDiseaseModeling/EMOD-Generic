@@ -75,7 +75,8 @@
                 "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION"
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.3,
+                "Base_Infectivity_Constant": 0.3,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 3,
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 7,
@@ -98,11 +99,11 @@
         "FUDGE_FACTORS": {
             "x_Air_Migration": 1,
             "x_Birth": 1,
+            "x_Larval_Habitats": 1,
             "x_Local_Migration": 1,
             "x_Other_Mortality": 0,
             "x_Regional_Migration": 1,
-            "x_Sea_Migration": 1,
-            "x_Larval_Habitats": 1
+            "x_Sea_Migration": 1
         },
         "HPC": {
             "Load_Balance_Filename": "",
@@ -113,6 +114,11 @@
         },
         "INTRANODE_TRANSMISSION": {
             "Enable_Heterogeneous_Intranode_Transmission": 1
+        },
+        "LOGLEVEL": {
+            "logLevel_EnvironmentalDiagnostic": "INFO",
+            "logLevel_Individual": "INFO",
+            "logLevel_NodeEnvironmental": "INFO"
         },
         "MIGRATION": {
             "Migration_Model": "NO_MIGRATION"
@@ -146,10 +152,6 @@
             "Simulation_Timestep": 1,
             "Start_Time": 0
         },
-        "SERIALIZATION": {
-            "Serialization_Type": "NONE"
-        },
-        "STRAIN_TRACKING": {},
         "SEASONALITY_INFECTIVITY_SCALING": {
             "Enable_Infectivity_Scaling": 0,
             "Enable_Infectivity_Scaling_Boxcar": 0,
@@ -166,10 +168,9 @@
             "Infectivity_Sinusoidal_Forcing_Amplitude": 0.5,
             "Infectivity_Sinusoidal_Forcing_Phase": 90
         },
-        "LOGLEVEL": {
-            "logLevel_Individual": "INFO",
-            "logLevel_NodeEnvironmental": "INFO",
-            "logLevel_EnvironmentalDiagnostic": "INFO"
-        }
+        "SERIALIZATION": {
+            "Serialization_Type": "NONE"
+        },
+        "STRAIN_TRACKING": {}
     }
 }

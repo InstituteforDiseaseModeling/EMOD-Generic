@@ -26,7 +26,6 @@ namespace Kernel
     public:
         virtual ~InfectionSTI(void);
         static InfectionSTI *CreateInfection(IIndividualHumanContext *context, suids::suid _suid);
-        virtual float GetInfectiousness() const override;
         virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
 
     protected:

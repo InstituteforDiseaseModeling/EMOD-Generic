@@ -27,7 +27,7 @@ In this test, we test the following features with DTK PyMod code.
 
 Incubation:
     Incubation_Period_Distribution:
-        Fixed_Duration
+        Constant_Duration
         Uniform_Duration
         Gaussian_Duration
         Exponential_Duration
@@ -42,10 +42,11 @@ Incubation:
             "DUAL_TIMESCALE_DISTRIBUTION"
 
 Infectiousness:
-    Infectiousness
+    Base_infectivity_Distribution:
+        Constant_Distribution
     Shedding and Decay on contagion pool
     Infectious_Period_Distribution:
-        Fixed_Duration
+        Constant_Duration
         Uniform_Duration
         Gaussian_Duration
         Exponential_Duration
@@ -108,6 +109,7 @@ class DemographicsParameters():
 
 class ConfigParameters():
     SIMULATION_TIMESTEP = "SIMULATION_TIMESTEP"
+
     # incubation
     Incubation_Period_Distribution = "Incubation_Period_Distribution"
     NOT_INITIALIZED = "NOT_INITIALIZED"
@@ -138,19 +140,24 @@ class ConfigParameters():
     PIECEWISE_LINEAR = "PIECEWISE_LINEAR"
     WEIBULL_DISTRIBUTION = "WEIBULL_DISTRIBUTION"
     DUAL_TIMESCALE_DISTRIBUTION = "DUAL_TIMESCALE_DISTRIBUTION"
+
     # age dependence
     Age_Initialization_Distribution_Type = "Age_Initialization_Distribution_Type"
     DISTRIBUTION_SIMPLE = "DISTRIBUTION_SIMPLE"
     DISTRIBUTION_COMPLEX = "DISTRIBUTION_COMPLEX"
     DISTRIBUTION_OFF = "DISTRIBUTION_OFF"
+
     # Mortality
     Enable_Vital_Dynamics = "Enable_Vital_Dynamics"
     Enable_Disease_Mortality = "Enable_Disease_Mortality"
     Mortality_Time_Course = "Mortality_Time_Course"
     Enable_Natural_Mortality = "Enable_Natural_Mortality"
     Base_Mortality = "Base_Mortality"
+
     # Infectivity
-    Base_Infectivity = "Base_Infectivity"
+    Base_Infectivity_Distribution = "Base_Infectivity_Distribution"
+    Base_Infectivity_Constant = "Base_Infectivity_Constant"
+
     Infectious_Period_Distribution = "Infectious_Period_Distribution"
     Infectious_Period_Constant = "Infectious_Period_Constant"
     Infectious_Period_Min = "Infectious_Period_Min"
@@ -161,6 +168,7 @@ class ConfigParameters():
     Infectious_Period_Log_Normal_Mu  = "Infectious_Period_Log_Normal_Mu"
     Infectious_Period_Log_NormalSigma = "Infectious_Period_Log_Normal_Sigma"
     Infectious_Period_Poisson_Mean = "Infectious_Period_Poisson_Mean"
+
     # these are covered by Generic SFTs already
     Infectivity_Scale_Type = "Infectivity_Scale_Type"
     CONSTANT_INFECTIVITY = "CONSTANT_INFECTIVITY"
@@ -178,6 +186,7 @@ class ConfigParameters():
     Infectivity_Exponential_Baseline = "Infectivity_Exponential_Baseline"
     Infectivity_Exponential_Delay = "Infectivity_Exponential_Delay"
     Infectivity_Exponential_Rate = "Infectivity_Exponential_Rate"
+
     # Need more information for these two scale type:
     FUNCTION_OF_TIME_AND_LATITUDE = "FUNCTION_OF_TIME_AND_LATITUDE"
     FUNCTION_OF_CLIMATE = "FUNCTION_OF_CLIMATE"
@@ -379,8 +388,10 @@ class IntrahostTest(unittest.TestCase):
         self.set_config_file(config)
         self.set_gi_file(config)
 
-    def configure_incubation_infectious_distribution(self, incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+    def configure_incubation_infectious_distribution(self,
+                                                     incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                      infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                                     base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                      other_config_params={}, initial_population=10000,
                                                      demo_template_filename="demographics_template.json",
                                                      nd_template_filename="nd_template.json"):
@@ -393,7 +404,8 @@ class IntrahostTest(unittest.TestCase):
         config = self.get_json_template(json_filename=nd_template_filename)
         config[ConfigParameters.Incubation_Period_Distribution] = incubation_distribution_type
         config[ConfigParameters.Infectious_Period_Distribution] = infectious_distribution_type
-        # config[ConfigParameters.Incubation_Period_Constant] = Incubation_Period_Constant
+        config[ConfigParameters.Base_Infectivity_Distribution]  = base_infectivity_distribution_type
+
         for param in other_config_params:
             config[param] = other_config_params[param]
         self.set_config_file(config)
@@ -436,22 +448,12 @@ class IntrahostTest(unittest.TestCase):
         nd.set_conceive_baby_callback( self.conceive_baby_callback )
         nd.set_update_preg_callback( self.update_pregnancy_callback )
 
-        columns = [ConfigParameters.SIMULATION_TIMESTEP, Constant.hum_id, Constant.is_infected, Constant.num_infected]
+        columns = [ConfigParameters.SIMULATION_TIMESTEP, Constant.hum_id, Constant.is_infected, Constant.infectiousness, Constant.num_infected]
         columns += properties_name
         index = 0
 
         if not serial_timestep:
             serial_timestep = range(duration)
-        # plot and write initial population
-        # if debug:
-        #     pop_age = []
-        #     for hum_id in self.human_pop:
-        #         age = gi.get_age(hum_id)
-        #         pop_age.append(age)
-        #     sft.plot_hist(pop_age, label1="initial_population_age", show=True)
-        #
-        #     with open("initial_human_pop.json", "w") as file:
-        #         file.write(json.dumps(self.human_pop, indent=4, sort_keys=True))
 
         logging.info( "Update shedding, exposure and vital dynamic of population of size {0} for {1} "
                       "year.".format(len(self.human_pop), duration/365))
@@ -466,19 +468,13 @@ class IntrahostTest(unittest.TestCase):
 
             # this is for shedding and infection only
             logging.info("Updating individuals (shedding) at timestep {0}.".format(t))
-            infected = {}
+            infected           = dict()
+            tot_infectiousness = dict()
             for hum_id in self.human_pop:
                 nd.update_node_stats(
                     (1.0, 0.0, gi.is_possible_mother(hum_id), 0))  # mcw, infectiousness, is_poss_mom, is_infected
                 gi.update1(hum_id)  # this should do shedding
-            #     if gi.is_infected(hum_id):
-            #         num_infected += 1
-            #         infected[hum_id] = 1
-            #     else:
-            #         infected[hum_id] = 0
-            # logging.info("num_infected = {0}.".format(num_infected))
 
-            # pdb.set_trace()
             if self.well_mixed_contagion_pool[-1] > 0:
                 self.well_mixed_contagion_pool[-1] /= len(self.human_pop)
             logging.info("well_mixed_contagion_pool = {0}.".format(self.well_mixed_contagion_pool[-1]))
@@ -494,6 +490,7 @@ class IntrahostTest(unittest.TestCase):
                     infected[hum_id] = 1
                 else:
                     infected[hum_id] = 0
+                tot_infectiousness[hum_id] = round(gi.get_infectiousness(hum_id),6)
 
             for hum_id in list(self.human_pop.keys()):  # avoid "RuntimeError: dictionary changed size during iteration"
                 # for death
@@ -512,7 +509,7 @@ class IntrahostTest(unittest.TestCase):
                         logging.info(json.dumps(json.loads(serial_man), indent=4))
                     # the timestep, human id, is_infected and num of total infections are the headers to be stored
                     # in the output data frame by default.
-                    properties = [t, hum_id, infected[hum_id], num_infected]
+                    properties = [t, hum_id, infected[hum_id], tot_infectiousness[hum_id], num_infected]
                     # collect other properties that we want to store in the output data frame
                     for property in serial_properties:
                         value = json.loads(serial_man)["individual"][property[0]]
@@ -573,7 +570,7 @@ class IntrahostTest(unittest.TestCase):
             shutil.move(file, os.path.join(path_name, file))
 
     def test_incubation_infectious_recovered(self, initial_population=10, Incubation_Period_Constant=3,
-                                             Infectious_Period_Constant=2, base_infectivity=2.5, duration=10,
+                                             Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5, duration=10,
                                              debug=debug):
         logging.info("test incubation, infectious and recovered begins")
         print("test incubation, infectious and recovered begins")
@@ -582,16 +579,16 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                             Incubation_Period_Constant,
                                                                         ConfigParameters.Infectious_Period_Constant:
                                                                             Infectious_Period_Constant,
-                                                                        ConfigParameters.Base_Infectivity:
-                                                                            base_infectivity},
+                                                                        ConfigParameters.Base_Infectivity_Constant:
+                                                                            Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
-        graveyard, output_df = self.run_test(duration=duration, serial_properties=[[Constant.infections, Constant.infectiousness]],
-                                             properties_name=[Constant.infectiousness], debug=debug)
+        graveyard, output_df = self.run_test(duration=duration, debug=debug)
         path = "./"
         test_name = "incubation_infectious_recovered"
         self.save_files(graveyard, path, test_name, debug)
@@ -612,10 +609,10 @@ class IntrahostTest(unittest.TestCase):
                             error_msg.append("Bad: at time {0} individual {1} infectiousness = {2}, expected 0 "
                                              "infectiousness.".format(t, hum_id, infectiousness))
                     else:
-                        if infectiousness != base_infectivity:
+                        if infectiousness != Base_Infectivity_Constant:
                             succeed = False
                             error_msg.append("Bad: at time {0} individual {1} infectiousness = {2}, expected {3} "
-                                             "infectiousness.".format(t, hum_id, infectiousness, base_infectivity))
+                                             "infectiousness.".format(t, hum_id, infectiousness, Base_Infectivity_Constant))
                     if t < self.outbreak_timestep[0] or \
                         t > self.outbreak_timestep[0] + Incubation_Period_Constant + Infectious_Period_Constant:
                         if is_infected:
@@ -645,7 +642,7 @@ class IntrahostTest(unittest.TestCase):
         self.save_files(graveyard, path, test_name, debug)
 
     def test_incubation_fixed(self, initial_population=10, Incubation_Period_Constant=3, Infectious_Period_Constant=2,
-                              base_infectivity=2.5, duration=10, debug=debug):
+                              Base_Infectivity_Constant=2.5, duration=10, debug=debug):
         logging.info("test incubation fixed duration begins")
         print("test incubation fixed duration begins")
 
@@ -653,18 +650,18 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                             Incubation_Period_Constant,
                                                                         ConfigParameters.Infectious_Period_Constant:
                                                                             Infectious_Period_Constant,
-                                                                        ConfigParameters.Base_Infectivity:
-                                                                            base_infectivity},
+                                                                        ConfigParameters.Base_Infectivity_Constant:
+                                                                            Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.infections, Constant.incubation_timer]],
-                                             properties_name=[Constant.infectiousness, Constant.incubation_timer],
+                                             serial_properties=[[Constant.infections, Constant.incubation_timer]],
+                                             properties_name=[Constant.incubation_timer],
                                              debug=debug)
         path = "./"
         test_name = "incubation_fixed"
@@ -716,9 +713,8 @@ class IntrahostTest(unittest.TestCase):
         # This function is used by incubation uniform, gaussian, exponential and poisson tests. Not for fixed and
         # lognormal test
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.infections, Constant.incubation_timer]],
-                                             properties_name=[Constant.infectiousness, Constant.incubation_timer],
+                                             serial_properties=[[Constant.infections, Constant.incubation_timer]],
+                                             properties_name=[Constant.incubation_timer],
                                              debug=debug)
 
         self.save_files(graveyard, path, test_name, debug)
@@ -780,7 +776,7 @@ class IntrahostTest(unittest.TestCase):
         return succeed, error_msg, incubation_timer_dict
 
     def test_incubation_uniform(self, initial_population=150, incubation_period_max=50, incubation_period_min=0,
-                                Infectious_Period_Constant=2, base_infectivity=2.5, duration=60, debug=debug):
+                                Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5, duration=60, debug=debug):
         logging.info("test incubation uniform duration begins")
         print("test incubation uniform duration begins")
 
@@ -788,14 +784,15 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.UNIFORM_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Max:
                                                                         incubation_period_max,
                                                                     ConfigParameters.Incubation_Period_Min:
                                                                         incubation_period_min,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity},
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         path = "./"
@@ -820,7 +817,7 @@ class IntrahostTest(unittest.TestCase):
         print("test incubation uniform duration passes")
 
     def test_incubation_gaussian(self, initial_population=500, incubation_period_gaussian_std_dev=6, incubation_period_gaussian_mean=10,
-                                 Infectious_Period_Constant=2, base_infectivity=2.5, duration=30, enable_immunity=0,
+                                 Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5, duration=30, enable_immunity=0,
                                  debug=debug):
         logging.info("test incubation gaussian duration begins")
         print("test incubation gaussian duration begins")
@@ -829,14 +826,15 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.GAUSSIAN_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Gaussian_Mean:
                                                                         incubation_period_gaussian_mean,
                                                                     ConfigParameters.Incubation_Period_Gaussian_Std_Dev:
                                                                         incubation_period_gaussian_std_dev,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity,
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant,
                                                                     ConfigParameters.Enable_Immunity:
                                                                         enable_immunity},
                                                initial_population=initial_population)
@@ -876,7 +874,7 @@ class IntrahostTest(unittest.TestCase):
         print("test incubation gaussian duration passes")
 
     def test_incubation_exponential(self, initial_population=500, incubation_period_exponential=5,
-                                    Infectious_Period_Constant=2, base_infectivity=2.5, duration=30, enable_immunity=0,
+                                    Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5, duration=30, enable_immunity=0,
                                     debug=debug):
         logging.info("test incubation exponential duration begins")
         print("test incubation exponential duration begins")
@@ -885,12 +883,13 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.EXPONENTIAL_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Exponential:
                                                                         incubation_period_exponential,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity,
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant,
                                                                     ConfigParameters.Enable_Immunity:
                                                                         enable_immunity},
                                                initial_population=initial_population)
@@ -929,7 +928,7 @@ class IntrahostTest(unittest.TestCase):
         print("test incubation exponential duration passes")
 
     def test_incubation_poisson(self, initial_population=500, incubation_period_poisson_mean=5,
-                                Infectious_Period_Constant=2, base_infectivity=2.5, duration=30, enable_immunity=0,
+                                Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5, duration=30, enable_immunity=0,
                                 debug=debug):
         logging.info("test incubation poisson duration begins")
         print("test incubation poisson duration begins")
@@ -938,12 +937,13 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.POISSON_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Poisson_Mean:
                                                                         incubation_period_poisson_mean,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity,
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant,
                                                                     ConfigParameters.Enable_Immunity:
                                                                         enable_immunity},
                                                initial_population=initial_population)
@@ -980,7 +980,7 @@ class IntrahostTest(unittest.TestCase):
         print("test incubation poisson duration passes")
 
     def test_incubation_lognormal(self, initial_population=1000, incubation_period_log_normal_mean=math.exp(1),
-                                  incubation_period_log_normal_width=0.5, Infectious_Period_Constant=2, base_infectivity=2.5,
+                                  incubation_period_log_normal_width=0.5, Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5,
                                   duration=2, enable_immunity=0, debug=debug):
         logging.info("test incubation log normal duration begins")
         print("test incubation log normal duration begins")
@@ -990,14 +990,15 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.LOG_NORMAL_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Log_Normal_Mu:
                                      incubation_period_log_normal_mean,
                                  ConfigParameters.Incubation_Period_Log_Normal_Sigma:
                                      incubation_period_log_normal_width,
                                  ConfigParameters.Infectious_Period_Constant:
                                      Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity:
-                                     base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant:
+                                     Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity:
                                      enable_immunity},
             initial_population=initial_population)
@@ -1049,7 +1050,7 @@ class IntrahostTest(unittest.TestCase):
         logging.info("test incubation lognormal duration passes")
         print("test incubation lognormal duration passes")
 
-    def NYI_test_incubation_bimodal(self, initial_population=1000, Infectious_Period_Constant=2, base_infectivity=2.5,
+    def NYI_test_incubation_bimodal(self, initial_population=1000, Infectious_Period_Constant=2, Base_Infectivity_Constant=2.5,
                                     duration=2, enable_immunity=0, debug=debug):
         logging.info("test incubation bimodal duration begins")
         print("test incubation bimodal duration begins")
@@ -1058,10 +1059,11 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.BIMODAL_DISTRIBUTION,
                                                           infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                                          base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           other_config_params={ConfigParameters.Infectious_Period_Constant:
                                                                                    Infectious_Period_Constant,
-                                                                               ConfigParameters.Base_Infectivity:
-                                                                                   base_infectivity,
+                                                                               ConfigParameters.Base_Infectivity_Constant:
+                                                                                   Base_Infectivity_Constant,
                                                                                ConfigParameters.Enable_Immunity:
                                                                                    enable_immunity},
                                                           initial_population=initial_population)
@@ -1074,7 +1076,7 @@ class IntrahostTest(unittest.TestCase):
             print("expected NYI error: {}".format(ex))
 
     def NYI_test_incubation_piecewise_constant(self, initial_population=1000, Infectious_Period_Constant=2,
-                                               base_infectivity=2.5, duration=2, enable_immunity=0, debug=debug):
+                                               Base_Infectivity_Constant=2.5, duration=2, enable_immunity=0, debug=debug):
         logging.info("test incubation piecewise constant duration begins")
         print("test incubation piecewise constant duration begins")
 
@@ -1082,10 +1084,11 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.PIECEWISE_CONSTANT,
                                                           infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                                          base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           other_config_params={ConfigParameters.Infectious_Period_Constant:
                                                                                    Infectious_Period_Constant,
-                                                                               ConfigParameters.Base_Infectivity:
-                                                                                   base_infectivity,
+                                                                               ConfigParameters.Base_Infectivity_Constant:
+                                                                                   Base_Infectivity_Constant,
                                                                                ConfigParameters.Enable_Immunity:
                                                                                    enable_immunity},
                                                           initial_population=initial_population)
@@ -1098,7 +1101,7 @@ class IntrahostTest(unittest.TestCase):
             print("expected NYI error: {}".format(ex))
 
     def test_infectious_fixed(self, initial_population=10, Incubation_Period_Constant=3, Infectious_Period_Constant=5,
-                              base_infectivity=2.5, duration=10, debug=debug):
+                              Base_Infectivity_Constant=2.5, duration=10, debug=debug):
         logging.info("test infectious fixed duration begins")
         print("test infectious fixed duration begins")
 
@@ -1106,18 +1109,18 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity},
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.infections, Constant.infectious_timer]],
-                                             properties_name=[Constant.infectiousness, Constant.infectious_timer],
+                                             serial_properties=[[Constant.infections, Constant.infectious_timer]],
+                                             properties_name=[Constant.infectious_timer],
                                              debug=debug)
         path = "./"
         test_name = "infectious_fixed"
@@ -1145,10 +1148,10 @@ class IntrahostTest(unittest.TestCase):
                 t = int(df[ConfigParameters.SIMULATION_TIMESTEP][index])
                 if infectiousness > 0 and is_infected:
                     infectious_duration += 1
-                    if infectiousness != base_infectivity:
+                    if infectiousness != Base_Infectivity_Constant:
                         succeed = False
                         error_msg.append("BAD: at time step {0} hum_id = {1} has infectiousness = {2} expected "
-                                         "infectiousness = {3}.".format(t, hum_id, infectiousness, base_infectivity))
+                                         "infectiousness = {3}.".format(t, hum_id, infectiousness, Base_Infectivity_Constant))
             if infectious_duration != Infectious_Period_Constant:
                 succeed = False
                 error_msg.append("BAD: hum_id = {0} has infectious duration = {1} expected fixed duration {2}.".format(
@@ -1161,12 +1164,11 @@ class IntrahostTest(unittest.TestCase):
         logging.info("test infectious fixed duration passes")
         print("test infectious fixed duration passes")
 
-    def infectious_test(self, base_infectivity, duration, initial_population, path, test_name, debug):
+    def infectious_test(self, Base_Infectivity_Constant, duration, initial_population, path, test_name, debug):
         # This function is used by infectious uniform, gaussian, exponential and poisson tests. Not for fixed test.
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.infections, Constant.infectious_timer]],
-                                             properties_name=[Constant.infectiousness, Constant.infectious_timer],
+                                             serial_properties=[[Constant.infections, Constant.infectious_timer]],
+                                             properties_name=[Constant.infectious_timer],
                                              debug=debug)
 
         self.save_files(graveyard, path, test_name, debug)
@@ -1191,10 +1193,10 @@ class IntrahostTest(unittest.TestCase):
                 t = int(df[ConfigParameters.SIMULATION_TIMESTEP][index])
                 if infectiousness > 0 and is_infected:
                     infectious_duration += 1
-                    if infectiousness != base_infectivity:
+                    if infectiousness != Base_Infectivity_Constant:
                         succeed = False
                         error_msg.append("BAD: at time step {0} hum_id = {1} has infectiousness = {2} expected "
-                                         "infectiousness = {3}.".format(t, hum_id, infectiousness, base_infectivity))
+                                         "infectiousness = {3}.".format(t, hum_id, infectiousness, Base_Infectivity_Constant))
             infectious_duration_dict[hum_id] = infectious_duration
             infectious_timer = infectious_timer_dict[hum_id]
             if int(infectious_timer) != infectious_duration:
@@ -1222,7 +1224,7 @@ class IntrahostTest(unittest.TestCase):
         return succeed, error_msg, infectious_timer_dict
 
     def test_infectious_uniform(self, initial_population=200, Incubation_Period_Constant=1, infectious_period_min=5,
-                                infectious_period_max=40, base_infectivity=3.5, duration=45, debug=debug):
+                                infectious_period_max=40, Base_Infectivity_Constant=3.5, duration=45, debug=debug):
         logging.info("test infectious uniform duration begins")
         print("test infectious uniform duration begins")
 
@@ -1230,19 +1232,20 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           infectious_distribution_type=ConfigParameters.UNIFORM_DISTRIBUTION,
+                                                          base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                                    Incubation_Period_Constant,
                                                                                ConfigParameters.Infectious_Period_Max:
                                                                                    infectious_period_max,
                                                                                ConfigParameters.Infectious_Period_Min:
                                                                                    infectious_period_min,
-                                                                               ConfigParameters.Base_Infectivity:
-                                                                                   base_infectivity},
+                                                                               ConfigParameters.Base_Infectivity_Constant:
+                                                                                   Base_Infectivity_Constant},
                                                           initial_population=initial_population)
         path = "./"
         test_name = "infectious_uniform"
 
-        succeed, error_msg, infectious_timer_dict = self.infectious_test(base_infectivity=base_infectivity,
+        succeed, error_msg, infectious_timer_dict = self.infectious_test(Base_Infectivity_Constant=Base_Infectivity_Constant,
                                                                          duration=duration,
                                                                          initial_population=initial_population,
                                                                          path=path, test_name=test_name,
@@ -1263,7 +1266,7 @@ class IntrahostTest(unittest.TestCase):
         print("test infectious uniform duration passes")
 
     def test_infectious_gaussian(self, initial_population=500, Incubation_Period_Constant=3, infectious_period_mean=5,
-                                infectious_period_std_dev=10, base_infectivity=4.5, duration=45, debug=debug):
+                                infectious_period_std_dev=10, Base_Infectivity_Constant=4.5, duration=45, debug=debug):
         logging.info("test infectious gaussian duration begins")
         print("test infectious gaussian duration begins")
 
@@ -1271,19 +1274,20 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.GAUSSIAN_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Gaussian_Mean:
                                                                         infectious_period_mean,
                                                                     ConfigParameters.Infectious_Period_Gaussian_Std_Dev:
                                                                         infectious_period_std_dev,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity},
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         path = "./"
         test_name = "infectious_gaussian"
-        succeed, error_msg, infectious_timer_dict = self.infectious_test(base_infectivity=base_infectivity,
+        succeed, error_msg, infectious_timer_dict = self.infectious_test(Base_Infectivity_Constant=Base_Infectivity_Constant,
                                                                          duration=duration,
                                                                          initial_population=initial_population,
                                                                          path=path, test_name=test_name,
@@ -1321,7 +1325,7 @@ class IntrahostTest(unittest.TestCase):
         print("test infectious gaussian duration passes")
 
     def test_infectious_exponential(self, initial_population=500, Incubation_Period_Constant=3, infectious_period_exponential=4.8,
-                                    base_infectivity=5.5, duration=40, debug=debug):
+                                    Base_Infectivity_Constant=5.5, duration=40, debug=debug):
         logging.info("test infectious exponential duration begins")
         print("test infectious exponential duration begins")
 
@@ -1329,17 +1333,18 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.EXPONENTIAL_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Exponential:
                                                                         infectious_period_exponential,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity},
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         path = "./"
         test_name = "infectious_exponential"
-        succeed, error_msg, infectious_timer_dict = self.infectious_test(base_infectivity=base_infectivity,
+        succeed, error_msg, infectious_timer_dict = self.infectious_test(Base_Infectivity_Constant=Base_Infectivity_Constant,
                                                                          duration=duration,
                                                                          initial_population=initial_population,
                                                                          path=path, test_name=test_name,
@@ -1374,7 +1379,7 @@ class IntrahostTest(unittest.TestCase):
         print("test infectious exponential duration passes")
 
     def test_infectious_poisson(self, initial_population=500, Incubation_Period_Constant=3, infectious_period_poisson_mean=5.8,
-                                base_infectivity=6.9, duration=30, debug=debug):
+                                Base_Infectivity_Constant=6.9, duration=30, debug=debug):
         logging.info("test infectious poisson duration begins")
         print("test infectious poisson duration begins")
 
@@ -1382,17 +1387,18 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.POISSON_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Poisson_Mean:
                                                                         infectious_period_poisson_mean,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity},
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant},
                                                initial_population=initial_population)
 
         path = "./"
         test_name = "infectious_poisson"
-        succeed, error_msg, infectious_timer_dict = self.infectious_test(base_infectivity=base_infectivity,
+        succeed, error_msg, infectious_timer_dict = self.infectious_test(Base_Infectivity_Constant=Base_Infectivity_Constant,
                                                                          duration=duration,
                                                                          initial_population=initial_population,
                                                                          path=path, test_name=test_name,
@@ -1437,7 +1443,7 @@ class IntrahostTest(unittest.TestCase):
 
     def NYI_test_infectious_lognormal(self, initial_population=1000, Incubation_Period_Constant=3,
                                       infectious_period_mean=1, infectious_period_width=0.5,
-                                      base_infectivity=1.9, duration=2, enable_immunity=0, debug=debug):
+                                      Base_Infectivity_Constant=1.9, duration=2, enable_immunity=0, debug=debug):
         logging.info("test infectious log normal duration begins")
         print("test infectious log normal duration begins")
 
@@ -1446,14 +1452,15 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.LOG_NORMAL_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant:
                                      Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Log_Normal_Mu:
                                      infectious_period_mean,
                                  ConfigParameters.Infectious_Period_Log_Normal_Sigma:
                                      infectious_period_width,
-                                 ConfigParameters.Base_Infectivity:
-                                     base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant:
+                                     Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity:
                                      enable_immunity},
             initial_population=initial_population)
@@ -1504,7 +1511,7 @@ class IntrahostTest(unittest.TestCase):
         print("test infectious lognormal duration passes")
 
     def NMI_test_infectious_fixed_scale_time(self, initial_population=1, Incubation_Period_Constant=0,
-                                             Infectious_Period_Constant=365, base_infectivity=2.5, duration=365,
+                                             Infectious_Period_Constant=365, Base_Infectivity_Constant=2.5, duration=365,
                                              debug=debug):
         logging.info("test infectious fixed duration with scale type = {} begins".
                      format(ConfigParameters.FUNCTION_OF_TIME_AND_LATITUDE))
@@ -1514,25 +1521,24 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity,
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant,
                                                                     ConfigParameters.Infectivity_Scale_Type:
                                                                     ConfigParameters.FUNCTION_OF_TIME_AND_LATITUDE},
                                                initial_population=initial_population)
 
-        graveyard, output_df = self.run_test(duration=duration, serial_properties=[[Constant.infections,
-                                                                                    Constant.infectiousness]],
-                                             properties_name=[Constant.infectiousness], debug=debug)
+        graveyard, output_df = self.run_test(duration=duration, debug=debug)
         path = "./"
         test_name = "infectious_fixed_scale_time"
         self.save_files(graveyard, path, test_name, debug)
 
     def NMI_test_infectious_fixed_scale_climate(self, initial_population=1, Incubation_Period_Constant=0,
-                                                Infectious_Period_Constant=365, base_infectivity=2.5, duration=365,
+                                                Infectious_Period_Constant=365, Base_Infectivity_Constant=2.5, duration=365,
                                                 debug=debug):
         logging.info("test infectious fixed duration with scale type = {} begins".
                      format(ConfigParameters.FUNCTION_OF_CLIMATE))
@@ -1542,19 +1548,18 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                                          base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                           other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                                    Incubation_Period_Constant,
                                                                                ConfigParameters.Infectious_Period_Constant:
                                                                                    Infectious_Period_Constant,
-                                                                               ConfigParameters.Base_Infectivity:
-                                                                                   base_infectivity,
+                                                                               ConfigParameters.Base_Infectivity_Constant:
+                                                                                   Base_Infectivity_Constant,
                                                                                ConfigParameters.Infectivity_Scale_Type:
                                                                                    ConfigParameters.FUNCTION_OF_CLIMATE},
                                                           initial_population=initial_population)
 
-        graveyard, output_df = self.run_test(duration=duration, serial_properties=[[Constant.infections,
-                                                                                    Constant.infectiousness]],
-                                             properties_name=[Constant.infectiousness], debug=debug)
+        graveyard, output_df = self.run_test(duration=duration, debug=debug)
         path = "./"
         test_name = "infectious_fixed_scale_climate"
         self.save_files(graveyard, path, test_name, debug)
@@ -1570,7 +1575,7 @@ class IntrahostTest(unittest.TestCase):
                                        )
 
     def test_shedding(self, initial_population=50, Incubation_Period_Constant=1, infectious_period_exponential=2,
-                      base_infectivity=1.5, duration=50, immunity_transmission_factor=0.8, decay_rate=0.1,
+                      Base_Infectivity_Constant=1.5, duration=50, immunity_transmission_factor=0.8, decay_rate=0.1,
                       decay_offset=3, debug=debug):
         logging.info("test shedding begins")
         print("test shedding begins")
@@ -1580,9 +1585,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.EXPONENTIAL_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Exponential: infectious_period_exponential,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: 1,
                                  ConfigParameters.Enable_Immune_Decay: 1,
                                  ConfigParameters.Immunity_Transmission_Factor: immunity_transmission_factor,
@@ -1591,9 +1597,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration, serial_properties=
-                                             [[Constant.infections, Constant.infectiousness],
-                                              [Constant.susceptibility, Constant.mod_transmit]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_transmit],
+                                             [[Constant.susceptibility, Constant.mod_transmit]],
+                                             properties_name=[Constant.mod_transmit],
                                              debug=debug)
         path = "./"
         test_name = "shedding"
@@ -1610,7 +1615,7 @@ class IntrahostTest(unittest.TestCase):
                 infectiousness = float(df[Constant.infectiousness][index])
                 is_shedding = 1 if infectiousness > 0 else 0
                 mod_transmit = float(df[Constant.mod_transmit][index])
-                expected_contagion_pool += base_infectivity * is_shedding * mod_transmit
+                expected_contagion_pool += Base_Infectivity_Constant * is_shedding * mod_transmit
             contagion_pool = self.well_mixed_contagion_pool[t]
             expected_contagion_pool /= self.statistical_population[t]
             expected_well_mixed_contagion_pool.append(pre_expected_contagion_pool)
@@ -1707,7 +1712,7 @@ class IntrahostTest(unittest.TestCase):
         return succeed, error_msg, expected_mods, actual_mods
 
     def test_natural_immunity_mod_acquire(self, initial_population=1, Incubation_Period_Constant=1,
-                                          Infectious_Period_Constant=1, base_infectivity=1.5, duration=30,
+                                          Infectious_Period_Constant=1, Base_Infectivity_Constant=1.5, duration=30,
                                           enable_immunity=1, immunity_acquisition_factor=None, debug=debug):
         logging.info("test natural immunity mod acquire begins")
         print("test natural immunity mod acquire begins")
@@ -1719,12 +1724,13 @@ class IntrahostTest(unittest.TestCase):
         self.infect_num = initial_population
         self.configure_incubation_infectious_distribution(incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+                                               base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
                                                other_config_params={ConfigParameters.Incubation_Period_Constant:
                                                                         Incubation_Period_Constant,
                                                                     ConfigParameters.Infectious_Period_Constant:
                                                                         Infectious_Period_Constant,
-                                                                    ConfigParameters.Base_Infectivity:
-                                                                        base_infectivity,
+                                                                    ConfigParameters.Base_Infectivity_Constant:
+                                                                        Base_Infectivity_Constant,
                                                                     ConfigParameters.Enable_Immunity:
                                                                     enable_immunity,
                                                                     ConfigParameters.Enable_Immune_Decay: 0,
@@ -1733,9 +1739,8 @@ class IntrahostTest(unittest.TestCase):
                                                initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_acquire]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_acquire],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_acquire]],
+                                             properties_name=[Constant.mod_acquire],
                                              debug=debug)
         path = "./"
         test_name = "natural_immu_mod_acquire"
@@ -1763,7 +1768,7 @@ class IntrahostTest(unittest.TestCase):
         print("test natural immunity mod acquire passes")
 
     def test_natural_immunity_mod_transmit(self, initial_population=1, Incubation_Period_Constant=1,
-                                           Infectious_Period_Constant=1, base_infectivity=1.5, duration=30,
+                                           Infectious_Period_Constant=1, Base_Infectivity_Constant=1.5, duration=30,
                                            enable_immunity=1, immunity_transmission_factor=None, debug=debug):
         logging.info("test natural immunity mod transmit begins")
         print("test natural immunity mod transmit begins")
@@ -1776,12 +1781,13 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant:
                                      Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant:
                                      Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity:
-                                     base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant:
+                                     Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity:
                                      enable_immunity,
                                  ConfigParameters.Enable_Immune_Decay: 0,
@@ -1790,9 +1796,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_transmit]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_transmit],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_transmit]],
+                                             properties_name=[Constant.mod_transmit],
                                              debug=debug)
         path = "./"
         test_name = "natural_immu_mod_transmit"
@@ -1820,7 +1825,7 @@ class IntrahostTest(unittest.TestCase):
         print("test natural immunity mod transmit passes")
 
     def test_natural_immunity_mod_mortality(self, initial_population=1, Incubation_Period_Constant=1,
-                                            Infectious_Period_Constant=1, base_infectivity=1.5, duration=30,
+                                            Infectious_Period_Constant=1, Base_Infectivity_Constant=1.5, duration=30,
                                             enable_immunity=1, immunity_mortality_factor=None, debug=debug):
         logging.info("test natural immunity mod mortality begins")
         print("test natural immunity mod mortality begins")
@@ -1833,12 +1838,13 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant:
                                      Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant:
                                      Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity:
-                                     base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant:
+                                     Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity:
                                      enable_immunity,
                                  ConfigParameters.Enable_Immune_Decay: 0,
@@ -1847,9 +1853,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_mortality],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_mortality]],
+                                             properties_name=[Constant.mod_mortality],
                                              debug=debug)
         path = "./"
         test_name = "natural_immu_mod_mortality"
@@ -1915,7 +1920,7 @@ class IntrahostTest(unittest.TestCase):
         return succeed, error_msg, expected_mods, actual_mods
 
     def test_immu_decay_mod_acquire(self, initial_population=1, Incubation_Period_Constant=1, Infectious_Period_Constant=1,
-                                    base_infectivity=1.5, duration=250, enable_immunity=1,
+                                    Base_Infectivity_Constant=1.5, duration=250, enable_immunity=1,
                                     immunity_acquisition_factor=0.65, decay_rate=0.1, decay_offset=30, debug=debug):
         msg = "test immunity decay mod acquire begins.\n" \
               "immnity factor is {0}, decay rate is {1} and offset is {2}.".format(immunity_acquisition_factor,
@@ -1928,9 +1933,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: enable_immunity,
                                  ConfigParameters.Enable_Immune_Decay: 1,
                                  ConfigParameters.Immunity_Acquisition_Factor: immunity_acquisition_factor,
@@ -1939,9 +1945,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_acquire]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_acquire], debug=debug)
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_acquire]],
+                                             properties_name=[Constant.mod_acquire], debug=debug)
         path = "./"
         test_name = "immu_decay_mod_acquire"
         self.save_files(graveyard, path, test_name, debug)
@@ -1966,7 +1971,7 @@ class IntrahostTest(unittest.TestCase):
         print("test immunity decay mod acquire passes")
 
     def test_immu_decay_mod_transmit(self, initial_population=1, Incubation_Period_Constant=1, Infectious_Period_Constant=1,
-                                     base_infectivity=1.5, duration=2000, enable_immunity=1,
+                                     Base_Infectivity_Constant=1.5, duration=2000, enable_immunity=1,
                                      immunity_transmission_factor=0.55, decay_rate=0.01, decay_offset=10, debug=debug,
                                      test_name="immu_decay_mod_transmit"):
         logging.info("test immunity decay mod transmit begins")
@@ -1977,9 +1982,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: enable_immunity,
                                  ConfigParameters.Enable_Immune_Decay: 1,
                                  ConfigParameters.Immunity_Transmission_Factor: immunity_transmission_factor,
@@ -1988,9 +1994,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_transmit]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_transmit],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_transmit]],
+                                             properties_name=[Constant.mod_transmit],
                                              debug=debug)
         path = "./"
         self.save_files(graveyard, path, test_name, debug)
@@ -2035,7 +2040,7 @@ class IntrahostTest(unittest.TestCase):
                                           duration=duration)
 
     def test_immu_decay_mod_mortality(self, initial_population=1, Incubation_Period_Constant=1, Infectious_Period_Constant=1,
-                                      base_infectivity=1.5, duration=50, enable_immunity=1,
+                                      Base_Infectivity_Constant=1.5, duration=50, enable_immunity=1,
                                       immunity_mortality_factor=0.4, decay_rate=0.6, decay_offset=10, debug=debug,
                                       test_name="immu_decay_mod_mortality"):
         logging.info("test immunity decay mod mortality begins")
@@ -2046,9 +2051,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: enable_immunity,
                                  ConfigParameters.Enable_Immune_Decay: 1,
                                  ConfigParameters.Immunity_Mortality_Factor: immunity_mortality_factor,
@@ -2057,9 +2063,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_mortality], debug=debug)
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_mortality]],
+                                             properties_name=[Constant.mod_mortality], debug=debug)
         path = "./"
         self.save_files(graveyard, path, test_name, debug)
 
@@ -2100,7 +2105,7 @@ class IntrahostTest(unittest.TestCase):
                                            test_name="immu_decay_mod_mortality_2")
 
     def test_disease_mortality_off(self, duration=30, initial_population=100, Incubation_Period_Constant=2,
-                                   Infectious_Period_Constant=5, base_infectivity=2, base_mortality=0.8,
+                                   Infectious_Period_Constant=5, Base_Infectivity_Constant=2, base_mortality=0.8,
                                    immunity_mortality_factor=0.9, debug=debug):
         logging.info("test disease mortality off begins")
         print("test disease mortality off begins")
@@ -2110,9 +2115,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: 1,
                                  ConfigParameters.Enable_Immune_Decay: 0,
                                  ConfigParameters.Enable_Vital_Dynamics: 0,
@@ -2124,9 +2130,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_mortality],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_mortality]],
+                                             properties_name=[Constant.mod_mortality],
                                              debug=debug)
         path = "./"
         test_name = "disease_mortality_off"
@@ -2142,7 +2147,7 @@ class IntrahostTest(unittest.TestCase):
         print("test disease mortality off passes")
 
     def test_daily_mortality(self, duration=20, initial_population=1000, Incubation_Period_Constant=0,
-                             Infectious_Period_Constant=5, base_infectivity=0.00001, base_mortality=0.1,
+                             Infectious_Period_Constant=5, Base_Infectivity_Constant=0.00001, base_mortality=0.1,
                              immunity_mortality_factor=0.4, debug=debug):
         logging.info("test disease mortality daily mortality begins")
         print("test disease mortality daily mortality begins")
@@ -2152,9 +2157,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: 1,
                                  ConfigParameters.Enable_Immune_Decay: 0,
                                  ConfigParameters.Enable_Vital_Dynamics: 1,
@@ -2167,9 +2173,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_mortality],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_mortality]],
+                                             properties_name=[Constant.mod_mortality],
                                              debug=debug)
         path = "./"
         test_name = "daily_mortality"
@@ -2219,7 +2224,7 @@ class IntrahostTest(unittest.TestCase):
 
 
     def test_mortality_after_infectious(self, duration=20, initial_population=500, Incubation_Period_Constant=0,
-                             Infectious_Period_Constant=3, base_infectivity=0.00001, base_mortality=0.25,
+                             Infectious_Period_Constant=3, Base_Infectivity_Constant=0.00001, base_mortality=0.25,
                              immunity_mortality_factor=0.65, debug=debug):
         logging.info("test disease mortality after infectious begins")
         print("test disease mortality after infectious begins")
@@ -2229,9 +2234,10 @@ class IntrahostTest(unittest.TestCase):
         self.configure_incubation_infectious_distribution(
             incubation_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             infectious_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
+            base_infectivity_distribution_type=ConfigParameters.CONSTANT_DISTRIBUTION,
             other_config_params={ConfigParameters.Incubation_Period_Constant: Incubation_Period_Constant,
                                  ConfigParameters.Infectious_Period_Constant: Infectious_Period_Constant,
-                                 ConfigParameters.Base_Infectivity: base_infectivity,
+                                 ConfigParameters.Base_Infectivity_Constant: Base_Infectivity_Constant,
                                  ConfigParameters.Enable_Immunity: 1,
                                  ConfigParameters.Enable_Immune_Decay: 0,
                                  ConfigParameters.Enable_Vital_Dynamics: 1,
@@ -2244,9 +2250,8 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
 
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_mortality],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_mortality]],
+                                             properties_name=[Constant.mod_mortality],
                                              debug=debug)
         path = "./"
         test_name = "mortality_after_infectious"
@@ -2316,12 +2321,10 @@ class IntrahostTest(unittest.TestCase):
             initial_population=initial_population)
         # self.configure_immunity_distribution(flag=flag, param1=param1,param2=param2, demo_template_filename="demographics.json")
         graveyard, output_df = self.run_test(duration=duration,
-                                             serial_properties=[[Constant.infections, Constant.infectiousness],
-                                                                [Constant.susceptibility, Constant.mod_acquire],
+                                             serial_properties=[[Constant.susceptibility, Constant.mod_acquire],
                                                                 [Constant.susceptibility, Constant.mod_transmit],
                                                                 [Constant.susceptibility, Constant.mod_mortality]],
-                                             properties_name=[Constant.infectiousness, Constant.mod_acquire,
-                                                              Constant.mod_transmit, Constant.mod_mortality],
+                                             properties_name=[Constant.mod_acquire, Constant.mod_transmit, Constant.mod_mortality],
                                              debug=debug)
         path = "./"
         test_name = "immu_init_dist_s_1"

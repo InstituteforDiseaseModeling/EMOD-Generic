@@ -50,8 +50,7 @@ namespace Kernel
     {
     }
 
-    const SimulationConfig*
-    InfectionPy::params()
+    const SimulationConfig* InfectionPy::params()
     {
         return GET_CONFIGURABLE(SimulationConfig);
     }
@@ -77,17 +76,9 @@ namespace Kernel
     {
     }
 
-    void InfectionPy::SetParameters(StrainIdentity* infstrain, int incubation_period_override)
+    void InfectionPy::SetParameters(StrainIdentity* infstrain, float incubation_period_override)
     {
-        Infection::SetParameters(infstrain, incubation_period_override); // setup infection timers and infection state
-        if(infstrain == NULL)
-        {
-            // using default strainIDs
-        }
-        else
-        {
-            *infection_strain = *infstrain;
-        }
+        Infection::SetParameters(infstrain, incubation_period_override);
     }
 
     void InfectionPy::InitInfectionImmunology(Susceptibility* _immunity)
@@ -105,14 +96,6 @@ namespace Kernel
     void InfectionPy::Update(float dt, ISusceptibilityContext* _immunity)
     {
         return;
-        /*
-        StateChange = InfectionStateChange::None;
-        ISusceptibilityPy* immunity = NULL;
-        if( _immunity->QueryInterface( GET_IID( ISusceptibilityPy ), (void**)&immunity ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "_immunity", "Susceptibility", "SusceptibilityPy" );
-        } */
-        //return InfectionEnvironmental::Update( dt, _immunity );
     }
 
     void InfectionPy::Clear()

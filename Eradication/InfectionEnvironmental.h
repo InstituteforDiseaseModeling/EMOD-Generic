@@ -29,7 +29,7 @@ namespace Kernel
         virtual ~InfectionEnvironmental(void);
 
         virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
-        virtual void SetParameters(IStrainIdentity* _infstrain=nullptr, int incubation_period_override = -1 ) override;
+        virtual void SetParameters(IStrainIdentity* _infstrain=nullptr, float incubation_period_override = -1.0f ) override;
 
     protected:
         InfectionEnvironmental(IIndividualHumanContext *context);

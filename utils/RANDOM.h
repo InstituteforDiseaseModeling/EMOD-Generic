@@ -19,6 +19,21 @@
 #include<emmintrin.h> // for __m128i
 #endif
 
+#include "ISerializable.h"
+
+#ifdef WIN32
+    #define ALIGN16  __declspec (align(16))
+#else
+    #define ALIGN16  __attribute__ ((aligned(16)))
+#endif
+
+#define FLOAT_EXP   8
+#define DOUBLE_EXP 11
+#define PI_F        3.1415927f
+#define PRNG_COUNT  (1<<20) // Let's start with ~1 million
+#define SQRT2       1.414214f
+#define NUM_KEYS_IN_SCHEDULE (15)
+
 namespace Kernel
 {
     // ------------------------------------------------------------------------
@@ -47,21 +62,18 @@ namespace Kernel
         // If the input value is 5.3, then 70% of the time it should return 5 and 30% of the time 6.
         uint32_t randomRound( float val );
 
-
-#define FLOAT_EXP   8
-#define DOUBLE_EXP 11
-#define SQRT2       1.414214f
-
         std::set<uint32_t> chooseMofN( uint32_t M, uint32_t N );
 
 
         double ee();
 
         double eGauss();    // Returns a normal deviate.
+
         float eGaussNonNeg(float mu, float sig);
+        float rand_gamma(float k, float theta);
+
         float erfinv_idm(float x);
         float erf_idm(float x);
-
 
         // Added by Philip Eckhoff, Poisson takes in a rate, and returns the number of events in unit time
         // Or equivalently, takes in rate*time and returns number of events in that time
@@ -84,14 +96,7 @@ namespace Kernel
         // Sum(rFractions) * N ~= Sum(returned vector) such that Sum(returned vector) <= N.
         std::vector<uint64_t> multinomial_approx( uint64_t N, const std::vector<float>& rFractions );
 
-        // M Behrend
-        // gamma-distributed random number
-        // shape constant k=2
-        double rand_gamma(double mean);
-        double gamma_cdf(double x, double mean);
-        double get_cdf_random_num_precision();
-
-    protected:// make something a friend.
+    protected:
 
         virtual void fill_bits();
         void bits_to_float();
@@ -103,9 +108,6 @@ namespace Kernel
     
         bool   bGauss;
         double eGauss_;
-
-        // precision of gamma-distributed random number
-        static double cdf_random_num_precision;
     };
 
     // ------------------------------------------------------------------------
@@ -153,14 +155,6 @@ namespace Kernel
     // "Intel (R) Advanced Encryption Standard (AES) New Instruction Set" whitepaper:
     // https://software.intel.com/sites/default/files/article/165683/aes-wp-2012-09-22-v01.pdf
 
-#ifdef WIN32
-    #define ALIGN16  __declspec (align(16))
-#else
-    #define ALIGN16  __attribute__ ((aligned(16)))
-#endif
-
-    #define NUM_KEYS_IN_SCHEDULE (15)
-
     typedef struct KEY_SCHEDULE 
     {
         ALIGN16 __m128i KEY[ NUM_KEYS_IN_SCHEDULE ];
@@ -176,7 +170,6 @@ namespace Kernel
     protected:
         virtual void fill_bits() override;
 
-    //private:
         AES_KEY     m_keySchedule;
         uint64_t    m_nonce;
         uint32_t    m_iteration;

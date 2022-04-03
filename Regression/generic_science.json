@@ -121,16 +121,25 @@
             "path": "Generic/SFTs/MeaslesVaccine/DistAge_NoEABM_CrazyTakeMap"
         },
         {
-            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic"
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT"
         },
         {
-            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_Close_to_0"
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT_1000"
         },
         {
-            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_1000"
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT_Close_to_0"
         },
         {
-            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_Equal_to_1"
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT_Equal_to_1"
+        },
+        {
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_EXPONENTIAL"
+        },
+        {
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_GAUSSIAN"
+        },
+        {
+            "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_UNIFORM"
         },
         {
             "path": "Generic/SFTs/InfectionRate_Basic_Calculation/SampleRate"
@@ -221,6 +230,36 @@
         },
         {
             "path": "Generic/SFTs/Serialization/03_infections_remain"
+        },
+        {
+            "path": "Generic/SFTs/LineListReporter/INFECTION"
+        },
+        {
+            "path": "Generic/SFTs/LineListReporter/INFECTION_ModAcquire"
+        },
+        {
+            "path": "Generic/SFTs/LineListReporter/MORTALITY"
+        },
+        {
+            "path": "Generic/SFTs/LineListReporter/MORTALITY_ModAcquire"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/Multicore-disabled"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/Multicore-enabled-below-mintime"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/Multicore-enabled-past-mintime"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/SingleCore-disabled"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/SingleCore-enabled-below-mintime"
+        },
+        {
+            "path" : "Generic/SFTs/ZeroInfectivityAbort/SingleCore-enabled-past-mintime"
         },
         {
             "path": "Generic/SFTs/SpatialReports/StatisticalPopulation"

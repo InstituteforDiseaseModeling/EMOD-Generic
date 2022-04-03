@@ -13,6 +13,7 @@ namespace Kernel
 {
     struct IStrainIdentity
     {
+        virtual std::string GetName(void) const = 0;
         virtual int  GetCladeID(void) const = 0;
         virtual int  GetGeneticID(void) const = 0;
         virtual void SetCladeID(int in_cladeID) = 0;

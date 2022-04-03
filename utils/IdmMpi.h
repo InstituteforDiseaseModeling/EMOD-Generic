@@ -55,6 +55,7 @@ namespace IdmMpi
         virtual void SendIntegers( const uint32_t* pBuf, int count, int toRank, Request* pRequest ) = 0;
         virtual void SendChars( const char* pBuf, int count, int toRank, Request* pRequest ) = 0;
         virtual void Reduce( float* pSendBuff, float* pReceiveBuff, int size ) = 0;
+        virtual void Allreduce_SUM( float* pSendBuff, float* pReceiveBuff, int size ) = 0;
         virtual void GatherToRoot( const std::string& rSend, std::string& rReceive ) = 0;
         virtual void Sync( const std::vector<int>& rSendInts, std::vector<int>& rReceiveInts ) = 0;
         virtual void BroadcastInteger( int* buffer, int size, int rank ) = 0;

@@ -83,7 +83,8 @@
                 "TB_Relapsed_to_Active_Rate": 1
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.0274,
+                "Base_Infectivity_Constant": 0.0274,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
                 "Population_Density_Infectivity_Correction": "CONSTANT_INFECTIVITY",
                 "TB_Active_Presymptomatic_Infectivity_Multiplier": 0.365,
@@ -102,11 +103,11 @@
         "FUDGE_FACTORS": {
             "x_Air_Migration": 1,
             "x_Birth": 1,
+            "x_Larval_Habitats": 1,
             "x_Local_Migration": 1,
             "x_Other_Mortality": 1,
             "x_Regional_Migration": 1,
-            "x_Sea_Migration": 1,
-            "x_Larval_Habitats": 1
+            "x_Sea_Migration": 1
         },
         "HPC": {
             "Load_Balance_Filename": "",

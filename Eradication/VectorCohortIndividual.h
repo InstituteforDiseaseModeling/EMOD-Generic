@@ -24,7 +24,7 @@ namespace Kernel
         virtual void IncrementParity() = 0 ;
         virtual void ReduceOvipositionTimer( float delta ) = 0;
         virtual void SetOvipositionTimer( float new_opt ) = 0;
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = NULL, int incubation_period_override = -1) = 0;
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
         virtual bool IsProgressedOrEmpty() const = 0;
     };
 
@@ -55,7 +55,7 @@ namespace Kernel
         static std::vector<VectorCohortIndividual*>* _supply;
 
         // should we bother with an interface for this common function to individual human? IInfectable?
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = NULL, int incubation_period_override = -1);
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f );
         virtual const IStrainIdentity& GetStrainIdentity() const override;
 
         virtual uint64_t GetID() const override { return m_ID; }

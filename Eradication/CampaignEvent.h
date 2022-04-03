@@ -40,7 +40,7 @@ namespace Kernel
     public:
         static ICampaignEventFactory * getInstance() { return _instance ? _instance : _instance = new CampaignEventFactory(); }
 
-        static CampaignEvent* CreateInstance(const Configuration * config);
+        static CampaignEvent* CreateInstance(const Configuration * config, ISimulationEventContext *isec );
         void Register(string classname, instantiator_function_t _if);
         virtual json::QuickBuilder GetSchema();
 

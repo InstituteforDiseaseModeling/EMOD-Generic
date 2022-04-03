@@ -47,7 +47,8 @@ namespace Kernel
 
         static IDistribution* infectious_distribution;
         static IDistribution* incubation_distribution;
-        static float base_infectivity;
+        static IDistribution* infectivity_distribution;
+
         static float base_mortality;
         static MortalityTimeCourse::Enum                          mortality_time_course;                            // MORTALITY_TIME_COURSE
 
@@ -72,8 +73,8 @@ namespace Kernel
 
         virtual suids::suid GetSuid() const;
 
-        virtual void SetParameters(IStrainIdentity* infstrain=NULL, int incubation_period_override = -1 );
-        virtual void Update(float, ISusceptibilityContext* =nullptr) override;
+        virtual void SetParameters(IStrainIdentity* infstrain = nullptr, float incubation_period_override = -1.0f );
+        virtual void Update(float, ISusceptibilityContext* = nullptr) override;
 
         virtual InfectionStateChange::_enum GetStateChange() const override;
         virtual float GetInfectiousness() const override;

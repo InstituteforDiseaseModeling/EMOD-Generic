@@ -72,7 +72,7 @@ namespace Kernel
 
         // ISimulation methods
         virtual bool  Populate() override;
-        virtual void  Update(float dt) override;
+        virtual void  Update() override;
         virtual int   GetSimulationTimestep() const override;
         virtual const IdmDateTime& GetSimulationTime() const override;
         virtual void  RegisterNewNodeObserver(void* id, Kernel::ISimulation::callback_t observer) override;
@@ -263,12 +263,12 @@ namespace Kernel
     private:
         typedef std::unordered_map< std::string, report_instantiator_function_t > ReportInstantiatorMap ;
         void Reports_ConfigureBuiltIn();
-        void Reports_FindReportsCollectingIndividualData( float currentTime, float dt );
+        void Reports_FindReportsCollectingIndividualData();
         Configuration* Reports_GetCustomReportConfiguration();
         void Reports_Instantiate( ReportInstantiatorMap& rReportInstantiatorMap );
-        void Reports_UpdateEventRegistration( float _currentTime, float dt );
+        void Reports_UpdateEventRegistration();
         void Reports_BeginTimestep();
-        void Reports_EndTimestep( float _currentTime, float dt );
+        void Reports_EndTimestep();
         void Reports_LogNodeData( INodeContext* n );
         void PrintTimeAndPopulation();
 

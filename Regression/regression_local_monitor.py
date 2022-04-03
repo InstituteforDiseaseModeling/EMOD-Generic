@@ -368,7 +368,7 @@ class Monitor(threading.Thread):
 
         if fail_validation:
             #print( "Validation failed, add to failing tests report." )
-            self.report.addFailingTest( self.scenario_path, failure_txt, os.path.join( sim_dir, ( "output/" + report_name ) ), self.scenario_type )
+            self.report.addFailingTest( self.scenario_path, failure_txt, os.path.join( self.sim_dir, ( "output/" + report_name ) ), self.scenario_type )
 
             if len(failures) > 0 and not self.params.hide_graphs and report_name.startswith( "InsetChart" ):
                 #print( "Plotting charts for failure deep dive." )  
@@ -389,23 +389,23 @@ class Monitor(threading.Thread):
     def science_verify( self, sim_dir ):
         #print( "Scientific Feature Testing: check scientific_feature_report.txt" )
         report_name = "scientific_feature_report.txt"
-        sfr = os.path.join( sim_dir, report_name )
+        sfr = os.path.join( self.sim_dir, report_name )
         if os.path.exists( sfr ):
             with open( sfr ) as sfr_file:
                 sfr_data = sfr_file.read()
                 if "SUMMARY: Success=True" in sfr_data:
                     print( self.scenario_path + " passed (" + str(self.duration) + ") - " + report_name )
                     #print( self.scenario_path + " passed." )
-                    self.report.addPassingTest(self.scenario_path, self.duration, os.path.join(sim_dir, report_name))
-                    os.remove( os.path.join( sim_dir, "test.txt" ) )
+                    self.report.addPassingTest(self.scenario_path, self.duration, os.path.join(self.sim_dir, report_name))
+                    os.remove( os.path.join( self.sim_dir, "test.txt" ) )
                 else:
                     fail_text = self.scenario_path + " SFT failed."
                     print( self.scenario_path + " failed (" + str(self.duration) + ") - " + report_name )
                     print( sfr_data )
-                    self.report.addFailingTest( self.scenario_path, fail_text, os.path.join( sim_dir, report_name ), self.scenario_type )
+                    self.report.addFailingTest( self.scenario_path, fail_text, os.path.join( self.sim_dir, report_name ), self.scenario_type )
         else:
             print( self.scenario_path + " failed (" + str(self.duration) + ") - " + report_name + " not generated. This could mean an error in the dtk_post_process.py script, imported scripts, including import errors, which can include not finding a shared python module in the import path.")
-            self.report.addFailingTest( self.scenario_path, "No " + report_name, os.path.join( sim_dir, report_name ), self.scenario_type )
+            self.report.addFailingTest( self.scenario_path, "No " + report_name, os.path.join( self.sim_dir, report_name ), self.scenario_type )
         
 
     def pymod_verify( self, sim_dir ):
@@ -420,11 +420,11 @@ class Monitor(threading.Thread):
                 pmr_data = line
                 if pmr_data is not None and pmr_data.strip() == "OK":
                     print( self.scenario_path + " passed (" + str(self.duration) + ") - " + report_name )
-                    self.report.addPassingTest(self.scenario_path, self.duration, os.path.join(sim_dir, report_name))
+                    self.report.addPassingTest(self.scenario_path, self.duration, os.path.join(self.sim_dir, report_name))
                 else:
                     fail_text = self.scenario_path + " PyMod failed."
                     print( self.scenario_path + " failed (" + str(self.duration) + ") - " + report_name )
                     print( pmr_data )
-                    self.report.addFailingTest( self.scenario_path, fail_text, os.path.join( sim_dir, report_name ), self.scenario_type )
+                    self.report.addFailingTest( self.scenario_path, fail_text, os.path.join( self.sim_dir, report_name ), self.scenario_type )
         else:
             print( "Failed to find 'report' file for pymod test: " + report_name )

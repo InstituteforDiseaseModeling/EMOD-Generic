@@ -1,7 +1,7 @@
 {
     "packages": [
         {
-            "name": "mathfunc",
+            "name": "dtk_mathfunc",
             "path": "emodularization/utils/mathfunc/mathfunc_setup.py",
             "auto_version_file": "true",
             "steps": ["update_version", "build"]

@@ -45,7 +45,7 @@ namespace Kernel
         virtual IInfection* createInfection(suids::suid _suid) override;
 
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route );
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) override;
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
         virtual void ReportInfectionState();
 
         TransmissionRoute::Enum exposureRoute;

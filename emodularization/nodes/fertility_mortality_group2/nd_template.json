@@ -1,6 +1,7 @@
 {
     "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
     "Base_Individual_Sample_Rate": 1,
+    "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
     "Base_Year": 2015,
     "Birth_Rate_Dependence": "FIXED_BIRTH_RATE",
     "Birth_Rate_Time_Dependence": "NONE",
@@ -50,13 +51,6 @@
     "Simulation_Type": "GENERIC_SIM",
     "Start_Time": 0,
     "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_OFF",
-    "___AGE_AND_SEX_STRUCTURE___": 0,
-    "___CONDITIONALLY_REQUIRED____": 0,
-    "___FERTILITY___": 0,
-    "___MORTALITY___": 0,
-    "___NOT_REQUIRED_BUT_OK_BOILERPLATE": 0,
-    "___NOT_REQUIRED_FOR_VITAL_DYNAMICS_BUT_FOR_TRANSMISSION___": 0,
-    "___REQUIRED_BUT_IGNORE___": 0,
     "x_Base_Population": 1,
     "x_Birth": 10,
     "x_Other_Mortality": 1

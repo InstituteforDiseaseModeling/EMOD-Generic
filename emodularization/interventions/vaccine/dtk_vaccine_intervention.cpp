@@ -21,7 +21,7 @@ getIntervention(PyObject *self, PyObject *args) {
     auto new_vaccine = new SimpleVaccine();
     auto vaccine_config_json = Configuration::Load( "sv.json" );
     new_vaccine->Configure( vaccine_config_json );
-    new_vaccine->ApplyVaccineTake( nullptr );
+    //new_vaccine->ApplyVaccineTake( nullptr ); // need to change something to make this work. I still have questions about how we do vaccine take
     // TBD: I haven't really investigated or thought about deallocation yet.
     return PyCapsule_New( (void*) new_vaccine, nullptr, nullptr );
 }

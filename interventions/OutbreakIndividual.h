@@ -58,8 +58,7 @@ namespace Kernel
         int clade;
         int genome;
 
-
-        bool ignoreImmunity;
-        int incubation_period_override;
+        bool   ignoreImmunity;
+        float  incubation_period_override;
     };
 }

@@ -55,6 +55,9 @@ SpatialReport::SpatialReport()
 , births_info(                      "Births",                           "")
 , campaign_cost_info(               "Campaign_Cost",                    "US dollars")
 , disease_deaths_info(              "Disease_Deaths",                   "")
+, exposed_info(                     "Exposed Fraction",                 "")
+, infectious_info(                  "Infectious Fraction",              "")
+, immunized_info(                   "Immunized Fraction",                "")
 , human_infectious_reservoir_info(  "Human_Infectious_Reservoir",       "???")
 , infection_rate_info(              "Infection_Rate",                   "???")
 , land_temperature_info(            "Land_Temperature",                 "degrees C")
@@ -63,9 +66,16 @@ SpatialReport::SpatialReport()
 , population_info(                  "Population",                       "")
 , prevalence_info(                  "Prevalence",                       "infected fraction")
 , rainfall_info(                    "Rainfall",                         "mm")
+, recovered_info(                   "Recovered Fraction",                "")
 , relative_humidity_info(           "Relative_Humidity",                "fraction")
+, susceptible_info(                 "Susceptible Fraction",             "")
 , new_infections(0.0f)
 , new_reported_infections(0.0f)
+, exposed(0.0f)
+, immunized(0.0f)
+, infectious(0.0f)
+, recovered(0.0f)
+, susceptible(0.0f)
 , disease_deaths(0.0f)
 , nodeid_index_map()
 , has_shuffled_nodes(false)
@@ -77,19 +87,24 @@ SpatialReport::SpatialReport()
 
 void SpatialReport::populateChannelInfos(tChanInfoMap &channel_infos)
 {
-    channel_infos[ air_temperature_info.name ] = &air_temperature_info;
-    channel_infos[ births_info.name ] = &births_info;
-    channel_infos[ campaign_cost_info.name ] = &campaign_cost_info;
-    channel_infos[ disease_deaths_info.name ] = &disease_deaths_info;
-    channel_infos[ human_infectious_reservoir_info.name ] = &human_infectious_reservoir_info;
-    channel_infos[ infection_rate_info.name ] = &infection_rate_info;
-    channel_infos[ land_temperature_info.name ] = &land_temperature_info;
-    channel_infos[ new_infections_info.name ] = &new_infections_info;
-    channel_infos[ new_reported_infections_info.name ] = &new_reported_infections_info;
-    channel_infos[ population_info.name ] = &population_info;
-    channel_infos[ prevalence_info.name ] = &prevalence_info;
-    channel_infos[ rainfall_info.name ] = &rainfall_info;
-    channel_infos[ relative_humidity_info.name ] = &relative_humidity_info;
+    channel_infos[air_temperature_info.name] = &air_temperature_info;
+    channel_infos[births_info.name] = &births_info;
+    channel_infos[campaign_cost_info.name] = &campaign_cost_info;
+    channel_infos[disease_deaths_info.name] = &disease_deaths_info;
+    channel_infos[exposed_info.name] = &exposed_info;
+    channel_infos[human_infectious_reservoir_info.name] = &human_infectious_reservoir_info;
+    channel_infos[immunized_info.name] = &immunized_info;
+    channel_infos[infection_rate_info.name] = &infection_rate_info;
+    channel_infos[infectious_info.name] = &infectious_info;
+    channel_infos[land_temperature_info.name] = &land_temperature_info;
+    channel_infos[new_infections_info.name] = &new_infections_info;
+    channel_infos[new_reported_infections_info.name] = &new_reported_infections_info;
+    channel_infos[population_info.name] = &population_info;
+    channel_infos[prevalence_info.name] = &prevalence_info;
+    channel_infos[rainfall_info.name] = &rainfall_info;
+    channel_infos[recovered_info.name] = &recovered_info;
+    channel_infos[relative_humidity_info.name] = &relative_humidity_info;
+    channel_infos[susceptible_info.name] = &susceptible_info;
 }
 
 void
@@ -159,7 +174,38 @@ SpatialReport::LogIndividualData(
     LOG_DEBUG( "LogIndividualData\n" );
 
     float monte_carlo_weight = (float)individual->GetMonteCarloWeight();
+    
+    if (!individual->IsInfected())  // Susceptible, Recovered or Vaccinated
+    {
+        float immunityAcquisitionModifier = individual->GetImmunityReducedAcquire();
+        float interventionAcquisitionModifier = individual->GetInterventionReducedAcquire();
+        // To avoid double counting, if somebody has immunity from acquisition, they are recovered, not vaccinated.
+        // Should normalize with Report.cpp to have a waning channel.  But would still like to keep natural and vaccine-derived immunity tracked separately.  
+        if (immunityAcquisitionModifier < 1.0f)
+        {
+            recovered += monte_carlo_weight;
+        }
+        else if (interventionAcquisitionModifier < 1.0f)
+        {
+            immunized += monte_carlo_weight;
+        }
+        else
+        {
+            susceptible += monte_carlo_weight;
+        }
+    }
 
+    else  // Infectious or Exposed
+    {
+        if (individual->GetInfectiousness() > 0.0f)
+        {
+            infectious += monte_carlo_weight;
+        }
+        else
+        {
+            exposed += monte_carlo_weight;
+        }
+    }
     NewInfectionState::_enum nis = individual->GetNewInfectionState();
 
     if(nis == NewInfectionState::NewAndDetected || nis == NewInfectionState::NewInfection)
@@ -189,6 +235,32 @@ SpatialReport::LogNodeData(
     {
         Accumulate(new_infections_info.name, nodeid, new_infections);
         new_infections = 0.0f;
+    }
+
+    if (exposed_info.enabled)
+    {
+        Accumulate(exposed_info.name, nodeid, exposed);
+        exposed = 0.0f;
+    }
+    if (immunized_info.enabled)
+    {
+        Accumulate(immunized_info.name, nodeid, immunized);
+        immunized = 0.0f;
+    }
+    if (infectious_info.enabled)
+    {
+        Accumulate(infectious_info.name, nodeid, infectious);
+        infectious = 0.0f;
+    }
+    if (recovered_info.enabled)
+    {
+        Accumulate(recovered_info.name, nodeid, recovered);
+        recovered = 0.0f;
+    }
+    if (susceptible_info.enabled)
+    {
+        Accumulate(susceptible_info.name, nodeid, susceptible);
+        susceptible = 0.0f;
     }
 
     if(new_reported_infections_info.enabled)
@@ -361,7 +433,8 @@ SpatialReport::Accumulate( std::string channel_name, int nodeid, float value )
 
     if(it == nodeid_index_map.end())
     {
-        nodeid_index_map[nodeid] = nodeid_index_map.size();
+        int current_map_size = static_cast<int>(nodeid_index_map.size());
+        nodeid_index_map[nodeid] = current_map_size;
     }
 
     int node_index = channelDataMap.GetChannelLength() - _nrmSize + nodeid_index_map[nodeid];
@@ -391,6 +464,66 @@ SpatialReport::postProcessAccumulatedData()
         else
         {
             throw GeneralConfigurationException(  __FILE__, __LINE__, __FUNCTION__, "If 'Prevalence' is enabled, then 'Population' must be enabled.");
+        }
+    }
+
+    if (exposed_info.enabled)
+    {
+        if (population_info.enabled)
+        {
+            normalizeChannel(exposed_info.name, population_info.name);
+        }
+        else
+        {
+            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "If 'Exposed Fraction' is enabled, then 'Population' must be enabled.");
+        }
+    }
+
+    if (immunized_info.enabled)
+    {
+        if (population_info.enabled)
+        {
+            normalizeChannel(immunized_info.name, population_info.name);
+        }
+        else
+        {
+            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "If 'Immunized Fraction' is enabled, then 'Population' must be enabled.");
+        }
+    }
+
+    if (infectious_info.enabled)
+    {
+        if (population_info.enabled)
+        {
+            normalizeChannel(infectious_info.name, population_info.name);
+        }
+        else
+        {
+            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "If 'Infectious Fraction' is enabled, then 'Population' must be enabled.");
+        }
+    }
+
+    if (recovered_info.enabled)
+    {
+        if (population_info.enabled)
+        {
+            normalizeChannel(recovered_info.name, population_info.name);
+        }
+        else
+        {
+            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "If 'Recovered Fraction' is enabled, then 'Population' must be enabled.");
+        }
+    }
+
+    if (susceptible_info.enabled)
+    {
+        if (population_info.enabled)
+        {
+            normalizeChannel(susceptible_info.name, population_info.name);
+        }
+        else
+        {
+            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "If 'Susceptible Fraction' is enabled, then 'Population' must be enabled.");
         }
     }
 

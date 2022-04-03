@@ -87,7 +87,7 @@ namespace Kernel
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) override;
         virtual void SortHumans() override;
-        virtual const std::vector<IIndividualHuman*>& GetHumans() const override { return individualHumans; }
+        virtual const std::vector<IIndividualHuman*>& GetHumans() const override;
 
         // Strain tracking
         virtual const std::map<std::string, int>&                 GetStrainClades()   const override { return strain_map_clade;   }
@@ -105,21 +105,6 @@ namespace Kernel
         bool IsInPolygon( const json::Array &poly );
         bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist );
 
-#if 0
-        // Reporting
-        virtual       IdmDateTime         GetTime()                       const override { return parent->GetSimulationTime(); }
-        virtual       float               GetInfected()                   const override { return Infected; }
-        virtual       float               GetStatPop()                    const override { return statPop; }
-        virtual       float               GetBirths()                     const override { return Births; }
-        virtual       float               GetCampaignCost()               const override { return Campaign_Cost; }
-        virtual       float               GetInfectivity()                const override { return mInfectivity; }
-        virtual       float               GetInfectionRate()              const override { return infectionrate; }
-        virtual       float               GetSusceptDynamicScaling()      const override { return susceptibility_dynamic_scaling; }
-        virtual const Climate*            GetLocalWeather()               const override { return localWeather; }
-        virtual       long int            GetPossibleMothers()            const override { return Possible_Mothers; }
-        virtual       float               GetMeanAgeInfection()           const override { return mean_age_infection; }
-#endif
-        
         // Reporting to higher levels (intermediate form)
         // Possible TODO: refactor into common interfaces if there is demand
         virtual       INodeEventContext*  GetEventContext()                     override;

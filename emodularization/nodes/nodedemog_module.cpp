@@ -134,7 +134,11 @@ namespace Test {
                 //std::cout << schema_ostream.str() << std::endl;
                 //result = schema_ostream.str();
                 Kernel::JsonConfigurable::_dryrun = false;
-                
+
+                // TBD: Parse dt
+                float dt = 1.0;
+                time.SetTimeDelta(dt);
+
                 unsigned int randomseed[2];
                 randomseed[0] = 0;
                 randomseed[1] = 0;
@@ -182,11 +186,17 @@ namespace Test {
             void setBaseYear( float baseYear )
             {
                 time.setBaseYear( baseYear ); // hmm, GENERIC_SIM doesn't use base year
+
                 time = IdmDateTime(); // easiest way to set time back to 0 without adding nasty test-only API method
+
+                // TBD: Parse dt
+                float dt = 1.0;
+                time.SetTimeDelta(dt);
             }
 
-            virtual void Update( float dt ) {
-                time.Update( dt );
+            virtual void Update()
+            {
+                time.Update();
             }
 
             // id services
@@ -220,7 +230,6 @@ namespace Test {
             virtual bool Populate() override { return false; };
 
             virtual int  GetSimulationTimestep() const override { return 1; };
-            //virtual const IdmDateTime& GetSimulationTime() const = 0;
             virtual bool TimeToStop() override { return false; };
 
             virtual void RegisterNewNodeObserver( void* id, Kernel::ISimulation::callback_t observer ) override {};
@@ -512,9 +521,11 @@ static PyObject*
 updateFertility(PyObject* self, PyObject* args)
 {
     // TBD: Parse dt
-    nodes[0]->updateVitalDynamics( 1.0f );
+    float dt = 1.0;
+
+    nodes[0]->updateVitalDynamics( dt );
     nodes[0]->resetNodeStateCounters();
-    p_testParentSim->Update( 1.0f );
+    p_testParentSim->Update();
     Py_RETURN_NONE;
 }
 

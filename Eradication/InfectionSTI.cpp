@@ -36,28 +36,7 @@ namespace Kernel
     InfectionSTI::InfectionSTI() { }
     InfectionSTI::InfectionSTI(IIndividualHumanContext *context) : Infection(context) { }
 
-    float
-    InfectionSTI::GetInfectiousness()
-    const
-    {
-        // DJK TODO: use generic linear interpolation code instead of repeating here <ERAD-1877>
-        // DJK TODO: use search instead of linear <ERAD-1878>
-
-        // If in relationship, multiply this by co-infection flag of EITHER partner, but not twice.
-        //IRelationship * pRel = parent->GetRelationships();
-        // Do this every time, or once for all? Afraid of impact of premature attenuation on disease progress, etc.
-        // TBD: Nasty cast
-        float retInf = infectiousness;
-
-        LOG_DEBUG_F( "raw infectiousness = %f, modified = %f\n", float(infectiousness), (float)retInf );
-        //release_assert( retInf>0.0f );
-        return retInf;
-    }
-
-    void InfectionSTI::Update(
-        float dt,
-        ISusceptibilityContext* immunity
-    )
+    void InfectionSTI::Update(float dt, ISusceptibilityContext* immunity)
     {
         Infection::Update( dt, immunity );
     }
@@ -68,6 +47,5 @@ namespace Kernel
     {
         Infection::serialize( ar, obj );
         InfectionSTI& infection = *obj;
-        ///ar.labelElement("xxx") & infection.xxx;
     }
 }

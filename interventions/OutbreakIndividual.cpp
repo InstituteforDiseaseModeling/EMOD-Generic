@@ -43,7 +43,7 @@ namespace Kernel
         : clade(0)
         , genome(0)
         , ignoreImmunity( true )
-        , incubation_period_override(-1)
+        , incubation_period_override(-1.0f)
     {
         // Schema documentation
         initSimTypes( 11, "GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM" );
@@ -54,7 +54,7 @@ namespace Kernel
         initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
         initConfigTypeMap( "Genome", &genome, Genome_DESC_TEXT, 0, 16777215, 0, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,AIRBORNE_SIM,POLIO_SIM,TBHIV_SIM,STI_SIM,HIV_SIM,PY_SIM,DENGUE_SIM,MALARIA_SIM");
         initConfigTypeMap( "Ignore_Immunity", &ignoreImmunity, OB_Ignore_Immunity_DESC_TEXT, true );
-        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1, INT_MAX, -1);
+        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1.0f, FLT_MAX, -1.0f);
 
         // --------------------------------------------------------------
         // --- Don't call BaseIntervention::Configure() because we don't

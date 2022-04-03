@@ -298,12 +298,12 @@ namespace Kernel
 
     void InterventionConfig::serialize(IArchive& ar, InterventionConfig& config)
     {
-#if defined(WIN32)
         if ( ar.IsWriter() )
         {
             std::ostringstream string_stream;
             json::Writer::Write( config._json, string_stream );
-            ar & string_stream.str();
+            std::string tmp = string_stream.str();
+            ar & tmp;
         }
         else
         {
@@ -312,7 +312,6 @@ namespace Kernel
             std::istringstream string_stream( json );
             json::Reader::Read( config._json, string_stream );
         }
-#endif
     }
 
     IndividualInterventionConfig::IndividualInterventionConfig()

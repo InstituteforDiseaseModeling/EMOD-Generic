@@ -1176,7 +1176,7 @@ namespace Kernel
         return( GetRng()->SmartDraw( prob ) ); // local rng stops function from being const when it should
     }
 
-    void IndividualHuman::AcquireNewInfection( const IStrainIdentity *strain_ptr, int incubation_period_override )
+    void IndividualHuman::AcquireNewInfection( const IStrainIdentity *strain_ptr, float incubation_period_override )
     {
         StrainIdentity newStrainId;
         if( strain_ptr != nullptr )
@@ -1190,7 +1190,7 @@ namespace Kernel
             cumulativeInfs++;
             m_is_infected = true;
 
-            IInfection *newinf = createInfection( parent->GetNextInfectionSuid() );
+            IInfection* newinf = createInfection( parent->GetNextInfectionSuid() );
             newinf->SetParameters(&newStrainId, incubation_period_override);
             newinf->InitInfectionImmunology(susceptibility);
 
@@ -1198,14 +1198,6 @@ namespace Kernel
             infections.push_front(newinf);
             infectiousness += newinf->GetInfectiousness();
             ReportInfectionState(); // can specify different reporting in derived classes
-#if 0
-            // Trigger new infection event observers
-            IIndividualTriggeredInterventionConsumer * pITIC = nullptr;
-            if (s_OK == GetInterventionsContext()->QueryInterface(GET_IID(IIndividualTriggeredInterventionConsumer), (void**)&pITIC) )
-            {
-                pITIC->TriggerObservers( GetEventContext(), EventTrigger::NewInfection );
-            }
-#endif
         }
     }
 
@@ -1231,8 +1223,8 @@ namespace Kernel
         }
         float raw_inf = infectiousness;
         infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
-		LOG_VALID_F("Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f, weight=%f).\n",
-			GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), interventions->GetInterventionReducedTransmit(), m_mc_weight);
+        LOG_VALID_F("Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f, weight=%f).\n",
+            GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), interventions->GetInterventionReducedTransmit(), m_mc_weight);
     }
 
     bool IndividualHuman::InfectionExistsForThisStrain(IStrainIdentity* check_strain_id)

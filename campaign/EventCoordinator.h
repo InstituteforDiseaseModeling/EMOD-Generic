@@ -36,6 +36,7 @@ namespace Kernel
     {
         virtual void SetContextTo(ISimulationEventContext *isec) = 0;
         virtual void CheckStartDay( float campaignStartDay ) const = 0;
+        virtual void InitializeTiming( const IdmDateTime& ) = 0;
         virtual void AddNode( const suids::suid& suid) = 0;
         virtual void Update(float dt) = 0;
         virtual void UpdateNodes(float dt) = 0;

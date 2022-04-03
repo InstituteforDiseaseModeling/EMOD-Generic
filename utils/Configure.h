@@ -488,18 +488,10 @@ namespace Kernel
         void initConfigTypeMap(
             const char* paramName,
             NPKeyValue * pVariable,
-            const char* defaultDesc 
+            const char* defaultDesc
         );
 
-        /*void initConfigTypeMap(
-            const char* paramName,
-            EventTrigger * pVariable,
-            const char* defaultDesc,
-            const char* condition_key = nullptr, const char* condition_value = nullptr,
-            const std::map<std::string, std::string> * depends_list = nullptr
-        ); */
-        
-	template< typename T >
+        template< typename T >
         void EnforceParameterRange( const std::string& key, T value, json::QuickInterpreter& jsonObj )
         {
             T min = (T)jsonObj["min"].As<json::Number>();

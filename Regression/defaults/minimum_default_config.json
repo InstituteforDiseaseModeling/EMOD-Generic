@@ -1,7 +1,8 @@
 {
     "parameters": {
         "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
-        "Base_Infectivity": 0.3,
+        "Base_Infectivity_Constant": 0.3,
+        "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
         "Climate_Model": "CLIMATE_OFF",
         "Config_Name": "",
         "Custom_Coordinator_Events": [],
@@ -43,6 +44,7 @@
         "Maternal_Infection_Transmission_Probability": 0,
         "Migration_Model": "NO_MIGRATION",
         "Node_Grid_Size": 0.042,
+        "Num_Cores": 1,
         "Population_Density_Infectivity_Correction": "CONSTANT_INFECTIVITY",
         "Population_Scale_Type": "USE_INPUT_FILE",
         "Python_Inprocessing_Tsteps": [],

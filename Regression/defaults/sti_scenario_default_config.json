@@ -128,7 +128,8 @@
         "____________TRANSMISSION___________": {
             "Acquisition_Blocking_Immunity_Decay_Rate": 0.1,
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 60,
-            "Base_Infectivity": 3.5,
+            "Base_Infectivity_Constant": 3.5,
+            "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
             "Coital_Dilution_Factor_2_Partners": 1,
             "Coital_Dilution_Factor_3_Partners": 1,
             "Coital_Dilution_Factor_4_Plus_Partners": 1,

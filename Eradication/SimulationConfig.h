@@ -107,7 +107,6 @@ namespace Kernel
         bool heterogeneous_intranode_transmission_enabled;
 
         float Sim_Duration;
-        float Sim_Tstep;
         float starttime;
         float node_grid_size;
 

@@ -30,7 +30,7 @@ namespace Kernel
     class StrainIdentity;
     struct IInfectionAcquirable : ISupports
     {
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) = 0;
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
 
         virtual ~IInfectionAcquirable() {}
     };

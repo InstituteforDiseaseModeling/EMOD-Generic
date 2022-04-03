@@ -504,13 +504,30 @@ namespace Kernel
     {
     }
 
+    std::string StrainAwareTransmissionGroups::GenomePopulationImpl::GetName( void ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
+    }
+
     int StrainAwareTransmissionGroups::GenomePopulationImpl::GetCladeID( void ) const
     {
         return cladeId;
     }
 
-    // This function is stupid because only needed so I can make IStrainIdentity a base class of IContagionPopulation
     int StrainAwareTransmissionGroups::GenomePopulationImpl::GetGeneticID( void ) const
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
+    }
+
+    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetCladeID( int cladeID )
+    {
+        // Never valid code path, have to implement this method due to interface.
+        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
+    }
+
+    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetGeneticID( int geneticID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );

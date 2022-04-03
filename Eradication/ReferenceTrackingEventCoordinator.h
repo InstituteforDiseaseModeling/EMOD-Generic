@@ -28,6 +28,7 @@ namespace Kernel
         virtual void Update(float dt) override;
         virtual void preDistribute() override;
         virtual void CheckStartDay( float campaignStartDay ) const override;
+        virtual void InitializeTiming( const IdmDateTime& ) override;
 
     protected:
         virtual void InitializeRepetitions( const Configuration* inputJson ) override;
@@ -35,6 +36,7 @@ namespace Kernel
 
         InterpolatedValueMap year2ValueMap;
         float end_year;
+        float update_period;
         std::vector< suids::suid_data_t > haves;
     };
 }

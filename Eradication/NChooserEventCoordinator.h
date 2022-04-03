@@ -153,6 +153,7 @@ namespace Kernel
 
         virtual void ScaleTargets( float popScaleFactor );
         virtual void CheckStartDay( float campaignStartDay ) const;
+        virtual void InitializeTiming( const IdmDateTime& );
 
     protected:
         virtual void AddTimeConfiguration();
@@ -203,6 +204,7 @@ namespace Kernel
         virtual void ScaleTargets( float popScaleFactor );
 
         virtual void CheckStartDay( float campaignStartDay ) const;
+        virtual void InitializeTiming( const IdmDateTime& );
 
     protected:
         // JsonConfigurableCollection methods
@@ -253,6 +255,7 @@ namespace Kernel
         // IEventCoordinator methods
         virtual void SetContextTo(ISimulationEventContext *isec) override;
         virtual void CheckStartDay( float campaignStartDay ) const override;
+        virtual void InitializeTiming( const IdmDateTime& ) override;
         virtual void AddNode( const suids::suid& suid) override;
         virtual void Update(float dt) override;
         virtual void UpdateNodes(float dt) override;

@@ -555,6 +555,12 @@ namespace Kernel
         }
     }
 
+    void IncidenceEventCoordinator::CheckStartDay( float campaignStartDay ) const
+    { }
+
+    void IncidenceEventCoordinator::InitializeTiming( const IdmDateTime& currentTime)
+    { }
+
     void IncidenceEventCoordinator::SetContextTo( ISimulationEventContext *isec )
     {
         m_Parent = isec;

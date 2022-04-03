@@ -202,7 +202,7 @@ namespace Kernel
         // Handle return value
         if(PyUnicode_Check(retValue))
         {
-            char* retValuePtr = PyUnicode_AsUTF8(retValue);
+            const char* retValuePtr = PyUnicode_AsUTF8(retValue);
             release_assert( retValuePtr );
             returnString.assign( retValuePtr );
         }

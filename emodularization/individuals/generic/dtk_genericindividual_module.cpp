@@ -474,7 +474,6 @@ getInfectiousness(PyObject* self, PyObject* args)
     return Py_BuildValue("f", infectivity );
 }
 
-
 // Supporting GetSchema here
 //
 // Simulation class is a friend which is necessary for calling Configure

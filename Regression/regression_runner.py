@@ -283,7 +283,6 @@ class MyRegressionRunner(object):
 
         for dll_subdir in dll_dirs:
             suffix = "*.dll" if os.name == "nt" and self.params.linux == False else "*.so"
-            #print( "Using suffix: " + str(suffix) )
             dlls = glob.glob(os.path.join( os.path.join(emodule_dir, dll_subdir), suffix )) 
             for dll in dlls:
                 print( "Considering dll: " + dll )
@@ -310,7 +309,6 @@ class MyRegressionRunner(object):
                         ru.copy(dll, os.path.join(target_dir, os.path.basename(dll)))
 
                     dll_path = os.path.join(target_dir, os.path.basename(dll))
-                    #print( "dll_path = " + dll_path )
                     # dll_path has to be converted to /mnt for --linux
                     if self.params.linux:
                         dll_path = self.transform_path( dll_path )

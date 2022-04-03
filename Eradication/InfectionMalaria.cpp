@@ -161,7 +161,7 @@ namespace Kernel
     {
     }
 
-    void InfectionMalaria::SetParameters( IStrainIdentity *_infstrain, int incubation_period_override )
+    void InfectionMalaria::SetParameters( IStrainIdentity *_infstrain, float incubation_period_override )
     {
         // Set up infection strain
         CreateInfectionStrain(_infstrain);

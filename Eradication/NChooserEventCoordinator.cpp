@@ -596,6 +596,9 @@ namespace Kernel
         }
     }
 
+    void TargetedDistribution::InitializeTiming( const IdmDateTime& currentTime )
+    { }
+
     // ------------------------------------------------------------------------
     // --- TargetedDistributionList
     // ------------------------------------------------------------------------
@@ -692,6 +695,14 @@ namespace Kernel
         for( auto p_td : m_Collection )
         {
             p_td->CheckStartDay( campaignStartDay );
+        }
+    }
+
+    void TargetedDistributionList::InitializeTiming( const IdmDateTime& currentTime )
+    {
+        for( auto p_td : m_Collection )
+        {
+            p_td->InitializeTiming( currentTime );
         }
     }
 
@@ -800,6 +811,10 @@ namespace Kernel
         m_TargetedDistributionList.CheckStartDay( campaignStartDay );
     }
 
+    void NChooserEventCoordinator::InitializeTiming( const IdmDateTime& currentTime )
+    {
+        m_TargetedDistributionList.InitializeTiming( currentTime );
+    }
 
     void NChooserEventCoordinator::AddNode( const suids::suid& node_suid )
     {

@@ -151,6 +151,12 @@ namespace Kernel
         return retValue;
     }
 
+    void CommunityHealthWorkerEventCoordinator::CheckStartDay( float campaignStartDay ) const
+    { }
+
+    void CommunityHealthWorkerEventCoordinator::InitializeTiming( const IdmDateTime& currentTime)
+    { }
+
     void CommunityHealthWorkerEventCoordinator::SetContextTo( ISimulationEventContext *isec )
     {
         m_Parent = isec;

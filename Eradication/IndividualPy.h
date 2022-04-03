@@ -45,7 +45,7 @@ namespace Kernel
         virtual void UpdateInfectiousness(float dt);
         virtual void Update(float currenttime, float dt);
         virtual Infection* createInfection(suids::suid _suid);
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1);
+        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f );
         virtual HumanStateChange GetStateChange() const;
 
         std::string processPrePatent( float dt );

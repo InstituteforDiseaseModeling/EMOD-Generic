@@ -235,7 +235,9 @@ int MPIInitWrapper( int argc, char* argv[])
             {
                 EnvPtr->Log->Flush();
             }
+#if defined(_WIN32)
             p_mpi->Abort(-1);
+#endif
         }
 
         p_mpi->Finalize();
