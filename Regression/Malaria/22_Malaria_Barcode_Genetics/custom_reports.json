@@ -107,10 +107,8 @@
                 "Nodeset_Config": {
                   "class": "NodeSetAll"
                 },
-                "Event_Trigger_List": [
-                  "NewInfection",
-                  "Received_Treatment",
-                  "Received_RCD_Drugs"
+                "Event_Trigger_List": [ 
+                  "NewInfection"
                 ],
                 "Report_Description": ""
               }

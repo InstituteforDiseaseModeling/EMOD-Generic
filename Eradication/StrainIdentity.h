@@ -19,8 +19,8 @@ namespace Kernel
     {
     public:
         StrainIdentity(void);
-        StrainIdentity(int initial_clade, int initial_genome, RANDOMBASE * prng = nullptr );
-        StrainIdentity( const IStrainIdentity *copy );
+        StrainIdentity(int initial_clade, int initial_genome);
+        StrainIdentity(const IStrainIdentity *copy);
         virtual ~StrainIdentity(void);
 
         // IStrainIdentity methods
@@ -28,7 +28,7 @@ namespace Kernel
         virtual int  GetGeneticID(void) const override;
         virtual void SetCladeID(int in_cladeID) override;
         virtual void SetGeneticID(int in_geneticID) override;
-        virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const;
+        virtual void ResolveInfectingStrain(IStrainIdentity* strainId) const;
 
         static IArchive& serialize(IArchive&, StrainIdentity*&);
         static IArchive& serialize(IArchive&, StrainIdentity&);

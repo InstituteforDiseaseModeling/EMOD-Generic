@@ -31,6 +31,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "StrainIdentity.h"
 #include "INodeContext.h"
 #include "DistributionFactory.h"
+#include "TBContexts.h"
 
 SETUP_LOGGING( "InfectionTB" )
 
@@ -69,12 +70,13 @@ namespace Kernel
     HANDLE_INTERFACE(IInfectionTB)
     END_QUERY_INTERFACE_BODY(InfectionTB)
 
-    bool
-        InfectionTBConfig::Configure(
-            const Configuration * config
-        )
+    bool InfectionTBConfig::Configure(const Configuration * config)
     {
         LOG_DEBUG("Configure\n");
+
+        // TB infections use Genome to represent drug resistance with the TBInfectionDrugResistance ENUM type.
+        InfectionConfig::number_genomes  = 2;
+
         initConfigTypeMap("TB_Latent_Cure_Rate", &TB_latent_cure_rate, TB_Latent_Cure_Rate_DESC_TEXT, 0.0f, 1.0f, 0.0005479f); // tb
         initConfigTypeMap("TB_Fast_Progressor_Rate", &TB_fast_progressor_rate, TB_Fast_Progressor_Rate_DESC_TEXT, 0.0f, 1.0f, 0.000041096f); // tb
         initConfigTypeMap("TB_Slow_Progressor_Rate", &TB_slow_progressor_rate, TB_Slow_Progressor_Rate_DESC_TEXT, -1.0f, 1.0f, 0.000002054f); // tb, -1 only to turn on AgeDepSlowProgression
@@ -324,7 +326,7 @@ namespace Kernel
         LOG_DEBUG( "Initializing a latent infection.\n" ); 
         StateChange = InfectionStateChange::TBLatent; 
 
-        if(Environment::getInstance()->Log->CheckLogLevel(Logger::DEBUG, "EEL"))
+        /*if(Environment::getInstance()->Log->CheckLogLevel(Logger::DEBUG, "EEL"))
         {
             std::ostringstream msg;
             msg << "t=" << ((INodeContext*)((IndividualHuman*)parent)->GetParent())->GetTime().time;
@@ -333,7 +335,7 @@ namespace Kernel
             msg << ",inf_id=-1";;
             msg << ",inf_mdr=" << IsMDR();
             Environment::getInstance()->Log->Log(Logger::DEBUG, "EEL", "%s\n", msg.str().c_str()  );
-        }
+        }*/
         ISusceptibilityTB* immunityTB = nullptr;
         if( immunity->QueryInterface( GET_IID( ISusceptibilityTB ), (void**)&immunityTB ) != s_OK )
         {
@@ -581,14 +583,14 @@ namespace Kernel
 
             case DistributionFunction::GAUSSIAN_DISTRIBUTION:
             {
-                if( total_rate != 0)
+                if( total_rate == 0 )
                 {
-                    InfectionTBConfig::p_infectious_timer_distribution->SetParameters(( log(2.0f) / total_rate ), InfectionTBConfig::TB_active_period_std_dev, 0.0);
-                    infectious_timer = InfectionTBConfig::p_infectious_timer_distribution->Calculate(parent->GetRng());
+                    infectious_timer = FLT_MAX; // rate = 0, mean inf, => duration = inf-ish
                 }
                 else
                 {
-                    infectious_timer = FLT_MAX;
+                    InfectionTBConfig::p_infectious_timer_distribution->SetParameters(( log(2.0f) / total_rate ), InfectionTBConfig::TB_active_period_std_dev, 0.0);
+                    infectious_timer = InfectionTBConfig::p_infectious_timer_distribution->Calculate(parent->GetRng()); 
                 }
                 break;
             }
@@ -735,7 +737,7 @@ namespace Kernel
 
                     infectiousness *= InfectionTBConfig::TB_MDR_Fitness_Multiplier;     //fitness penalty for MDR
                     
-                    if(Environment::getInstance()->Log->CheckLogLevel(Logger::DEBUG, "EEL"))
+                    /*if(Environment::getInstance()->Log->CheckLogLevel(Logger::DEBUG, "EEL"))
                     {
                         std::ostringstream msg;
                         msg << "t=" << ((INodeContext*)((IndividualHuman*)parent)->GetParent())->GetTime().time;
@@ -743,7 +745,7 @@ namespace Kernel
                         msg << ",inf_id=-1";
                         msg << ",ev=MDR";
                         Environment::getInstance()->Log->Log(Logger::DEBUG, "EEL", "%s\n", msg.str().c_str()  );
-                    }
+                    }*/
                 }
             }
         }
@@ -964,6 +966,36 @@ namespace Kernel
     { 
         return m_shows_symptoms; 
     }    
+
+    TBInfectionState::Enum InfectionTB::GetInfectionState() const
+    {
+        if( IsActive() )
+        {
+            if( IsSymptomatic() )
+            {
+                if( IsSmearPositive() )
+                {
+                    return TBInfectionState::ActiveSymptomaticSmearPositive;
+                }
+                else if( IsExtrapulmonary() )
+                {
+                    return TBInfectionState::ActiveSymptomaticExtraPulmonary;
+                }
+                else
+                {
+                    return TBInfectionState::ActiveSymptomaticSmearNegative;
+                }
+            }
+            else
+            {
+                return TBInfectionState::ActivePreSymptomatic;
+            }
+        }
+        else
+        {
+            return TBInfectionState::Latent;
+        }
+    }
 
     float InfectionTB::GetLatentCureRate() const
     {

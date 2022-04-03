@@ -28,6 +28,11 @@ SETUP_LOGGING( "IndividualVector" )
 
 namespace Kernel
 {
+    TransmissionGroupMembership_t IndividualHumanVector::human_indoor;
+    TransmissionGroupMembership_t IndividualHumanVector::human_outdoor;
+    TransmissionGroupMembership_t IndividualHumanVector::vector_indoor;
+    TransmissionGroupMembership_t IndividualHumanVector::vector_outdoor;
+
     BEGIN_QUERY_INTERFACE_DERIVED(IndividualHumanVector, IndividualHuman)
         HANDLE_INTERFACE(IIndividualHumanVectorContext)
     END_QUERY_INTERFACE_DERIVED(IndividualHumanVector, IndividualHuman)
@@ -70,6 +75,10 @@ namespace Kernel
     {
         SusceptibilityVectorConfig immunity_config;
         immunity_config.Configure( config );
+        InfectionVectorConfig infection_config;
+        infection_config.Configure( config );
+        //IndividualHumanVectorConfig individual_config;
+        //individual_config.Configure( config );
     }
 
     void IndividualHumanVector::PropagateContextToDependents()
@@ -245,8 +254,8 @@ namespace Kernel
                          host_vector_weight,
                          infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit()
                        );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit(),  NodeVector::human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockOutdoorVectorTransmit(), NodeVector::human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
         }
     }
 

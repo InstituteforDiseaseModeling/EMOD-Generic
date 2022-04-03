@@ -46,11 +46,8 @@ namespace Kernel
     bool MaleCircumcision::Configure( const Configuration * inputJson )
     {
         initConfigTypeMap( "Circumcision_Reduced_Acquire", &m_ReducedAcquire, Male_Circumcision_Reduced_Acquire_DESC_TEXT, 0.0f, 1.0f, 0.60f );
-        initConfigTypeMap( "Apply_If_Higher_Reduced_Acquire", &m_ApplyIfHigherReducedAcquire, Male_Circumcision_Apply_If_Higher_Reduced_Acquire_DESC_TEXT, false );
-
-        initConfigTypeMap( "Distributed_Event_Trigger",
-                           &m_DistrbutedEventTrigger,
-                           Male_Circumcision_Distributed_Event_Trigger_DESC_TEXT );
+        initConfigTypeMap( "Apply_If_Higher_Reduced_Acquire", &m_ApplyIfHigherReducedAcquire, Male_Circumcision_Apply_If_Higher_Reduced_Acquire_DESC_TEXT, false ); 
+        initConfig( "Distributed_Event_Trigger", m_DistrbutedEventTrigger, inputJson, MetadataDescriptor::Enum("Distributed_Event_Trigger", Male_Circumcision_Distributed_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
 
         return BaseIntervention::Configure( inputJson );
     }
@@ -116,7 +113,7 @@ namespace Kernel
         // ----------------------------------------------------------------------------------
         // --- If the user defines a trigger, broadcast that the circumcision was distributed
         // ----------------------------------------------------------------------------------
-        if( ret && !m_DistrbutedEventTrigger.IsUninitialized() )
+        if( ret && m_DistrbutedEventTrigger != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = context->GetParent()->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( context->GetParent()->GetEventContext(), m_DistrbutedEventTrigger );
@@ -171,6 +168,6 @@ namespace Kernel
         MaleCircumcision& mc = *obj;
         ar.labelElement("m_ReducedAcquire"             ) & mc.m_ReducedAcquire;
         ar.labelElement("m_ApplyIfHigherReducedAcquire") & mc.m_ApplyIfHigherReducedAcquire;
-        ar.labelElement("m_DistrbutedEventTrigger"     ) & mc.m_DistrbutedEventTrigger;
+        ar.labelElement("m_DistrbutedEventTrigger"     ) & (uint32_t&)mc.m_DistrbutedEventTrigger;
     }
 }

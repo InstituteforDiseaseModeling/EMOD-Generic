@@ -29,7 +29,6 @@ namespace Kernel
 {
     struct IIndividualHumanContext;
     struct IIndividualHumanEventContext;
-    class EventTrigger;
 
     struct IDMAPI ICampaignCostObserver : ISupports
     {

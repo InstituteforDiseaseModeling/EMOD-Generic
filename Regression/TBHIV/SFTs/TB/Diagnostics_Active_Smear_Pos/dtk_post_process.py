@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-
-import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as dpp_adhoc
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 import os
 import csv
 import math
@@ -175,9 +177,6 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
         default = []
         total = []
         failed_timestep = []
-
-        point_fail = 0
-        point_tolerance = 0.3
         if not len(report_dict):
             success = False
             outfile.write(sft.sft_no_test_data)
@@ -191,7 +190,6 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
             outfile.write("Run Chi-squared test at time step {}.\n".format(t))
             result = sft.test_multinomial(dist=value_to_test, proportions=proportions, report_file=outfile)
             if not result:
-                point_fail += 1
                 failed_timestep.append(t)
                 outfile.write(
                     "Warning: At timestep {0}, the Chi-squared test failed.\n".format(t))
@@ -202,13 +200,6 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
         else:
             outfile.write(
                 "GOOD: the Chi-squared test failed {} times, less than 5% of the total timestep.\n".format(len(failed_timestep)))
-        outfile.write("BIG TEST: Testing the total proportion across the simulation\n")
-        total_result = sft.test_multinomial(dist=[sum(positive), sum(negative), sum(default)],
-                                                proportions=proportions,
-                                                report_file=outfile)
-        if not total_result:
-            success=False
-            outfile.write("FAIL: the total chi-square test fails.\n")
 
         sft.plot_data(positive, dist2=total, label1="TBTestPositive", label2="Total tested",
                                    title="Test positive vs. total, positive proportion = {}".format(sensitivity * treatment_fraction),
@@ -232,6 +223,7 @@ def application( output_folder="output", stdout_filename="test.txt", insetchart_
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
                  debug=False):
+    dpp_adhoc.application( output_folder )
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

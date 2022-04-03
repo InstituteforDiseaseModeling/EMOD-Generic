@@ -32,6 +32,7 @@
         "____________REPORTING___________": "",
         "____________SIMULATION___________": "",
         "____________TRANSMISSION___________": "",
-        "x_Base_Population": 1e-05
+        "x_Base_Population": 1e-05,
+        "Python_Script_Path": "LOCAL"
     }
 }

@@ -1,7 +1,9 @@
 {
     "Campaign_Name": "1a_MaleCircumcision_at_2020",
     "Default_Campaign_Path": "defaults/hiv_default_campaign.json",
-    "Events": [
+    "Use_Defaults": 1,
+    "Events":
+    [
         {
             "BEGIN": "MALE CIRCUMCISION FOR 20% OF UNINFECTED ON JAN 1, 2020",
             "END": "MALE CIRCUMCISION FOR 20% OF UNINFECTED ON JAN 1, 2020",
@@ -14,7 +16,6 @@
                     "Event_Or_Config": "Event",
                     "Negative_Diagnosis_Event": "HIVNeedsMaleCircumcision",
                     "New_Property_Value": "InterventionStatus:None",
-                    "Positive_Diagnosis_Event": "",
                     "class": "HIVSimpleDiagnostic"
                 },
                 "Target_Demographic": "ExplicitGender",
@@ -1682,6 +1683,5 @@
             "Start_Year": 1990,
             "class": "CampaignEventByYear"
         }
-    ],
-    "Use_Defaults": 1
+    ]
 }

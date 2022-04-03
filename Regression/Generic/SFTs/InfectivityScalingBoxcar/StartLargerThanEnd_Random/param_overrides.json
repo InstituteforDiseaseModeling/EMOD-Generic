@@ -23,6 +23,7 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingBoxcar/StartLargerThanEnd_Random",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 1095
         },

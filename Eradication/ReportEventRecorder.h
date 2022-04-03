@@ -15,13 +15,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class EventTriggerFactory;
-
     class ReportEventRecorder : public BaseReportEventRecorder< IIndividualEventBroadcaster,
                                                                 IIndividualEventObserver,
-                                                                IIndividualHumanEventContext,
-                                                                EventTrigger,
-                                                                EventTriggerFactory >
+                                                                IIndividualHumanEventContext >
     {
     public:
         GET_SCHEMA_STATIC_WRAPPER( ReportEventRecorder )
@@ -46,8 +42,28 @@ namespace Kernel
 
     protected:
         virtual void ConfigureOther( const Configuration* inputJson ) override;
-        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
         virtual float GetTime( IIndividualHumanEventContext* pEntity ) const override;
+        //virtual float GetTime( const IdmDateTime& rDateTime ) const;
+
+        // -----------------------------
+        // --- BaseTextReportEvents
+        // -----------------------------
+#if 0
+        virtual bool Configure( const Configuration* inputJson );
+        virtual std::string GetHeader() const ;
+        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger);
+
+    protected:
+        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger );
+        virtual std::string GetTimeHeader() const;
+        virtual float GetTime( const IdmDateTime& rDateTime ) const;
+#endif
+        //virtual bool Configure( const Configuration* inputJson );
+        //virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger);
+
+    protected:
+        //virtual std::string GetTimeHeader() const;
 
         jsonConfigurable::tDynamicStringSet properties_to_report;
     };

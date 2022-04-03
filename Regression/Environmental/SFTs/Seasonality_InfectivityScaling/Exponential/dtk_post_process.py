@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -182,15 +182,17 @@ def create_report_file(param_obj, stdout_df, property_obj, property_df, report_n
             exp_delay = param_obj[ConfigKeys.Infectivity_Exponential_Delay]
             exp_baseline = param_obj[ConfigKeys.Infectivity_Exponential_Baseline]
             exp_rate = param_obj[ConfigKeys.Infectivity_Exponential_Rate]
-            if t < exp_delay:
-                exponential_multiplier = exp_baseline
-            else:
-                exponential_multiplier = 1.0 - ((1.0 - exp_baseline) * math.exp((exp_delay - t) / exp_rate))
-            # TODO: change to the following equation when changes in Generic_Ongoing are merged
-            # if t + 1 < exp_delay:
+            # comment out old way to test
+            # if t < exp_delay:
             #     exponential_multiplier = exp_baseline
             # else:
-            #     exponential_multiplier = 1.0 - ((1.0 - exp_baseline) * math.exp((exp_delay - t - 1) * exp_rate))
+            #     exponential_multiplier = 1.0 - ((1.0 - exp_baseline) * math.exp((exp_delay - t) / exp_rate))
+
+            # new implementation in G-O
+            if t + 1 < exp_delay:
+                exponential_multiplier = exp_baseline
+            else:
+                exponential_multiplier = 1.0 - ((1.0 - exp_baseline) * math.exp((exp_delay - t - 1) * exp_rate))
 
             expected_contagion_e = param_obj[ConfigKeys.Base_Infectivity] * \
                                    expected_amplification * \

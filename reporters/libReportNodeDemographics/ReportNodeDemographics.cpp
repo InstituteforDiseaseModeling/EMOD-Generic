@@ -7,7 +7,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-
 #include "stdafx.h"
 
 #include "ReportNodeDemographics.h"
@@ -69,6 +68,8 @@ namespace Kernel
 
     bool ReportNodeDemographics::Configure( const Configuration * inputJson )
     {
+        auto stack = JsonConfigurable::_useDefaults;
+        JsonConfigurable::_useDefaults = true;
         initConfigTypeMap( "IP_Key_To_Collect", &m_IPKeyToCollect, "Name of the key to add a column for.", "" );
         if( inputJson->Exist("Age_Bins") )
         {
@@ -83,9 +84,7 @@ namespace Kernel
         initConfigTypeMap( "Stratify_By_Gender", &m_StratifyByGender, "1 (default) implies stratify by gender, 0 implies do not", true );
         bool ret = JsonConfigurable::Configure( inputJson );
         
-        if( ret )
-        {
-        }
+        JsonConfigurable::_useDefaults = stack;
         return ret;
     }
 

@@ -92,6 +92,7 @@
         "Property_Report_Start_Year": 1875.0,
         "Property_Report_Stop_Year": 2100.0,
         "Python_Script_Path": "LOCAL",
+        "Python_Inprocessing_Tsteps": [],
         "Rainfall_Filename": "Namawala_single_node_rainfall_daily.bin",
         "Rainfall_Scale_Factor": 1,
         "Relative_Humidity_Filename": "Namawala_single_node_relative_humidity_daily.bin",

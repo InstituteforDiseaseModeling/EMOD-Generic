@@ -147,9 +147,10 @@ namespace Kernel
                            Report_HIV_ByAgeAndGender_Has_Intervention_With_Name_DESC_TEXT,
                            "" );
 
-        initConfigTypeMap( "Report_HIV_ByAgeAndGender_Event_Counter_List",
-                           &data_event_list,
-                           Report_HIV_ByAgeAndGender_Event_Counter_List_DESC_TEXT );
+        initVectorConfig( "Report_HIV_ByAgeAndGender_Event_Counter_List",
+                          data_event_list,
+                          inputJson,
+                          MetadataDescriptor::Enum("Report_HIV_ByAgeAndGender_Event_Counter_List", Report_HIV_ByAgeAndGender_Event_Counter_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)));
 
         initConfigTypeMap( "Report_HIV_ByAgeAndGender_Add_Relationships",
                            &data_has_relationships,
@@ -444,7 +445,7 @@ namespace Kernel
 
         for( auto ev : data_event_list )
         {
-            header << "," << ev.ToString();
+            header << "," << EventTrigger::pairs::lookup_key( ev );
         }
 
         if( data_has_relationships )
@@ -570,7 +571,7 @@ namespace Kernel
 
             for( auto ev : data_event_list )
             {
-                GetOutputStream() << "," << data.event_counter_map[ ev.ToString() ];
+                GetOutputStream() << "," << data.event_counter_map[ EventTrigger::pairs::lookup_key( ev ) ];
             }
 
             if( data_has_relationships )
@@ -787,11 +788,11 @@ namespace Kernel
         data.num_partners_lifetime_sum += mc_weight * sti_individual->GetLifetimeRelationshipCount();
     }
 
-    bool ReportHIVByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool ReportHIVByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         LOG_DEBUG_F( "Individual %d experienced event %s\n",
                      context->GetSuid().data,
-                     trigger.c_str()
+                     EventTrigger::pairs::lookup_key( trigger )
                    );
 
         uint64_t map_key = GetDataMapKey( context );
@@ -838,7 +839,7 @@ namespace Kernel
         }
         else if( std::find( data_event_list.begin(), data_event_list.end(), trigger ) != data_event_list.end() )
         {
-             data.event_counter_map[ trigger.ToString()] += mc_weight;
+             data.event_counter_map[ EventTrigger::pairs::lookup_key( trigger ) ] += mc_weight;
         }
 
         return true;

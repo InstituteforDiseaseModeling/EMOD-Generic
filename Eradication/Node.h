@@ -27,6 +27,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Serialization.h"
 #include "NodeProperties.h"
 #include "INodeContext.h"
+#include "StrainIdentity.h"
 
 class Report;
 class ReportVector;
@@ -63,16 +64,15 @@ namespace Kernel
         Node(); // constructor for serialization use
         virtual ~Node();
 
-
         // INodeContext
         virtual void PreUpdate();
         virtual void Update(float dt) override;
         virtual ISimulationContext* GetParent() override;
         virtual suids::suid   GetSuid() const override;
-        virtual suids::suid   GetNextInfectionSuid() override;
+        virtual suids::suid   GetNextInfectionSuid() override; 
         virtual RANDOMBASE* GetRng() override;
-        virtual void SetRng( RANDOMBASE* prng ) override;
-        virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger>& rTriggerList ) override;
+        virtual void SetRng( RANDOMBASE* prng ) override; 
+        virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override;
 
 
         virtual IMigrationInfo*   GetMigrationInfo() override;
@@ -80,7 +80,6 @@ namespace Kernel
         virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const override;
         virtual NPKeyValueContainer& GetNodeProperties() override;
 
-        virtual INodeEventContext* GetEventContext() override;
 
         // Migration
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
@@ -88,6 +87,12 @@ namespace Kernel
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) override;
         virtual void SortHumans() override;
+        virtual const std::vector<IIndividualHuman*>& GetHumans() const override { return individualHumans; }
+
+        // Strain tracking
+        virtual const std::map<std::string, int>&                 GetStrainClades()   const override { return strain_map_clade;   }
+        virtual const std::map<std::string, int>&                 GetStrainGenomes()  const override { return strain_map_genome;  }
+        virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const override { return strain_map_data;    }
 
         // Initialization
         virtual void SetContextTo(ISimulationContext* context) override;
@@ -100,8 +105,25 @@ namespace Kernel
         bool IsInPolygon( const json::Array &poly );
         bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist );
 
+#if 0
+        // Reporting
+        virtual       IdmDateTime         GetTime()                       const override { return parent->GetSimulationTime(); }
+        virtual       float               GetInfected()                   const override { return Infected; }
+        virtual       float               GetStatPop()                    const override { return statPop; }
+        virtual       float               GetBirths()                     const override { return Births; }
+        virtual       float               GetCampaignCost()               const override { return Campaign_Cost; }
+        virtual       float               GetInfectivity()                const override { return mInfectivity; }
+        virtual       float               GetInfectionRate()              const override { return infectionrate; }
+        virtual       float               GetSusceptDynamicScaling()      const override { return susceptibility_dynamic_scaling; }
+        virtual const Climate*            GetLocalWeather()               const override { return localWeather; }
+        virtual       long int            GetPossibleMothers()            const override { return Possible_Mothers; }
+        virtual       float               GetMeanAgeInfection()           const override { return mean_age_infection; }
+#endif
+        
         // Reporting to higher levels (intermediate form)
         // Possible TODO: refactor into common interfaces if there is demand
+        virtual       INodeEventContext*  GetEventContext()                     override;
+        virtual       ExternalNodeId_t    GetExternalID() const override;
         virtual const IdmDateTime& GetTime()     const override;
         virtual float GetInfected()              const override;
         virtual float GetSymptomatic()           const override;
@@ -117,10 +139,9 @@ namespace Kernel
 
         virtual float GetMeanAgeInfection()      const override;
         virtual float GetBasePopulationScaleFactor() const override;
+
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override;
 
-        // This method will ONLY be used for spatial reporting by input node ID, don't use it elsewhere!
-        virtual ExternalNodeId_t GetExternalID() const;
 
         // Heterogeneous intra-node transmission
         virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) override;
@@ -142,12 +163,13 @@ namespace Kernel
         virtual float GetTotalContagion( void ) override;
         virtual std::map< std::string, float > GetContagionByRoute() const;
         virtual const RouteList_t& GetTransmissionRoutes() const override;
-        virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override;
 
         //Methods for implementing time dependence in various quantities; infectivity, birth rate, migration rate
-        virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase) const override;
-        virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time) const override;
-        virtual float getExponentialCorrection(float baseline, float rate, float delay);
+        virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time)  const;
+        virtual float getClimateCorrection()                                                                       const;
+        virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase)                  const;
+
+        virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override;
 
         // These methods are not const because they will extract the value from the demographics
         // if it has not been done yet.
@@ -173,6 +195,7 @@ namespace Kernel
         virtual void ManageFamilyTrip( float currentTime, float dt );
 
     protected:
+        float area;
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
@@ -186,19 +209,18 @@ namespace Kernel
         NodeDemographicsDistribution* MortalityDistributionFemale;
         NodeDemographicsDistribution* AgeDistribution;
 
-    private:
-
         // Do not access these directly but use the access methods above.
         float _latitude;
         float _longitude;
+
+        // Standard distributions for SIMPLE initialization
+        IDistribution* distribution_age;
         IDistribution* distribution_migration;
         IDistribution* distribution_demographic_risk;
         IDistribution* distribution_susceptibility;
 
-    protected:
         // Enum type name                            Enum variable name                         Name in config.json
         IndSamplingType::Enum                        ind_sampling_type;                         // Individual_Sampling_Type
-        PopulationDensityInfectivityCorrection::Enum population_density_infectivity_correction; // Population_Density_Infectivity_Correction
         DistributionType::Enum                       age_initialization_distribution_type;      // Age_Initialization_Distribution_Type
         PopulationScaling::Enum                      population_scaling;                        // POPULATION_SCALING
         float susceptibility_dynamic_scaling;
@@ -234,11 +256,34 @@ namespace Kernel
         ExternalNodeId_t externalId; // DON'T USE THIS EXCEPT FOR INPUT/OUTPUT PURPOSES!
         NPKeyValueContainer node_properties;
 
+        // Infectivity modifications
+        bool  enable_infectivity_reservoir;
+        bool  enable_infectivity_scaling;
+        bool  enable_infectivity_scaling_boxcar;
+        bool  enable_infectivity_scaling_climate;
+        bool  enable_infectivity_scaling_density;
+        bool  enable_infectivity_scaling_exponential;
+        bool  enable_infectivity_scaling_sinusoid;
+
+        float infectivity_boxcar_amplitude;
+        float infectivity_boxcar_start_time;
+        float infectivity_boxcar_end_time;
+        float infectivity_exponential_baseline;
+        float infectivity_exponential_rate;
+        float infectivity_exponential_delay;
+        float infectivity_multiplier;
+        float infectivity_population_density_halfmax;
+        float infectivity_reservoir_end_time;
+        float infectivity_reservoir_size;
+        float infectivity_reservoir_start_time;
+        float infectivity_sinusoidal_amplitude;
+        float infectivity_sinusoidal_phase;
+
         // Event handling
         friend class NodeEventContextHost;
         friend class Simulation; // so migration can call configureAndAdd?????
         NodeEventContextHost *event_context_host;
-        std::vector<EventTrigger> events_from_other_nodes ;
+        std::vector<EventTrigger::Enum> events_from_other_nodes ;
 
         //  Counters (some for reporting, others also for internal calculations)
         float statPop;
@@ -263,6 +308,11 @@ namespace Kernel
         float infectionrate; // TODO: this looks like its only a reporting counter now and possibly not accurately updated in all cases
         float mInfectivity;
 
+        // Reporting container for strain tracking
+        std::map<std::string, int>                  strain_map_clade;
+        std::map<std::string, int>                  strain_map_genome;
+        std::map<std::string, std::vector<float>>   strain_map_data;
+
         ISimulationContext *parent;     // Access back to simulation methods
         ISimulation* parent_sim; //reduce access to RNG
 
@@ -281,22 +331,21 @@ namespace Kernel
         float rel_sample_rate_immune;
         float immune_threshold_for_downsampling;
         float prob_maternal_infection_transmission;
-        float population_density_c50;
         float population_scaling_factor;
         bool vital_dynamics;
         bool enable_natural_mortality;
         bool enable_maternal_infection_transmission;
         bool enable_initial_prevalence;
-        int  init_prev_clade;
-        int  init_prev_genome;
-        bool enable_infectivity_reservoir;
+
+        std::vector<float> init_prev_fraction;
+        std::vector<int>   init_prev_clade;
+        std::vector<int>   init_prev_genome;
+
         bool vital_birth;
         VitalBirthDependence::Enum                           vital_birth_dependence;                           // Vital_Birth_Dependence
         VitalBirthTimeDependence::Enum                       vital_birth_time_dependence;                      //Time dependence in Birth Rate
         float x_birth;
         float x_othermortality;
-
-        InfectivityScaling::Enum                             infectivity_scaling;                              // Infectivity_Scale_Type
 
         RouteList_t routes;
 
@@ -311,9 +360,7 @@ namespace Kernel
         virtual void updateInfectivity(float dt = 0.0f);
         virtual void updatePopulationStatistics(float=1.0);     // called by updateinfectivity to gather population statistics
         virtual void accumulateIndividualPopulationStatistics(float dt, IIndividualHuman* individual);
-        virtual float getDensityContactScaling(); // calculate correction to infectivity due to lower population density
-        virtual float getClimateInfectivityCorrection()  const;
-        virtual float getSeasonalInfectivityCorrection();
+
     public: 
         void  updateVitalDynamics(float dt = 1.0f);             // handles births and non-disease mortality
         virtual void considerPregnancyForIndividual( bool bPossibleMother, bool bIsPregnant, float age, int individual_id, float dt, IIndividualHuman* pIndividual = nullptr ); 
@@ -334,7 +381,7 @@ namespace Kernel
         virtual float drawInitialSusceptibility(float ind_init_age);
 
         virtual IIndividualHuman *createHuman( suids::suid id, float MCweight, float init_age, int gender);
-        IIndividualHuman* configureAndAddNewIndividual(float=1.0, float=(20*DAYSPERYEAR), float= 0, float = 0.5);
+        IIndividualHuman* configureAndAddNewIndividual(float ind_MCweight=1.0f, float ind_init_age=(20*DAYSPERYEAR), float comm_init_prev=0.0f, float comm_female_ratio=0.5f, float init_mod_acquire=1.0f);
         virtual IIndividualHuman* addNewIndividual(
             float monte_carlo_weight = 1.0,
             float initial_age = 0,
@@ -369,17 +416,6 @@ namespace Kernel
 
 
         const SimulationConfig* params() const;
-        float infectivity_sinusoidal_forcing_amplitude; // Only for Infectivity_Scale_Type = SINUSOIDAL_FUNCTION_OF_TIME
-        float infectivity_sinusoidal_forcing_phase;     // Only for Infectivity_Scale_Type = SINUSOIDAL_FUNCTION_OF_TIME
-        float infectivity_boxcar_forcing_amplitude;     // Only for Infectivity_Scale_Type = ANNUAL_BOXCAR_FUNCTION
-        float infectivity_boxcar_start_time;            // Only for Infectivity_Scale_Type = ANNUAL_BOXCAR_FUNCTION
-        float infectivity_boxcar_end_time;              // Only for Infectivity_Scale_Type = ANNUAL_BOXCAR_FUNCTION
-        float infectivity_exponential_baseline;         // Only for Infectivity_Scale_Type = EXPONENTIAL_FUNCTION_OF_TIME
-        float infectivity_exponential_rate;             // Only for Infectivity_Scale_Type = EXPONENTIAL_FUNCTION_OF_TIME
-        float infectivity_exponential_delay;            // Only for Infectivity_Scale_Type = EXPONENTIAL_FUNCTION_OF_TIME
-        float infectivity_reservoir_size;
-        float infectivity_reservoir_start_time;
-        float infectivity_reservoir_end_time;
 
         float birth_rate_sinusoidal_forcing_amplitude;  // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME
         float birth_rate_sinusoidal_forcing_phase;      // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME

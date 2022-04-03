@@ -56,7 +56,7 @@ namespace Kernel
         // --- IIndividualEventObserver
         // -----------------------------
         virtual bool notifyOnEvent( Kernel::IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override { return false; };
+                                    const EventTrigger::Enum& trigger ) override { return false; };
 
         // --------------
         // --- ISupports
@@ -69,7 +69,7 @@ namespace Kernel
         // ----------
         float GetStartDay() const;
         float GetDurationDays() const;
-        const std::vector< EventTrigger >& GetEventTriggerList() const;
+        const std::vector< EventTrigger::Enum >& GetEventTriggerList() const;
 
         bool HaveRegisteredAllEvents()   const ;
         bool HaveUnregisteredAllEvents() const ;
@@ -79,6 +79,7 @@ namespace Kernel
         void UnregisterAllNodes();
 
         Kernel::INodeEventContext* GetFirstINodeEventContext();
+
 
         std::string GetBaseOutputFilename() const ;
     private:
@@ -90,7 +91,7 @@ namespace Kernel
         std::string reportDescription; // Text to add to report name when creating file name - helps to distinguish from other instances
         Kernel::INodeSet *pNodeSet;    // Nodes to listen for events on
         Kernel::NodeSetConfig nodesetConfig;
-        std::vector< EventTrigger > eventTriggerList ; // list of events to listen for
+        std::vector< EventTrigger::Enum > eventTriggerList ; // list of events to listen for
         bool events_registered ;       // true if events have been registered
         bool events_unregistered ;     // true if events have been unregistered
         std::vector<Kernel::INodeEventContext*> nodeEventContextList ; // list of nodes that events are registered with

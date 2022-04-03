@@ -19,7 +19,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT": "Give POOR vaccine if we hear Action_Event_1.",
+            "COMMENT": "Give POOR vaccine if we hear GP_EVENT_001.",
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
@@ -35,7 +35,7 @@
                     },
                     "Demographic_Coverage": 1.0,
                     "Trigger_Condition_List": [
-                        "Action_Event_1"
+                        "GP_EVENT_001"
                     ],
                     "class": "NodeLevelHealthTriggeredIV"
                 },
@@ -48,7 +48,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT": "Give OK vaccine if we hear Action_Event_2.",
+            "COMMENT": "Give OK vaccine if we hear GP_EVENT_002.",
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
@@ -64,7 +64,7 @@
                     },
                     "Demographic_Coverage": 1.0,
                     "Trigger_Condition_List": [
-                        "Action_Event_2"
+                        "GP_EVENT_002"
                     ],
                     "class": "NodeLevelHealthTriggeredIV"
                 },
@@ -77,7 +77,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT": "Give GOOD vaccine if we hear Action_Event_3.",
+            "COMMENT": "Give GOOD vaccine if we hear GP_EVENT_003.",
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
@@ -93,7 +93,7 @@
                     },
                     "Demographic_Coverage": 1.0,
                     "Trigger_Condition_List": [
-                        "Action_Event_3"
+                        "GP_EVENT_003"
                     ],
                     "class": "NodeLevelHealthTriggeredIV"
                 },
@@ -154,15 +154,15 @@
                 "Responder": {
                     "Action_List": [
                         {
-                            "Event_To_Broadcast": "Action_Event_1",
+                            "Event_To_Broadcast": "GP_EVENT_001",
                             "Threshold": 5
                         },
                         {
-                            "Event_To_Broadcast": "Action_Event_2",
+                            "Event_To_Broadcast": "GP_EVENT_002",
                             "Threshold": 10
                         },
                         {
-                            "Event_To_Broadcast": "Action_Event_3",
+                            "Event_To_Broadcast": "GP_EVENT_003",
                             "Threshold": 15
                         }
                     ],
@@ -255,7 +255,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT1": "People in Node 2 get the event a second time so we can get Action_Event_2.",
+            "COMMENT1": "People in Node 2 get the event a second time so we can get GP_EVENT_002.",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
@@ -330,7 +330,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT1": "People in Node 3 get the event a second time so we can get Action_Event_3.",
+            "COMMENT1": "People in Node 3 get the event a second time so we can get GP_EVENT_003.",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
@@ -356,7 +356,7 @@
             "class": "CampaignEvent"
         },
         {
-            "COMMENT1": "People in Node 3 get the event a third time so we can get Action_Event_3.",
+            "COMMENT1": "People in Node 3 get the event a third time so we can get GP_EVENT_003.",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {

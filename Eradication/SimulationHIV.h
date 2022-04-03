@@ -30,6 +30,7 @@ namespace Kernel
         static SimulationHIV *CreateSimulation(const ::Configuration *config);
         static void SetFixedParameters(::Configuration *config);
         SimulationHIV();
+
         virtual bool Configure( const ::Configuration *json );
 
         virtual void Reports_CreateBuiltIn();
@@ -40,6 +41,7 @@ namespace Kernel
     protected:
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
+
         static bool ValidateConfiguration(const ::Configuration *config);
 
         // Allows correct type of Node to be added by classes derived from Simulation

@@ -61,11 +61,11 @@ SUITE(StiIsPostDebutTest)
 
             m_Human.GetProperties()->Add( IPKeyValue( "InterventionStatus:no_state" ) );
 
-            EventTriggerFactory::DeleteInstance();
+            //EventTriggerFactoryDeleteInstance();
 
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
 
             m_pDiag = new STIIsPostDebut();
@@ -92,7 +92,7 @@ SUITE(StiIsPostDebutTest)
 
         m_Human.SetAge( 25.0*365.0 );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
         CHECK( !m_pDiag->Expired() );
 
         ICampaignCostObserverFake cco_fake ;
@@ -102,7 +102,7 @@ SUITE(StiIsPostDebutTest)
 
         m_pDiag->Update( 1.0 );
 
-        CHECK_EQUAL( EventTrigger::Births.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "Births" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) ) ;
     }
 
     TEST_FIXTURE(DiagnosticFixture, TestPostDebutNo)
@@ -117,14 +117,14 @@ SUITE(StiIsPostDebutTest)
 
         m_Human.SetAge( 1.0*365.0 );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
         CHECK( !m_pDiag->Expired() );
 
         ICampaignCostObserverFake cco_fake ;
         bool distributed = m_pDiag->Distribute( &m_InterventionsContext, &cco_fake );
         CHECK( distributed );
 
-        CHECK_EQUAL( EventTrigger::NonDiseaseDeaths.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "NonDiseaseDeaths" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) ) ;
         CHECK( m_pDiag->Expired() );
     }
 

@@ -1,19 +1,10 @@
 {
-    "Default_Config_Path": "../../defaults/hiv_default_config.json",
+    "Default_Config_Path": "defaults/hiv_default_config.json",
     "parameters": {
+        "Base_Population_Scale_Factor": 0.0001,
         "Base_Year": 1990,
         "Config_Name": "31_HIV_IsPostDebut",
-        "Custom_Individual_Events": [
-            "Yikes_Toddler_Is_Post_Debut",
-            "Phew_Toddler_Is_Not_Post_Debut",
-            "Teen_Is_Post_Debut",
-            "Teen_Is_Pre_Debut",
-            "Post_Debut_On_Debut",
-            "ERROR_Pre_Debut_On_Debut"
-        ],
-        "Enable_Birth": 0,
-        "Enable_Strain_Tracking": 0,
-        "Enable_Termination_On_Zero_Total_Infectivity": 0,
+        "Enable_Birth": 0, 
         "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "Yikes_Toddler_Is_Post_Debut",
@@ -34,7 +25,7 @@
             "STIDebut"
         ],
         "Run_Number": 9,
-        "Simulation_Duration": 180,
-        "x_Base_Population": 0.0001
+        "Python_Script_Path": "LOCAL",
+        "Simulation_Duration": 180
     }
 }

@@ -57,7 +57,7 @@ namespace Kernel
     protected:
         float m_ReducedAcquire;
         bool m_ApplyIfHigherReducedAcquire;
-        EventTrigger m_DistrbutedEventTrigger;
+        EventTrigger::Enum m_DistrbutedEventTrigger;
         ISTICircumcisionConsumer* m_pCircumcisionConsumer;
         bool has_been_applied;
 

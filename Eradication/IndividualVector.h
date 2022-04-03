@@ -28,13 +28,17 @@ namespace Kernel
     class IndividualHumanVector : public IndividualHuman, public IIndividualHumanVectorContext
     {
         friend class SimulationVector;
+        friend class NodeVector;
+        //friend class VectorPopulation;
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
+        //DECLARE_SERIALIZABLE( IndividualHumanVector )
 
     public:
         // TODO change double to float
         static IndividualHumanVector *CreateHuman(INodeContext *context, suids::suid _suid, double monte_carlo_weight = 1.0, double initial_age = 0.0, int gender = 0);
         virtual ~IndividualHumanVector();
+        static void InitializeStaticsVector( const Configuration * config );
 
         virtual void CreateSusceptibility(float immunity_modifier = 1.0, float risk_modifier = 1.0) override;
         virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership) override;
@@ -45,6 +49,13 @@ namespace Kernel
 
         // IIndividualHumanVectorContext methods
         virtual float GetRelativeBitingRate(void) const override;
+
+        // These used to live in NodeVector but that makes it hard to support component-level operation of STI intrahost (pymod)
+        // without linking in spurious classes.
+        static TransmissionGroupMembership_t human_indoor;
+        static TransmissionGroupMembership_t human_outdoor;
+        static TransmissionGroupMembership_t vector_indoor;
+        static TransmissionGroupMembership_t vector_outdoor;
 
     protected:
         // cumulative exposure by pool stored along with randomly selected strain from each pool + total exposure
@@ -64,10 +75,8 @@ namespace Kernel
 
         virtual void PropagateContextToDependents() override;
 
-        static void InitializeStaticsVector( const Configuration* config );
-
         void ReportInfectionState() override;
-
+    
         DECLARE_SERIALIZABLE(IndividualHumanVector);
     };
 

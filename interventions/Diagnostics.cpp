@@ -50,7 +50,7 @@ namespace Kernel
 
         if( use_event_or_config == EventOrConfig::Event || JsonConfigurable::_dryrun )
         {
-            initConfigTypeMap("Positive_Diagnosis_Event", &positive_diagnosis_event, SD_Positive_Diagnosis_Config_Event_DESC_TEXT );
+            initConfig( "Positive_Diagnosis_Event", positive_diagnosis_event, inputJson, MetadataDescriptor::Enum("Positive_Diagnosis_Event", SD_Positive_Diagnosis_Config_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         }
 
         if( use_event_or_config == EventOrConfig::Config || JsonConfigurable::_dryrun )
@@ -96,7 +96,7 @@ namespace Kernel
 
     void SimpleDiagnostic::CheckConfigTriggers( const Configuration * inputJson )
     {
-        if( positive_diagnosis_event.IsUninitialized() )
+        if( positive_diagnosis_event == EventTrigger::NoTrigger )
         {
             std::stringstream ss;
             ss << "Positive_Diagnosis_Event is not defined." << std::endl;
@@ -107,7 +107,7 @@ namespace Kernel
     void SimpleDiagnostic::CheckPostiveEventConfig()
     {
         if( !JsonConfigurable::_dryrun && 
-            positive_diagnosis_event.IsUninitialized() &&
+            positive_diagnosis_event == EventTrigger::NoTrigger &&
             (positive_diagnosis_config._json.Type() == ElementType::NULL_ELEMENT) )
         {
             const char* msg = "You must define either Positive_Diagnosis_Event or Positive_Diagnosis_Config";
@@ -167,7 +167,7 @@ namespace Kernel
         }
 
         parent = context->GetParent();
-        LOG_DEBUG_F( "Individual %d is getting tested and positive_diagnosis_event = %s.\n", parent->GetSuid().data, positive_diagnosis_event.c_str() );
+        LOG_DEBUG_F( "Individual %d is getting tested and positive_diagnosis_event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
 
         // Positive test result and distribute immediately if days_to_diagnosis <=0
         if ( positiveTestResult() )
@@ -254,12 +254,12 @@ namespace Kernel
     }
 
     void
-    SimpleDiagnostic::broadcastEvent( const EventTrigger& event )
+    SimpleDiagnostic::broadcastEvent( const EventTrigger::Enum& event )
     {
-        if( !event.IsUninitialized() )
+        if( event != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
-            LOG_DEBUG_F( "SimpleDiagnostic broadcasting event = %s.\n", event.c_str() );
+            LOG_DEBUG_F( "SimpleDiagnostic broadcasting event = %s.\n", EventTrigger::pairs::lookup_key( event ) );
             broadcaster->TriggerObservers( parent->GetEventContext(), event );
         }
     }
@@ -272,7 +272,7 @@ namespace Kernel
     void SimpleDiagnostic::positiveTestDistribute()
     {
         release_assert( parent );
-        LOG_DEBUG_F( "Individual %d tested 'positive' in SimpleDiagnostic, receiving actual intervention: event = %s.\n", parent->GetSuid().data, positive_diagnosis_event.c_str() );
+        LOG_DEBUG_F( "Individual %d tested 'positive' in SimpleDiagnostic, receiving actual intervention: event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
 
         // Next alternative is that we were configured to broadcast a raw event string. In which case the value will not
         // the "uninitialized" value.
@@ -333,8 +333,8 @@ namespace Kernel
         ar.labelElement("treatment_fraction"); diagnostic.treatment_fraction.serialize(ar);
         ar.labelElement("days_to_diagnosis") & diagnostic.days_to_diagnosis;
         ar.labelElement("use_event_or_config") & (uint32_t&)diagnostic.use_event_or_config;
-        ar.labelElement("positive_diagnosis_config") & diagnostic.positive_diagnosis_config;
-        ar.labelElement("positive_diagnosis_event") & diagnostic.positive_diagnosis_event;
+        ar.labelElement("positive_diagnosis_config") & diagnostic.positive_diagnosis_config; 
+        ar.labelElement("positive_diagnosis_event") & (uint32_t&) diagnostic.positive_diagnosis_event; 
         ar.labelElement("enable_isSymptomatic") & diagnostic.enable_isSymptomatic;
     }
 }

@@ -16,6 +16,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventTrigger.h"
 #include "ExternalNodeId.h"
 
+#define INDEX_RST_TOT_INF         (0)
+#define INDEX_RST_CON_INF         (1)
+#define INDEX_RST_CONTAGION       (2)
+
 namespace Kernel
 {
     struct IdmDateTime;
@@ -70,6 +74,7 @@ namespace Kernel
         virtual void Update(float dt) = 0;
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) = 0;
         virtual void SortHumans() = 0;
+        virtual const std::vector<IIndividualHuman*>& GetHumans() const = 0;
 
         // heterogeneous intra-node transmission
         virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) = 0;
@@ -80,6 +85,7 @@ namespace Kernel
         virtual float GetTotalContagion( void ) = 0;
         virtual ITransmissionGroups* GetTransmissionGroups() const = 0;
         virtual const RouteList_t& GetTransmissionRoutes( ) const = 0;
+
         virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) = 0;
 
         virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase) const = 0;
@@ -109,6 +115,11 @@ namespace Kernel
         virtual float GetMeanAgeInfection()    const = 0;
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const = 0;
 
+        // Reporting interfaces for strain tracking
+        virtual const std::map<std::string, int>&                 GetStrainClades()   const = 0;
+        virtual const std::map<std::string, int>&                 GetStrainGenomes()  const = 0;
+        virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const = 0;
+
         // These methods are not const because they will extract the value from the demographics
         // if it has not been done yet.
         virtual float GetLatitudeDegrees() = 0;
@@ -119,7 +130,7 @@ namespace Kernel
 
         // for interventions
         virtual INodeEventContext* GetEventContext() = 0;
-        virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger>& rTriggerList ) = 0;
+        virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) = 0;
 
         virtual bool IsEveryoneHome() const = 0;
         virtual void SetWaitingForFamilyTrip( suids::suid migrationDestination, 

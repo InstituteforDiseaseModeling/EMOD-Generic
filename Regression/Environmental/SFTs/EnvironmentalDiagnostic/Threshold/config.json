@@ -25,8 +25,8 @@
         "Custom_Coordinator_Events": [],
         "Custom_Individual_Events": [],
         "Custom_Node_Events": [
-            "Negative_Event_Node",
-            "Positive_Event_Node"
+            "NegativeResult",
+            "PositiveResult"
         ],
         "Custom_Reports_Filename": "NoCustomReports",
         "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
@@ -96,8 +96,8 @@
         "Land_Temperature_Offset": 0,
         "Land_Temperature_Variance": 2,
         "Listed_Events": [
-            "Negative_Event_Node",
-            "Positive_Event_Node"
+            "NegativeResult",
+            "PositiveResult"
         ],
         "Load_Balance_Filename": "",
         "Load_Balance_Scheme": "STATIC",
@@ -120,7 +120,8 @@
         "Post_Infection_Acquisition_Multiplier": 1,
         "Post_Infection_Mortality_Multiplier": 1,
         "Post_Infection_Transmission_Multiplier": 1,
-        "Python_Script_Path": "SHARED",
+        "Python_Script_Path": "LOCAL",
+        "Python_Inprocessing_Tsteps": [],
         "Rainfall_Filename": "",
         "Rainfall_Scale_Factor": 1,
         "Relative_Humidity_Filename": "",

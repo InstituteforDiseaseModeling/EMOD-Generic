@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-
-import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as dpp_adhoc
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 import os
 import csv
 
@@ -167,10 +169,6 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
         if not len(report_dict):
             success = False
             outfile.write(sft.sft_no_test_data)
-
-        point_fail = 0
-        point_tolerance = 0.3
-
         for t in report_dict:
             num_success = report_dict[t][KEY_POSITIVE]
             num_trials = report_dict[t][KEY_NEGATIVE] + num_success
@@ -184,32 +182,14 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
                 outfile.write("At timestep {0}, the binomial 95% test result is {1}.\n".format(t, result))
                 binomial_test_count += 1
                 if not result:
-                    point_fail += 1
+                    success = False
         if not binomial_test_count:
-            success = False 
-            outfile.write("FAIL: There is not enough sample size for binomial test in every time step, please fix the test.\n")
-
-        point_test_message = f"Detected failures: {point_fail} trials: {binomial_test_count} tolerance: {point_tolerance}.\n"
-        if point_fail / binomial_test_count > point_tolerance:
             success = False
-            outfile.write(f"FAIL: {point_test_message}")
-        else:
-            outfile.write(f"PASS: {point_test_message}")
-
-        outfile.write("BIG TEST: Testing the total of diagnoses across the simulation...\n")
-        total_result = sft.test_binomial_95ci(num_success=sum(positive),
-                                                  num_trials=sum(total),
-                                                  prob=prob,
-                                                  report_file=outfile,
-                                                  category="Total active smear neg test positive")
-        if not total_result:
-            success=False
-            outfile.write("FAIL: the total test failed, see line above.\n")
-
+            outfile.write("BAD: There is not enough sample size for binomial test in every time step, please fix the test.\n")
         sft.plot_data(positive, dist2=total, label1="TBTestPositive", label2="Total tested",
-                                title="Test positive vs. total, positive proportion = {}".format(prob),
-                                xlabel="time step", ylabel="# of individuals", category='Test_positive_vs_total',
-                                show=True, line=False)
+                                   title="Test positive vs. total, positive proportion = {}".format(prob),
+                                   xlabel="time step", ylabel="# of individuals", category='Test_positive_vs_total',
+                                   show=True, line=False)
         # When Treatment_fraction is set to 1, the report should match debug log. Here is the test for it:
         for t in output_dict:
             log_positive = output_dict[t][KEY_POSITIVE]
@@ -251,6 +231,7 @@ def application( output_folder="output", stdout_filename="test.txt", insetchart_
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
                  debug=False):
+    dpp_adhoc.application( output_folder )
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

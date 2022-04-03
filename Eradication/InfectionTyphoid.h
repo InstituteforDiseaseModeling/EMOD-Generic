@@ -23,8 +23,11 @@ namespace Kernel
 
     public:
         virtual bool Configure( const Configuration* config ) override;
-        
+
         static IDistribution* p_log_normal_distribution;
+
+    protected:
+        friend class InfectionTyphoid;
     };
 
     class IInfectionTyphoid : public ISupports

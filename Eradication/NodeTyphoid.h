@@ -56,9 +56,6 @@ namespace Kernel
         // Factory methods
         virtual Kernel::IndividualHuman *createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender);
 
-        // wrap base-class function between creation and deletion of polio vaccine immunity initialization distributions.
-        virtual void populateNewIndividualsFromDemographics(int count_new_individuals);
-
         virtual void computeMaxInfectionProb( float dt ) override;
 
     private:

@@ -23,6 +23,7 @@ namespace Kernel
 
     protected:
         SimulationEnvironmental();
+
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
 

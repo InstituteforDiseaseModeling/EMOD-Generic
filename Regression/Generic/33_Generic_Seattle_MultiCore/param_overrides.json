@@ -25,6 +25,7 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
+                "Incubation_Period_Constant": 3,
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 7
             },

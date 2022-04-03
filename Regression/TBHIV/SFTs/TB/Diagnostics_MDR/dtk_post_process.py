@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-
-import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as dpp_adhoc
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 import os
 import pandas as pd
 import csv
@@ -19,9 +21,6 @@ What we are testing is three outcomes Positive Event, Negative Event, or Dropout
 Positive proportion  = Test Sensitivity * Treatment_Proportion
 Negative Proportion = (1-Test_Sensitivity) * Treatment_Porportion
 Dropout = 1- Treatment_Proportion.
-
-This test should fail if the total proportions across all times do not pass a chi-square
-test, or if more than one of the timesteps fail.
 """
 # campaign parameter
 KEY_BASE_SENSITIVITY = "Base_Sensitivity"
@@ -173,38 +172,18 @@ def create_report_file(param_obj, campaign_obj, output_dict, report_dict, report
         negative = []
         default = []
         total = []
-        pass_count = 0
-        fail_count = 0
         for t in report_dict:
             value_to_test = [report_dict[t][KEY_MDR_POSITIVE], report_dict[t][KEY_MDR_NEGATIVE], report_dict[t][KEY_MDR_DEFAULT]]
             positive.append(value_to_test[0])
             negative.append(value_to_test[1])
             default.append(value_to_test[2])
-            total.append(int(sum(value_to_test)/total_proportion)) 
-            outfile.write(f"Timestep {t} Chi-squared test: {value_to_test[0]} positive, {value_to_test[1]} negative," \
-                          f" {value_to_test[2]} default.\n")
+            total.append(int(sum(value_to_test)/total_proportion))
+            outfile.write("Run Chi-squared test at time step {}.\n".format(t))
             result = sft.test_multinomial(dist=value_to_test, proportions=proportions, report_file=outfile)
             if not result:
-                # success = False
-                fail_count += 1
-                outfile.write("BAD: At timestep {0}, the Chi-squared test failed.\n".format(t))
-            else:
-                pass_count += 1
-
-        point_count = pass_count + fail_count
-        point_check_tolerance = 0.2
-        if fail_count / point_count > point_check_tolerance:
-            success = False
-            outfile.write(f"FAIL: more than {point_check_tolerance} of the points checked failed validation.\n")
-        positives = sum(positive)
-        negatives = sum(negative)
-        defaults = sum(default)
-        outfile.write("BIG TEST: testing all of the diagnoses in the sim next!\n")
-        sum_result = sft.test_multinomial(dist=[positives, negatives, defaults], proportions=proportions,
-                                              report_file=outfile)
-        if not sum_result:
-            success = False
-            outfile.write("FAIL: the sum chi-square test fails.\n")
+                success = False
+                outfile.write(
+                    "BAD: At timestep {0}, the Chi-squared test failed.\n".format(t))
 
         sft.plot_data(positive, dist2=total, label1="TBMDRTestPositive", label2="Total tested",
                                    title="MDR Test positive vs. total, positive proportion = {}".format(
@@ -230,6 +209,7 @@ def application( output_folder="output", stdout_filename="test.txt", insetchart_
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
                  debug=False):
+    dpp_adhoc.application( output_folder )
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

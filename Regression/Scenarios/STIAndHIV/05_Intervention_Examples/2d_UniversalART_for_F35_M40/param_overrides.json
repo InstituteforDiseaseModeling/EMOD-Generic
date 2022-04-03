@@ -2,6 +2,8 @@
     "Default_Config_Path": "defaults/hiv_scenario5_default_config.json",
     "parameters":
     {
+        "Base_Population_Scale_Factor": 0.0001,
+        "Python_Script_Path": "LOCAL",
         "RARELY_CHANGED": {
             "Config_Name": "05_2D_UniversalART_for_F35_M40"
         }

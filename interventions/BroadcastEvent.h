@@ -43,7 +43,7 @@ namespace Kernel
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        EventTrigger broadcast_event;
+        EventTrigger::Enum broadcast_event;
 
         DECLARE_SERIALIZABLE(BroadcastEvent);
 #pragma warning( pop )

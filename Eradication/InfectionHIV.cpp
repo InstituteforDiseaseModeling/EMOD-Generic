@@ -51,11 +51,10 @@ namespace Kernel
         HANDLE_INTERFACE(IInfectionHIV)
     END_QUERY_INTERFACE_BODY(InfectionHIV)
 
-    bool
-    InfectionHIVConfig::Configure(
-        const Configuration * config
-    )
+    bool InfectionHIVConfig::Configure( const Configuration * config )
     {
+        LOG_DEBUG("Configure\n");
+
         //read in configs here   
         initConfigTypeMap( "Acute_Duration_In_Months", &acute_duration_in_months, Acute_Duration_In_Months_DESC_TEXT, 0.0f, 5.0f, 2.9f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
         initConfigTypeMap( "AIDS_Duration_In_Months", &AIDS_duration_in_months, AIDS_Duration_In_Months_DESC_TEXT, 7.0f, 12.0f, 9.0f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
@@ -66,6 +65,7 @@ namespace Kernel
         initConfigTypeMap( "ART_CD4_at_Initiation_Saturating_Reduction_in_Mortality", &max_CD4_cox, ART_CD4_at_Initiation_Saturating_Reduction_in_Mortality_DESC_TEXT, 0.0f, FLT_MAX, 350.0f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
 
         bool ret = JsonConfigurable::Configure( config );
+
         if( ret || JsonConfigurable::_dryrun )
         {
             ret = mortality_distribution_by_age.Configure( config );
@@ -347,11 +347,11 @@ namespace Kernel
         // the HIVInterventionsContainer.
         // TBD: Use QI instead of cast
         IHIVInterventionsContainer * pHIC = nullptr;
-        if ( s_OK != parent->GetInterventionsContext()->QueryInterface(GET_IID(IHIVInterventionsContainer), (void**)&pHIC) )
+        if ( s_OK == parent->GetInterventionsContext()->QueryInterface(GET_IID(IHIVInterventionsContainer), (void**)&pHIC) )
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionsContext()", "IHIVInterventionsContainer", "IIndividualHumanInterventionsContext" );
+            retInf *= pHIC->GetInfectivitySuppression();
         }
-        retInf *= pHIC->GetInfectivitySuppression();
+
         retInf *= m_hetero_infectivity_multiplier;
         
         LOG_DEBUG_F( "infectiousness from HIV = %f\n", retInf );

@@ -30,7 +30,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "GroupEventCoordinator.h"
 #include "StandardEventCoordinator.h"
 #include "CoverageByNodeEventCoordinator.h"
-#include "CalendarEventCoordinator.h"
+//#include "CalendarEventCoordinator.h"
 #include "NodeSet.h"
 
 SETUP_LOGGING( "CampaignEvent" )

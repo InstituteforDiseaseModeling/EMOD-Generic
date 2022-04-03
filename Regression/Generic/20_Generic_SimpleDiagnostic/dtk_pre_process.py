@@ -1,7 +1,5 @@
 #!/usr/bin/python
+from dtk_ep4 import dtk_pre_process_adhocevents
 
-import regression_utils as ru
-
-def application( json_config_path ):
-    ru.flattenConfig( json_config_path )
-    return "config.json"
+def application( config ):
+    return dtk_pre_process_adhocevents.application( config )

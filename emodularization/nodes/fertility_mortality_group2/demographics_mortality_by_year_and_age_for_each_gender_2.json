@@ -1,0 +1,108 @@
+{
+	"Defaults": {},
+	"Metadata": {
+		"Author": "jsteinkraus",
+		"DateCreated": "Sun Sep 25 23:19:55 2011",
+		"IdReference": "Gridded world grump2.5arcmin",
+		"NodeCount": 1,
+		"Resolution": 150,
+		"Tool": "convertdemog.py"
+	},
+	"Nodes": [{
+			"IndividualAttributes": {
+				"AgeDistribution": {
+					"AxisScaleFactors": 1,
+					"DistributionValues": [
+						0,
+						1
+					],
+					"NumDistributionAxes": 0,
+					"ResultScaleFactor": 365,
+					"ResultUnits": "years",
+					"ResultValues": [
+						16,
+						16
+					]
+				},
+				"AgeDistribution1": 0.000118,
+				"AgeDistribution2": 0,
+				"AgeDistributionFlag": 3,
+				"SusceptibilityDistribution1": 1,
+				"SusceptibilityDistribution2": 0,
+				"SusceptibilityDistributionFlag": 0,
+				"MigrationHeterogeneityDistribution1": 1,
+				"MigrationHeterogeneityDistribution2": 0,
+				"MigrationHeterogeneityDistributionFlag": 0,
+				"MortalityDistributionFemale": {
+					"AxisNames": [
+						"age",
+						"year"
+					],
+					"AxisScaleFactors": [
+						365,
+						1
+					],
+					"AxisUnits": [
+						"years",
+						"simulation year"
+					],
+					"NumDistributionAxes": 2,
+					"NumPopulationGroups": [
+						1,
+						4
+					],
+					"PopulationGroups": [
+						[0], [0, 0.999999,1, 1.999999]
+					],
+					"ResultScaleFactor": 1,
+					"ResultUnits": "Mortality rate in units of 1/year",
+					"ResultValues": [[0.001, 0.001,0.002,0.002]
+					]
+				},
+				"MortalityDistributionMale": {
+					"AxisNames": [
+						"age",
+						"year"
+					],
+					"AxisScaleFactors": [
+						365,
+						1
+					],
+					"AxisUnits": [
+						"years",
+						"simulation year"
+					],
+					"NumDistributionAxes": 2,
+					"NumPopulationGroups": [
+						1,
+						4
+					],
+					"PopulationGroups": [
+						[0], [0, 0.999999,1, 1.999999]
+					],
+					"ResultScaleFactor": 1,
+					"ResultUnits": "Mortality rate in units of 1/year",
+					"ResultValues": [[0.003,0.003,0.0015, 0.0015]
+					]
+				},
+				"PrevalenceDistribution1": 0.0,
+				"PrevalenceDistribution2": 0.0,
+				"PrevalenceDistributionFlag": 0,
+				"RiskDistribution1": 1,
+				"RiskDistribution2": 0,
+				"RiskDistributionFlag": 0
+			},
+			"NodeAttributes": {
+				"Airport": 0,
+				"Altitude": 0,
+				"BirthRate": 0.0548,
+				"InitialPopulation": 5000,
+				"Latitude": 0,
+				"Longitude": 0,
+				"Region": 1,
+				"Seaport": 0
+			},
+			"NodeID": 1
+		}
+	]
+}

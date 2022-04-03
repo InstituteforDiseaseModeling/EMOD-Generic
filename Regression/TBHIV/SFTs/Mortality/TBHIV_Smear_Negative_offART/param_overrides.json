@@ -1,0 +1,76 @@
+{
+    "parameters": {
+        "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
+        "CoInfection_Mortality_Rate_Off_ART": 0.0079,
+        "CoInfection_Mortality_Rate_On_ART": 0.0042,
+        "Config_Name": "TBHIV_Mortality_Smear_Negative_offART",
+        "Days_Between_Symptomatic_And_Death_Weibull_Heterogeneity": 0.2,
+        "Demographics_Filenames": [
+            "../../../demographics/single_node_demographics_1000_20_yrolds.json",
+            "../../../demographics/Base_overlay.json"
+        ],
+        "Enable_Birth": 0,
+        "Enable_Initial_Susceptibility_Distribution": 1,
+        "Enable_Natural_Mortality": 0,
+        "Enable_Regional_Migration": 1,
+        "HIV_Adult_Survival_Scale_Parameter_Slope": -0.001,
+        "Mortality_Blocking_Immunity_Decay_Rate": 1,
+        "Mortality_Blocking_Immunity_Duration_Before_Decay": 0,
+        "Simulation_Duration": 1500,
+        "TBHIV_Drug_Params": {
+            "ACFDOTS": {
+                "TB_Drug_Cure_Rate": 0.25,
+                "TB_Drug_Inactivation_Rate_HIV": 1e-09,
+                "TB_Drug_Mortality_Rate": 1e-09,
+                "TB_Drug_Mortality_Rate_HIV": 1e-09,
+                "TB_Drug_Primary_Decay_Time_Constant": 179,
+                "TB_Drug_Relapse_Rate_HIV": 1e-09,
+                "TB_Drug_Resistance_Rate_HIV": 1e-09
+            }
+        },
+        "TBHIV_Drug_Types": [
+            "ACFDOTS",
+            "DOTSHQ"
+        ],
+        "TB_Active_Cure_Rate": 1e-09,
+        "TB_Active_Mortality_Rate": 1e-38,
+        "TB_CD4_Activation_Vector": [
+            5,
+            5,
+            5,
+            5,
+            5,
+            5
+        ],
+        "TB_CD4_Infectiousness": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ],
+        "TB_CD4_Susceptibility": [
+            5,
+            5,
+            5,
+            5,
+            1,
+            1,
+            1
+        ],
+        "TB_Enable_Exogenous": 0,
+        "TB_Extrapulmonary_Mortality_Multiplier": 0,
+        "TB_Latent_Cure_Rate": 0,
+        "TB_Relapsed_to_Active_Rate": 0,
+        "TB_Smear_Negative_Infectivity_Multiplier": 1e-13,
+        "TB_Smear_Negative_Mortality_Multiplier": 0,
+        "TB_Smear_Positive_Fraction_Adult": 0,
+        "TB_Smear_Positive_Fraction_Child": 0,
+        "logLevel_ARTBasic": "DEBUG",
+        "logLevel_IndividualCoInfection": "VALID",
+        "x_Base_Population": 1.5
+    },
+    "Default_Config_Path": "defaults/tbhiv_science_default_config.json"
+}

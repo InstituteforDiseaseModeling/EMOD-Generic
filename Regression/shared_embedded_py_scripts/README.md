@@ -1,18 +1,20 @@
-# DTK SFT support package (dtk_test)
+# SHARED_EMBEDDED_PY_SCRIPTS
 
-These scripts are created and supported by the IDM Test team as part of the Scientific Feature Testing work. 
+The python scripts in this directory are generally used as embedded Python pre- and post-processing scripts when running the DTK, part of the overall EP4 vision.
 
-All the scripts that make up the **dtk_test** package (that would get installed by doing a pip install) now live in the **dtk_test** subdirectory.
+Originally they were just scripts used by SFTs. But now we are moving away from just copying individual python scripts around and instead moving towards properly packaged (and versioned and deployed) python modules.
 
-Any script that lives in this directory is considered "under active development". That means rt.py will copy it from here. The files in **dtk_test** do not get copied by rt.py. They should be installed and thus live in site-packages and are available to python by doing an `import dtk_test`.
+All the SFT support scripts are now part of the dtk_test package or module. As such, their proper home (exceptions to follow) is in the dtk_test subdirectory.
 
-Scripts/files that are in this directory, and thus under active development, and thus copied by rt.py are no longer copied into the shared Python directory specified in rt.cfg. They are copied to the simulation folder itself. Thus they are available by `import <file>`. The directory of the dtk_post_process.py (top level script) is always available in the sys path.
+There are other scripts that will become part of the dtk_utils module (which exists in a very rudimentary form at this time) or maybe they will become part of a dtk_ep4 module. We are in the process of figuring this out.
 
-Some additional notes:
-- The .py files here are ONLY copied if the Python_Script_Path in the config.json is "SHARED". That's literally what that means. It means we need python scripts from 'somewhere else' as well as '.'
-- Files really should not live in this directory for very long in master. They should be bundled into a new version of **dtk_test**, uploaded, installed, etc. ASAP.
-- Importing shared files under development will be done like `import my_new_shared_support_script` whereas once it's migrated into the dtk_test package/module, the import will be `import dtk_test.my_new_shared_support_script`.
-- The shared Python directory specified in rt.cfg would appeared to be deprecated by this change at least as far as master is concerned.
-- No, I am not worried about the additional disk usage of a few extra copies of python scripts in simulation folders on bayesian. If someone else is, feel free to add code to rt.py to remove them (and maybe the entire sim dir) upon completion.
-
-
+At the moment, the algorithm in rt.py does the following:
+- IF Python_Script_Path is set to "SHARED" then:
+	- Any file starting with 'dtk_pre_' or 'dtk_post_' gets copied to the simulation directory.
+	- Any other file starting with 'dtk_' gets copied to a dtk_test subdirectory in the simulation directory.
+		- An __init__.py touch file is created in the simdir/dtk_test subdirectory so it is priority importable by python scripts in the simdir.
+	- Ideally the dtk_test python scripts in shared_embedded_py_scripts/ are symlinks to the actual files in shared_embedded_py_scripts/dtk_test/...
+		- Except new ones; and
+		- Except ones that are being edited/developed in this branch.
+		- One says 'ideally' because there are windows issues with this solution and a final decision about whether to go with a one-size-fits-all nasty copying solution or an OS-optimized solution is pending.
+	- In master, shared_embedded_py_scripts should really be emptied out and the files put into dtk_test, dtk_utils, dtk_ep4 (or whatever) package subdirectories, and new modules published, etc.

@@ -67,7 +67,7 @@ public:
     // user may call multiple times, each time the reduce will only apply to time steps accumulated since the last call
     void Reduce();
 
-    virtual void WriteOutput( const std::string& filename, std::map<std::string, std::string>& units_map );
+    virtual void WriteOutput( const std::string& filename, std::map<std::string, std::string>& units_map, bool defaultPrecision = true);
 
     void normalizeChannel( const std::string &channel_name, const std::string& normalization_channel );
     void normalizeChannel( const std::string &channel_name, float normalization_value );

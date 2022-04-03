@@ -137,9 +137,8 @@ namespace Kernel
             throw InitializationException(__FILE__, __LINE__, __FUNCTION__, "Failed to create Python simulation: Python not initialized. Make sure to provide a Python script path command line argument.\n");
         }
 
-       SimulationPy *newsimulation = NULL;
-       
-       newsimulation = _new_ SimulationPy();
+       SimulationPy *newsimulation = _new_ SimulationPy();
+
        if (newsimulation)
        {
             // This sequence is important: first
@@ -148,7 +147,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = NULL;
+                throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "PY_SIM requested with invalid configuration.");
             }
        }
 

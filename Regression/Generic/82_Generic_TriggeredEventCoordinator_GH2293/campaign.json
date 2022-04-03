@@ -142,7 +142,6 @@
                     "Start_Vaccinating_3n4"
                 ],
                 "Stop_Trigger_Condition_List": [
-                    "Stop_Vaccinating_3n4"
                 ],
                 "Target_Demographic": "Everyone",
                 "Timesteps_Between_Repetitions": 11,

@@ -145,9 +145,6 @@
     <ClCompile Include="Distributions.cpp" />
     <ClCompile Include="DistributionsConfigurable.cpp" />
     <ClCompile Include="Environment.cpp" />
-    <ClCompile Include="EventTrigger.cpp" />
-    <ClCompile Include="EventTriggerCoordinator.cpp" />
-    <ClCompile Include="EventTriggerNode.cpp" />
     <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="IArchive.cpp" />
@@ -175,7 +172,6 @@
     <ClCompile Include="Properties.cpp" />
     <ClCompile Include="BaseProperties.cpp" />
     <ClCompile Include="RANDOM.cpp" />
-    <ClCompile Include="RandomNumberGeneratorFactory.cpp" />
     <ClCompile Include="RapidJsonImpl.cpp" />
     <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="Serializer.cpp" />
@@ -261,7 +257,6 @@
     <ClInclude Include="BaseProperties.h" />
     <ClInclude Include="PropertiesString.h" />
     <ClInclude Include="RANDOM.h" />
-    <ClInclude Include="RandomNumberGeneratorFactory.h" />
     <ClInclude Include="RapidJsonImpl.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="Serializer.h" />

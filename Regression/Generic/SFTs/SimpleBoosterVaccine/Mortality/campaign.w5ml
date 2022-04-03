@@ -1,0 +1,36 @@
+Events:
+- What: 
+    class: OutbreakIndividual
+  Who: 20%, AllAges, BothSexes
+  When: 5, 20 * 11
+  Where: Everywhere
+
+- What: 
+    class: SimpleVaccine
+    Vaccine_Type: MortalityBlocking
+    Efficacy_Profile: Box, 0.55, 10
+  Who: 100%, AllAges, BothSexes
+  When: 1, 40, 80, 100, 140
+  Where: Everywhere
+
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: MortalityBlocking
+    Prime_Effect: 0.25
+    Boost_Effect: 0.45
+    Boost_Threshold: 0.0
+    Efficacy_Profile: Box, 1, 10
+  Who: 100%, AllAges, BothSexes
+  When: 20, 42, 60, 62, 81, 82, 160, 181, 202
+  Where: Everywhere
+
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: MortalityBlocking
+    Prime_Effect: 0.25
+    Boost_Effect: 0.45
+    Boost_Threshold: 0.6
+    Efficacy_Profile: Box, 1, 10
+  Who: 100%, AllAges, BothSexes
+  When: 101, 102, 120, 121, 141, 161, 162, 180, 200, 201
+  Where: Everywhere

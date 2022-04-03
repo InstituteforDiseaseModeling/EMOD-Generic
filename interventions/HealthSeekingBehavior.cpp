@@ -40,7 +40,7 @@ namespace Kernel
         initConfig( "Event_Or_Config", use_event_or_config, inputJson, MetadataDescriptor::Enum("EventOrConfig", Event_Or_Config_DESC_TEXT, MDD_ENUM_ARGS( EventOrConfig ) ) );
         if( use_event_or_config == EventOrConfig::Event || JsonConfigurable::_dryrun )
         {
-            initConfigTypeMap( "Actual_IndividualIntervention_Event", &actual_intervention_event, HSB_Actual_Intervention_Config_Event_DESC_TEXT );
+            initConfig( "Actual_IndividualIntervention_Event", actual_intervention_event, inputJson, MetadataDescriptor::Enum("Actual_IndividualIntervention_Event", HSB_Actual_Intervention_Config_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         }
 
         if( use_event_or_config == EventOrConfig::Config || JsonConfigurable::_dryrun )
@@ -62,7 +62,7 @@ namespace Kernel
                                                              inputJson->GetDataLocation() );
             }
             if( !JsonConfigurable::_dryrun && 
-                actual_intervention_event.IsUninitialized() &&
+                actual_intervention_event == EventTrigger::NoTrigger &&
                 (actual_intervention_config._json.Type() == ElementType::NULL_ELEMENT) )
             {
                 const char* msg = "You must define either Actual_IndividualIntervention_Event or Actual_IndividualIntervention_Config";
@@ -216,8 +216,8 @@ namespace Kernel
         SimpleHealthSeekingBehavior& intervention = *obj;
         ar.labelElement("probability_of_seeking") & intervention.probability_of_seeking;
         ar.labelElement("use_event_or_config") & (uint32_t&)intervention.use_event_or_config;
-        ar.labelElement("actual_intervention_config") & intervention.actual_intervention_config;
-        ar.labelElement("actual_intervention_event") & intervention.actual_intervention_event;
+        ar.labelElement("actual_intervention_event") & (uint32_t&) intervention.actual_intervention_event;
         ar.labelElement("single_use") & intervention.single_use;
+        ar.labelElement("actual_intervention_config") & intervention.actual_intervention_config;
     }
 }

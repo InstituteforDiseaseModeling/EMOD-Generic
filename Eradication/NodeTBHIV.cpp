@@ -106,7 +106,7 @@ namespace Kernel
         return tempind;
     }
 
-    bool CD4TrajectoryChangeObserver::notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger& trigger)
+    bool CD4TrajectoryChangeObserver::notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger)
     {
         if (trigger == EventTrigger::StartedART || trigger == EventTrigger::StoppedART)
         {
@@ -121,7 +121,7 @@ namespace Kernel
             if (p_human_co->HasLatentInfection())
             {
                 // order of logging matters (for SFTs). Keep this before function call.
-                LOG_VALID_F( "%s: Individual %lu has event %s.\n", __FUNCTION__, context->GetSuid().data, trigger.ToString().c_str() );
+                LOG_VALID_F( "%s: Individual %lu has event %s.\n", __FUNCTION__, context->GetSuid().data, EventTrigger::pairs::lookup_key( trigger ) );
                 p_human_co->LifeCourseLatencyUpdateAll();
             }
         }

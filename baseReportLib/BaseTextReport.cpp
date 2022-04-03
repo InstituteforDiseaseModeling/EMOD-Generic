@@ -122,7 +122,7 @@ namespace Kernel {
         bool good_name = true;
         for(std::string::const_iterator it = new_name.begin(); it != new_name.end(); it++)
         {
-            if(!isalnum(*it))
+            if(!isalnum(*it) && (*it) != '_' &&  (*it) != '.')
             {
                 good_name = false;
                 break;
@@ -142,7 +142,7 @@ namespace Kernel {
         return;
     }
 
-    void BaseTextReport::AddHeaderLine(bool add_endl)
+    void BaseTextReport::AddHeaderNewline(bool add_endl)
     {
         write_header_newline = add_endl;
 

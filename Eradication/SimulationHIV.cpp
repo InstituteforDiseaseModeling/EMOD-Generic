@@ -60,6 +60,7 @@ namespace Kernel
     SimulationHIV *SimulationHIV::CreateSimulation(const ::Configuration *config)
     {
         SimulationHIV *newsimulation = _new_ SimulationHIV();
+
         if (newsimulation)
         {
             // This sequence is important: first
@@ -68,7 +69,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "HIV_SIM requested with invalid configuration." );
             }
         }
 
@@ -85,10 +86,9 @@ namespace Kernel
         config->Add("Enable_Vital_Dynamics", 1);
     }
 
-    void
-    SimulationHIV::Initialize()
+    void SimulationHIV::Initialize()
     {
-        return SimulationSTI::Initialize();
+        SimulationSTI::Initialize();
     }
 
     void SimulationHIV::Initialize(const ::Configuration *config)

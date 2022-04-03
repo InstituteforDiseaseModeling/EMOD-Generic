@@ -1,0 +1,28 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.2
+            }
+        },
+        "ENVIRONMENTAL": {
+            "Node_Contagion_Decay_Rate": 0.4
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 0
+        },
+        "OUTPUT": {
+            "Enable_Property_Output": 0
+        },
+        "PRIMARY": {
+            "Config_Name": "Environmental_Route_Contagion_Dacay"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

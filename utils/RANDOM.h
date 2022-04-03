@@ -19,17 +19,16 @@
 #include<emmintrin.h> // for __m128i
 #endif
 
-#include "ISerializable.h"
-
 namespace Kernel
 {
     // ------------------------------------------------------------------------
     // --- RANDOMBASE
     // ------------------------------------------------------------------------
-    class RANDOMBASE : public ISerializable
+    class RANDOMBASE 
     {
     public:
 
+        friend class RANDOMBASE_SER;
         RANDOMBASE( size_t nCache );
         virtual ~RANDOMBASE();
 
@@ -48,11 +47,21 @@ namespace Kernel
         // If the input value is 5.3, then 70% of the time it should return 5 and 30% of the time 6.
         uint32_t randomRound( float val );
 
+
+#define FLOAT_EXP   8
+#define DOUBLE_EXP 11
+#define SQRT2       1.414214f
+
         std::set<uint32_t> chooseMofN( uint32_t M, uint32_t N );
 
+
         double ee();
-    
+
         double eGauss();    // Returns a normal deviate.
+        float eGaussNonNeg(float mu, float sig);
+        float erfinv_idm(float x);
+        float erf_idm(float x);
+
 
         // Added by Philip Eckhoff, Poisson takes in a rate, and returns the number of events in unit time
         // Or equivalently, takes in rate*time and returns number of events in that time
@@ -82,7 +91,7 @@ namespace Kernel
         double gamma_cdf(double x, double mean);
         double get_cdf_random_num_precision();
 
-    protected:
+    protected:// make something a friend.
 
         virtual void fill_bits();
         void bits_to_float();
@@ -92,8 +101,6 @@ namespace Kernel
         uint32_t* random_bits;
         float*    random_floats;
     
-        static void serialize( IArchive&, RANDOMBASE* );
-        
         bool   bGauss;
         double eGauss_;
 
@@ -110,9 +117,6 @@ namespace Kernel
     class LINEAR_CONGRUENTIAL : public RANDOMBASE
     {
     public:
-        IMPLEMENT_NO_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-    public:
         LINEAR_CONGRUENTIAL( uint32_t iSequence = 0x31415926, size_t nCache = 0 );
        ~LINEAR_CONGRUENTIAL();
 
@@ -121,7 +125,6 @@ namespace Kernel
 
         uint32_t iSeq;
 
-        DECLARE_SERIALIZABLE( LINEAR_CONGRUENTIAL );
     };
 
     // ------------------------------------------------------------------------
@@ -132,9 +135,6 @@ namespace Kernel
     class PSEUDO_DES : public RANDOMBASE
     {
     public:
-        IMPLEMENT_NO_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-    public:
         PSEUDO_DES( uint64_t iSequence = 0, size_t nCache = 0 );
         ~PSEUDO_DES();
 
@@ -144,7 +144,6 @@ namespace Kernel
         uint32_t iSeq;
         uint32_t iNum;
 
-        DECLARE_SERIALIZABLE( PSEUDO_DES );
     };
 
     // ------------------------------------------------------------------------
@@ -171,20 +170,16 @@ namespace Kernel
     class AES_COUNTER : public RANDOMBASE
     {
     public:
-        IMPLEMENT_NO_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-    public:
         AES_COUNTER( uint64_t iSequence = 0, size_t nCache = 0 );
         ~AES_COUNTER();
 
     protected:
         virtual void fill_bits() override;
 
-    private:
+    //private:
         AES_KEY     m_keySchedule;
         uint64_t    m_nonce;
         uint32_t    m_iteration;
 
-        DECLARE_SERIALIZABLE( AES_COUNTER );
     };
 }

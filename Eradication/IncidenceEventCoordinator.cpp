@@ -39,7 +39,7 @@ namespace Kernel
     Action::Action()
         : JsonConfigurable()
         , m_Threshold( 0 )
-        , m_EventToBroadcast()
+        , m_EventToBroadcast(EventTrigger::NoTrigger)
         , m_EventType(EventType::INDIVIDUAL)
         , m_TriggerCoordinator()
         , m_TriggerNode()
@@ -54,13 +54,14 @@ namespace Kernel
     bool Action::Configure( const Configuration * inputJson )
     {
         initConfigTypeMap( "Threshold", &m_Threshold, ICE_Action_Threshold_DESC_TEXT, 0.0, FLT_MAX, 0.0 );
-        initConfig("Event_Type", m_EventType, inputJson, MetadataDescriptor::Enum("Event_Type", ICE_Event_Type_DESC_TEXT, MDD_ENUM_ARGS( EventType )));
-        initConfigTypeMap( "Event_To_Broadcast", &m_EventToBroadcast, ICE_Action_Event_To_Broadcast_DESC_TEXT );
+
+        initConfig("Event_Type", m_EventType, inputJson, MetadataDescriptor::Enum("Event_Type", ICE_Event_Type_DESC_TEXT, MDD_ENUM_ARGS( EventType ))); 
+        initConfig( "Event_To_Broadcast", m_EventToBroadcast, inputJson, MetadataDescriptor::Enum("Event_To_Broadcast", ICE_Action_Event_To_Broadcast_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
         if( ret && !JsonConfigurable::_dryrun )
-        {
+        { 
             CheckConfigurationTriggers();
         }
         return ret;
@@ -68,7 +69,7 @@ namespace Kernel
 
     void Action::CheckConfigurationTriggers()
     {
-        if( m_EventToBroadcast.empty() || (m_EventToBroadcast == JsonConfigurable::default_string) )
+        if( m_EventToBroadcast == EventTrigger::NoTrigger )
         {
             throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "You must define Event_To_Broadcast" );
         } 
@@ -77,17 +78,17 @@ namespace Kernel
         {
             case EventType::INDIVIDUAL:
             {
-                m_TriggerIndividual = EventTriggerFactory::GetInstance()->CreateTrigger( "Event_To_Broadcast", m_EventToBroadcast );
+                m_TriggerIndividual =  m_EventToBroadcast;
                 break;
             }
             case EventType::NODE:
             {
-                m_TriggerNode = EventTriggerNodeFactory::GetInstance()->CreateTrigger( "Event_To_Broadcast", m_EventToBroadcast );
+                m_TriggerNode = m_EventToBroadcast;
                 break;
             }
             case EventType::COORDINATOR:
             {
-                m_TriggerCoordinator = EventTriggerCoordinatorFactory::GetInstance()->CreateTrigger( "Event_To_Broadcast", m_EventToBroadcast );
+                m_TriggerCoordinator = m_EventToBroadcast;
                 break;
             }
             default:
@@ -101,7 +102,7 @@ namespace Kernel
         return m_Threshold;
     }
 
-    const std::string& Action::GetEventToBroadcast() const
+    const EventTrigger::Enum& Action::GetEventToBroadcast() const
     {
         return m_EventToBroadcast;
     }
@@ -219,27 +220,33 @@ namespace Kernel
 
             switch(m_pCurrentAction->GetEventType())
             {
-            case EventType::INDIVIDUAL:
-                for (INodeEventContext* p_node : nodes)
-                {
-                    num_distributed += p_node->VisitIndividuals( this );
-                    ss << "Distribute() broadcasted '" << m_pCurrentAction->GetEventToBroadcast() << "' to " << num_distributed << " individuals\n";
-                }
-                break;
-            case EventType::NODE:
-                for (INodeEventContext* p_node : nodes)
-                {
-                    auto TriggerNode = m_pCurrentAction->GetEventToBroadcastNode();
-                    p_node->GetNodeContext()->GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers(p_node, TriggerNode);
-                    ss << "Distribute() broadcasted Node Event: '" << TriggerNode.ToString() << "'\n";
-                }
-                break;
-            case EventType::COORDINATOR:
-                auto TriggerCoordinator = m_pCurrentAction->GetEventToBroadcastCooridnator();
-                m_sim->GetCoordinatorEventBroadcaster()->TriggerObservers(m_Parent, TriggerCoordinator);
-                ss << "Distribute() broadcasted Coordinator Event: '" << TriggerCoordinator.ToString() << "'\n";
-                break;
+                case EventType::INDIVIDUAL:
+                    for (INodeEventContext* p_node : nodes)
+                    {
+                        num_distributed += p_node->VisitIndividuals( this );
+                        ss << "Distribute() broadcasted '" << EventTrigger::pairs::lookup_key( m_pCurrentAction->GetEventToBroadcast() ) << "' to " << num_distributed << " individuals\n";
+                    }
+                    break;
+                case EventType::NODE:
+                    for (INodeEventContext* p_node : nodes)
+                    {
+                        auto TriggerNode = m_pCurrentAction->GetEventToBroadcastNode();
+                        p_node->GetNodeContext()->GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers(p_node, TriggerNode);
+                        ss << "Distribute() broadcasted Node Event: '" << EventTrigger::pairs::lookup_key( TriggerNode ) << "'\n";
+                    }
+                    break;
+                case EventType::COORDINATOR:
+                    {
+                    auto TriggerCoordinator = m_pCurrentAction->GetEventToBroadcastCoordinator();
+                    m_sim->GetCoordinatorEventBroadcaster()->TriggerObservers(m_Parent, TriggerCoordinator);
+                    ss << "Distribute() broadcasted Coordinator Event: '" << EventTrigger::pairs::lookup_key( TriggerCoordinator ) << "'\n";
+                    }
+                    break;
+
+                default:
+                    abort();
             }
+            ss << "UpdateNodes() broadcasted '" << EventTrigger::pairs::lookup_key( m_pCurrentAction->GetEventToBroadcast() )  << "' to " << num_distributed << " individuals\n";
             LOG_INFO( ss.str().c_str() );
         }
         return (m_pCurrentAction != nullptr);
@@ -266,6 +273,7 @@ namespace Kernel
 
     Action* Responder::GetAction( float value )
     {
+        release_assert( m_ActionList.Size() > 0 );
         Action* p_action = nullptr;
         for( int i = 0; i < m_ActionList.Size(); ++i )
         {
@@ -295,7 +303,7 @@ namespace Kernel
         , m_Count(0)
         , m_NodePropertyRestrictions()
         , m_DemographicRestrictions()
-        , m_TriggerConditionListIndividual()
+        , m_TriggerConditionList()
         , m_CountEventsForNumTimeSteps(1)
         , m_NumTimeStepsCounted(-1)
         , m_IsDoneCounting(false)  
@@ -309,7 +317,7 @@ namespace Kernel
 
     bool IncidenceCounter::Configure( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Count_Events_For_Num_Timesteps", &m_CountEventsForNumTimeSteps, ICE_Count_Events_For_Num_Timesteps_DESC_TEXT, 1, INT_MAX, 1 );
+        initConfigTypeMap( "Count_Events_For_Num_Timesteps", &m_CountEventsForNumTimeSteps, ICE_Count_Events_For_Num_Timesteps_DESC_TEXT, 1, INT_MAX, 1 ); 
         initConfigComplexType( "Node_Property_Restrictions", &m_NodePropertyRestrictions, ICE_Node_Property_Restriction_DESC_TEXT );
         
         m_DemographicRestrictions.ConfigureRestrictions( this, inputJson );
@@ -326,7 +334,7 @@ namespace Kernel
 
     void IncidenceCounter::ConfigureTriggers( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Trigger_Condition_List", &m_TriggerConditionListIndividual, ICE_Trigger_Condition_List_DESC_TEXT );        
+        initVectorConfig( "Trigger_Condition_List", m_TriggerConditionList, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", ICE_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger) ) );
     }
 
     void IncidenceCounter::CheckConfigurationTriggers()
@@ -335,7 +343,7 @@ namespace Kernel
     }
 
     bool IncidenceCounter::notifyOnEvent( IIndividualHumanEventContext *context,
-                                          const EventTrigger& trigger )
+                                          const EventTrigger::Enum& trigger )
     {
         if( m_NodePropertyRestrictions.Qualifies( context->GetNodeEventContext()->GetNodeContext()->GetNodeProperties() ) &&
             m_DemographicRestrictions.IsQualified( context ) &&
@@ -423,7 +431,7 @@ namespace Kernel
     {
         IIndividualEventBroadcaster* broadcaster = pNEC->GetIndividualEventBroadcaster();
 
-        for( auto& trigger : m_TriggerConditionListIndividual )
+        for( auto& trigger : m_TriggerConditionList )
         {
             broadcaster->RegisterObserver( this, trigger );
         }
@@ -433,7 +441,7 @@ namespace Kernel
     {
         IIndividualEventBroadcaster* broadcaster = pNEC->GetIndividualEventBroadcaster();
 
-        for( auto& trigger : m_TriggerConditionListIndividual )
+        for( auto& trigger : m_TriggerConditionList )
         {
             broadcaster->UnregisterObserver( this, trigger );
         }

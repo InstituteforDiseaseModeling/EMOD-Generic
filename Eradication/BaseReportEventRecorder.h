@@ -18,8 +18,8 @@ namespace Kernel
 {
     struct IdmDateTime;
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    class BaseReportEventRecorder : public BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>
+    template<class Broadcaster, class Observer, class Entity>
+    class BaseReportEventRecorder : public BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>
     {
     public:
         static std::string GetEnableParameterName();
@@ -41,11 +41,11 @@ namespace Kernel
         virtual std::string GetHeader() const;
 
         // IObserver
-        bool notifyOnEvent( Entity *pEntity, const Trigger& trigger );
+        bool notifyOnEvent( Entity *pEntity, const EventTrigger::Enum& trigger );
 
     protected:
         virtual void ConfigureOther( const Configuration* inputJson );
-        virtual std::string GetOtherData( Entity *pEntity, const Trigger& trigger );
+        virtual std::string GetOtherData( Entity *pEntity, const EventTrigger::Enum& trigger );
         virtual std::string GetTimeHeader() const;
 
         virtual float GetTime( Entity* pEntity ) const = 0;

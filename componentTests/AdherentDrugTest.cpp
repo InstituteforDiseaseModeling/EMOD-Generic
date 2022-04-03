@@ -66,11 +66,10 @@ SUITE( AdherentDrugTest )
             m_InterventionsContext.SetContextTo( &m_Human );
 
             IPFactory::DeleteFactory();
-            EventTriggerFactory::DeleteInstance();
 
-            json::Object fakeConfigJson;
-            Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //json::Object fakeConfigJson;
+            //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
+            ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
 
             m_NEC.Initialize();
         }

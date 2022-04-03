@@ -279,6 +279,7 @@
     <ClInclude Include="..\interventions\MalariaChallenge.h" />
     <ClInclude Include="..\interventions\MalariaDiagnostic.h" />
     <ClInclude Include="..\interventions\MaleCircumcision.h" />
+    <ClInclude Include="..\interventions\MeaslesVaccine.h" />
     <ClInclude Include="..\interventions\MigrateFamily.h" />
     <ClInclude Include="..\interventions\MigrateIndividuals.h" />
     <ClInclude Include="..\interventions\ModifyStiCoInfectionStatus.h" />
@@ -481,6 +482,7 @@
     <ClInclude Include="PropertyRestrictions.h" />
     <ClInclude Include="PyInterventionsContainer.h" />
     <ClInclude Include="PythonSupport.h" />
+    <ClInclude Include="RandomNumberGeneratorFactory.h" />
     <ClInclude Include="RateTableFactory.h" />
     <ClInclude Include="RateTableImpl.h" />
     <ClInclude Include="ReferenceTrackingEventCoordinator.h" />
@@ -639,6 +641,7 @@
     <ClCompile Include="..\interventions\MalariaChallenge.cpp" />
     <ClCompile Include="..\interventions\MalariaDiagnostic.cpp" />
     <ClCompile Include="..\interventions\MaleCircumcision.cpp" />
+    <ClCompile Include="..\interventions\MeaslesVaccine.cpp" />
     <ClCompile Include="..\interventions\MigrateFamily.cpp" />
     <ClCompile Include="..\interventions\MigrateIndividuals.cpp" />
     <ClCompile Include="..\interventions\ModifyStiCoInfectionStatus.cpp" />
@@ -790,6 +793,8 @@
     <ClCompile Include="PropertyRestrictions.cpp" />
     <ClCompile Include="PyInterventionsContainer.cpp" />
     <ClCompile Include="PythonSupport.cpp" />
+    <ClCompile Include="RandomNumberGeneratorFactory.cpp" />
+    <ClCompile Include="RandomSerializable.cpp" />
     <ClCompile Include="RateTableFactory.cpp" />
     <ClCompile Include="RateTableImpl.cpp" />
     <ClCompile Include="ReferenceTrackingEventCoordinator.cpp" />

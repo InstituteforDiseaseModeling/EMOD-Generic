@@ -106,6 +106,61 @@ SimulationConfig::~SimulationConfig()
 {
 }
 
+#if 0
+void SimulationConfig::SetFixedParameters(Configuration * inputJson)
+{
+    SimType::Enum sim_type;
+    initConfig("Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType))); // simulation only (???move)
+
+    switch (sim_type)
+    {
+    case SimType::MALARIA_SIM:
+        inputJson->Add("Enable_Immunity", 1);
+        inputJson->Add("Enable_Immune_Decay", 1);
+        inputJson->Add("Enable_Maternal_Protection", 0 );
+        break;
+    case SimType::HIV_SIM:
+        inputJson->Add("Enable_Disease_Mortality", 1);
+        inputJson->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
+        inputJson->Add("Enable_Immune_Decay", 0);   //must exist because Enable_Immunity: 1
+        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 0); //must exist because Enable_Immunity: 1
+        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
+        inputJson->Add("Enable_Vital_Dynamics", 1);
+        break;
+    case SimType::TYPHOID_SIM:
+        inputJson->Add("Enable_Maternal_Infection_Transmission", 0);  //must exist because fixed-off and depends on Enable_Birth
+        break;
+    case SimType::DENGUE_SIM:
+        inputJson->Add("Enable_Immunity", 1);
+        inputJson->Add("Enable_Immune_Decay", 1);
+        inputJson->Add("Enable_Maternal_Protection", 0 );
+        inputJson->Add("Enable_Maternal_Infection_Transmission", 1);
+        break;
+    case SimType::POLIO_SIM:
+        inputJson->Add("Enable_Immunity", 1);
+        inputJson->Add("Enable_Immune_Decay", 1);
+        inputJson->Add("Enable_Initial_Susceptibility_Distribution", 1);
+        inputJson->Add("Enable_Superinfection", 1);
+        inputJson->Add("Enable_Maternal_Infection_Transmission", 0); //must exist because fixed-off and depends on Enable_Birth
+        break;
+    }
+
+//    // Assume that the listed Enable parameters are implied false if missing; does not require enable_defaults to be set.
+//    std::vector<string> assume_false;
+//    assume_false.push_back("Enable_Strain_Tracking");
+//    assume_false.push_back("Enable_Termination_On_Zero_Total_Infectivity");
+//
+//    for(std::vector<string>::iterator it = assume_false.begin(); it != assume_false.end(); ++it)
+//    {
+//        if(!inputJson->Exist(*it))
+//        {
+//            inputJson->Add(*it, 0 );
+//        }
+//    }
+}
+#endif
+
+
 bool SimulationConfig::Configure(const Configuration * inputJson)
 {
     LOG_DEBUG( "Configure\n" );
@@ -331,11 +386,11 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
 void SimulationConfig::VectorCheckConfig( const Configuration* inputJson )
 {
 #ifndef DISABLE_VECTOR
-    if( Sim_Tstep != 1.0f )
+    /*if( Sim_Tstep != 1.0f )
     {
         // There has not been sufficient testing for vector related simulations when dt != 1.
         throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "Vector-based simulations assume that the Simulation_Timestep = 1" );
-    }
+    }*/
 
     if( vector_params->vector_species_names.empty() )
     {
@@ -448,9 +503,6 @@ void SimulationConfig::MalariaAddSchema( json::QuickBuilder& retJson )
 void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
 {
 #ifdef ENABLE_POLIO
-    InfectionConfig::number_clades   =   6; // would like to move this here to NodePolio but too late
-    InfectionConfig::number_genomes  = 256;
-
     initConfig( "Evolution_Polio_Clock_Type", polio_params->evolution_polio_clock_type, inputJson, MetadataDescriptor::Enum(Evolution_Polio_Clock_Type_DESC_TEXT, Evolution_Polio_Clock_Type_DESC_TEXT, MDD_ENUM_ARGS(EvolutionPolioClockType)) ); // infection (polio) only
     initConfig( "VDPV_Virulence_Model_Type",  polio_params->VDPV_virulence_model_type,  inputJson, MetadataDescriptor::Enum(VDPV_Virulence_Model_Type_DESC_TEXT,  VDPV_Virulence_Model_Type_DESC_TEXT,  MDD_ENUM_ARGS(VDPVVirulenceModelType))  ); // susceptibility polio only
     initConfigTypeMap( "Max_Rand_Standard_Deviations", &(polio_params->MaxRandStdDev), Max_Rand_Standard_Deviations_DESC_TEXT, 0.0f, 10.0f, 2.0f);
@@ -578,23 +630,14 @@ void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
     initConfigTypeMap( "Vaccine_Genome_OPV1", &(polio_params->vaccine_genome_OPV1), Vaccine_Genome_OPV1_DESC_TEXT, 0, 1023, 1 );
     initConfigTypeMap( "Vaccine_Genome_OPV2", &(polio_params->vaccine_genome_OPV2), Vaccine_Genome_OPV2_DESC_TEXT, 0, 1023, 1 );
     initConfigTypeMap( "Vaccine_Genome_OPV3", &(polio_params->vaccine_genome_OPV3), Vaccine_Genome_OPV3_DESC_TEXT, 0, 1023, 1 );
-
-    polio_params->vaccine_strains[0] = new StrainIdentity(PolioVirusTypes::VRPV1,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
-    polio_params->vaccine_strains[1] = new StrainIdentity(PolioVirusTypes::VRPV2,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
-    polio_params->vaccine_strains[2] = new StrainIdentity(PolioVirusTypes::VRPV3,0); // sets cladeID for VRPV strains and genome to zero (fully Sabin), note: literal definition of "vaccine-related poliovirus"
-
-    polio_params->vaccine_strains[0]->SetGeneticID( polio_params->vaccine_genome_OPV1 ); // user-configuration of Sabin genome in OPV, default is zero
-    polio_params->vaccine_strains[1]->SetGeneticID( polio_params->vaccine_genome_OPV2 ); // user-configuration of Sabin genome in OPV, default is zero
-    polio_params->vaccine_strains[2]->SetGeneticID( polio_params->vaccine_genome_OPV3 ); // user-configuration of Sabin genome in OPV, default is zero
 #endif // ENABLE_POLIO
 }
 
 void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
 {
 #ifdef ENABLE_POLIO
-    unsigned int number_genomes = 256;
-    std::vector<float> dummyvect(number_genomes , 1.0f);
-    polio_params->genomeRelativeInfectivity.resize(number_genomes, dummyvect);
+    std::vector<float> dummyvect(N_MAX_POLIO_GENOMES , 1.0f);
+    polio_params->genomeRelativeInfectivity.resize(N_MAX_POLIO_GENOMES, dummyvect);
 
     // reversion rates for Sabin attenuating sites
     for(int i=0; i<3; ++i)
@@ -603,7 +646,7 @@ void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
         int ptrPosition;
         const char * readStr = tmpSiteRatesStrings[i].c_str();
         float data;
-        size_t maximum_index = 1 + int(log(float(number_genomes)) / log(2.0f));
+        size_t maximum_index = 1 + int(log(float(N_MAX_POLIO_GENOMES)) / log(2.0f));
         vector<float> tmp_sabin_rates;
         tmp_sabin_rates.resize(maximum_index);
 
@@ -630,7 +673,6 @@ void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
         }
     }
 
-
     // vaccine infectivity by genotype
     for(int i=0; i<3; ++i)
     {
@@ -649,16 +691,13 @@ void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
             ++nDataRead;
         }
 
-        if (nDataRead != number_genomes)
+        if (nDataRead != N_MAX_POLIO_GENOMES)
         {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead", nDataRead, "number_genomes", number_genomes );
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead", nDataRead, "number_genomes", N_MAX_POLIO_GENOMES );
         }
     }
     polio_params->decayRatePassiveImmunity = log(2.0f) / polio_params->maternalAbHalfLife; // (days) decayrate=log(2.0)/halflife; Ogra 1968, Warren 1964, Dexiang1956, Plotkin 1959
 
-    polio_params->vaccine_strains[0]->SetGeneticID( polio_params->vaccine_genome_OPV1 ); // user-configuration of Sabin genome in OPV, default is zero
-    polio_params->vaccine_strains[1]->SetGeneticID( polio_params->vaccine_genome_OPV2 ); // user-configuration of Sabin genome in OPV, default is zero
-    polio_params->vaccine_strains[2]->SetGeneticID( polio_params->vaccine_genome_OPV3 ); // user-configuration of Sabin genome in OPV, default is zero
 #endif // ENABLE_POLIO
 }
 

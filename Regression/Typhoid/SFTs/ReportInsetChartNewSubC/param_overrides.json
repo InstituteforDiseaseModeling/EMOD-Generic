@@ -1,0 +1,16 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Report_Insert_Chart_New_SubC",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_1K_overlay.json"
+        ],
+        "Enable_Vital_Dynamics": 0,
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 365,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Symptomatic_Fraction": 0,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

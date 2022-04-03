@@ -23,6 +23,7 @@
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Simulation_Duration": 50
         },

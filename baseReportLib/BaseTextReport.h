@@ -51,7 +51,7 @@ namespace Kernel
         std::stringstream& GetOutputStream() { return output_stream; }
 
         void SetReportName(const std::string& new_name);
-        void AddHeaderLine(bool add_endl);
+        void AddHeaderNewline(bool add_endl);
 
         void GetDataFromOtherCores();
         void WriteData( const std::string& rStringData );

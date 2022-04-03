@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventTrigger.h"
 #include "EventTriggerNode.h"
 #include "EventTriggerCoordinator.h"
+#include "Log.h"
 
 SETUP_LOGGING( "BroadcasterImpl" )
 
@@ -22,19 +23,14 @@ SETUP_LOGGING( "BroadcasterImpl" )
 namespace Kernel
 {
     template class BroadcasterImpl< ICoordinatorEventObserver,
-                                    IEventCoordinatorEventContext,
-                                    EventTriggerCoordinator,
-                                    EventTriggerCoordinatorFactory >;
+                                    IEventCoordinatorEventContext >;
 
     template class BroadcasterImpl< INodeEventObserver,
-                                    INodeEventContext,
-                                    EventTriggerNode,
-                                    EventTriggerNodeFactory >;
+                                    INodeEventContext >;
 
     template class BroadcasterImpl< IIndividualEventObserver,
-                                    IIndividualHumanEventContext,
-                                    EventTrigger,
-                                    EventTriggerFactory >;
+                                    IIndividualHumanEventContext
+                                     >;
 }
 
 

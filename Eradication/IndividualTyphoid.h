@@ -16,17 +16,19 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class SusceptibilityTyphoid;
-    class IndividualHumanTyphoidConfig : public JsonConfigurable
+    class IndividualHumanTyphoidConfig : public IndividualHumanEnvironmentalConfig
     {
         GET_SCHEMA_STATIC_WRAPPER(IndividualHumanTyphoidConfig)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
         DECLARE_QUERY_INTERFACE()
+        virtual bool Configure( const Configuration* config );
     protected:
         friend class SimulationTyphoid;
         friend class IndividualHumanTyphoid;
         friend class InfectionTyphoid;
         friend class SusceptibilityTyphoid;
-        friend class NodeTyphoid;
+        friend class NodeTyphoid; 
+
         static float environmental_incubation_period; // NaturalNumber please
         static float typhoid_acute_infectiousness;
         static float typhoid_chronic_relative_infectiousness;
@@ -45,7 +47,6 @@ namespace Kernel
         static float typhoid_environmental_peak_multiplier;
         static float typhoid_exposure_lambda;
 
-        virtual bool Configure( const Configuration* config );
     };
 
 
@@ -62,14 +63,14 @@ namespace Kernel
     class IndividualHumanTyphoid : public IndividualHumanEnvironmental, public IIndividualHumanTyphoid
     {
         friend class SimulationTyphoid;
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
+
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
-        DECLARE_SERIALIZABLE(IndividualHumanTyphoid);
+        DECLARE_SERIALIZABLE( IndividualHumanTyphoid )
 
     public:
         static IndividualHumanTyphoid *CreateHuman(INodeContext *context, suids::suid id, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanTyphoid(void);
-        static void InitializeStatics( const Configuration* config );
 
         virtual void CreateSusceptibility(float imm_mod = 1.0, float risk_mod = 1.0);
 
@@ -128,6 +129,8 @@ namespace Kernel
         friend class NodeTyphoid;
 
     private:
+        static void InitializeStaticsTyphoid( const Configuration* config );
+
         SusceptibilityTyphoid * typhoid_susceptibility;
         std::map< TransmissionRoute::Enum, float > contagion_population_by_route;
     };

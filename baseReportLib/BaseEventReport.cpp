@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2016 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "EventTrigger.h"
 
-// DON'T COMMIT THIS CHANGE BELOW
 SETUP_LOGGING( "BaseEventReport" )
 
 namespace Kernel
@@ -62,14 +61,18 @@ namespace Kernel
 
         if( inputJson->Exist( "Event_Trigger_List" ) )
         {
-            initConfigTypeMap( "Event_Trigger_List", &eventTriggerList, Event_Trigger_List_DESC_TEXT );
+            initVectorConfig( "Event_Trigger_List",
+                              eventTriggerList,
+                              inputJson,
+                              MetadataDescriptor::Enum(
+                                "Event_Trigger_List",
+                                Event_Trigger_List_DESC_TEXT,
+                                MDD_ENUM_ARGS(EventTrigger)
+                        )
+                );
         }
 
         bool retValue = JsonConfigurable::Configure( inputJson );
-        if( eventTriggerList.size() == 0 )
-        {
-            eventTriggerList = EventTriggerFactory::GetInstance()->GetAllEventTriggers();
-        }
 
         if( retValue && (pNodeSet == nullptr) )
         {
@@ -96,6 +99,11 @@ namespace Kernel
 
     void BaseEventReport::CheckForValidNodeIDs(const std::vector<ExternalNodeId_t>& nodeIds_demographics)
     {
+        if( pNodeSet == nullptr )
+        {
+            // Actual case encountered but hard to reproduce under normal operation. Should throw exception???
+            return;
+        }
         std::vector<ExternalNodeId_t> nodes_missing_in_demographics = pNodeSet->IsSubset(nodeIds_demographics);
         if (!nodes_missing_in_demographics.empty())
         {
@@ -134,7 +142,7 @@ namespace Kernel
         {
             for( auto p_nec : rNodeEventContextList )
             {
-                if( pNodeSet->Contains( p_nec ) )
+                if( pNodeSet && pNodeSet->Contains( p_nec ) )
                 {
                     if( register_now )
                     {
@@ -197,7 +205,7 @@ namespace Kernel
         return durationDays;
     }
 
-    const std::vector< EventTrigger >&
+    const std::vector< EventTrigger::Enum >&
     BaseEventReport::GetEventTriggerList() const
     {
         return eventTriggerList;
@@ -213,7 +221,7 @@ namespace Kernel
 
         for( auto trigger : eventTriggerList )
         {
-            LOG_DEBUG_F( "BaseEventReport is registering to listen to event %s\n", trigger.c_str() );
+            LOG_DEBUG_F( "BaseEventReport is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ) );
             broadcaster->RegisterObserver( this, trigger );
         }
         nodeEventContextList.push_back( pNEC );
@@ -225,8 +233,8 @@ namespace Kernel
         IIndividualEventBroadcaster* broadcaster = pNEC->GetIndividualEventBroadcaster();
 
         for( auto trigger : eventTriggerList )
-        {
-            LOG_DEBUG_F( "BaseEventReport is unregistering to listen to event %s\n", trigger.c_str() );
+        { 
+            LOG_DEBUG_F( "BaseEventReport is unregistering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ) );
             broadcaster->UnregisterObserver( this, trigger );
         }
         events_unregistered = true ;

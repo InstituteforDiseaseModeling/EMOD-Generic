@@ -27,6 +27,7 @@ namespace Kernel
 
         virtual float GetInfectiousnessByRoute( const std::string& route) const = 0;
         virtual void GetInfectiousStrainID(IStrainIdentity*) = 0;
+        virtual const IStrainIdentity* GetStrain() const  = 0;
 
         virtual bool IsActive() const = 0;
         virtual NonNegativeFloat GetDuration() const = 0;

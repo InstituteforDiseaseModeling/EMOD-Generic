@@ -55,15 +55,11 @@ SUITE(CampaignEventByYearTest)
 
             Environment::setSimulationConfig( m_pSimulationConfig );
 
-            EventTriggerFactory::DeleteInstance();
-            EventTriggerFactory::GetInstance()->Configure( EnvPtr->Config );
-
             m_oldBaseYear = Simulation::base_year; // Need to save old base_year for restoration
         }
 
         ~CampaignEventByYearFixture()
         {
-            EventTriggerFactory::DeleteInstance();
             Environment::Finalize();
             Simulation::base_year = m_oldBaseYear; // Restore base_year
         }

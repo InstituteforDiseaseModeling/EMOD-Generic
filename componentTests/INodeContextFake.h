@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "ISimulationContext.h"
 #include "NodeEventContext.h"
+#include "IIndividualHumanContext.h"
 #include "IdmDateTime.h"
 #include "INodeContext.h"
 #include "TransmissionGroupMembership.h"
@@ -216,7 +217,7 @@ public:
         return m_pNEC;
     }
 
-    virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger>& rTriggerList ) override
+    virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
@@ -314,6 +315,10 @@ public:
     virtual void Update(float)                                                                                 override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual IIndividualHuman* processImmigratingIndividual(IIndividualHuman*)                                  override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual void SortHumans()                                                                                  override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual const std::vector<IIndividualHuman*>& GetHumans()                                            const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual std::map<std::string, int>& GetStrainClades()                                                const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual const std::map<std::string, int>& GetStrainGenomes()                                         const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual std::map<std::string, std::vector<float>>& GetStrainData()                                   const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
 
     virtual float GetBasePopulationScaleFactor() const
     {

@@ -28,7 +28,7 @@
         "PRIMARY": {
             "Config_Name": "Generic serialization 01 writes files",
             "Geography": "SamplesInput",
-            "Python_Script_Path": "SHARED",
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Serialization_Time_Steps": [
                 10,

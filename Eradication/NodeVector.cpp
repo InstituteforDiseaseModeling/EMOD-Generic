@@ -51,11 +51,6 @@ namespace Kernel
 
     GET_SCHEMA_STATIC_WRAPPER_IMPL(NodeVector, NodeVector)
 
-    TransmissionGroupMembership_t NodeVector::human_indoor;
-    TransmissionGroupMembership_t NodeVector::human_outdoor;
-    TransmissionGroupMembership_t NodeVector::vector_indoor;
-    TransmissionGroupMembership_t NodeVector::vector_outdoor;
-
     NodeVector::NodeVector() 
         : m_larval_habitats()
         , m_vectorpopulations()
@@ -255,11 +250,11 @@ namespace Kernel
         // variables are shared by all (demographic) nodes on the same compute core. It is
         // just maybe possible that the HINT configuration is different for different nodes
         // and should not all be using the same static variables.
-        transmissionGroups->GetGroupMembershipForProperties( humanProperties, human_indoor );
-        txOutdoor->GetGroupMembershipForProperties( humanProperties, human_outdoor );
+        transmissionGroups->GetGroupMembershipForProperties( humanProperties, IndividualHumanVector::human_indoor );
+        txOutdoor->GetGroupMembershipForProperties( humanProperties, IndividualHumanVector::human_outdoor );
 
-        transmissionGroups->GetGroupMembershipForProperties( vectorProperties, vector_indoor );
-        txOutdoor->GetGroupMembershipForProperties( vectorProperties, vector_outdoor );
+        transmissionGroups->GetGroupMembershipForProperties( vectorProperties, IndividualHumanVector::vector_indoor );
+        txOutdoor->GetGroupMembershipForProperties( vectorProperties, IndividualHumanVector::vector_outdoor );
 
 // Workaround (AKA hack) for deserialization
 for (auto pop : m_vectorpopulations)
@@ -286,8 +281,8 @@ for (auto pop : m_vectorpopulations)
         float weight = 1.0f - invie->GetPFVKill();
 
         // Acquire infections with strain tracking for exposed queues
-        transmissionGroups->CorrectInfectivityByGroup(weight, NodeVector::human_indoor);
-        txOutdoor->CorrectInfectivityByGroup( weight, NodeVector::human_outdoor );
+        transmissionGroups->CorrectInfectivityByGroup(weight, IndividualHumanVector::human_indoor);
+        txOutdoor->CorrectInfectivityByGroup( weight, IndividualHumanVector::human_outdoor );
 
         // changes in larval capacities.
         // drying of larval habitat, function of temperature and humidity
@@ -635,8 +630,8 @@ for (auto pop : m_vectorpopulations)
 
     void NodeVector::UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes, float mc_weight)
     {
-        transmissionGroups->UpdatePopulationSize(human_indoor, size_changes, mc_weight);
-        txOutdoor->UpdatePopulationSize(human_outdoor, size_changes, mc_weight);
+        transmissionGroups->UpdatePopulationSize(IndividualHumanVector::human_indoor, size_changes, mc_weight);
+        txOutdoor->UpdatePopulationSize(IndividualHumanVector::human_outdoor, size_changes, mc_weight);
     }
 
     ITransmissionGroups* NodeVector::CreateTransmissionGroups()
@@ -688,8 +683,8 @@ for (auto pop : m_vectorpopulations)
 
     void NodeVector::ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt )
     {
-        transmissionGroups->ExposeToContagion( candidate, human_indoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR );
-        txOutdoor->ExposeToContagion( candidate, human_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR );
+        transmissionGroups->ExposeToContagion( candidate, IndividualHumanVector::human_indoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR );
+        txOutdoor->ExposeToContagion( candidate, IndividualHumanVector::human_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR );
     }
 
     float NodeVector::GetTotalContagion( void )

@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-
-import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as dpp_adhoc
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 import math
 
 import pandas as pd
@@ -26,14 +28,12 @@ class Config:
     simulation_timestep = "Simulation_Timestep"
     duration = "Simulation_Duration"
 
-
 class ReportColumn:
     year = "Year"
     negative = " TBTestNegative"
     default = " TBTestDefault"
     positive = " TBTestPositive"
     agebin = " AgeBin"
-    seek200 = " Seek200"
 
 
 class Campaign:
@@ -138,7 +138,7 @@ def parse_custom_reporter(reporter_path="output", reporter_filename="output/Repo
     report_df = pd.read_csv(os.path.join(reporter_path, reporter_filename))
     success = True
     try:
-        filtered_df = report_df[[ReportColumn.year, ReportColumn.agebin, ReportColumn.negative, ReportColumn.default, ReportColumn.seek200]]
+        filtered_df = report_df[ [ReportColumn.year, ReportColumn.agebin, ReportColumn.negative, ReportColumn.default ] ]#, ReportColumn.seek200]]
         if debug:
             with open("DEBUG_reporter_dataframe.csv", "w") as outfile:
                 filtered_df.to_csv(outfile, header=True)
@@ -272,6 +272,8 @@ def application( output_folder="output", stdout_filename="test.txt", reporter_fi
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
                  debug=False):
+
+    dpp_adhoc.application( output_folder )
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

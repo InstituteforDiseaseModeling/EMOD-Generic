@@ -1,0 +1,17 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Shedding_Multiroute",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_1K_overlay.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Typhoid_Chronic_Relative_Infectiousness": 0.25,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.75,
+        "x_Base_Population": 0.1,
+        "logLevel_IndividualTyphoid": "VALID",
+        "logLevel_InfectionTyphoid": "VALID",
+        "logLevel_SusceptibilityTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

@@ -42,7 +42,7 @@ namespace Kernel
         virtual void Update(float dt) override;
 
         // IIndividualEventObserver
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
         virtual void SetDemographicCoverage(float new_coverage) { demographic_restrictions.SetDemographicCoverage( new_coverage );};
         virtual void SetMaxDuration(float new_duration) {max_duration = new_duration;};

@@ -37,7 +37,7 @@ namespace Kernel
 
     bool ResponderSurveillance::Configure( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Responded_Event", &m_RespondedEvent, SEC_Responded_Event_DESC_TEXT );
+        initConfig( "Responded_Event", m_RespondedEvent, inputJson, MetadataDescriptor::Enum("Responded_Event", SEC_Responded_Event_DESC_TEXT , MDD_ENUM_ARGS( EventTrigger ) ) );
 
         initConfigTypeMap( "Percentage_Events_To_Count",
                            &m_PercentageEventsToCount,
@@ -59,7 +59,7 @@ namespace Kernel
     bool ResponderSurveillance::Distribute( const std::vector<INodeEventContext*>& nodes, uint32_t numIncidences, uint32_t qualifyingPopulation )
     {
         bool distributed = Responder::Distribute( nodes, numIncidences, qualifyingPopulation );
-        if( distributed && !m_RespondedEvent.IsUninitialized() )
+        if( distributed && m_RespondedEvent != EventTrigger::NoTrigger )
         {
             m_sim->GetCoordinatorEventBroadcaster()->TriggerObservers( m_Parent, m_RespondedEvent );
         }
@@ -98,8 +98,20 @@ namespace Kernel
 
     bool SurveillanceEventCoordinator::Configure( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Start_Trigger_Condition_List", &m_StartTriggerConditionList, SEC_Start_Trigger_Condition_List_DESC_TEXT );
-        initConfigTypeMap( "Stop_Trigger_Condition_List", &m_StopTriggerConditionList, SEC_Stop_Trigger_Condition_List_DESC_TEXT );
+        initVectorConfig( "Start_Trigger_Condition_List",
+                          m_StartTriggerConditionList,
+                          inputJson,
+                          MetadataDescriptor::Enum(
+                            "Start_Trigger_Condition_List",
+                            SEC_Start_Trigger_Condition_List_DESC_TEXT ,
+                            MDD_ENUM_ARGS(EventTrigger) ) );
+        initVectorConfig( "Stop_Trigger_Condition_List",
+                          m_StopTriggerConditionList,
+                          inputJson,
+                          MetadataDescriptor::Enum(
+                            "Stop_Trigger_Condition_List",
+                            SEC_Stop_Trigger_Condition_List_DESC_TEXT ,
+                            MDD_ENUM_ARGS(EventTrigger)));
         initConfigTypeMap( "Duration", &m_Duration, SEC_Duration_DESC_TEXT, -1.0f, FLT_MAX, -1.0f );
         initConfigTypeMap( "Coordinator_Name", &m_CoordinatorName, SEC_Coordinator_Name_DESC_TEXT, "SurveillanceEventCoordinator" );
 
@@ -125,7 +137,7 @@ namespace Kernel
             if( found != m_StartTriggerConditionList.end() )
             {
                 std::ostringstream msg;
-                msg << "In Coordinator \'" << m_CoordinatorName << "\' stop trigger \'" << etc.ToString() << "\' is already defined in Start_Trigger_Condition_List.";
+                msg << "In Coordinator \'" << m_CoordinatorName << "\' stop trigger \'" << EventTrigger::pairs::lookup_key( etc ) << "\' is already defined in Start_Trigger_Condition_List.";
                 throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
             }
         }
@@ -174,15 +186,15 @@ namespace Kernel
     void SurveillanceEventCoordinator::Register()
     {
         //Register Start and Stop events
-        for( EventTriggerCoordinator& ect : m_StartTriggerConditionList)
+        for( EventTriggerCoordinator& etc : m_StartTriggerConditionList)
         {
-            m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, ect );
-            LOG_INFO_F( "%s: registered Start_Trigger: %s\n", m_CoordinatorName.c_str(), ect.ToString().c_str() );
+            m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, etc );
+            LOG_INFO_F( "%s: registered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
         }
-        for( EventTriggerCoordinator& ect : m_StopTriggerConditionList)
+        for( EventTriggerCoordinator& etc : m_StopTriggerConditionList)
         {
-            m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, ect );
-            LOG_INFO_F( "%s: registered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), ect.ToString().c_str() );
+            m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, etc );
+            LOG_INFO_F( "%s: registered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
         }
     }
 
@@ -191,12 +203,12 @@ namespace Kernel
         auto it_start = find( m_StartTriggerConditionList.begin(), m_StartTriggerConditionList.end(), trigger );
         if ( it_start != m_StartTriggerConditionList.end() )
         {
-            LOG_INFO_F( "%s: notifyOnEvent received Start: %s\n", m_CoordinatorName.c_str(), trigger.ToString().c_str() );
+            LOG_INFO_F( "%s: notifyOnEvent received Start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
             m_IsStarting = true;           
         }
         else
         {
-            LOG_INFO_F( "%s: notifyOnEvent received Stop: %s\n", m_CoordinatorName.c_str(), trigger.ToString().c_str() );
+            LOG_INFO_F( "%s: notifyOnEvent received Stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
             m_IsStopping = true;
         }
         return true;
@@ -204,15 +216,15 @@ namespace Kernel
 
     void SurveillanceEventCoordinator::Unregister()
     {
-        for ( EventTriggerCoordinator& ect : m_StartTriggerConditionList )
+        for ( EventTriggerCoordinator& etc : m_StartTriggerConditionList )
         {
-            m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, ect );
-            LOG_INFO_F( "%s: Unregistered Start_Trigger: %s\n", m_CoordinatorName.c_str(), ect.ToString().c_str() );
+            m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, etc );
+            LOG_INFO_F( "%s: Unregistered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
         }
-        for ( EventTriggerCoordinator& ect : m_StopTriggerConditionList )
+        for ( EventTriggerCoordinator& etc : m_StopTriggerConditionList )
         {
-            m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, ect );
-            LOG_INFO_F( "%s: Unregistered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), ect.ToString().c_str() );
+            m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, etc );
+            LOG_INFO_F( "%s: Unregistered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
         }
     }
 

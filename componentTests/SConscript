@@ -21,6 +21,7 @@ else:
         "AssortivityTest.cpp",
         "BaseEventReportTest.cpp",
         "BehaviorPfaTest.cpp",
+        "CampaignEventByYearTest.cpp",
         "CommunityHealthWorkerEventCoordinatorTest.cpp",
         "componentTests.cpp",
         "ConcurrencyParametersTest.cpp",
@@ -29,10 +30,10 @@ else:
         "GenomeMarkersTest.cpp",
         "HIVARTStagingByCD4DiagnosticTest.cpp",
         "HIVARTStagingCD4AgnosticDiagnosticTest.cpp",
-        "HIVDrawBloodTest.cpp",
-        "HIVSimpleDiagnosticTest.cpp",
+        "HIVDrawBloodTest.cpp", 
+        "HIVSimpleDiagnosticTest.cpp", 
         "InterventionForCurrentPartnersTest.cpp",
-        "IncidenceEventCoordinatorTest.cpp",
+        #"IncidenceEventCoordinatorTest.cpp",
         "InterpolatedValueMapTest.cpp",
         "JsonObjectDemogTest.cpp",
         "LarvalHabitatMultiplierTest.cpp",
@@ -61,10 +62,7 @@ else:
         "FakeLogger.cpp"
     ]
 
-    #DMB 3/16/2017 - Serialization is only supported on windows at this time.
-    if os.sys.platform == 'win32':
-        testsSrcFiles.append("SerializationTest.cpp")
-
+   
     testsIncFiles = [
         'common.h',
         'ICampaignCostObserverFake.h',
@@ -94,6 +92,12 @@ else:
         erad_env.Append(LIBS=["/WHOLEARCHIVE:coreLib"])
     else:
         #erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,$BUILD_DIR/Eradication/libcoreLib.a,--no-whole-archive"])
+        erad_env.Append( LIBS=[ "baseReportLib"] )
+        erad_env.Append( LIBS=[ "campaign"] )
+        erad_env.Append( LIBS=[ "utils"] )
+        erad_env.Append( LIBS=[ "cajun"] )
+        erad_env.Append( LIBS=[ "snappy"] )
+        erad_env.Append( LIBS=[ "lz4"] )
         if env["Debug"]:
             erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,--no-whole-archive"])
         else:

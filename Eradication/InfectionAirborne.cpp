@@ -13,8 +13,18 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "InfectionAirborne.h"
 
+SETUP_LOGGING( "InfectionAirborne" )
+
 namespace Kernel
 {
+    bool InfectionAirborneConfig::Configure( const Configuration * config )
+    {
+        LOG_DEBUG( "Configure\n" );
+
+        bool bRet = JsonConfigurable::Configure( config );
+        return bRet;
+    }
+
     InfectionAirborne *InfectionAirborne::CreateInfection(IIndividualHumanContext *context, suids::suid _suid)
     {
         InfectionAirborne *newinfection = _new_ InfectionAirborne(context);

@@ -28,7 +28,7 @@ namespace Kernel
             virtual json::QuickBuilder GetSchema() override;
             virtual bool  HasValidDefault() const override { return false; }
             std::vector<std::pair< NaturalNumber, NaturalNumber > > thresholds;
-            std::vector< EventTrigger > thresh_events;
+            std::vector< EventTrigger::Enum > thresh_events;
 
             static void serialize(IArchive& ar, AgeThresholds& obj);
     };

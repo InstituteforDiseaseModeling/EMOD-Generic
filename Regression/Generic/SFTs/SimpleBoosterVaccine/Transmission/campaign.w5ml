@@ -1,0 +1,42 @@
+Events:
+- What: 
+    class: OutbreakIndividual
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed
+  When: 5, 20 * 10
+  Where: Everywhere
+
+- What: 
+    class: SimpleVaccine
+    Vaccine_Type: TransmissionBlocking
+    Vaccine_Take: 1
+    Cost_To_Consumer: 1.0
+    Efficacy_Profile: Box, 0.55, 10
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed
+  When: 61, 122, 141, 161, 181
+  Where: Everywhere
+
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: TransmissionBlocking
+    Vaccine_Take: 1
+    Prime_Effect: 0.25
+    Boost_Effect: 0.45
+    Boost_Threshold: 0.6
+    Cost_To_Consumer: 1.0
+    Efficacy_Profile: Box, 1, 10
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed
+  When: 21, 82, 101
+  Where: Everywhere
+
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: TransmissionBlocking
+    Vaccine_Take: 1
+    Prime_Effect: 0.25
+    Boost_Effect: 0.45
+    Boost_Threshold: 0.0
+    Cost_To_Consumer: 1.0
+    Efficacy_Profile: Box, 1, 10
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed
+  When: 41, 81, 102, 121, 142, 162, 163, 182, 183
+  Where: Everywhere

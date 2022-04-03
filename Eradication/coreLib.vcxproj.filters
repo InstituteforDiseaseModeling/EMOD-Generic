@@ -231,16 +231,10 @@
     <ClInclude Include="SusceptibilityAirborne.h">
       <Filter>Source Files\Airborne</Filter>
     </ClInclude>
-    <ClInclude Include="IndividualTB.h">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClInclude>
     <ClInclude Include="InfectionTB.h">
       <Filter>Source Files\Airborne\TB</Filter>
     </ClInclude>
     <ClInclude Include="NodeTB.h">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClInclude>
-    <ClInclude Include="SimulationTB.h">
       <Filter>Source Files\Airborne\TB</Filter>
     </ClInclude>
     <ClInclude Include="SusceptibilityTB.h">
@@ -1329,6 +1323,8 @@
     <ClInclude Include="IVectorMigrationReporting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\interventions\MeaslesVaccine.h">
+      <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     <ClInclude Include="SerializationTimeCalc.h">
       <Filter>Source Files\Controllers</Filter>
     </ClInclude>
@@ -1349,16 +1345,10 @@
     <ClCompile Include="SusceptibilityAirborne.cpp">
       <Filter>Source Files\Airborne</Filter>
     </ClCompile>
-    <ClCompile Include="IndividualTB.cpp">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClCompile>
     <ClCompile Include="InfectionTB.cpp">
       <Filter>Source Files\Airborne\TB</Filter>
     </ClCompile>
     <ClCompile Include="NodeTB.cpp">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClCompile>
-    <ClCompile Include="SimulationTB.cpp">
       <Filter>Source Files\Airborne\TB</Filter>
     </ClCompile>
     <ClCompile Include="SusceptibilityTB.cpp">
@@ -2239,6 +2229,9 @@
     </ClCompile>
     <ClCompile Include="SerializationTimeCalc.cpp">
       <Filter>Source Files\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\MeaslesVaccine.cpp">
+      <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

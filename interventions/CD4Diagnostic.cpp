@@ -34,10 +34,11 @@ namespace Kernel
             assert( a_qi.As<json::Array>().Size() );
             for( unsigned int idx=0; idx<a_qi.As<json::Array>().Size(); idx++ )
             {
-                EventTrigger signal;
-                initConfigTypeMap( "Event", &signal, HIV_CD4_Diagnostic_Event_Name_DESC_TEXT );
+                EventTrigger::Enum signal;
                 auto obj = Configuration::CopyFromElement( (threshJson)[idx], inputJson->GetDataLocation() );
-                JsonConfigurable::Configure( obj );
+                // TBD: This sucks with the copy, see if this can be done without that.
+                initConfig( "Event", signal, obj, MetadataDescriptor::Enum("Event", HIV_CD4_Diagnostic_Event_Name_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+                //initConfig( "Event", signal, (threshJson)[idx], MetadataDescriptor::Enum("Event", HIV_CD4_Diagnostic_Event_Name_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
                 delete obj;
                 obj = nullptr;
                 thresh_events.push_back( signal );
@@ -65,7 +66,7 @@ namespace Kernel
                 }
 
                 thresholds.push_back( std::make_pair( low, high ) );
-                LOG_DEBUG_F( "Found CD4 threshold set from config: low/high/event = %d/%d/%s\n", (int) low, (int) high, signal.c_str() );
+                LOG_DEBUG_F( "Found CD4 threshold set from config: low/high/event = %d/%d/%s\n", (int) low, (int) high, EventTrigger::pairs::lookup_key( signal ) );
             }
         }
         catch( const json::Exception & )
@@ -98,13 +99,13 @@ namespace Kernel
     {
         ar.startObject();
         ar.labelElement("thresholds"   ); serialize_thresholds( ar, obj.thresholds );
-        ar.labelElement("thresh_events") & obj.thresh_events;
+        ar.labelElement("thresh_events") & (std::vector<uint32_t>&) obj.thresh_events;
         ar.endObject();
 
         // verify events are valid
         if( ar.IsReader() )
         {
-            EventTrigger signal;
+            EventTrigger::Enum signal;
             for( auto ev : obj.thresh_events )
             {
                 signal = ev;
@@ -216,6 +217,7 @@ namespace Kernel
     {
         SimpleDiagnostic::serialize( ar, obj );
         CD4Diagnostic& cd4 = *obj;
-        ar.labelElement("cd4_thresholds"); CD4Thresholds::serialize( ar, cd4.cd4_thresholds );
+        ar.labelElement("cd4_thresholds");
+        CD4Thresholds::serialize( ar, cd4.cd4_thresholds );
     }
 }

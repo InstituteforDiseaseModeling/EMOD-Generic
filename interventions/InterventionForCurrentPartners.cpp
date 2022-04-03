@@ -77,13 +77,13 @@ namespace Kernel
         initConfig( "Prioritize_Partners_By", m_PrioritizePartnersBy, inputJson, MetadataDescriptor::Enum( "Prioritize_Partners_By", IFCP_Prioritize_Partners_By_DESC_TEXT, MDD_ENUM_ARGS( PartnerPrioritizationType ) ) );
 
         initConfig( "Event_Or_Config", m_UseEventOrConfig, inputJson, MetadataDescriptor::Enum( "EventOrConfig", Event_Or_Config_DESC_TEXT, MDD_ENUM_ARGS( EventOrConfig ) ) );
-        initConfigTypeMap( "Broadcast_Event", &m_EventToBroadcast, IFCP_Broadcast_Event_DESC_TEXT, "Event_Or_Config", "Event" );
+        initConfig( "Broadcast_Event", m_EventToBroadcast, inputJson, MetadataDescriptor::Enum("Broadcast_Event", IFCP_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ), "Event_Or_Config", "Event" );
         initConfigComplexType( "Intervention_Config", &m_InterventionConfig, IFCP_Intervention_Config_DESC_TEXT, "Event_Or_Config", "Config" );
 
         bool ret = BaseIntervention::Configure( inputJson );
         if( ret && !JsonConfigurable::_dryrun )
         {
-            if( (m_UseEventOrConfig == EventOrConfig::Event) && m_EventToBroadcast.IsUninitialized() )
+            if( (m_UseEventOrConfig == EventOrConfig::Event) && m_EventToBroadcast == EventTrigger::NoTrigger )
             {
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                         "If you set 'Event_Or_Config' = 'Event', then you must define 'Broadcast_Event'" );
@@ -394,7 +394,7 @@ namespace Kernel
         ar.labelElement( "m_MinimumDurationDays"  ) & ifcp.m_MinimumDurationDays;
         ar.labelElement( "m_MaximumPartners"      ) & ifcp.m_MaximumPartners;
         ar.labelElement( "m_UseEventOrConfig"     ) & (uint32_t&)ifcp.m_UseEventOrConfig;
-        ar.labelElement( "m_EventToBroadcast"     ) & ifcp.m_EventToBroadcast;
+        ar.labelElement( "m_EventToBroadcast"     ) & (uint32_t&)ifcp.m_EventToBroadcast;
         //ar.labelElement( "m_InterventionConfig"   ) & ifcp.m_InterventionConfig;
 
         // Haven't tested this so assert if someone tries it but I don't think this will

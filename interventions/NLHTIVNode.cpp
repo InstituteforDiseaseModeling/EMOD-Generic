@@ -86,7 +86,8 @@ namespace Kernel
         initConfigTypeMap("Duration", &max_duration, BT_Duration_DESC_TEXT, -1.0f, FLT_MAX, -1.0f ); // -1 is a convention for indefinite duration
 
         initConfigTypeMap( "Blackout_Period", &blackout_period, Blackout_Period_DESC_TEXT, 0.0f, FLT_MAX, 0.0f );
-        initConfigTypeMap( "Blackout_Event_Trigger", &blackout_event_trigger, Blackout_Event_Trigger_DESC_TEXT );
+        //initConfigTypeMap( "Blackout_Event_Trigger", &blackout_event_trigger, Blackout_Event_Trigger_DESC_TEXT );
+        initConfig( "Blackout_Event_Trigger", blackout_event_trigger, inputJson, MetadataDescriptor::Enum("Blackout_Event_Trigger", Blackout_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Blackout_On_First_Occurrence", &blackout_on_first_occurrence, Blackout_On_First_Occurrence_DESC_TEXT, false );
 
         initConfigComplexType( "Node_Property_Restrictions", &node_property_restrictions, NLHTIV_Node_Property_Restriction_DESC_TEXT );
@@ -103,7 +104,8 @@ namespace Kernel
         // --- Phase 3 - 11/9/16    Consolidate so that the user only defines Trigger_Condition_List
         // --------------------------------------------------------------------------------------------------------------------
         JsonConfigurable::_useDefaults = InterventionFactory::useDefaults; // Why???
-        initConfigTypeMap( "Trigger_Condition_List", &m_trigger_conditions, NLHTI_Trigger_Condition_List_DESC_TEXT );
+        //initConfigTypeMap( "Trigger_Condition_List", &m_trigger_conditions, NLHTI_Trigger_Condition_List_DESC_TEXT );
+        initVectorConfig( "Trigger_Condition_List", m_trigger_conditions, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", NLHTI_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
 
         bool retValue = BaseNodeIntervention::Configure( inputJson );
 
@@ -120,7 +122,7 @@ namespace Kernel
                 using_individual_config = false;
             }
 
-            event_occured_list.resize( EventTriggerNodeFactory::GetInstance()->GetNumEventTriggers() );
+            event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
             bool blackout_configured = (inputJson->Exist("Blackout_Event_Trigger")) || (inputJson->Exist("Blackout_Period")) || (inputJson->Exist("Blackout_On_First_Occurrence"));
             bool blackout_all_configured = (inputJson->Exist("Blackout_Event_Trigger")) && (inputJson->Exist("Blackout_Period")) && (inputJson->Exist("Blackout_On_First_Occurrence"));
@@ -154,7 +156,7 @@ namespace Kernel
             release_assert( broadcaster );
             for (auto &trigger : m_trigger_conditions)
             {
-                LOG_DEBUG_F( "Registering as observer of event %s.\n", trigger.c_str() );
+                LOG_DEBUG_F( "Registering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
                 broadcaster->RegisterObserver((INodeEventObserver*)this, trigger);
             }
         }
@@ -183,7 +185,7 @@ namespace Kernel
         // the trigger event
         LOG_DEBUG_F("Node %d experienced event %s, check to see if it passes the conditions before distributing actual_intervention \n",
                     pNode->GetNodeContext()->GetSuid().data,
-                    trigger.c_str()
+                    EventTrigger::pairs::lookup_key( trigger )
                    );
 
         assert( parent );
@@ -215,7 +217,7 @@ namespace Kernel
             {
                 notification_occured = true ;
             }
-            event_occured_list[ trigger.GetIndex() ].insert( pNode->GetNodeContext()->GetSuid().data ); 
+            event_occured_list[ trigger ].insert( pNode->GetNodeContext()->GetSuid().data ); 
         }
 
         return distributed;
@@ -229,7 +231,7 @@ namespace Kernel
         release_assert( broadcaster );
         for (auto &trigger : m_trigger_conditions)
         {
-            LOG_DEBUG_F( "Unregistering as observer of event %s.\n", trigger.c_str() );
+            LOG_DEBUG_F( "Unregistering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
             broadcaster->UnregisterObserver( (INodeEventObserver*)this, trigger );
         }
         SetExpired( true );
@@ -251,7 +253,7 @@ namespace Kernel
             Unregister();
         }
         event_occured_list.clear();
-        event_occured_list.resize( EventTriggerNodeFactory::GetInstance()->GetNumEventTriggers() );
+        event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
         blackout_time_remaining -= dt ;
         if( notification_occured )

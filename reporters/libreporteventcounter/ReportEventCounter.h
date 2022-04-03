@@ -28,7 +28,7 @@ namespace Kernel
         virtual void Reduce() override;
         virtual void Finalize() override;
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override;
+                                    const EventTrigger::Enum& trigger ) override;
     private:
         ChannelDataMap channelDataMap ;
         std::map<std::string, std::string> unitsMap;

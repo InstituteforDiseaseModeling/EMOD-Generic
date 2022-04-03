@@ -5,7 +5,7 @@ import re
 import math
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -37,21 +37,13 @@ def application(report_file):
     # This test uses the PropertyReport not stdout.
     prt_json = json.loads( open( "output/PropertyReportTyphoid.json" ).read() )
     geographic_zones = [ "A", "B", "C", "D", "E", "F", "G", "H", "I" ]
-<<<<<<< HEAD
+
     # File looks like: "Channels": { "Contagion (Contact): Geographic:A": { "Data": [
     contact_chans = {}
     enviro_chans = {}
     for zone in geographic_zones:
         contact_chans[ zone ] = prt_json[ "Channels" ][ "Contagion (Contact): Geographic:" + zone ][ "Data" ]
         enviro_chans[ zone ] = prt_json[ "Channels" ][ "Contagion (Environment): Geographic:" + zone ][ "Data" ]
-=======
-    # File looks like: "Channels": { "Contagion (Contact):Geographic:A": { "Data": [
-    contact_chans = {}
-    enviro_chans = {}
-    for zone in geographic_zones:
-        contact_chans[ zone ] = prt_json[ "Channels" ][ "Contagion (Contact):Geographic:" + zone ][ "Data" ]
-        enviro_chans[ zone ] = prt_json[ "Channels" ][ "Contagion (Environment):Geographic:" + zone ][ "Data" ]
->>>>>>> origin/Typhoid-Ongoing
 
     success = True
     # This test assumes a very specific scenario setup: Down the River from A to B.

@@ -14,15 +14,15 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::GetEnableParameterName()
+    template<class Broadcaster, class Observer, class Entity>
+    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity>::GetEnableParameterName()
     {
         return ENABLE_PARAMETER_NAME;
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    BaseReportEventRecorder<Broadcaster,Observer,Entity,Trigger,Factory>::BaseReportEventRecorder( const std::string& rReportName )
-        : BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>( rReportName )
+    template<class Broadcaster, class Observer, class Entity>
+    BaseReportEventRecorder<Broadcaster,Observer,Entity>::BaseReportEventRecorder( const std::string& rReportName )
+        : BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>( rReportName )
         , ignore_events_in_list( false )
         , m_EnableParameterName( ENABLE_PARAMETER_NAME )
         , m_EventsListName( EVENTS_LIST_NAME )
@@ -32,19 +32,20 @@ namespace Kernel
     {
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::~BaseReportEventRecorder()
+    template<class Broadcaster, class Observer, class Entity>
+    BaseReportEventRecorder<Broadcaster, Observer, Entity>::~BaseReportEventRecorder()
     {
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    bool BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::Configure( const Configuration * inputJson )
+    template<class Broadcaster, class Observer, class Entity>
+    bool BaseReportEventRecorder<Broadcaster, Observer, Entity>::Configure( const Configuration * inputJson )
     {
-        std::vector<Trigger> tmp_event_trigger_list;
+        std::vector<EventTrigger::Enum> tmp_event_trigger_list;
 
-        JsonConfigurable::initConfigTypeMap( m_EventsListName.c_str(),       &tmp_event_trigger_list, m_EventsListDesc.c_str(), m_EnableParameterName.c_str() );
+        JsonConfigurable::initVectorConfig( m_EventsListName.c_str(), tmp_event_trigger_list, inputJson, MetadataDescriptor::VectorOfEnum(m_EventsListName.c_str(), m_EventsListDesc.c_str(), MDD_ENUM_ARGS(EventTrigger))); // , m_EnableParameterName.c_str() );
         JsonConfigurable::initConfigTypeMap( m_IgnoreEventsListName.c_str(), &ignore_events_in_list,  m_IgnoreEventsListDesc.c_str(), false, m_EnableParameterName.c_str() );
 
+        
         ConfigureOther( inputJson );
 
         bool ret = JsonConfigurable::Configure( inputJson );
@@ -58,43 +59,48 @@ namespace Kernel
                 LOG_WARN( ss.str().c_str() );
             }
             else
-            {
+	    {
                 // This logic goes through all possible events.  It checks to see if that event
                 // is in the listen-to-these event_list provided by the user. But that list can be a 
                 // whitelist or blacklist. If using whitelist AND event-requested is in master THEN listen.
                 // else if using blacklist AND if event-(de)requested is not in master THEN listen.
 
-                std::vector<Trigger> all_trigger_list = Factory::GetInstance()->GetAllEventTriggers();
-                for( auto trigger : all_trigger_list )
-                {
-                    bool in_event_list = std::find( tmp_event_trigger_list.begin(),
-                                                    tmp_event_trigger_list.end(), trigger ) != tmp_event_trigger_list.end();
+                // This is a pile of crap from the old way of doing it. Just iterate through an enum now. 
+                std::vector<EventTrigger::Enum> all_trigger_list;
+		for( unsigned int trigger_idx = EventTrigger::NoTrigger; trigger_idx < EventTrigger::NUM_EVENT_TRIGGERS; trigger_idx++ )
+		{
+		    EventTrigger::Enum trigger = EventTrigger::Enum( trigger_idx );
+		    all_trigger_list.push_back( trigger );
+		}
 
-                    if( ignore_events_in_list != in_event_list )
-                    {
-                        // list of events to listen for
-                        BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::eventTriggerList.push_back( trigger );
-                    }
-                }
+		for( auto idx : all_trigger_list )
+		{
+		    bool in_event_list = std::find( tmp_event_trigger_list.begin(), tmp_event_trigger_list.end(), idx ) != tmp_event_trigger_list.end(); 
+		    if( ignore_events_in_list != in_event_list )
+		    {
+		         // list of events to listen for
+			BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::eventTriggerList.push_back( idx );
+		    }
+		}
             }
         }
 
         return ret;
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    void BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::ConfigureOther( const Configuration* inputJson )
+    template<class Broadcaster, class Observer, class Entity>
+    void BaseReportEventRecorder<Broadcaster, Observer, Entity>::ConfigureOther( const Configuration* inputJson )
     {
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::GetHeader() const
+    template<class Broadcaster, class Observer, class Entity>
+    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity>::GetHeader() const
     {
         return GetTimeHeader();
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    bool BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::notifyOnEvent( Entity *pEntity, const Trigger& trigger )
+    template<class Broadcaster, class Observer, class Entity>
+    bool BaseReportEventRecorder<Broadcaster, Observer, Entity>::notifyOnEvent( Entity *pEntity, const EventTrigger::Enum& trigger )
     {
         GetOutputStream() << GetTime( pEntity );
 
@@ -105,14 +111,14 @@ namespace Kernel
         return true;
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::GetTimeHeader() const
+    template<class Broadcaster, class Observer, class Entity>
+    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity>::GetTimeHeader() const
     {
         return "Time";
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger, class Factory>
-    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity, Trigger, Factory>::GetOtherData( Entity *pEntity, const Trigger& trigger )
+    template<class Broadcaster, class Observer, class Entity>
+    std::string BaseReportEventRecorder<Broadcaster, Observer, Entity>::GetOtherData( Entity *pEntity, const EventTrigger::Enum& trigger )
     {
         return "";
     }

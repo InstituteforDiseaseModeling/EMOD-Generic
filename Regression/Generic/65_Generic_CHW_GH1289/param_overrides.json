@@ -4,10 +4,6 @@
         "Base_Infectivity": 0.7,
         "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
         "Config_Name": "65_Generic_CHW_GH1289",
-        "Custom_Individual_Events": [
-            "CHW_Give_Drugs",
-            "Received_Treatment"
-        ],
         "Demographics_Filenames": [
             "demographics.json"
         ],

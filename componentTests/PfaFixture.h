@@ -75,10 +75,10 @@ public:
         Environment::Finalize();
         Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
 
-        EventTriggerFactory::DeleteInstance();
+        //EventTriggerFactory::DeleteInstance();
         json::Object fakeConfigJson;
         Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-        EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+        //EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
 
         m_NEC.Initialize();
     }
@@ -90,7 +90,7 @@ public:
         Environment::Finalize();
     }
 
-    void Register( IIndividualEventObserver* pIEO, EventTrigger trigger )
+    void Register( IIndividualEventObserver* pIEO, EventTrigger::Enum trigger )
     {
         m_NEC.RegisterObserver( pIEO, trigger );
     }

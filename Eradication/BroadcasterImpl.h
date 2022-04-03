@@ -15,11 +15,15 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
+    /*class EventTriggerSillyClass : public EventTrigger
+    {
+    };*/
+
     // BroadcasterImpl provides the basic functions for an IEventBroadcaster.
     // By using a template, we can reuse the code for the different kinds of broadcasters
     // while keeping the types unique.
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    class BroadcasterImpl : IEventBroadcaster<Observer,Entity,Trigger>
+    template<class Observer, class Entity>
+    class BroadcasterImpl : IEventBroadcaster<Observer,Entity>
     {
     public:
         BroadcasterImpl();
@@ -31,9 +35,9 @@ namespace Kernel
         virtual int32_t Release() { return 1; }
 
         // IEventBroadcaster
-        virtual void RegisterObserver(   Observer* pObserver, const Trigger& trigger );
-        virtual void UnregisterObserver( Observer* pObserver, const Trigger& trigger );
-        virtual void TriggerObservers(   Entity*   pEntity,   const Trigger& trigger );
+        virtual void RegisterObserver(   Observer* pObserver, const EventTrigger::Enum& trigger );
+        virtual void UnregisterObserver( Observer* pObserver, const EventTrigger::Enum& trigger );
+        virtual void TriggerObservers(   Entity*   pEntity,   const EventTrigger::Enum& trigger );
 
         void DisposeOfUnregisteredObservers();
 
@@ -42,28 +46,21 @@ namespace Kernel
         std::vector< std::vector<Observer*> > disposed_observers;
     };
 
-    class EventTriggerCoordinatorFactory;
-    class EventTriggerNodeFactory;
-    class EventTriggerFactory;
-
     class CoordinatorEventBroadcaster : public BroadcasterImpl< ICoordinatorEventObserver,
-                                                                IEventCoordinatorEventContext,
-                                                                EventTriggerCoordinator,
-                                                                EventTriggerCoordinatorFactory>
+                                                                IEventCoordinatorEventContext >
+                                                                
     {
     };
 
     class NodeEventBroadcaster : public BroadcasterImpl< INodeEventObserver,
-                                                         INodeEventContext,
-                                                         EventTriggerNode,
-                                                         EventTriggerNodeFactory>
+                                                         INodeEventContext >
+                                                         
     {
     };
 
     class IndividualEventBroadcaster : public BroadcasterImpl< IIndividualEventObserver,
-                                                               IIndividualHumanEventContext,
-                                                               EventTrigger,
-                                                               EventTriggerFactory>
+                                                               IIndividualHumanEventContext> 
+                                                               
     {
     };
 }

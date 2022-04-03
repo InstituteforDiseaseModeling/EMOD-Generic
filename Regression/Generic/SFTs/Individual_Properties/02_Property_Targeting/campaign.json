@@ -1,0 +1,234 @@
+{
+    "Campaign_Name": "Property Matrix Costing",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Easy"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Hard"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 2,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Risk:Low"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 11,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Risk:High"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 12,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Easy",
+                    "Risk:Low"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 21,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Easy",
+                    "Risk:High"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 22,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Hard",
+                    "Risk:Low"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 23,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 1.0,
+                    "Vaccine_Take": 1,
+                    "Vaccine_Type": "AcquisitionBlocking",
+                    "Waning_Config": {
+                        "Box_Duration": 3650,
+                        "Initial_Effect": 0,
+                        "class": "WaningEffectBox"
+                    },
+                    "class": "SimpleVaccine"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": [
+                    "Accessibility:Hard",
+                    "Risk:High"
+                ],
+                "Target_Demographic": "Everyone",
+                "Timesteps_Between_Repetitions": 7,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 24,
+            "class": "CampaignEvent"
+        }
+    ], 
+    "Use_Defaults": 1
+}

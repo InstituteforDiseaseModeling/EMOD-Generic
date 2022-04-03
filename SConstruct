@@ -245,6 +245,7 @@ else:
                           "#/utils",
                           "#/libgeneric_static",
                           "/usr/include/python3.6m",
+                          "/usr/include/python3.7m",
                           "/opt/python/python3.6.3/include/python3.6m",
                           "#/cajun/include",
                           "#/rapidjson/include",
@@ -304,16 +305,17 @@ if os.sys.platform.startswith("linux"):
         env.Append( EXTRALIBPATH=["/usr/lib64" , "/lib64" ] )
 
     env.Append( LIBS=["pthread", "python3.6m", "dl" ] ) 
+    #env.Append( LIBS=["pthread", "python3.7m", "dl" ] ) 
     env.Append( EXTRALIBPATH=[ "/usr/local/lib", "/usr/lib64/mpich/lib", "/opt/python/python3.6.3/lib" ] )
 
     if static:
         #env.Append( LINKFLAGS=" -static " )
         env.Append( LINKFLAGS=" -rdynamic " )
     if Dbg:
-        env.Append( CCFLAGS=["-O0", "-g"] )
+        env.Append( CCFLAGS=["-O0", "-g", "-fPIC"] )
         env.Append( CPPDEFINES=["_DEBUG"] )
     else:
-        env.Append( CCFLAGS=["-O3"] )
+        env.Append( CCFLAGS=["-O3", "-fPIC"] )
         
     # enable AES support or get [wmmintrin.h:34:3: error: #error "AES/PCLMUL instructions not enabled"]
     env.Append( CCFLAGS=["-maes"] )

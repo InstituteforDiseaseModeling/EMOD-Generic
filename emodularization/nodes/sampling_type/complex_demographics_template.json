@@ -1,0 +1,52 @@
+{
+    "Metadata": {
+        "DateCreated": "Tue Dec 02 12:28:04 2018", 
+        "Tool": "convertdemog.py", 
+        "Author": "chjones", 
+        "IdReference": "TEST", 
+        "NodeCount": 1,
+		"Resolution": 150
+    }, 
+    "Defaults": {
+    },
+    "Nodes": [
+        {
+            "NodeID": 1, 
+            "NodeAttributes": {
+                "Latitude": 0, 
+                "Longitude": 0, 
+                "Altitude": 0, 
+                "Airport": 0, 
+                "Region": 1, 
+                "Seaport": 0, 
+                "InitialPopulation": 10000, 
+                "BirthRate": 0.0000548
+            }, 
+            "IndividualAttributes": {
+                "AgeDistribution": {
+                    "ResultUnits": "days",
+                    "ResultScaleFactor": 1,
+                    "DistributionValues": [
+                        0,
+                        0.2,
+                        0.4,
+                        0.6,
+                        0.8,
+                        0.9,
+                        1
+                    ],
+                    ".Comment": "These age groups are designed to match the adapted-sampling-by-age buckets: birth, 0-18m, 18m-4y, 5-9, 10-14, 15-19, 20+ (20-40)",
+                    "ResultValues": [
+                        0,
+                        540,
+                        1825,
+                        3650,
+                        5475,
+                        7300,
+                        14600
+                    ]
+                }
+            }
+        }
+    ]
+}

@@ -21,7 +21,7 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 0.0,
                     "Event_Or_Config": "Event",
-                    "Positive_Diagnosis_Event": "TestedPositive_CureMeNow",
+                    "Positive_Diagnosis_Event": "PositiveResult",
                     "Enable_IsSymptomatic": 0,
                     "class": "SimpleDiagnostic"
                 },
@@ -58,7 +58,7 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 0.0,
                     "Event_Or_Config": "Event",
-                    "Positive_Diagnosis_Event": "TestedPositive_CureMeNow",
+                    "Positive_Diagnosis_Event": "PositiveResult",
                     "Enable_IsSymptomatic": 1,
                     "class": "SimpleDiagnostic"
                 },

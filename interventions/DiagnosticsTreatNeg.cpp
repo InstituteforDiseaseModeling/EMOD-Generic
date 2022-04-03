@@ -34,8 +34,8 @@ namespace Kernel
         initConfig( "Event_Or_Config", use_event_or_config, inputJson, MetadataDescriptor::Enum("EventOrConfig", Event_Or_Config_DESC_TEXT, MDD_ENUM_ARGS( EventOrConfig ) ) );
         if( use_event_or_config == EventOrConfig::Event || JsonConfigurable::_dryrun )
         {
-            initConfigTypeMap( "Negative_Diagnosis_Event", &negative_diagnosis_event, DTN_Negative_Diagnosis_Config_Event_DESC_TEXT );
-            initConfigTypeMap( "Defaulters_Event", &defaulters_event, DTN_Defaulters_Diagnosis_Config_Event_DESC_TEXT );
+            initConfig( "Negative_Diagnosis_Event", negative_diagnosis_event, inputJson, MetadataDescriptor::Enum("Negative_Diagnosis_Event", DTN_Negative_Diagnosis_Config_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+            initConfig( "Defaulters_Event", defaulters_event, inputJson, MetadataDescriptor::Enum("Defaulters_Event", DTN_Defaulters_Diagnosis_Config_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         }
 
         if( use_event_or_config == EventOrConfig::Config || JsonConfigurable::_dryrun )
@@ -60,7 +60,7 @@ namespace Kernel
             }
 
             if( !JsonConfigurable::_dryrun && 
-                negative_diagnosis_event.IsUninitialized() &&
+                negative_diagnosis_event == EventTrigger::NoTrigger &&
                 (negative_diagnosis_config._json.Type() == ElementType::NULL_ELEMENT) )
             {
                 const char* msg = "You must define either Negative_Diagnosis_Event or Negative_Diagnosis_Config";
@@ -68,7 +68,7 @@ namespace Kernel
             }
 
             if( !JsonConfigurable::_dryrun && 
-                defaulters_event.IsUninitialized() &&
+                defaulters_event == EventTrigger::NoTrigger &&
                 (defaulters_config._json.Type() == ElementType::NULL_ELEMENT) )
             {
                 const char* msg = "You must define either Defaulters_Event or Defaulters_Config";
@@ -321,9 +321,9 @@ namespace Kernel
         SimpleDiagnostic::serialize(ar, obj);
         DiagnosticTreatNeg& diagnostic = *obj;
         ar.labelElement("negative_diagnosis_config") & diagnostic.negative_diagnosis_config;
-        ar.labelElement("negative_diagnosis_event") & diagnostic.negative_diagnosis_event;
+        ar.labelElement("negative_diagnosis_event") & (uint32_t&) diagnostic.negative_diagnosis_event;
         ar.labelElement("defaulters_config") & diagnostic.defaulters_config;
-        ar.labelElement("defaulters_event") & diagnostic.defaulters_event;
+        ar.labelElement("defaulters_event") & (uint32_t&) diagnostic.defaulters_event;
         ar.labelElement("m_gets_positive_test_intervention") & diagnostic.m_gets_positive_test_intervention;
     }
 }

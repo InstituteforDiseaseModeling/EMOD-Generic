@@ -31,7 +31,6 @@
                             "Initial_Effect" : 1.0
                         },
                         "Distributed_Event_Trigger" : "Vaccinated",
-                        ".Expired_Event_Trigger"     : "",
                         "Duration_To_Wait_Before_Revaccination" : 0
                     }
                }

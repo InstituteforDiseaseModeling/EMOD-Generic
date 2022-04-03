@@ -29,22 +29,22 @@
     "Responder": {
         "Action_List": [
             {
-                "COMMENT": "!!!!! Two thresholds should be the same !!!!!!",
-                "Event_To_Broadcast": "Action_Event_1",
-                "Threshold": 20
+                "COMMENT" : "!!!!! Two thresholds should be the same !!!!!!",
+                "Threshold" : 20,
+                "Event_To_Broadcast" : "GP_EVENT_000"
             },
             {
-                "Event_To_Broadcast": "Action_Event_2",
-                "Threshold": 30
+                "Threshold" : 30,
+                "Event_To_Broadcast" : "GP_EVENT_001"
             },
             {
-                "Event_To_Broadcast": "Action_Event_2",
-                "Threshold": 10
+                "Threshold" : 10,
+                "Event_To_Broadcast" : "GP_EVENT_001"
             },
             {
-                "COMMENT": "!!!!! Two thresholds should be the same !!!!!!",
-                "Event_To_Broadcast": "Action_Event_2",
-                "Threshold": 20
+                "COMMENT" : "!!!!! Two thresholds should be the same !!!!!!",
+                "Threshold" : 20,
+                "Event_To_Broadcast" : "GP_EVENT_001"
             }
         ],
         "Threshold_Type": "COUNT"

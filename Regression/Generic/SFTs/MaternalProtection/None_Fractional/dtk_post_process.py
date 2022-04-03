@@ -33,7 +33,7 @@ if the SFT failed, the output file (normally scientific_feature_report.txt) will
 import dtk_test.dtk_MaternalProtection_Support as MP_Support
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)

@@ -1,0 +1,22 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Vaccine_Linear_Dose_Contact",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../IP_1_Overlay.json"
+        ],
+        "Enable_Birth": 0,
+        "Enable_Natural_Mortality": 0,
+        "Node_Contagion_Decay_Rate": 1,
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 50,
+        "Typhoid_Acute_Infectiousness": 4000,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Contact_Exposure_Rate": 1,
+        "Typhoid_Environmental_Exposure_Rate": 1,
+        "Typhoid_Protection_Per_Infection": 0.2,
+        "logLevel_Report": "DEBUG",
+        "logLevel_TyphoidInterventionsContainer": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

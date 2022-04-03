@@ -67,7 +67,7 @@ namespace Kernel
         float m_MinimumDurationDays;
         float m_MaximumPartners;
         EventOrConfig::Enum m_UseEventOrConfig;
-        EventTrigger m_EventToBroadcast;
+        EventTrigger::Enum m_EventToBroadcast;
         IndividualInterventionConfig m_InterventionConfig;
 
         DECLARE_SERIALIZABLE( InterventionForCurrentPartners );

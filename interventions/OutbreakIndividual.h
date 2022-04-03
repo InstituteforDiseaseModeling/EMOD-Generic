@@ -29,6 +29,7 @@ namespace Kernel
     {
         virtual int GetClade() const = 0;
         virtual int GetGenome() const = 0;
+
         virtual ~IOutbreakIndividual() { }; // needed for cleanup via interface pointer
     };
 
@@ -52,15 +53,12 @@ namespace Kernel
         virtual int GetClade()  const  { return clade; }
         virtual int GetGenome() const  { return genome; }
 
-        // other methods
-        virtual void ConfigureClade( const Configuration * inputJson );
-        virtual void ConfigureGenome( const Configuration * inputJson );
 
     protected:
-        const StrainIdentity* GetNewStrainIdentity(INodeEventContext *context, IIndividualHumanContext* pIndiv);
-
         int clade;
         int genome;
+
+
         bool ignoreImmunity;
         int incubation_period_override;
     };

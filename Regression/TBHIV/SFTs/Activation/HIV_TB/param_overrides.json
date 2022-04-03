@@ -1,0 +1,83 @@
+{
+    "parameters": {
+        "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
+        "CD4_At_Death_LogLogistic_Scale": 1,
+        "CD4_Post_Infection_Weibull_Heterogeneity": 0,
+        "CD4_Post_Infection_Weibull_Scale": 1000,
+        "CD4_Strata_Activation": [
+            1,
+            200,
+            350,
+            500,
+            2000
+        ],
+        "CoInfection_Mortality_Rate_Off_ART": 0.0001,
+        "CoInfection_Mortality_Rate_On_ART": 0.0001,
+        "Config_Name": "TBHIV_SFT_ACTIVATION_HIV_TB",
+        "Days_Between_Symptomatic_And_Death_Weibull_Heterogeneity": 0.1,
+        "Demographics_Filenames": [
+            "../../../demographics/single_node_demographics_1000_20_yrolds.json",
+            "../../../demographics//Base_overlay.json"
+        ],
+        "Enable_Coinfection_Mortality": 0,
+        "Enable_Demographics_Birth": 0,
+        "Enable_Heterogeneous_Intranode_Transmission": 0,
+        "Enable_Initial_Susceptibility_Distribution": 1,
+        "Enable_Natural_Mortality": 0,
+        "Enable_Regional_Migration": 1,
+        "Simulation_Duration": 160,
+        "TBHIV_Drug_Params": {
+            "ACFDOTS": {
+                "TB_Drug_Cure_Rate": 0.25,
+                "TB_Drug_Inactivation_Rate_HIV": 1e-09,
+                "TB_Drug_Mortality_Rate": 1e-09,
+                "TB_Drug_Mortality_Rate_HIV": 1e-09,
+                "TB_Drug_Primary_Decay_Time_Constant": 179,
+                "TB_Drug_Relapse_Rate_HIV": 1e-09,
+                "TB_Drug_Resistance_Rate_HIV": 1e-09
+            }
+        },
+        "TBHIV_Drug_Types": [
+            "ACFDOTS",
+            "DOTSHQ"
+        ],
+        "TB_Active_Cure_Rate": 0,
+        "TB_Active_Mortality_Rate": 0,
+        "TB_Active_Period_Gaussian_Std_Dev": 20,
+        "TB_CD4_Activation_Vector": [
+            0.05,
+            0.05,
+            0.05,
+            0.05,
+            0.05
+        ],
+        "TB_CD4_Infectiousness": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ],
+        "TB_CD4_Susceptibility": [
+            5,
+            5,
+            5,
+            5,
+            1,
+            1,
+            1
+        ],
+        "TB_Fast_Progressor_Fraction_Adult": 0,
+        "TB_Fast_Progressor_Fraction_Child": 0,
+        "TB_Latent_Cure_Rate": 0,
+        "TB_Smear_Negative_Mortality_Multiplier": 0,
+        "TB_Smear_Positive_Fraction_Adult": 1,
+        "TB_Smear_Positive_Fraction_Child": 1,
+        "logLevel_InfectionTB": "VALID",
+        "logLevel_IndividualCoInfection": "VALID",
+        "x_Base_Population": 1
+    },
+    "Default_Config_Path": "defaults/tbhiv_science_default_config.json"
+}

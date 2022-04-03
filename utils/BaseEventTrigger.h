@@ -18,6 +18,7 @@ namespace Kernel
                  ENUM_VALUE_SPEC( NODE,        1 )
                  ENUM_VALUE_SPEC( COORDINATOR, 2 ) )
 
+#if 0
     // This class is an internal implementation is not meant to be used
     // outside the EventTrigger set of classes.
     class EventTriggerInternal
@@ -145,4 +146,5 @@ namespace Kernel
         static const char* USER_EVENTS_PARAMETER_DESC;
         static std::vector<std::pair<std::string, Trigger*>> m_VectorBuiltIn;
     };
+#endif 
 }

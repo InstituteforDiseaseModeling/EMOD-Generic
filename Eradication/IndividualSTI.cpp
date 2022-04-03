@@ -156,6 +156,11 @@ namespace Kernel
 
     void IndividualHumanSTI::SetConcurrencyParameters( const char *prop, const char* prop_value )
     {
+        // For system-level operation this should not be null, but when running STI or HIV intrahost as a standalone component, this is OK.
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         // Update promiscuity flags.  Begin with a reset.
         if( IS_SUPER_SPREADER() )
             promiscuity_flags = SUPER_SPREADER;
@@ -181,6 +186,10 @@ namespace Kernel
 
     void IndividualHumanSTI::UpdateSTINetworkParams( const char *prop, const char* new_value )
     {
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         IConcurrency* p_concurrency = p_sti_node->GetSociety()->GetConcurrency();
 
         if( (prop == nullptr) || p_concurrency->IsConcurrencyProperty( prop ) )
@@ -234,6 +243,10 @@ namespace Kernel
 
         LOG_DEBUG_F( "Individual ? will debut at age %f (yrs)f.\n", sexual_debut_age/DAYSPERYEAR );
 
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         // Promiscuity flags, including behavioral super-spreader
         if( GetRng()->SmartDraw( p_sti_node->GetSociety()->GetConcurrency()->GetProbSuperSpreader() ) )
         {
@@ -454,7 +467,10 @@ namespace Kernel
         if( was_pre_debut && is_post_debut )
         {
             // Broadcast STIDebut
-            broadcaster->TriggerObservers( GetEventContext(), EventTrigger::STIDebut );
+            if( broadcaster )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::STIDebut );
+            }
         }
     }
 
@@ -528,6 +544,10 @@ namespace Kernel
 
     void IndividualHumanSTI::InitializeStaticsSTI( const Configuration* config )
     {
+        //SusceptibilitySTIConfig immunity_config;
+        //immunity_config.Configure( config );
+        InfectionSTIConfig infection_config;
+        infection_config.Configure( config );
         IndividualHumanSTIConfig individual_config;
         individual_config.Configure( config );
     }
@@ -540,7 +560,10 @@ namespace Kernel
 
     void IndividualHumanSTI::UpdateGroupMembership()
     {
-        static_cast<NodeSTI*>(p_sti_node)->GetGroupMembershipForIndividual_STI( relationship_properties, transmissionGroupMembershipByRelationship );
+        if( p_sti_node != nullptr )
+        {
+            p_sti_node->GetGroupMembershipForIndividual_STI( relationship_properties, transmissionGroupMembershipByRelationship );
+        }
     }
 
     void IndividualHumanSTI::UpdateInfectiousnessSTI(act_prob_vec_t &act_prob_vec, unsigned int rel_id)
@@ -644,14 +667,21 @@ namespace Kernel
 
         IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );
 
-        broadcaster->TriggerObservers( GetEventContext(), EventTrigger::STINewInfection );
+        if( broadcaster )
+        {
+            broadcaster->TriggerObservers( GetEventContext(), EventTrigger::STINewInfection );
+        }
     }
 
     void
     IndividualHumanSTI::UpdateEligibility()
     {
         // DJK: Could return if pre-sexual-debut, related to <ERAD-1869>
-        release_assert( p_sti_node );
+        //release_assert( p_sti_node );
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         ISociety* society = p_sti_node->GetSociety();
 
         for( int type=0; type<RelationshipType::COUNT; type++ )
@@ -668,7 +698,10 @@ namespace Kernel
     void
     IndividualHumanSTI::ConsiderRelationships(float dt)
     {
-        release_assert( p_sti_node );
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         ISociety* society = p_sti_node->GetSociety();
 
         float ellapsed_time = 0;
@@ -808,7 +841,10 @@ namespace Kernel
             r_partner_map[ partner_id ] = FLT_MAX;
         }
 
-        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::EnteredRelationship);
+        if( broadcaster )
+        {
+            broadcaster->TriggerObservers(GetEventContext(), EventTrigger::EnteredRelationship);
+        }
     }
 
     void
@@ -845,7 +881,10 @@ namespace Kernel
             r_partner_map[ partner_id ] = float( parent->GetTime().time );
         }
 
-        broadcaster->TriggerObservers( GetEventContext(), EventTrigger::ExitedRelationship );
+        if( broadcaster )
+        {
+            broadcaster->TriggerObservers( GetEventContext(), EventTrigger::ExitedRelationship );
+        }
     }
 
     bool
@@ -921,6 +960,10 @@ namespace Kernel
     IndividualHumanSTI::onImmigrating()
     {
         LOG_DEBUG_F( "%s()\n", __FUNCTION__ );
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         migrating_because_of_partner = false;
 
         release_assert( p_sti_node );
@@ -1118,9 +1161,11 @@ namespace Kernel
         {
             if (parent->QueryInterface(GET_IID(INodeSTI), (void**)&p_sti_node) != s_OK)
             {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "INodeSTI", "INodeContext" );
+                // Not throwing an exception because valid in pymod mode.
+                LOG_WARN_F( "Didn't find an object in the parent pointer that supports INodeSTI. OK for component use but not for full system." );
+                //throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "INodeSTI", "INodeContext" );
             }
-            release_assert( p_sti_node );
+            //release_assert( p_sti_node );
         }
     }
 
@@ -1139,7 +1184,6 @@ namespace Kernel
             if( StateChange == HumanStateChange::Migrating )
             {
                 release_assert( p_sti_node );
-                auto manager = p_sti_node->GetRelationshipManager();
 
                 // NOTE: This for loop is done this way since terminate() will remove relationships
                 // from the set.  If you use range-based loops, you will get an errlr.
@@ -1194,7 +1238,11 @@ namespace Kernel
                         // --- More permanent relationships can last/stay open until the person comes back
                         // --------------------------------------------------------------------------------
                         rel->Pause( this );
-                        manager->Emigrate( rel );
+                        if( p_sti_node != nullptr )
+                        {
+                            auto manager = p_sti_node->GetRelationshipManager();
+                            manager->Emigrate( rel );
+                        }
                     }
                     else
                     {
@@ -1210,7 +1258,10 @@ namespace Kernel
 
     void IndividualHumanSTI::disengageFromSociety()
     {
-        release_assert( p_sti_node );
+        if( p_sti_node == nullptr )
+        {
+            return;
+        }
         ISociety* society = p_sti_node->GetSociety();
 
         for( int type = 0; type < RelationshipType::COUNT; type++ )
@@ -1258,7 +1309,10 @@ namespace Kernel
 
         if( (prev_total_coital_acts == 0) && (m_TotalCoitalActs > 0) )
         {
-            broadcaster->TriggerObservers( GetEventContext(), EventTrigger::FirstCoitalAct );
+            if( broadcaster )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::FirstCoitalAct );
+            }
         }
     }
 

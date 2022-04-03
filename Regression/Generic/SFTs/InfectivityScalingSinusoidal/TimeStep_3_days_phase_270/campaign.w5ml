@@ -1,0 +1,6 @@
+Events:
+- Who: 10%, AllAges, BothSexes
+  When: 1, 70 * 30
+  Where: Everywhere
+  What: 
+    class: OutbreakIndividual

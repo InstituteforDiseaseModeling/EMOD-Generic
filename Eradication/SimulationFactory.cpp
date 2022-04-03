@@ -77,9 +77,6 @@ namespace Kernel
 {
     ISimulation * SimulationFactory::CreateSimulation()
     {
-        EventTriggerFactory::GetInstance()->Configure( EnvPtr->Config );
-        EventTriggerNodeFactory::GetInstance()->Configure( EnvPtr->Config );
-        EventTriggerCoordinatorFactory::GetInstance()->Configure( EnvPtr->Config );
         NPFactory::CreateFactory();
         IPFactory::CreateFactory();
 

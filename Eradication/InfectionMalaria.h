@@ -28,12 +28,11 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
     public:
-        InfectionMalariaConfig() {};
         virtual bool Configure( const Configuration* config ) override;
 
     protected:
         friend class InfectionMalaria;
-        
+
         static ParasiteSwitchType::Enum parasite_switch_type;
         static MalariaStrains::Enum     malaria_strains;
 

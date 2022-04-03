@@ -78,15 +78,13 @@ SUITE(NChooserEventCoordinatorTest)
 
            IPFactory::GetInstance()->AddIP( 1, "Income", income_ip_values );
 
-            EventTriggerFactory::DeleteInstance();
-            EventTriggerFactory::GetInstance()->Configure( EnvPtr->Config );
-
-            m_oldBaseYear = Simulation::base_year; // Need to save old base_year for restoration
+            //EventTriggerFactoryDeleteInstance();
+            //EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
         }
 
         ~NChooserEventCoordinatorFixture()
         {
-            EventTriggerFactory::DeleteInstance();
+            //EventTriggerFactoryDeleteInstance();
             IPFactory::DeleteFactory();
             Environment::Finalize();
             Simulation::base_year = m_oldBaseYear; // Restore base_year

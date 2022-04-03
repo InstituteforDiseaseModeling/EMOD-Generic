@@ -44,19 +44,18 @@ namespace Kernel
 
     bool BroadcastNodeEvent::Configure( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Broadcast_Event", &m_EventToBroadcast, BNE_Broadcast_Event_DESC_TEXT );
+        //initConfigTypeMap( "Broadcast_Event", &m_EventToBroadcast, BNE_Broadcast_Event_DESC_TEXT );
+        initConfig( "Broadcast_Event", m_EventToBroadcast, inputJson, MetadataDescriptor::Enum("Broadcast_Event", HIV_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Cost_To_Consumer", &cost_per_unit, BNE_Cost_To_Consumer_DESC_TEXT, 0.0f, 999999, 0.0f );
 
         bool retValue = JsonConfigurable::Configure( inputJson );
 
-        if( retValue && !JsonConfigurable::_dryrun )
+        //if( retValue && !JsonConfigurable::_dryrun ) {
+        if( !JsonConfigurable::_dryrun && m_EventToBroadcast == EventTrigger::NoTrigger )
         {
-            if( m_EventToBroadcast.IsUninitialized() )
-            {
-                std::stringstream ss;
-                ss << "BroadcastNodeEvent was configured with empty (or uninitialized) Broadcast_Event.\n";
-                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-            }
+            std::stringstream ss;
+            ss << "BroadcastNodeEvent was configured with empty (or uninitialized) Broadcast_Event.\n";
+            throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
         return retValue;

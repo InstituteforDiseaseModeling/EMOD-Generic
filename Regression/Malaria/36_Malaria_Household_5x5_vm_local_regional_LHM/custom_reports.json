@@ -5,7 +5,9 @@
         "ReportVectorStats" :
         {
             "Enabled" : 1,
-            "Reports" : [ {} ]
+            "Reports" : [ {
+                 "Stratify_By_Species": 0
+            } ]
         }
     }
 }

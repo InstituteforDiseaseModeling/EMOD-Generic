@@ -1,0 +1,15 @@
+{
+    "parameters": {
+        "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
+        "Config_Name": "SFT:Typhoid:Acu_To_Chr_Trans_Prob:60_year_bucket",
+        "Demographics_Filenames": [
+            "../../../Santiago_Demographics.json",
+            "../../../Santiago_10K_61yr_overlay.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Typhoid_Symptomatic_Fraction": 1,
+        "x_Base_Population": 0.1,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

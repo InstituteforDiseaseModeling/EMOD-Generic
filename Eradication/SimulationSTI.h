@@ -28,7 +28,6 @@ namespace Kernel
         virtual ~SimulationSTI(void);
         static SimulationSTI *CreateSimulation();
         static SimulationSTI *CreateSimulation(const ::Configuration *config);
-        SimulationSTI();
 
         // methods of IIdGeneratorSTI
         virtual suids::suid GetNextRelationshipSuid() override;
@@ -42,13 +41,15 @@ namespace Kernel
         virtual INodeInfo* CreateNodeInfo( int rank, INodeContext* pNC ) override;
 
     protected:
+        SimulationSTI();
 
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
-        virtual bool Configure( const ::Configuration *json );
-        virtual void Reports_CreateBuiltIn();
 
         static bool ValidateConfiguration(const ::Configuration *config);
+
+        virtual bool Configure( const ::Configuration *json );
+        virtual void Reports_CreateBuiltIn();
 
         // Allows correct type of Node to be added by classes derived from Simulation
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

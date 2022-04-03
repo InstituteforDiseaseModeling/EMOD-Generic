@@ -104,17 +104,7 @@ namespace Kernel
 
     bool InfectionMalariaConfig::Configure(const Configuration * config)
     {
-        // Malaria sims implement a customized version of strain tracking. Default behavior is disallowed.
-        if(InfectionConfig::enable_strain_tracking)
-        {
-            std::stringstream ss;
-            ss << "Malaria simulations cannot select Enable_Strain_Tracking.";
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-        }
-        else
-        {
-            initConfigTypeMap("Number_of_Clades", &InfectionConfig::number_clades, Number_of_Clades_DESC_TEXT,   1,  10,   1);
-        }
+        LOG_DEBUG("Configure\n");
 
         initConfig( "Malaria_Strain_Model", malaria_strains, config, MetadataDescriptor::Enum("malaria_strains", Malaria_Strain_Model_DESC_TEXT, MDD_ENUM_ARGS(MalariaStrains)) ); // 'global'
         initConfig( "Parasite_Switch_Type", parasite_switch_type, config, MetadataDescriptor::Enum("parasite_switch_type", Parasite_Switch_Type_DESC_TEXT, MDD_ENUM_ARGS(ParasiteSwitchType)) ); // infection (malaria) only 

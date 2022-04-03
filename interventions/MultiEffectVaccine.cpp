@@ -68,9 +68,18 @@ namespace Kernel
         vaccine_take = master.vaccine_take;
         cost_per_unit = master.cost_per_unit;
 
-        acquire_effect   = master.acquire_effect->Clone();
-        transmit_effect  = master.transmit_effect->Clone();
-        mortality_effect = master.mortality_effect->Clone();
+        if( master.acquire_effect )
+        {
+            acquire_effect   = master.acquire_effect->Clone();
+        }
+        if( master.transmit_effect )
+        {
+            transmit_effect  = master.transmit_effect->Clone();
+        }
+        if( master.mortality_effect  )
+        {
+            mortality_effect = master.mortality_effect->Clone();
+        }
     }
 
     MultiEffectVaccine::~MultiEffectVaccine()
@@ -86,27 +95,48 @@ namespace Kernel
 
         release_assert(ivc);
 
-        acquire_effect->Update(dt);
-        ivc->UpdateVaccineAcquireRate( acquire_effect->Current(), efficacy_is_multiplicative );
-
-        transmit_effect->Update(dt);
-        ivc->UpdateVaccineTransmitRate( transmit_effect->Current(), efficacy_is_multiplicative );
-
-        mortality_effect->Update(dt);
-        ivc->UpdateVaccineMortalityRate( mortality_effect->Current(), efficacy_is_multiplicative );
-
-        if( !expired )
+        if( vaccine_took )
         {
-            expired = acquire_effect->Expired() && transmit_effect->Expired() && mortality_effect->Expired();
+            if( acquire_effect )
+            {
+                acquire_effect->Update(dt);
+                ivc->UpdateVaccineAcquireRate( acquire_effect->Current(), efficacy_is_multiplicative );
+            }
+
+            if( transmit_effect )
+            {
+                transmit_effect->Update(dt);
+                ivc->UpdateVaccineTransmitRate( transmit_effect->Current(), efficacy_is_multiplicative );
+            }
+
+            if( mortality_effect )
+            {
+                mortality_effect->Update(dt);
+                ivc->UpdateVaccineMortalityRate( mortality_effect->Current(), efficacy_is_multiplicative );
+            }
+
+            if( !expired )
+            {
+                expired = acquire_effect->Expired() && transmit_effect->Expired() && mortality_effect->Expired();
+            }
         }
     }
 
     void MultiEffectVaccine::SetContextTo( IIndividualHumanContext *context )
     {
         SimpleVaccine::SetContextTo( context );
-        acquire_effect->SetContextTo( context );
-        transmit_effect->SetContextTo( context );
-        mortality_effect->SetContextTo( context );
+        if( acquire_effect )
+        {
+            acquire_effect->SetContextTo( context );
+        }
+        if( transmit_effect )
+        {
+            transmit_effect->SetContextTo( context );
+        }
+        if( mortality_effect )
+        {
+            mortality_effect->SetContextTo( context );
+        }
     }
 
     bool MultiEffectVaccine::NeedsInfectiousLoopUpdate() const

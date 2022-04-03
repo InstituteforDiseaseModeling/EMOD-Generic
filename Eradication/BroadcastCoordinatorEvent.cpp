@@ -61,14 +61,14 @@ namespace Kernel
         std::string default_name = m_CoordinatorName;
 
         initConfigTypeMap( "Coordinator_Name", &m_CoordinatorName,  BCE_Coordinator_Name_DESC_TEXT, default_name );
-        initConfigTypeMap( "Broadcast_Event",  &m_EventToBroadcast, BCE_Broadcast_Event_DESC_TEXT );
         initConfigTypeMap( "Cost_To_Consumer", &m_CampaignCost,     BCE_Cost_To_Consumer_DESC_TEXT, 0.0f, FLT_MAX, 0.0f );
+        initConfig( "Broadcast_Event", m_EventToBroadcast, inputJson, MetadataDescriptor::Enum("Broadcast_Event", HIV_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
 
         bool retValue = JsonConfigurable::Configure( inputJson );
 
         if( retValue && !JsonConfigurable::_dryrun )
         {
-            if( m_EventToBroadcast.IsUninitialized() )
+            if( m_EventToBroadcast == EventTrigger::NoTrigger )
             {
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Broadcast_Event must be defined and it cannot be empty");
             }

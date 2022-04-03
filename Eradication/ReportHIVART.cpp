@@ -58,7 +58,7 @@ namespace Kernel
         return header.str();
     }
 
-    bool ReportHIVART::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool ReportHIVART::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         /*IIndividualHumanHIV * iindividual_hiv = nullptr;
         if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&iindividual_hiv) )

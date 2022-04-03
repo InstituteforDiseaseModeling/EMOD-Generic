@@ -36,6 +36,7 @@ namespace Kernel
         virtual IIndividualHumanInterventionsContext *GetInterventionsContextbyInfection( IInfection* infection ) = 0; // internal components of individuals interact with interventions via this interface
         virtual IIndividualHumanEventContext *GetEventContext() = 0;                       // access to specific attributes of the individual useful for events
         virtual ISusceptibilityContext *GetSusceptibilityContext() const = 0;              // access to immune attributes useful for infection, interventions, reporting, etc.
+        virtual float GetAcquisitionImmunity() const = 0;               // KM: For downsampling based on immune status.  For now, just takes perfect immunity; can be updated to include a threshold.  Unclear how to work with multiple strains or waning immunity.
 
         virtual const NodeDemographics* GetDemographics() const = 0;
 

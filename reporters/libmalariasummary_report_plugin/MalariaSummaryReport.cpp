@@ -7,7 +7,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-#include "StdAfx.h"
+#include "stdafx.h"
+
 #include "MalariaSummaryReport.h"
 
 #include <algorithm>
@@ -496,7 +497,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         BaseEventReportIntervalOutput::EndTimestep( currentTime, dt );
     }
 
-    bool MalariaSummaryReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool MalariaSummaryReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         LOG_DEBUG_F( "MalariaSummaryReport notified of event by %d-year old individual.\n", (int) (context->GetAge() / DAYSPERYEAR) );
 
@@ -542,7 +543,11 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
                 m_pReportData->sum_parasite_positive_by_agebin.at(agebin) += mc_weight;
 
                 float log10_parasite_count = log10(parasite_count);
+#if defined(_WIN32)
                 if( !( _isnanf ( log10_parasite_count ) ) && _finitef( log10_parasite_count ) )
+#else
+                if( !( isnanf ( log10_parasite_count ) ) && finitef( log10_parasite_count ) )
+#endif
                 {
                     m_pReportData->sum_log_parasite_density_by_agebin.at(agebin) += log10_parasite_count;
                 }

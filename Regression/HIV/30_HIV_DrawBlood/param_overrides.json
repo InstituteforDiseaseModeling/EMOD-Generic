@@ -10,7 +10,6 @@
         "Custom_Individual_Events": [
             "HIVDiagnosedEligibleForART",
             "HIVPositiveHIVTest",
-            "HIVNegativeHIVTest",
             "HIVNeedsHIVTest",
             "HCTTestingLoop3"
         ],
@@ -26,7 +25,6 @@
         "Report_Event_Recorder_Events": [
             "HIVNeedsHIVTest",
             "HIVPositiveHIVTest",
-            "HIVNegativeHIVTest",
             "DiseaseDeaths",
             "NonDiseaseDeaths",
             "Births"
@@ -34,6 +32,7 @@
         "Report_Event_Recorder_Ignore_Events_In_List": 0,
         "Report_Event_Recorder_Individual_Properties": [],
         "Simulation_Duration": 30,
+        "Python_Script_Path": "LOCAL",
         "Simulation_Timestep": 1,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",

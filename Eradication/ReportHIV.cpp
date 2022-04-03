@@ -70,7 +70,7 @@ namespace Kernel {
         AddRef();   // TODO - this should be virtual, but isn't because the constructor isn't finished yet...
 
         // this vector is indexed by the EventTrigger index
-        event_counter_vector.resize( EventTriggerFactory::GetInstance()->GetNumEventTriggers() );
+        event_counter_vector.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     ReportHIV::~ReportHIV()
@@ -100,7 +100,7 @@ namespace Kernel {
         {
             for( auto trig : eventTriggerList )
             {
-                std::string label = GetEventPerChannelLabel( trig.ToString() ) ;
+                std::string label = GetEventPerChannelLabel( EventTrigger::pairs::lookup_key( trig ) );
                 units_map[ label ] = "";
             }
         }
@@ -108,7 +108,16 @@ namespace Kernel {
 
     bool ReportHIV::Configure( const Configuration* inputJson )
     {
-        initConfigTypeMap( "Report_HIV_Event_Channels_List", &eventTriggerList, Report_HIV_Event_Channels_List_DESC_TEXT, "Enable_Default_Reporting" );
+        initVectorConfig( "Report_HIV_Event_Channels_List",
+                          eventTriggerList,
+                          inputJson,
+                          MetadataDescriptor::Enum(
+                            "Report_HIV_Event_Channels_List",
+                            Report_HIV_Event_Channels_List_DESC_TEXT,
+                            MDD_ENUM_ARGS(EventTrigger)
+                )
+                //,"Enable_Default_Reporting" 
+            );
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
@@ -122,13 +131,13 @@ namespace Kernel {
             {
                 counting_all_events = true;
 
-                std::vector<EventTrigger> all_triggers = EventTriggerFactory::GetInstance()->GetAllEventTriggers();
-                for( auto trig : all_triggers )
-                {
+                for( int event_idx=0; event_idx < EventTrigger::NUM_EVENT_TRIGGERS; event_idx++ )
+                { 
                     // we'll need better solution here as we add more built-in model events
-                    if( (trig != EventTrigger::EveryUpdate) && (trig != EventTrigger::EveryTimeStep && trig != EventTrigger::ExposureComplete ) ) 
+                    EventTrigger::Enum trig = EventTrigger::Enum( event_idx );
+                    if( (trig != EventTrigger::EveryUpdate) && (trig != EventTrigger::EveryTimeStep && trig != EventTrigger::ExposureComplete ) )
                     {
-                        LOG_INFO_F( "Adding %s to eventTriggerList.\n", trig.c_str() );
+                        LOG_INFO_F( "Adding %s to eventTriggerList.\n", EventTrigger::pairs::lookup_key( trig ) );
                         eventTriggerList.push_back( trig );
                     }
                 }
@@ -158,7 +167,8 @@ namespace Kernel {
 
             for( auto trig : eventTriggerList )
             {
-                LOG_INFO_F( "ReportHIV is registering to listen to event %s\n", trig.c_str() );
+                LOG_INFO_F( "ReportHIV is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trig ) ); 
+                //pNTIC->RegisterNodeEventObserver( this, trig );
                 broadcaster->RegisterObserver( this, trig );
             }
             broadcaster_list.push_back( broadcaster );
@@ -263,9 +273,9 @@ namespace Kernel {
         {
             for( auto trig : eventTriggerList )
             {
-                std::string label = GetEventPerChannelLabel( trig.ToString() ) ;
-                Accumulate( label, event_counter_vector[ trig.GetIndex() ] ); 
-                event_counter_vector[ trig.GetIndex() ] = 0 ;
+                std::string label = GetEventPerChannelLabel( EventTrigger::pairs::lookup_key( trig ) );
+                Accumulate( label, event_counter_vector[ trig ] ); 
+                event_counter_vector[ trig ] = 0 ;
             }
         }
                  
@@ -298,9 +308,9 @@ namespace Kernel {
     }
 
     bool ReportHIV::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                   const EventTrigger& trigger )
+                                   const EventTrigger::Enum& trigger )
     {
-        LOG_DEBUG_F( "notifyOnEvent: %s\n", trigger.c_str() );
+        LOG_DEBUG_F( "notifyOnEvent: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
         // no elements in the map implies that we are counting all of the events.
         if( counting_all_events )
         {
@@ -308,7 +318,7 @@ namespace Kernel {
         }
         else
         {
-            event_counter_vector[ trigger.GetIndex() ]++ ;
+            event_counter_vector[ trigger ]++ ;
         }
         return true ;
     }

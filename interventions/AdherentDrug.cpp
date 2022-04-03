@@ -69,7 +69,8 @@ namespace Kernel
 
         initConfigTypeMap(     "Non_Adherence_Distribution",      &non_adherence_probability, AD_Non_Adherence_Distribution_DESC_TEXT, 0.0f, 1.0f, 0.0f ); 
         initConfigTypeMap(     "Max_Dose_Consideration_Duration", &m_MaxDuration,             AD_Max_Dose_Consideration_Duration_DESC_TEXT, (1.0f/24.0f), FLT_MAX, FLT_MAX ); // 1-hour=1/24
-        initConfigTypeMap(     "Took_Dose_Event",                 &m_TookDoseEvent,           AD_Took_Dose_Event_DESC_TEXT );
+        initConfig( "Took_Dose_Event", m_TookDoseEvent, inputJson, MetadataDescriptor::Enum("Non_Adherence_Options", AD_Took_Dose_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) ); 
+                          
         initConfigComplexType( "Adherence_Config",                &adherence_config,          AD_Adherence_Config_DESC_TEXT );
 
         bool ret = AntimalarialDrug::Configure( inputJson );
@@ -287,7 +288,7 @@ namespace Kernel
             }
         }
 
-        if( is_taking_dose && !m_TookDoseEvent.IsUninitialized() )
+        if( is_taking_dose && m_TookDoseEvent != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( parent->GetEventContext(), m_TookDoseEvent );

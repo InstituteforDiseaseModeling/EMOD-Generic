@@ -1,0 +1,29 @@
+{
+    "Metadata": {
+        "DateCreated": "Sun Sep 25 23:19:55 2011", 
+        "Tool": "convertdemog.py", 
+        "Author": "jsteinkraus", 
+        "IdReference": "SampleContent", 
+        "NodeCount": 1,
+		"Resolution": 150
+    }, 
+    "Defaults": {
+    },
+    "Nodes": [
+        {
+            "NodeID": 1, 
+            "IndividualAttributes": {
+                "PrevalenceDistributionFlag": 0, 
+                "PrevalenceDistribution1": 0.01,
+                "PrevalenceDistribution2": 0.0,
+                "InitialPrevalenceStrains": [
+                    {
+                        "Clade": 1,
+                        "Genome": -1,
+                        "Fraction": 1.0
+                    }
+                ]
+            }
+        }
+    ]
+}

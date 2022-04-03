@@ -1,24 +1,24 @@
 #!/usr/bin/python
 
-
 import os.path as path
 import dtk_test.dtk_sft as sft
+import dtk_test.dtk_SimpleBoosterVaccine_Support as sbvs
 import json
-np=sft.np
+import math
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
-import math
 
-KEY_TOTAL_TIMESTEPS = "Simulation_Duration"
-KEY_IMMUNITY_ACQUISITION_FACTOR = "Post_Infection_Acquisition_Multiplier"
-KEY_NEW_INFECTIONS_GROUP = [ "New Infections:QualityOfCare:1_Control",
-                             "New Infections:QualityOfCare:2_Test"]
-KEY_STATISTICAL_POPULATION_GROUP = [ "Statistical Population:QualityOfCare:1_Control",
-                                     "Statistical Population:QualityOfCare:2_Test"]
-Outbreak_Start_Day = 2
-Timesteps_Between_Repetitions = 5
-Number_Repetitions = 2
+
+KEY_NEW_INFECTIONS_GROUP = ["New Infections:QualityOfCare:1_Control",
+                            "New Infections:QualityOfCare:2_Test"]
+KEY_STATISTICAL_POPULATION_GROUP = ["Statistical Population:QualityOfCare:1_Control",
+                                    "Statistical Population:QualityOfCare:2_Test"]
+
+Timesteps_Between_Outbreaks = 5  # Two distinct outbreaks with EnableImmunity on or off
+
 
 """
 SimpleBoosterVaccine is derived from SimpleVaccine, and preserves many of the same parameters.
@@ -32,120 +32,107 @@ according to the Waning_Config, just like a Simple Vaccine. In essence, this int
 a SimpleVaccine with one effect to all naive (below- threshold) individuals, and another effect to
 all primed (above-threshold) individuals; this behavior is intended to mimic, to some degree,
 biological priming and boosting.
-
 All parameters necessary to define a SimpleVaccine are also necessary for a SimpleBoosterVaccine
 (though the Initial_Effect of the Waning_Config will be overwritten by one of Prime_Effect or
 Boost_Effect upon distribution).
 """
-def load_emod_parameters(config_filename="config.json"):
-    """
-    reads config file and populates params_obj
-    :param config_filename: name of config file (config.json)
-    :returns param_obj:     dictionary with KEY_TOTAL_TIMESTEPS, etc., keys (e.g.)
-    """
-    with open(config_filename) as infile:
-        cdj = json.load(infile)["parameters"]
-    param_obj = {}
-    param_obj[KEY_TOTAL_TIMESTEPS] = cdj[KEY_TOTAL_TIMESTEPS]
-    param_obj[KEY_IMMUNITY_ACQUISITION_FACTOR] = cdj[KEY_IMMUNITY_ACQUISITION_FACTOR]
-    return param_obj
 
-def parse_json_report(output_folder="output", propertyreport_name="PropertyReport.json", debug=False):
-    """
-    creates report_data_obj structure with keys
-    :param propertyreport_name: PropertyReport.json file with location (output/PropertyReport.json)
-    :returns: report_data_obj structure, dictionary with KEY_NEW_INFECTIONS etc., keys (e.g.)
-    """
-    propertyreport_path = path.join(output_folder, propertyreport_name)
-    with open(propertyreport_path) as infile:
-        icj = json.load(infile)["Channels"]
 
-    report_data_obj = {}
-    for key in KEY_NEW_INFECTIONS_GROUP:
-        new_infections = icj[key]["Data"]
-        report_data_obj[key] = new_infections
-    for key in KEY_STATISTICAL_POPULATION_GROUP:
-        statistical_population = icj[key]["Data"]
-        report_data_obj[key] = statistical_population
-
-    if debug:
-        with open("data_PropertyReport.json", "w") as outfile:
-            json.dump(report_data_obj, outfile, indent=4)
-
-    return report_data_obj
-
-def calc_expected_new_infection_portion(param_obj, debug = False):
+def calc_expected_new_infection_portion(vax_event_obj, param_obj, debug=False):
     """
     calculate the expected new infection(percentage) for each group. we are using hardcoded values in Campaign file.
     :param debug:
     :return: immunity
     """
-    prime = 0.2
-    boost = 0.6
-    # threshold_1 = 0.0
+    boost = vax_event_obj[sbvs.CampaignKeys.Boost_Effect]
     new_infection_portions = []
-    natural_immunuty = 1.0 - param_obj[KEY_IMMUNITY_ACQUISITION_FACTOR]
-    new_infection_portions.append(1.0 - natural_immunuty)                       # 1_Control
-    new_infection_portions.append((1.0 - natural_immunuty)* (1.0 - boost))       # 2_Test
+    natural_immunity = 1.0 - param_obj[sbvs.ConfigKeys.IMMUNITY_ACQUISITION_FACTOR]
+    new_infection_portions.append(1.0 - natural_immunity)                       # 1_Control
+    new_infection_portions.append((1.0 - natural_immunity) * (1.0 - boost))     # 2_Test
     if debug:
-        print( new_infection_portions )
+        print(new_infection_portions)
     return new_infection_portions
 
-def create_report_file(param_obj, report_data_obj, report_name, debug):
+
+def create_report_file(vax_event_obj, outbreak_event_obj, param_obj, report_data_obj, report_name, debug):
     with open(report_name, "w") as outfile:
+        outfile.write("# Test name: " + str(param_obj[sbvs.ConfigKeys.CONFIG_NAME]) + ", Run number: " +
+                      str(param_obj[sbvs.ConfigKeys.RUN_NUMBER]) +
+                      "\n# Test compares the transmission blocking effects to the expected"
+                      " as well as the reported vs. expected new infections.\n")
         success = True
-        new_infection_portions = calc_expected_new_infection_portion(param_obj, debug)
+        new_infection_portions = calc_expected_new_infection_portion(vax_event_obj, param_obj, debug)
         new_infections = []
         expected_new_infections = []
-        # skip the first outbreak, which gives the natual immunity
-        timestep = Outbreak_Start_Day + Timesteps_Between_Repetitions
+        # skip the first outbreak, which gives the natural immunity
+        timestep = outbreak_event_obj[sbvs.CampaignKeys.Start_Day] + Timesteps_Between_Outbreaks
         for i in range(len(KEY_NEW_INFECTIONS_GROUP)):
             new_infection = report_data_obj[KEY_NEW_INFECTIONS_GROUP[i]][timestep]
             statistical_population = report_data_obj[KEY_STATISTICAL_POPULATION_GROUP[i]][timestep]
             expected_new_infection = statistical_population * (new_infection_portions[i])
             tolerance = 0.0 if expected_new_infection == 0.0 else 2e-2 * statistical_population
-            result = f"At time step: {timestep} Group: {KEY_NEW_INFECTIONS_GROUP[i]}" \
-                     f" reported new infections: {new_infection} expected: {expected_new_infection}" \
-                     f" tolerance: {tolerance}.\n"
+            low_acceptance_bound = expected_new_infection - tolerance
+            high_acceptance_bound = expected_new_infection + tolerance
             if math.fabs(new_infection - expected_new_infection) > tolerance:
                 success = False
-                outfile.write(f"BAD:  {result}")
-            else:
-                outfile.write(f"GOOD: {result}")
-
+                outfile.write("BAD: At time step {0}, {1} reports {2} new infections, which is not within acceptance"
+                              "range of ({3}, {4}).  Expected {5}.\n".format(timestep, KEY_NEW_INFECTIONS_GROUP[i],
+                                                                             new_infection, low_acceptance_bound,
+                                                                             high_acceptance_bound,
+                                                                             expected_new_infection))
             new_infections.append(new_infection)
             expected_new_infections.append(expected_new_infection)
+        if success:
+            outfile.write("GOOD: For all time steps, the new infections were within tolerance (within 2% of statistical"
+                          " population) of the expected.\n")
         outfile.write(sft.format_success_msg(success))
-    sft.plot_data(new_infections,expected_new_infections,
-                           label1= "Actual", label2 = "Expected",
-                           xlabel= "0: Control group, 1: Test group",ylabel="new infection",
-                           title = "Actual new infection vs. expected new infection",
-                           category = 'New_infections',show = True )
-    if debug:
-        print( "SUMMARY: Success={0}\n".format(success) )
-    return success
+        sft.plot_data(new_infections, expected_new_infections,
+                      label1="Actual", label2="Expected",
+                      xlabel="0: Control group, 1: Test group", ylabel="new infection",
+                      title="Actual new infection vs. expected new infection",
+                      category='New_infections', show=True)
+        if debug:
+            print("SUMMARY: Success={0}\n".format(success))
+        return success
 
-def application( output_folder="output", stdout_filename="test.txt",
-                 config_filename="config.json",campaign_filename="campaign.json",
-                 demographics_filename = "../../demographics.json",
-                 propertyreport_name="PropertyReport.json",
-                 report_name=sft.sft_output_filename,
-                 debug=False):
-    if debug:
-        print( "output_folder: " + output_folder )
-        print( "stdout_filename: " + stdout_filename+ "\n" )
-        print( "config_filename: " + config_filename + "\n" )
-        print( "campaign_filename: " + campaign_filename + "\n" )
-        print( "demographics_filename: " + demographics_filename + "\n" )
-        print( "propertyreport_name: " + propertyreport_name + "\n" )
-        print( "report_name: " + report_name + "\n" )
-        print( "debug: " + str(debug) + "\n" )
+
+def application(output_folder="output", stdout_filename="test.txt",
+                config_filename="config.json",
+                propertyreport_name="PropertyReport.json",
+                report_name=sft.sft_output_filename,
+                debug=False):
 
     sft.wait_for_done()
-    param_obj = load_emod_parameters(config_filename)
-    report_data_obj = parse_json_report(output_folder, propertyreport_name, debug)
-    create_report_file(param_obj, report_data_obj, report_name, debug)
+    param_obj = sbvs.load_emod_parameters(config_filename)
+    campaign_filename = param_obj[sbvs.ConfigKeys.CAMPAIGN_NAME]
+    if debug:
+        print("output_folder: " + output_folder)
+        print("stdout_filename: " + stdout_filename + "\n")
+        print("campaign_filename: " + campaign_filename + "\n")
+        print("propertyreport_name: " + propertyreport_name + "\n")
+        print("report_name: " + report_name + "\n")
+        print("debug: " + str(debug) + "\n")
+    vax_event_obj = sbvs.parse_vax_event(campaign_filename, 1)
+    outbreak_event_obj = sbvs.parse_outbreak_event(campaign_filename, 0)
+    report_data_obj = sbvs.parse_json_report(KEY_NEW_INFECTIONS_GROUP, KEY_STATISTICAL_POPULATION_GROUP,
+                                             None, output_folder, propertyreport_name, debug)
+    create_report_file(vax_event_obj, outbreak_event_obj, param_obj, report_data_obj, report_name, debug)
+
 
 if __name__ == "__main__":
     # execute only if run as a script
-    application( "output" )
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--output', default="output", help="Folder to load outputs from (output)")
+    parser.add_argument('-s', '--stdout', default="test.txt", help="Name of stdoutfile to parse (test.txt")
+    parser.add_argument('-c', '--config', default="config.json", help="Config name to load (config.json)")
+    parser.add_argument('-p', '--propertyreportname', default="PropertyReport.json",
+                        help="Property report name to load (PropertyReport.json")
+    parser.add_argument('-r', '--reportname', default=sft.sft_output_filename, help="Report file to generate")
+    parser.add_argument('-d', '--debug', action='store_true', help="Turns on debugging")
+    args = parser.parse_args()
+
+    application(output_folder=args.output, stdout_filename=args.stdout,
+                config_filename=args.config,
+                report_name=args.reportname, debug=args.debug)

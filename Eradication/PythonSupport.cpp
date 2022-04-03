@@ -29,6 +29,7 @@ namespace Kernel
     std::string PythonSupport::SCRIPT_PRE_PROCESS         = "dtk_pre_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS        = "dtk_post_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS_SCHEMA = "dtk_post_process_schema";
+    std::string PythonSupport::SCRIPT_IN_PROCESS          = "dtk_in_process";
 
     std::string PythonSupport::SCRIPT_PYTHON_FEVER        = "dtk_pydemo_individual";
     std::string PythonSupport::SCRIPT_TYPHOID             = "dtk_typhoid_individual";

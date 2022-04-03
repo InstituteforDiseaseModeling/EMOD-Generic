@@ -24,7 +24,8 @@ namespace Kernel
 
     bool ImmunityBloodTest::Configure(const Configuration * inputJson)
     {
-        initConfigTypeMap("Negative_Diagnosis_Event", &negative_diagnosis_event, IBT_Negative_Diagnosis_Config_Event_DESC_TEXT, "Event_Or_Config", "Event");
+        //initConfigTypeMap("Negative_Diagnosis_Event", &negative_diagnosis_event, IBT_Negative_Diagnosis_Config_Event_DESC_TEXT, "Event_Or_Config", "Event");
+        initConfig( "Negative_Diagnosis_Event", negative_diagnosis_event, inputJson, MetadataDescriptor::Enum("Negative_Diagnosis_Event", IBT_Negative_Diagnosis_Config_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap("Positive_Threshold_AcquisitionImmunity", &threshold_acquisitionImmunity, IBT_Positive_Threshold_AcquisitionImmunity_DESC_TEXT, 0.0, 1.0, ImmuneThreshold);
         return SimpleDiagnostic::Configure(inputJson);
     }
@@ -36,17 +37,17 @@ namespace Kernel
 
     void ImmunityBloodTest::CheckConfigTriggers( const Configuration * inputJson )
     {
-        if( negative_diagnosis_event.IsUninitialized() && positive_diagnosis_event.IsUninitialized() )
+        if( negative_diagnosis_event == EventTrigger::NoTrigger && positive_diagnosis_event == EventTrigger::NoTrigger )
         {
             std::stringstream ss;
             ss << "Neither Positive_Diagnosis_Event nor Negative_Diagnosis_Event is defined." << std::endl;
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
-        else if( positive_diagnosis_event.IsUninitialized() )
+        else if( positive_diagnosis_event == EventTrigger::NoTrigger )
         {
             LOG_INFO( "Positive_Diagnosis_Event is not defined. No notification will be given for this event.\n" );
         }
-        else if( negative_diagnosis_event.IsUninitialized() )
+        else if( negative_diagnosis_event == EventTrigger::NoTrigger )
         {
             LOG_INFO( "Negative_Diagnosis_Event is not defined. No notification will be given for this event.\n" );
         }        
@@ -92,9 +93,9 @@ namespace Kernel
         auto iid = parent->GetSuid().data;
         LOG_DEBUG_F( "Individual %d tested 'negative' in ImmunityBloodTest, broadcasting negative event.\n", iid );
 
-        if (!negative_diagnosis_event.IsUninitialized())
+        if (!negative_diagnosis_event == EventTrigger::NoTrigger)
         {
-            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", negative_diagnosis_event.c_str(), iid );
+            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ), iid );
             broadcastEvent(negative_diagnosis_event);
         }
         else
@@ -111,6 +112,6 @@ namespace Kernel
         SimpleDiagnostic::serialize(ar, obj);
         ImmunityBloodTest& ibt = *obj;
         ar.labelElement("threshold_acquisitionImmunity") & ibt.threshold_acquisitionImmunity;
-        ar.labelElement("negative_diagnosis_event") & ibt.negative_diagnosis_event;
+        //ar.labelElement("negative_diagnosis_event") & ibt.negative_diagnosis_event;
     }
 }

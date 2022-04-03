@@ -41,7 +41,7 @@ namespace Kernel
         //eventTriggerList.push_back( IndividualEventTriggerType::DiseaseDeaths );
         //eventTriggerList.push_back( IndividualEventTriggerType::NonDiseaseDeaths );
         if( !JsonConfigurable::_dryrun )
-        {
+        { 
             eventTriggerList.push_back( EventTrigger::NewInfection );
         }
 
@@ -95,8 +95,8 @@ namespace Kernel
         if( permutationsSet.size() == 0 )
         {
             // put all keys in set
-            PropertyReport::tKeyValuePairs actualPerm;
-            PropertyReport::GenerateAllPermutationsOnce( permKeys, actualPerm, permutationsSet ); 
+            PropertyReport::tKeyValuePair actualPerm;
+            PropertyReport::GenerateAllPermutationsOnce( permKeys, actualPerm, permutationsSet );
         }
 
         // Get integer that represents reportingBucket
@@ -336,11 +336,11 @@ namespace Kernel
         }
     }
 
-    bool ReportTyphoidByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& StateChange)
+    bool ReportTyphoidByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& StateChange)
     {
         LOG_DEBUG_F( "Individual %d experienced event %s\n",
                      context->GetSuid().data,
-                     StateChange.c_str()
+                     EventTrigger::pairs::lookup_key( StateChange )
                    );
 
         float mc_weight = context->GetMonteCarloWeight();

@@ -43,7 +43,7 @@ namespace Kernel
 
     struct IDMAPI IOutbreakConsumer : public ISupports
     {
-        virtual void AddImportCases( StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node, ProbabilityNumber prob_infect ) = 0;
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node) = 0;
         //virtual void IncreasePrevalence(StrainIdentity* outbreak_strainID, IEventCoordinator2* pEC) = 0;
     };
 

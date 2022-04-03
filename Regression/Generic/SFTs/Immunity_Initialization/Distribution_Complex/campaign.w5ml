@@ -1,0 +1,7 @@
+Events:
+- What:
+    class: OutbreakIndividual
+    Ignore_Immunity: 0 
+  Who: 100%, AllAges, BothSexes
+  When: 5
+  Where: Everywhere

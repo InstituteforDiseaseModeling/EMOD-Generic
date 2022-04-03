@@ -9,6 +9,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
+#include "EventTrigger.h"
+#include "BaseEventTrigger.h"
 #include "EventCoordinator.h"
 #include "Configure.h"
 #include "DemographicRestrictions.h"
@@ -51,21 +53,23 @@ namespace Kernel
 
         // Other methods
         float GetThreshold() const;
-        const std::string& GetEventToBroadcast() const;
+
+        //const std::string& GetEventToBroadcast() const;
+        const EventTrigger::Enum& GetEventToBroadcast() const;
         
         EventType::Enum GetEventType() { return m_EventType; };
-        EventTriggerCoordinator& GetEventToBroadcastCooridnator() { return m_TriggerCoordinator; };
-        EventTriggerNode& GetEventToBroadcastNode() { return m_TriggerNode; };
-        EventTrigger& GetEventToBroadcastIndividual() { return m_TriggerIndividual; };
+        EventTrigger::Enum& GetEventToBroadcastCoordinator() { return m_TriggerCoordinator; };
+        EventTrigger::Enum& GetEventToBroadcastNode() { return m_TriggerNode; };
+        EventTrigger::Enum& GetEventToBroadcastIndividual() { return m_TriggerIndividual; };
 
 
     private:
         float        m_Threshold;
-        std::string  m_EventToBroadcast;
+        EventTrigger::Enum  m_EventToBroadcast;
         EventType::Enum  m_EventType;
-        EventTriggerCoordinator m_TriggerCoordinator;
-        EventTriggerNode m_TriggerNode;
-        EventTrigger m_TriggerIndividual;
+        EventTrigger::Enum m_TriggerCoordinator;
+        EventTrigger::Enum m_TriggerNode;
+        EventTrigger::Enum m_TriggerIndividual;
     };
 
     // ------------------------------------------------------------------------
@@ -138,6 +142,11 @@ namespace Kernel
         virtual void ConfigureTriggers( const Configuration * inputJson );
         virtual void CheckConfigurationTriggers();
 
+        // IIndividualEventObserver methods
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context,
+                                    const EventTrigger::Enum& StateChange ) override;
+
+        // Other methods
         uint32_t GetCount() const;
         virtual uint32_t GetCountOfQualifyingPopulation( const std::vector<INodeEventContext*>& rNodes );
         virtual void StartCounting();
@@ -153,20 +162,17 @@ namespace Kernel
         bool IsNodeQualified( INodeEventContext* pNEC );
         individual_qualified_function_t GetIndividualQualifiedFunction();
 
-        // IIndividualEventObserver methods
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context,
-            const EventTrigger& StateChange ) override;
-
     protected:
         uint32_t m_Count;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> m_NodePropertyRestrictions;
         DemographicRestrictions   m_DemographicRestrictions;
-        std::vector<EventTrigger> m_TriggerConditionListIndividual;
+        std::vector<EventTrigger::Enum> m_TriggerConditionList;
 
     private:
         int32_t m_CountEventsForNumTimeSteps;
         int32_t m_NumTimeStepsCounted;
         bool m_IsDoneCounting;
+
     };
 
     // ------------------------------------------------------------------------

@@ -35,7 +35,7 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
-        initConfigTypeMap( "Event_Trigger", &event_trigger, BETON_Event_Trigger_DESC_TEXT );
+        initConfig( "Event_Trigger", event_trigger, inputJson, MetadataDescriptor::Enum("Event_Trigger", BETON_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Include_My_Node", &include_my_node, BETON_Include_My_Node_DESC_TEXT, false );
 
         initConfig( "Node_Selection_Type", node_selection_type, inputJson, MetadataDescriptor::Enum("Node_Selection_Type", BETON_Node_Selection_Type_DESC_TEXT, MDD_ENUM_ARGS(NodeSelectionType)) );
@@ -48,7 +48,7 @@ namespace Kernel
 
         bool ret = BaseIntervention::Configure( inputJson );
 
-        if( !JsonConfigurable::_dryrun && event_trigger.IsUninitialized() )
+        if( !JsonConfigurable::_dryrun && event_trigger == EventTrigger::NoTrigger )
         {
             std::stringstream ss;
             ss << "BroadcastEventToOtherNodes was configured with empty (or uninitialized) Event_Trigger.\n";
@@ -141,7 +141,7 @@ namespace Kernel
         }
         if( qualifies )
         {
-            LOG_INFO_F("broadcast %s, %d -> %d\n",event_trigger.c_str(),p_node_context->GetExternalID(),rni.GetExternalID());
+            LOG_INFO_F("broadcast %s, %d -> %d\n", EventTrigger::pairs::lookup_key( event_trigger ),p_node_context->GetExternalID(),rni.GetExternalID());
         }
 
         return qualifies ;
@@ -153,7 +153,7 @@ namespace Kernel
     {
         BaseIntervention::serialize( ar, obj );
         BroadcastEventToOtherNodes& cal = *obj;
-        ar.labelElement("event_trigger"      ) & cal.event_trigger;
+        ar.labelElement("event_trigger"      ) & (uint32_t&)cal.event_trigger;
         ar.labelElement("include_my_node"    ) & cal.include_my_node;
         ar.labelElement("node_selection_type") & (uint32_t&)cal.node_selection_type;
         ar.labelElement("max_distance_km"    ) & cal.max_distance_km;

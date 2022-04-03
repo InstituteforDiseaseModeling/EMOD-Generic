@@ -296,7 +296,7 @@ namespace Kernel
     }
 
     bool ReportVectorStats::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                            const EventTrigger& trigger )
+                                            const EventTrigger::Enum& trigger )
     {
         //// iindividual context for suid
         //IIndividualHumanContext * iindividual = NULL;

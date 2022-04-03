@@ -120,10 +120,7 @@ namespace Kernel
     void SimulationTyphoid::Initialize(const ::Configuration *config)
     {
         SimulationEnvironmental::Initialize(config);
-        //IndividualHumanTyphoid fakeHuman;
-        LOG_INFO( "Calling Configure on fakeHuman\n" );
-        //fakeHuman.Configure( config );
-        IndividualHumanTyphoid::InitializeStatics( config );
+        IndividualHumanTyphoid::InitializeStaticsTyphoid( config );
     }
 
     SimulationTyphoid *SimulationTyphoid::CreateSimulation()
@@ -136,9 +133,8 @@ namespace Kernel
 
     SimulationTyphoid *SimulationTyphoid::CreateSimulation(const ::Configuration *config)
     {
-       SimulationTyphoid *newsimulation = NULL;
-       
-       newsimulation = _new_ SimulationTyphoid();
+       SimulationTyphoid *newsimulation = _new_ SimulationTyphoid();
+
        if (newsimulation)
        {
             // This sequence is important: first
@@ -147,7 +143,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = NULL;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "TYPHOID_SIM requested with invalid configuration." );
             }
        }
 

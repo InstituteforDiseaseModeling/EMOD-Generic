@@ -26,6 +26,11 @@
             "Enable_Demographics_Builtin": 0,
             "Enable_Demographics_Reporting": 0,
             "Enable_Demographics_Risk": 0,
+	    "Enable_Infectivity_Scaling": 0,
+	    "Enable_Infectivity_Scaling_Density": 0,
+	    "Enable_Infectivity_Scaling_Boxcar": 0,
+	    "Enable_Infectivity_Scaling_Sinusoid": 0,
+	    "Enable_Infectivity_Scaling_Exponential": 0,
             "Enable_Initial_Prevalence": 1,
             "Enable_Maternal_Infection_Transmission": 0,
             "Enable_Maternal_Protection": 0,
@@ -70,7 +75,7 @@
                 "Sample_Rate_18mo_4yr": 1,
                 "Sample_Rate_20_Plus": 1,
                 "Sample_Rate_5_9": 1,
-                "Sample_Rate_Birth": 1
+                "Sample_Rate_Birth": 1 
             },
             "x_Base_Population": 1
         },
@@ -102,7 +107,9 @@
                 "Symptomatic_Infectious_Offset": 999999
             },
             "Infection_Updates_Per_Timestep": 1,
+            "Log2_Number_of_Genomes_per_Clade": 1,
             "Max_Individual_Infections": 1,
+            "Number_of_Clades": 1,
             "TRANSMISSION": {
                 "Enable_Maternal_Infection_Transmission": 0,
                 "Maternal_Infection_Transmission_Probability": 0
@@ -177,6 +184,7 @@
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
             "Node_Grid_Size": 0.042,
             "Python_Script_Path": "SHARED",
+            "Python_Inprocessing_Tsteps": [],
             "Run_Number": 1,
             "Simulation_Duration": 365,
             "Simulation_Timestep": 1,
@@ -187,8 +195,8 @@
         },
         "STRAIN_TRACKING": {},
         "LOGLEVEL":{
-            "logLevel_Individual": "INFO",
-            "logLevel_Susceptibility": "INFO"
+            "logLevel_Individual": "DEBUG",
+            "logLevel_Susceptibility": "DEBUG"
         },
         "MATERNAL_TRANSMISSION": {
             "Enable_Maternal_Transmission": 0,

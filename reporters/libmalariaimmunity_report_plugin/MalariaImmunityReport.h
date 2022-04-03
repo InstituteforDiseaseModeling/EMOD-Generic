@@ -51,7 +51,7 @@ namespace Kernel
 
         //BaseEventReportIntervalOutput
         virtual bool Configure( const Configuration * inputJson ) override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
     protected:
         // BaseEventReportIntervalOutput

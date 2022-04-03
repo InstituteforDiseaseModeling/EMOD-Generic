@@ -1,0 +1,18 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Dose_Response_Probability",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_100_overlay.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 365,
+        "Typhoid_Acute_Infectiousness": 40,
+        "Typhoid_Chronic_Relative_Infectiousness": 0.15,
+        "Typhoid_Contact_Exposure_Rate": 5,
+        "Typhoid_Prepatent_Relative_Infectiousness": 0.55,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.95,
+        "logLevel_IndividualTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

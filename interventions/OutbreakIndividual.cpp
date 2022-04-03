@@ -45,15 +45,16 @@ namespace Kernel
         , ignoreImmunity( true )
         , incubation_period_override(-1)
     {
-        initConfigTypeMap( "Ignore_Immunity", &ignoreImmunity, OB_Ignore_Immunity_DESC_TEXT, true );
-        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1, INT_MAX, -1);
-        initSimTypes( 11, "GENERIC_SIM" , "VECTOR_SIM" , "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM" );
+        // Schema documentation
+        initSimTypes( 11, "GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM" );
     }
 
     bool OutbreakIndividual::Configure(const Configuration * inputJson)
     {
-        ConfigureClade( inputJson );
-        ConfigureGenome( inputJson );
+        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
+        initConfigTypeMap( "Genome", &genome, Genome_DESC_TEXT, 0, 16777215, 0, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,AIRBORNE_SIM,POLIO_SIM,TBHIV_SIM,STI_SIM,HIV_SIM,PY_SIM,DENGUE_SIM,MALARIA_SIM");
+        initConfigTypeMap( "Ignore_Immunity", &ignoreImmunity, OB_Ignore_Immunity_DESC_TEXT, true );
+        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1, INT_MAX, -1);
 
         // --------------------------------------------------------------
         // --- Don't call BaseIntervention::Configure() because we don't
@@ -62,36 +63,25 @@ namespace Kernel
         return JsonConfigurable::Configure( inputJson );
     }
 
-    void OutbreakIndividual::ConfigureClade( const Configuration * inputJson )
-    {
-        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
-    }
-
-    void OutbreakIndividual::ConfigureGenome( const Configuration * inputJson )
-    {
-        initConfigTypeMap( "Genome", &genome, Genome_DESC_TEXT, -1, 16777216, 0 );
-    }
-
-    bool OutbreakIndividual::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * pCCO
-    )
+    bool OutbreakIndividual::Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * pCCO)
     {
         bool distributed = false;
+        StrainIdentity outbreak_strain(clade,genome);
+
         // TBD: Get individual from context, and infect
         IIndividualHuman* individual = dynamic_cast<IIndividualHuman*>(context->GetParent()); // QI in new code
-        INodeEventContext * pContext = individual->GetParent()->GetEventContext();
+
         LOG_DEBUG( "Infecting individual from Outbreak.\n" );
-        if( ignoreImmunity || // if we're ignoring immunity, just infect
-            context->GetParent()->GetRng()->SmartDraw( individual->GetAcquisitionImmunity() ) )
+        if( ignoreImmunity || context->GetParent()->GetRng()->SmartDraw( individual->GetAcquisitionImmunity() ) )
         {
-            individual->AcquireNewInfection( GetNewStrainIdentity( pContext, context->GetParent() ), incubation_period_override );
+            individual->AcquireNewInfection(&outbreak_strain, incubation_period_override);
             distributed = true;
         }
         else
         {
             LOG_DEBUG_F( "We didn't infect individual %d with immunity %f (ignore=%d).\n", individual->GetSuid().data, individual->GetAcquisitionImmunity(), ignoreImmunity );
         }
+
         return distributed;
     }
 
@@ -99,32 +89,5 @@ namespace Kernel
     {
         LOG_WARN("updating outbreakIndividual (?!?)\n");
         // Distribute() doesn't call GiveIntervention() for this intervention, so it isn't added to the NodeEventContext's list of NDI
-    }
-
-    const Kernel::StrainIdentity* OutbreakIndividual::GetNewStrainIdentity( INodeEventContext *context, IIndividualHumanContext* pIndiv )
-    {
-        StrainIdentity *outbreakIndividual_strainID = nullptr;
-
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        // NO usage of GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
-        IGlobalContext *pGC = nullptr;
-        const SimulationConfig* simConfigObj = nullptr;
-        if (s_OK == context->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            simConfigObj = pGC->GetSimulationConfigObj();
-        }
-        if (!simConfigObj)
-        {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-        }
-
-        if( clade < 0 )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "clade", clade, 0 );
-        }
-
-        outbreakIndividual_strainID = _new_ StrainIdentity( clade, genome, pIndiv->GetRng() );
-
-        return outbreakIndividual_strainID;
     }
 }

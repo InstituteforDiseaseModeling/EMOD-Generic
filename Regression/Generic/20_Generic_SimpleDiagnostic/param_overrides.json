@@ -1,10 +1,6 @@
 {
     "Default_Config_Path": "../../defaults/generic_default_config.json",
     "parameters": {
-        "Custom_Individual_Events": [
-            "TestedPositive_CureMeNow",
-            "TestedNegative_ProtectMeNow"
-        ],
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
                 "Namawala_single_node_demographics.json"
@@ -18,8 +14,10 @@
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
+	    "Incubation_Period_Constant": 3,
             "Run_Number": 1,
-            "Simulation_Duration": 180
+            "Simulation_Duration": 180,
+            "Python_Script_Path": "LOCAL"
         }
     }
 }

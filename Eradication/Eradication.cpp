@@ -424,6 +424,7 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 
         // Run python pre-process script; does nothing and returns configFileName if no python.
         configFileName = Kernel::PythonSupport::RunPyFunction( configFileName, Kernel::PythonSupport::SCRIPT_PRE_PROCESS );
+        //EnvPtr->MPI.p_idm_mpi->Barrier(); // I would like to do this here to be safe but MPI ptr isn't initialized yet
 
         // set up the environment
         EnvPtr->Log->Flush();
@@ -471,6 +472,7 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             LOG_INFO_F("Status monitor sim id: %s\n", po.GetCommandLineValueString( "sim_id" ).c_str() );
             EnvPtr->getStatusReporter()->SetHPCId( po.GetCommandLineValueString( "sim_id" ) );
         }
+
 
 #ifdef _DEBUG
     //#define DEBUG_MEMORY_LEAKS // uncomment this to run an extra warm-up pass and enable dumping objects 

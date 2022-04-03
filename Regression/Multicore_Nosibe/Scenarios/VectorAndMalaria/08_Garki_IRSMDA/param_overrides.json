@@ -27,7 +27,9 @@
             "Enable_Birth": 1,
             "Enable_Maternal_Protection": 0,
             "Enable_Natural_Mortality": 1,
-            "Population_Scale_Type": "FIXED_SCALING"
+            "Population_Scale_Type": "FIXED_SCALING",
+            "Base_Individual_Sample_Rate": 0.01,
+            "Individual_Sampling_Type": "FIXED_SAMPLING"
         },
         "GENERAL_DISEASE": {
             "Infection_Updates_Per_Timestep": 24

@@ -37,7 +37,8 @@ namespace Kernel
         float sample_threshold;
         float base_specificity;
         float base_sensitivity;
-        EventTriggerNode negative_diagnosis_event, positive_diagnosis_event;
+        EventTrigger::Enum negative_diagnosis_event;
+        EventTrigger::Enum positive_diagnosis_event;
         IPKeyValue environment_ip_key_value;
     };
 }

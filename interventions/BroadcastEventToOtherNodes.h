@@ -52,7 +52,7 @@ namespace Kernel
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
         INodeContext* p_node_context ;
-        EventTrigger event_trigger;
+        EventTrigger::Enum event_trigger;
         bool include_my_node ;
         NodeSelectionType::Enum node_selection_type ;
         float max_distance_km ;

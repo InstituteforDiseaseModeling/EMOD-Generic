@@ -18,7 +18,7 @@
         "acqdecayoffset":0,
         "trandecayoffset":0,
         "mortdecayoffset":0,
-        "immune_failage" : 0,
+        "m_immune_failage_acquire" : 0,
         "demographic_risk":1,
         "Flag_use_CD4_for_act":false,
         "m_is_immune_competent":true,

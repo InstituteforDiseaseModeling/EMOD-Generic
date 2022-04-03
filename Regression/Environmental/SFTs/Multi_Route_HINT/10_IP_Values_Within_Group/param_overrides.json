@@ -1,0 +1,23 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_mr_10groups_trans_wi_overlay.json",
+                "../../Demographics/demographics_10000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Infectious_Period_Constant": 60
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "HINT_Multi_Routes_10_IP_Values_Within_Group"
+        },
+        "LOGLEVEL": {
+            "logLevel_Individual": "DEBUG"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

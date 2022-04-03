@@ -46,10 +46,10 @@ namespace Kernel
         IndividualInterventionConfig negative_diagnosis_config;
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        EventTrigger negative_diagnosis_event;
+        EventTrigger::Enum negative_diagnosis_event;
 
         IndividualInterventionConfig defaulters_config;
-        EventTrigger defaulters_event;
+        EventTrigger::Enum defaulters_event;
 #pragma warning( pop )
 
     private:

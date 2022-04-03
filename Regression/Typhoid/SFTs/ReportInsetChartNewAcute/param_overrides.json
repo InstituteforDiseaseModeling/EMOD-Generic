@@ -1,0 +1,18 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Report_Insert_Chart_New_Acute",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_1K_overlay.json"
+        ],
+        "Enable_Demographics_Reporting": 1,
+        "Enable_Vital_Dynamics": 0,
+        "Python_Script_Path": "SHARED",
+        "Report_Typhoid_ByAgeAndGender_Start_Year": 1900,
+        "Simulation_Duration": 365,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Symptomatic_Fraction": 1,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

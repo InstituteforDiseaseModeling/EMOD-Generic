@@ -2,11 +2,7 @@
     "Default_Config_Path": "../.././defaults/sti_default_config.json",
     "parameters": {
         "Base_Year": 1960,
-        "Config_Name": "78_STI_NChooser",
-        "Custom_Individual_Events": [
-            "Vaccinated",
-            "VaccineExpired"
-        ],
+        "Config_Name": "78_STI_NChooser", 
         "Demographics_Filenames": [
             "../../HIV/input/SA_UN_demographics.json",
             "../../HIV/input/PFA_overlay.json"
@@ -24,6 +20,7 @@
             "Vaccinated",
             "VaccineExpired"
         ],
+        "Python_Script_Path": "LOCAL",
         "Run_Number": 1,
         "Simulation_Duration": 2555,
         "x_Base_Population": 0.001

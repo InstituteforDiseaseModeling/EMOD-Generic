@@ -44,10 +44,10 @@ namespace Kernel
         virtual void Update(float dt) override;
 
         // IIndividualEventObserver
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
     protected:
-        std::vector<EventTrigger>   m_trigger_conditions;
+        std::vector<EventTrigger::Enum>   m_trigger_conditions;
         float max_duration;
         float duration;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;
@@ -55,7 +55,7 @@ namespace Kernel
         bool m_disqualified_by_coverage_only;
         float blackout_period ;
         float blackout_time_remaining ;
-        EventTrigger blackout_event_trigger ;
+        EventTrigger::Enum blackout_event_trigger ;
         bool blackout_on_first_occurrence;
         bool notification_occured ;
         bool distribute_on_return_home;

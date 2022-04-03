@@ -1,0 +1,19 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Immunity_Acquired",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Report_Typhoid_ByAgeAndGender_Start_Year": 1930,
+        "Simulation_Duration": 365,
+        "Typhoid_Acute_Infectiousness": 100000,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Chronic_Relative_Infectiousness": 1,
+        "Typhoid_Prepatent_Relative_Infectiousness": 1,
+        "Typhoid_Protection_Per_Infection": 0.23,
+        "x_Base_Population": 0.01,
+        "logLevel_IndividualTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

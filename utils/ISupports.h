@@ -80,7 +80,8 @@ namespace Kernel
     };
 
 #define DECLARE_QUERY_INTERFACE() \
-    virtual QueryResult QueryInterface(iid_t iid, void** pinstance);
+    public: \
+        virtual QueryResult QueryInterface(iid_t iid, void** pinstance);
 
 // TODO: need some method to ensure that refcounts will be serialized...maybe a macro that must exist in the serialize method or else a compile error is thrown
 // small helper class to keep ref counts auto-initialized

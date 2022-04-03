@@ -1,0 +1,35 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../Demographics/demographics.json",
+                "../Demographics/demographics_1000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Infectious_Period_Constant": 730
+            }
+        },
+        "ENVIRONMENTAL": {
+            "Environmental_Cutoff_Days": 70,
+            "Environmental_Peak_Start": 150,
+            "Environmental_Ramp_Down_Duration": 50,
+            "Environmental_Ramp_Up_Duration": 40
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 0
+        },
+        "OUTPUT": {
+            "Enable_Property_Output": 0
+        },
+        "PRIMARY": {
+            "Config_Name": "Seasonality",
+            "Simulation_Duration": 730
+        },
+        "LOGLEVEL": {
+            "logLevel_NodeEnvironmental": "VALID"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

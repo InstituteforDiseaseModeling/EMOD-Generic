@@ -35,8 +35,10 @@ namespace Kernel
         SimpleDiagnostic();
         SimpleDiagnostic( const SimpleDiagnostic& master );
         virtual ~SimpleDiagnostic() {  }
-        bool Configure( const Configuration* pConfig ) override;
-        virtual void CheckConfigTriggers( const Configuration * inputJson );
+        virtual bool Configure( const Configuration* pConfig ) override;
+
+        virtual void CheckConfigTriggers( const Configuration * inputJson ); 
+
         void ConfigurePositiveEventOrConfig( const Configuration * inputJson );
 
         // IDistributingDistributableIntervention
@@ -53,7 +55,7 @@ namespace Kernel
 
     protected:
 
-        void broadcastEvent( const EventTrigger& event );
+        void broadcastEvent( const EventTrigger::Enum& event );
         virtual EventOrConfig::Enum getEventOrConfig( const Configuration* );
         void CheckPostiveEventConfig();
 
@@ -68,7 +70,7 @@ namespace Kernel
 
         EventOrConfig::Enum use_event_or_config;
         IndividualInterventionConfig positive_diagnosis_config;
-        EventTrigger positive_diagnosis_event;
+        EventTrigger::Enum positive_diagnosis_event;
 
         DECLARE_SERIALIZABLE(SimpleDiagnostic);
 #pragma warning( pop )

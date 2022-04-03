@@ -117,12 +117,6 @@ namespace Kernel
        
     }
 
-    void NodeTyphoid::populateNewIndividualsFromDemographics(int count_new_individuals)
-    {
-        // Populate the initial population
-        Node::populateNewIndividualsFromDemographics(count_new_individuals);
-    }
-
     IndividualHuman *NodeTyphoid::createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
     {
         return IndividualHumanTyphoid::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);

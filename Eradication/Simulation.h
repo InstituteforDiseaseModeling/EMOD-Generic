@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <map>
 #include <unordered_map>
+#include <queue>
 #include "suids.hpp"
 
 #include "BoostLibWrapper.h"
@@ -84,7 +85,7 @@ namespace Kernel
         virtual void PostMigratingIndividualHuman(IIndividualHuman *i) override;
         virtual bool CanSupportFamilyTrips() const override;
 
-        virtual void DistributeEventToOtherNodes( const EventTrigger& rEventTrigger, INodeQualifier* pQualifier ) override;
+        virtual void DistributeEventToOtherNodes( const EventTrigger::Enum& rEventTrigger, INodeQualifier* pQualifier ) override;
         virtual void UpdateNodeEvents() override;
         virtual ISimulationEventContext* GetSimulationEventContext() override;
 
@@ -104,15 +105,14 @@ namespace Kernel
         virtual INodeInfo* CreateNodeInfo() override;
         virtual INodeInfo* CreateNodeInfo( int rank, INodeContext* pNC ) override;
 
-        virtual void Initialize(const ::Configuration *config) override;
-
         typedef std::map< suids::suid, INodeContext* > NodeMap_t; // TODO: change to unordered_map for better asymptotic performance
         typedef NodeMap_t::value_type NodeMapEntry_t;
 
     protected:
-
         Simulation();
-        virtual void Initialize();  // for serialization
+
+        virtual void Initialize();
+        virtual void Initialize(const ::Configuration *config) override;
 
         static bool ValidateConfiguration(const ::Configuration *config);
 
@@ -169,7 +169,7 @@ namespace Kernel
         NodeRankMap nodeRankMap;
 
         std::map<int,EventsForOtherNodes> node_events_added ; // map of rank to EventsForOtherNodes
-        std::map<suids::suid,std::vector<EventTrigger>> node_events_to_be_processed ; // map of node suids to list of events
+        std::map<suids::suid,std::vector<EventTrigger::Enum>> node_events_to_be_processed ; // map of node suids to list of events
 
         std::vector<INodeEventContext*> node_event_context_list ;
 
@@ -244,7 +244,9 @@ namespace Kernel
         NodeDemographicsFactory* demographics_factory;
         RandomNumberGeneratorFactory* m_pRngFactory;
 
-        float min_sim_endtime;
+        float min_sim_endtime; 
+        std::queue< int > py_inproc_tsteps;
+
 #pragma warning( pop )
     protected:
 

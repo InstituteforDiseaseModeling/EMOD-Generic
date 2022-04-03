@@ -41,8 +41,8 @@ namespace Kernel
         InterpolatedValueMap year2DelayMap;
         float days_remaining;
 
-        EventTrigger broadcast_event;
-        EventTrigger broadcast_on_expiration_event;
+        EventTrigger::Enum broadcast_event;
+        EventTrigger::Enum broadcast_on_expiration_event;
 
         DECLARE_SERIALIZABLE(HIVDelayedIntervention);
     };

@@ -1,0 +1,82 @@
+{
+    "packages": [
+        {
+            "name": "mathfunc",
+            "path": "emodularization/utils/mathfunc/mathfunc_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build"]
+        },
+        {
+            "name": "dtk_nodedemog",
+            "path": "emodularization/nodes/package_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel"]
+        },
+        {
+            "name": "dtk_generic_intrahost",
+            "path": "emodularization/individuals/generic/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/generic/test_generic_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_airborne_intrahost",
+            "path": "emodularization/individuals/airborne/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/airborne/test_airborne_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_environmental_intrahost",
+            "path": "emodularization/individuals/environmental/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/environmental/test_environmental_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_typhoid_intrahost",
+            "path": "emodularization/individuals/typhoid/package_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel"]
+        },
+        {
+            "name": "dtk_tbhiv_intrahost",
+            "path": "emodularization/individuals/tbhiv/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/tbhiv/test_tbhiv_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_sti_intrahost",
+            "path": "emodularization/individuals/sti/package_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel"]
+        },
+        {
+            "name": "dtk_hiv_intrahost",
+            "path": "emodularization/individuals/hiv/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/hiv/test_hiv_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_malaria_intrahost",
+            "path": "emodularization/individuals/malaria/package_setup.py",
+            "auto_version_file": "true",
+            "test_path": "emodularization/individuals/malaria/test_malaria_individuals.py",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel", "test"]
+        },
+        {
+            "name": "dtk_vaccine_intervention",
+            "path": "emodularization/interventions/vaccine/package_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel"]
+        },
+        {
+            "name": "dtk_art_intervention",
+            "path": "emodularization/interventions/art_on/package_setup.py",
+            "auto_version_file": "true",
+            "steps": ["update_version", "build", "bdist_wheel", "install_wheel"]
+        }
+    ]
+}

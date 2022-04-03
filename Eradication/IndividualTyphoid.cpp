@@ -71,8 +71,7 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_BODY(IndividualHumanTyphoidConfig)
     END_QUERY_INTERFACE_BODY(IndividualHumanTyphoidConfig)
 
-    bool
-    IndividualHumanTyphoidConfig::Configure( const Configuration* config ) // just called once!
+    bool IndividualHumanTyphoidConfig::Configure( const Configuration* config ) // just called once!
     {
         LOG_DEBUG( "Configure\n" );
         // 
@@ -92,19 +91,18 @@ namespace Kernel
         initConfigTypeMap( "Typhoid_6year_Susceptible_Fraction", &typhoid_6year_susceptible_fraction, Typhoid_6year_Susceptible_Fraction_DESC_TEXT, 0, 1, 0.5 );
         initConfigTypeMap( "Typhoid_Symptomatic_Fraction", &typhoid_symptomatic_fraction, Typhoid_Symptomatic_Fraction_DESC_TEXT, 0, 1, 0.5 );   
         initConfigTypeMap( "Typhoid_Exposure_Lambda", &typhoid_exposure_lambda, Typhoid_Exposure_Lambda_DESC_TEXT, -1, 100, 2 );
-        
-        SusceptibilityTyphoidConfig fakeImmunity;
-        fakeImmunity.Configure( config );
-        InfectionTyphoidConfig fakeInfection;
-        fakeInfection.Configure( config );
 
         //do we need to call initConfigTypeMap? DLC 
         bool ret = JsonConfigurable::Configure( config );
         return ret;
     }
 
-    void IndividualHumanTyphoid::InitializeStatics( const Configuration * config )
+    void IndividualHumanTyphoid::InitializeStaticsTyphoid( const Configuration * config )
     {
+        SusceptibilityTyphoidConfig immunity_config;
+        immunity_config.Configure( config );
+        InfectionTyphoidConfig infection_config;
+        infection_config.Configure( config );
         IndividualHumanTyphoidConfig human_config;
         human_config.Configure( config );
     }

@@ -7,7 +7,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-#include "StdAfx.h"
+#include "stdafx.h"
+
 #include "MalariaTransmissionReport.h"
 
 #include <algorithm>
@@ -173,14 +174,14 @@ GetReportInstantiator( report_instantiator_function_t* pif )
         }
     }
 
-    bool MalariaTransmissionReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool MalariaTransmissionReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         if( HaveUnregisteredAllEvents() )
         {
             return false ;
         }
 
-        const std::string& StateChange = trigger.ToString();
+        const std::string& StateChange = EventTrigger::pairs::lookup_key( trigger );
 
         uint32_t id = context->GetSuid().data;
         float age = context->GetAge();
@@ -253,9 +254,11 @@ GetReportInstantiator( report_instantiator_function_t* pif )
                 inf_humans.size(), infected_location.second, infected_location.first);
 
             // weighted sampling by infectiousness
-            std::vector<float> weights(inf_humans.size(), 0);
-            std::transform(inf_humans.begin(), inf_humans.end(),
-                weights.begin(), [](const auto& m){return m->infectiousness;});
+            std::vector<float> weights;
+            for( const auto &hum: inf_humans )
+            {
+                weights.push_back( hum->infectiousness );
+            }
             std::vector<float> cum_weights(weights.size(), 0);
             std::partial_sum(weights.begin(), weights.end(), cum_weights.begin());
             float total = cum_weights.back();

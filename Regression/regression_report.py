@@ -142,8 +142,10 @@ class Report:
         self.suite_el.setAttribute("errors", str(self.num_errors))
         self.suite_el.setAttribute("time", str(time.total_seconds()))
         
-        if not os.path.exists("reports"):
-            os.makedirs("reports")
+        report_path = os.path.dirname(filename)
+        if not os.path.exists(report_path):
+            os.makedirs(report_path)
+
         with open( filename, "a" ) as report_file:
             report_file.write(self.doc.toprettyxml())
 

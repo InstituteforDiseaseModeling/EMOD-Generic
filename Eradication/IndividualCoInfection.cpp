@@ -439,7 +439,7 @@ namespace Kernel
 
         //  Get new infections
         ExposeToInfectivity(dt, transmissionGroupMembership); // Need to do it even if infectivity==0, because of diseases in which immunity of acquisition depends on challenge (eg malaria)
-        
+
         // Exogenous re-infection of Latently infected here dt = 0 is flag for this
         if (IndividualHumanCoInfectionConfig::enable_exogenous)
         {
@@ -457,7 +457,7 @@ namespace Kernel
             CheckHIVVitalDynamics(dt);
         }
 
-        if (StateChange == HumanStateChange::None && GET_CONFIGURABLE(SimulationConfig)->migration_structure) // Individual can't migrate if they're already dead
+        if (StateChange == HumanStateChange::None && IndividualHumanConfig::migration_structure) // Individual can't migrate if they're already dead
         {
             CheckForMigration(currenttime, dt);
         }
@@ -491,11 +491,34 @@ namespace Kernel
         }
     }
 
- 
-
     bool IndividualHumanCoInfection::GetExogenousTBStateChange() const
     {
         return m_bool_exogenous;
+    }
+
+    bool
+    IndividualHumanCoInfection::ShouldAcquire(
+        float contagion,
+        float dt,
+        float suscept_mod,
+        TransmissionRoute::Enum transmission_route
+    )
+    {
+        if( suscept_mod == -1 )
+        {
+            ISusceptibilityTB* pISTB = nullptr;
+            if (s_OK != susceptibility_tb->QueryInterface(GET_IID(ISusceptibilityTB), (void**) &pISTB) )
+            {
+                throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "susceptibility_tb", "Susceptibility", "ISusceptibilityTB");
+            }
+            suscept_mod = pISTB->GetModAcquire(this);
+        }
+        bool shouldAcquire = false;
+        //LOG_VALID_F( "%s: Individual %d with CD4count=%f has susceptibility CD4mod=%f.\n", __FUNCTION__, GetSuid().data, GetCD4(), suscept_mod );
+
+        // multiple infections of the same type happen here
+        ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire()); // infection results from this strain?
+        return( GetRng()->SmartDraw( prob ) ); // infection results from this strain? 
     }
 
     void IndividualHumanCoInfection::Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route)
@@ -535,26 +558,12 @@ namespace Kernel
         }
         else
         {
-            if (!InfectionExistsForThisStrain(&strainIDs)) // no existing infection of this clade type, so determine infection from exposure
+            bool shouldAcquire = ShouldAcquire( cp->GetTotalContagion(), dt, suscept_mod, transmission_route );
+
+            if( shouldAcquire )
             {
-                //GHH temp changed to susceptibility_tb since this is for pools, which is specific for infectiousness, 
-                //deal with HIV later (it has no strain tracking now anyways)
-                float prob = EXPCDF( -cp->GetTotalContagion()*dt*suscept_mod*interventions->GetInterventionReducedAcquire() );
-                if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
-                {
-                    cp->ResolveInfectingStrain(&strainIDs); // get the genome ID
-                    AcquireNewInfection(&strainIDs);
-                }
-            }
-            else
-            {
-                // multiple infections of the same type happen here
-                float prob = EXPCDF( -cp->GetTotalContagion()*dt * suscept_mod*interventions->GetInterventionReducedAcquire() );
-                if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
-                {
-                    cp->ResolveInfectingStrain(&strainIDs);
-                    AcquireNewInfection(&strainIDs); // superinfection of this clade type
-                }
+                cp->ResolveInfectingStrain(&strainIDs); // get the genome ID
+                AcquireNewInfection(&strainIDs);
             }
         }
     }
@@ -612,7 +621,12 @@ namespace Kernel
     bool IndividualHumanCoInfection::SetNewInfectionState(InfectionStateChange::_enum inf_state_change)
     {
         //trigger node level interventions
-        ( (NodeTBHIV * ) parent ) ->SetNewInfectionState(inf_state_change, this);
+        INodeTBHIV* pTBHIVParent = nullptr;
+        // Not finding this is not an exception anymore to support pymod/component-level operation.
+        if (s_OK == parent->QueryInterface(GET_IID( INodeTBHIV ), (void**)&pTBHIVParent ) )
+        {
+            pTBHIVParent->SetNewInfectionState(inf_state_change, this);
+        }
 
         if ( IndividualHuman::SetNewInfectionState(inf_state_change) )
         {
@@ -1420,20 +1434,29 @@ namespace Kernel
             case HumanStateChange::DiedFromNaturalCauses:
                 {
                     LOG_DEBUG_F("%s: individual %d (%s) died of natural causes at age %f with daily_mortality_rate = %f\n", __FUNCTION__, suid.data, (GetGender() == Gender::FEMALE ? "Female" : "Male"), GetAge() / DAYSPERYEAR, m_daily_mortality_rate);
-                    broadcaster->TriggerObservers(GetEventContext(), EventTrigger::NonDiseaseDeaths);
+                    if( broadcaster )
+                    {
+                        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::NonDiseaseDeaths);
+                    }
                 }
             break;
 
             case HumanStateChange::KilledByInfection:
                 {
                     LOG_DEBUG_F("%s: individual %d died from infection\n", __FUNCTION__, suid.data);
-                    broadcaster->TriggerObservers(GetEventContext(), EventTrigger::DiseaseDeaths);
+                    if( broadcaster )
+                    {
+                        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::DiseaseDeaths);
+                    }
                 }
             break;
             case HumanStateChange::KilledByOpportunisticInfection:
                 {
                     LOG_DEBUG_F("%s: individual %d died from non-TB opportunistic infection\n", __FUNCTION__, suid.data);
-                    broadcaster->TriggerObservers(GetEventContext(), EventTrigger::OpportunisticInfectionDeath);
+                    if( broadcaster )
+                    {
+                        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::OpportunisticInfectionDeath);
+                    }
 
                 }
             break;
@@ -1525,9 +1548,14 @@ namespace Kernel
         return susceptibility_tb->getModAcquire();
     }
 
-    float IndividualHumanCoInfection::GetImmuneFailage() const
+    TBInfectionState::Enum IndividualHumanCoInfection::GetTBInfectionState() const
     {
-        return susceptibility_tb->getImmuneFailage();
+        TBInfectionState::Enum ret = TBInfectionState::None;
+        if( IsInfected() || GetTBInfection() != nullptr )
+        {
+            ret = GetTBInfection()->GetInfectionState();
+        }
+        return ret;
     }
 }
 

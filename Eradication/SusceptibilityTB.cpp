@@ -192,11 +192,15 @@ namespace Kernel
 
     float SusceptibilityTB::GetModAcquire(IndividualHumanCoInfection* phc) const
     {
+        /*if( phc == nullptr )
+        {
+            phc = parent;
+        }*/
         float local_modifier = 1.0;
         if (phc->HasHIV())
-            {
-                local_modifier = phc->GetCD4SusceptibilityMap(phc->GetCD4());
-            }
+        {
+            local_modifier = phc->GetCD4SusceptibilityMap(phc->GetCD4());
+        }
     
         return local_modifier * mod_acquire;
     }

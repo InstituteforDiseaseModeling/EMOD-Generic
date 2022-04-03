@@ -57,7 +57,7 @@ namespace Kernel
         BaseTextReportEvents::Initialize( nrmSize );
     }
 
-    bool StiTransmissionReporter::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool StiTransmissionReporter::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         LOG_DEBUG_F( "transmission event for individual %d\n", context->GetSuid().data );
         StiTransmissionInfo info;

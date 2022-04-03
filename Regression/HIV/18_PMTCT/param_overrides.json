@@ -14,10 +14,6 @@
         "Report_Event_Recorder": 0,
         "Report_Event_Recorder_Events": [
             "NewInfection",
-            "HIVNeedsHIVTest",
-            "HIVPositiveHIVTest",
-            "HIVNegativeHIVTest",
-            "HIVDiagnosedEligibleForART",
             "NewlySymptomatic",
             "DiseaseDeaths",
             "NonDiseaseDeaths",
@@ -27,10 +23,6 @@
         "Report_Event_Recorder_Individual_Properties": [],
         "Report_HIV_Event_Channels_List": [
             "NewInfection",
-            "HIVNeedsHIVTest",
-            "HIVPositiveHIVTest",
-            "HIVNegativeHIVTest",
-            "HIVDiagnosedEligibleForART",
             "NewlySymptomatic",
             "DiseaseDeaths",
             "NonDiseaseDeaths",

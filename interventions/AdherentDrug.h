@@ -52,7 +52,7 @@ namespace Kernel
         std::vector<NonAdherenceOptionsType::Enum> m_NonAdherenceOptions;
         std::vector<float>                         m_NonAdherenceCdf;
 
-        EventTrigger m_TookDoseEvent;
+        EventTrigger::Enum m_TookDoseEvent;
         float m_MaxDuration;
         float m_CurrentDuration;
         int m_TotalDoses;

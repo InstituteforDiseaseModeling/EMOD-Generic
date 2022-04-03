@@ -1,0 +1,17 @@
+#define CHW_Node_Property_Restriction_DESC_TEXT "TBD"
+//#define Enable_Infectivity_Reservoir_DESC_TEXT "Controls whether or not an exogeneous reservoir of infectivity will be included in the simulation."
+#define Enable_Abort_Zero_Infectivity_DESC_TEXT "Controls if the simulation should be ended when total infectivity falls to zero."
+//#define Minimum_End_Time_DESC_TEXT "Minimum time step the simulation must reach before checking for early termination conditions."
+
+#define Enable_Infectivity_Scaling_DESC_TEXT "Controls if total node infectivity should multiplied by a scaling factor."
+#define Enable_Infectivity_Scaling_Boxcar_DESC_TEXT "Controls if annual pulse wave forcing is applied to total node infectivity."
+#define Enable_Infectivity_Scaling_Climate_DESC_TEXT "Controls if climate is used to alter total node infectivity."
+#define Enable_Infectivity_Scaling_Density_DESC_TEXT "Controls if total node infectivity should be decreased based on population density."
+#define Enable_Infectivity_Scaling_Exponential_DESC_TEXT "Controls if total node infectivity in all nodes is decreased at initilization and increased toward its unmodified value as the simulation progresses."
+#define Enable_Infectivity_Scaling_Sinusoid_DESC_TEXT "Controls if a zero-bias annual sinusoidal oscillation is applied to total node infectivity."
+#define Infectivity_Population_Density_HalfMax_DESC_TEXT "Population density at which at which total node infectivity is decreased to half of its unmodified value."
+
+//#define Enable_Initial_Susceptibility_Distribution_DESC_TEXT "Controls if individuals begin the simulation with reduced susceptibility. If not selected, all individual are initialized as immunologically naive. If selected, the type of initialization is specified by Susceptibility_Initialization_Distribution_Type."
+//#define Susceptibility_Initialization_Distribution_Type_DESC_TEXT "Method used to initialize susceptibility in the simulated population."
+
+

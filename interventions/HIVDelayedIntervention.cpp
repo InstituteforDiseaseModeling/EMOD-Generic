@@ -59,9 +59,9 @@ namespace Kernel
         initConfig( "Delay_Period_Distribution", delay_function, inputJson, MetadataDescriptor::Enum( "Delay_Distribution", DI_Delay_Distribution_DESC_TEXT, MDD_ENUM_ARGS( DistributionFunction ) ) );
         delay_distribution = DistributionFactory::CreateDistribution( this, delay_function, "Delay_Period", inputJson );
 
-        initConfigTypeMap( "Broadcast_Event", &broadcast_event, HIV_Delayed_Intervention_Broadcast_Event_DESC_TEXT );
-        initConfigTypeMap( "Broadcast_On_Expiration_Event", &broadcast_on_expiration_event, HIV_Delayed_Intervention_Broadcast_On_Expiration_Event_DESC_TEXT );
-
+        //DelayedIntervention::InterventionConfigure(inputJson);
+        initConfig( "Broadcast_Event", broadcast_event, inputJson, MetadataDescriptor::Enum("Broadcast_Event", HIV_Delayed_Intervention_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Broadcast_On_Expiration_Event", broadcast_on_expiration_event, inputJson, MetadataDescriptor::Enum("Broadcast_On_Expiration_Event", HIV_Delayed_Intervention_Broadcast_On_Expiration_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         // skip DelayedIntervention::Configure() because we don't want those variables.
 
         bool ret = BaseIntervention::Configure(inputJson);
@@ -103,11 +103,10 @@ namespace Kernel
         days_remaining -= dt;
         if( days_remaining < 0 )
         {
-            expired = true;
-
-            if( !broadcast_on_expiration_event.IsUninitialized() )
+            expired = true; 
+            if( broadcast_on_expiration_event != EventTrigger::NoTrigger )
             {
-                IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
+                auto broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
                 broadcaster->TriggerObservers( parent->GetEventContext(), broadcast_on_expiration_event );
             }
             LOG_DEBUG_F("broadcast on expiration event\n");
@@ -121,7 +120,7 @@ namespace Kernel
     
     void HIVDelayedIntervention::Callback( float dt )
     {
-        if( expired || broadcast_event.IsUninitialized() )
+        if( expired || broadcast_event == EventTrigger::NoTrigger )
         {
             LOG_DEBUG_F("expired or event is unitialized\n");
         }
@@ -144,7 +143,7 @@ namespace Kernel
 
         ar.labelElement("year2DelayMap"                 ) & delayed.year2DelayMap;
         ar.labelElement("days_remaining"                ) & delayed.days_remaining;
-        ar.labelElement("broadcast_event"               ) & delayed.broadcast_event;
-        ar.labelElement("broadcast_on_expiration_event" ) & delayed.broadcast_on_expiration_event;
+        ar.labelElement("broadcast_event"               ) & (uint32_t&)delayed.broadcast_event;
+        ar.labelElement("broadcast_on_expiration_event" ) & (uint32_t&)delayed.broadcast_on_expiration_event;
     }
 }

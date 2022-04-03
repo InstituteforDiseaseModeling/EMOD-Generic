@@ -38,7 +38,7 @@ namespace Kernel
 
         // for IIndividualEventObserver
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override;
+                                    const EventTrigger::Enum& trigger ) override;
 
         // ISupports
         virtual Kernel::QueryResult QueryInterface(Kernel::iid_t iid, void **ppvObject) override { return Kernel::e_NOINTERFACE; }
@@ -58,10 +58,11 @@ namespace Kernel
         float num_hiv_cd4_hi_on_ART;
         float num_on_ART;
         float num_ART_dropouts;
-        unsigned int num_events ;
+        unsigned int num_events;
         bool counting_all_events;
         std::vector<uint32_t> event_counter_vector; // indexed by EventTrigger index
-        std::vector< EventTrigger > eventTriggerList ;
-        std::vector<IIndividualEventBroadcaster*> broadcaster_list ;
+
+        std::vector< EventTrigger::Enum > eventTriggerList;
+        std::vector<IIndividualEventBroadcaster*> broadcaster_list;
     };
 }

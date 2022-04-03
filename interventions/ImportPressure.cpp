@@ -132,14 +132,14 @@ namespace Kernel
         else
         {       
             LOG_DEBUG_F("Duration counter = %f, Total duration = %f, import_cases = %d\n", (float) duration_counter, (float) durations_and_pressures.back().first, (int) num_imports);
-            StrainIdentity* strain_identity = GetNewStrainIdentity(parent);
 
+            const StrainIdentity outbreak_strain(clade,genome);
             IOutbreakConsumer *ioc;
+
             if (s_OK == parent->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
             {
-                ioc->AddImportCases(strain_identity, import_age, num_imports, 1.0 );
+                ioc->AddImportCases(&outbreak_strain, import_age, num_imports);
             }
-            delete strain_identity;
         }
     }
 }

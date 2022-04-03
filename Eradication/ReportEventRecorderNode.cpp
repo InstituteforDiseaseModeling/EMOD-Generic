@@ -30,14 +30,11 @@ namespace Kernel
 {
     template std::string BaseReportEventRecorder< INodeEventBroadcaster,
                                                   INodeEventObserver,
-                                                  INodeEventContext,
-                                                  EventTriggerNode,
-                                                  EventTriggerNodeFactory>::GetEnableParameterName();
+                                                  INodeEventContext >::GetEnableParameterName();
 
     template void BaseTextReportEventsTemplate< INodeEventBroadcaster,
                                                 INodeEventObserver,
-                                                INodeEventContext,
-                                                EventTriggerNode >::Reduce();
+                                                INodeEventContext>::Reduce();
 
     const std::string ReportEventRecorderNode::ENABLE_PARAMETER_NAME   = "Report_Node_Event_Recorder";
     const std::string ReportEventRecorderNode::EVENTS_LIST_NAME        = "Report_Node_Event_Recorder_Events";
@@ -124,7 +121,7 @@ namespace Kernel
     }
 
     std::string ReportEventRecorderNode::GetOtherData( INodeEventContext *pEntity,
-                                                       const EventTriggerNode& trigger )
+                                                       const EventTrigger::Enum& trigger )
     {
         m_ReportStatsByIP.ResetData();
 
@@ -134,7 +131,7 @@ namespace Kernel
         std::stringstream ss;
 
         ss << "," << pEntity->GetExternalId()
-           << "," << trigger.ToString()
+           << "," << EventTrigger::pairs::lookup_key( trigger )
            << "," << m_ReportStatsByIP.GetReportData();
 
         // Report requested properties

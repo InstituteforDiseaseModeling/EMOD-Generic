@@ -1,0 +1,15 @@
+{
+    ".class": "SimpleBednet",
+    "Bednet_Type": "ITN",
+    "Blocking_Config": {
+        "Decay_Time_Constant": 100.0,
+        "Initial_Effect": 1.0,
+        "class": "WaningEffectExponential"
+    },
+    ".Cost_To_Consumer": 8,
+    "Killing_Config": {
+        "Box_Duration": 3650,
+        "Initial_Effect": 0.53429,
+        "class": "WaningEffectBox"
+    }
+}

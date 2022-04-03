@@ -47,6 +47,11 @@ namespace Kernel
         spatialReportClassCreator = SpatialReportVector::CreateReport;
     }
 
+    void SimulationVector::Initialize()
+    {
+        Simulation::Initialize();
+    }
+
     void SimulationVector::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
@@ -64,12 +69,16 @@ namespace Kernel
 
     SimulationVector *SimulationVector::CreateSimulation()
     {
-        return _new_ SimulationVector();
+        SimulationVector *newsimulation = _new_ SimulationVector();
+        newsimulation->Initialize();
+
+        return newsimulation;
     }
 
     SimulationVector *SimulationVector::CreateSimulation(const ::Configuration *config)
     {
         SimulationVector *newsimulation = _new_ SimulationVector();
+
         if (newsimulation)
         {
             // This sequence is important: first
@@ -78,7 +87,6 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                /* newsimulation = nullptr; */
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "VECTOR_SIM requested with invalid configuration." );
             }
         }

@@ -22,7 +22,6 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
     public:
-        SimulationMalaria();
         static SimulationMalaria *CreateSimulation();
         static SimulationMalaria *CreateSimulation(const ::Configuration *config);
         static void SetFixedParameters(::Configuration *config);
@@ -36,6 +35,11 @@ namespace Kernel
                                                  bool white_list_enabled ) override;
 
     protected:
+        SimulationMalaria();
+
+        virtual void Initialize() override;
+        virtual void Initialize(const ::Configuration *config) override;
+
         static bool ValidateConfiguration(const ::Configuration *config);
 
         virtual void InitializeFlags(const ::Configuration *config);  // override in derived classes to instantiate correct flag classes
@@ -43,8 +47,6 @@ namespace Kernel
         DECLARE_SERIALIZABLE(SimulationMalaria);
 
     private:
-        virtual void Initialize(const ::Configuration *config) override;
-
         virtual ISimulationContext *GetContextPointer() override;
     };
 }

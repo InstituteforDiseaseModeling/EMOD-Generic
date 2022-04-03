@@ -81,7 +81,7 @@ namespace Kernel
 
         // BaseEventReportIntervalOutput
         virtual bool Configure(const Configuration* config) override;
-        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger& trigger) override;
+        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger) override;
         virtual void EndTimestep(float currentTime, float dt) override;
 
     protected:

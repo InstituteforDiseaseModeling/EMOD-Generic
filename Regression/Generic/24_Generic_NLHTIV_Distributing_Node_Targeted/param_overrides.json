@@ -45,6 +45,7 @@
             "Run_Number": 1,
             "Simulation_Duration": 70,
             "Simulation_Timestep": 1
-        }
+        },
+	"Incubation_Period_Constant": 3
     }
 }

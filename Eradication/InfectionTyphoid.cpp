@@ -39,7 +39,7 @@ namespace Kernel
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Typhoid.Infection,InfectionTyphoidConfig)
     BEGIN_QUERY_INTERFACE_BODY(InfectionTyphoidConfig)
     END_QUERY_INTERFACE_BODY(InfectionTyphoidConfig)
-    
+
     IDistribution* InfectionTyphoidConfig::p_log_normal_distribution = nullptr;
 
     // Incubation period by transmission route (taken from Glynn's dose response analysis) assuming low dose for environmental.
@@ -84,17 +84,12 @@ namespace Kernel
         return draw;
     }
 
-
-    bool
-    InfectionTyphoidConfig::Configure(
-        const Configuration * config
-    )
+    bool InfectionTyphoidConfig::Configure( const Configuration * config )
     {
         LOG_DEBUG( "Configure\n" );
-        
+
         p_log_normal_distribution = DistributionFactory::CreateDistribution( DistributionFunction::LOG_NORMAL_DISTRIBUTION );
-        
-        //initConfigTypeMap( "Enable_Contact_Tracing", &tracecontact_mode, Enable_Contact_Tracing_DESC_TEXT, false ); // polio
+
         bool bRet = JsonConfigurable::Configure( config );
         return bRet;
     }

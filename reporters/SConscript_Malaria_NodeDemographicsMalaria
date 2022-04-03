@@ -9,20 +9,26 @@ report_env = env.Clone()
 report_env[ "REPORT_DIR" ] = 'libReportNodeDemographics'
 
 lib_report_dllSrcFiles = [ "$REPORT_DIR/ReportNodeDemographicsMalaria.cpp" ]
+if os.name == "nt":
+    lib_report_dllSrcFiles.append( "$REPORT_DIR/stdafx.cpp" )
 lib_report_dllIncFiles = [ "$REPORT_DIR/ReportNodeDemographicsMalaria.h" ]
-lib_report_dllLocalInc = [ "$REPORT_DIR/stdafx.h" ]
+lib_report_dllLocalInc = []
+if os.name == "nt":
+    lib_report_dllLocalInc.append( "$REPORT_DIR/stdafx.h" )
 
-stdafx_obj = report_env.Object( "rndm_stdafx", "$REPORT_DIR/stdafx.cpp" )
 base_class_obj = report_env.Object( "rndm_ReportNodeDemographics", "$REPORT_DIR/ReportNodeDemographics.cpp" )
 
 report_env.Append(LIBS=['baseReportLib'])
 report_env.Append(LIBS=['utils'])
-report_env.Append(LIBPATH=['$BUILD_DIR/baseReportLib'])
-report_env.Append(LIBPATH=['$BUILD_DIR/utils'])
+report_env.Append(LIBS=['cajun'])
 
 report_dir = report_env[ "BUILD_DIR" ] + 'reporter_plugins/' + report_env[ "REPORT_DIR" ]
 
-lib_report_Dll = report_env.SharedLibrary( report_dir+"Malaria", lib_report_dllSrcFiles + base_class_obj + stdafx_obj )
+filelist = lib_report_dllSrcFiles + base_class_obj 
+#if os.name == "nt":
+#    filelist += stdafx_obj
+
+lib_report_Dll = report_env.SharedLibrary( report_dir+"Malaria", filelist )
 #print "building lib_report_dll: " + str(lib_report_Dll)
 
 # take lib_report.dll (exclude .lib, .exp) out to be the building target

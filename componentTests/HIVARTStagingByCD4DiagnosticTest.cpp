@@ -84,11 +84,11 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
 
             m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
 
-            EventTriggerFactory::DeleteInstance();
+            //EventTriggerFactoryDeleteInstance();
 
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
         }
 
@@ -116,7 +116,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
         m_Human.GetProperties()->Add( IPKeyValue( "HasActiveTB:YES" ) );
         m_Human.SetIsPregnant( true );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
 
         CHECK_EQUAL( true,  m_Human.IsPregnant() );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
@@ -134,7 +134,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
 
         m_Diag.Update( 1.0 );
 
-        CHECK_EQUAL( EventTrigger::Births.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "Births" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
         CHECK_EQUAL( 333.0, m_InterventionsContext.LastRecordedCD4() );
         CHECK_EQUAL( 333.0, m_InterventionsContext.LowestRecordedCD4() );
@@ -159,7 +159,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
         m_Human.GetProperties()->Add( IPKeyValue( "HasActiveTB:YES" ) );
         m_Human.SetIsPregnant( true );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
 
         CHECK_EQUAL( true,  m_Human.IsPregnant() );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
@@ -177,7 +177,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
 
         m_Diag.Update( 1.0 );
 
-        CHECK_EQUAL( EventTrigger::NonDiseaseDeaths.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "NonDiseaseDeaths" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
         CHECK_EQUAL( 999.0, m_InterventionsContext.LastRecordedCD4() );
         CHECK_EQUAL( 999.0, m_InterventionsContext.LowestRecordedCD4() );
@@ -206,7 +206,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
         m_Human.GetProperties()->Add( IPKeyValue( "HasActiveTB:YES" ) );
         m_Human.SetIsPregnant( true );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
 
         CHECK_EQUAL( true,  m_Human.IsPregnant() );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
@@ -224,7 +224,7 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
 
         m_Diag.Update( 1.0 );
 
-        CHECK_EQUAL( EventTrigger::NonDiseaseDeaths.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "NonDiseaseDeaths" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) );
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
         CHECK_EQUAL( 333.0, m_InterventionsContext.LastRecordedCD4() );
         CHECK_EQUAL( 333.0, m_InterventionsContext.LowestRecordedCD4() );

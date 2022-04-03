@@ -1,0 +1,83 @@
+{
+    "Campaign_Name": "Two OutbreakIndividualsttest.",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 3,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "Node_List": [1],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.005,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 5,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [4],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 25,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.005,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 5,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [3],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 30,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.005,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 3,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "Node_List": [2],
+                "class": "NodeSetNodeList"
+            },
+            "Start_Day": 35,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

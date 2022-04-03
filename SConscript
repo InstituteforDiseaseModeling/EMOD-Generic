@@ -40,8 +40,9 @@ if dst_path != "":
 # set the common libraries
 env.Append(LIBPATH = ["$BUILD_DIR/baseReportLib", "$BUILD_DIR/cajun", "$BUILD_DIR/campaign", "$BUILD_DIR/snappy", "$BUILD_DIR/lz4", "$BUILD_DIR/utils"])
 
-print( "Link executable against cajun, campaign, snappy, and utils lib's." )
-env.Append(LIBS=["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"])
+if os.name == "nt":
+    print( "Link executable against cajun, campaign, snappy, and utils lib's." )
+    env.Append(LIBS=["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"])
 
 #print "builddir is " + env["BUILD_DIR"]
 
@@ -210,40 +211,39 @@ disease = "ALL"
 if 'Disease' in env and len(env['Disease']) > 0:
     disease = env["Disease"]
 
-if os.sys.platform == 'win32':
-    if disease != "Typhoid":
-        OptionalScript('reporters/SConscript_Generic_Basic')
-        OptionalScript('reporters/SConscript_Generic_EventCounter')
-        OptionalScript('reporters/SConscript_Generic_HumanMigrationTracking')
-        OptionalScript('reporters/SConscript_Generic_NodeDemographics')
+if disease != "Typhoid":
+    OptionalScript('reporters/SConscript_Generic_Basic')
+    OptionalScript('reporters/SConscript_Generic_EventCounter')
+    OptionalScript('reporters/SConscript_Generic_HumanMigrationTracking')
+    OptionalScript('reporters/SConscript_Generic_NodeDemographics')
 
-    if( (disease == "ALL") or (disease == "HIV") ):
-        pass
+if( (disease == "ALL") or (disease == "HIV") ):
+    pass
 
-    if( (disease == "ALL") or (disease == "Malaria") ):
-        OptionalScript('reporters/SConscript_Malaria_Filtered')
-        OptionalScript('reporters/SConscript_Malaria_Filtered_Spatial')
-        OptionalScript('reporters/SConscript_Malaria_Immunity')
-        OptionalScript('reporters/SConscript_Malaria_Patient')
-        OptionalScript('reporters/SConscript_Malaria_Summary')
-        OptionalScript('reporters/SConscript_Malaria_Survey')
-        OptionalScript('reporters/SConscript_Malaria_Transmission')
-        OptionalScript('reporters/SConscript_Malaria_NodeDemographicsMalaria')
-        OptionalScript('reporters/SConscript_Malaria_VectorStatsMalaria')
+if( (disease == "ALL") or (disease == "Malaria") ):
+    OptionalScript('reporters/SConscript_Malaria_Filtered')
+    OptionalScript('reporters/SConscript_Malaria_Filtered_Spatial')
+    OptionalScript('reporters/SConscript_Malaria_Immunity')
+    OptionalScript('reporters/SConscript_Malaria_Patient')
+    OptionalScript('reporters/SConscript_Malaria_Summary')
+    OptionalScript('reporters/SConscript_Malaria_Survey')
+    OptionalScript('reporters/SConscript_Malaria_Transmission')
+    OptionalScript('reporters/SConscript_Malaria_NodeDemographicsMalaria')
+    OptionalScript('reporters/SConscript_Malaria_VectorStatsMalaria')
 
-    if( (disease == "ALL") or (disease == "Polio") ):
-        pass
+if( (disease == "ALL") or (disease == "Polio") ):
+    pass
 
-    if( (disease == "ALL") or (disease == "TBHIV") ):
-        OptionalScript('reporters/SConscript_TBHIV_ByAge')
+if( (disease == "ALL") or (disease == "TBHIV") ):
+    OptionalScript('reporters/SConscript_TBHIV_ByAge')
 
-    if( (disease == "ALL") or (disease == "STI") or (disease == "HIV") ):
-        OptionalScript('reporters/SConscript_STI_RelationshipCensus')
+if( (disease == "ALL") or (disease == "STI") or (disease == "HIV") ):
+    OptionalScript('reporters/SConscript_STI_RelationshipCensus')
 
-    if( (disease == "ALL") or (disease == "Vector") or (disease == "Malaria") ):
-        OptionalScript('reporters/SConscript_Vector_VectorHabitat')
-        OptionalScript('reporters/SConscript_Vector_VectorMigration')
-        OptionalScript('reporters/SConscript_Vector_VectorStats')
+if( (disease == "ALL") or (disease == "Vector") or (disease == "Malaria") ):
+    OptionalScript('reporters/SConscript_Vector_VectorHabitat')
+    OptionalScript('reporters/SConscript_Vector_VectorMigration')
+    OptionalScript('reporters/SConscript_Vector_VectorStats')
 
 if( disease == "ALL"):
     OptionalScript('UnitTest++/SConscript')

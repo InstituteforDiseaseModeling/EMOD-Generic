@@ -33,6 +33,7 @@ BaseChannelReport::BaseChannelReport( const std::string& rReportName )
     , report_name( rReportName )
     , _nrmSize( 0 )
     , channelDataMap()
+    , defaultPrecision( true )
 {
 }
 
@@ -75,7 +76,7 @@ BaseChannelReport::Finalize()
     std::map<std::string, std::string> units_map;
     populateSummaryDataUnitsMap(units_map);
 
-    channelDataMap.WriteOutput( report_name, units_map );
+    channelDataMap.WriteOutput( report_name, units_map, defaultPrecision );
 }
 
 std::string BaseChannelReport::GetReportName() const
@@ -125,6 +126,11 @@ void BaseChannelReport::addDerivedCumulativeSummaryChannel(
 void BaseChannelReport::SetAugmentor( IChannelDataMapOutputAugmentor* pAugmentor )
 {
     channelDataMap.SetAugmentor( pAugmentor );
+}
+
+void BaseChannelReport::SetDefaultPrecision( bool defaultPrecisionVal )
+{
+    defaultPrecision = defaultPrecisionVal;
 }
 
 #if 0

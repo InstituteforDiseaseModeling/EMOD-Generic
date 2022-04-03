@@ -447,8 +447,8 @@ namespace Kernel
     void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, float cladeID, float geneticID)
     {
         StrainIdentity id = StrainIdentity(cladeID, geneticID);
-        parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  NodeVector::human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-        parent->DepositFromIndividual( id, weight*ivie->GetblockOutdoorVectorTransmit(), NodeVector::human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+        parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
+        parent->DepositFromIndividual( id, weight*ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
     }
 
     void IndividualHumanMalaria::ResetClinicalSymptoms()

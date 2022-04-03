@@ -14,6 +14,9 @@ namespace Kernel
 {
     class InfectionAirborneConfig : public InfectionConfig
     {
+    public:
+        virtual bool Configure( const Configuration* config ) override;
+
     protected:
         friend class InfectionAirborne;
     };

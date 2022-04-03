@@ -42,9 +42,22 @@ namespace Kernel
 
     bool DelayEventCoordinator::Configure( const Configuration * inputJson )
     {
-        initConfigTypeMap( "Start_Trigger_Condition_List", &m_StartTriggerConditionList, TEC_Start_Trigger_Condition_List_DESC_TEXT );
-        initConfigTypeMap( "Stop_Trigger_Condition_List", &m_StopTriggerConditionList, TEC_Stop_Trigger_Condition_List_DESC_TEXT );
-        initConfigTypeMap( "Delay_Complete_Event", &m_CompletionEvent, DEC_Completion_Event_DESC_TEXT );
+        initVectorConfig( "Start_Trigger_Condition_List",
+                          m_StartTriggerConditionList,
+                          inputJson,
+                          MetadataDescriptor::Enum(
+                            "Start_Trigger_Condition_List",
+                            TEC_Start_Trigger_Condition_List_DESC_TEXT ,
+                            MDD_ENUM_ARGS(EventTrigger) ) );
+        initVectorConfig( "Stop_Trigger_Condition_List",
+                          m_StopTriggerConditionList,
+                          inputJson,
+                          MetadataDescriptor::Enum(
+                            "Stop_Trigger_Condition_List",
+                            TEC_Stop_Trigger_Condition_List_DESC_TEXT ,
+                            MDD_ENUM_ARGS(EventTrigger)));
+
+        initConfig( "Delay_Complete_Event", m_CompletionEvent, inputJson, MetadataDescriptor::Enum("Delay_Complete_Event", DEC_Completion_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Coordinator_Name", &m_CoordinatorName, TEC_Coordinator_Name_DESC_TEXT, "DelayEventCoordinator" );
         initConfigTypeMap( "Duration", &m_Duration, TEC_Duration_DESC_TEXT, -1.0f, FLT_MAX, -1.0f );
 
@@ -58,7 +71,7 @@ namespace Kernel
         {
             CheckConfigTriggers( inputJson );
 
-            if( m_CompletionEvent.IsUninitialized() )
+            if( m_CompletionEvent == EventTrigger::NoTrigger )
             {
                 std::stringstream ss;
                 ss << "'Delay_Complete_Event', for coordinator '" << m_CoordinatorName << "', must be defined and it cannot be empty.";
@@ -94,7 +107,7 @@ namespace Kernel
         auto it_start = find( m_StartTriggerConditionList.begin(), m_StartTriggerConditionList.end(), trigger );
         if( it_start != m_StartTriggerConditionList.end() )
         {
-            LOG_INFO_F( "%s: notifyOnEvent received start: %s\n", m_CoordinatorName.c_str(), trigger.ToString().c_str() );
+            LOG_INFO_F( "%s: notifyOnEvent received start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
 
             // ---------------------------------------------------------------------
             // --- Not sure this is the best solution, but always using the RNG from
@@ -108,7 +121,7 @@ namespace Kernel
         }
         else
         {
-            LOG_INFO_F( "%s: notifyOnEvent received stop: %s\n", m_CoordinatorName.c_str(), trigger.ToString().c_str() );
+            LOG_INFO_F( "%s: notifyOnEvent received stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
             m_IsActive = false;
         }
         return true;

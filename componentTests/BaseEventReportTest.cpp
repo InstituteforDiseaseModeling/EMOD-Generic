@@ -41,7 +41,7 @@ public:
     }
 
     virtual bool notifyOnEvent( Kernel::IIndividualHumanEventContext *context, 
-                                const EventTrigger& trigger) override
+                                const EventTrigger::Enum& trigger) override
     {
         if( HaveUnregisteredAllEvents() )
         {
@@ -133,13 +133,11 @@ SUITE(BaseEventReportTest)
             string dllPath("");
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, /*statePath, */dllPath, false);
 
-            Environment::setSimulationConfig( m_pSimulationConfig );
+            Environment::setSimulationConfig( m_pSimulationConfig ); 
 
-            EventTriggerFactory::DeleteInstance();
-
-            json::Object fakeConfigJson;
-            Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //json::Object fakeConfigJson;
+            //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
+            ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
         }
 
         ~ReportFixture()
@@ -175,8 +173,10 @@ SUITE(BaseEventReportTest)
         CHECK_EQUAL(      5, report.GetReportValue() );
 
         CHECK_EQUAL( 2, report.GetEventTriggerList().size() );
-        CHECK_EQUAL( EventTrigger::Births.ToString(),           report.GetEventTriggerList()[0].ToString() );
-        CHECK_EQUAL( EventTrigger::NonDiseaseDeaths.ToString(), report.GetEventTriggerList()[1].ToString() );
+        //CHECK_EQUAL( std::string( "This" ), std::string( "That" ) );
+
+        CHECK_EQUAL( std::string( "Births" ),           std::string( EventTrigger::pairs::lookup_key( report.GetEventTriggerList()[0] ) ) );
+        CHECK_EQUAL( std::string( "NonDiseaseDeaths" ), std::string( EventTrigger::pairs::lookup_key( report.GetEventTriggerList()[1] ) ) );
     }
 
     TEST_FIXTURE(ReportFixture, TestEvents)

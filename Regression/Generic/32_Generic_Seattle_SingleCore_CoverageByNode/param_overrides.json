@@ -11,6 +11,7 @@
         },
         "DISEASE": {
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 270,
+            "Incubation_Period_Constant": 3,
             "Infectious_Period_Constant": 7,
             "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
             "Mortality_Blocking_Immunity_Decay_Rate": 0.1,

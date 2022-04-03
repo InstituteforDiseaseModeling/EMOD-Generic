@@ -38,6 +38,7 @@
         },
         "PRIMARY": {
             "Config_Name": "SimpleBoosterVaccine/Generic",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "Namawala",
             "Simulation_Duration": 15
         },

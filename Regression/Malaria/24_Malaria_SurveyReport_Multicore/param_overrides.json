@@ -104,9 +104,9 @@
     },
     "PRIMARY": {
         "Config_Name": "24_Malaria_SurveyrReport_Multicore",
-        "Custom_Reports_Filename": "custom_reports.json",
-        "Enable_Interventions": 1,
-        "Enable_Strain_Tracking": 0,
+        "Custom_Reports_Filename": "custom_reports.json", 
+        "Enable_Interventions": 1, 
+        "Enable_Strain_Tracking": 1,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
         "Num_Cores": 8,

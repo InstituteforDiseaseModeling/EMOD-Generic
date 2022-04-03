@@ -101,8 +101,8 @@ def flattenConfig( configjson_path, new_config_name="config" ):
         configjson["parameters"].pop("Default_Config_Path")
 
     # There are no custom reports for Linux so, check if dlls exist will fail
-    if os.name == "posix":
-        del configjson["parameters"]["Custom_Reports_Filename"]
+    #if os.name == "posix":
+        #del configjson["parameters"]["Custom_Reports_Filename"]
 
     # let's write out a flat version in case someone wants
     # to use regression examples as configs for debug mode
@@ -174,11 +174,7 @@ def areTheseJsonFilesTheSame( file1, file2, key = None ):
     return False if test_hash != ref_hash else True
 
 def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
-
+    return os.path.getsize(fname)
 
 def make_event_map(json_in):
     event_map = {}

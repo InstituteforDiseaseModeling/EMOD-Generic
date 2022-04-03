@@ -1,7 +1,7 @@
 {
     "Events": [
         {
-            "comment" : "No infections, Negative_Event_Node",
+            "comment" : "No infections, NegativeResult",
             "class": "CampaignEvent",
             "Start_Day": 1,
             "Nodeset_Config": { 
@@ -20,8 +20,8 @@
                         "Environment_IP_Key_Value" : "Risk:High",
                         "Base_Specificity": 0.8,
                         "Base_Sensitivity": 0.7,
-                        "Negative_Diagnostic_Event": "Negative_Event_Node", 
-                        "Positive_Diagnostic_Event" : "Positive_Event_Node"
+                        "Negative_Diagnosis_Event": "NegativeResult", 
+                        "Positive_Diagnosis_Event" : "PositiveResult"
                     }
                 }
             }

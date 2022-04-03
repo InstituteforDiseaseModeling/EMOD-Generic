@@ -34,6 +34,7 @@
         },
         "PRIMARY": {
             "Config_Name": "SimpleBoosterVaccine/Acquisition_BoostNaturalImmunity",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "Namawala",
             "Simulation_Duration": 10
         }

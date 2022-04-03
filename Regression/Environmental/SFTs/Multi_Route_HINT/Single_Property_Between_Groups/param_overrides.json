@@ -1,0 +1,24 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_mr_2groups_trans_bt_overlay.json",
+                "../../Demographics/demographics_10000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.7,
+                "Infectious_Period_Constant": 60
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "HINT_Multi_Routes_Single_Property_Between_Groups"
+        },
+        "LOGLEVEL": {
+            "logLevel_Individual": "DEBUG"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

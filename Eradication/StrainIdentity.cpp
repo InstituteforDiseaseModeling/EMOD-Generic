@@ -23,24 +23,24 @@ namespace Kernel {
     {
     }
 
-    StrainIdentity::StrainIdentity(int initial_clade, int initial_genome, RANDOMBASE * pRng )
-        : cladeID( initial_clade )
-        , geneticID( initial_genome )
+    StrainIdentity::StrainIdentity(int initial_clade, int initial_genome)
+        : cladeID(initial_clade)
+        , geneticID(initial_genome)
     {
-        if( initial_clade >= int(InfectionConfig::number_clades) )
+        if( initial_clade < 0 )
         {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_clade", initial_clade, InfectionConfig::number_clades );
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_clade", initial_clade, 0 );
+        }
+        else if( initial_clade >= static_cast<int>(InfectionConfig::number_clades) )
+        {
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_clade", initial_clade, InfectionConfig::number_clades-1 );
         }
 
-        if ( initial_genome < 0 )
+        if( initial_genome < 0 )
         {
-            int max_genome = InfectionConfig::number_genomes;
-            unsigned int BARCODE_BITS = 0;
-            while(max_genome >>= 1) ++BARCODE_BITS;
-            geneticID = pRng->ul() & ((1 << BARCODE_BITS)-1);
-            LOG_DEBUG_F("random genome generation... clade: %d\t genome: %d\n", cladeID, geneticID);
+            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_genome", initial_genome, 0 );
         }
-        else if( initial_genome >= int(InfectionConfig::number_genomes) )
+        else if( initial_genome >= static_cast<int>(InfectionConfig::number_genomes) )
         {
             throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_genome", initial_genome, InfectionConfig::number_genomes-1 );
         }

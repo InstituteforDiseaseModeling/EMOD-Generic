@@ -53,4 +53,12 @@ namespace Kernel
         virtual float GetMDRFastIncidentCounter()     const = 0;
     };
 
+    ENUM_DEFINE(TBInfectionState,
+		    ENUM_VALUE_SPEC(None                            , 0)
+		    ENUM_VALUE_SPEC(Latent                          , 1)
+		    ENUM_VALUE_SPEC(ActivePreSymptomatic            , 2)
+		    ENUM_VALUE_SPEC(ActiveSymptomaticSmearPositive  , 3)
+		    ENUM_VALUE_SPEC(ActiveSymptomaticSmearNegative  , 4)
+		    ENUM_VALUE_SPEC(ActiveSymptomaticExtraPulmonary , 5))
+
 }

@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+
 #include "VectorHabitatReport.h"
 
 #include <map>
@@ -238,7 +239,7 @@ void VectorHabitatReport::LogNodeData( INodeContext * pNC )
             {
                 species_habitat_idx_map[species_habitat] = num_total_bins++;
 
-                LOG_DEBUG_F( "species_habitat = %s  num_total_bins = %d  capacity = %0.2f\n", species_habitat.c_str(), num_total_bins, hab->GetCurrentLarvalCapacity() );
+                LOG_DEBUG_F( "species_habitat = %s  num_total_bins = %d  capacity = %0.2f\n", species_habitat.c_str(), num_total_bins, float(hab->GetCurrentLarvalCapacity()) );
 
                 current_habitat_capacity.push_back(    hab->GetCurrentLarvalCapacity()        );
                 total_larva.push_back(                 hab->GetTotalLarvaCount(TimeStepIndex::CURRENT_TIME_STEP));
@@ -250,7 +251,7 @@ void VectorHabitatReport::LogNodeData( INodeContext * pNC )
             }
             else
             {
-                LOG_DEBUG_F( "species_habitat = %s  capacity = %0.2f\n", species_habitat.c_str(), hab->GetCurrentLarvalCapacity() );
+                LOG_DEBUG_F( "species_habitat = %s  capacity = %0.2f\n", species_habitat.c_str(), float(hab->GetCurrentLarvalCapacity()) );
                 int idx = species_habitat_idx_map.at(species_habitat);
 
                 current_habitat_capacity[idx]    = hab->GetCurrentLarvalCapacity();

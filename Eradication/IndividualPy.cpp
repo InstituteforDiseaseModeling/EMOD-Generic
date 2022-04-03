@@ -101,6 +101,8 @@ namespace Kernel
         immunity_config.Configure( config );
         InfectionPyConfig infection_config;
         infection_config.Configure( config );
+        //IndividualHumanPyConfig human_config;
+        //human_config.Configure( config );
     }
 
     IndividualHumanPy *IndividualHumanPy::CreateHuman(INodeContext *context, suids::suid id, float monte_carlo_weight, float initial_age, int gender)

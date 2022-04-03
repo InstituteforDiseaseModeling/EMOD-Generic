@@ -39,7 +39,7 @@ namespace Kernel
 
         // BaseEventReport
         virtual bool Configure( const Configuration* ) override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger) override;
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const override;
         virtual void LogIndividualData( IIndividualHuman* individual ) override;
         virtual void LogNodeData( INodeContext * pNC ) override;

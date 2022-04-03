@@ -56,6 +56,7 @@
             "Listed_Events": [
                 "Change_Low_To_High"
             ],
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 2,
             "Simulation_Duration": 70
         }

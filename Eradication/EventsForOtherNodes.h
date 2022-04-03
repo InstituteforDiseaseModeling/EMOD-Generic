@@ -33,14 +33,14 @@ namespace Kernel
         bool operator==( const EventsForOtherNodes& rthat ) const;
         bool operator!=( const EventsForOtherNodes& rthat ) const;
 
-        void Add( const suids::suid& rNodeSuid, const EventTrigger& trigger );
+        void Add( const suids::suid& rNodeSuid, const EventTrigger::Enum& trigger );
         void Clear();
         void Print();
         void Update( const EventsForOtherNodes& rEfon );
-        const std::map<suids::suid,std::vector<EventTrigger>>& GetMap() const { return m_NodeEventMap; }
+        const std::map<suids::suid,std::vector<EventTrigger::Enum>>& GetMap() const { return m_NodeEventMap; }
 
         static void serialize( IArchive& ar, EventsForOtherNodes& obj );
     private:
-        std::map<suids::suid,std::vector<EventTrigger>> m_NodeEventMap ;
+        std::map<suids::suid,std::vector<EventTrigger::Enum>> m_NodeEventMap ;
     };
 }

@@ -27,7 +27,7 @@ namespace Kernel
         virtual void Initialize() override;
         virtual bool Configure( const Configuration* config ) override;
 
-        void GetGroupMembershipForIndividual_STI( const std::map<std::string, uint32_t>& properties, std::map< int, TransmissionGroupMembership_t>& membershipOut );
+        virtual void GetGroupMembershipForIndividual_STI( const std::map<std::string, uint32_t>& properties, std::map< int, TransmissionGroupMembership_t>& membershipOut ) override;
 
     protected:
         NodeSTI();

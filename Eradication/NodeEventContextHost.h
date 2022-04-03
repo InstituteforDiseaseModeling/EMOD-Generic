@@ -70,13 +70,13 @@ namespace Kernel
         virtual bool GiveIntervention( INodeDistributableIntervention * pIV ) override;
 
         // IOutbreakConsumer
-        virtual void AddImportCases( StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node, ProbabilityNumber prob_infect ) override;
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node) override;
         //virtual void IncreasePrevalence(StrainIdentity* outbreak_strainID, IEventCoordinator2* pEC) override;
 
         // IIndividualTriggeredInterventionConsumer
-        virtual void RegisterObserver( IIndividualEventObserver *pIEO, const EventTrigger& trigger ) override;
-        virtual void UnregisterObserver( IIndividualEventObserver *pIEO, const EventTrigger& trigger ) override;
-        virtual void TriggerObservers( IIndividualHumanEventContext *ihec, const EventTrigger& trigger ) override;
+        virtual void RegisterObserver( IIndividualEventObserver *pIEO, const EventTrigger::Enum& trigger ) override;
+        virtual void UnregisterObserver( IIndividualEventObserver *pIEO, const EventTrigger::Enum& trigger ) override;
+        virtual void TriggerObservers( IIndividualHumanEventContext *ihec, const EventTrigger::Enum& trigger ) override;
 
         //////////////////////////////////////////////////////////////////////////
          

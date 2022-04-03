@@ -16,13 +16,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class ICoordinatorEventContext;
-    class EventTriggerCoordinatorFactory;
 
     class ReportEventRecorderCoordinator : public BaseReportEventRecorder< ICoordinatorEventBroadcaster,
                                                                            ICoordinatorEventObserver,
-                                                                           IEventCoordinatorEventContext,
-                                                                           EventTriggerCoordinator,
-                                                                           EventTriggerCoordinatorFactory >
+                                                                           IEventCoordinatorEventContext >
     {
     public:
         GET_SCHEMA_STATIC_WRAPPER( ReportEventRecorderCoordinator )
@@ -46,7 +43,7 @@ namespace Kernel
         virtual std::string GetHeader() const override;
 
     protected:
-        virtual std::string GetOtherData( IEventCoordinatorEventContext *context, const EventTriggerCoordinator& trigger ) override;
+        virtual std::string GetOtherData( IEventCoordinatorEventContext *context, const EventTrigger::Enum & trigger ) override;
         virtual float GetTime( IEventCoordinatorEventContext* pEntity ) const override;
     };
 }

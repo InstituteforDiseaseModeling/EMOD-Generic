@@ -42,10 +42,10 @@ namespace Kernel
         virtual bool IsDoneCounting() const override;        
 
         // IIndividualEventObserver methods
-        virtual bool notifyOnEvent( IEventCoordinatorEventContext *pEntity, const EventTriggerCoordinator& trigger ) override;
+        virtual bool notifyOnEvent( IEventCoordinatorEventContext *pEntity, const EventTrigger::Enum& trigger ) override;
         virtual uint32_t GetCountOfQualifyingPopulation( const std::vector<INodeEventContext*>& rNodes ) override;
-        virtual bool notifyOnEvent( INodeEventContext *pEntity, const EventTriggerNode& trigger ) override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext * pEntity, const EventTrigger & trigger ) override;
+        virtual bool notifyOnEvent( INodeEventContext *pEntity, const EventTrigger::Enum& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext * pEntity, const EventTrigger::Enum & trigger ) override;
 
     private:
         float m_CounterPeriod;
@@ -53,13 +53,13 @@ namespace Kernel
         CounterType::Enum     m_CounterType;
         EventType::Enum       m_CounterEventType;
 
-        std::vector<std::string>             m_TriggerConditionList;
-        std::vector<EventTriggerNode>        m_TriggerConditionListNode;
-        std::vector<EventTriggerCoordinator> m_TriggerConditionListCoordinator;
+        std::vector<EventTrigger::Enum>             m_TriggerConditionListIndividual;
+        std::vector<EventTrigger::Enum>        m_TriggerConditionListNode;
+        std::vector<EventTrigger::Enum> m_TriggerConditionListCoordinator;
 
-        std::vector<EventTrigger>            m_PercentageEventsToCountIndividual;
-        std::vector<EventTriggerNode>        m_PercentageEventsToCountNode;
-        std::vector<EventTriggerCoordinator> m_PercentageEventsToCountCoordinator;
+        std::vector<EventTrigger::Enum>           m_PercentageEventsToCountIndividual;
+        std::vector<EventTrigger::Enum>        m_PercentageEventsToCountNode;
+        std::vector<EventTrigger::Enum> m_PercentageEventsToCountCoordinator;
         uint32_t m_PercentageEventsCounted;
     };
 }

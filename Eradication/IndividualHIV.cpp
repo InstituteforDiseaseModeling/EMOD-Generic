@@ -30,9 +30,9 @@ namespace Kernel
 
     float IndividualHumanHIVConfig::maternal_transmission_ART_multiplier = 1.0f;
 
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(IndividualHumanHIV,IndividualHumanHIVConfig)
-    BEGIN_QUERY_INTERFACE_BODY(IndividualHumanHIVConfig)
-    END_QUERY_INTERFACE_BODY(IndividualHumanHIVConfig)
+    //GET_SCHEMA_STATIC_WRAPPER_IMPL(IndividualHumanHIV,IndividualHumanHIVConfig)
+    //BEGIN_QUERY_INTERFACE_BODY(IndividualHumanHIVConfig)
+    //END_QUERY_INTERFACE_BODY(IndividualHumanHIVConfig)
 
     bool IndividualHumanHIVConfig::Configure( const Configuration* config )
     {
@@ -91,11 +91,10 @@ namespace Kernel
 
     void IndividualHumanHIV::InitializeStaticsHIV( const Configuration* config )
     {
-        InfectionHIVConfig infection_config;
-        infection_config.enable_disease_mortality = true;  //fixed on for HIV, needs to be set explicitly because SIM_HIV is not in depends-on clause (and thus not read)
-        infection_config.Configure( config );
         SusceptibilityHIVConfig immunity_config;
         immunity_config.Configure( config );
+        InfectionHIVConfig infection_config;
+        infection_config.Configure( config );
         IndividualHumanHIVConfig individual_config;
         individual_config.Configure( config );
     }
@@ -167,12 +166,24 @@ namespace Kernel
 
     }
 
+    bool
+    IndividualHumanHIV::ShouldAcquire(
+        float contagion,
+        float dt,
+        float suscept_mod,
+        TransmissionRoute::Enum transmission_route
+    )
+    const
+    {
+        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Function exists due to inheritance but not implemented yet in HIV. Not needed or used for system-level operation." );
+    }
+
     void
     IndividualHumanHIV::Update( float curtime, float dt )
     {
         IndividualHumanSTI::Update( curtime, dt );
 
-        if (IndividualHumanConfig::aging)
+        if (IndividualHumanConfig::aging && broadcaster )
         {
             if( ((m_age - dt) < SIX_WEEKS) && (SIX_WEEKS <= m_age) )
             {
@@ -189,7 +200,7 @@ namespace Kernel
     {
         bool birth_this_timestep = IndividualHumanSTI::UpdatePregnancy( dt );
         
-        if( is_pregnant )
+        if( is_pregnant  && broadcaster )
         {
             if( ((pregnancy_timer - dt) < (DAYSPERWEEK*WEEKS_FOR_GESTATION - TWELVE_WEEKS)) && 
                                           ((DAYSPERWEEK*WEEKS_FOR_GESTATION - TWELVE_WEEKS) <= pregnancy_timer) )
@@ -268,7 +279,6 @@ namespace Kernel
     {
         IndividualHumanSTI::serialize( ar, obj );
         IndividualHumanHIV& ind_hiv = *obj;
-        ar.labelElement("has_active_TB"                     ) & ind_hiv.has_active_TB;
         ar.labelElement("pos_num_partners_while_CD4500plus" ) & ind_hiv.pos_num_partners_while_CD4500plus;
         ar.labelElement("neg_num_partners_while_CD4500plus" ) & ind_hiv.neg_num_partners_while_CD4500plus;
 

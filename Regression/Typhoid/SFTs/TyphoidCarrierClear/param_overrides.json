@@ -1,0 +1,26 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:TyphoidCarrierClear",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_1K_overlay.json",
+            "../../Santiago_IP_3group_overlay.json"
+        ],
+        "Enable_Birth": 0,
+        "Enable_Natural_Mortality": 0,
+        "Enable_Property_Output": 1,
+        "Enable_Vital_Dynamics": 0,
+        "Inset_Chart_Reporting_Start_Year": 1930,
+        "Inset_Chart_Reporting_Stop_Year": 1931,
+        "Node_Contagion_Decay_Rate": 1,
+        "Property_Report_Start_Year": 1930,
+        "Property_Report_Stop_Year": 1940,
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 62,
+        "Typhoid_Carrier_Probability": 1,
+        "Typhoid_Protection_Per_Infection": 0.45,
+        "logLevel_IndividualTyphoid": "DEBUG",
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

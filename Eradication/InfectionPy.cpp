@@ -34,13 +34,10 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_BODY(InfectionPyConfig)
     END_QUERY_INTERFACE_BODY(InfectionPyConfig)
 
-    bool
-    InfectionPyConfig::Configure(
-        const Configuration * config
-    )
+    bool InfectionPyConfig::Configure( const Configuration * config )
     {
         LOG_DEBUG( "Configure\n" );
-        //initConfigTypeMap( "Enable_Contact_Tracing", &tracecontact_mode, Enable_Contact_Tracing_DESC_TEXT, false ); // polio
+
         bool bRet = JsonConfigurable::Configure( config );
         return bRet;
     }

@@ -1,11 +1,14 @@
 
 import os.path as path
 import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as adhoc
 import json
-np=sft.np
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 
 """
 This is HIVSimpleDiagnostic test. 
@@ -245,6 +248,9 @@ def application(output_folder="output",
                 inset_chart_name="InsetChart.json",
                 report_name=sft.sft_output_filename,
                 debug=False):
+
+    adhoc.application( output_folder )
+
     if debug:
         print("output_folder: " + output_folder)
         print("property_report_name: " + property_report_name)

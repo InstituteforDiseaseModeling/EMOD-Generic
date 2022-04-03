@@ -21,6 +21,7 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingExponential/TimeStep_.5_days",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 400,
             "Simulation_Timestep": 0.5

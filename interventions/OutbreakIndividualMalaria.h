@@ -24,11 +24,9 @@ namespace Kernel
 
         // OutbreakIndividual methods
         virtual bool Configure( const Configuration * inputJson ) override;
-        virtual void ConfigureGenome( const Configuration * inputJson );
         virtual QueryResult QueryInterface( iid_t iid, void **ppvObject );
 
     protected:
         std::vector<std::string> m_GenomeMarkerNames;
-        bool m_CreateRandomGenome;
     };
 }

@@ -56,7 +56,7 @@ namespace Kernel
     {
         if( getEventOrConfig( inputJson ) == EventOrConfig::Event || JsonConfigurable::_dryrun )
         {
-            initConfigTypeMap( "Negative_Diagnosis_Event", &negative_diagnosis_event, HIV_SD_Negative_Diagnosis_Event_DESC_TEXT );
+            initConfig( "Negative_Diagnosis_Event", negative_diagnosis_event, inputJson, MetadataDescriptor::Enum("Negative_Diagnosis_Event", HIV_SD_Negative_Diagnosis_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         }
 
         ConfigurePositiveEventOrConfig( inputJson );
@@ -123,9 +123,9 @@ namespace Kernel
         auto iid = parent->GetSuid().data;
         LOG_DEBUG_F( "Individual %d tested 'negative' in HIVSimpleDiagnostic, receiving actual intervention.\n", iid );
 
-        if( !negative_diagnosis_event.IsUninitialized() )
+        if( negative_diagnosis_event != EventTrigger::NoTrigger )
         {
-            LOG_DEBUG_F( "Brodcasting event %s as negative diagnosis event for individual %d.", negative_diagnosis_event.c_str(), iid );
+            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ), iid );
             broadcastEvent( negative_diagnosis_event );
         }
         else
@@ -183,10 +183,10 @@ namespace Kernel
 
         // True positive (sensitivity), or False positive (1-specificity)
 
+        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
         return applySensitivityAndSpecificity(infected);
-
-        
 #else
+        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
         return SimpleDiagnostic::positiveTestResult();
 #endif
 
@@ -202,6 +202,6 @@ namespace Kernel
         ar.labelElement("result_of_positive_test"   ) & hsd.result_of_positive_test;
         ar.labelElement("original_days_to_diagnosis") & hsd.original_days_to_diagnosis;
         ar.labelElement("absoluteDuration"          ) & hsd.absoluteDuration;
-        ar.labelElement("negative_diagnosis_event"  ) & hsd.negative_diagnosis_event;
+        ar.labelElement("negative_diagnosis_event"  ) & (uint32_t&)hsd.negative_diagnosis_event;
     }
 }

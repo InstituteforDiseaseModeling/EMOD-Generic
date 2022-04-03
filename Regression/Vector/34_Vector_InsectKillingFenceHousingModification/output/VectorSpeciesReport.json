@@ -1,7 +1,7 @@
 {
     "Header": {
-        "DateTime": "Fri Dec  7 13:49:20 2018",
-        "DTK_Version": "4588 to_2_master_219_merge_candidate (ef87771) Dec  6 2018 14:21:07",
+        "DateTime": "Sun Jul 28 21:11:47 2019",
+        "DTK_Version": "4637 go-to-master (521b386) Jul 27 2019 16:52:57",
         "Report_Version": "2.1",
         "Timesteps": 360,
         "Subchannel_Metadata": {

@@ -24,7 +24,7 @@
                 "Intervention_Config": {
                     "class": "TyphoidCarrierDiagnostic",
                     "Event_Or_Config": "Event",
-                    "Positive_Diagnosis_Event": "Chronic_Carrier"
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 },
                 "Number_Repetitions": 10,
                 "Timesteps_Between_Repetitions": 180,

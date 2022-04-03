@@ -1,0 +1,79 @@
+{
+    "parameters": {
+        "AIDS_Duration_In_Months": 9,
+        "Base_Infectivity": 0.02657,
+        "Birth_Rate_Dependence": "INDIVIDUAL_PREGNANCIES_BY_AGE_AND_YEAR",
+        "CD4_At_Death_LogLogistic_Heterogeneity": 0.7,
+        "CD4_At_Death_LogLogistic_Scale": 2.96,
+        "CD4_Num_Steps": 20,
+        "CD4_Strata_Activation": [
+            1,
+            100,
+            200,
+            300,
+            400,
+            500,
+            2000
+        ],
+        "Config_Name": "multicore:reporter:tb_hiv_deaths",
+        "Custom_Reports_Filename": "custom_reports.json",
+        "Days_Between_Symptomatic_And_Death_Weibull_Scale": 618.34,
+        "Demographics_Filenames": [
+            "../../../demographics/Base_Demog_MultiNode.json"
+        ],
+        "Enable_Immune_Decay": 0,
+        "Enable_Local_Migration": 1,
+        "Geography": "TBHIV",
+        "HIV_Adult_Survival_Scale_Parameter_Intercept": 21.182,
+        "HIV_Adult_Survival_Scale_Parameter_Slope": -0.2717,
+        "HIV_Adult_Survival_Shape_Parameter": 2.0,
+        "HIV_Age_Max_for_Adult_Age_Dependent_Survival": 75,
+        "HIV_Age_Max_for_Child_Survival_Function": 15,
+        "HIV_Child_Survival_Rapid_Progressor_Fraction": 0.57,
+        "HIV_Child_Survival_Rapid_Progressor_Rate": 1.52,
+        "HIV_Child_Survival_Slow_Progressor_Scale": 16.0,
+        "HIV_Child_Survival_Slow_Progressor_Shape": 2.7,
+        "Local_Migration_Filename": "4nodes_local_migration.bin",
+        "Migration_Model": "FIXED_RATE_MIGRATION",
+        "Mortality_Blocking_Immunity_Decay_Rate": 0,
+        "Num_Cores": 4,
+        "Post_Infection_Acquisition_Multiplier": 0.5,
+        "Simulation_Duration": 730,
+        "TBHIV_Drug_Params": {
+            "ACFDOTS": {
+                "TB_Drug_Cure_Rate_HIV": 0.0007701635339554948,
+                "TB_Drug_Cure_Rate_MDR": 0.0007701635339554948,
+                "TB_Drug_Inactivation_Rate": 0.0007701635339554948,
+                "TB_Drug_Inactivation_Rate_MDR": 0.0007701635339554948,
+                "TB_Drug_Mortality_Rate_MDR": 0.0007701635339554948,
+                "TB_Drug_Relapse_Rate": 0.0015403270679109895,
+                "TB_Drug_Relapse_Rate_MDR": 0.0015403270679109895,
+                "TB_Drug_Resistance_Rate": 0.0011706723961980698
+            }
+        },
+        "TBHIV_Drug_Types": [
+            "ACFDOTS"
+        ],
+        "TB_Active_Cure_Rate": 0.00024,
+        "TB_Active_Mortality_Rate": 0.024,
+        "TB_Active_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
+        "TB_Active_Presymptomatic_Infectivity_Multiplier": 0.114816072,
+        "TB_Extrapulmonary_Fraction_Adult": 0.1,
+        "TB_Extrapulmonary_Fraction_Child": 0.4,
+        "TB_Fast_Progressor_Fraction_Adult": 0.1,
+        "TB_Fast_Progressor_Fraction_Child": 0.03,
+        "TB_Fast_Progressor_Rate": 0.006,
+        "TB_Inactivation_Rate": 1e-09,
+        "TB_Presymptomatic_Cure_Rate": 0.007,
+        "TB_Presymptomatic_Rate": 0.1165,
+        "TB_Slow_Progressor_Rate": 0.5,
+        "TB_Smear_Negative_Infectivity_Multiplier": 0.34604,
+        "TB_Smear_Negative_Mortality_Multiplier": 0.3,
+        "logLevel_InfectionTB": "VALID",
+        "logLevel_IndividualCoInfection": "DEBUG",
+        "x_Base_Population": 300,
+        "x_Birth": 0,
+        "x_Other_Mortality": 0
+    },
+    "Default_Config_Path": "defaults/tbhiv_science_default_config.json"
+}

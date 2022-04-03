@@ -46,19 +46,21 @@ namespace Kernel
         initConfigTypeMap( "Base_Specificity", &base_specificity, SD_Base_Specificity_DESC_TEXT, 0.0f, 1.0f, 1.0f );
         initConfigTypeMap( "Base_Sensitivity", &base_sensitivity, ED_Base_Sensitivity_DESC_TEXT, 0.0f, 1.0f, 1.0f );
         initConfigTypeMap( "Environment_IP_Key_Value", &environment_ip_key_value, ED_Environment_IP_Key_Value_DESC_TEXT );
-        initConfigTypeMap( "Negative_Diagnostic_Event", &negative_diagnosis_event, ED_Negative_Diagnostic_Event_DESC_TEXT );
-        initConfigTypeMap( "Positive_Diagnostic_Event", &positive_diagnosis_event, ED_Positive_Diagnostic_Event_DESC_TEXT );
+        initConfig( "Negative_Diagnosis_Event", negative_diagnosis_event, inputJson, MetadataDescriptor::Enum("Positive_Diagnosis_Event", ED_Negative_Diagnostic_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Positive_Diagnosis_Event", positive_diagnosis_event, inputJson, MetadataDescriptor::Enum("Positive_Diagnosis_Event", ED_Positive_Diagnostic_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        //initConfigTypeMap( "Negative_Diagnostic_Event", &negative_diagnosis_event, ED_Negative_Diagnostic_Event_DESC_TEXT );
+        //initConfigTypeMap( "Positive_Diagnostic_Event", &positive_diagnosis_event, ED_Positive_Diagnostic_Event_DESC_TEXT );
 
         bool ret = BaseNodeIntervention::Configure(inputJson);
-        if (ret && !JsonConfigurable::_dryrun)
+        /*if (ret && !JsonConfigurable::_dryrun)
         {
-            if (positive_diagnosis_event.IsUninitialized())
+            if (positive_diagnosis_event == EventTrigger::NoTrigger )
             {
                 std::stringstream msg;
                 msg << "Invalid Configuration for EnvironmentalDiagnostic. For Positive_Diagnostic_Event an event of type NODE must be configured. The NODE event must be in the Custom_Node_Events list.\n" << std::endl;
                 throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, msg.str().c_str());
             }
-        }
+        }*/
         return ret;
     }
 
@@ -120,7 +122,7 @@ namespace Kernel
             LOG_DEBUG_F( "EnvironmentalDiagnostic tested positive.\n" );
             broadcaster->TriggerObservers( parent, positive_diagnosis_event );
         }
-        else if( !negative_diagnosis_event.IsUninitialized() )
+        else if( !negative_diagnosis_event == EventTrigger::NoTrigger )
         {
             LOG_DEBUG_F( "EnvironmentalDiagnostic tested negative.\n" );
             broadcaster->TriggerObservers( parent, negative_diagnosis_event );

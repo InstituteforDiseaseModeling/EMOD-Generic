@@ -61,7 +61,7 @@ SUITE( InterventionForCurrentPartnersTest )
         {
         }
 
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override
         {
             selected_ids.push_back( context->GetSuid().data );
             return true;

@@ -6,10 +6,7 @@
             {
 				"Additional_Events": [
 				  "TBTestNegative",
-				  "TBTestDefault",
-				  "Seek100",
-				  "Seek200",
-				  "Seek500"
+				  "TBTestDefault"
                ],
                "Max_Age_Yrs": 200,	
                "Min_Age_Yrs": 0,	

@@ -290,7 +290,8 @@ void ChannelDataMap::SetStartTime(float time)
 
 void ChannelDataMap::WriteOutput( 
     const std::string& filename, 
-    std::map<std::string, std::string>& units_map )
+    std::map<std::string, std::string>& units_map, 
+    bool defaultPrecision )
 {
     // Add some header stuff to InsetChart.json.
     // { "Header":
@@ -318,7 +319,7 @@ void ChannelDataMap::WriteOutput(
 
     Kernel::JSerializer js;
     Kernel::IJsonObjectAdapter* pIJsonObj = Kernel::CreateJsonObjAdapter();
-    pIJsonObj->CreateNewWriter();
+    pIJsonObj->CreateNewWriter(false, defaultPrecision);
     pIJsonObj->BeginObject();
 
     pIJsonObj->Insert("Header");

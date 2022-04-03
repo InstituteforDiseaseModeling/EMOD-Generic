@@ -45,7 +45,6 @@ namespace Kernel
 
     class IndividualHumanConfig : public JsonConfigurable
     {
-        GET_SCHEMA_STATIC_WRAPPER(IndividualHumanConfig)
         friend class Simulation;
         friend class IndividualHuman;
         friend class IndividualHumanTyphoid;
@@ -53,12 +52,16 @@ namespace Kernel
         friend class IndividualHumanMalariaConfig;
         friend class IndividualHumanPolioConfig;
 
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanConfig )
+
     public:
         static bool IsAdultAge( float years );
         static bool CanSupportFamilyTrips( IMigrationInfoFactory* pmi );
+        virtual bool Configure( const Configuration* config ) override;
 
     protected:
-
         static bool aging;
         static float min_adult_age_years ;
 
@@ -88,15 +91,11 @@ namespace Kernel
 
         static bool  enable_skipping;
 
-        virtual bool Configure( const Configuration* config ) override;
         void PrintConfigs() const;
 
         void RegisterRandomWalkDiffusionParameters();
         void RegisterSingleRoundTripsParameters();
         void RegisterWaypointsHomeParameters();
-
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
     };
 
     class IndividualHuman : public IIndividualHuman,
@@ -106,15 +105,19 @@ namespace Kernel
                             public IInfectionAcquirable,
                             public IMigrate
     {
+        friend class Simulation;
+
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHuman )
 
     public:
-
         static IndividualHuman *CreateHuman();
         static IndividualHuman *CreateHuman(INodeContext *context, suids::suid id, float MCweight = 1.0f, float init_age = 0.0f, int gender = 0);
-        virtual void InitializeHuman() override;
         virtual ~IndividualHuman();
+
+        virtual void InitializeHuman() override;
+        static void InitializeStatics( const Configuration* config ); // for pymod: maybe can friend a pymod class ?
 
         virtual void Update(float currenttime, float dt) override;
 
@@ -133,16 +136,19 @@ namespace Kernel
         virtual const Kernel::NodeDemographics*     GetDemographics() const override;
 
         // IIndividualHumanEventContext methods
-        virtual bool   IsPregnant()           const override { return is_pregnant; };
-        virtual double GetAge()               const override { return m_age; }
-        virtual float GetImmuneFailage()      const override;
-        inline float getAgeInYears()          const {return floor(GetAge()/DAYSPERYEAR);}
-        virtual int    GetGender()            const override { return m_gender; }
-        virtual double GetMonteCarloWeight()  const override { return m_mc_weight; }
-        virtual bool   IsPossibleMother()     const override;
-        virtual bool   IsInfected()           const override { return m_is_infected; }
-        virtual float  GetAcquisitionImmunity() const override; // KM: For downsampling based on immune status.  For now, just takes perfect immunity; can be updated to include a threshold.  Unclear how to work with multiple strains or waning immunity.
-        virtual HumanStateChange GetStateChange() const override { return StateChange; }
+        virtual bool              IsPregnant()                     const override { return is_pregnant; };
+        virtual double            GetAge()                         const override { return m_age; }
+        virtual float             GetImmuneFailAgeAcquire()        const override;
+        inline  float             getAgeInYears()                  const          { return floor(GetAge()/DAYSPERYEAR);}
+        virtual int               GetGender()                      const override { return m_gender; }
+        virtual float             GetMonteCarloWeight()            const override { return m_mc_weight; }
+        virtual bool              IsPossibleMother()               const override;
+        virtual bool              IsInfected()                     const override { return m_is_infected; }
+        virtual float             GetAcquisitionImmunity()         const override; // KM: For downsampling based on immune status.  For now, just takes perfect immunity; can be updated to include a threshold.  Unclear how to work with multiple strains or waning immunity.
+        virtual float             GetImmunityReducedAcquire()      const override;
+        virtual float             GetInterventionReducedAcquire()  const override;
+        virtual HumanStateChange  GetStateChange()                 const override { return StateChange; }
+
         virtual void Die( HumanStateChange ) override;
         virtual INodeEventContext   * GetNodeEventContext() override; // for campaign cost reporting in e.g. HealthSeekingBehavior
         virtual IPKeyValueContainer* GetProperties() override;
@@ -175,7 +181,6 @@ namespace Kernel
         virtual void UpdateGroupPopulation(float size_changes) override;
 
         // Initialization
-        virtual void SetInitialInfections(int init_infs, const IStrainIdentity *infstrain = nullptr) override;
         virtual void SetParameters( INodeContext* pParent, float infsample, float imm_mod, float risk_mod, float mig_mod) override; // specify each parameter, default version of SetParams()
         virtual void CreateSusceptibility(float susceptibility_mod=1.0, float risk_mod=1.0);
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) override;
@@ -184,6 +189,7 @@ namespace Kernel
         // Infections
         virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership);
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
+        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) override;
 
         virtual const infection_list_t &GetInfections() const override;
@@ -194,9 +200,6 @@ namespace Kernel
         virtual void ClearNewInfectionState() override;
         virtual NewInfectionState::_enum GetNewInfectionState() const override { return m_new_infection_state; }
         virtual inline float GetInfectiousness() const override { return infectiousness; }
-
-        virtual float GetImmunityReducedAcquire() const override;
-        virtual float GetInterventionReducedAcquire() const override;
 
         // Births and deaths
         virtual bool UpdatePregnancy(float dt=1) override; // returns true if birth happens this time step and resets is_pregnant to false
@@ -219,10 +222,7 @@ namespace Kernel
         virtual void SetWaitingToGoOnFamilyTrip() override;
         virtual void GoHome() override;
 
-        static void InitializeStatics( const Configuration* config );
-
     protected:
-
         // Core properties
         suids::suid suid;
         float m_age;
@@ -294,10 +294,9 @@ namespace Kernel
         IIndividualEventBroadcaster* broadcaster;
 
     private:
-        bool m_newly_symptomatic;
-        
-        virtual IIndividualHumanContext* GetContextPointer();
 
-        DECLARE_SERIALIZABLE(IndividualHuman);
+        bool m_newly_symptomatic;
+
+        virtual IIndividualHumanContext* GetContextPointer();
     };
 }

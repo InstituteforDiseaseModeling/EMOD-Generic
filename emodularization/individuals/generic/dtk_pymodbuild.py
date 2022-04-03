@@ -12,7 +12,7 @@ if os.name == "posix":
     os.environ['CC'] = 'gcc'
     os.environ['CXX'] = 'g++'
     os.environ['CPP'] = 'g++'
-    compiler_args = [ "-std=c++11", "-w", "-fpermissive" ]
+    compiler_args = [ "-std=c++11", "-fpermissive", "-Wunused-variable" ]
     my_library_dirs = [ 
             '../../../build/x64/Release/utils/',
             '../../../build/x64/Release/campaign/',
@@ -26,7 +26,7 @@ else:
         "/c", "/nologo", "/EHsc", "/W3", "/bigobj", "/errorReport:none", "/fp:strict", "/GS-", "/Oi", "/Ot", "/Zc:forScope", "/Zc:wchar_t", "/Z7", "/DIDM_EXPORT", "/O2", "/MD", "/DWIN32", "/D_UNICODE", "/DUNICODE"
         ]
     my_library_dirs = [ "../../../x64/Release" ]
-compiler_args.extend( [ "-DENABLE_TBHIV", "-DENABLE_TB", "-DDISABLE_HIV", "-DDISABLE_STI", "-DDISABLE_VECTOR", "-DDISABLE_MALARIA", "-DDISABLE_CLIMATE" ] )
+compiler_args.extend( [ "-DDISABLE_HIV", "-DDISABLE_STI", "-DDISABLE_TBHIV", "-DDISABLE_VECTOR", "-DDISABLE_MALARIA", "-DDISABLE_CLIMATE" ] )
 
 my_include_dirs = [
             '../../../interventions/',

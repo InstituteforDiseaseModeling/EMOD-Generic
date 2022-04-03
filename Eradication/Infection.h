@@ -31,7 +31,6 @@ namespace Kernel
     class InfectionConfig : public JsonConfigurable
     {
     public:
-        InfectionConfig() {};
         virtual bool Configure( const Configuration* config ) override;
 
         static bool enable_disease_mortality;
@@ -39,19 +38,18 @@ namespace Kernel
         static float symptomatic_infectious_offset;
 
         static bool enable_strain_tracking;
+        static unsigned int log2genomes;
         static unsigned int number_clades;
         static unsigned int number_genomes;
 
     protected:
         friend class Infection;
-        
+
         static IDistribution* infectious_distribution;
         static IDistribution* incubation_distribution;
         static float base_infectivity;
         static float base_mortality;
         static MortalityTimeCourse::Enum                          mortality_time_course;                            // MORTALITY_TIME_COURSE
-
-
 
         GET_SCHEMA_STATIC_WRAPPER(InfectionConfig)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
@@ -83,6 +81,7 @@ namespace Kernel
 
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void GetInfectiousStrainID(IStrainIdentity* infstrain); // the ID of the strain being shed
+        virtual const IStrainIdentity* Infection::GetStrain() const override;
         virtual bool IsActive() const override;
         virtual NonNegativeFloat GetDuration() const override;
         virtual bool StrainMatches( IStrainIdentity * pStrain );

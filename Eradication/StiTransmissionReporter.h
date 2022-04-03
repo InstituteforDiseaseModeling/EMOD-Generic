@@ -70,7 +70,7 @@ namespace Kernel
         // BaseTextReport
         virtual std::string GetHeader() const override;
 
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
         // Methods for subclasses to override so that they can add data
         virtual void ClearData();

@@ -68,11 +68,11 @@ SUITE(HivDrawBloodTest)
 
             m_Human.GetProperties()->Add( IPKeyValue( "InterventionStatus:no_state" ) );
 
-            EventTriggerFactory::DeleteInstance();
+            ////EventTriggerFactoryDeleteInstance();
 
-            json::Object fakeConfigJson;
-            Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //json::Object fakeConfigJson;
+            //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
+            ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
         }
 
@@ -92,7 +92,7 @@ SUITE(HivDrawBloodTest)
         std::unique_ptr<Configuration> p_config( Configuration_Load( "testdata/HIVDrawBloodTest.json" ) );
         m_Diag.Configure( p_config.get() );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() ) ;
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger ) ;
 
         CHECK_EQUAL( false, m_InterventionsContext.EverReceivedCD4() );
         CHECK_EQUAL( 0.0,   m_InterventionsContext.LastRecordedCD4() );
@@ -106,7 +106,7 @@ SUITE(HivDrawBloodTest)
 
         m_Diag.Update(1.0);
 
-        CHECK_EQUAL( EventTrigger::Births.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK_EQUAL( std::string( "Births" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) ) ;
         CHECK_EQUAL( true,  m_InterventionsContext.EverReceivedCD4() );
         CHECK_EQUAL( 777.0, m_InterventionsContext.LastRecordedCD4() );
 

@@ -27,15 +27,21 @@ namespace Kernel
     struct IDMAPI IIndividualHumanEventContext : public ISupports 
     {
         // for example, individual attributes...
-        virtual bool   IsPregnant()          const = 0;        
+        virtual bool   IsPregnant()                    const = 0;        
         
+        /*virtual float  GetImmuneFailAgeAcquire()       const = 0;
+        virtual float  GetInterventionReducedAcquire() const = 0;
+        virtual float  GetImmunityReducedAcquire()     const = 0;
+        virtual float  GetAcquisitionImmunity()        const = 0;*/
+
         virtual double GetAge()              const = 0;
         virtual int    GetGender()           const = 0;
-        virtual double GetMonteCarloWeight() const = 0;
+        virtual float  GetMonteCarloWeight() const = 0;
         virtual bool   IsPossibleMother()    const = 0;
         virtual bool   IsInfected()          const = 0;
         virtual bool   IsSymptomatic()       const = 0;
         virtual float  GetInfectiousness()   const = 0;
+
         virtual HumanStateChange GetStateChange(void) const = 0;
         virtual void   Die( HumanStateChange ) = 0; // for testing, quick results
         virtual suids::suid GetSuid() const = 0;

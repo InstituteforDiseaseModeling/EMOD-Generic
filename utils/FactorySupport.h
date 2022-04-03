@@ -25,6 +25,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #define DTK_DLLEXPORT   __declspec(dllexport)
 #else // Other non-windows platform
 #define DTK_DLLEXPORT   
+#define __cdecl
 #endif
 
 namespace Kernel

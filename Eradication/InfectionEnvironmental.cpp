@@ -18,6 +18,17 @@ SETUP_LOGGING( "InfectionEnvironmental" )
 
 namespace Kernel
 {
+    bool InfectionEnvironmentalConfig::Configure( const Configuration * config )
+    {
+        LOG_DEBUG("Configure\n");
+
+        // Environmental infections use Genome to represent transmission route.
+        InfectionConfig::number_genomes = 1;
+
+        bool bRet = JsonConfigurable::Configure( config );
+        return bRet;
+    }
+
     InfectionEnvironmental::InfectionEnvironmental()
     {
     }

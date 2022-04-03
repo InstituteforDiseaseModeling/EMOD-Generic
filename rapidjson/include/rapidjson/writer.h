@@ -33,12 +33,12 @@ class Writer {
 public:
     typedef typename Encoding::Ch Ch;
 
-    Writer(Stream& stream, bool defaultPercision=true, Allocator* allocator = 0, size_t levelDepth = kDefaultLevelDepth)
+    Writer(Stream& stream, bool defaultPrecision=true, Allocator* allocator = 0, size_t levelDepth = kDefaultLevelDepth)
     : stream_(stream) 
     , level_stack_( allocator, levelDepth * sizeof(Level) )
     , p_double_format("%.13g")
     {
-        if( !defaultPercision )
+        if( !defaultPrecision )
         {
             p_double_format = "%g";
         }

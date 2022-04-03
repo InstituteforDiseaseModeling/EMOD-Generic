@@ -46,10 +46,10 @@ namespace Kernel {
         }
     }
 
-    void RapidJsonObj::CreateNewWriter(bool bCacheWriter)
+    void RapidJsonObj::CreateNewWriter(bool bCacheWriter, bool defaultPrecision)
     {
         m_buffer = _new_ StringBuffer();
-        m_writer = _new_ Writer<StringBuffer>(*m_buffer);
+        m_writer = _new_ Writer<StringBuffer>(*m_buffer, defaultPrecision);
 
         m_bCacheWriter = bCacheWriter;
         if (m_bCacheWriter)

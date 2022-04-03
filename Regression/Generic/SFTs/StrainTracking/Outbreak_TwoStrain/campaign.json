@@ -1,0 +1,44 @@
+{
+    "Campaign_Name": "Two OutbreakIndividualsttest.",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 3,
+                    "Number_Cases_Per_Node": 10,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak1_3",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 30,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 5,
+                    "Number_Cases_Per_Node": 10,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak0_5",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 35,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

@@ -29,8 +29,8 @@ namespace Kernel
     {
         if( this->m_NodeEventMap.size() != rThat.m_NodeEventMap.size() ) return false ;
 
-        std::map<suids::suid,std::vector<EventTrigger>>::const_iterator this_it = this->m_NodeEventMap.begin();
-        std::map<suids::suid,std::vector<EventTrigger>>::const_iterator that_it = rThat.m_NodeEventMap.begin();
+        std::map<suids::suid,std::vector<EventTrigger::Enum>>::const_iterator this_it = this->m_NodeEventMap.begin();
+        std::map<suids::suid,std::vector<EventTrigger::Enum>>::const_iterator that_it = rThat.m_NodeEventMap.begin();
         while( this_it != this->m_NodeEventMap.end() )
         {
             if( (*this_it).first != (*that_it).first ) return false ;
@@ -53,7 +53,7 @@ namespace Kernel
         return !operator==( rThat );
     }
 
-    void EventsForOtherNodes::Add( const suids::suid& rNodeSuid, const EventTrigger& trigger )
+    void EventsForOtherNodes::Add( const suids::suid& rNodeSuid, const EventTrigger::Enum& trigger )
     {
         m_NodeEventMap[ rNodeSuid ].push_back( trigger );
     }
@@ -73,7 +73,7 @@ namespace Kernel
             ss << dest_node_id.data  ;
             for( auto trigger : trigger_list )
             {
-                ss << ", " << trigger.ToString() ;
+                ss << ", " << EventTrigger::pairs::lookup_key( trigger );
             }
             printf("Rank=%2d: %s\n",EnvPtr->MPI.Rank,ss.str().c_str()); fflush(stdout);
         }
@@ -94,6 +94,6 @@ namespace Kernel
 
     void EventsForOtherNodes::serialize( IArchive& ar, EventsForOtherNodes& obj )
     {
-        ar & obj.m_NodeEventMap;
+        ar & (std::map<suids::suid,std::vector<uint32_t>>&) obj.m_NodeEventMap;
     }
 }

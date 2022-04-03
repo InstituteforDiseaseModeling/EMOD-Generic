@@ -19,33 +19,30 @@ namespace Kernel
 {
     class IndividualHumanHIVConfig : public IndividualHumanSTIConfig
     {
-        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanHIVConfig )
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
-        DECLARE_QUERY_INTERFACE()
-    protected:
         friend class IndividualHumanHIV;
 
         static float maternal_transmission_ART_multiplier;
-
+    public:
         virtual bool Configure( const Configuration* config ) override;
+
     };
 
     class IHIVInfection;
     class IHIVSusceptibility;
     class IndividualHumanHIV : public IndividualHumanSTI, public IIndividualHumanHIV
     {
-    public:
         friend class SimulationHIV;
-        DECLARE_QUERY_INTERFACE()
-        IMPLEMENT_NO_REFERENCE_COUNTING();
 
+        IMPLEMENT_NO_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanHIV )
+
+    public:
+        static IndividualHumanHIV *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = int(Gender::MALE));
         virtual ~IndividualHumanHIV(void);
-        static   IndividualHumanHIV *CreateHuman( INodeContext *context, 
-                                                  suids::suid _suid, 
-                                                  float monte_carlo_weight = 1.0f, 
-                                                  float initial_age = 0.0f, 
-                                                  int gender = int(Gender::MALE));
+
         virtual void InitializeHuman() override;
+
         virtual void Update( float currenttime, float dt ) override;
 
         // Infections and Susceptibility
@@ -64,7 +61,6 @@ namespace Kernel
         // healthcare interactions
         virtual std::string toString() const override;
 
-    protected:
         static void InitializeStaticsHIV( const Configuration* config );
 
         IndividualHumanHIV( suids::suid id = suids::nil_suid(), 
@@ -72,6 +68,9 @@ namespace Kernel
                             float initial_age = 0.0f, 
                             int gender = 0 );
         
+	virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) const;
+
+    protected:
         virtual IInfection* createInfection(suids::suid _suid) override;
         virtual void setupInterventionsContainer() override;
         ISusceptibilityHIV * hiv_susceptibility;
@@ -80,12 +79,10 @@ namespace Kernel
         // individual characteristics, node-agnostic for now.
         //
         // medical chart variables
-        bool has_active_TB;
 
         // variables for reporting
         unsigned int pos_num_partners_while_CD4500plus;
         unsigned int neg_num_partners_while_CD4500plus;
 
-        DECLARE_SERIALIZABLE(IndividualHumanHIV);
     };
 }

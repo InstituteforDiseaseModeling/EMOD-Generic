@@ -47,7 +47,7 @@ public:
 
     void Initialize()
     {
-        m_ObserversMap.resize( EventTriggerFactory::GetInstance()->GetNumEventTriggers() );
+        m_ObserversMap.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     void Add( IIndividualHumanContext* human )
@@ -90,21 +90,21 @@ public:
     // -----------------------------------------------
     // --- IIndividualEventBroadcaster Methods
     // -----------------------------------------------
-    virtual void RegisterObserver( IIndividualEventObserver* pIEO, const EventTrigger &trigger )
+    virtual void RegisterObserver( IIndividualEventObserver* pIEO, const EventTrigger::Enum &trigger )
     {
-        m_ObserversMap[ trigger.GetIndex() ].push_back( pIEO );
+        m_ObserversMap[ int(trigger) ].push_back( pIEO );
     }
 
-    virtual void UnregisterObserver( IIndividualEventObserver* pIEO, const EventTrigger &trigger )
+    virtual void UnregisterObserver( IIndividualEventObserver* pIEO, const EventTrigger::Enum &trigger ) 
     {
         //m_Observers.erase( pIEO );
     }
 
-    virtual void TriggerObservers( IIndividualHumanEventContext* pIndiv, const EventTrigger &trigger )
+    virtual void TriggerObservers( IIndividualHumanEventContext* pIndiv, const EventTrigger::Enum &trigger )
     {
         m_TriggeredEvent = trigger ;
 
-        for( auto p_ieo : m_ObserversMap[ trigger.GetIndex() ] )
+        for( auto p_ieo : m_ObserversMap[ int( trigger ) ] )
         {
             p_ieo->notifyOnEvent( pIndiv, trigger );
         }
@@ -206,8 +206,8 @@ public:
     // -----------------
     // --- Other Methods
     // -----------------
-    EventTrigger GetTriggeredEvent() const { return m_TriggeredEvent ; }
-    void ClearTriggeredEvent() { m_TriggeredEvent = EventTrigger(); }
+    EventTrigger::Enum GetTriggeredEvent() const { return m_TriggeredEvent ; } 
+    void ClearTriggeredEvent() { m_TriggeredEvent = EventTrigger::NoTrigger; }
 
     void SetTime( const IdmDateTime& rTime )
     {
@@ -229,7 +229,7 @@ public:
 private:
     INodeContext* m_NodeContext;
     suids::suid m_ID;
-    EventTrigger m_TriggeredEvent ;
+    EventTrigger::Enum m_TriggeredEvent ;
     IdmDateTime m_IdmDateTime ;
     std::vector<IIndividualHumanContext*> m_HumanList;
     std::vector<std::vector<IIndividualEventObserver*> > m_ObserversMap;

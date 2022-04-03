@@ -70,11 +70,6 @@ namespace Kernel
 
         virtual const VectorPopulationReportingList_t& GetVectorPopulationReporting() const override;
 
-        static TransmissionGroupMembership_t human_indoor;
-        static TransmissionGroupMembership_t human_outdoor;
-        static TransmissionGroupMembership_t vector_indoor;
-        static TransmissionGroupMembership_t vector_outdoor;
-
     protected:
 
         std::map<std::string, VectorHabitatList_t> m_larval_habitats;

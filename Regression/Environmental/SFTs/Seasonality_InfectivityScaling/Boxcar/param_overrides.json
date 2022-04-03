@@ -1,0 +1,35 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json",
+                "../../Demographics/demographics_mr_2groups_overlay.json",
+                "Boxcar_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Infectious_Period_Constant": 730
+            }
+        },
+        "ENVIRONMENTAL": {
+            "Environmental_Cutoff_Days": 70,
+            "Environmental_Peak_Start": 150,
+            "Environmental_Ramp_Down_Duration": 50,
+            "Environmental_Ramp_Up_Duration": 40
+        },
+        "PRIMARY": {
+            "Config_Name": "Seasonality_Boxcar",
+            "Simulation_Duration": 730
+        },
+        "SEASONALITY_INFECTIVITY_SCALING": {
+            "Enable_Infectivity_Scaling": 1,
+            "Enable_Infectivity_Scaling_Boxcar": 1
+        },
+        "LOGLEVEL": {
+            "logLevel_NodeEnvironmental": "VALID"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

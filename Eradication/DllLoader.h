@@ -27,6 +27,11 @@ using namespace std;
 
 typedef Kernel::ISimulation* (*createSim)(const Environment *);
 typedef const char* (*getSchema)();
+#ifdef WIN32
+typedef std::wstring emodulewstr;
+#else
+typedef std::string emodulewstr;
+#endif
 
 class DllLoader
 {
@@ -43,14 +48,16 @@ public:
                          const char* dllName = nullptr );
     bool LoadInterventionDlls(const char* dllName=nullptr);
 
+    bool StringEquals(const emodulewstr& wStr, const char* cStr);
 #if defined(WIN32)
-    bool StringEquals(const std::wstring& wStr, const char* cStr);
     bool StringEquals(const TCHAR* tStr, const char* cStr);
-    wstring GetFullDllPath(std::wstring& pluginDir, const char* dllPath = nullptr);
-    bool GetDllsVersion(const char* dllPath, std::wstring& wsPluginDir,list<string>& dllNames, list<string>& dllVersions);
-
     bool CheckEModuleVersion(HMODULE hEMod, char* emodVer=nullptr);
+#else
+    bool StringEquals(const char* tStr, const char* cStr);
+    bool CheckEModuleVersion(void* hEMod, char* emodVer=nullptr);
 #endif
+    bool GetDllsVersion(const char* dllPath, emodulewstr& wsPluginDir,list<string>& dllNames, list<string>& dllVersions);
+    emodulewstr GetFullDllPath(emodulewstr& pluginDir, const char* dllPath = nullptr);
 
     string GetEModulePath(const char* emoduleDir);
     bool GetEModulesVersion(const char* dllPath, list<string>& dllNames, list<string>& dllVersions);
@@ -58,18 +65,18 @@ public:
 protected:
 #if defined(WIN32)
     bool GetSimTypes( const TCHAR* pFilename, HMODULE repDll );
-    bool GetReportInstantiator( const TCHAR* pFilename, 
-                                HMODULE repDll, 
-                                Kernel::report_instantiator_function_t* pRIF );
-    bool GetType( const TCHAR* pFilename, 
-                  HMODULE repDll, 
-                 std::string& rClassName );
+    bool GetReportInstantiator( const TCHAR* pFilename, HMODULE repDll, Kernel::report_instantiator_function_t* pRIF );
+    bool GetType( const TCHAR* pFilename, HMODULE repDll, std::string& rClassName );
+#else
+    bool GetSimTypes( const char* pFilename, void* repDll );
+    bool GetReportInstantiator( const char* pFilename, void* repDll, Kernel::report_instantiator_function_t* pRIF );
+    bool GetType( const char* pFilename, void* repDll, std::string& rClassName );
 #endif
     
     bool MatchSimType(char* simTypes[]);
     bool IsValidVersion(const char* emodVer);
     void LogSimTypes(char* simTypes[]);
-    void ReadEmodulesJson( const std::string& key, std::list< std::wstring > &dll_dirs );
+    void ReadEmodulesJson( const std::string& key, std::list< emodulewstr > &dll_dirs );
     std::map< std::string, getSchema> getSchemaFuncPtrMap;
     std::map< std::string, std::string > dll2VersionStringMap;
 

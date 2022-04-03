@@ -7,7 +7,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "MalariaImmunityReport.h"
 
 #include <algorithm>
@@ -213,7 +213,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     {
     }
 
-    bool MalariaImmunityReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool MalariaImmunityReport::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         LOG_DEBUG_F( "MalariaImmunityReport notified of event by %d-year old individual.\n", (int) (context->GetAge() / DAYSPERYEAR) );
 

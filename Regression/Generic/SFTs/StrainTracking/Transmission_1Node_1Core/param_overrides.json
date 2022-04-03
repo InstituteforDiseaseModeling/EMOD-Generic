@@ -1,0 +1,43 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "demographics_4groups_overlay.json",
+                "../../demographics_10000_overlay.json"
+            ],
+            "Enable_Birth": 0,
+            "Enable_Strain_Tracking": 1,
+            "Enable_Vital_Dynamics": 0,
+            "IMMUNITY": {
+                "Enable_Immune_Decay": 0
+            }
+        },
+        "DISEASE": {
+            "INCUBATION": {
+                "Incubation_Period_Constant": 2
+            },
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.5,
+                "Infectious_Period_Exponential": 3
+            },
+            "Log2_Number_of_Genomes_per_Clade": 3,
+            "Number_of_Clades": 2
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 1
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Property_Output": 1
+        },
+        "PRIMARY": {
+            "Config_Name": "StrainID_Transmission_1Node",
+            "Geography": "SamplesInput",
+            "Run_Number": 1,
+            "Simulation_Duration": 50
+        }
+    },
+    "Default_Config_Path": "defaults\\generic_science_default_config.json"
+}

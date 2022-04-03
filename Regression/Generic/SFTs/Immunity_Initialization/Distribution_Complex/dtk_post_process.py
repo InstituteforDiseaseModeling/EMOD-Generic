@@ -2,7 +2,7 @@
 
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -10,11 +10,11 @@ import dtk_test.dtk_Immunity_Initialization_Support as dtk_iis
 
 
 """
-This test (for Complex Initialization) operates differently:
+This Test (for Complex Initialization) operates differently:
 1. Load a config file with a demographics overlay
  that declares a particular complex immunity profile
  and has loglevel_Susceptibility set to VALID
-2. Capture stdout (test.txt) on the first day of the sim
+2. Capture stdout (Test.txt) on the first day of the sim
 3. In dtk_post_process.py, load the stdout into a dataframe
 4. Compare this dataframe to expected distributions from
  the complex immunity profile from step (1)
@@ -44,7 +44,7 @@ def application(output_folder="output", config_filename="config.json",
 
     demographics_object = dtk_iis.load_demographics_file(
         demographics_filename=demographics_overlay_name,
-        susceptibility_initialization_type=config_object[dtk_iis.ConfigKeys.SUS_INIT_DIST_TYPE],
+        immunity_initialization_type=config_object[dtk_iis.ConfigKeys.SUS_DIST_TYPE],
         debug=debug)
 
     sft.start_report_file(report_name, test_config_name)
@@ -56,7 +56,7 @@ def application(output_folder="output", config_filename="config.json",
     distro_results = \
         distribution_object[dtk_iis.DemographicFileKeys.SusceptibilityDistribution.ComplexKeys.ResultValues][0]
     if debug:
-        print("Sus distribution type: {0}\n".format(config_object[dtk_iis.ConfigKeys.SUS_INIT_DIST_TYPE]))
+        print("Imm distribution type: {0}\n".format(config_object[dtk_iis.ConfigKeys.SUS_DIS_TYPE]))
         print("Distribution object: {0}\n".format(distribution_object))
         print("Distro values: {0}\n".format(distro_values))
     with open(report_name, "a") as outfile:

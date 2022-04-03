@@ -50,7 +50,7 @@ namespace Kernel
         virtual void updateInfectivity( float dt ) override;
 
         // Effect of climate on infectivity in Environmental disease
-        virtual float getClimateInfectivityCorrection() const override;
+        virtual float getClimateCorrection() const override;
 
         virtual void SetupIntranodeTransmission() override;
         virtual ITransmissionGroups* CreateTransmissionGroups() override;

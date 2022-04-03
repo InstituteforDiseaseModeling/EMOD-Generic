@@ -21,12 +21,13 @@ namespace Kernel
     public:
         static   SimulationTBHIV *CreateSimulation();
         static   SimulationTBHIV *CreateSimulation(const ::Configuration *config);
-        virtual void Initialize( const ::Configuration *config ) override;
         virtual ~SimulationTBHIV(void);
 
     protected:
-
         SimulationTBHIV();
+
+        virtual void Initialize() override;
+        virtual void Initialize( const ::Configuration *config ) override;
 
         static bool ValidateConfiguration(const ::Configuration *config);
 

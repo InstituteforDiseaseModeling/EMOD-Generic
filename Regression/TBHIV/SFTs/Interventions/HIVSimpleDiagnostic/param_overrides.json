@@ -1,0 +1,71 @@
+{
+    "parameters": {
+        "ART_Reactivation_Factor": 0.95,
+        "CoInfection_Mortality_Rate_Off_ART": 0.0001,
+        "CoInfection_Mortality_Rate_On_ART": 0.0001,
+        "Config_Name": "SFT_TBHIV_HIVSimpleDiagnostic",
+        "Custom_Reports_Filename": "custom_reports.json",
+        "Days_Between_Symptomatic_And_Death_Weibull_Heterogeneity": 0.2756,
+        "Demographics_Filenames": [
+            "../../../demographics/SA_UN_demographics_extrapolated_WithProperties_Smoothed.json",
+            "../../../demographics/PFA_overlay.json",
+            "../../../demographics/TestState_overlay.json"
+        ],
+        "Enable_Coinfection_Mortality": 0,
+        "Enable_Disease_Mortality": 0,
+        "Enable_Natural_Mortality": 0,
+        "Enable_Property_Output": 1,
+        "Enable_Regional_Migration": 1,
+        "Report_Event_Recorder_Events": [
+            "So_Far_So_Good",
+            "There_It_Is",
+            "Tested_Negative_Because_No_Outbreak_Yet"
+        ],
+        "Simulation_Duration": 50,
+        "TBHIV_Drug_Params": {
+            "ACFDOTS": {
+                "TB_Drug_Cure_Rate": 0.25,
+                "TB_Drug_Inactivation_Rate_HIV": 1e-09,
+                "TB_Drug_Mortality_Rate": 1e-09,
+                "TB_Drug_Mortality_Rate_HIV": 1e-09,
+                "TB_Drug_Primary_Decay_Time_Constant": 179,
+                "TB_Drug_Relapse_Rate_HIV": 1e-09,
+                "TB_Drug_Resistance_Rate_HIV": 1e-09
+            }
+        },
+        "TBHIV_Drug_Types": [
+            "ACFDOTS",
+            "DOTSHQ"
+        ],
+        "TB_CD4_Activation_Vector": [
+            0.00026,
+            0.00026,
+            0.00026,
+            0.00026,
+            2.6e-05,
+            2e-06
+        ],
+        "TB_CD4_Infectiousness": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ],
+        "TB_CD4_Susceptibility": [
+            5,
+            5,
+            5,
+            5,
+            1,
+            1,
+            1
+        ],
+        "TB_Extrapulmonary_Fraction_Adult": 0.1,
+        "TB_Extrapulmonary_Fraction_Child": 0.4,
+        "x_Base_Population": 0.0001
+    },
+    "Default_Config_Path": "defaults/tbhiv_science_default_config.json"
+}

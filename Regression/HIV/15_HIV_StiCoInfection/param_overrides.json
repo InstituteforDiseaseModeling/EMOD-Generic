@@ -23,12 +23,7 @@
             1.5
         ],
         "Maternal_Transmission_ART_Multiplier": 0.03,
-        "Report_HIV_ART": 1,
-        "Report_HIV_Event_Channels_List": [
-            "StartedART",
-            "StoppedART",
-            "OnPreART0"
-        ],
+        "Report_HIV_ART": 0,
         "Report_HIV_Mortality": 1,
         "Run_Number": 54,
         "Simulation_Duration": 365,

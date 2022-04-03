@@ -39,6 +39,8 @@
             "Regional_Migration_Filename": "RegionalMigration_3_Nodes.bin"
         },
         "OUTPUT": {
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json",
             "Enable_Spatial_Output": 1
         },

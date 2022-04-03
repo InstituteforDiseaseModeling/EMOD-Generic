@@ -35,7 +35,7 @@ namespace Kernel
         virtual void Update( float dt ) override;
 
     protected:
-        EventTriggerNode m_EventToBroadcast;
+        EventTrigger::Enum m_EventToBroadcast;
 
         // TODO - can't do until BaseNodeIntervention is serializable
         //DECLARE_SERIALIZABLE(BroadcastNodeEvent);

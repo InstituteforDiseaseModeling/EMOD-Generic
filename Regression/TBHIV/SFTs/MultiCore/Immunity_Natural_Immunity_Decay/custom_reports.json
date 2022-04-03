@@ -2,7 +2,9 @@
 	"Custom_Reports": {
 		"ReportHumanMigrationTracking": {
 			"Enabled": 1,
-			"Reports": [{}
+            "Reports": [{
+                "Additional_Events": []
+            }
 			]
 		},
 		"Use_Explicit_Dlls": 1

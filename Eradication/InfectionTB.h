@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "TBInterventionsContainer.h"
 #include "SusceptibilityTB.h"
 #include "Infection.h"
+#include "TBContexts.h"
 
 namespace Kernel
 {
@@ -37,6 +38,7 @@ namespace Kernel
         virtual bool IsPendingRelapse() const = 0;
         virtual void ExogenousLatentSlowToFast() = 0;
         virtual void LifeCourseLatencyTimerUpdate() = 0;
+        virtual TBInfectionState::Enum GetInfectionState() const = 0;
     };
 
     class InfectionTBConfig : public InfectionAirborneConfig
@@ -50,10 +52,11 @@ namespace Kernel
         virtual bool Configure( const Configuration* config ) override;
         std::map <float,float> GetCD4Map();
         InfectionStateChange::_enum TB_event_type_associated_with_infectious_timer;
+
         
     protected:
         friend class InfectionTB;
-        
+
         static float TB_latent_cure_rate;
         static float TB_fast_progressor_rate;
         static float TB_slow_progressor_rate;
@@ -95,7 +98,7 @@ namespace Kernel
         virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void SetContextTo(IIndividualHumanContext * context) override;
-        
+
        // Inherited from base class
         virtual bool IsActive() const override;
 
@@ -107,6 +110,7 @@ namespace Kernel
         virtual bool EvolvedResistance() const override;
         virtual bool IsPendingRelapse() const override;
         virtual bool IsSymptomatic() const override;
+        virtual TBInfectionState::Enum GetInfectionState() const;
         virtual float GetLatentCureRate() const override;
         virtual float GetDurationSinceInitialInfection() const override; 
         virtual void LifeCourseLatencyTimerUpdate() override;

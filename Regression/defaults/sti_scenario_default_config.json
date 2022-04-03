@@ -116,6 +116,7 @@
             "Campaign_Filename": "campaign.json",
             "Enable_Aging": 1,
             "Enable_Interventions": 1,
+            "Python_Inprocessing_Tsteps": [],
             "Run_Number": 1,
             "Simulation_Duration": 365,
             "Simulation_Timestep": 1,

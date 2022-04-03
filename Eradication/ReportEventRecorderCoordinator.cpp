@@ -28,14 +28,11 @@ namespace Kernel
 {
     template std::string BaseReportEventRecorder< ICoordinatorEventBroadcaster,
                                                   ICoordinatorEventObserver,
-                                                  IEventCoordinatorEventContext,
-                                                  EventTriggerCoordinator,
-                                                  EventTriggerCoordinatorFactory>::GetEnableParameterName();
+                                                  IEventCoordinatorEventContext >::GetEnableParameterName();
 
     template void BaseTextReportEventsTemplate< ICoordinatorEventBroadcaster,
                                                 ICoordinatorEventObserver,
-                                                IEventCoordinatorEventContext,
-                                                EventTriggerCoordinator >::Reduce();
+                                                IEventCoordinatorEventContext>::Reduce();
 
     const std::string ReportEventRecorderCoordinator::ENABLE_PARAMETER_NAME   = "Report_Coordinator_Event_Recorder";
     const std::string ReportEventRecorderCoordinator::EVENTS_LIST_NAME        = "Report_Coordinator_Event_Recorder_Events";
@@ -90,12 +87,12 @@ namespace Kernel
     }
 
     std::string ReportEventRecorderCoordinator::GetOtherData( IEventCoordinatorEventContext *pEntity,
-                                                              const EventTriggerCoordinator& trigger )
+                                                              const EventTrigger::Enum& trigger )
     {
         std::stringstream ss;
 
         ss << "," << pEntity->GetName()
-           << "," << trigger.ToString();
+           << "," << EventTrigger::pairs::lookup_key( trigger );
 
         return ss.str();
     }

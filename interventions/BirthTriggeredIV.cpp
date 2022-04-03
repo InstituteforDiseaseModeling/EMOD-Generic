@@ -89,7 +89,7 @@ namespace Kernel
 
     bool BirthTriggeredIV::notifyOnEvent(
         IIndividualHumanEventContext *pIndiv,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
     {
         LOG_DEBUG("A baby was born, distribute actual_intervention (conditionally)\n");

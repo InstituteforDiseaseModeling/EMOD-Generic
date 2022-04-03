@@ -101,11 +101,12 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
         if( ret )
         {
-            const std::vector< EventTrigger >& trigger_list = GetEventTriggerList();
+            const std::vector< EventTrigger::Enum >& trigger_list = GetEventTriggerList();
             for( auto trigger : trigger_list )
             {
-                unitsMap[ trigger.ToString() ] = "" ;
-                channelDataMap.AddChannel( trigger.ToString() );
+                auto event_string = EventTrigger::pairs::lookup_key( trigger );
+                unitsMap[ event_string ] = "" ;
+                channelDataMap.AddChannel( event_string );
             }
         }
         return ret;
@@ -130,14 +131,14 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     }
 
     bool ReportEventCounter::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                            const EventTrigger& trigger )
+                                            const EventTrigger::Enum& trigger )
     {
         if( HaveUnregisteredAllEvents() )
         {
             return false ;
         }
 
-        channelDataMap.Accumulate( trigger.ToString(), 1.0 );
+        channelDataMap.Accumulate( EventTrigger::pairs::lookup_key( trigger ), 1.0 );
 
         return true ;
     }

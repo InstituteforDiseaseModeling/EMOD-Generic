@@ -1,0 +1,23 @@
+Events:
+- What: 
+    class: OutbreakIndividual
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed_Control
+  When: 1, 10 * 2
+  Where: Everywhere
+
+- What: 
+    class: OutbreakIndividual
+  Who: 100%, AllAges, BothSexes, QualityOfCare:2_Seed_Test
+  When: 1, 10 * 2
+  Where: Everywhere
+
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: TransmissionBlocking
+    Prime_Effect: 0.2
+    Boost_Effect: 0.6
+    Boost_Threshold: 0.0
+    Efficacy_Profile: Box, 1, 10
+  Who: 100%, AllAges, BothSexes, QualityOfCare:2_Seed_Test
+  When: 3
+  Where: Everywhere

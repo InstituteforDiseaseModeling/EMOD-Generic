@@ -17,13 +17,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct INodeEventContext;
-    class EventTriggerNodeFactory;
 
     class ReportEventRecorderNode : public BaseReportEventRecorder< INodeEventBroadcaster,
                                                                     INodeEventObserver,
-                                                                    INodeEventContext,
-                                                                    EventTriggerNode,
-                                                                    EventTriggerNodeFactory >
+                                                                    INodeEventContext >
     {
     public:
         GET_SCHEMA_STATIC_WRAPPER( ReportEventRecorderNode )
@@ -48,7 +45,7 @@ namespace Kernel
 
     protected:
         virtual void ConfigureOther( const Configuration* inputJson ) override;
-        virtual std::string GetOtherData( INodeEventContext *context, const EventTriggerNode& trigger ) override;
+        virtual std::string GetOtherData( INodeEventContext *context, const EventTrigger::Enum& trigger ) override;
         virtual float GetTime( INodeEventContext* pEntity ) const override;
 
         jsonConfigurable::tDynamicStringSet m_NodePropertiesToReport;

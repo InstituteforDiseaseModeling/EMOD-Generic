@@ -27,7 +27,7 @@ namespace Kernel {
         // -----------------------------
         virtual void Initialize( unsigned int nrmSize ) override;
         virtual std::string GetHeader() const override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
     private:
         const ISimulation * _parent;

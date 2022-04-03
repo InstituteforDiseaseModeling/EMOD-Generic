@@ -33,26 +33,31 @@ else:
                             "StrainIdentity.cpp",
                             "SerializedPopulation.cpp",
                             "SerializationTimeCalc.cpp",
+                            "RandomSerializable.cpp",
+                            "RandomNumberGeneratorFactory.cpp",
+                            "BroadcasterImpl.cpp",
                             
                             # Campaign
-                            "BroadcasterImpl.cpp",
-                            "BroadcastCoordinatorEvent.cpp",
-                            "CalendarEventCoordinator.cpp",
                             "CampaignEvent.cpp",
-                            "DelayEventCoordinator.cpp",
-                            "IncidenceEventCoordinator.cpp",
                             "InterventionsContainer.cpp",
                             "NChooserEventCoordinator.cpp",
                             "NodeEventContext.cpp",
                             "SimulationEventContext.cpp",
                             "StandardEventCoordinator.cpp",
-                            "IncidenceCounterSurveillance.cpp",
-                            "SurveillanceEventCoordinator.cpp",
-                            "TriggeredEventCoordinator.cpp",
                             "CoverageByNodeEventCoordinator.cpp",
                             "CommunityHealthWorkerEventCoordinator.cpp",
                             "DemographicRestrictions.cpp",
                             "PropertyRestrictions.cpp",
+
+                            # Surveillance
+                            "BroadcastCoordinatorEvent.cpp",
+                            "CalendarEventCoordinator.cpp",
+                            "DelayEventCoordinator.cpp",
+                            "IncidenceEventCoordinator.cpp",
+                            "IncidenceCounterSurveillance.cpp",
+                            "SurveillanceEventCoordinator.cpp",
+                            "TriggeredEventCoordinator.cpp",
+                            "ReportSurveillanceEventRecorder.cpp",
                             
                             # Reporting
                             "DemographicsReport.cpp",
@@ -62,7 +67,6 @@ else:
                             "ReportEventRecorder.cpp",
                             "ReportEventRecorderNode.cpp",
                             "ReportEventRecorderCoordinator.cpp",
-                            "ReportSurveillanceEventRecorder.cpp",
                             
                             # HINT
                             "StrainAwareTransmissionGroups.cpp",
@@ -97,6 +101,7 @@ else:
                             "../interventions/ImmunityBloodTest.cpp",
                             "../interventions/ImportPressure.cpp",
                             "../interventions/IndividualImmunityChanger.cpp",
+                            "../interventions/MeaslesVaccine.cpp",
                             "../interventions/MigrateIndividuals.cpp",
                             "../interventions/MigrateFamily.cpp",
                             "../interventions/MultiInterventionDistributor.cpp",

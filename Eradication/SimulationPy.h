@@ -22,17 +22,18 @@ namespace Kernel
     class SimulationPy : public Simulation
     {
     public:
-        SimulationPy();
         static SimulationPy *CreateSimulation();
         static SimulationPy *CreateSimulation(const ::Configuration *config);
         virtual ~SimulationPy(void) { }
         virtual void Reports_CreateBuiltIn();
 
     protected:
-        static bool ValidateConfiguration(const ::Configuration *config);
+        SimulationPy();
 
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
+
+        static bool ValidateConfiguration(const ::Configuration *config);
 
         // Allows correct type of community to be added by derived class Simulations
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

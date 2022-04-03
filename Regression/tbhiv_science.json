@@ -1,4 +1,7 @@
 {
+    "_science": [
+        { "path": "TBHIV/SFTs/Outbreaks/Both" }
+    ],
     "science": [
         { "path": "TBHIV/SFTs/Outbreaks/TB_Only" },
         { "path": "TBHIV/SFTs/Outbreaks/HIV_Only" },

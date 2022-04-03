@@ -20,18 +20,18 @@ namespace Kernel
     // of files that contain this implementation so that when we make changes we do not compile a
     // ton files.
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    BroadcasterImpl<Observer,Entity,Trigger,TriggerFactory>::BroadcasterImpl()
+    template<class Observer, class Entity>
+    BroadcasterImpl<Observer,Entity>::BroadcasterImpl()
         : observers()
         , disposed_observers()
     {
-        int num_triggers = TriggerFactory::GetInstance()->GetNumEventTriggers();
+        int num_triggers = EventTrigger::NUM_EVENT_TRIGGERS;
         observers.resize( num_triggers );
         disposed_observers.resize( num_triggers );
     }
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    BroadcasterImpl<Observer, Entity, Trigger, TriggerFactory>::~BroadcasterImpl()
+    template<class Observer, class Entity>
+    BroadcasterImpl<Observer, Entity>::~BroadcasterImpl()
     {
         DisposeOfUnregisteredObservers();
 
@@ -46,42 +46,42 @@ namespace Kernel
         }
     }
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    void BroadcasterImpl<Observer, Entity, Trigger, TriggerFactory>::RegisterObserver( Observer* pObserver, const Trigger& trigger )
+    template<class Observer, class Entity>
+    void BroadcasterImpl<Observer, Entity>::RegisterObserver( Observer* pObserver, const EventTrigger::Enum& trigger )
     {
-        std::vector<Observer*>& event_observer_list = observers[ trigger.GetIndex() ];
+        std::vector<Observer*>& event_observer_list = observers[ trigger ];
 
         if( std::find( event_observer_list.begin(), event_observer_list.end(), pObserver ) != event_observer_list.end() )
         {
             std::stringstream ss;
-            ss << "Trying to register an observer (" << typeid(*pObserver).name() << ") more than once to event " << trigger.ToString();
+            ss << "Trying to register an observer (" << typeid(*pObserver).name() << ") more than once to event " << EventTrigger::pairs::lookup_key( trigger );
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        LOG_DEBUG_F( "Observer is registering for event %s.\n", trigger.c_str() );
+        LOG_DEBUG_F( "Observer is registering for event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
         event_observer_list.push_back( pObserver );
         pObserver->AddRef();
     }
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    void BroadcasterImpl<Observer, Entity, Trigger, TriggerFactory>::UnregisterObserver( Observer* pObserver, const Trigger& trigger )
+    template<class Observer, class Entity>
+    void BroadcasterImpl<Observer, Entity>::UnregisterObserver( Observer* pObserver, const EventTrigger::Enum& trigger )
     {
         LOG_DEBUG( "[UnregisterObserver] Putting observer into the disposed observers list .\n" );
-        disposed_observers[ trigger.GetIndex() ].push_back( pObserver );
+        disposed_observers[ trigger ].push_back( pObserver );
     }
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    void BroadcasterImpl<Observer, Entity, Trigger, TriggerFactory>::TriggerObservers( Entity* pEntity, const Trigger& trigger )
+    template<class Observer, class Entity>
+    void BroadcasterImpl<Observer, Entity>::TriggerObservers( Entity* pEntity, const EventTrigger::Enum& trigger )
     {
-        if( trigger.IsUninitialized() )
+        if( trigger == EventTrigger::NoTrigger )
         {
             return;
         }
 
-        std::vector<Observer*>& observer_list = observers[ trigger.GetIndex() ];
-        std::vector<Observer*>& disposed_list = disposed_observers[ trigger.GetIndex() ];
+        std::vector<Observer*>& observer_list = observers[ trigger ];
+        std::vector<Observer*>& disposed_list = disposed_observers[ trigger ];
 
-        LOG_DEBUG_F( "We have %d observers of event %s.\n", observer_list.size(), trigger.c_str() );
+        LOG_DEBUG_F( "We have %d observers of event %s.\n", observer_list.size(), EventTrigger::pairs::lookup_key( trigger ) );
         for( auto observer : observer_list )
         {
             // ---------------------------------------------------------------------
@@ -102,8 +102,8 @@ namespace Kernel
         }
     }
 
-    template<class Observer, class Entity, class Trigger, class TriggerFactory>
-    void BroadcasterImpl<Observer, Entity, Trigger, TriggerFactory>::DisposeOfUnregisteredObservers()
+    template<class Observer, class Entity>
+    void BroadcasterImpl<Observer, Entity>::DisposeOfUnregisteredObservers()
     {
         if( disposed_observers.size() > 0 )
         {
@@ -123,9 +123,10 @@ namespace Kernel
                     {
                         current_list[ i ] = current_list.back();
                         current_list.pop_back();
+                        const char * event_name = "<TBD: get event name from id>";
                         LOG_DEBUG_F( "[UnregisterObserver] Removed observer from list: now %d observers of event %s.\n",
                                     current_list.size(),
-                                    TriggerFactory::GetInstance()->GetEventTriggerName( event_index ).c_str()
+                                    event_name
                         );
                         break;
                     }

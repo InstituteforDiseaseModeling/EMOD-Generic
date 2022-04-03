@@ -14,6 +14,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISupports.h"
 #include "IdmApi.h"
 #include "ExternalNodeId.h"
+#include "ISusceptibilityContext.h"
+#include "EventTrigger.h"
+
+//class RANDOMBASE;
 
 namespace Kernel
 {
@@ -21,10 +25,9 @@ namespace Kernel
     class SimulationConfig;
     class IInterventionFactory;
     struct DemographicsContext;
-    struct INodeQualifier;
+    struct INodeQualifier; 
     struct IIndividualHuman;
     struct IdmDateTime;
-    class EventTrigger;
     struct ISimulationEventContext;
 
     ////////////////////////////////////////////////////////////////////////
@@ -64,7 +67,7 @@ namespace Kernel
         virtual bool CanSupportFamilyTrips() const = 0;
 
         // events
-        virtual void DistributeEventToOtherNodes( const EventTrigger& rEventTrigger, INodeQualifier* pQualifier ) = 0;
+        virtual void DistributeEventToOtherNodes( const EventTrigger::Enum& rEventTrigger, INodeQualifier* pQualifier ) = 0;
         virtual void UpdateNodeEvents() = 0;
         virtual ISimulationEventContext* GetSimulationEventContext() = 0;
 

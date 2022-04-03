@@ -40,8 +40,8 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
         std::vector< IndividualHumanContextFake*              > m_human_list ;
         IdmMpi::MessageInterface* m_pMpi;
         SimulationConfig* m_pSimulationConfig ;
-        EventTrigger m_ListenForEvent;
-        EventTrigger m_EventFromIntervention;
+        EventTrigger::Enum m_ListenForEvent = EventTrigger::GP_EVENT_000;
+        EventTrigger::Enum m_EventFromIntervention = EventTrigger::GP_EVENT_001;
 
         ChwFixture()
             : m_hic_list()
@@ -68,10 +68,9 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
 
             Environment::setSimulationConfig( m_pSimulationConfig );
 
-            EventTriggerFactory::DeleteInstance();
-            EventTriggerFactory::GetInstance()->Configure( EnvPtr->Config );
-            m_ListenForEvent        = EventTriggerFactory::GetInstance()->CreateUserEventTrigger( "ListenForEvent"        );
-            m_EventFromIntervention = EventTriggerFactory::GetInstance()->CreateUserEventTrigger( "EventFromIntervention" );
+            ////EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
+            //m_ListenForEvent        = //EventTriggerFactoryGetInstance()->CreateUserEventTrigger( "ListenForEvent"        );
+            //m_EventFromIntervention = //EventTriggerFactoryGetInstance()->CreateUserEventTrigger( "EventFromIntervention" );
 
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
@@ -97,7 +96,7 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
             }
             m_human_list.clear();
 
-            EventTriggerFactory::DeleteInstance();
+            ////EventTriggerFactoryDeleteInstance();
             IPFactory::DeleteFactory();
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
@@ -166,7 +165,7 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
 
     };
 
-    void BroadcastEvent( IIndividualHumanEventContext* pIHEC, const EventTrigger& rTrigger )
+    void BroadcastEvent( IIndividualHumanEventContext* pIHEC, const EventTrigger::Enum& rTrigger )
     {
         IIndividualEventBroadcaster* broadcaster = pIHEC->GetNodeEventContext()->GetIndividualEventBroadcaster();
         broadcaster->TriggerObservers( pIHEC, rTrigger );
@@ -175,7 +174,7 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
     //typedef std::function<void (/*suids::suid, */IIndividualHumanEventContext*)> individual_visit_function_t;
     void BroadcastEvent_ListenForEvent( IIndividualHumanEventContext* pIHEC )
     {
-        BroadcastEvent( pIHEC, EventTrigger("ListenForEvent") );
+        BroadcastEvent( pIHEC, EventTrigger::GP_EVENT_000 );
     }
 
 #if 1

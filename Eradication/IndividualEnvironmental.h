@@ -14,11 +14,21 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
+    class IndividualHumanEnvironmentalConfig : public IndividualHumanConfig
+    {
+        friend class IndividualHumanEnvironmental; 
+    public:
+        virtual bool Configure( const Configuration* config ) override;
+    };
+
     class IndividualHumanEnvironmental : public IndividualHuman
     {
-    public:
-        DECLARE_QUERY_INTERFACE()
+        friend class SimulationEnvironmental;
 
+        DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanEnvironmental )
+
+    public:
         static IndividualHumanEnvironmental *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanEnvironmental(void);
 
@@ -41,6 +51,7 @@ namespace Kernel
         TransmissionRoute::Enum exposureRoute;
         std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
-        DECLARE_SERIALIZABLE(IndividualHumanEnvironmental);
+    private:
+        static void InitializeStaticsEnvironmental( const Configuration* config );
     };
 }

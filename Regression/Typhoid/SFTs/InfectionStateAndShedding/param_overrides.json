@@ -1,0 +1,23 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Typhoid_1",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_100_overlay.json"
+        ],
+        "Environmental_Peak_Start": 30.0,
+        "Environmental_Ramp_Down_Duration": 30,
+        "Environmental_Ramp_Up_Duration": 50,
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 365,
+        "Typhoid_Carrier_Probability": 0.1,
+        "Typhoid_Contact_Exposure_Rate": 0.0,
+        "Typhoid_Environmental_Exposure_Rate": 1.0,
+        "Typhoid_Prepatent_Relative_Infectiousness": 0.4,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.8,
+        "Typhoid_Symptomatic_Fraction": 0.5,
+        "logLevel_IndividualTyphoid": "VALID",
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

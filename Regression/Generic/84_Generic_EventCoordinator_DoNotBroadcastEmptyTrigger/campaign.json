@@ -42,7 +42,7 @@
                       "Box_Duration": 20
                    }
                 },
-                "Completion_Event": ""
+                "Completion_Event": "NoTrigger"
             }
         } 
     ],

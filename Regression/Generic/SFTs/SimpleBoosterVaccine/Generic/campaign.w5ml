@@ -1,0 +1,28 @@
+Events:
+- What: 
+    class: SimpleBoosterVaccine
+    Vaccine_Type: Generic
+    Vaccine_Take: 1
+    Prime_Effect: 0.2
+    Boost_Effect: 0.45
+    Boost_Threshold: 0.0
+    Cost_To_Consumer: 1.0
+    Efficacy_Profile: Box, 1, 20
+  Who: 100%, AllAges, BothSexes, QualityOfCare:2_Seed_Test
+  When: 1
+  Where: Everywhere
+
+- What: 
+    class: OutbreakIndividual
+    Ignore_Immunity: 0
+  Who: 100%, AllAges, BothSexes, QualityOfCare:2_Seed_Test
+  When: 10
+  Where: Everywhere
+
+- What: 
+    class: OutbreakIndividual
+    Ignore_Immunity: 0
+  Who: 100%, AllAges, BothSexes, QualityOfCare:1_Seed_Control
+  When: 10
+  Where: Everywhere
+

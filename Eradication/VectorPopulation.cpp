@@ -23,6 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "StrainIdentity.h"
 #include "IMigrationInfoVector.h"
 #include "RANDOM.h"
+#include "IndividualVector.h"
 
 SETUP_LOGGING( "VectorPopulation" )
 
@@ -636,7 +637,7 @@ namespace Kernel
                                                  TransmissionRoute::Enum route )
     {
         release_assert( (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) || (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR) );
-        auto vector = ((route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) ? NodeVector::vector_indoor : NodeVector::vector_outdoor );
+        auto vector = ((route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) ? IndividualHumanVector::vector_indoor : IndividualHumanVector::vector_outdoor );
         m_context->DepositFromIndividual( strain, float( attemptFeed ) * species()->transmissionmod, vector, route );
     }
 
@@ -680,12 +681,12 @@ namespace Kernel
             {
                 case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR:
                     txGroups = m_txIndoor;
-                    group = NodeVector::vector_indoor;
+                    group = IndividualHumanVector::vector_indoor;
                     break;
 
                 case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR:
                     txGroups = m_txOutdoor;
-                    group = NodeVector::vector_outdoor;
+                    group = IndividualHumanVector::vector_outdoor;
                     break;
 
                 default:
@@ -1458,7 +1459,7 @@ namespace Kernel
     void VectorPopulation::Update_Egg_Hatching( float dt )
     {
         // Calculate egg-hatch delay factor
-        Fraction eggHatchDelayFactor = dt;
+        float eggHatchDelayFactor = dt;
         Fraction localdensdephatchmod = 1.0;
         NonNegativeFloat temperature = m_context->GetLocalWeather()->airtemperature();
 

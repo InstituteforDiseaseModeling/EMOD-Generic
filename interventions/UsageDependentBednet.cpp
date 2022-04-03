@@ -154,10 +154,10 @@ namespace Kernel
         initConfig("Expiration_Period_Distribution", expiration_function, inputJson, MetadataDescriptor::Enum("Expiration_Distribution_Type", UDBednet_Expiration_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)));                 
         m_ExpirationDuration = DistributionFactory::CreateDistribution( this, expiration_function, "Expiration_Period", inputJson );
 
-        initConfigTypeMap( "Received_Event", &m_TriggerReceived, UDBednet_Received_Event_DESC_TEXT );
-        initConfigTypeMap( "Using_Event",    &m_TriggerUsing,    UDBednet_Using_Event_DESC_TEXT );
-        initConfigTypeMap( "Discard_Event",  &m_TriggerDiscard,  UDBednet_Discard_Event_DESC_TEXT );
 
+        initConfig( "Received_Event", m_TriggerReceived, inputJson, MetadataDescriptor::Enum("Received_Event", UDBednet_Received_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Using_Event", m_TriggerUsing, inputJson, MetadataDescriptor::Enum("Using_Event", UDBednet_Using_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Discard_Event", m_TriggerDiscard, inputJson, MetadataDescriptor::Enum("Discard_Event", UDBednet_Discard_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         return JsonConfigurable::Configure( inputJson ); // AbstractBednet is responsible for calling BaseIntervention::Configure()
     }
 
@@ -244,9 +244,10 @@ namespace Kernel
         UsageDependentBednet& bednet = *obj;
 
         ar.labelElement( "m_UsageEffectList" ) & bednet.m_UsageEffectList;
-        ar.labelElement( "m_TriggerReceived" ) & bednet.m_TriggerReceived;
-        ar.labelElement( "m_TriggerUsing"    ) & bednet.m_TriggerUsing;
-        ar.labelElement( "m_TriggerDiscard"  ) & bednet.m_TriggerDiscard;
+        LOG_ERR( "TBD: Serialize enum." );
+        ar.labelElement( "m_TriggerReceived" ) & (uint32_t&)bednet.m_TriggerReceived;
+        ar.labelElement( "m_TriggerUsing"    ) & (uint32_t&)bednet.m_TriggerUsing;
+        ar.labelElement( "m_TriggerDiscard"  ) & (uint32_t&)bednet.m_TriggerDiscard;
         ar.labelElement( "m_ExpirationTimer" ) & bednet.m_ExpirationTimer;
         ar.labelElement( "m_TimerHasExpired" ) & bednet.m_TimerHasExpired;
     }

@@ -1,0 +1,12 @@
+{
+  "Custom_Reports": {
+    "Use_Explicit_Dlls": 1,
+    "ReportStrainTracking": {
+      "Enabled": 1,
+      "Reports": [
+        {
+        }
+      ]
+    }
+  }
+}

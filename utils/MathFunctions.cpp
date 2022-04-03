@@ -20,6 +20,7 @@ SETUP_LOGGING("MathFunctions")
 
 namespace Kernel
 {
+
 #define PI (3.141592653589793)
 
     // This method uses the Haversine Formula for calculating the great-circle distance

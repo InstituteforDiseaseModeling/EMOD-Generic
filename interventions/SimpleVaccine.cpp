@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Common.h"                  // for INFINITE_TIME
 #include "IIndividualHumanContext.h"
 #include "InterventionsContainer.h"  // for IVaccineConsumer methods
+#include "IndividualEventContext.h"
 #include "RANDOM.h"                  // for ApplyVaccineTake random draw
 
 SETUP_LOGGING( "SimpleVaccine" )
@@ -169,6 +170,14 @@ namespace Kernel
         release_assert( pihc );
 
         bool did_vaccine_take = pihc->GetRng()->SmartDraw( vaccine_take );
+        if (did_vaccine_take)
+        { 
+            LOG_VALID_F("Vaccine did take for individual %d with age %f.\n", pihc->GetSuid(), pihc->GetEventContext()->GetAge());
+        }
+        else
+        {
+            LOG_VALID_F("Vaccine did not take for individual %d with age %f.\n", pihc->GetSuid(), pihc->GetEventContext()->GetAge());
+        }
         return did_vaccine_take;
     }
 

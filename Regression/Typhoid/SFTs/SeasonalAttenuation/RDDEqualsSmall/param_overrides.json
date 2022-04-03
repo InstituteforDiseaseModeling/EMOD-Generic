@@ -1,0 +1,23 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Seasonal_Attenuation_RDDSmall",
+        "Demographics_Filenames": [
+            "../../../Santiago_Demographics.json",
+            "../../../Santiago_10_overlay.json"
+        ],
+        "Enable_Vital_Dynamics": 0,
+        "Environmental_Ramp_Down_Duration": 1.1755e-38,
+        "Python_Script_Path": "SHARED",
+        "Report_Typhoid_ByAgeAndGender_Start_Year": 1930,
+        "Typhoid_Acute_Infectiousness": 400,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Chronic_Relative_Infectiousness": 0.15,
+        "Typhoid_Prepatent_Relative_Infectiousness": 0.55,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.99,
+        "logLevel_IndividualTyphoid": "VALID",
+        "logLevel_NodeEnvironmental": "VALID",
+        "logLevel_Report": "DEBUG",
+        "logLevel_StrainAwareTransmissionGroups": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

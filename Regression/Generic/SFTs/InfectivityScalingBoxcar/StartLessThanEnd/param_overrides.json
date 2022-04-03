@@ -25,6 +25,7 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingBoxcar/StartLessThanEnd",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": ""
         },
         "logLevel_Individual": "DEBUG"

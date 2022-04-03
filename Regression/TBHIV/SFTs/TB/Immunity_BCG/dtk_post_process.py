@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
-
-import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import dtk_test.dtk_sft as sft
+import dtk_ep4.dtk_post_process_adhocevents as dpp_adhoc
+
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
+
 import os
 from scipy import stats
 
@@ -154,6 +156,7 @@ def application( output_folder="output", stdout_filename="test.txt", insetchart_
                  config_filename="config.json", campaign_filename="campaign.json",
                  report_name=sft.sft_output_filename,
                  debug=False):
+    dpp_adhoc.application( output_folder )
     if debug:
         print( "output_folder: " + output_folder )
         print( "stdout_filename: " + stdout_filename+ "\n" )

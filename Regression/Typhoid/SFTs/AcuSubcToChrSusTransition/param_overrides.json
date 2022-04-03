@@ -1,0 +1,13 @@
+{
+    "parameters": {
+        "Campaign_Filename": "campaign.w5ml",
+        "Config_Name": "SFT:Typhoid:Acute_To_Subclinical_To_Chronic_or_Susceptible_Transitions",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "x_Base_Population": 0.1,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

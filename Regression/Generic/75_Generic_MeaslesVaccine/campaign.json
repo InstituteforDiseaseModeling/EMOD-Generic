@@ -1,0 +1,70 @@
+{
+     "Use_Defaults": 1,
+     "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Antigen": 0,
+                    "Genome": 0,
+                    "class": "OutbreakIndividual",
+                    "Ignore_Immunity": 0
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 5,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0, 
+                "Intervention_Config": {
+                    "Cost_To_Consumer": 10.0, 
+                    "Acquire_Config": {
+                        "Box_Duration": 100, 
+                        "Initial_Effect": 0.5, 
+                        "class": "WaningEffectBox"
+                    },
+                    "Vaccine_Take_Vs_Age_Map":
+                    {
+                        "Times": [0, 90, 150, 180, 230, 400],
+                        "Values": [0, 0, 0.3, 0.5, 0.7, 1]
+                    },
+                    "Existing_Antibody_Blocking_Multiplier": 0.3,
+                    "class": "MeaslesVaccine"
+                }, 
+                "Target_Demographic": "Everyone", 
+                "class": "StandardInterventionDistributionEventCoordinator"
+            }, 
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            }, 
+            "Start_Day": 10, 
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Antigen": 0,
+                    "Genome": 0,
+                    "class": "OutbreakIndividual",
+                    "Ignore_Immunity": 0
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 15,
+            "class": "CampaignEvent"
+        }
+     ]
+}

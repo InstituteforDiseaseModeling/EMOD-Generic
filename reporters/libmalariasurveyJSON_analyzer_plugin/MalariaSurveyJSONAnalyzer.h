@@ -77,7 +77,7 @@ namespace Kernel
         // BaseEventReportIntervalOutput
         virtual void Initialize( unsigned int nrmSize ) override;
         virtual bool Configure( const Configuration* ) override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
     protected:
         // BaseEventReportIntervalOutput

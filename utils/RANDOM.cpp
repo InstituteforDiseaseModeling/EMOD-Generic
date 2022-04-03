@@ -21,7 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <tmmintrin.h> // _mm_shuffle_epi8
 #endif
 
-#include "IArchive.h"
+#define PI_F 3.1415927f
 
 #define PRNG_COUNT  (1<<20) // Let's start with ~1 million
 
@@ -224,6 +224,81 @@ double RANDOMBASE::eGauss()
     eGauss_ = r1 * norm;
     bGauss = true;
     return r2 * norm;
+}
+
+// Approximate re-sampling for a truncated eGauss
+float RANDOMBASE::eGaussNonNeg(float mu, float sig)
+{
+    float retv = 0.0f;
+
+    if(sig < 0.0f)
+    {
+        // Invalid input; return error (-1.0f)
+        retv = -1.0f;
+    }
+    else if(mu == HUGE_VALF || sig == HUGE_VALF)
+    {
+        // Invalid input; return error (-1.0f)
+        retv = -1.0f;
+    }
+    else if(sig == 0.0f && mu < 0.0f)
+    {
+        // Delta function on negative value; return error (-1.0f)
+        retv = -1.0f;
+    }
+    else if(sig == 0.0f)
+    {
+        // Delta function on non-negative value; return value
+        retv = mu;
+    }
+    else if(mu/sig < -4.0f)
+    {
+        // Insufficient precision when mu/sig < -4.0; return error (-1.0f)
+        retv = -1.0f;
+    }
+    else
+    {
+        // Valid input for non-negative Gaussian distribution
+        float minv = erf_idm(-mu/sig/SQRT2);
+        float x    = e();
+        x    = x+(1.0f-x)*minv;
+
+        if( (minv < x) && (x < 1.0f) )
+        {
+            retv = mu + sig*SQRT2*erfinv_idm(x);
+            retv = (retv > 0.0f) ? retv : 0.0f;
+        }
+    }
+
+    return retv;
+}
+
+// Inverse error function: x = (-1.0, 1.0)
+//   "A handy approximation for the error function and its inverse" - Sergei Winitzki
+float RANDOMBASE::erfinv_idm(float x)
+{
+    float tt2, tt1, lnx, sgn;
+    sgn = (x < 0) ? -1.0f : 1.0f;
+
+    x   = (1.0f - x)*(1.0f + x);
+    lnx = logf(x);
+    tt1 = 2.0f/(0.147f*PI_F) + 0.5f*lnx;
+    tt2 = lnx/0.147f;
+
+    return(sgn*sqrtf(-tt1 + sqrtf(tt1*tt1 - tt2)));
+}
+
+// Exact inverse of erfinv_idm: x = (-inf, inf)
+//   Used in place of the the math.h library function erf for internal consistency
+float RANDOMBASE::erf_idm(float x)
+{
+    float tt2, tt1, sgn;
+    sgn = (x < 0) ? -1.0f : 1.0f;
+
+    tt1 = 4.0f/PI_F + 0.147f*x*x;
+    tt2 = 1.0f + 0.147f*x*x;
+
+    return(sgn*sqrtf(1.0f - expf(-x*x*tt1/tt2)));
 }
 
 double RANDOMBASE::ee()
@@ -616,33 +691,6 @@ double RANDOMBASE::get_cdf_random_num_precision()
     return cdf_random_num_precision;
 }
 
-void RANDOMBASE::serialize( IArchive& ar, RANDOMBASE* obj )
-{
-    RANDOMBASE& rb = *obj;
-    ar.labelElement( "cache_count"   ) & rb.cache_count;
-
-    if( ar.IsReader() )
-    {
-        free( rb.random_bits );
-        free( rb.random_floats );
-
-        rb.random_bits   = reinterpret_cast<uint32_t*>(malloc( rb.cache_count * sizeof( uint32_t ) ));
-        rb.random_floats = reinterpret_cast<float*   >(malloc( rb.cache_count * sizeof( float    ) ));
-    }
-
-    ar.labelElement( "index"         ) & rb.index;
-    ar.labelElement( "random_bits"   ); ar.serialize( rb.random_bits, rb.cache_count );
-    ar.labelElement( "random_floats" ); ar.serialize( rb.random_floats, rb.cache_count );
-    ar.labelElement( "bGauss"        ) & rb.bGauss;
-    ar.labelElement( "eGauss_"       ) & rb.eGauss_;
-}
-
-// ----------------------------------------------------------------------------
-// --- LINEAR_CONGRUENTIAL
-// ----------------------------------------------------------------------------
-BEGIN_QUERY_INTERFACE_BODY( LINEAR_CONGRUENTIAL )
-END_QUERY_INTERFACE_BODY( LINEAR_CONGRUENTIAL )
-
 LINEAR_CONGRUENTIAL::LINEAR_CONGRUENTIAL( uint32_t iSequence, size_t nCache )
     : RANDOMBASE( nCache )
     , iSeq( iSequence )
@@ -660,21 +708,6 @@ void LINEAR_CONGRUENTIAL::fill_bits()
         random_bits[ i ] = iSeq = 69069 * iSeq + 1;
     }
 }
-
-REGISTER_SERIALIZABLE( LINEAR_CONGRUENTIAL );
-
-void LINEAR_CONGRUENTIAL::serialize( Kernel::IArchive& ar, LINEAR_CONGRUENTIAL* obj )
-{
-    RANDOMBASE::serialize( ar, obj );
-    LINEAR_CONGRUENTIAL& lc = *obj;
-    ar.labelElement( "iSeq" ) & lc.iSeq;
-}
-
-// ----------------------------------------------------------------------------
-// --- PSEUDO_DES
-// ----------------------------------------------------------------------------
-BEGIN_QUERY_INTERFACE_BODY( PSEUDO_DES )
-END_QUERY_INTERFACE_BODY( PSEUDO_DES )
 
 PSEUDO_DES::PSEUDO_DES( uint64_t iSequence, size_t nCache )
     : RANDOMBASE( nCache )
@@ -731,22 +764,6 @@ void PSEUDO_DES::fill_bits()
             kk[1] ^ ((XCHG(iB) ^ c2[3]) + LO(iA) * HI(iA));
     }
 }
-
-REGISTER_SERIALIZABLE( PSEUDO_DES );
-
-void PSEUDO_DES::serialize( Kernel::IArchive& ar, PSEUDO_DES* obj )
-{
-    RANDOMBASE::serialize( ar, obj );
-    PSEUDO_DES& des = *obj;
-    ar.labelElement( "iSeq" ) & des.iSeq;
-    ar.labelElement( "iNum" ) & des.iNum;
-}
-
-// ----------------------------------------------------------------------------
-// --- AES_COUNTER
-// ----------------------------------------------------------------------------
-BEGIN_QUERY_INTERFACE_BODY( AES_COUNTER )
-END_QUERY_INTERFACE_BODY( AES_COUNTER )
 
 inline __m128i AES_128_ASSIST(__m128i temp1, __m128i temp2)
 {
@@ -894,34 +911,6 @@ void AES_COUNTER::fill_bits()
 {
     memset(random_bits, 0, sizeof(__m128i));
     AES_Get_Bits_Ex(random_bits, cache_count * sizeof(uint32_t), m_nonce, m_iteration++, &m_keySchedule);
-}
-
-REGISTER_SERIALIZABLE( AES_COUNTER );
-
-void serialize_AES_KEY( Kernel::IArchive& ar, AES_KEY& key )
-{
-    size_t num_keys = 2 * NUM_KEYS_IN_SCHEDULE;
-
-    ar.startObject();
-    ar.labelElement("KEY");
-    ar.startArray( num_keys );
-    uint64_t* vals = (uint64_t*)(key.KEY);
-    for( size_t i = 0; i < num_keys; ++i )
-    {
-        ar & vals[i];
-    }
-    ar.endArray();
-    ar.labelElement("nr") & key.nr;
-    ar.endObject();
-}
-
-void AES_COUNTER::serialize( Kernel::IArchive& ar, AES_COUNTER* obj )
-{
-    RANDOMBASE::serialize( ar, obj );
-    AES_COUNTER& aes = *obj;
-    ar.labelElement( "m_keySchedule" ); serialize_AES_KEY( ar, aes.m_keySchedule );
-    ar.labelElement( "m_nonce"     ) & aes.m_nonce;
-    ar.labelElement( "m_iteration" ) & aes.m_iteration;
 }
 
 }

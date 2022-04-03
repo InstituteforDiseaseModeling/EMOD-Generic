@@ -35,6 +35,7 @@
         },
         "PRIMARY": {
             "Config_Name": "SimpleBoosterVaccine/Mortality",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "Namawala",
             "Simulation_Duration": 210
         }

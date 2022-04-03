@@ -1,20 +1,18 @@
 {
-    "Metadata": {
-        "DateCreated": "Sun Sep 25 23:19:55 2011", 
-        "Tool": "convertdemog.py", 
-        "Author": "jsteinkraus", 
-        "IdReference": "Gridded world grump2.5arcmin", 
-        "NodeCount": 1,
-		"Resolution": 150
-    }, 
-    "Defaults": {
-    },
-    "Nodes": [
-        {
-            "NodeID": 1, 
-            "NodeAttributes": {
-                "InitialPopulation": 1000
-            }
-        }
-    ]
+   "Metadata": {
+      "Author": "yechen",
+      "DateCreated": "2018-07-03 10:43:48.070250",
+      "IdReference": "Gridded world grump2.5arcmin",
+      "NodeCount": 1,
+      "Resolution": 150,
+      "Tool": "dtk-tools"
+   },
+   "Nodes": [
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 1000
+         },
+         "NodeID": 1
+      }
+   ]
 }

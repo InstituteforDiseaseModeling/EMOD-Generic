@@ -1,6 +1,7 @@
 #include <Python.h>
 #include <iostream>
 #include "Vaccine.h"
+#include "Individual.h"
 
 using namespace Kernel;
 
@@ -25,6 +26,25 @@ getIntervention(PyObject *self, PyObject *args) {
     return PyCapsule_New( (void*) new_vaccine, nullptr, nullptr );
 }
 
+static PyObject*
+distribute(PyObject *self, PyObject *args) {
+    PyObject* pf = NULL;
+    if( !PyArg_ParseTuple(args, "O", &pf ) )
+    {
+        std::cout << "Failed to parse id and/or pointer for distribute." << std::endl;
+    }
+    auto * man = (IndividualHuman *)PyCapsule_GetPointer(pf, nullptr );
+    
+    auto * new_iv = new SimpleVaccine();
+    Kernel::JsonConfigurable::_useDefaults = true;
+    auto iv_config_json = Configuration::Load("sv.json");
+    Kernel::JsonConfigurable::_useDefaults = false;
+    new_iv->Configure( iv_config_json );
+    assert( man->GetInterventionsContext() );
+    new_iv->Distribute( man->GetInterventionsContext(), nullptr );
+    Py_RETURN_NONE;
+}
+
 // This (Simple) vaccine module is going to expose two functions.
 // One gets the vaccine in the first place. The second lets a 
 // different module call functions on it in python. I think.
@@ -32,6 +52,7 @@ getIntervention(PyObject *self, PyObject *args) {
 static PyMethodDef DtkvaccineIvIndividualMethods[] =
 {
      {"get_intervention", getIntervention, METH_VARARGS, "Try to return an opaque void pointer that can be invoked from python."},
+     {"distribute", distribute, METH_VARARGS, "Tell intervention to distribute itself to an individual."},
      {NULL, NULL, 0, NULL}
 };
 

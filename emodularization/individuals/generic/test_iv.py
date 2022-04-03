@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6 
+#!/usr/bin/python3
 #import sys
 #sys.path.append( "build/lib.linux-x86_64-3.6" )
 """
@@ -14,8 +14,9 @@ import json
 id = gi.create( ( 0, 100.0, 1.0 ) )
 print( json.dumps( gi.serialize( id ) ) )
 
-iv = sv.get_intervention()
-gi.give_intervention( ( id, iv ) )
+#iv = sv.get_intervention()
+#gi.give_intervention( ( id, iv ) )
+sv.distribute( gi.get_individual_for_iv( id ) )
 for _ in range(365):
     gi.update( id )
     imm = gi.get_immunity( id ) 

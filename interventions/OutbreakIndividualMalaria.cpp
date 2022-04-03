@@ -27,7 +27,6 @@ namespace Kernel
     OutbreakIndividualMalaria::OutbreakIndividualMalaria()
         : OutbreakIndividual()
         , m_GenomeMarkerNames()
-        , m_CreateRandomGenome(false)
     {
         initSimTypes( 1, "MALARIA_SIM" );
     }
@@ -38,28 +37,24 @@ namespace Kernel
 
     bool OutbreakIndividualMalaria::Configure( const Configuration * inputJson )
     {
-        bool ret = OutbreakIndividual::Configure( inputJson );
-
-        if( ret && !JsonConfigurable::_dryrun )
-        {
-            genome = -1;  // tell OutbreakIndividual::GetNewStrainIdentity() to create random genome
-            if(!m_CreateRandomGenome )
-            {
-                genome = GET_CONFIGURABLE( SimulationConfig )->malaria_params->pGenomeMarkers->CreateBits( m_GenomeMarkerNames );
-            }
-        }
-        return ret;
-    }
-
-    void OutbreakIndividualMalaria::ConfigureGenome( const Configuration * inputJson )
-    {
         const std::set<std::string>* p_known_markers = nullptr;
         if( !JsonConfigurable::_dryrun )
         {
             p_known_markers = &(GET_CONFIGURABLE( SimulationConfig )->malaria_params->pGenomeMarkers->GetNameSet());
         }
 
-        initConfigTypeMap( "Create_Random_Genome", &m_CreateRandomGenome, OIM_Create_Random_Genome_DESC_TEXT, false );
+        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
         initConfigTypeMap( "Genome_Markers", &m_GenomeMarkerNames, OIM_Genome_Markers_DESC_TEXT, "<configuration>.Genome_Markers", *p_known_markers );
+        initConfigTypeMap( "Ignore_Immunity", &ignoreImmunity, OB_Ignore_Immunity_DESC_TEXT, true );
+        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1, INT_MAX, -1);
+
+        bool ret = JsonConfigurable::Configure( inputJson );
+
+        if( ret && !JsonConfigurable::_dryrun )
+        {
+            genome = GET_CONFIGURABLE( SimulationConfig )->malaria_params->pGenomeMarkers->CreateBits( m_GenomeMarkerNames );
+        }
+
+        return ret;
     }
 }

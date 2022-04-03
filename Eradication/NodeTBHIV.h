@@ -25,7 +25,7 @@ namespace Kernel
     virtual int32_t AddRef() { return 1; };
     virtual int32_t Release() { return 0; };
     public:
-        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger& trigger);
+        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger);
     };
 
 
@@ -42,7 +42,7 @@ namespace Kernel
         static NodeTBHIV *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid); 
         virtual void Initialize();
 
-        virtual void SetNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih);
+        virtual void SetNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih) override;
 
         virtual bool Configure( const Configuration* config ) override; 
         virtual const NodeDemographicsDistribution* GetHIVCoinfectionDistribution() const override { return HIVCoinfectionDistribution; }

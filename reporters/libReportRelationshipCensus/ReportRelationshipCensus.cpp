@@ -221,7 +221,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     }
 
     bool ReportRelationshipCensus::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                                  const Kernel::EventTrigger &trigger )
+                                                  const EventTrigger::Enum &trigger )
     {
         return true;
     }

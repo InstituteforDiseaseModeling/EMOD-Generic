@@ -19,6 +19,7 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingSinusoidal/TimeStep_.5_days_phase_180",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 1825,
             "Simulation_Timestep": 0.5

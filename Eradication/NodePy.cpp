@@ -190,12 +190,6 @@ namespace Kernel
        
     }
 
-    void NodePy::populateNewIndividualsFromDemographics(int count_new_individuals)
-    {
-        // Populate the initial population
-        Node::populateNewIndividualsFromDemographics(count_new_individuals);
-    }
-
     IndividualHuman *NodePy::createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
     {
         return IndividualHumanPy::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
@@ -213,7 +207,8 @@ namespace Kernel
     NodePyTest::NodePyTest(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     {
         parent = _parent_sim;
-        auto newPerson = configureAndAddNewIndividual(1.0F /*mc*/, 0 /*age*/, 0.0f /*prev*/, 0.5f /*gender*/); // N.B. temp_prevalence=0 without maternal_transmission flag
+        auto newPerson = configureAndAddNewIndividual(1.0f /*mc*/, 0 /*age*/, 0.0f /*prev*/, 0.5f /*gender*/, 1.0f /*mod_acquire*/); // N.B. temp_prevalence=0 without maternal_transmission flag
+
         for (auto pIndividual : individualHumans)
         {
              // Nothing to do at the moment.

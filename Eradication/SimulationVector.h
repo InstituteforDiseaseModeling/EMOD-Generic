@@ -51,16 +51,17 @@ namespace Kernel
         virtual INodeInfo* CreateNodeInfo( int rank, INodeContext* pNC ) override;
 
     protected:
+        SimulationVector();
+
+        virtual void Initialize() override;
+        virtual void Initialize(const ::Configuration *config) override;
+
+        static bool ValidateConfiguration(const ::Configuration *config);
 
         // holds a vector of migrating vectors for each node rank
         vector<vector<IVectorCohort*>> migratingVectorQueues;
         vector< IVectorMigrationReporting* > vector_migration_reports ;
         std::map<suids::suid,float> node_populations_map ;
-
-        virtual void Initialize(const ::Configuration *config) override;
-
-        SimulationVector();
-        static bool ValidateConfiguration(const ::Configuration *config);
 
         virtual void resolveMigration() override;
         virtual void setupMigrationQueues() override;

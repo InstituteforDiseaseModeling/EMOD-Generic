@@ -40,7 +40,7 @@ namespace Kernel
                                               ISimulationEventContext* pSimEventContext ) override;
         virtual void Initialize( unsigned int nrmSize ) override;
         virtual std::string GetHeader() const override;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const override;
         virtual void LogIndividualData( IIndividualHuman* individual ) override;
@@ -172,7 +172,7 @@ namespace Kernel
         bool                      data_has_transmitters;
         bool                      data_stratify_infected_by_CD4;
         std::string               data_name_of_intervention_to_count;
-        std::vector<EventTrigger> data_event_list;
+        std::vector<EventTrigger::Enum> data_event_list;
         bool                      data_has_relationships;
         bool                      data_has_concordant_relationships;
 

@@ -1,0 +1,46 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
+            "Demographics_Filenames": [
+                "generic_scenarios_individualproperties_demographics.json",
+                "initial_prevalence_randomstrain_demographics.json"
+            ],
+            "Enable_Birth": 0,
+            "Enable_Interventions": 1,
+            "Enable_Initial_Prevalence": 1,
+            "Enable_Demographics_Reporting": 1,
+            "Enable_Strain_Tracking": 1,
+            "Enable_Vital_Dynamics": 0,
+            "IMMUNITY": {
+                "Enable_Immune_Decay": 0
+            },
+            "SAMPLING": {
+                "Sample_Rate_Birth": 1
+            }
+        },
+        "DISEASE": {
+            "INCUBATION": {
+                "Incubation_Period_Constant": 2
+            },
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.5,
+                "Infectious_Period_Exponential": 3
+            },
+            "Number_of_Clades": 3,
+            "Log2_Number_of_Genomes_per_Clade": 4
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Property_Output": 1
+        },
+        "PRIMARY": {
+            "Config_Name": "StrainTracking_InitialPrevalence_2RandomGenomes_Weighted",
+            "Geography": "SamplesInput",
+            "logLevel_Infection": "VALID",
+            "Run_Number": 1,
+            "Simulation_Duration": 50
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

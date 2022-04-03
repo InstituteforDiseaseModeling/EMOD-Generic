@@ -25,7 +25,7 @@
         "Enable_Demographics_Reporting": 0,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
-        "Python_Script_Path": "SHARED",
+        "Python_Script_Path": "LOCAL",
         "Serialization_Time_Steps": [
             23,
             24,

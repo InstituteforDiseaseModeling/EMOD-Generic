@@ -46,6 +46,7 @@ namespace Kernel
     void SimulationEnvironmental::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
+        IndividualHumanEnvironmental::InitializeStaticsEnvironmental( config );
     }
 
     SimulationEnvironmental *SimulationEnvironmental::CreateSimulation()
@@ -58,9 +59,8 @@ namespace Kernel
 
     SimulationEnvironmental *SimulationEnvironmental::CreateSimulation(const ::Configuration *config)
     {
-        SimulationEnvironmental *newsimulation = nullptr;
+        SimulationEnvironmental *newsimulation = _new_ SimulationEnvironmental();
 
-        newsimulation = _new_ SimulationEnvironmental();
         if (newsimulation)
         {
             // This sequence is important: first
@@ -69,7 +69,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "ENVIRONMENTAL_SIM requested with invalid configuration." );
             }
         }
 

@@ -22,17 +22,18 @@ namespace Kernel
 
     class IndividualHumanSTIConfig : public IndividualHumanConfig
     {
-        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanSTIConfig )
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
-        DECLARE_QUERY_INTERFACE()
-
-    public:
-
-    protected:
         friend class SimulationSTI;
         friend class IndividualHumanSTI;
         friend class Relationship;
 
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanSTIConfig )
+
+    public:
+        virtual bool Configure( const Configuration* config ) override;
+
+    protected:
         static float debutAgeYrsMale_inv_kappa;
         static float debutAgeYrsFemale_inv_kappa;
         static float debutAgeYrsMin;
@@ -55,24 +56,23 @@ namespace Kernel
         static float coital_dilution_2_partners;
         static float coital_dilution_3_partners;
         static float coital_dilution_4_plus_partners;
-
-        virtual bool Configure( const Configuration* config ) override;
     };
 
     class IndividualHumanSTI :  public IndividualHuman, 
                                 public IIndividualHumanSTI
     {
-    public:
-        DECLARE_QUERY_INTERFACE()
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
+        friend class SimulationSTI;
 
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanSTI )
+
+    public:
+        static IndividualHumanSTI *CreateHuman( INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanSTI(void);
-        static   IndividualHumanSTI *CreateHuman( INodeContext *context, 
-                                                  suids::suid _suid, 
-                                                  float monte_carlo_weight = 1.0f, 
-                                                  float initial_age = 0.0f, 
-                                                  int gender = 0);
+
         virtual void InitializeHuman() override;
+
         virtual void Update(float currenttime, float dt) override;
         virtual void UpdateHistory( const IdmDateTime& rCurrentTime, float dt ) override;
         virtual void UpdatePausedRelationships( const IdmDateTime& rCurrentTime, float dt ) override;
@@ -146,8 +146,6 @@ namespace Kernel
         float GetMaxNumRels(Gender::Enum gender, RelationshipType::Enum rel_type);
         virtual void NotifyPotentialExposure() override;
 
-        static void InitializeStaticsSTI( const Configuration* config );
-
     protected:
         IndividualHumanSTI( suids::suid id = suids::nil_suid(), 
                             float monte_carlo_weight = 1.0f, 
@@ -177,6 +175,8 @@ namespace Kernel
         std::map< int, TransmissionGroupMembership_t > transmissionGroupMembershipByRelationship;
 
     private:
+        static void InitializeStaticsSTI( const Configuration* config );
+
         virtual void IndividualHumanSTI::SetConcurrencyParameters( const char *prop, const char* prop_value );
 
         RelationshipSet_t relationships_at_death ;
@@ -193,7 +193,5 @@ namespace Kernel
 
         typedef std::map<suids::suid, float> PartnerIdToRelEndTimeMap_t;
         std::vector<std::vector<PartnerIdToRelEndTimeMap_t>> num_unique_partners; // vector(by time period) of vector(by relationship type) of maps of IndividualID to Relationship End Time
-
-        DECLARE_SERIALIZABLE(IndividualHumanSTI);
     };
 }

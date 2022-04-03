@@ -28,6 +28,7 @@
         "Report_HIV_Infection_Start_Year": 1900,
         "Report_HIV_Infection_Stop_Year": 2100,
         "Simulation_Duration": 100,
+        "Python_Script_Path": "LOCAL",
         "Simulation_Timestep": 1,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",

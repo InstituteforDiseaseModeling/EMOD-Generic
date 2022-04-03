@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
+#include "Sugar.h" // for EnvPtr
 #include "ReportUtilitiesSTI.h"
 #include "Debug.h"
 #include "IIndividualHuman.h"

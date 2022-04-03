@@ -82,11 +82,11 @@ namespace Kernel
         virtual float getModAcquire() const override;
         virtual float getModTransmit() const override;
         virtual float getModMortality() const override;
-        virtual float getImmuneFailage() const override;
+        virtual float getImmuneFailAgeAcquire() const override;
         virtual void  updateModAcquire(float updateVal) override;
         virtual void  updateModTransmit(float updateVal) override;
         virtual void  updateModMortality(float updateVal) override;
-        virtual void  setImmuneFailage(float newFailage) override;
+        virtual void  setImmuneFailAgeAcquire(float newFailAge) override;
         virtual void  InitNewInfection() override;
         virtual bool  IsImmune() const override;
 
@@ -103,7 +103,7 @@ namespace Kernel
         float trandecayoffset;
         float mortdecayoffset;
 
-        float immune_failage;
+        float m_immune_failage_acquire;
 
         Susceptibility();
         Susceptibility(IIndividualHumanContext *context);

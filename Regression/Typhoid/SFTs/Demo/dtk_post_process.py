@@ -8,7 +8,7 @@ import os
 import dtk_test.dtk_plot_wrapper as plot_wrapper
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)

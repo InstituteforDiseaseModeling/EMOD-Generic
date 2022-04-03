@@ -181,9 +181,9 @@ namespace Kernel
         m_pEffectBlocking->SetContextTo( context );
     }
 
-    void AbstractBednet::BroadcastEvent( const EventTrigger& trigger ) const
+    void AbstractBednet::BroadcastEvent( const EventTrigger::Enum& trigger ) const
     {
-        if( !trigger.IsUninitialized() )
+        if( trigger != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( parent->GetEventContext(), trigger );

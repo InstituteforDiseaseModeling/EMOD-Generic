@@ -1,12 +1,6 @@
 #!/usr/bin/python
 
 import re
-import json
-import math
-import pdb
-import matplotlib.pyplot as plt
-import numpy as np
-
 
 def application( report_file ):
     #print( "Post-processing: " + report_file )

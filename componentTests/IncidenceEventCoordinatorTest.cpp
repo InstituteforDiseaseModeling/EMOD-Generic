@@ -42,8 +42,8 @@ SUITE( IncidenceEventCoordinatorTest )
         std::vector< IndividualHumanContextFake*              > m_human_list;
         IdmMpi::MessageInterface* m_pMpi;
         SimulationConfig* m_pSimulationConfig;
-        EventTrigger m_ActionEvent1;
-        EventTrigger m_ActionEvent2;
+        EventTrigger::Enum m_ActionEvent1;
+        EventTrigger::Enum m_ActionEvent2;
 
         IecFixture()
             : m_hic_list()
@@ -70,10 +70,10 @@ SUITE( IncidenceEventCoordinatorTest )
 
             Environment::setSimulationConfig( m_pSimulationConfig );
 
-            EventTriggerFactory::DeleteInstance();
-            EventTriggerFactory::GetInstance()->Configure( EnvPtr->Config );
-            m_ActionEvent1 = EventTriggerFactory::GetInstance()->CreateUserEventTrigger( "Action_Event_1" );
-            m_ActionEvent2 = EventTriggerFactory::GetInstance()->CreateUserEventTrigger( "Action_Event_2" );
+            //EventTriggerFactoryDeleteInstance();
+            //EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
+            m_ActionEvent1 = EventTrigger::GP_EVENT_000;
+            m_ActionEvent2 = EventTrigger::GP_EVENT_001;
 
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
@@ -108,7 +108,7 @@ SUITE( IncidenceEventCoordinatorTest )
             }
             m_human_list.clear();
 
-            EventTriggerFactory::DeleteInstance();
+            //EventTriggerFactoryDeleteInstance();
             IPFactory::DeleteFactory();
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
@@ -183,13 +183,13 @@ SUITE( IncidenceEventCoordinatorTest )
         IMPLEMENT_NO_REFERENCE_COUNTING()
         virtual QueryResult QueryInterface( iid_t iid, void** pinstance ) { return QueryResult::e_NOINTERFACE; }
 
-        ActionEventListener( const EventTrigger& rListeningForEvent )
+        ActionEventListener( const EventTrigger::Enum& rListeningForEvent )
             : m_Event( rListeningForEvent )
             , m_NumEventsHeard(0)
         {
         }
 
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
         {
             if( m_Event == trigger )
             {
@@ -198,17 +198,17 @@ SUITE( IncidenceEventCoordinatorTest )
             return true;
         }
 
-        const EventTrigger& GetListeningForEvent() const { return m_Event; }
+        const EventTrigger::Enum& GetListeningForEvent() const { return m_Event; }
         uint32_t GetNumEventsHeard() const { return m_NumEventsHeard; }
         void Reset() { m_NumEventsHeard = 0; }
 
     private:
-        EventTrigger m_Event;
+        EventTrigger::Enum m_Event;
         uint32_t m_NumEventsHeard;
     };
 
 
-    void BroadcastEvent( IIndividualHumanEventContext* pIHEC, const EventTrigger& rTrigger )
+    void BroadcastEvent( IIndividualHumanEventContext* pIHEC, const EventTrigger::Enum& rTrigger )
     {
         IIndividualEventBroadcaster* broadcaster = pIHEC->GetNodeEventContext()->GetIndividualEventBroadcaster();
         broadcaster->TriggerObservers( pIHEC, rTrigger );

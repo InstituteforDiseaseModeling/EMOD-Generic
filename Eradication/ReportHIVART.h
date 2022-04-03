@@ -29,7 +29,7 @@ namespace Kernel
         // --- BaseTextReportEvents
         // -----------------------------
         virtual std::string GetHeader() const ;
-        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger );
+        virtual bool notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger );
 
     protected:
 

@@ -39,7 +39,7 @@ namespace Kernel
         // -----------------------
         // --- ReportEventRecorder
         // -----------------------
-        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger& trigger ) override;
+        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
 
         IPKey m_InterventionStatusKey;
     };

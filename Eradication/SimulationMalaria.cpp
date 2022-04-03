@@ -109,6 +109,11 @@ namespace Kernel
         spatialReportClassCreator = SpatialReportMalaria::CreateReport;
     }
 
+    void SimulationMalaria::Initialize()
+    {
+        SimulationVector::Initialize();
+    }
+
     void SimulationMalaria::Initialize(const ::Configuration *config)
     {
         SimulationVector::Initialize(config);
@@ -117,12 +122,16 @@ namespace Kernel
 
     SimulationMalaria *SimulationMalaria::CreateSimulation()
     {
-        return _new_ SimulationMalaria();
+        SimulationMalaria *newsimulation = _new_ SimulationMalaria();
+        newsimulation->Initialize();
+
+        return newsimulation;
     }
 
     SimulationMalaria *SimulationMalaria::CreateSimulation(const ::Configuration *config)
     {
         SimulationMalaria *newsimulation = _new_ SimulationMalaria();
+
         if (newsimulation)
         {
             // This sequence is important: first
@@ -131,8 +140,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
-                throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Malaria simulations do not currently support heterogeneous intra-node transmission.");
+                throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "MALARIA_SIM requested with invalid configuration.");
             }
         }
 

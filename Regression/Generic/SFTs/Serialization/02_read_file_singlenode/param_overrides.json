@@ -1,5 +1,5 @@
 {
-    "Default_Config_Path": "../../../../defaults/generic_serialization_default_config.json",
+    "Default_Config_Path": "defaults/generic_serialization_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
@@ -33,7 +33,7 @@
         "PRIMARY": {
             "Config_Name": "Generic serialization 01 writes files",
             "Geography": "SamplesInput",
-            "Python_Script_Path": "SHARED",
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Serialization_Time_Steps": [
                 70

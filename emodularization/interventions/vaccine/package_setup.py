@@ -3,6 +3,7 @@ from setuptools.extension import Extension
 
 from sources import *
 from dtk_pymodbuild import *
+import dtk_sv_ver
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -19,7 +20,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name=ext_name,
-    version="0.0.4",
+    version=dtk_sv_ver.version,
     author="Jonathan Bloedow",
     author_email="jbloedow@idmod.org",
     description="IDM's DTK Generic Vaccine Intervention 'pymod'",

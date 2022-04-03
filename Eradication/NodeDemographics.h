@@ -67,6 +67,7 @@ namespace Kernel
 
         std::string ToString() const { return jsonValue.ToString(); }
         bool IsObject() const { return jsonValue.IsObject(); }
+        bool IsArray() const { return jsonValue.IsArray(); }
 
     protected:
         friend class NodeDemographicsFactory;

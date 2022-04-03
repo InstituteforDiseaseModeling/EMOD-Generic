@@ -21,9 +21,12 @@ namespace Kernel
         virtual ~SimulationAirborne(void);
         static SimulationAirborne *CreateSimulation();
         static SimulationAirborne *CreateSimulation(const ::Configuration *config);
-        SimulationAirborne();
 
     protected:
+        SimulationAirborne();
+
+        virtual void Initialize() override;
+        virtual void Initialize(const ::Configuration *config) override;
 
         static bool ValidateConfiguration(const ::Configuration *config);
 

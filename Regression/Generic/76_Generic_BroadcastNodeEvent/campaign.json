@@ -19,7 +19,7 @@
         {
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
-                    "Broadcast_Event": "Node_Event_1",
+                    "Broadcast_Event": "GP_EVENT_000",
                     "Cost_To_Consumer": 10,
                     "class": "BroadcastNodeEvent"
                 },
@@ -37,7 +37,7 @@
         {
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
-                    "Broadcast_Event": "Node_Event_2",
+                    "Broadcast_Event": "GP_EVENT_001",
                     "Cost_To_Consumer": 20,
                     "class": "BroadcastNodeEvent"
                 },
@@ -56,7 +56,7 @@
         {
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
-                    "Broadcast_Event": "Node_Event_3",
+                    "Broadcast_Event": "GP_EVENT_002",
                     "Cost_To_Consumer": 25,
                     "class": "BroadcastNodeEvent"
                 },

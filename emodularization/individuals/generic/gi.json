@@ -4,7 +4,7 @@
     "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
     "Base_Individual_Sample_Rate": 1,
     "Base_Infectious_Period": 4,
-    "Base_Infectivity": 7.77,
+    "Base_Infectivity": 1,
     "Base_Year": 2015,
     "Birth_Rate_Dependence": "FIXED_BIRTH_RATE",
     "Birth_Rate_Time_Dependence": "NONE",

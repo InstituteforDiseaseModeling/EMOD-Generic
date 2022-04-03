@@ -34,6 +34,7 @@
             ],
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
+	    "Python_Script_Path": "LOCAL", 
             "Simulation_Duration": 14600,
             "Simulation_Timestep": 30.4166666667
         }

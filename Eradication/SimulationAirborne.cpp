@@ -25,6 +25,17 @@ namespace Kernel
     SimulationAirborne::~SimulationAirborne(void) { }
     SimulationAirborne::SimulationAirborne() { }
 
+    void SimulationAirborne::Initialize()
+    {
+        Simulation::Initialize();
+    }
+
+    void SimulationAirborne::Initialize(const ::Configuration *config)
+    {
+        Simulation::Initialize(config);
+        IndividualHumanAirborne::InitializeStaticsAirborne( config );
+    }
+
     SimulationAirborne *SimulationAirborne::CreateSimulation()
     {
         SimulationAirborne *newsimulation = _new_ SimulationAirborne();
@@ -35,9 +46,8 @@ namespace Kernel
 
     SimulationAirborne *SimulationAirborne::CreateSimulation(const ::Configuration *config)
     {
-        SimulationAirborne *newsimulation = nullptr;
+        SimulationAirborne *newsimulation = _new_ SimulationAirborne();
 
-        newsimulation = _new_ SimulationAirborne();
         if (newsimulation)
         {
             // This sequence is important: first
@@ -46,7 +56,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "AIRBORNE_SIM requested with invalid configuration." );
             }
         }
 

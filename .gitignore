@@ -272,3 +272,18 @@ config_new.xlsx
 *.VC.db
 *.VC.opendb
 
+.vs/config/applicationhost.config
+Regression/Generic/SFTs/test.txt
+Regression/Generic/SFTs/MeaslesVaccine/MultiAge_EABM/output/InsetChart.json
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/scientific_feature_report.txt
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/plot_data.png
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/DEBUG_filtered_lines.txt
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/touchfile
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/test.txt
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/plot_data.png
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/output/InsetChart.json
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/DEBUG_filtered_lines.txt
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/touchfile
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_EABM/scientific_feature_report.txt
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/output/InsetChart.json
+Regression/Generic/SFTs/MeaslesVaccine/DistAge_NoEABM/test.txt

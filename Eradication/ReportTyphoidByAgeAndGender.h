@@ -37,7 +37,7 @@ namespace Kernel {
                                               std::vector<INodeEventContext*>& rNodeEventContextList,
                                               ISimulationEventContext* pSimEventContext );
         virtual std::string GetHeader() const ;
-        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger& StateChange);
+        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& StateChange);
 
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const ;
         virtual void LogIndividualData( IIndividualHuman* individual );

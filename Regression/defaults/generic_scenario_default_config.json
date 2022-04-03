@@ -73,6 +73,7 @@
         },
         "DISEASE": {
             "Enable_Infectivity_Reservoir": 0,
+            "Enable_Infectivity_Scaling": 0,
             "INCUBATION": {
                 "Incubation_Period_Constant": 3,
                 "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION"
@@ -129,6 +130,7 @@
             "Geography": "DEFAULT_GEOGRAPHY_SHOULD_BE_SET",
             "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
+            "Python_Inprocessing_Tsteps": [],
             "Node_Grid_Size": 0.042,
             "Run_Number": 0,
             "Simulation_Duration": 365,

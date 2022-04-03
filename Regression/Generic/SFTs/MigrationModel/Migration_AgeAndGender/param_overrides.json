@@ -13,6 +13,8 @@
             "Migration_Model": "FIXED_RATE_MIGRATION"
         },
         "OUTPUT": {
+	    "logLevel_Individual": "INFO",
+	    "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json"
         },
         "PRIMARY": {

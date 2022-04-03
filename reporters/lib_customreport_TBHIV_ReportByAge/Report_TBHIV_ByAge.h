@@ -92,7 +92,7 @@ namespace Kernel
         //virtual void Reduce();
         //virtual void Finalize();
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override;
+                                    const EventTrigger::Enum& trigger ) override;
     private:
 
         const float report_tbhiv_half_period;
@@ -133,7 +133,7 @@ namespace Kernel
         float TBTests[Report_Age::Enum::COUNT];
         float HIVDeathsActiveTB[Report_Age::Enum::COUNT];
 
-        vector <std::string> Additional_Event_Names;
+        vector <EventTrigger::Enum> Additional_Event_Names;
         float DynamicEvents[100][Report_Age::Enum::COUNT];
                                                                            
     };

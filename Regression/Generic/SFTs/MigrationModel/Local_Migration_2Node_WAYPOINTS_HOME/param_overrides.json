@@ -29,6 +29,8 @@
             "Migration_Pattern": "WAYPOINTS_HOME"
         },
         "OUTPUT": {
+	    "logLevel_Individual": "INFO",
+	    "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json"
         },
         "PRIMARY": {

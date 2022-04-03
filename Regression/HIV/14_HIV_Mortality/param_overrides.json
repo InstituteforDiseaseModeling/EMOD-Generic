@@ -74,6 +74,7 @@
         "alpha_____________REPORTING___________": "",
         "alpha_____________SIMULATION___________": "",
         "alpha_____________TRANSMISSION___________": "",
-        "x_Base_Population": 0.002
+        "x_Base_Population": 0.002,
+        "Python_Script_Path": "LOCAL"
     }
 }

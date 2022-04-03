@@ -20,6 +20,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanContext.h"
 #include "IDistribution.h"
 #include "DistributionFactory.h"
+#include "IndividualEventContext.h"
+#include "NodeEventContext.h"
 
 SETUP_LOGGING( "Infection" )
 
@@ -33,6 +35,7 @@ namespace Kernel
     float InfectionConfig::base_mortality = 1.0f;
     bool  InfectionConfig::enable_disease_mortality = false;
     bool  InfectionConfig::enable_strain_tracking   = false;
+    unsigned int InfectionConfig::log2genomes     = 0;
     unsigned int InfectionConfig::number_clades   = 1;
     unsigned int InfectionConfig::number_genomes  = 1;
     
@@ -46,7 +49,9 @@ namespace Kernel
 
     bool InfectionConfig::Configure(const Configuration* config)
     {
-        initConfigTypeMap("Enable_Disease_Mortality", &enable_disease_mortality, Enable_Disease_Mortality_DESC_TEXT, true, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,MALARIA_SIM,TBHIV_SIM,TYPHOID_SIM,PY_SIM");
+        LOG_DEBUG("Configure\n");
+
+        initConfigTypeMap("Enable_Disease_Mortality", &enable_disease_mortality, Enable_Disease_Mortality_DESC_TEXT, true, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,MALARIA_SIM,TBHIV_SIM,TYPHOID_SIM,PY_SIM,HIV_SIM");
         initConfig( "Mortality_Time_Course", mortality_time_course, config, MetadataDescriptor::Enum("mortality_time_course", Mortality_Time_Course_DESC_TEXT, MDD_ENUM_ARGS(MortalityTimeCourse)), "Enable_Disease_Mortality" );
         initConfigTypeMap("Base_Mortality", &base_mortality, Base_Mortality_DESC_TEXT, 0.0f, 1000.0f, 0.001f, "Enable_Disease_Mortality"); // should default change depending on disease?
         initConfigTypeMap("Base_Infectivity", &base_infectivity, Base_Infectivity_DESC_TEXT, 0.0f, 1000.0f, 0.3f, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,TBHIV_SIM,PY_SIM,HIV_SIM");// should default change depending on disease?
@@ -64,18 +69,22 @@ namespace Kernel
         {
             // Infectious_Period_Distribution is a required parameter for several sims, if this parameter is not set then it is not required for the current sim
             infectious_distribution = DistributionFactory::CreateDistribution( this, infectious_distribution_function, "Infectious_Period", config );
-        }
+        } 
 
         // Symptomatic
-        initConfigTypeMap( "Symptomatic_Infectious_Offset", &symptomatic_infectious_offset, Symptomatic_Infectious_Offset_DESC_TEXT, -FLT_MAX, FLT_MAX, FLT_MAX, "Simulation_Type", "GENERIC_SIM" ); //FLT_MAX Individual never becomes symptomatic
+        // 0.0f    - Individual symptomatic when contagious
+        // FLT_MAX - Individual never becomes symptomatic
+        initConfigTypeMap( "Symptomatic_Infectious_Offset", &symptomatic_infectious_offset, Symptomatic_Infectious_Offset_DESC_TEXT, -FLT_MAX, FLT_MAX, 0.0f, "Simulation_Type", "GENERIC_SIM" );
 
         // Strain tracking
-        int log2genomes = 0;
-        initConfigTypeMap("Enable_Strain_Tracking",            &enable_strain_tracking,  Enable_Strain_Tracking_DESC_TEXT,            false);
-        initConfigTypeMap("Number_of_Clades",                  &number_clades,           Number_of_Clades_DESC_TEXT,                      1,  10,   1, "Enable_Strain_Tracking");
-        initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,             Log2_Number_of_Genomes_per_Clade_DESC_TEXT,      0,  24,   0, "Enable_Strain_Tracking");
+        initConfigTypeMap("Enable_Strain_Tracking",            &enable_strain_tracking,  Enable_Strain_Tracking_DESC_TEXT, false);
 
-        // Process configuration
+        const std::map<std::string, std::string> depends_set_number_clades  {{"Enable_Strain_Tracking", "1"}, {"Simulation_Type", "GENERIC_SIM,VECTOR_SIM,MALARIA_SIM,ENVIRONMENTAL_SIM,TYPHOID_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,PY_SIM"}};
+        const std::map<std::string, std::string> depends_set_log2genomes    {{"Enable_Strain_Tracking", "1"}, {"Simulation_Type", "GENERIC_SIM,VECTOR_SIM,DENGUE_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,PY_SIM"}};
+        initConfigTypeMap("Number_of_Clades",                  &number_clades,  Number_of_Clades_DESC_TEXT,                   1,  10,   1, nullptr, nullptr, &depends_set_number_clades);
+        initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,    Log2_Number_of_Genomes_per_Clade_DESC_TEXT,   0,  24,   0, nullptr, nullptr, &depends_set_log2genomes );
+
+        // Evaluate configuration
         bool bRet = JsonConfigurable::Configure( config );
 
         // Post-process values
@@ -144,6 +153,12 @@ namespace Kernel
         // Set up infection strain
         CreateInfectionStrain(infstrain);
 
+        LOG_VALID_F("New Infection: Individual: %d Node: %d Clade: %d Genome: %d .\n",
+            parent->GetSuid().data,
+            parent->GetEventContext()->GetNodeEventContext()->GetExternalId(),
+            infection_strain->GetCladeID(),
+            infection_strain->GetGeneticID());  // TODO: Test code from cwiswell in case this breaks
+        
         if( incubation_period_override != -1 )
         {
             incubation_timer = float(incubation_period_override);
@@ -155,7 +170,6 @@ namespace Kernel
         }
 
         infectious_timer = InfectionConfig::infectious_distribution->Calculate( parent->GetRng() );
-        
         LOG_DEBUG_F( "infectious_timer = %f\n", infectious_timer );
 
         total_duration = incubation_timer + infectious_timer;
@@ -245,6 +259,7 @@ namespace Kernel
         {
             infection_strain->SetCladeID( infstrain->GetCladeID() );
             infection_strain->SetGeneticID( infstrain->GetGeneticID() );
+
             // otherwise, using the default cladeID and genomeID from the StrainIdentity constructor
         }
     }
@@ -260,6 +275,11 @@ namespace Kernel
         // Really want to make this cloning an internal StrainIdentity function
         infstrain->SetCladeID( infection_strain->GetCladeID() );
         infstrain->SetGeneticID( infection_strain->GetGeneticID() );
+    }
+
+    const IStrainIdentity* Infection::GetStrain() const
+    {
+        return static_cast<IStrainIdentity*>(infection_strain);
     }
 
     void Infection::SetContextTo(IIndividualHumanContext* context) { parent = context; }

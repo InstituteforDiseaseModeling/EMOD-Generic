@@ -19,7 +19,8 @@ namespace Kernel
 {
     struct INodeEventContext;
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
+    //template<class Broadcaster, class Observer, class Entity, class Trigger>
+    template<class Broadcaster, class Observer, class Entity>
     class BaseTextReportEventsTemplate : public BaseTextReport, public Observer
     {
     public:
@@ -41,8 +42,8 @@ namespace Kernel
         void UpdateRegistration( Broadcaster* broadcaster, bool registering );
         void UnregisterAllBroadcasters();
 
-        // this is not private so that subclasses can use initConfig() to initialize it.
-        std::vector< Trigger > eventTriggerList;
+        // this is not private so that subclasses can use initConfig() to initialize it.  
+        std::vector< EventTrigger::Enum > eventTriggerList;
 
         std::vector< Broadcaster* > broadcaster_list;
         bool is_registered;
@@ -54,8 +55,7 @@ namespace Kernel
     // and adding the data.
     class BaseTextReportEvents : public BaseTextReportEventsTemplate<IIndividualEventBroadcaster,
                                                                      IIndividualEventObserver,
-                                                                     IIndividualHumanEventContext,
-                                                                     EventTrigger>
+                                                                     IIndividualHumanEventContext>
     {
     public:
         BaseTextReportEvents( const std::string& rReportName );

@@ -1,0 +1,26 @@
+{
+   "Metadata": {
+      "Author": "yechen",
+      "DateCreated": "2018-07-27 11:40:09.734900",
+      "IdReference": "Gridded world grump2.5arcmin",
+      "NodeCount": 1,
+      "Resolution": 150,
+      "Tool": "dtk-tools"
+   },
+   "Nodes": [
+      {
+         "NodeAttributes": {
+            "Area": 0.77,
+            "InfectivityBoxcarAmplitude": 0,
+            "InfectivityBoxcarEndTime": 0,
+            "InfectivityBoxcarStartTime": 0,
+            "InfectivityMultiplier": 0.44,
+            "InfectivityReservoirSize": 0,
+            "InfectivitySinusoidalAmplitude": 0.55,
+            "InfectivitySinusoidalPhase": 20,
+            "InitialPopulation": 1000
+         },
+         "NodeID": 1
+      }
+   ]
+}

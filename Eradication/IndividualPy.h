@@ -17,15 +17,14 @@ namespace Kernel
 {
     class SusceptibilityPy;
 
-    class IIndividualHumanPy : public ISupports
-    {
-    };
+    class IIndividualHumanPy : public ISupports {};
 
     class IndividualHumanPy : public IndividualHuman, public IIndividualHumanPy
     {
         friend class SimulationPy;
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
-        DECLARE_QUERY_INTERFACE();
+
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
 
     public:
         static IndividualHumanPy *CreateHuman(INodeContext *context, suids::suid id, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
@@ -35,7 +34,6 @@ namespace Kernel
         virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership);
 
     protected:
-
         // New Exposure Pattern
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route );
 
@@ -63,12 +61,12 @@ namespace Kernel
         std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
     private:
+        static void InitializeStaticsPy( const Configuration* config );
+
 #ifdef ENABLE_PYTHON
         PyObject * expose_vars;
 #endif
         SusceptibilityPy * pydemo_susceptibility;
         std::map< TransmissionRoute::Enum, float > contagion_population_by_route;
-
-        static void InitializeStaticsPy( const Configuration* config );
     };
 }

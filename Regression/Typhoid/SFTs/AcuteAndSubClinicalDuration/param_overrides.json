@@ -1,0 +1,15 @@
+{
+    "parameters": {
+        "Campaign_Filename": "campaign.w5ml",
+        "Config_Name": "SFT:Typhoid:Acute_And_Subclinical_Duration",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Run_Number": 0,
+        "Typhoid_Carrier_Probability": 0.13,
+        "x_Base_Population": 0.4,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

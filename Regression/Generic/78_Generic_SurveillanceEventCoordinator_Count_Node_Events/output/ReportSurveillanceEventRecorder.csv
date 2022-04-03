@@ -1,2 +1,2 @@
 Time,Coordinator_Name,Event_Name,NumCounted,ThresholdOfAction,NumIndividuals,NumInfected
-16,ACF_Counter,Respond_To_Surveillance,3,2,10,0
+16,ACF_Counter,GP_EVENT_007,2,2,10,0

@@ -58,6 +58,7 @@ Report::Report( const std::string& rReportName )
 , new_reported_infections(0.0f)
 , disease_deaths(0.0f)
 {
+    BaseChannelReport::SetDefaultPrecision( false );
 }
 
 

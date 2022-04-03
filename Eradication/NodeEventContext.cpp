@@ -38,6 +38,8 @@ namespace Kernel
     , broadcaster_impl()
     {
         arrival_distribution_sources.clear();
+        //individual_event_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
+        //disposed_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     NodeEventContextHost::NodeEventContextHost(Node* _node)
@@ -49,6 +51,8 @@ namespace Kernel
     , broadcaster_impl()
     {
         arrival_distribution_sources.clear();
+        //individual_event_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
+        //disposed_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     // This was done with macros, but prefer actual code.
@@ -240,23 +244,25 @@ namespace Kernel
 
     void NodeEventContextHost::RegisterObserver(
         IIndividualEventObserver * pObserver,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
-    {
+    { 
         broadcaster_impl.RegisterObserver( pObserver, trigger );
     }
 
     void NodeEventContextHost::UnregisterObserver(
         IIndividualEventObserver * pObserver,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
     {
+        //LOG_INFO( "[UnregisterIndividualEventObserver] Putting individual event observer into the disposed observers list .\n" );
         broadcaster_impl.UnregisterObserver( pObserver, trigger );
+        //LOG_INFO( "[UnregisterIndividualEventObserver] Putting individual event observer into the disposed observers list .\n" );
     }
 
     void NodeEventContextHost::TriggerObservers(
         IIndividualHumanEventContext *pIndiv,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
     {
         broadcaster_impl.TriggerObservers( pIndiv, trigger );
@@ -295,6 +301,40 @@ namespace Kernel
 
         broadcaster_impl.DisposeOfUnregisteredObservers();
     }
+
+#if 0
+    void NodeEventContextHost::DisposeOfUnregisteredObservers()
+    {
+        if( disposed_observers.size() > 0 )
+        {
+            LOG_DEBUG_F( "We have %d disposed_observers to clean up.\n", disposed_observers.size() );
+        }
+
+        for( int event_index = 0 ; event_index < disposed_observers.size() ; ++event_index )
+        {
+            std::vector<IIndividualEventObserver*>& disposed_list = disposed_observers[ event_index ];
+            std::vector<IIndividualEventObserver*>& current_list = individual_event_observers[ event_index ];
+
+            for( auto observer : disposed_list )
+            {
+                for( int i = 0 ; i < current_list.size() ; ++i )
+                {
+                    if( current_list[ i ] == observer )
+                    {
+                        current_list[ i ] = current_list.back();
+                        current_list.pop_back();
+                        /*LOG_INFO_F( "[UnregisterIndividualEventObserver] Removed individual event observer from list: now %d observers of event %s.\n",
+                                    current_list.size(),
+                                    EventTriggerFactory::GetInstance()->GetEventTriggerName( event_index ).c_str()
+                        );*/
+                        break;
+                    }
+                }
+            }
+            disposed_list.clear();
+        }
+    }
+#endif
 
     bool NodeEventContextHost::GiveIntervention( INodeDistributableIntervention* iv )
     {
@@ -381,23 +421,18 @@ namespace Kernel
         sources.clear();
     }
 
-    void NodeEventContextHost::AddImportCases(
-        StrainIdentity* outbreak_strainID,
-        float import_age,
-        NaturalNumber num_cases_per_node,
-        ProbabilityNumber prob_infection
-    )
+    void NodeEventContextHost::AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node )
     {
         for (int i = 0; i < num_cases_per_node; i++)
         {
-            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(1.0, import_age, 0.0, 0.5); // using age specified by Oubreak, but otherwise community demographics for import case (e.g. immune history)
+            // ind_MCweight = 1.0f; ind_init_age = import_age; comm_init_prev = 0.0f; comm_female_ratio = 0.5f; init_mod_acquire = 1.0f
+            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(1.0f, import_age, 0.0f, 0.5f, 1.0f);
 
-            // 0 = incubation_period_override, outbreaks are instantaneously mature
-            TransmissionGroupsBase::ContagionPopulationImpl cp( outbreak_strainID, 0 );
-            //if( prob_infection == 1.0f || ( prob_infection != 0 && randgen->e() < prob_infection ) ) // TBD, fix smart draw in merge with new RNG stuff.
-            {
-                new_individual->AcquireNewInfection(&cp, 0 ); 
-            }
+            // Create new agent (monte_carlo_weight = 1.0; age = import_age; prob_init_infection = 0.0; prob_gender_female = 0.5)
+            //IIndividualHuman* new_individual = node->configureAndAddNewIndividual(1.0, import_age, 0.0, 0.5);
+
+            // Start as infectious (incubation_period = 0)
+            new_individual->AcquireNewInfection(outbreak_strainID, 0 );
         }
     }
 

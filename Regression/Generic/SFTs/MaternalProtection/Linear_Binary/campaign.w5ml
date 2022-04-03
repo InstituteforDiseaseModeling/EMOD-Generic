@@ -1,0 +1,7 @@
+Events:
+- Who: 0.01%, 10-20, Female
+  When: 1
+  Where: Everywhere
+  What: 
+    class: OutbreakIndividual
+    Ignore_Immunity: 0

@@ -45,7 +45,7 @@ namespace Kernel
         return IndividualHumanAirborne::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    float NodeAirborne::getClimateInfectivityCorrection() const
+    float NodeAirborne::getClimateCorrection() const
     {
         // Airborne infectivity depends on relative humidity.
         // TODO: make more configurable to accommodate different modalities:

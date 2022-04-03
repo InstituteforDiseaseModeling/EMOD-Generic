@@ -21,10 +21,12 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingBoxcar/StartEqualToEnd_Random",
-            "Geography": "",
+            "Campaign_Filename": "campaign.w5ml",
+            "Geography": "", 
+            "Run_Number": 1,
             "Simulation_Duration": 1095
         },
-        "logLevel_Individual": "DEBUG"
+        "logLevel_Individual": "DEBUG" 
     },
     "Default_Config_Path": "defaults/generic_science_default_config.json"
 }

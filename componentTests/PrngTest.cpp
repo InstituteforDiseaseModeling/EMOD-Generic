@@ -13,7 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "UnitTest++.h"
 #include "ChiSquare.h"
 
-#include "RANDOM.h"
+#include "RandomSerializable.h"
 
 using namespace Kernel;
 
@@ -21,7 +21,7 @@ SUITE(PrngTest)
 {
     TEST( Test_eGauss )
     {
-        RANDOMBASE* prng = new PSEUDO_DES( 42 );
+        RANDOMBASE* prng = new PSEUDO_DES_SER( 42 );
 
         float sum = 0.0;
         float sum2 = 0.0;
@@ -50,7 +50,7 @@ SUITE(PrngTest)
             0x607CDC4C, 0x2EEE692C, 0x870408D3, 0x1C677DB0,
             0xE162A0B3, 0x8E0C8452, 0x7A4D3E26, 0x51293548
         };
-        RANDOMBASE* prng = new PSEUDO_DES(42);
+        RANDOMBASE* prng = new PSEUDO_DES_SER(42);
         std::cout << "-----====##### TestPseudoDes #####=====-----" << std::endl;
         // Display hexadecimal in uppercase right aligned with '0' for fill.
         std::cout << std::hex << std::uppercase << std::right << std::setfill('0');
@@ -158,7 +158,7 @@ SUITE(PrngTest)
 
     TEST( TestUniformZeroToN )
     {
-        PSEUDO_DES prng(1);
+        PSEUDO_DES_SER prng(1);
 
         random_function_t fn_16 = []( RANDOMBASE* prng, uint32_t N )
         {
@@ -207,7 +207,7 @@ SUITE(PrngTest)
 
     TEST( TesteGauss )
     {
-        PSEUDO_DES prng( 1 );
+        PSEUDO_DES_SER prng( 1 );
 
         uint32_t num_samples = 1000000;
         float sum = 0.0;
@@ -258,7 +258,7 @@ SUITE(PrngTest)
 
     TEST( TestRandomRound )
     {
-        RANDOMBASE* prng = new PSEUDO_DES( 42 );
+        RANDOMBASE* prng = new PSEUDO_DES_SER( 42 );
 
         for( float inc=0.0; inc < 1.0 ; inc += 0.1f )
         {
@@ -294,7 +294,7 @@ SUITE(PrngTest)
 
     TEST( TestMultinomialApprox )
     {
-        RANDOMBASE* prng = new PSEUDO_DES( 42 );
+        RANDOMBASE* prng = new PSEUDO_DES_SER( 42 );
 
         uint64_t N = 100000;
         uint64_t num_samples = 10000;

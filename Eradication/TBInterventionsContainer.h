@@ -42,7 +42,7 @@ namespace Kernel
         virtual void ApplyDrugVaccineReducedAcquireEffect( float rate ) = 0;
         virtual void ApplyDrugVaccineReducedTransmitEffect( float rate ) = 0;
         virtual void ApplyTBDrugEffects( TBDrugEffects_t effects, TBDrugType::Enum drug_type ) = 0;
-        virtual void UpdateTreatmentStatus( const EventTrigger& new_treatment_status ) = 0;
+        virtual void UpdateTreatmentStatus( const EventTrigger::Enum& new_treatment_status ) = 0;
         virtual ~ITBDrugEffectsApply() { }
     };
 
@@ -79,7 +79,7 @@ namespace Kernel
         virtual void ApplyDrugVaccineReducedAcquireEffect( float rate ) override;
         virtual void ApplyDrugVaccineReducedTransmitEffect( float rate ) override;
         virtual void ApplyTBDrugEffects( TBDrugEffects_t effects, TBDrugType::Enum drug_type ) override;
-        virtual void UpdateTreatmentStatus( const EventTrigger& new_treatment_status ) override;
+        virtual void UpdateTreatmentStatus( const EventTrigger::Enum& new_treatment_status ) override;
         
         //functions in the ITBInterventionsContainer
         virtual int GetNumTBDrugsActive() override; //this function needs to be non-const so it can call GetInterventionsByInterface

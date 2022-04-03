@@ -18,7 +18,7 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Broadcast_Event": "Coordinator_Event_1",
+                "Broadcast_Event": "GP_EVENT_000",
                 "Coordinator_Name": "Coordnator_1",
                 "Cost_To_Consumer": 10,
                 "class": "BroadcastCoordinatorEvent"
@@ -31,7 +31,7 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Broadcast_Event": "Coordinator_Event_2",
+                "Broadcast_Event": "GP_EVENT_001",
                 "Coordinator_Name": "Coordnator_2",
                 "Cost_To_Consumer": 20,
                 "class": "BroadcastCoordinatorEvent"
@@ -44,7 +44,7 @@
         },
         {
             "Event_Coordinator_Config": {
-                "Broadcast_Event": "Coordinator_Event_3",
+                "Broadcast_Event": "GP_EVENT_002",
                 "Coordinator_Name": "Coordnator_3",
                 "Cost_To_Consumer": 30,
                 "class": "BroadcastCoordinatorEvent"

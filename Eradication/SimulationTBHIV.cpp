@@ -42,14 +42,15 @@ namespace Kernel
     SimulationTBHIV *SimulationTBHIV::CreateSimulation()
     {
         SimulationTBHIV *newsimulation = _new_ SimulationTBHIV();
+        newsimulation->Initialize();
 
         return newsimulation;
     }
 
     SimulationTBHIV *SimulationTBHIV::CreateSimulation(const ::Configuration *config)
     {
-        SimulationTBHIV *newsimulation = nullptr;
-        newsimulation = _new_ SimulationTBHIV();
+        SimulationTBHIV *newsimulation = _new_ SimulationTBHIV();
+
         if (newsimulation)
         {
             // This sequence is important: first
@@ -58,7 +59,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "TBHIV_SIM requested with invalid configuration." );
             }
         }
 
@@ -73,6 +74,11 @@ namespace Kernel
         // TODO: are there any more checks on configuration parameters we want to do here?
 
         return true;
+    }
+
+    void SimulationTBHIV::Initialize()
+    {
+        SimulationAirborne::Initialize();
     }
 
     void SimulationTBHIV::Initialize( const ::Configuration *config )

@@ -29,7 +29,7 @@ namespace Kernel {
     // which is an ordered collection of json values
     struct IJsonAdapter
     {
-        virtual void CreateNewWriter(bool bCacheWriter = false) = 0;
+        virtual void CreateNewWriter(bool bCacheWriter = false, bool defaultPrecision = true) = 0;
         virtual void FinishWriter() = 0;
         virtual void BeginObject() = 0;
         virtual void EndObject() = 0;

@@ -25,6 +25,7 @@
         },
         "PRIMARY": {
             "Config_Name": "Generic_SFT_MaternalProtection_SigmoidBinary",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 5
         },

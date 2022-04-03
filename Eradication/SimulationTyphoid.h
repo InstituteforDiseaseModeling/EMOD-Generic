@@ -23,7 +23,6 @@ namespace Kernel
     class SimulationTyphoid : public SimulationEnvironmental
     {
     public:
-        SimulationTyphoid();
         static SimulationTyphoid *CreateSimulation();
         static SimulationTyphoid *CreateSimulation(const ::Configuration *config);
         static void SetFixedParameters(::Configuration *config);
@@ -32,10 +31,12 @@ namespace Kernel
         virtual void Reports_CreateBuiltIn();
 
     protected:
-        static bool ValidateConfiguration(const ::Configuration *config);
+        SimulationTyphoid();
 
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
+
+        static bool ValidateConfiguration(const ::Configuration *config);
 
         // Allows correct type of community to be added by derived class Simulations
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

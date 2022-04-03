@@ -1,65 +1,83 @@
 #!/usr/bin/python
-
 import json
+import pdb
 
-def application( config_file_name ):
-    if config_file_name.endswith( ".json" ):
-        tlc = json.loads( open( config_file_name ).read() )
-        params = {}
-        param_key = "parameters"
-        path_key = "paths"
-        if tlc.has_key( param_key ):
-            print( "'config.json' already has 'parameters' key so returning as-is" )
-            return config_file_name 
-        elif tlc.has_key( path_key ):
-            print( "'config.json' has 'paths' key -> stitching." )
-            params[param_key] = {}
-            if path_key in tlc.keys():
-                for path in tlc[path_key]:
-                    #print( "Pre-processing " + path )
-                    param_set = json.loads( open( path ).read() )
-                    params[param_key].update( param_set[param_key] )
-            stitched_output_config_file_name = ".config_stitched.json"
-            with open( stitched_output_config_file_name , "w" ) as handle:
-                handle.write( json.dumps( params, indent=4, sort_keys=True ) )
+adhoc_events = []
+def recursive_json( ref_json, flat_input_json ):
+    for val in ref_json:
+        #if not leaf, call recursive_json_leaf_reader
+        #if json.dumps( ref_json[val] ).startswith( "{" ) or json.dumps( ref_json[val] ).startswith( "[" ): # change to isinstance
+        #if json.dumps( ref_json[val] ).startswith( "{" ): #or json.dumps( ref_json[val] ).startswith( "[" ): # change to isinstance
+        if isinstance( ref_json[val], dict ): 
+            #print( "recursing on nested object: val = " + val )
+            recursive_json( ref_json[val], flat_input_json ) 
+        elif isinstance( ref_json[val], list ):
+            #print( "Iterating over list under val: " + val )
+            for obj in ref_json[val]: 
+                # Ignore lists of numbers and strings
+                if isinstance( obj, dict ) or isinstance( obj, list ): 
+                    #print( "Found list or dict inside list to recurse." )
+                    #print( obj )
+                    recursive_json( obj, flat_input_json ) 
+        else:
+            if "_Event" in val or "Event_Trigger" in val:
+                broadcast_event = ref_json[val]
+                print( broadcast_event  )
+                if broadcast_event not in adhoc_events:
+                    adhoc_events.append( broadcast_event )
+            if val not in flat_input_json:
+                flat_input_json[val] = ref_json[val]
+            #else:
+                #print( "Ignoring {0} because already present.".format( val ) )
 
-            return stitched_output_config_file_name 
+def application( config ):
+    print( "DTK PRE PROC SCRIPT: Scrape all ad-hoc events and map to GPIO_X." )
+    camp_json = json.loads( open( "campaign.json" ).read() )
 
-    elif config_file_name.endswith( ".yaml" ):
-        import yaml
-        config_yaml_f = open( config_file_name )
-        config = yaml.safe_load( config_yaml_f )
-        config_json_str = json.dumps( config )
-        config_json = json.loads( config_json_str  )
-        output_config_file_name = ".config_json.json"
-        with open( output_config_file_name, "w" ) as handle:
-            handle.write( json.dumps( config_json, indent=4, sort_keys=True ) )
-        return output_config_file_name 
+    event_map = {}
+    for camp_event in camp_json["Events"]:
+        output_json = {}
+        recursive_json( camp_event, output_json )
+        """
+        for key in output_json.keys():
+            print( "Considering key: " + key )
+            if "_Event" in key or "Event_Trigger" in key:
+                broadcast_event = output_json[key]
+                print( broadcast_event  )
+                if broadcast_event not in adhoc_events:
+                    adhoc_events.append( broadcast_event )
+        """
 
-    elif config_file_name.endswith( ".xlsx" ) or config_file_name.endswith( ".xlsm" ):
-        import xlrd
-        wb = xlrd.open_workbook( config_file_name ) 
-        # just support single worksheet for now
-        config_json = json.loads( "{}" )
-        param_key = "parameters"
-        config_json[ param_key ] = {}
+    for event in adhoc_events:
+        counter = len( event_map )
+        builtin = "GP_EVENT_" + str(counter)
+        event_map[ event ] = builtin
 
-        for sheet in wb.sheets():
-            for row_id in range(0,sheet.nrows):
-                row = sheet.row(row_id)
-                param_name = row[0].value
-                param_value = row[1].value
-                if isinstance( param_value,basestring) and param_value.startswith( "[" ):
-                    param_list = param_value.strip( "[" ).strip( "]" ).split()
-                    param_value = param_list
-                #print( param_name, param_value )
-                config_json[param_key][param_name] = param_value
+    camp_json_str = json.dumps( camp_json )
+    for event in event_map:
+        camp_json_str = camp_json_str.replace( event, event_map[event] )
 
-        output_config_file_name = ".config_from_excel.json"
-        with open( output_config_file_name, "w" ) as handle:
-            handle.write( json.dumps( config_json, indent=4, sort_keys=True ) )
-        return output_config_file_name 
+    camp_json = json.loads( camp_json_str )
 
-    else:
-        print( "Non-json files not supported (yet)." )
-        return config_file_name
+    with open( "campaign_xform.json", "w" ) as camp_json_handle:
+        camp_json_handle.write( json.dumps( camp_json, sort_keys=True, indent=4 ) )
+
+    # Do event mapping in config.json
+    # 1) Load
+    config_json = json.loads( open( "config.json" ).read() )
+
+    # 2) Make changes
+    config_json["parameters"]["Campaign_Filename"] = "campaign_xform.json"
+    config_json_str = json.dumps( config_json )
+    reverse_map = {}
+    for event in event_map:
+        config_json_str = config_json_str.replace( event, event_map[event] )
+        reverse_map[ event_map[event] ] = event
+
+    # 3) Save
+    config_json = json.loads( config_json_str )
+    config_json["parameters"]["Event_Map"] = reverse_map
+    with open( "config_xform.json", "w" ) as conf_json_handle:
+        conf_json_handle.write( json.dumps( config_json, sort_keys=True, indent=4 ) )
+
+    return "config_xform.json"

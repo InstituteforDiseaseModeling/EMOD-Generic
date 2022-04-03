@@ -1,0 +1,81 @@
+{
+    "Defaults": {},
+    "Metadata": {
+        "Author": "chjones",
+        "DateCreated": "Tue Dec 02 12:28:04 2018", 
+        "IdReference": "TEST",
+        "NodeCount": 1,
+        "Resolution": 150,
+        "Tool": "convertdemog.py"
+    },
+    "Nodes": [
+        {
+            "NodeID": 1,
+            "IndividualAttributes": {
+                "AgeDistribution1": 1,
+                "AgeDistribution2": 7600,
+                "AgeDistributionFlag": 1,
+                "MigrationHeterogeneityDistribution1": 1,
+                "MigrationHeterogeneityDistribution2": 0,
+                "MigrationHeterogeneityDistributionFlag": 0,
+                "MortalityDistribution": {
+                    "AxisNames": [
+                        "gender",
+                        "age"
+                    ],
+                    "AxisScaleFactors": [
+                        1,
+                        365
+                    ],
+                    "AxisUnits": [
+                        "male=0,female=1",
+                        "years"
+                    ],
+                    "NumDistributionAxes": 2,
+                    "NumPopulationGroups": [
+                        2,
+                        1
+                    ],
+                    "PopulationGroups": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0
+                        ]
+                    ],
+                    "ResultScaleFactor": 1,
+                    "ResultUnits": "deaths per day",
+                    "ResultValues": [
+                        [
+                            5.48e-05
+                        ],
+                        [
+                            5.48e-05
+                        ]
+                    ]
+                },
+                "PrevalenceDistribution1": 0.0,
+                "PrevalenceDistribution2": 0.0,
+                "PrevalenceDistributionFlag": 0,
+                "RiskDistribution1": 1,
+                "RiskDistribution2": 0,
+                "RiskDistributionFlag": 0,
+                "SusceptibilityDistribution1": 1,
+                "SusceptibilityDistribution2": 0,
+                "SusceptibilityDistributionFlag": 0
+            },
+            "NodeAttributes": {
+                "Airport": 0,
+                "Altitude": 0,
+                "BirthRate": 5.48e-05,
+                "InitialPopulation": 10000,
+                "Latitude": 0,
+                "Longitude": 0,
+                "Region": 1,
+                "Seaport": 0
+            }
+        }
+    ]
+}

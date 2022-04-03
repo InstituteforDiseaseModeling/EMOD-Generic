@@ -22,7 +22,7 @@ SETUP_LOGGING( "Susceptibility" )
 namespace Kernel
 {
     // Maternal protection
-    MaternalProtectionType::Enum SusceptibilityConfig::maternal_protection_type = MaternalProtectionType::NONE;
+    MaternalProtectionType::Enum SusceptibilityConfig::maternal_protection_type = MaternalProtectionType::SIGMOID;
     bool  SusceptibilityConfig::maternal_protection = false;
     float SusceptibilityConfig::matlin_slope        = 1.0f;
     float SusceptibilityConfig::matlin_suszero      = 1.0f;
@@ -37,12 +37,12 @@ namespace Kernel
 
     // Decay of post-infection immunity
     bool SusceptibilityConfig::enable_immune_decay = false;
-    float SusceptibilityConfig::acqdecayrate  = 0.0f;
-    float SusceptibilityConfig::trandecayrate = 0.0f;
-    float SusceptibilityConfig::mortdecayrate = 0.0f;
-    float SusceptibilityConfig::baseacqoffset  = 0.0f;
-    float SusceptibilityConfig::basetranoffset = 0.0f;
-    float SusceptibilityConfig::basemortoffset = 0.0f;
+    float SusceptibilityConfig::acqdecayrate       = 0.0f;
+    float SusceptibilityConfig::trandecayrate      = 0.0f;
+    float SusceptibilityConfig::mortdecayrate      = 0.0f;
+    float SusceptibilityConfig::baseacqoffset      = 0.0f;
+    float SusceptibilityConfig::basetranoffset     = 0.0f;
+    float SusceptibilityConfig::basemortoffset     = 0.0f;
 
     SusceptibilityType::Enum SusceptibilityConfig::susceptibility_type = SusceptibilityType::FRACTIONAL;
 
@@ -69,12 +69,12 @@ namespace Kernel
         , acqdecayoffset( 0.0f )
         , trandecayoffset( 0.0f )
         , mortdecayoffset( 0.0f )
-        , immune_failage( 0.0f )
+        , m_immune_failage_acquire( 0.0f )
         , parent( nullptr )
     {
     }
 
-    Susceptibility::Susceptibility(IIndividualHumanContext *context)
+    Susceptibility::Susceptibility(IIndividualHumanContext *context) 
         : age( 0.0f )
         , mod_acquire( 0.0f )
         , mod_transmit( 0.0f )
@@ -82,7 +82,7 @@ namespace Kernel
         , acqdecayoffset( 0.0f )
         , trandecayoffset( 0.0f )
         , mortdecayoffset( 0.0f )
-        , immune_failage( 0.0f )
+        , m_immune_failage_acquire( 0.0f )
         , parent(context)
     {
         //SetFlags(parent != nullptr ? parent->GetSusceptibilityFlags() : nullptr);
@@ -138,7 +138,7 @@ namespace Kernel
         initConfigTypeMap( "Mortality_Blocking_Immunity_Duration_Before_Decay",    &basemortoffset, Mortality_Blocking_Immunity_Duration_Before_Decay_DESC_TEXT,    0.0f, MAX_HUMAN_LIFETIME, 0.0f, "Enable_Immune_Decay" );
 
         // Maternal protection options (does not require infection derived immunity; does not decay)
-        initConfigTypeMap("Enable_Maternal_Protection", &maternal_protection, Enable_Maternal_Protection_DESC_TEXT, false, "Enable_Birth");
+        initConfigTypeMap("Enable_Maternal_Protection", &maternal_protection, Enable_Maternal_Protection_DESC_TEXT, false, "Enable_Immunity");
         initConfig("Maternal_Protection_Type", maternal_protection_type, config, MetadataDescriptor::Enum("Maternal_Protection_Type", Maternal_Protection_Type_DESC_TEXT, MDD_ENUM_ARGS(MaternalProtectionType)),"Enable_Maternal_Protection");
         initConfigTypeMap("Maternal_Linear_Slope",       &matlin_slope,    Maternal_Linear_Slope_DESC_TEXT,          0.0001f, 1.0f,   0.01f, "Maternal_Protection_Type", "LINEAR");
         initConfigTypeMap("Maternal_Linear_SusZero",     &matlin_suszero,  Maternal_Linear_SusZero_DESC_TEXT,        0.0f,    1.0f,   0.2f,  "Maternal_Protection_Type", "LINEAR");
@@ -182,12 +182,12 @@ namespace Kernel
             {
                 if (rDraw == 0.0f)
                 {
-                    immune_failage = 0.0f;
+                    m_immune_failage_acquire = 0.0f;
                 }
                 else
                 {
-                    immune_failage = (rDraw-SusceptibilityConfig::matlin_suszero)
-                                           /SusceptibilityConfig::matlin_slope;
+                    m_immune_failage_acquire = (rDraw-SusceptibilityConfig::matlin_suszero)
+                                                     /SusceptibilityConfig::matlin_slope;
                 }
             }
 
@@ -195,15 +195,15 @@ namespace Kernel
             {
                 if (rDraw <= SusceptibilityConfig::matsig_susinit)
                 {
-                    immune_failage = 0.0f;
+                    m_immune_failage_acquire = 0.0f;
                 }
                 else
                 {
                     // The value 0.001f is a small positive constant that avoids division by zero.
-                    immune_failage = SusceptibilityConfig::matsig_halfmax -
-                                       SusceptibilityConfig::matsig_steepfac*
-                                       log(( 1.0f-SusceptibilityConfig::matsig_susinit)/
-                                           (rDraw-SusceptibilityConfig::matsig_susinit)-1.0f+0.001f);
+                    m_immune_failage_acquire = SusceptibilityConfig::matsig_halfmax -
+                                                 SusceptibilityConfig::matsig_steepfac*
+                                                 log(( 1.0f-SusceptibilityConfig::matsig_susinit)/
+                                                     (rDraw-SusceptibilityConfig::matsig_susinit)-1.0f+0.001f);
                 }
             }
         }
@@ -264,14 +264,14 @@ namespace Kernel
         }
 
         // Reduces mod_acquire to zero if age is less than calculated immunity failure day.
-        if(age < immune_failage)
+        if(age < m_immune_failage_acquire)
         {
             susceptibility_correction = 0.0f;
         }
 
         BOUND_RANGE(susceptibility_correction, 0.0f, 1.0f);
 
-        LOG_VALID_F("id = %d, age = %f, mod_acquire = %f, immune_failage = %f\n", parent->GetSuid().data, age, mod_acquire*susceptibility_correction, immune_failage);
+        LOG_VALID_F("id = %d, age = %f, mod_acquire = %f, m_immune_failage_acquire = %f\n", parent->GetSuid().data, age, mod_acquire*susceptibility_correction, m_immune_failage_acquire);
 
         return mod_acquire * susceptibility_correction;
     }
@@ -286,9 +286,9 @@ namespace Kernel
         return mod_mortality;
     }
 
-    float Susceptibility::getImmuneFailage() const
+    float Susceptibility::getImmuneFailAgeAcquire() const
     {
-        return immune_failage;
+        return m_immune_failage_acquire;
     }
 
     void Susceptibility::Update( float dt )
@@ -351,9 +351,9 @@ namespace Kernel
         mod_mortality *= updateVal;
     }
 
-    void Susceptibility::setImmuneFailage(float newFailage)
+    void Susceptibility::setImmuneFailAgeAcquire(float newFailAge)
     {
-        immune_failage = newFailage;
+        m_immune_failage_acquire = newFailAge;
     }
     
     void Susceptibility::UpdateInfectionCleared()
@@ -395,6 +395,6 @@ namespace Kernel
         ar.labelElement("trandecayoffset")   & susceptibility.trandecayoffset;
         ar.labelElement("mortdecayoffset")   & susceptibility.mortdecayoffset;
         
-        ar.labelElement("immune_failage")    & susceptibility.immune_failage;
+        ar.labelElement("m_immune_failage_acquire")    & susceptibility.m_immune_failage_acquire; // old
     }
 } // namespace Kernel

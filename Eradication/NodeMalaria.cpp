@@ -144,11 +144,25 @@ namespace Kernel
     {
         float temp_susceptibility = 1.0;
 
-        release_assert( SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_COMPLEX );
-        release_assert( distribution_susceptibility );
+        switch( SusceptibilityConfig::susceptibility_initialization_distribution_type )
+        {
+        case DistributionType::DISTRIBUTION_COMPLEX:
+            temp_susceptibility = distribution_susceptibility->Calculate( GetRng() );
+            LOG_VALID_F( "creating individual with age = %f and susceptibility = %f\n",  ind_init_age, temp_susceptibility);
+            break;
+            
+        case DistributionType::DISTRIBUTION_SIMPLE:
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", "DISTRIBUTION_SIMPLE", "Simulation_Type", "MALARIA_SIM");
 
-        temp_susceptibility = distribution_susceptibility->Calculate( GetRng() );
-        LOG_VALID_F( "creating individual with age = %f and susceptibility = %f\n", ind_init_age, temp_susceptibility );
+        case DistributionType::DISTRIBUTION_OFF:
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", "DISTRIBUTION_OFF", "Simulation_Type", "MALARIA_SIM");
+
+        default:
+            if( !JsonConfigurable::_dryrun )
+            {
+                throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", SusceptibilityConfig::susceptibility_initialization_distribution_type, DistributionType::pairs::lookup_key( SusceptibilityConfig::susceptibility_initialization_distribution_type ) );
+            }
+        }
 
         return temp_susceptibility;
     }

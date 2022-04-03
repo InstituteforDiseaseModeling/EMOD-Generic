@@ -11,6 +11,7 @@
         "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
         "Demographics_Filenames": [
             "Namawala_single_node_demographics.json",
+            "Namawala_single_node_demographics_initial_prevalence_genomes.json",
             "Namawala_single_node_demographics_complex_mortality.json",
             "Namawala_single_node_demographics.immunity.json"
         ],
@@ -30,11 +31,7 @@
         "Antibody_Memory_Level": 0.3,
         "Antigen_Switch_Rate": 5e-09,
         "Base_Gametocyte_Production_Rate": 0.1,
-        "Custom_Individual_Events": [
-            "Received_Treatment",
-            "Received_RCD_Drugs"
-        ],
-        "Falciparum_MSP_Variants": 100,
+	"Falciparum_MSP_Variants": 100,
         "Falciparum_Nonspecific_Types": 20,
         "Falciparum_PfEMP1_Variants": 1000
     },
@@ -100,11 +97,12 @@
     },
     "PRIMARY": {
         "Config_Name": "22_Malaria_Barcode_Genetics",
-        "Custom_Reports_Filename": "custom_reports.json",
-        "Enable_Interventions": 1,
-        "Enable_Strain_Tracking": 0,
+        "Custom_Reports_Filename": "custom_reports.json", 
+        "Enable_Interventions": 1, 
+        "Enable_Strain_Tracking": 1,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "Namawala",
+        "Python_Script_Path": "LOCAL",
         "Run_Number": 2,
         "Simulation_Duration": 1095
     },
@@ -132,7 +130,7 @@
             "gm20",
             "gm21",
             "gm22",
-            "gm23",
+            "gm23", 
             "gm24"
         ],
         "Number_of_Clades": 2

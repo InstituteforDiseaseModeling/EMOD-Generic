@@ -10,7 +10,6 @@
         { "path": "Scenarios/Generic/06_SEIRS" },
         { "path": "Scenarios/Generic/07_SI" },
         { "path": "Scenarios/Generic/08_SIS" },
-        { "path": "Scenarios/Generic/09_DensityScaling" },
 
         { "path": "Scenarios/VectorAndMalaria/01_A_Namawala3Vectors_lowEIR" },
         { "path": "Scenarios/VectorAndMalaria/01_B_Namawala3Vectors_highEIR" },

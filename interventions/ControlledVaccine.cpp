@@ -29,8 +29,9 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
-        initConfigTypeMap( "Distributed_Event_Trigger",             &m_DistributedEventTrigger,           RV_Distributed_Event_Trigger_DESC_TEXT );
-        initConfigTypeMap( "Expired_Event_Trigger",                 &m_ExpiredEventTrigger,               RV_Expired_Event_Trigger_DESC_TEXT     );
+        initConfig( "Distributed_Event_Trigger", m_DistributedEventTrigger, inputJson, MetadataDescriptor::Enum("Distributed_Event_Trigger", RV_Distributed_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Expired_Event_Trigger", m_ExpiredEventTrigger, inputJson, MetadataDescriptor::Enum("Expired_Event_Trigger", RV_Expired_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+
         initConfigTypeMap( "Duration_To_Wait_Before_Revaccination", &m_DurationToWaitBeforeRevaccination, RV_Duration_To_Wait_Before_Revaccination_DESC_TEXT, 0, FLT_MAX, FLT_MAX);
 
         bool configured = SimpleVaccine::Configure( inputJson );
@@ -83,7 +84,7 @@ namespace Kernel
             distribute = SimpleVaccine::Distribute( context, pCCO );
         }
 
-        if( distribute && !m_DistributedEventTrigger.IsUninitialized() )
+        if( distribute && m_DistributedEventTrigger != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = context->GetParent()->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( context->GetParent()->GetEventContext(), m_DistributedEventTrigger );
@@ -97,7 +98,7 @@ namespace Kernel
         SimpleVaccine::Update( dt );
         m_TimeSinceVaccination += dt;
 
-        if( expired && !m_ExpiredEventTrigger.IsUninitialized() )
+        if( expired && m_ExpiredEventTrigger != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( parent->GetEventContext(), m_ExpiredEventTrigger );
@@ -128,7 +129,7 @@ namespace Kernel
         ControlledVaccine& vaccine = *obj;
         ar.labelElement( "m_TimeSinceVaccination"              ) & vaccine.m_TimeSinceVaccination;
         ar.labelElement( "m_DurationToWaitBeforeRevaccination" ) & vaccine.m_DurationToWaitBeforeRevaccination;
-        ar.labelElement( "m_DistributedEventTrigger"           ) & vaccine.m_DistributedEventTrigger;
-        ar.labelElement( "m_ExpiredEventTrigger"               ) & vaccine.m_ExpiredEventTrigger;
+        ar.labelElement( "m_DistributedEventTrigger"           ) & (uint32_t&)vaccine.m_DistributedEventTrigger;
+        ar.labelElement( "m_ExpiredEventTrigger"               ) & (uint32_t&)vaccine.m_ExpiredEventTrigger;
     }
 }

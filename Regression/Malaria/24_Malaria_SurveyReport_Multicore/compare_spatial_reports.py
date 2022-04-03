@@ -100,7 +100,6 @@ def CompareData( exp_data, exp_num_timesteps, exp_num_nodes,
                  act_data, act_num_timesteps, act_num_nodes,
                  time_offset, node_offset ):
 
-    print( "============= CompareData ===============" )
     CompareValues( "exp_num_nodes",     exp_num_nodes,     exp_data.num_nodes     )
     CompareValues( "act_num_nodes",     act_num_nodes,     act_data.num_nodes     )
     CompareValues( "exp_num_timesteps", exp_num_timesteps, exp_data.num_timesteps )
@@ -163,7 +162,8 @@ class InsetChart:
 
         data = InsetChartData()
 
-        for spatial_ch, inset_ch in channel_name_map_spatial_to_inset.iteritems():
+        for spatial_ch in channel_name_map_spatial_to_inset:
+            inset_ch = channel_name_map_spatial_to_inset[spatial_ch]
             data.channel_data[ inset_ch ] = json_data["Channels"][inset_ch]["Data"]
         return data
 
@@ -173,7 +173,8 @@ class InsetChart:
 
 def CompareInsetChart( exp_data, act_data ):
     print ("!!!!!!!!!!!!!!!!!! Compare InsetChartData !!!!!!!!!!!!!!!!!!!!!!!")
-    for spatial_ch, inset_ch in channel_name_map_spatial_to_inset.iteritems():
+    for spatial_ch in channel_name_map_spatial_to_inset:
+        inset_ch = channel_name_map_spatial_to_inset[spatial_ch]
         var = inset_ch+"-num_values"
         CompareValues( var, len( exp_data.channel_data[inset_ch] ), len( act_data.channel_data[inset_ch] ) )
         for i in range(len(exp_data.channel_data[inset_ch]) ):

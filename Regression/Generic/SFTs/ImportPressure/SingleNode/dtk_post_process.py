@@ -3,19 +3,14 @@
 import dtk_test.dtk_ImportPressure_Support as ips
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
 
-KEY_NEW_INFECTIONS = "New Infections"
-KEY_STATISTICAL_POPULATION = "Statistical Population"
-KEY_CAMPAIGN_NAME = "Campaign_Filename"
-KEY_DEMOGRAPHICS_NAME = "Demographics_Filenames"
 
 def application(output_folder="output",
                 config_filename="config.json", campaign_filename="campaign.json",
-                demographics_filename="demographics_100_overlay.json",
                 inset_chart_name="InsetChart.json",
                 report_name=sft.sft_output_filename,
                 debug=False):
@@ -24,25 +19,24 @@ def application(output_folder="output",
         print("output_folder: " + output_folder)
         print("config_filename: " + config_filename + "\n")
         print("campaign_filename: " + campaign_filename + "\n")
-        print("demographics_filename: " + demographics_filename + "\n")
         print("inset_chart_name: " + inset_chart_name + "\n")
         print("debug: " + str(debug) + "\n")
 
     sft.wait_for_done()
 
     param_obj = ips.load_emod_parameters(config_filename, debug)
-    campaign_obj = ips.load_campaign_file(param_obj[KEY_CAMPAIGN_NAME], debug)
-    demographics_obj = ips.load_demographics_file(param_obj[KEY_DEMOGRAPHICS_NAME][-1], debug)
+    campaign_obj = ips.load_campaign_file(param_obj[ips.ConfigKeys.CAMPAIGN_NAME], debug)
+    demographics_obj = ips.load_demographics_file(param_obj[ips.ConfigKeys.DEMOGRAPHICS_NAME][-1], debug)
     report_data_obj = ips.parse_json_report(output_folder, inset_chart_name, debug)
 
-    sft.plot_data(report_data_obj[KEY_NEW_INFECTIONS],
+    sft.plot_data(report_data_obj[ips.KEY_NEW_INFECTIONS],
                   title="new infections",
                   label1="New Infections",
                   label2="NA",
                   xlabel="time steps", ylabel="new infection",
                   category='New_infections',
                   show=True)
-    sft.plot_data(report_data_obj[KEY_STATISTICAL_POPULATION],
+    sft.plot_data(report_data_obj[ips.KEY_STATISTICAL_POPULATION],
                   title="Statistical Population",
                   label1="Statistical Population",
                   label2="NA",

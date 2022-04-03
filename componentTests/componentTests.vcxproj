@@ -169,7 +169,6 @@
     <ClCompile Include="RelationshipParametersTest.cpp" />
     <ClCompile Include="ReportUtilitiesMalariaTest.cpp" />
     <ClCompile Include="ReportUtilitiesTest.cpp" />
-    <ClCompile Include="SerializationTest.cpp" />
     <ClCompile Include="SerializationTimeCalculatorTest.cpp" />
     <ClCompile Include="STIIsPostDebutTest.cpp" />
     <ClCompile Include="HIVSimpleDiagnosticTest.cpp" />

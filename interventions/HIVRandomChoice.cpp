@@ -22,6 +22,10 @@ SETUP_LOGGING( "HIVRandomChoice" )
 
 namespace Kernel
 {
+
+    const static float MIN_PROBABILITY = 0.0f ;
+    const static float MAX_PROBABILITY = 1.0f ;
+
     BEGIN_QUERY_INTERFACE_DERIVED(HIVRandomChoice, HIVSimpleDiagnostic)
     END_QUERY_INTERFACE_DERIVED(HIVRandomChoice, HIVSimpleDiagnostic)
 
@@ -56,23 +60,12 @@ namespace Kernel
 
         for (int i = 0; i < names.size(); i++)
         {
-            EventTrigger event = EventTriggerFactory::GetInstance()->CreateTrigger("Choices", names[i]);
+            EventTrigger::Enum event = EventTrigger::Enum( EventTrigger::pairs::lookup_value( names[i].c_str() ) );
             float probability = values[i];
 
             event_names.push_back(event);
             event_probabilities.push_back(probability);
             total += probability;
-        }
-
-        if ( total == 0.0 && !JsonConfigurable::_dryrun )
-        {
-            throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "The sum of the probabilities in the 'Choices' table must be > 0.");
-        }
-
-        // Normalize the probabilities
-        for (int i = 0; i < event_probabilities.size(); i++)
-        {
-            event_probabilities[i] = event_probabilities[i] / total;
         }
     }
 
@@ -80,6 +73,48 @@ namespace Kernel
     {
         return true;
     }
+#if 0
+    void HIVRandomChoice::positiveTestDistribute()
+    {
+        LOG_DEBUG_F( "Individual %d tested HIVRandomChoice receiving actual intervention from HIVRandomChoice.\n", parent->GetSuid().data );
+
+        // random number to choose an event from the dictionary
+        float p = parent->GetRng()->e();
+
+        EventTrigger::Enum trigger;
+        float probSum = 0;
+
+        // pick the EventTrigger to broadcast 
+        for (int i = 0; i < event_names.size(); i++)
+        {
+            probSum += event_probabilities[i];
+            if (p <= probSum)
+            { 
+                trigger = event_names[i];
+                break;
+            }
+        }
+
+        // expire the intervention
+        expired = true;
+
+        // broadcast the event 
+        INodeTriggeredInterventionConsumer* broadcaster = nullptr;
+        if (s_OK != parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(INodeTriggeredInterventionConsumer), (void**)&broadcaster))
+        {
+            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__,
+                                           "parent->GetEventContext()->GetNodeEventContext()",
+                                           "INodeTriggeredInterventionConsumer",
+                                           "INodeEventContext" );
+        }
+
+        if( trigger != EventTrigger::NoTrigger )
+        {
+            IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
+            broadcaster->TriggerObservers( parent->GetEventContext(), trigger );
+        }
+    }
+#endif
 
     void HIVRandomChoice::positiveTestDistribute()
     {
@@ -88,7 +123,7 @@ namespace Kernel
         // random number to choose an event from the dictionary
         float p = parent->GetRng()->e();
 
-        EventTrigger trigger;
+        EventTrigger::Enum trigger;
         float probSum = 0;
 
         // pick the EventTrigger to broadcast
@@ -106,7 +141,7 @@ namespace Kernel
         expired = true;
 
         // broadcast the event
-        if( !trigger.IsUninitialized() )
+        if( trigger != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
             broadcaster->TriggerObservers( parent->GetEventContext(), trigger );
@@ -118,9 +153,10 @@ namespace Kernel
     void HIVRandomChoice::serialize(IArchive& ar, HIVRandomChoice* obj)
     {
         HIVSimpleDiagnostic::serialize( ar, obj );
-        HIVRandomChoice& choice = *obj;
-
-        ar.labelElement("event_names") & choice.event_names;
-        ar.labelElement("event_probabilities") & choice.event_probabilities;
+        HIVRandomChoice& choice = *obj; 
+        abort();
+        // Does this intervention ever persist? No.  
+        //ar.labelElement("event_names") & (std::vector<uint32>)choice.event_names;
+        ar.labelElement("event_probabilities") & choice.event_probabilities; 
     }
 }

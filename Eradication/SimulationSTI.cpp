@@ -65,9 +65,8 @@ namespace Kernel
 
     SimulationSTI *SimulationSTI::CreateSimulation(const ::Configuration *config)
     {
-        SimulationSTI *newsimulation = nullptr;
+        SimulationSTI *newsimulation = _new_ SimulationSTI();
 
-        newsimulation = _new_ SimulationSTI();
         if (newsimulation)
         {
             // This sequence is important: first
@@ -76,23 +75,19 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "STI_SIM requested with invalid configuration." );
             }
         }
 
         return newsimulation;
     }
 
-    void
-    SimulationSTI::Initialize()
+    void SimulationSTI::Initialize()
     {
         Simulation::Initialize();
     }
 
-    void
-    SimulationSTI::Initialize(
-        const ::Configuration *config
-    )
+    void SimulationSTI::Initialize( const ::Configuration *config )
     {
         Simulation::Initialize(config);
         IndividualHumanSTI::InitializeStaticsSTI( config );

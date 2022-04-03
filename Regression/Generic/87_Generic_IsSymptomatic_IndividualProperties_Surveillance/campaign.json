@@ -133,7 +133,7 @@
                         "Cost_To_Consumer": 0.0,
                         "Days_To_Diagnosis": 1.0,
                         "Event_Or_Config": "Event",
-                        "Positive_Diagnosis_Event": "TestedPositive",
+                        "Positive_Diagnosis_Event": "PositiveResult",
                         "Treatment_Fraction": 1.0,
                         "class": "SimpleDiagnostic"
                     },

@@ -662,3 +662,5 @@
 #define x_Sea_Migration_DESC_TEXT "Scale factor for the rate of migration by sea."
 #define x_Vector_Migration_Local_DESC_TEXT "Scale factor for the rate of vector migration to adjacent nodes."
 #define x_Vector_Migration_Regional_DESC_TEXT "Scale factor for the rate of vector migration to non-adjacent nodes."
+
+#include "missing_config_params.rc"

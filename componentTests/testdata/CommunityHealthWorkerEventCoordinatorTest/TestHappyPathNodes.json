@@ -9,7 +9,7 @@
     "Initial_Amount_Distribution": "CONSTANT_DISTRIBUTION",
     "Initial_Amount_Constant": 6,
     "Trigger_Condition_List": [
-        "ListenForEvent"
+        "GP_EVENT_000"
     ],
     "Intervention_Config": {
         "class": "SpaceSpraying",

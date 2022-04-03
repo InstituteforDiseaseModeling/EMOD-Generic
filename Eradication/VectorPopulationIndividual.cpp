@@ -23,6 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "VectorSpeciesParameters.h"
 #include "RANDOM.h"
 #include "TransmissionGroupMembership.h"
+#include "IndividualVector.h" // just for human_indoor, etc. statics
 
 SETUP_LOGGING( "VectorPopulationIndividual" )
 
@@ -193,8 +194,8 @@ namespace Kernel
         // Acquire infections with strain tracking for exposed queues
 
         LOG_DEBUG("Exposure to contagion: human to vector.\n");
-        m_txIndoor->ExposeToContagion(  (IInfectable*)this, NodeVector::vector_indoor,  dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-        m_txOutdoor->ExposeToContagion( (IInfectable*)this, NodeVector::vector_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+        m_txIndoor->ExposeToContagion(  (IInfectable*)this, IndividualHumanVector::vector_indoor,  dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
+        m_txOutdoor->ExposeToContagion( (IInfectable*)this, IndividualHumanVector::vector_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
         IndoorExposedQueues.clear();
         OutdoorExposedQueues.clear();
     }

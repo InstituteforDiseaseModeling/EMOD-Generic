@@ -24,6 +24,7 @@ or unspecified behavior may result later.
 To finalize the accumulation across distributed MPI processes, call Reduce(); data will be valid on rank 0 only.
 */
 namespace Kernel {
+
     class IndividualHuman; // fwd declaration
     class PropertyReport : public Report
     {
@@ -36,15 +37,17 @@ namespace Kernel {
         virtual void LogIndividualData( Kernel::IIndividualHuman* individual ) override;
         virtual void LogNodeData( Kernel::INodeContext * pNC ) override;
 
-        // new functions and members exclusive to this class
-        typedef std::map< std::string, std::string > tKeyValuePairs; // pairs?
-        typedef std::set< tKeyValuePairs > tPermutations;
-        static void GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePairs perm, tPermutations &permutationsSet );
     protected:
         PropertyReport( const std::string& rReportName );
 
-        std::vector<std::string> permutationsList;
+    public:
+        // new functions and members exclusive to this class
+        typedef std::map< std::string, std::string > tKeyValuePair; // pairs?
+        typedef std::set< tKeyValuePair > tPermutations;
         tPermutations permutationsSet;
+        std::vector<std::string> permutationsList;
+        static void GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePair perm, tPermutations &permutationsSet );
+
 
         virtual void postProcessAccumulatedData() override;
 

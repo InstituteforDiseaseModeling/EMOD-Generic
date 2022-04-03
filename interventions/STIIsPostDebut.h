@@ -21,6 +21,7 @@ namespace Kernel
     public:
         STIIsPostDebut();
         STIIsPostDebut( const STIIsPostDebut& ); // copy ctor
+        virtual bool Configure( const Configuration* pConfig ) override;
 
         // IDistributingDistributableIntervention
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) override;
@@ -32,7 +33,7 @@ namespace Kernel
     protected:
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        EventTrigger negative_diagnosis_event;
+        EventTrigger::Enum negative_diagnosis_event;
 
         DECLARE_SERIALIZABLE(STIIsPostDebut);
 #pragma warning( pop )

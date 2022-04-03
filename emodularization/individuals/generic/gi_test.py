@@ -1,5 +1,7 @@
 #!/usr/bin/python3.6
 
+import sys
+sys.path.append( "./build/lib.linux-x86_64-3.7" )
 import dtk_generic_intrahost as gi
 
 boy = gi.create( ( 0, 100.0, 1.0 ) )

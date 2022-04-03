@@ -29,23 +29,23 @@
                 "Intervention_Config": {
                     "Age_Thresholds": [
                         {
-                            "Event": "AgeMeasured0",
+                            "Event": "GP_EVENT_000",
                             "High": 15,
                             "Low": 0
                         },
                         {
-                            "Event": "AgeMeasured1",
+                            "Event": "GP_EVENT_001",
                             "High": 25,
                             "Low": 15,
                             "NOTE": "Age ranges need not be exclusive.  This event and the next will ffire for a 20 year old."
                         },
                         {
-                            "Event": "AgeMeasured2",
+                            "Event": "GP_EVENT_002",
                             "High": 50,
                             "Low": 15
                         },
                         {
-                            "Event": "AgeMeasured3",
+                            "Event": "GP_EVENT_003",
                             "High": 100,
                             "Low": 50
                         }

@@ -24,6 +24,7 @@ namespace Kernel
 {
     class StrainIdentity;
 
+
     struct IOutbreak : public ISupports
     {
         virtual int GetClade() const = 0;
@@ -49,7 +50,7 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreak
-        virtual int GetClade() const  { return clade; }
+        virtual int GetClade() const   { return clade; }
         virtual int GetGenome() const  { return genome; }
         virtual float GetImportAge() const { return import_age; }
 
@@ -58,9 +59,7 @@ namespace Kernel
         int genome;
         float import_age;
         int num_cases_per_node;
-        int incubation_period_override;
-        ProbabilityNumber prob_infection;
 
-        StrainIdentity* GetNewStrainIdentity(INodeEventContext *context);
+        int incubation_period_override;
     };
 }

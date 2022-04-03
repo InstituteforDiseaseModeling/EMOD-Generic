@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # This SFT test the following statement:
 # Seasonality. The amount of environmental contagion (dose) to which an individual is exposed is attenuated/amplified
 # by a seasonality factor that varies throughout the year according to a trapezoidal pattern.
@@ -17,7 +17,7 @@
 # "Environmental_Ramp_Down_Duration": 170,
 # "Environmental_Ramp_Up_Duration": 30,
 
-import dtk_SeasonalAttenuation_Support as dtk_SAS
+import dtk_test.dtk_SeasonalAttenuation_Support as dtk_SAS
 import dtk_test.dtk_sft as sft
 
 def application(output_folder="output",

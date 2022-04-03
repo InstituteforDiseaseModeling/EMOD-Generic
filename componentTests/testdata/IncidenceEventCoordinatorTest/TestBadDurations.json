@@ -30,12 +30,12 @@
     "Responder": {
         "Action_List": [
             {
-                "Event_To_Broadcast": "Action_Event_1",
-                "Threshold": 20
+                "Threshold" : 20,
+                "Event_To_Broadcast" : "GP_EVENT_000"
             },
             {
-                "Event_To_Broadcast": "Action_Event_2",
-                "Threshold": 50
+                "Threshold" : 50,
+                "Event_To_Broadcast" : "GP_EVENT_001"
             }
         ],
         "Threshold_Type": "COUNT"

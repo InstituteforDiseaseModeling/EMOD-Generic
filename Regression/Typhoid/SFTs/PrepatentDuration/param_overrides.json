@@ -1,0 +1,18 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Typhoid_SFT_PrepatentTreatment",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_1K_overlay.json"
+        ],
+        "Environmental_Peak_Start": 30.0,
+        "Environmental_Ramp_Down_Duration": 30,
+        "Environmental_Ramp_Up_Duration": 50,
+        "Python_Script_Path": "SHARED",
+        "Typhoid_Carrier_Probability": 0.1,
+        "Typhoid_Contact_Exposure_Rate": 0.6,
+        "x_Base_Population": 3,
+        "logLevel_InfectionTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

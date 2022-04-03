@@ -19,8 +19,8 @@ namespace Kernel
     // --- BaseTextReportEventsTemplate
     // ------------------------------------------------------------------------
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
-    BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::BaseTextReportEventsTemplate( const std::string& rReportName )
+    template<class Broadcaster, class Observer, class Entity>
+    BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::BaseTextReportEventsTemplate( const std::string& rReportName )
         : BaseTextReport( rReportName )
         , eventTriggerList()
         , broadcaster_list()
@@ -34,13 +34,13 @@ namespace Kernel
         AddRef();
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
-    BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::~BaseTextReportEventsTemplate()
+    template<class Broadcaster, class Observer, class Entity>
+    BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::~BaseTextReportEventsTemplate()
     {
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
-    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::Reduce()
+    template<class Broadcaster, class Observer, class Entity>
+    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::Reduce()
     {
         BaseTextReport::Reduce();
         if( is_registered )
@@ -49,14 +49,14 @@ namespace Kernel
         }
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
-    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::UpdateRegistration( Broadcaster* broadcaster, bool registering )
+    template<class Broadcaster, class Observer, class Entity>
+    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::UpdateRegistration( Broadcaster* broadcaster, bool registering )
     {
         for( auto trigger : eventTriggerList )
         {
             if( registering )
             {
-                LOG_DEBUG_F( "BaseTextReportEventsTemplate is registering to listen to event %s\n", trigger.c_str() );
+                //LOG_DEBUG_F( "BaseTextReportEventsTemplate is registering to listen to event %s\n", trigger.c_str() );
                 broadcaster->RegisterObserver( this, trigger );
             }
             else
@@ -66,8 +66,8 @@ namespace Kernel
         }
     }
 
-    template<class Broadcaster, class Observer, class Entity, class Trigger>
-    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity, Trigger>::UnregisterAllBroadcasters()
+    template<class Broadcaster, class Observer, class Entity>
+    void BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::UnregisterAllBroadcasters()
     {
         for( auto broadcaster : broadcaster_list )
         {

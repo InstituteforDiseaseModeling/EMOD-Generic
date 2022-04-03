@@ -44,6 +44,7 @@ namespace Kernel
         static std::string SCRIPT_PRE_PROCESS;
         static std::string SCRIPT_POST_PROCESS;
         static std::string SCRIPT_POST_PROCESS_SCHEMA;
+        static std::string SCRIPT_IN_PROCESS;
 
         static std::string SCRIPT_PYTHON_FEVER;
         static std::string SCRIPT_TYPHOID;

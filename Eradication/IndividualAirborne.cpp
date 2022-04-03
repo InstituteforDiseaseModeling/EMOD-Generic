@@ -24,6 +24,16 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_DERIVED(IndividualHumanAirborne, IndividualHuman)
     END_QUERY_INTERFACE_DERIVED(IndividualHumanAirborne, IndividualHuman)
 
+    void IndividualHumanAirborne::InitializeStaticsAirborne( const Configuration* config )
+    {
+        //SusceptibilityAirborneConfig immunity_config;
+        //immunity_config.Configure( config );
+        InfectionAirborneConfig infection_config;
+        infection_config.Configure( config );
+        //IndividualHumanAirborneConfig individual_config;
+        //individual_config.Configure( config );
+    }
+
     IndividualHumanAirborne *IndividualHumanAirborne::CreateHuman(INodeContext *context, suids::suid id, float MCweight, float init_age, int gender)
     {
         IndividualHumanAirborne *newindividual = _new_ IndividualHumanAirborne(id, MCweight, init_age, gender);

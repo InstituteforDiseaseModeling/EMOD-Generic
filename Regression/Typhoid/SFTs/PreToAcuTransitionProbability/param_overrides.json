@@ -1,0 +1,15 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Pre_To_Acu_Trans_Prob",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Symptomatic_Fraction": 0.234,
+        "x_Base_Population": 0.5,
+        "logLevel_InfectionTyphoid": "DEBUG",
+        "logLevel_MathFunctions": "ERROR"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

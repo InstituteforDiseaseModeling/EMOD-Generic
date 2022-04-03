@@ -47,7 +47,7 @@ namespace Kernel
         virtual bool notifyOnEvent( INodeEventContext *context, const EventTriggerNode& trigger ) override;
 
     protected:
-        std::vector<EventTriggerNode>   m_trigger_conditions;
+        std::vector<EventTrigger::Enum>   m_trigger_conditions;
         float max_duration;
         float duration;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;

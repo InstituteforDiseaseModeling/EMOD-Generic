@@ -3,7 +3,7 @@
 
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -11,19 +11,10 @@ np.random.seed(run_number)
 import math
 import dtk_test.dtk_ImportPressure_Support as ips
 
-KEY_TOTAL_TIMESTEPS = "Simulation_Duration"
-KEY_START_TIME = "Start_Time"
-KEY_CAMPAIGN_DURATIONS = "Durations"
-KEY_CAMPAIGN_DIP = "Daily_Import_Pressures"
-KEY_INITIAL_POPULATION = "InitialPopulation"
-KEY_NEW_INFECTIONS = "New Infections"
-KEY_STATISTICAL_POPULATION = "Statistical Population"
+
 KEY_NODE_COUNT = "NodeCount"
 KEY_NODE_LIST_COUNT = "Node_List_Count"
-KEY_CONFIG_NAME = "Config_Name"
-KEY_CAMPAIGN_NAME = "Campaign_Filename"
-KEY_DEMOGRAPHICS_NAME = "Demographics_Filenames"
-KEY_RUN_NUMBER = "Run_Number"
+
 
 def load_campaign_file(campaign_filename="campaign.json", debug=False):
     """reads campaign file and populates campaign_obj
@@ -34,10 +25,11 @@ def load_campaign_file(campaign_filename="campaign.json", debug=False):
     with open(campaign_filename) as infile:
         cf = json.load(infile)
     campaign_obj = {}
-    durations = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"][KEY_CAMPAIGN_DURATIONS]
-    campaign_obj[KEY_CAMPAIGN_DURATIONS] = durations
-    daily_import_pressures = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"][KEY_CAMPAIGN_DIP]
-    campaign_obj[KEY_CAMPAIGN_DIP] = daily_import_pressures
+    durations = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"][ips.CampaignKeys.CAMPAIGN_DURATIONS]
+    campaign_obj[ips.CampaignKeys.CAMPAIGN_DURATIONS] = durations
+    daily_import_pressures = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"][ips.CampaignKeys.
+        CAMPAIGN_DIP]
+    campaign_obj[ips.CampaignKeys.CAMPAIGN_DIP] = daily_import_pressures
     node_list = cf["Events"][0]["Nodeset_Config"]["Node_List"]
     campaign_obj[KEY_NODE_LIST_COUNT] = len(node_list)
 
@@ -59,8 +51,8 @@ def load_demographics_file(demographics_filename="demographics_multiplenodes.jso
     demographics_obj = {}
     initial_population = 0
     for node in df["Nodes"]:
-        initial_population += node["NodeAttributes"][KEY_INITIAL_POPULATION]
-    demographics_obj[KEY_INITIAL_POPULATION] = initial_population
+        initial_population += node["NodeAttributes"][ips.KEY_INITIAL_POPULATION]
+    demographics_obj[ips.KEY_INITIAL_POPULATION] = initial_population
     node_count = df["Metadata"]["NodeCount"]
     demographics_obj[KEY_NODE_COUNT] = node_count
 
@@ -73,19 +65,19 @@ def load_demographics_file(demographics_filename="demographics_multiplenodes.jso
 
 def create_report_file(param_obj, campaign_obj, demographics_obj, report_data_obj, report_name, debug=False):
     with open(report_name, "w") as outfile:
-        total_timesteps = param_obj[KEY_TOTAL_TIMESTEPS]
-        start_timestep = param_obj[KEY_START_TIME]
-        initial_population = demographics_obj[KEY_INITIAL_POPULATION]
-        rates = [x * campaign_obj[KEY_NODE_LIST_COUNT] for x in campaign_obj[KEY_CAMPAIGN_DIP]]
-        durations = campaign_obj[KEY_CAMPAIGN_DURATIONS]
-        new_infections = report_data_obj[KEY_NEW_INFECTIONS]
-        statistical_population = report_data_obj[KEY_STATISTICAL_POPULATION]
+        total_timesteps = param_obj[ips.ConfigKeys.TOTAL_TIMESTEPS]
+        start_timestep = param_obj[ips.ConfigKeys.START_TIME]
+        initial_population = demographics_obj[ips.KEY_INITIAL_POPULATION]
+        rates = [x * campaign_obj[KEY_NODE_LIST_COUNT] for x in campaign_obj[ips.CampaignKeys.CAMPAIGN_DIP]]
+        durations = campaign_obj[ips.CampaignKeys.CAMPAIGN_DURATIONS]
+        new_infections = report_data_obj[ips.KEY_NEW_INFECTIONS]
+        statistical_population = report_data_obj[ips.KEY_STATISTICAL_POPULATION]
         length = len(rates)
         start_duration = start_timestep
         new_infections_dict = {}
         calculate_new_population = initial_population
-        outfile.write("# Test name: " + str(param_obj[KEY_CONFIG_NAME]) + ", Run number: " +
-                      str(param_obj[KEY_RUN_NUMBER]) +
+        outfile.write("# Test name: " + str(param_obj[ips.ConfigKeys.CONFIG_NAME]) + ", Run number: " +
+                      str(param_obj[ips.ConfigKeys.RUN_NUMBER]) +
                       "\n# Test compares the statistical population with the"
                       " calculated population and tests the Poisson distribution for new infections.\n")
         for i in range(length):
@@ -171,18 +163,18 @@ def application(output_folder="output",
     sft.wait_for_done()
 
     param_obj = ips.load_emod_parameters(config_filename, debug)
-    campaign_obj = load_campaign_file(param_obj[KEY_CAMPAIGN_NAME], debug)
-    demographics_obj = load_demographics_file(param_obj[KEY_DEMOGRAPHICS_NAME][-1], debug)
+    campaign_obj = load_campaign_file(param_obj[ips.ConfigKeys.CAMPAIGN_NAME], debug)
+    demographics_obj = load_demographics_file(param_obj[ips.ConfigKeys.DEMOGRAPHICS_NAME][-1], debug)
     report_data_obj = ips.parse_json_report(output_folder, insetchart_name, debug)
 
-    sft.plot_data(report_data_obj[KEY_NEW_INFECTIONS],
+    sft.plot_data(report_data_obj[ips.KEY_NEW_INFECTIONS],
                   title="new infections",
                   label1="New Infections",
                   label2="NA",
                   xlabel="time steps", ylabel="new infection",
                   category='New_infections',
                   show=True)
-    sft.plot_data(report_data_obj[KEY_STATISTICAL_POPULATION],
+    sft.plot_data(report_data_obj[ips.KEY_STATISTICAL_POPULATION],
                   title="Statistical Population",
                   label1="Statistical Population",
                   label2="NA",
@@ -190,7 +182,7 @@ def application(output_folder="output",
                   category='Statistical_population',
                   show=True, line=True)
     create_report_file(param_obj, campaign_obj, demographics_obj, report_data_obj, report_name,
-                        debug)
+                       debug)
 
 
 if __name__ == "__main__":

@@ -16,6 +16,14 @@ SETUP_LOGGING( "InfectionSTI" )
 
 namespace Kernel
 {
+    bool InfectionSTIConfig::Configure( const Configuration * config )
+    {
+        LOG_DEBUG("Configure\n");
+
+        bool bRet = JsonConfigurable::Configure( config );
+        return bRet;
+    }
+
     InfectionSTI *InfectionSTI::CreateInfection(IIndividualHumanContext *context, suids::suid _suid)
     {
         InfectionSTI *newinfection = _new_ InfectionSTI(context);

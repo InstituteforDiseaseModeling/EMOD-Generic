@@ -50,7 +50,7 @@ namespace Kernel
     {
         bool ret = initConfig("Infection_Type", infection_type, inputJson, MetadataDescriptor::Enum("Infection_Type", "TB =1 or HIV = 0", MDD_ENUM_ARGS(TBHIVInfectionType)) );
 
-        if (!_dryrun && infection_type == TBHIVInfectionType::HIV && !IndividualHumanCoInfectionConfig::enable_coinfection )
+        if (!JsonConfigurable::_dryrun && infection_type == TBHIVInfectionType::HIV && !IndividualHumanCoInfectionConfig::enable_coinfection )
         {
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Intervention in campaign", "OutbreakIndividualTBorHIV", "Enable_Coinfection = 0", "Infection_Type = HIV");
         }
@@ -71,23 +71,25 @@ namespace Kernel
     )
     {
         bool success = true;
+        StrainIdentity outbreak_strain(clade,genome);
 
         IndividualHumanCoInfection* Ind_coinf = dynamic_cast<IndividualHumanCoInfection*>(context->GetParent());  // Better be TBHIV at this point 
         IIndividualHuman* individual = dynamic_cast<IIndividualHuman*>(context->GetParent()); // QI in new code
-        INodeEventContext * pContext = individual->GetParent()->GetEventContext();
 
         LOG_DEBUG("Infecting individual from Outbreak.\n");
         if (infection_type == TBHIVInfectionType::TB)
         {
             LOG_INFO("Infecting individual from Outbreak with TB.\n");
+            
             if (Ind_coinf->HasTB())
             {
                 LOG_DEBUG_F("Individual was selected for TB infection via OutbreakIndividualTBorHIV, but already infected with TB. Quitting here.\n");
-                return false; 
+                success = false; 
             }
-            const IStrainIdentity * pStrain = GetNewStrainIdentity( pContext, context->GetParent() );
-            Ind_coinf->AcquireNewInfection( pStrain, incubation_period_override );
-            return success;
+            else
+            {
+                Ind_coinf->AcquireNewInfection(&outbreak_strain, incubation_period_override);
+            }
         }
         else if (infection_type == TBHIVInfectionType::HIV)
         {
@@ -96,18 +98,20 @@ namespace Kernel
             if (Ind_coinf->HasHIV())
             {
                 LOG_DEBUG_F("Individual was selected for HIV infection via OutbreakIndividualTBorHIV, but already infected with HIV. Quitting here.\n");
-                return false;
+                success = false;
             }
-
-            const IStrainIdentity * pStrain = GetNewStrainIdentity( pContext, context->GetParent() );
-            Ind_coinf->AcquireNewInfectionHIV( pStrain, incubation_period_override );
-            return success;
+            else
+            {
+                Ind_coinf->AcquireNewInfectionHIV(&outbreak_strain, incubation_period_override);
+            }
         }
         else
         {
             LOG_INFO("Infection Type Neither HIV or TB, no infections from Outbreak");
-            return false;
+            success = false;
         }
+
+        return success;
     }
 }
 

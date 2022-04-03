@@ -45,13 +45,21 @@ namespace Kernel
     , negative_diagnosis_event()
     {
         initSimTypes( 2, "STI_SIM", "HIV_SIM" );
-        initConfigTypeMap( "Negative_Diagnosis_Event", &negative_diagnosis_event, STI_IPD_Negative_Diagnosis_Event_DESC_TEXT );
+        
     }
 
     STIIsPostDebut::STIIsPostDebut( const STIIsPostDebut& master )
         : SimpleDiagnostic( master )
     {
         negative_diagnosis_event = master.negative_diagnosis_event;
+    }
+
+    bool STIIsPostDebut::Configure(
+        const Configuration * inputJson
+    )
+    {
+        initConfig( "Negative_Diagnosis_Event", negative_diagnosis_event, inputJson, MetadataDescriptor::Enum("Negative_Diagnosis_Event", STI_IPD_Negative_Diagnosis_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        return SimpleDiagnostic::Configure( inputJson );
     }
 
     bool STIIsPostDebut::positiveTestResult()
@@ -79,9 +87,9 @@ namespace Kernel
         auto iid = parent->GetSuid().data;
         LOG_DEBUG_F( "Individual %d tested 'negative' in STIIsPostDebut, broadcasting negative event.\n", iid );
         
-        if( !negative_diagnosis_event.IsUninitialized() )
+        if( negative_diagnosis_event != EventTrigger::NoTrigger )
         {
-            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", negative_diagnosis_event.c_str(), iid );
+            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ), iid );
             broadcastEvent( negative_diagnosis_event );
         }
         else
@@ -97,6 +105,6 @@ namespace Kernel
     {
         SimpleDiagnostic::serialize( ar, obj );
         STIIsPostDebut& debut = *obj;
-        ar.labelElement("negative_diagnosis_event") & debut.negative_diagnosis_event;
+        ar.labelElement("negative_diagnosis_event") & (uint32_t&)debut.negative_diagnosis_event;
     }
 }

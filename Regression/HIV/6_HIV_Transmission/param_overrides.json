@@ -142,6 +142,7 @@
         "Report_Transmission": 1,
         "Report_Transmission_Individual_Properties": [],
         "Run_Number": 1,
+        "Python_Script_Path": "LOCAL",
         "STI_Coinfection_Acquisition_Multiplier": 13.4,
         "STI_Coinfection_Transmission_Multiplier": 13.4,
         "Sexual_Debut_Age_Female_Weibull_Heterogeneity": 0.020408162847,

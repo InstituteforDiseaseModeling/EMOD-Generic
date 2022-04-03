@@ -29,6 +29,7 @@ namespace Kernel
 {
     class IInfectionTB;
     // This class has no need yet for flags beyond those in the base class
+
     class IIndividualHumanCoInfection : public ISupports
     {
         friend struct IInfection;
@@ -53,6 +54,7 @@ namespace Kernel
         virtual bool IsExtrapulmonary() const = 0;
         virtual bool HasPendingRelapseInfection() const = 0;
         virtual bool GetExogenousTBStateChange() const = 0;
+        virtual TBInfectionState::Enum GetTBInfectionState() const = 0;
 
         virtual NaturalNumber              GetViralLoad() const = 0;
         virtual float                      GetCD4() const = 0;
@@ -73,18 +75,18 @@ namespace Kernel
     //class IndividualHumanCoInfection : public IIndividualHumanCoInfection, public IIndividualHumanTB, public IndividualHumanAirborne, public IIndividualHumanHIV 
     class IndividualHumanCoInfectionConfig : public IndividualHumanConfig
     {
-        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanCoInfectionConfig )
+        friend class IndividualHumanCoInfection;
+        friend class NodeTBHIV;
+
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
+        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanCoInfectionConfig )
 
     public:
         virtual bool Configure( const Configuration* config ) override;
         static bool enable_coinfection;
 
     protected:
-        friend class IndividualHumanCoInfection;
-        friend class NodeTBHIV;
-
         static map <float,float> CD4_act_map;
         static float ART_extra_reactivation_reduction;
         static map <float, float> TB_CD4_Infectiousness_Map;
@@ -107,13 +109,17 @@ namespace Kernel
     {
         friend class SimulationTBHIV;
         friend class Node;
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
+
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanCoInfection )
 
     public:
+        static IndividualHumanCoInfection *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanCoInfection(void);
-        static   IndividualHumanCoInfection *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
+
         IndividualHumanCoInfection();  // just trying to make compiler happy: TBD
+        static void InitializeStaticsCoInfection( const Configuration* config );
 
         // Infections and Susceptibility
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) override;
@@ -136,6 +142,8 @@ namespace Kernel
         virtual bool HasTB() const override;
         virtual bool IsImmune() const override;
         virtual inline NewInfectionState::_enum GetNewInfectionState() const override { return m_new_infection_state; }
+        virtual TBInfectionState::Enum GetTBInfectionState() const override;
+
         virtual bool IsMDR() const override;
         virtual int GetTime() const override;
         virtual bool IsSmearPositive() const override;
@@ -202,8 +210,9 @@ namespace Kernel
         float mdr_evolved_incident_counter;
         float new_mdr_fast_active_infection_counter;
 
-        virtual float GetImmunityReducedAcquire() override;
-        virtual float GetImmuneFailage() const override;
+        virtual float GetImmunityReducedAcquire() override; 
+
+        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
 
     protected:
         IndividualHumanCoInfection( suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
@@ -217,8 +226,7 @@ namespace Kernel
         //infection_list_t newInfectionlist;
         std::list< Susceptibility* > susceptibilitylist;
 
-        std::map< IInfection*, Susceptibility*> infection2susceptibilitymap;
-        //std::map< IInfection*, InterventionsContainer*> infection2interventionsmap;
+        std::map< IInfection*, Susceptibility*> infection2susceptibilitymap; 
 
         //future, please use the list not the individual ones
         Susceptibility* susceptibility_tb;
@@ -233,8 +241,6 @@ namespace Kernel
         bool m_bool_exogenous;
 
         //event observers
-        //std::vector < IInfectionIncidenceObserver * > infectionIncidenceObservers; 
-        static void InitializeStaticsCoInfection( const Configuration* config );
 
         //Strain tracking
         virtual bool InfectionExistsForThisStrain(IStrainIdentity* check_strain_id);
@@ -242,10 +248,9 @@ namespace Kernel
 
         virtual void PropagateContextToDependents() override;
 
-
     private:
+
         virtual IIndividualHumanContext* GetContextPointer( ) override { return (IIndividualHumanContext*)this; };
-        DECLARE_SERIALIZABLE(IndividualHumanCoInfection);
     };
 }
 

@@ -57,7 +57,7 @@ namespace Kernel
         virtual float GetEffectBlocking() const;
         virtual float GetEffectUsage() const = 0;
 
-        void BroadcastEvent( const EventTrigger& trigger ) const;
+        void BroadcastEvent( const EventTrigger::Enum& trigger ) const;
 
         IWaningEffect* m_pEffectKilling;
         IWaningEffect* m_pEffectBlocking;

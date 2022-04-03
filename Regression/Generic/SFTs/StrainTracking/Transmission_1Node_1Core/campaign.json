@@ -1,0 +1,90 @@
+{
+    "Campaign_Name": "Seed infection in three property groups",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Distributions":
+                [
+                    {
+                        "Age_Ranges_Years": [{}],
+                        "Start_Day": 20,
+                        "End_Day": 21,
+                        "Num_Targeted": [25],
+                        "Property_Restrictions_Within_Node": [{"Risk":"Seed_1"}]
+                    }
+                ],
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "NChooserEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Distributions":
+                [
+                    {
+                        "Age_Ranges_Years": [{}],
+                        "Start_Day": 20,
+                        "End_Day": 21,
+                        "Num_Targeted": [50],
+                        "Property_Restrictions_Within_Node": [{"Risk":"Seed_2"}]
+                    }
+                ],
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 2,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "NChooserEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Distributions":
+                [
+                    {
+                        "Age_Ranges_Years": [{}],
+                        "Start_Day": 20,
+                        "End_Day": 21,
+                        "Num_Targeted": [100],
+                        "Property_Restrictions_Within_Node": [{"Risk":"Seed_3"}]
+                    }
+                ],
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 3,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "NChooserEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

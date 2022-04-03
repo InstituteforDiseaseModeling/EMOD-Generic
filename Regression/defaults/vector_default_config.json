@@ -94,6 +94,7 @@
         },
         "DISEASE": {
             "Enable_Infectivity_Reservoir": 0,
+            "Enable_Infectivity_Scaling": 0,
             "Enable_Superinfection": 1,
             "INCUBATION": {
                 "Incubation_Period_Constant": 25,
@@ -153,6 +154,7 @@
             "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
             "Node_Grid_Size": 0.042,
+            "Python_Inprocessing_Tsteps": [],
             "Run_Number": 1,
             "Simulation_Duration": 1825,
             "Simulation_Timestep": 1,

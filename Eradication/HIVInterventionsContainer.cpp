@@ -285,14 +285,20 @@ namespace Kernel
 
     void HIVInterventionsContainer::OnBeginART()
     {
+        num_times_started_ART++;
+
+        if( parent->GetEventContext()->GetNodeEventContext() == nullptr )
+        {
+            ever_been_on_ART = true;
+            return;
+        }
         float t = parent->GetEventContext()->GetNodeEventContext()->GetTime().time;
         if( !ever_been_on_ART )
         {
             ever_been_on_ART = true;
-            time_first_started_ART = t ;
+            time_first_started_ART = t;
         }
-        num_times_started_ART++ ;
-        time_last_started_ART = t ;
+        time_last_started_ART = t;
     }
 
     bool HIVInterventionsContainer::EverTested()
@@ -526,8 +532,11 @@ namespace Kernel
 
         days_since_most_recent_ART_start = 0.0f;
 
-        IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
-        broadcaster->TriggerObservers( parent->GetEventContext(), EventTrigger::StartedART );
+        if( parent->GetEventContext()->GetNodeEventContext() != nullptr )
+        {
+            IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
+            broadcaster->TriggerObservers( parent->GetEventContext(), EventTrigger::StartedART );
+        }
         LOG_DEBUG_F( "Individual %d is now on ART.\n", parent->GetSuid().data );
 
         // If not going to achieve viral suppression, stop here so as to 1) avoid computing failure and 2) skip maternal transmission mod

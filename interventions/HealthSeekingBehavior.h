@@ -56,7 +56,7 @@ namespace Kernel
         float probability_of_seeking;
         EventOrConfig::Enum use_event_or_config;
         IndividualInterventionConfig actual_intervention_config;
-        EventTrigger actual_intervention_event;
+        EventTrigger::Enum actual_intervention_event;
         bool single_use;
 
         DECLARE_SERIALIZABLE(SimpleHealthSeekingBehavior);

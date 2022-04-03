@@ -31,19 +31,16 @@ namespace Kernel
 {
     template std::string BaseReportEventRecorder< IIndividualEventBroadcaster,
                                                   IIndividualEventObserver,
-                                                  IIndividualHumanEventContext,
-                                                  EventTrigger,
-                                                  EventTriggerFactory>::GetEnableParameterName();
+                                                  IIndividualHumanEventContext >::GetEnableParameterName();
 
     template void BaseTextReportEventsTemplate< IIndividualEventBroadcaster,
                                                 IIndividualEventObserver,
-                                                IIndividualHumanEventContext,
-                                                EventTrigger >::Reduce();
+                                                IIndividualHumanEventContext
+                                                >::Reduce();
 
     template void BaseTextReportEventsTemplate< IIndividualEventBroadcaster,
                                                 IIndividualEventObserver,
-                                                IIndividualHumanEventContext,
-                                                EventTrigger >::UnregisterAllBroadcasters();
+                                                IIndividualHumanEventContext >::UnregisterAllBroadcasters();
 
     const std::string ReportEventRecorder::ENABLE_PARAMETER_NAME   = "Report_Event_Recorder";
     const std::string ReportEventRecorder::EVENTS_LIST_NAME        = "Report_Event_Recorder_Events";
@@ -69,7 +66,7 @@ namespace Kernel
     }
 
     void ReportEventRecorder::ConfigureOther( const Configuration * inputJson )
-    {
+    { 
         properties_to_report.value_source = IPKey::GetConstrainedStringConstraintKey(); 
         initConfigTypeMap("Report_Event_Recorder_Individual_Properties", &properties_to_report, Property_Restriction_DESC_TEXT, ENABLE_PARAMETER_NAME.c_str() );
     }
@@ -103,6 +100,28 @@ namespace Kernel
                 IIndividualEventBroadcaster* broadcaster = pNEC->GetIndividualEventBroadcaster();
                 UpdateRegistration( broadcaster, true );
                 broadcaster_list.push_back( broadcaster );
+#if 0
+                // This logic goes through all possible events.  It checks to see if that event
+                // is in the listen-to-these event_list provided by the user. But that list can be a 
+                // whitelist or blacklist. If using whitelist AND event-requested is in master THEN listen.
+                // else if using blacklist AND if event-(de)requested is not in master THEN listen.
+
+                //std::vector<EventTrigger::Enum> all_trigger_list = EventTrigger::NUM_EVENT_TRIGGERS;
+                //for( auto trigger : all_trigger_list )
+                for( unsigned int trigger_idx = EventTrigger::NoTrigger; trigger_idx < EventTrigger::NUM_EVENT_TRIGGERS; trigger_idx++ )
+                {
+                    EventTrigger::Enum trigger = EventTrigger::Enum( trigger_idx );
+                    bool in_event_list = std::find( tmp_event_trigger_list.begin(), 
+                                                    tmp_event_trigger_list.end(), trigger ) != tmp_event_trigger_list.end() ;
+
+                    if( (!ignore_events_in_list &&  in_event_list) ||
+                        ( ignore_events_in_list && !in_event_list) )
+                    {
+                        // list of events to listen for
+                        eventTriggerList.push_back( trigger );
+                    }
+                }
+#endif
             }
             is_registered = true;
         }
@@ -129,11 +148,11 @@ namespace Kernel
     }
 
     std::string ReportEventRecorder::GetOtherData( IIndividualHumanEventContext *context,
-                                                   const EventTrigger& trigger )
+                                                   const EventTrigger::Enum& trigger )
     {
         int         id           = context->GetSuid().data;
         ExternalNodeId_t node_id = context->GetNodeEventContext()->GetExternalId();
-        const char* event_name   = trigger.c_str();
+        const char* event_name   = EventTrigger::pairs::lookup_key( trigger); 
         float       age          = context->GetAge();
         const char  gender       = (context->GetGender() == Gender::MALE) ? 'M' : 'F' ;
         bool        infected     = context->IsInfected();

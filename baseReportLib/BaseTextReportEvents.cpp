@@ -52,5 +52,32 @@ namespace Kernel
         }
     }
 
+    /*
+    void BaseTextReportEvents::UpdateRegistration( INodeTriggeredInterventionConsumer* pNTIC,
+                                                   bool registering )
+    {
+        for( auto trigger : eventTriggerList )
+        {
+            if( registering )
+            {
+                LOG_DEBUG_F( "BaseTextReportEvents is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+                pNTIC->RegisterNodeEventObserver( this, trigger );
+            }
+            else
+            {
+                pNTIC->UnregisterNodeEventObserver( this, trigger );
+            }
+        }
+    }
 
+    void BaseTextReportEvents::UnregisterAllBroadcasters()
+    {
+        for( auto pNTIC : ntic_list )
+        {
+            UpdateRegistration( pNTIC, false );
+            pNTIC->Release();
+        }
+        ntic_list.clear();
+    }
+    */
 }

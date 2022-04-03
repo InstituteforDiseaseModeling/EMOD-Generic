@@ -30,6 +30,7 @@ class Monitor(threading.Thread):
         # can I make this static?
         self.params = params
         self.scenario_type = scenario_type
+        self.sim_dir = None
 
     def get_input_path_from_geog( self, input_root ):
         #actual_input_dir = "."
@@ -41,29 +42,49 @@ class Monitor(threading.Thread):
                 actual_input_dir = ".;" + os.path.join( input_root, self.config_json["parameters"]["Geography"] )
         return actual_input_dir 
 
+    def get_num_cores( self ):
+        num_cores = 1
+        if ('parameters' in self.config_json) and ('Num_Cores' in self.config_json['parameters']):
+            num_cores = self.config_json['parameters']['Num_Cores']
+        else:
+           print( "Didn't find key 'parameters/Num_Cores' in '{0}'. Using 1.".format( self.scenario_path ) )
+               
+        return int(num_cores)
+    
     def run(self):
         self.__class__.sems.acquire()
         self.sim_root = self.params.local_sim_root
-        sim_dir = os.path.join( self.sim_root, self.sim_timestamp )
-        #os.chdir( sim_dir )    # NOT THREAD SAFE!
+        self.sim_dir = os.path.join( self.sim_root, self.sim_timestamp )
+        numcores = self.get_num_cores()
+        #os.chdir( self.sim_dir )    # NOT THREAD SAFE!
 
         starttime = datetime.datetime.now()
 
         stdoutfile = "stdout.txt"
         if self.scenario_type != 'tests':
             stdoutfile = "test.txt"
-        with open(os.path.join(sim_dir, stdoutfile), "w") as stdout, open(os.path.join(sim_dir, "stderr.txt"), "w") as stderr:
+        with open(os.path.join(self.sim_dir, stdoutfile), "w") as stdout, open(os.path.join(self.sim_dir, "stderr.txt"), "w") as stderr:
             actual_input_dir = self.get_input_path_from_geog( self.params.input_path )
             # Call Eradication.exe through mpiexec to avoid Windows security warnings (see GitHub issue #1439)
-            cmd = ['mpiexec', "-n", "1", self.config_json["bin_path"], "-C", "config.json" ]
+            cmd = None
+            if "Eradication" in self.config_json["bin_path"]:
+                cmd = ['mpiexec', "-n", str(numcores), self.config_json["bin_path"], "-C", "config.json" ]
+            else:
+                cmd = self.config_json["bin_path"].split()
+                if self.scenario_type != 'pymod':
+                    cmd.extend( ["-C", "config.json" ] )
             if actual_input_dir:
                 cmd.extend( [ "--input-path", actual_input_dir ] )
             # python-script-path is optional parameter.
             if "PSP" in self.config_json:
                 cmd.extend( [ "--python-script-path", self.config_json["PSP"] ] )
-            #print( "Calling '" + str(cmd) + "' from " + sim_dir + "\n" )
-            print( "Running '" + str(self.config_json["parameters"]["Config_Name"]) + "' in " + sim_dir + "\n" )
-            proc = subprocess.Popen( cmd, stdout=stdout, stderr=stderr, cwd=sim_dir )
+            print( "Calling '" + str(cmd) + "' from " + self.sim_dir + "\n" )
+            print( "Running '" + str(self.config_json["parameters"]["Config_Name"]) + "' in " + self.sim_dir + "\n" )
+            shell_val = False
+            #if self.scenario_type == 'pymod' and self.params.local_execution:
+            #    shell_val = True
+
+            proc = subprocess.Popen( cmd, stdout=stdout, stderr=stderr, cwd=self.sim_dir, shell=shell_val )
             proc.wait()
         # JPS - do we want to append config_json["parameters"]["Geography"] to the input_path here too like we do in the HPC case?
         endtime = datetime.datetime.now()
@@ -75,16 +96,16 @@ class Monitor(threading.Thread):
         if self.scenario_type == 'tests':
             if self.params.all_outputs == False:
             # Following line is for InsetChart.json only
-                self.verify(sim_dir)
+                self.verify(self.sim_dir)
             else:
                 # Every .json file in output (not hidden with . prefix) will be used for validation
                 for file in os.listdir( os.path.join( self.scenario_path, "output" ) ):
                     if ( file.endswith( ".json" ) or file.endswith( ".csv" ) or file.endswith( ".h5" ) or file.endswith( ".db" ) ) and file[0] != ".":
-                        self.verify( sim_dir, file, "Channels" )
+                        self.verify( self.sim_dir, file, "Channels" )
         elif self.scenario_type == 'science':
-            self.science_verify( sim_dir )
+            self.science_verify( self.sim_dir )
         elif self.scenario_type == 'pymod':
-            self.pymod_verify( sim_dir )
+            self.pymod_verify( self.sim_dir )
 
         self.__class__.sems.release()
 
@@ -289,6 +310,9 @@ class Monitor(threading.Thread):
                 failures.append( "And another " + str( num_skipped  ) + " lines skipped.\n" )
         return
 
+    def get_sim_path(self):
+        return self.sim_dir
+
     # Adding optional report_name parameter, defaults to InsetChart
     def verify(self, sim_dir, report_name="InsetChart.json", key="Channels" ):
         #print( "Checking if report " + report_name + " based on key " + key + " matches reference..." )
@@ -306,18 +330,18 @@ class Monitor(threading.Thread):
         if self.report == None:
             return 
 
-        test_path = os.path.join( sim_dir, os.path.join( "output", report_name ) )
+        test_path = os.path.join( self.get_sim_path(), os.path.join( "output", report_name ) )
         ref_path = os.path.join( ru.cache_cwd, os.path.join( str(self.scenario_path), os.path.join( "output", report_name ) ) )
 
         # if on linux, use alternate InsetChart.json, but only if exists
-        if os.name != "nt" and report_name == "InsetChart.json":
+        if ( os.name != "nt" or self.params.linux ) and report_name == "InsetChart.json":
             report_name = "InsetChart.linux.json" 
             alt_ref_path = os.path.join( ru.cache_cwd, os.path.join( str(self.scenario_path), os.path.join( "output", report_name ) ) )
             if os.path.exists( alt_ref_path ):
                 ref_path = alt_ref_path
 
 
-        if os.name == "nt" and report_name == "InsetChart.linux.json":
+        if ( os.name == "nt" and not self.params.linux ) and report_name == "InsetChart.linux.json":
             return True
 
         # This check is probably only for InsetChart.json
@@ -337,7 +361,7 @@ class Monitor(threading.Thread):
             fail_validation, failure_txt = self.compareCsvOutputs( ref_path, test_path, failures )
 
         elif test_path.endswith( ".json" ):
-            fail_validation, failure_txt = self.compareJsonOutputs( sim_dir, report_name, ref_path, test_path, failures )
+            fail_validation, failure_txt = self.compareJsonOutputs( self.get_sim_path(), report_name, ref_path, test_path, failures )
 
         elif test_path.endswith( ".kml" ) or test_path.endswith( ".bin" ):
             fail_validation, failure_txt = self.compareOtherOutputs( report_name, ref_path, test_path, failures )
@@ -386,14 +410,15 @@ class Monitor(threading.Thread):
 
     def pymod_verify( self, sim_dir ):
         # pymod verification, which consists entirely of looking for an 'OK' at the end of the stdout which happens to be StdErr.txt
-        report_name = "StdErr.txt" # This isn't my 'design'; it's just what is. XXXJHHB
+        report_name = "stderr.txt" # This isn't my 'design'; it's just what is. XXXJHHB
         pmr = os.path.join( sim_dir, report_name )
         if os.path.exists( pmr ):
             with open( pmr ) as pmr_file:
+                line = None
                 for line in pmr_file:
                     pass
                 pmr_data = line
-                if pmr_data.strip() == "OK":
+                if pmr_data is not None and pmr_data.strip() == "OK":
                     print( self.scenario_path + " passed (" + str(self.duration) + ") - " + report_name )
                     self.report.addPassingTest(self.scenario_path, self.duration, os.path.join(sim_dir, report_name))
                 else:

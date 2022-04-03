@@ -32,11 +32,12 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
-        initConfigTypeMap( "Broadcast_Event", &broadcast_event, HIV_Broadcast_Event_DESC_TEXT );
+        initConfig( "Broadcast_Event", broadcast_event, inputJson, MetadataDescriptor::Enum("Broadcast_Event", HIV_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
 
         bool ret = BaseIntervention::Configure( inputJson );
 
-        if( !JsonConfigurable::_dryrun && broadcast_event.IsUninitialized() )
+        //if( !JsonConfigurable::_dryrun && broadcast_event.IsUninitialized() )
+        if( !JsonConfigurable::_dryrun && broadcast_event == EventTrigger::NoTrigger )
         {
             std::stringstream ss;
             ss << "BroadcastEvent was configured with empty (or uninitialized) Broadcast_Event.\n";
@@ -61,7 +62,7 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        if( !broadcast_event.IsUninitialized() )
+        if( broadcast_event != EventTrigger::NoTrigger )
         {
             // broadcast the event
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
@@ -78,6 +79,6 @@ namespace Kernel
     {
         BaseIntervention::serialize( ar, obj );
         BroadcastEvent& be = *obj;
-        ar.labelElement("broadcast_event") & be.broadcast_event;
+        ar.labelElement("broadcast_event") & (uint32_t&)be.broadcast_event;
     }
 }

@@ -22,7 +22,7 @@
                             "class": "SimpleVaccine"
                         },
                         {
-                            "Broadcast_Event": "Received_Treatment",
+                            "Broadcast_Event": "ReceivedTreatment",
                             "class": "BroadcastEvent"
                         },
                         {

@@ -24,6 +24,7 @@
         },
         "PRIMARY": {
             "Config_Name": "InfectivityScalingBoxcar/TimeStep_3_days_Random",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 1095,
             "Simulation_Timestep": 3

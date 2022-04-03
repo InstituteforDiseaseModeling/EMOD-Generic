@@ -28,7 +28,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SusceptibilityTB.h"
 #include "INodeContext.h"
 #include "FactorySupport.h"
-#include "IdmDatetime.h"
+#include "IdmDateTime.h"
 
 // TODO: 
 // --> Start_Year
@@ -172,8 +172,10 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         initConfigTypeMap( "Stop_Year",  &stopYear,  "Year to stop collecting data",  BASE_YEAR, MAX_YEAR, BASE_YEAR );
         initConfigTypeMap( "Min_Age_Yrs", &min_age_yrs, "Minimum age to aollect data", 0.0f, MAX_AGE_YRS, 0.0f);
         initConfigTypeMap("Max_Age_Yrs", &max_age_yrs, "Maximum age to collect data", 0.0f, MAX_AGE_YRS, MAX_AGE_YRS);
-        initConfigTypeMap("Additional_Events", &Additional_Event_Names, "Additional Events to Record");
-
+        if( inputJson->Exist( "Additional_Events" ) )
+        {
+            initVectorConfig("Additional_Events", Additional_Event_Names, inputJson, MetadataDescriptor::VectorOfEnum("NA", "Additional Events to Record" , MDD_ENUM_ARGS(EventTrigger) ) );
+        }
         bool ret = JsonConfigurable::Configure( inputJson );
 
         if( ret ) {
@@ -191,10 +193,9 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
             }
         }
 
-        for (vector<string>::iterator it =  Additional_Event_Names.begin(); it != Additional_Event_Names.cend(); ++it)
+        for (auto it =  Additional_Event_Names.begin(); it != Additional_Event_Names.cend(); ++it)
         {
-            eventTriggerList.push_back(EventTrigger(*it));
-
+            eventTriggerList.push_back(EventTrigger::Enum( *it ) );
         }
 
         // Manually push required events into the eventTriggerList
@@ -259,7 +260,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         }
         else if( is_collecting_data && (current_year >= stopYear) )
         {
-            UnregisterAllBroadcasters();
+            //UnregisterAllBroadcasters();
             is_collecting_data = false ;
         }
 
@@ -316,7 +317,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         for( auto it = Additional_Event_Names.begin(); it != Additional_Event_Names.cend(); ++it)
         {
             header << ", "
-                << *it;
+                << EventTrigger::pairs::lookup_key( *it );
         }
             
         return header.str();
@@ -566,7 +567,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     }
 
     bool Report_TBHIV_ByAge::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                            const EventTrigger& trigger )
+                                            const EventTrigger::Enum& trigger )
     {
         if( context->GetAge() < min_age_yrs * DAYSPERYEAR || context->GetAge() > max_age_yrs * DAYSPERYEAR)
             return true;
@@ -661,10 +662,10 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         }
         else
         {
-            for (vector<string>::iterator it = Additional_Event_Names.begin(); it != Additional_Event_Names.cend(); ++it)
+            for (auto it = Additional_Event_Names.begin(); it != Additional_Event_Names.cend(); ++it)
             {
                 int index = std::distance(Additional_Event_Names.begin(), it);
-                if (trigger == EventTrigger(*it))
+                if (trigger == EventTrigger::Enum(*it))
                 {
                     DynamicEvents[index][age_group] += mc_weight;
                 }

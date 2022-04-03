@@ -45,7 +45,7 @@ namespace Kernel
     , m_disqualified_by_coverage_only(false)
     , blackout_period(0.0)
     , blackout_time_remaining(0.0)
-    , blackout_event_trigger()
+    , blackout_event_trigger( EventTrigger::NoTrigger )
     , blackout_on_first_occurrence(false)
     , notification_occured(false)
     , distribute_on_return_home(false)
@@ -100,7 +100,7 @@ namespace Kernel
         initConfigTypeMap("Duration", &max_duration, BT_Duration_DESC_TEXT, -1.0f, FLT_MAX, -1.0f ); // -1 is a convention for indefinite duration
 
         initConfigTypeMap( "Blackout_Period", &blackout_period, Blackout_Period_DESC_TEXT, 0.0f, FLT_MAX, 0.0f );
-        initConfigTypeMap( "Blackout_Event_Trigger", &blackout_event_trigger, Blackout_Event_Trigger_DESC_TEXT );
+        initConfig( "Blackout_Event_Trigger", blackout_event_trigger, inputJson, MetadataDescriptor::Enum("Blackout_Event_Trigger", Blackout_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Blackout_On_First_Occurrence", &blackout_on_first_occurrence, Blackout_On_First_Occurrence_DESC_TEXT, false );
 
         initConfigComplexType( "Node_Property_Restrictions", &node_property_restrictions, NLHTIV_Node_Property_Restriction_DESC_TEXT );
@@ -117,7 +117,7 @@ namespace Kernel
         // --- Phase 3 - 11/9/16    Consolidate so that the user only defines Trigger_Condition_List
         // --------------------------------------------------------------------------------------------------------------------
         JsonConfigurable::_useDefaults = InterventionFactory::useDefaults; // Why???
-        initConfigTypeMap( "Trigger_Condition_List", &m_trigger_conditions, NLHTI_Trigger_Condition_List_DESC_TEXT );
+        initVectorConfig( "Trigger_Condition_List", m_trigger_conditions, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", NLHTI_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
 
         bool retValue = BaseNodeIntervention::Configure( inputJson );
 
@@ -142,7 +142,7 @@ namespace Kernel
                 using_individual_config = false;
             }
 
-            event_occured_list.resize( EventTriggerFactory::GetInstance()->GetNumEventTriggers() );
+            event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
             bool blackout_configured = (inputJson->Exist("Blackout_Event_Trigger")) || (inputJson->Exist("Blackout_Period")) || (inputJson->Exist("Blackout_On_First_Occurrence"));
             bool blackout_all_configured = (inputJson->Exist("Blackout_Event_Trigger")) && (inputJson->Exist("Blackout_Period")) && (inputJson->Exist("Blackout_On_First_Occurrence"));
@@ -196,7 +196,7 @@ namespace Kernel
     //returns false if didn't get the intervention
     bool NodeLevelHealthTriggeredIV::notifyOnEvent(
         IIndividualHumanEventContext *pIndiv,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
     {
         // ----------------------------------------------------------------------
@@ -204,6 +204,7 @@ namespace Kernel
         // ----------------------------------------------------------------------
         if( !node_property_restrictions.Qualifies( parent->GetNodeContext()->GetNodeProperties() ) )
         {
+            LOG_DEBUG_F( "returning false from notifyOnEvent at line %d.\n", __LINE__ );
             return false;
         }
 
@@ -265,19 +266,26 @@ namespace Kernel
             }
         }
 
-        if( !blackout_event_trigger.IsUninitialized() && (blackout_period > 0.0) )
+        if( blackout_event_trigger != EventTrigger::NoTrigger && (blackout_period > 0.0) )
         {
-            if( (event_occured_list[ trigger.GetIndex() ].count( pIndiv->GetSuid().data ) > 0) || (!missed_intervention && (blackout_time_remaining > 0.0f)) )
+            if( (event_occured_list[ trigger ].count( pIndiv->GetSuid().data ) > 0) || (!missed_intervention && (blackout_time_remaining > 0.0f)) )
             {
                 IIndividualEventBroadcaster * broadcaster = parent->GetIndividualEventBroadcaster();
                 broadcaster->TriggerObservers( pIndiv, blackout_event_trigger );
+                /*INodeTriggeredInterventionConsumer * pNTIC = NULL;
+                if (s_OK != parent->QueryInterface(GET_IID(INodeTriggeredInterventionConsumer), (void**)&pNTIC) )
+                {
+                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "INodeTriggeredInterventionConsumer", "INodeEventContext" );
+                }
+                pNTIC->TriggerNodeEventObservers( pIndiv, blackout_event_trigger ); 
+                LOG_DEBUG_F( "Returning false from notifyOnEvent at line %d.\n", __LINE__ ); */
                 return false;
             }
         }
 
         LOG_DEBUG_F("Individual %d experienced event %s, check to see if they pass the conditions before distributing actual_intervention \n",
                     pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data,
-                    trigger.c_str()
+                    EventTrigger::pairs::lookup_key( trigger )
                    );
 
         assert( parent );
@@ -352,9 +360,10 @@ namespace Kernel
             }
             else
             {
+                LOG_DEBUG_F( "Setting notification_occured for node %d.\n", parent->GetExternalId() );
                 notification_occured = true ;
             }
-            event_occured_list[ trigger.GetIndex() ].insert( pIndiv->GetSuid().data ); 
+            event_occured_list[ trigger ].insert( pIndiv->GetSuid().data ); 
         }
 
         return distributed;
@@ -388,7 +397,7 @@ namespace Kernel
             Unregister();
         }
         event_occured_list.clear();
-        event_occured_list.resize( EventTriggerFactory::GetInstance()->GetNumEventTriggers() );
+        event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
         blackout_time_remaining -= dt ;
         if( notification_occured )

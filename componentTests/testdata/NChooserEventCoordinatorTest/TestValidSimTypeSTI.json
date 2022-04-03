@@ -56,9 +56,7 @@
     ],
     "Intervention_Config": {
         "Cost_To_Consumer": 10,
-        "Distributed_Event_Trigger": "Vaccinated",
         "Duration_To_Wait_Before_Revaccination": 240,
-        "Expired_Event_Trigger": "VaccineExpired",
         "Intervention_Name": "TheVaccine",
         "Vaccine_Take": 0.75,
         "Vaccine_Type": "AcquisitionBlocking",
@@ -81,7 +79,10 @@
             "Initial_Effect": 1.0,
             "class": "WaningEffectMapLinear"
         },
+        "Distributed_Event_Trigger" : "GP_EVENT_000",
+        "Expired_Event_Trigger"     : "GP_EVENT_001",
         "class": "ControlledVaccine"
     },
     "class": "NChooserEventCoordinatorSTI"
 }
+

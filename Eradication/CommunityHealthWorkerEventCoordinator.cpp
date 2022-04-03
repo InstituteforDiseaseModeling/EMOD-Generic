@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2015 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -91,9 +91,9 @@ namespace Kernel
 
         m_DemographicRestrictions.ConfigureRestrictions( this, inputJson );
 
-        initConfigTypeMap( "Trigger_Condition_List", &m_TriggerConditionList, CHW_Trigger_Condition_List_DESC_TEXT );
-
-        initConfigComplexType( "Node_Property_Restrictions", &m_NodePropertyRestrictions, SEC_Node_Property_Restriction_DESC_TEXT );
+        initVectorConfig("Trigger_Condition_List", m_TriggerConditionList, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", CHW_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
+                
+        initConfigComplexType( "Node_Property_Restrictions", &m_NodePropertyRestrictions, CHW_Node_Property_Restriction_DESC_TEXT );
 
         initConfigComplexType( "Intervention_Config", &m_InterventionConfig, CHW_Intervention_Config_DESC_TEXT );
 
@@ -104,11 +104,7 @@ namespace Kernel
             // ------------------------------------------------------
             // --- Check that the intervention exists and initialize
             // ------------------------------------------------------
-            InterventionTypeValidation::Enum type_found = InterventionValidator::ValidateIntervention(
-                                                              GetTypeName(),
-                                                              InterventionTypeValidation::EITHER,
-                                                              m_InterventionConfig._json,
-                                                              inputJson->GetDataLocation() );
+            //InterventionValidator::ValidateIntervention( m_InterventionConfig._json, inputJson->GetDataLocation() );
 
             m_DemographicRestrictions.CheckConfiguration();
 
@@ -116,11 +112,8 @@ namespace Kernel
 
             m_InterventionName = std::string( json::QuickInterpreter(m_InterventionConfig._json)["class"].As<json::String>() );
 
-            if( type_found == InterventionTypeValidation::INDIVIDUAL )
-            {
-                m_pInterventionIndividual = InterventionFactory::getInstance()->CreateIntervention( qi_as_config );
-            }
-            else
+            m_pInterventionIndividual = InterventionFactory::getInstance()->CreateIntervention( qi_as_config );
+            if( m_pInterventionIndividual == nullptr )
             {
                 m_pInterventionNode = InterventionFactory::getInstance()->CreateNDIIntervention( qi_as_config );
             }
@@ -412,7 +405,7 @@ namespace Kernel
     }
 
 
-    bool CommunityHealthWorkerEventCoordinator::IsRemoveIndividualEvent( const EventTrigger& rTrigger ) const
+    bool CommunityHealthWorkerEventCoordinator::IsRemoveIndividualEvent( const EventTrigger::Enum& rTrigger ) const
     {
         bool found = (std::find( m_RemoveIndividualEventList.begin(),
                                  m_RemoveIndividualEventList.end(),
@@ -441,7 +434,7 @@ namespace Kernel
     }
 
     bool CommunityHealthWorkerEventCoordinator::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                                              const EventTrigger& trigger)
+                                                              const EventTrigger::Enum& trigger)
     {
         if( IsRemoveIndividualEvent( trigger ) )
         {

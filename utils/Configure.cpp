@@ -29,22 +29,24 @@ SETUP_LOGGING( "JsonConfigurable" )
 
 namespace Kernel
 {
-    // two functions. second is wrapper around this. Can consolidate into single.
+    // Two ignoreParameter functions; second one is a wrapper around the first.
+    // Second function calls the first function twice, first time using a variable pJson configuration, and then a second
+    // time using the simulation configuration stored in the EnvPtr. This pattern allows some cross-file dependencies.
+    // Example: a campaign parameter can be contingent on a config parameter. Note that the config in the EnvPtr may
+    // be null; if the config in the EnvPtr is null (e.g., in a DLL), then an ignorable parameter may still be required.
     bool ignoreParameter( const json::QuickInterpreter * pJson, const char * condition_key, const char * condition_value )
     {
         if( condition_key != nullptr ) 
         {
-            if( pJson &&
-                pJson->Exist(condition_key) == true )
+            if( pJson && pJson->Exist(condition_key) == true )
             {
-                auto c_value = (*pJson)[condition_key];
                 // condition_key is in config. Read value 
+                auto c_value = (*pJson)[condition_key];
 
                 if( condition_value == nullptr )
                 {
-                    // condition_value is null, so it's a bool and 1 (no other options)
-                    auto c_value2 = (int) c_value.As<json::Number>();
-                    if( c_value2 != 1 )
+                    // condition_value is null, so condition_key is a bool and condition_value is true
+                    if( static_cast<int>(c_value.As<json::Number>()) == 0 )
                     {
                         // Condition for using this param is false (mismatch), so returning
                         LOG_DEBUG_F( "bool condition_value found but is false/0. That makes this check fail.\n" );
@@ -52,13 +54,27 @@ namespace Kernel
                     }
                     else
                     {
-                        LOG_DEBUG_F( "bool condition_value found and is true/1. That makes this check pass.\n" );
                         // Conditions match. Continue and return false at end.
+                        LOG_DEBUG_F( "bool condition_value found and is true/1. That makes this check pass.\n" );
+                    }
+                }
+                else if( (std::string(condition_key)).rfind("Enable_", 0) == 0 )
+                {
+                    // condition_key starts with "Enable_", so condition_key is a bool
+                    if( static_cast<int>(c_value.As<json::Number>()) != std::stoi(std::string(condition_value),nullptr) )
+                    {
+                        // Condition for using this param is false (mismatch), so returning
+                        LOG_DEBUG_F( "bool condition_value found but does not match specified value. That makes this check fail.\n" );
+                        return true;
+                    }
+                    else
+                    {
+                        // Conditions match. Continue and return false at end.
+                        LOG_DEBUG_F( "bool condition_value found and matches specified value. That makes this check pass.\n" );
                     }
                 }
                 else
-                {
-                    release_assert( condition_value );
+                { 
                     // condition_value is not null, so it's a string (enum); let's read it.
                     auto c_value_from_config = GET_CONFIG_STRING(pJson, condition_key);
                     LOG_DEBUG_F( "string/enum condition_value (from config.json) = %s. Will check if matches schema condition_value (raw) = %s\n", c_value_from_config.c_str(), condition_value );
@@ -99,18 +115,30 @@ namespace Kernel
     {
         if( schema.Exist( "depends-on" ) )
         {
-            auto condition = getCondition( schema );
-            std::string condition_key = std::get<0>( condition );
-            std::string condition_value_str = std::get<1>( condition );
-            
-            const char * condition_value = condition_value_str.empty() ? nullptr : condition_value_str.c_str();
-            
-
-            if( ignoreParameter( pJson, condition_key.c_str(), condition_value ) )
-            { 
-                if( ignoreParameter( EnvPtr->Config, condition_key.c_str(), condition_value ) )
+            auto condition_list = json_cast<const json::Object&>(schema["depends-on"]);
+            for(auto itr1 = condition_list.Begin(); itr1 != condition_list.End(); itr1++)
+            {
+                std::string  condition_key       = itr1->name;
+                std::string  condition_value_str = "";
+                const char * condition_value     = nullptr;
+                try
                 {
-                    return true;
+                    condition_value_str = (json::QuickInterpreter(itr1->element)).As<json::String>();
+                    condition_value     = condition_value_str.c_str();
+                    LOG_DEBUG_F( "schema condition value appears to be string/enum: %s.\n", condition_value );
+                }
+                catch(...)
+                {
+                    //condition_value = std::to_string( (int) (json::QuickInterpreter( condition )[ condition_key ]).As<json::Number>() );
+                    LOG_DEBUG_F( "schema condition value appears to be bool, not string.\n" );
+                }
+
+                if( ignoreParameter( pJson, condition_key.c_str(), condition_value ) )
+                { 
+                    if( ignoreParameter( EnvPtr->Config, condition_key.c_str(), condition_value ) )
+                    {
+                        return true;
+                    }
                 }
             }
         }
@@ -411,18 +439,30 @@ namespace Kernel
     void updateSchemaWithCondition( json::Object& schema, const char* condition_key, const char* condition_value )
     {
         LOG_DEBUG_F( "Setting condition in schema for key %s (value=%s).\n", condition_key, ( condition_value ? condition_value : "1") );
+
         if( condition_key )
         {
-            json::Object condition;
-            if( condition_value )
+            if(!schema.Exist("depends-on"))
             {
-                condition[ condition_key ] = json::String( condition_value );
+                schema["depends-on"] = json::Object();
+            }
+
+            if( condition_value == nullptr )
+            {
+                // condition_value is null, so condition_key is a bool and condition_value is implicitly true
+                json_cast<json::Object&>(schema["depends-on"])[ condition_key ] = json::Number( 1 );
+
+            }
+            else if( (std::string(condition_key)).rfind("Enable_", 0) == 0 )
+            {
+                // condition_key starts with "Enable_", so condition_key is a bool
+                json_cast<json::Object&>(schema["depends-on"])[ condition_key ] = json::Number( std::stoi(std::string(condition_value),nullptr) );
             }
             else
-            { 
-                condition[ condition_key ] = json::Number( 1 );
+            {
+                // condition_value is not null, so it's a string (enum)
+                json_cast<json::Object&>(schema["depends-on"])[ condition_key ] = json::String( condition_value );
             }
-            schema["depends-on"] = condition;
         }
     }
 
@@ -504,22 +544,30 @@ namespace Kernel
         bool * pVariable,
         const char* description,
         bool defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F("initConfigTypeMap<bool>: %s\n", paramName);
         GetConfigData()->boolConfigTypeMap[ paramName ] = pVariable;
-        json::Object newIntSchema;
-        /* Use this when boolean configuration parameters are actually 'true'/'false'.
-        newIntSchema["default"] = json::Boolean(defaultvalue); */
-        newIntSchema["default"] = json::Number(defaultvalue ? 1 : 0);
+        json::Object newParamSchema;
+        newParamSchema["default"] = json::Number(defaultvalue ? 1 : 0);
         if ( _dryrun )
         {
-            newIntSchema["description"] = json::String(description);
-            newIntSchema["type"] = json::String( "bool" );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "bool" );
         }
-        updateSchemaWithCondition( newIntSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newIntSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -528,48 +576,66 @@ namespace Kernel
         int * pVariable,
         const char * description,
         int min, int max, int defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<int>: %s\n", paramName);
         GetConfigData()->intConfigTypeMap[ paramName ] = pVariable;
-        json::Object newIntSchema;
-        newIntSchema["min"] = json::Number(min);
-        newIntSchema["max"] = json::Number(max);
-        newIntSchema["default"] = json::Number(defaultvalue);
+        json::Object newParamSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
         if ( _dryrun )
         {
-            newIntSchema["description"] = json::String(description);
-            newIntSchema["type"] = json::String( "integer" );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "integer" );
         }
-            
-        updateSchemaWithCondition( newIntSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newIntSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            uint32_t * pVariable,
-            const char * description,
-            uint32_t min, uint32_t max, uint32_t defaultvalue,
-            const char* condition_key, const char* condition_value
-        )
+    JsonConfigurable::initConfigTypeMap(
+        const char* paramName,
+        uint32_t * pVariable,
+        const char * description,
+        uint32_t min, uint32_t max, uint32_t defaultvalue,
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
+    )
     {
         LOG_DEBUG_F( "initConfigTypeMap<int>: %s\n", paramName );
         GetConfigData()->uint32ConfigTypeMap[ paramName ] = pVariable;
-        json::Object newUint32Schema;
-        newUint32Schema[ "min" ] = json::Number( min );
-        newUint32Schema[ "max" ] = json::Number( max );
-        newUint32Schema[ "default" ] = json::Number( defaultvalue );
+        json::Object newParamSchema;
+        newParamSchema[ "min" ] = json::Number( min );
+        newParamSchema[ "max" ] = json::Number( max );
+        newParamSchema[ "default" ] = json::Number( defaultvalue );
         if( _dryrun )
         {
-            newUint32Schema[ "description" ] = json::String( description );
-            newUint32Schema[ "type" ] = json::String( "integer" );
+            newParamSchema[ "description" ] = json::String( description );
+            newParamSchema[ "type" ] = json::String( "integer" );
         }
 
-        updateSchemaWithCondition( newUint32Schema, condition_key, condition_value );
-        jsonSchemaBase[ paramName ] = newUint32Schema;
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[ paramName ] = newParamSchema;
     }
 
     void
@@ -578,22 +644,32 @@ namespace Kernel
         float * pVariable,
         const char * description,
         float min, float max, float defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<float>: %s\n", paramName);
         GetConfigData()->floatConfigTypeMap[ paramName ] = pVariable;
-        json::Object newFloatSchema;
-            newFloatSchema["min"] = json::Number(min);
-        newFloatSchema["max"] = json::Number(max);
-        newFloatSchema["default"] = json::Number(defaultvalue);
+        json::Object newParamSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
         if ( _dryrun )
         {
-            newFloatSchema["description"] = json::String(description);
-            newFloatSchema["type"] = json::String( "float" ); 
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "float" ); 
         }
-        updateSchemaWithCondition( newFloatSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newFloatSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -602,22 +678,32 @@ namespace Kernel
         double * pVariable,
         const char * description,
         double min, double max, double defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<double>: %s\n", paramName);
         GetConfigData()->doubleConfigTypeMap[ paramName ] = pVariable;
-        json::Object newDoubleSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newDoubleSchema["description"] = json::String(description);
-            newDoubleSchema["type"] = json::String("double");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("double");
         }
-        newDoubleSchema["min"] = json::Number(min);
-        newDoubleSchema["max"] = json::Number(max);
-        newDoubleSchema["default"] = json::Number(defaultvalue);
-        updateSchemaWithCondition( newDoubleSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newDoubleSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -626,20 +712,30 @@ namespace Kernel
         std::string * pVariable,
         const char * description,
         const std::string& default_str,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<string>: %s\n", paramName);
         GetConfigData()->stringConfigTypeMap[ paramName ] = pVariable;
-        json::Object newStringSchema;
-        newStringSchema["default"] = json::String(default_str);
+        json::Object newParamSchema;
+        newParamSchema["default"] = json::String(default_str);
         if ( _dryrun )
         {
-            newStringSchema["description"] = json::String(description);
-            newStringSchema["type"] = json::String("string");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("string");
         }
-        updateSchemaWithCondition( newStringSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newStringSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -648,21 +744,31 @@ namespace Kernel
         jsonConfigurable::ConstrainedString * pVariable,
         const char * description,
         const std::string& default_str,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<ConstrainedString>: %s\n", paramName);
         GetConfigData()->conStringConfigTypeMap[ paramName ] = pVariable;
-        json::Object newConStringSchema;
-        newConStringSchema["default"] = json::String(default_str); // would be nice if this always in the constraint list!
+        json::Object newParamSchema;
+        newParamSchema["default"] = json::String(default_str); // would be nice if this always in the constraint list!
         if ( _dryrun )
         {
-            newConStringSchema["description"] = json::String(description);
-            newConStringSchema["type"] = json::String("Constrained String");
-            newConStringSchema["value_source"] = json::String( pVariable->constraints );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Constrained String");
+            newParamSchema["value_source"] = json::String( pVariable->constraints );
         }
-        updateSchemaWithCondition( newConStringSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newConStringSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value );
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
 
@@ -671,40 +777,48 @@ namespace Kernel
         const char* paramName,
         jsonConfigurable::tStringSetBase * pVariable,
         const char* description,
-        const char* condition_key,
-        const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<set<string>>: %s\n", paramName);
         GetConfigData()->stringSetConfigTypeMap[ paramName ] = pVariable;
-        json::Object root;
-        json::QuickBuilder newStringSetSchema( root );
-        newStringSetSchema["default"] = json::Array();
+        json::Object newParamSchema;
+        newParamSchema["default"] = json::Array();
         if ( _dryrun )
         {
-            newStringSetSchema["description"] = json::String(description);
-            newStringSetSchema["type"] = json::String( pVariable->getTypeName() );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( pVariable->getTypeName() );
 
             if( pVariable->getTypeName() == FIXED_STRING_SET_LABEL )
             {
-                unsigned int counter = 0;
-                newStringSetSchema["possible_values"] = json::Array();
+                json::Array pval_array;
                 for( auto& value : ((jsonConfigurable::tFixedStringSet*)pVariable)->possible_values )
                 {
-                    newStringSetSchema["possible_values"][counter++] = json::String( value );
+                    pval_array.Insert(json::String(value), pval_array.End());
                 }
+                newParamSchema["possible_values"] = pval_array;
             }
             else if( pVariable->getTypeName() == DYNAMIC_STRING_SET_LABEL )
             {
-                newStringSetSchema["value_source"] = json::String( ((jsonConfigurable::tDynamicStringSet*)pVariable)->value_source );
+                newParamSchema["value_source"] = json::String( ((jsonConfigurable::tDynamicStringSet*)pVariable)->value_source );
             }
             else
             {
                 // just a regular old string set, no problem.
             }
         }
-        //updateSchemaWithCondition( newStringSetSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newStringSetSchema.As<json::Object>();
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value );
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -714,25 +828,35 @@ namespace Kernel
         const char* description,
         const char* constraint_schema,
         const std::set< std::string > &constraint_variable,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<vector<string>>: %s\n", paramName);
         GetConfigData()->vectorStringConfigTypeMap[ paramName ] = pVariable;
         GetConfigData()->vectorStringConstraintsTypeMap[ paramName ] = &constraint_variable;
-        json::Object newVectorStringSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newVectorStringSchema["description"] = json::String(description);
-            newVectorStringSchema["type"] = json::String("Vector String");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Vector String");
 
             if( constraint_schema )
             {
-                newVectorStringSchema["value_source"] = json::String( constraint_schema );
+                newParamSchema["value_source"] = json::String( constraint_schema );
             }
         }
-        updateSchemaWithCondition( newVectorStringSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newVectorStringSchema;
+
+        updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -742,46 +866,66 @@ namespace Kernel
         const char* description,
         const char* constraint_schema,
         const std::set< std::string > &constraint_variable,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<vector<vector<string>>>: %s\n", paramName);
         GetConfigData()->vector2dStringConfigTypeMap[ paramName ] = pVariable;
         GetConfigData()->vector2dStringConstraintsTypeMap[ paramName ] = &constraint_variable;
-        json::Object newVectorStringSchema;
-        newVectorStringSchema["description"] = json::String(description);
-        newVectorStringSchema["type"] = json::String("Vector 2d String");
+        json::Object newParamSchema;
+        newParamSchema["description"] = json::String(description);
+        newParamSchema["type"] = json::String("Vector 2d String");
         if( constraint_schema )
         {
-            newVectorStringSchema["value_source"] = json::String( constraint_schema );
+            newParamSchema["value_source"] = json::String( constraint_schema );
         }
-        updateSchemaWithCondition( newVectorStringSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newVectorStringSchema;
+
+        updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            std::vector< float > * pVariable,
-            const char* description,
-            float min, float max, float defaultvalue, bool ascending,
-            const char* condition_key, const char* condition_value
-        )
+    JsonConfigurable::initConfigTypeMap(
+        const char* paramName,
+        std::vector< float > * pVariable,
+        const char* description,
+        float min, float max, float defaultvalue, bool ascending,
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
+    )
     {
         LOG_DEBUG_F("initConfigTypeMap<vector<float>>: %s\n", paramName);
         GetConfigData()->vectorFloatConfigTypeMap[paramName] = pVariable;
-        json::Object newVectorFloatSchema;
+        json::Object newParamSchema;
         if (_dryrun)
         {
-            newVectorFloatSchema["description"] = json::String(description);
-            newVectorFloatSchema["type"] = json::String("Vector Float");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Vector Float");
         }
-        newVectorFloatSchema["min"] = json::Number(min);
-        newVectorFloatSchema["max"] = json::Number(max);
-        newVectorFloatSchema["default"] = json::Number(defaultvalue);
-        newVectorFloatSchema["ascending"] = json::Number(ascending ? 1 : 0);
-        updateSchemaWithCondition(newVectorFloatSchema, condition_key, condition_value);
-        jsonSchemaBase[paramName] = newVectorFloatSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
+        newParamSchema["ascending"] = json::Number(ascending ? 1 : 0);
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -790,22 +934,32 @@ namespace Kernel
         std::vector< int > * pVariable,
         const char* description,
         int min, int max, int defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<vector<int>>: %s\n", paramName);
         GetConfigData()->vectorIntConfigTypeMap[ paramName ] = pVariable;
-        json::Object newVectorIntSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newVectorIntSchema["description"] = json::String(description);
-            newVectorIntSchema["type"] = json::String("Vector Int");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Vector Int");
         }
-        newVectorIntSchema["min"] = json::Number(min);
-        newVectorIntSchema["max"] = json::Number(max);
-        newVectorIntSchema["default"] = json::Number(defaultvalue);
-        updateSchemaWithCondition( newVectorIntSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newVectorIntSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -814,22 +968,32 @@ namespace Kernel
         std::vector< std::vector< float > > * pVariable,
         const char* description,
         float min, float max, float defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<vector,vector<float>>>: %s\n", paramName);
         GetConfigData()->vector2dFloatConfigTypeMap[ paramName ] = pVariable;
-        json::Object newVector2dFloatSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newVector2dFloatSchema["description"] = json::String(description);
-            newVector2dFloatSchema["type"] = json::String("Vector2d Float");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Vector2d Float");
         }
-        newVector2dFloatSchema["min"] = json::Number(min);
-        newVector2dFloatSchema["max"] = json::Number(max);
-        newVector2dFloatSchema["default"] = json::Number(defaultvalue);
-        updateSchemaWithCondition( newVector2dFloatSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newVector2dFloatSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -838,22 +1002,32 @@ namespace Kernel
         std::vector< std::vector< int > > * pVariable,
         const char* description,
         int min, int max, int defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<vector,vector<int>>>: %s\n", paramName);
         GetConfigData()->vector2dIntConfigTypeMap[ paramName ] = pVariable;
-        json::Object newVector2dIntSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newVector2dIntSchema["description"] = json::String(description);
-            newVector2dIntSchema["type"] = json::String("Vector2d Int");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Vector2d Int");
         }
-        newVector2dIntSchema["min"] = json::Number(min);
-        newVector2dIntSchema["max"] = json::Number(max);
-        newVector2dIntSchema["default"] = json::Number(defaultvalue);
-        updateSchemaWithCondition( newVector2dIntSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newVector2dIntSchema;
+        newParamSchema["min"] = json::Number(min);
+        newParamSchema["max"] = json::Number(max);
+        newParamSchema["default"] = json::Number(defaultvalue);
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     // We have sets/vectors from json arrays, now add maps from json dictonaries
@@ -868,13 +1042,13 @@ namespace Kernel
     {
         LOG_DEBUG_F( "initConfigTypeMap<pwcMap>: %s\n", paramName);
         GetConfigData()->ffMapConfigTypeMap[ paramName ] = pVariable;
-        json::Object newNestedSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newNestedSchema["description"] = json::String(defaultDesc);
-            newNestedSchema["type"] = json::String("nested json object (of key-value pairs)");
+            newParamSchema["description"] = json::String(defaultDesc);
+            newParamSchema["type"] = json::String("nested json object (of key-value pairs)");
         }
-        jsonSchemaBase[paramName] = newNestedSchema;
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -882,19 +1056,29 @@ namespace Kernel
         const char* paramName,
         tFloatFloatMapConfigType * pVariable,
         const char* description,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<pwcMap>: %s\n", paramName);
         GetConfigData()->ffMapConfigTypeMap[ paramName ] = pVariable;
-        json::Object newNestedSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newNestedSchema["description"] = json::String(description);
-            newNestedSchema["type"] = json::String("nested json object (of key-value pairs)");
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("nested json object (of key-value pairs)");
         }
-        updateSchemaWithCondition( newNestedSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newNestedSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -906,13 +1090,13 @@ namespace Kernel
     {
         LOG_DEBUG_F( "initConfigTypeMap<pwcMap>: %s\n", paramName);
         GetConfigData()->sfMapConfigTypeMap[ paramName ] = pVariable;
-        json::Object newNestedSchema;
+        json::Object newParamSchema;
         if ( _dryrun )
         {
-            newNestedSchema["description"] = json::String(defaultDesc);
-            newNestedSchema["type"] = json::String("nested json object (of key-value pairs)");
+            newParamSchema["description"] = json::String(defaultDesc);
+            newParamSchema["type"] = json::String("nested json object (of key-value pairs)");
         }
-        jsonSchemaBase[paramName] = newNestedSchema;
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -921,22 +1105,32 @@ namespace Kernel
         RangedFloat * pVariable,
         const char * description,
         float defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<RangedFloat>: %s\n", paramName);
         GetConfigData()->rangedFloatConfigTypeMap[ paramName ] = pVariable;
-        json::Object newFloatSchema;
-        newFloatSchema["min"] = json::Number( pVariable->getMin() );
-        newFloatSchema["max"] = json::Number( pVariable->getMax() );
-        newFloatSchema["default"] = json::Number(defaultvalue);
+        json::Object newParamSchema;
+        newParamSchema["min"] = json::Number( pVariable->getMin() );
+        newParamSchema["max"] = json::Number( pVariable->getMax() );
+        newParamSchema["default"] = json::Number(defaultvalue);
         if ( _dryrun )
         {
-            newFloatSchema["description"] = json::String(description);
-            newFloatSchema["type"] = json::String( "float" );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "float" );
         }
-        updateSchemaWithCondition( newFloatSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newFloatSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -946,11 +1140,32 @@ namespace Kernel
         const char * description,
         float max,
         float defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
-        RangedFloat * pTmp = (RangedFloat*) pVariable;
-        return initConfigTypeMap( paramName, pTmp, description, defaultvalue, condition_key, condition_value );
+        LOG_DEBUG_F( "initConfigTypeMap<NonNegativeFloat>: %s\n", paramName);
+        GetConfigData()->nonNegativeFloatConfigTypeMap[ paramName ] = pVariable;
+        json::Object newParamSchema;
+        newParamSchema["min"] = json::Number( pVariable->getMin() );
+        newParamSchema["max"] = json::Number( pVariable->getMax() );
+        newParamSchema["default"] = json::Number(defaultvalue);
+        if ( _dryrun )
+        {
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "float" );
+        }
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
 
@@ -961,22 +1176,32 @@ namespace Kernel
         const char * description,
         unsigned int max,
         NaturalNumber defaultvalue,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<NaturalNumber>: %s\n", paramName);
         GetConfigData()->naturalNumberConfigTypeMap[ paramName ] = pVariable;
-        json::Object newNNSchema;
-        newNNSchema["min"] = json::Number( 0 );
-        newNNSchema["max"] = json::Number( max );
-        newNNSchema["default"] = json::Number(defaultvalue);
+        json::Object newParamSchema;
+        newParamSchema["min"] = json::Number( 0 );
+        newParamSchema["max"] = json::Number( max );
+        newParamSchema["default"] = json::Number(defaultvalue);
         if ( _dryrun )
         {
-            newNNSchema["description"] = json::String(description);
-            newNNSchema["type"] = json::String( "NaturalNumber" );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String( "NaturalNumber" );
         }
-        updateSchemaWithCondition( newNNSchema, condition_key, condition_value );
-        jsonSchemaBase[paramName] = newNNSchema;
+
+        updateSchemaWithCondition(newParamSchema, condition_key, condition_value);
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void
@@ -984,7 +1209,8 @@ namespace Kernel
         const char* paramName,
         JsonConfigurable * pVariable,
         const char* defaultDesc,
-        const char* condition_key, const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<JsonConfigurable>: %s\n", paramName);
@@ -1009,11 +1235,20 @@ namespace Kernel
             _dryrun = tmp ;
             jsonSchemaBase[ variable_type ] = pVariable->GetSchema();
 
-            json::Object newNestedSchema;
-            newNestedSchema["description"] = json::String(defaultDesc);
-            newNestedSchema["type"] = json::String(variable_type);
-            updateSchemaWithCondition( newNestedSchema, condition_key, condition_value );
-            jsonSchemaBase[paramName] = newNestedSchema;
+            json::Object newParamSchema;
+            newParamSchema["description"] = json::String(defaultDesc);
+            newParamSchema["type"] = json::String(variable_type);
+
+            updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
+            if(depends_list)
+            {
+                for(auto const pair: *depends_list)
+                {
+                    updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+                }
+            }
+
+            jsonSchemaBase[paramName] = newParamSchema;
         }
     }
 
@@ -1021,8 +1256,8 @@ namespace Kernel
         const char* paramName,
         IComplexJsonConfigurable * pVariable,
         const char* description,
-        const char* condition_key, 
-        const char* condition_value
+        const char* condition_key, const char* condition_value,
+        const std::map<std::string, std::string> * depends_list
     )
     {
         json::QuickBuilder custom_schema = pVariable->GetSchema();
@@ -1037,14 +1272,20 @@ namespace Kernel
         std::string custom_type_label = (std::string) custom_schema[ _typename_label() ].As<json::String>();
         json::String custom_type_label_as_json_string = json::String( custom_type_label );
         jsonSchemaBase[ custom_type_label ] = custom_schema[ _typeschema_label() ];
-        json::Object newComplexTypeSchemaEntry;
-        newComplexTypeSchemaEntry["description"] = json::String( description );
-        newComplexTypeSchemaEntry["type"] = json::String( custom_type_label_as_json_string );
-        if( condition_key )
+        json::Object newParamSchema;
+        newParamSchema["description"] = json::String( description );
+        newParamSchema["type"] = json::String( custom_type_label_as_json_string );
+
+        updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
+        if(depends_list)
         {
-            updateSchemaWithCondition( newComplexTypeSchemaEntry, condition_key, condition_value );
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
         }
-        jsonSchemaBase[ paramName ] = newComplexTypeSchemaEntry;
+
+        jsonSchemaBase[ paramName ] = newParamSchema;
         GetConfigData()->complexTypeMap[ paramName ] = pVariable;
     }
 
@@ -1072,15 +1313,15 @@ namespace Kernel
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<IPKey>: %s\n", paramName);
-        json::Object newIPKeySchema;
+        json::Object newParamSchema;
         if( _dryrun )
         {
-            newIPKeySchema["description"] = json::String(description);
-            newIPKeySchema["type"] = json::String("Constrained String");
-            newIPKeySchema[ "value_source" ] = json::String( IPKey::GetConstrainedStringConstraintKey() );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema["type"] = json::String("Constrained String");
+            newParamSchema[ "value_source" ] = json::String( IPKey::GetConstrainedStringConstraintKey() );
         }
         GetConfigData()->ipKeyTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[paramName] = newIPKeySchema;
+        jsonSchemaBase[paramName] = newParamSchema;
 
         if( pVariable->GetParameterName().empty() )
         {
@@ -1096,15 +1337,15 @@ namespace Kernel
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<IPKeyValue>: %s\n", paramName);
-        json::Object newIPKeyValueSchema;
+        json::Object newParamSchema;
         if( _dryrun )
         {
-            newIPKeyValueSchema["description"] = json::String(description);
-            newIPKeyValueSchema[ "type" ] = json::String( "Constrained String" );
-            newIPKeyValueSchema[ "value_source" ] = json::String( IPKey::GetConstrainedStringConstraintKeyValue() );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema[ "type" ] = json::String( "Constrained String" );
+            newParamSchema[ "value_source" ] = json::String( IPKey::GetConstrainedStringConstraintKeyValue() );
         }
         GetConfigData()->ipKeyValueTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[paramName] = newIPKeyValueSchema;
+        jsonSchemaBase[paramName] = newParamSchema;
 
         if( pVariable->GetParameterName().empty() )
         {
@@ -1120,15 +1361,15 @@ namespace Kernel
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<NPKey>: %s\n", paramName);
-        json::Object newNPKeySchema;
+        json::Object newParamSchema;
         if( _dryrun )
         {
-            newNPKeySchema["description"] = json::String(description);
-            newNPKeySchema[ "type" ] = json::String( "Constrained String" );
-            newNPKeySchema[ "value_source" ] = json::String( NPKey::GetConstrainedStringConstraintKey() );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema[ "type" ] = json::String( "Constrained String" );
+            newParamSchema[ "value_source" ] = json::String( NPKey::GetConstrainedStringConstraintKey() );
         }
         GetConfigData()->npKeyTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[paramName] = newNPKeySchema;
+        jsonSchemaBase[paramName] = newParamSchema;
 
         if( pVariable->GetParameterName().empty() )
         {
@@ -1144,15 +1385,15 @@ namespace Kernel
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<NPKeyValue>: %s\n", paramName);
-        json::Object newNPKeyValueSchema;
+        json::Object newParamSchema;
         if( _dryrun )
         {
-            newNPKeyValueSchema["description"] = json::String(description);
-            newNPKeyValueSchema[ "type" ] = json::String( "Constrained String" );
-            newNPKeyValueSchema[ "value_source" ] = json::String( NPKey::GetConstrainedStringConstraintKeyValue() );
+            newParamSchema["description"] = json::String(description);
+            newParamSchema[ "type" ] = json::String( "Constrained String" );
+            newParamSchema[ "value_source" ] = json::String( NPKey::GetConstrainedStringConstraintKeyValue() );
         }
         GetConfigData()->npKeyValueTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[paramName] = newNPKeyValueSchema;
+        jsonSchemaBase[paramName] = newParamSchema;
 
         if( pVariable->GetParameterName().empty() )
         {
@@ -1160,181 +1401,7 @@ namespace Kernel
         }
     }
 
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            EventTrigger * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<EventTrigger>: %s\n", paramName );
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Constrained String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0; i < built_in_names.size(); ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            std::vector<EventTrigger> * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<std::vector<EventTrigger>>: %s\n", paramName );
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Vector String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0 ; i < built_in_names.size() ; ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerVectorTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            EventTriggerNode * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<EventTriggerNode>: %s\n", paramName );
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Constrained String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerNodeFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerNodeFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0; i < built_in_names.size(); ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerNodeTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            std::vector<EventTriggerNode> * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<std::vector<EventTrigger>>: %s\n", paramName );
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Vector String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerNodeFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerNodeFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0; i < built_in_names.size(); ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerNodeVectorTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            EventTriggerCoordinator * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<EventTriggerCoordinator>: %s\n", paramName );
-
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Constrained String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerCoordinatorFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerCoordinatorFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0; i < built_in_names.size(); ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerCoordinatorTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
-    void
-        JsonConfigurable::initConfigTypeMap(
-            const char* paramName,
-            std::vector<EventTriggerCoordinator> * pVariable,
-            const char * description,
-            const char* condition_key,
-            const char* condition_value
-        )
-    {
-        LOG_DEBUG_F( "initConfigTypeMap<std::vector<EventTriggerCoordinator>>: %s\n", paramName );
-        json::Object newTriggerSchema;
-        json::QuickBuilder qb( newTriggerSchema );
-        if( _dryrun )
-        {
-            qb[ "type" ] = json::String( "Vector String" );
-            qb[ "default" ] = json::String( "" );
-            qb[ "description" ] = json::String( description );
-            qb[ "value_source" ] = json::String( EventTriggerCoordinatorFactory::CONSTRAINT_SCHEMA_STRING );
-            const std::vector<std::string>& built_in_names = EventTriggerCoordinatorFactory::GetInstance()->GetBuiltInNames();
-            for( int i = 0; i < built_in_names.size(); ++i )
-            {
-                qb[ "Built-in" ][ i ] = json::String( built_in_names[ i ] );
-            }
-            updateSchemaWithCondition( newTriggerSchema, condition_key, condition_value );
-        }
-        GetConfigData()->eventTriggerCoordinatorVectorTypeMap[ paramName ] = pVariable;
-        jsonSchemaBase[ paramName ] = newTriggerSchema;
-    }
-
+    
     bool JsonConfigurable::Configure( const Configuration* inputJson )
     {
         if( _dryrun )
@@ -1600,6 +1667,46 @@ namespace Kernel
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
                     EnforceParameterRange<float>( key, val, schema );
+                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    *(entry.second) = val;
+                }
+                else 
+                {
+                    handleMissingParam( key, inputJson->GetDataLocation() );
+                }
+            }
+
+            LOG_DEBUG_F("the key %s = float %f\n", key.c_str(), (float) *(entry.second));
+        }
+
+        // ---------------------------------- NONNEGATIVEFLOAT ------------------------------------
+        for (auto& entry : GetConfigData()->nonNegativeFloatConfigTypeMap)
+        {
+            const std::string& key = entry.first;
+            json::QuickInterpreter schema = jsonSchemaBase[key];
+            float val = -1.0f;
+
+            if( ignoreParameter( schema, inputJson ) )
+            {
+                continue; // param is missing and that's ok.
+            }
+
+            // Check if parameter was specified in input json
+            LOG_DEBUG_F( "useDefaults = %d\n", _useDefaults );
+            if( inputJson->Exist(key) )
+            {
+                // get specified configuration parameter
+                val = GET_CONFIG_DOUBLE( inputJson, key.c_str() );
+                *(entry.second) = val;
+                // throw exception if specified value is outside of range even though this datatype enforces ranges inherently.
+                EnforceParameterRange<float>( key, val, schema);
+            }
+            else
+            {
+                if( _useDefaults )
+                {
+                    // using the default value
+                    val = (float)schema["default"].As<json::Number>();
                     LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
@@ -2084,7 +2191,7 @@ namespace Kernel
                 handleMissingParam( param_key, inputJson->GetDataLocation() );
             }
         }
-
+#if 0
         // ---------------------------------- EventTrigger  ------------------------------------
         for( auto& entry : GetConfigData()->eventTriggerTypeMap )
         {
@@ -2094,7 +2201,8 @@ namespace Kernel
             {
                 if( _useDefaults )
                 {
-                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", param_key.c_str(), "");
+                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", param_key.c_str(), "EventTrigger::NoTrigger" );
+                    *(entry.second) = EventTrigger::NoTrigger;
                 }
                 else
                 {
@@ -2104,7 +2212,22 @@ namespace Kernel
             else
             {
                 std::string candidate = (std::string) GET_CONFIG_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerFactory::GetInstance()->CreateTrigger( param_key, candidate );
+                //if( EventTriggerFactory::GetInstance()->IsValidEvent( candidate ) )
+                {
+                    *(entry.second) = candidate;
+                }
+                else
+                {
+                    std::ostringstream msg;
+                    msg << "EventTrigger with specified value "
+                        << candidate
+                        << " is invalid. Possible values are: ";
+                    for( auto value : EventTriggerFactory::GetInstance()->GetAllEventTriggers() )
+                    {
+                        msg << value.ToString() << "...";
+                    }
+                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                }
             }
         }
 
@@ -2121,89 +2244,28 @@ namespace Kernel
             else
             {
                 std::vector<std::string> candidate_list = GET_CONFIG_VECTOR_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerFactory::GetInstance()->CreateTriggerList( param_key, candidate_list );
-            }
-        }
-
-        // ---------------------------------- EventTriggerNode  ------------------------------------
-        for( auto& entry : GetConfigData()->eventTriggerNodeTypeMap )
-        {
-            const std::string& param_key = entry.first;
-            json::QuickInterpreter schema = jsonSchemaBase[ param_key ];
-            if( !inputJson->Exist( param_key ) && _useDefaults )
-            {
-                if( _useDefaults )
+                for( auto candidate : candidate_list )
                 {
-                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", param_key.c_str(), "" );                    
-                }
-                else
-                {
-                    handleMissingParam( param_key, inputJson->GetDataLocation() );
-                }
-            }
-            else
-            {
-                std::string candidate = (std::string) GET_CONFIG_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerNodeFactory::GetInstance()->CreateTrigger( param_key, candidate );
-            }
-        }
-
-        // ---------------------------------- EventTriggerNodeVector  ------------------------------------
-        for( auto& entry : GetConfigData()->eventTriggerNodeVectorTypeMap )
-        {
-            const std::string& param_key = entry.first;
-            json::QuickInterpreter schema = jsonSchemaBase[ param_key ];
-            if( !inputJson->Exist( param_key ) && _useDefaults )
-            {
-                LOG_INFO_F( "Using the default value ( \"%s\" : \"\" ) for unspecified parameter.\n", param_key.c_str() );
-                handleMissingParam( param_key, inputJson->GetDataLocation() );
-            }
-            else
-            {
-                std::vector<std::string> candidate_list = GET_CONFIG_VECTOR_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerNodeFactory::GetInstance()->CreateTriggerList( param_key, candidate_list );
-            }
-        }
-
-        // ---------------------------------- EventTriggerCoordinator  ------------------------------------
-        for( auto& entry : GetConfigData()->eventTriggerCoordinatorTypeMap )
-        {
-            const std::string& param_key = entry.first;
-            json::QuickInterpreter schema = jsonSchemaBase[ param_key ];
-            if( !inputJson->Exist( param_key ) && _useDefaults )
-            {
-                if( _useDefaults )
-                {
-                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", param_key.c_str(), "" );
-                }
-                else
-                {
-                    handleMissingParam( param_key, inputJson->GetDataLocation() );
+                    if( EventTriggerFactory::GetInstance()->IsValidEvent( candidate ) )
+                    {
+                        (*(entry.second)).push_back( EventTrigger( candidate ) );
+                    }
+                    else
+                    {
+                        std::ostringstream msg;
+                        msg << "EventTrigger with specified value "
+                            << candidate
+                            << " is invalid. Possible values are: ";
+                        for( auto value : EventTriggerFactory::GetInstance()->GetAllEventTriggers() )
+                        {
+                            msg << value.ToString() << "...";
+                        }
+                        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                    }
                 }
             }
-            else
-            {
-                std::string candidate = (std::string) GET_CONFIG_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerCoordinatorFactory::GetInstance()->CreateTrigger( param_key, candidate );
-            }
         }
-
-        // ---------------------------------- EventTriggerCoordinatorVector  ------------------------------------
-        for( auto& entry : GetConfigData()->eventTriggerCoordinatorVectorTypeMap )
-        {
-            const std::string& param_key = entry.first;
-            json::QuickInterpreter schema = jsonSchemaBase[ param_key ];
-            if( !inputJson->Exist( param_key ) && _useDefaults )
-            {
-                LOG_INFO_F( "Using the default value ( \"%s\" : \"\" ) for unspecified parameter.\n", param_key.c_str() );
-                handleMissingParam( param_key, inputJson->GetDataLocation() );
-            }
-            else
-            {
-                std::vector<std::string> candidate_list = GET_CONFIG_VECTOR_STRING( inputJson, (entry.first).c_str() );
-                *(entry.second) = EventTriggerCoordinatorFactory::GetInstance()->CreateTriggerList( param_key, candidate_list );
-            }
-        }
+#endif
 
         delete m_pData;
         m_pData = nullptr;

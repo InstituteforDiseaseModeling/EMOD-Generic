@@ -20,7 +20,7 @@ namespace Kernel
         DECLARE_FACTORY_REGISTERED(InterventionFactory, ImmunityBloodTest, IDistributableIntervention)
 
         float threshold_acquisitionImmunity;
-        EventTrigger negative_diagnosis_event;
+        EventTrigger::Enum negative_diagnosis_event;
 
     public:
         ImmunityBloodTest();

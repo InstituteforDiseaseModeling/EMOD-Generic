@@ -34,6 +34,7 @@ namespace Kernel
 
     protected:
         friend class InfectionHIV;
+
         friend class IndividualHumanCoInfection;
 
         //these are the config params
@@ -74,6 +75,7 @@ namespace Kernel
         virtual void ApplySuppressionFailure() override;
         
         // kto moved to public for access through interventions
+        virtual const HIVInfectionStage::Enum& GetStage() const override;
         float GetWHOStage() const override;
 
     protected:
@@ -85,7 +87,6 @@ namespace Kernel
         void SetupNonSuppressedDiseaseTimers();
         /* clorton virtual */ bool  ApplyDrugEffects(float dt, ISusceptibilityContext* immunity = nullptr);
         void SetStageFromDuration();
-        virtual const HIVInfectionStage::Enum& GetStage() const override;
         static float GetWeightInKgFromWHOStage(float whoStage);
         float ComputeDurationFromEnrollmentToArtAidsDeath() const;
 

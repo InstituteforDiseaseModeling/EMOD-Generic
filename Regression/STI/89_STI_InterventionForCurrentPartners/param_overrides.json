@@ -21,6 +21,7 @@
         "Incubation_Period_Constant": 1,
         "Infectious_Period_Gaussian_Mean": 120,
         "Min_Days_Between_Adding_Relationships": 1,
+	"Python_Script_Path": "LOCAL", 
         "Report_Relationship_Start": 0,
         "Simulation_Duration": 100,
         "x_Base_Population": 0.0001

@@ -59,6 +59,7 @@ def get_argparser(parser = None):
     parser.add_argument("--config-constraints", nargs="?",                              help="key:value pair(s) which are used to filter the scenario list (the given key and value must be in the config.json)")
     parser.add_argument("--scons", action="store_true", default=False,                  help="Indicates scons build so look for custom DLLs in the build/64/Release directory.")
     parser.add_argument('--local', action='store_true', default=False,                  help='Run all simulations locally.')
+    parser.add_argument('--linux', action='store_true', default=False,                  help='Run on linux target')
     parser.add_argument("--print-error", action='store_true', default=False,            help="Print error message to screen.")
 
     return parser
@@ -244,15 +245,25 @@ def load_campjson_from_campaign(simcfg_path, enable_interventions, runner, campa
     """
     if enable_interventions == 1:
         if not campaign_filename or not os.path.exists(campaign_filename):
-            try:
-                campaign_filename = glob.glob(os.path.join(simcfg_path, "campaign_*.json"))[0]
-            except Exception as ex:
-                print( str( ex ) + " while processing " + simcfg_path )
+            print( "Caution: Didn't find {0} for {1}.".format( campaign_filename, simcfg_path ) )
+            campaign_filename = glob.glob(os.path.join(simcfg_path, "campaign_*.json"))[0]
         runner.campaign_filename = os.path.basename(campaign_filename)
-        campjson = ru.load_json(campaign_filename, lambda x: x.replace("u'", "'").replace("'", '"').strip('"'))
-        return str(campjson)
-    else:
-        return {'Events': []}
+        try:
+            # One version breaks HIV campaign scenarios, the other breaks others.
+            #campjson = ru.load_json(campaign_filename, lambda x: x.replace("u'", "'").replace("'", '"').strip('"'))
+            campjson = ru.load_json(campaign_filename)
+            #return json.dumps(campjson)
+            return campjson
+        except json.decoder.JSONDecodeError as err:
+            err_msg = "JSON Decode Error loading test campaign, {}: {}".format(campaign_filename, err)
+            sys.stderr.write(err_msg + "\n")
+            report.addErroringTest(simcfg_path, err_msg, "(no simulation directory created).", test_type)
+        except:
+            err_msg = "Unexpected error while loading campaign, {}: {} - {}".format(campaign_filename, sys.exc_info()[0], sys.exc_info()[1])
+            sys.stderr.write(err_msg + "\n")
+            report.addErroringTest(simcfg_path, err_msg, "(no simulation directory created).", test_type)
+
+    return {'Events': []}
 
 def get_exe_version(exepath):
     """
@@ -414,13 +425,17 @@ class TestRunner(object):
                         ei = False
                         if "parameters" in configjson and "Enable_Interventions" in configjson["parameters"]:
                             ei = configjson["parameters"]["Enable_Interventions"]
-                        configjson["campaign_json"] = load_campjson_from_campaign(sim_path, ei, self.runner, campaign_file) 
+                        if campaign_file and campaign_file.endswith( ".json" ):
+                            configjson["campaign_json"] = load_campjson_from_campaign(sim_path, ei, self.runner, campaign_file) 
                 else:
-                    configjson["campaign_json"] = str(campjson)
+                    configjson["campaign_json"] = json.dumps(campjson)
 
                 # add custom reports, if they exist
-                if os.path.exists( os.path.join(sim_path, "custom_reports.json") ):
-                    configjson["custom_reports_json"] = str(ru.load_json(os.path.join(sim_path, "custom_reports.json")))
+                try:
+                    if os.path.exists( os.path.join(sim_path, "custom_reports.json") ):
+                        configjson["custom_reports_json"] = str(ru.load_json(os.path.join(sim_path, "custom_reports.json")))
+                except Exception as ex:
+                    print( "Exception loading custom_reports.json for scenario " + sim_path )
 
                 thread = self.runner.commissionFromConfigJson(sim_id, configjson, sim_path, self.report, self.scenario_type)
                 ru.reg_threads.append(thread)
@@ -631,7 +646,10 @@ def main():
     sweep = "sweep" in test_type
 
     if test_type != "pymod":
-        ru.version_string = get_exe_version(params.executable_path)
+        if params.linux:
+            ru.version_string = "<na:linux>"
+        else:
+            ru.version_string = get_exe_version(params.executable_path)
 
     # create report
     report = regression_report.Report(params, ru.version_string)

@@ -71,7 +71,7 @@ namespace Kernel
     }
 
     std::string HIVReportEventRecorder::GetOtherData( IIndividualHumanEventContext *context, 
-                                                      const EventTrigger& trigger )
+                                                      const EventTrigger::Enum& trigger )
     {
         IIndividualHumanHIV * iindividual_hiv = nullptr;
         if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&iindividual_hiv) )

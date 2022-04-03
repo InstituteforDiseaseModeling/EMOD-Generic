@@ -5,6 +5,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
+                    "Genome": 1,
                     "Infection_Type": "TB",
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividualTBorHIV"

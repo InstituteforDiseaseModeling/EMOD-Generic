@@ -7,7 +7,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-#include "StdAfx.h"
+#include "stdafx.h"
+
 #include "MalariaSurveyJSONAnalyzer.h"
 
 #include "FileSystem.h"
@@ -345,7 +346,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         BaseEventReportIntervalOutput::Initialize( nrmSize );
     }
 
-    bool MalariaSurveyJSONAnalyzer::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger& trigger )
+    bool MalariaSurveyJSONAnalyzer::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         if( HaveUnregisteredAllEvents() )
         {

@@ -16,17 +16,22 @@ namespace Kernel
 {
     class IndividualHumanAirborneConfig : public IndividualHumanConfig
     {
-    protected:
         friend class IndividualHumanAirborne;
+
+    public:
+        virtual bool Configure( const Configuration* config ) override;
     };
 
     class IndividualHumanAirborne : public IndividualHuman
     {
-    public:    
-        DECLARE_QUERY_INTERFACE()
+        friend class SimulationAirborne;
 
+        DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanAirborne )
+
+    public:
+        static IndividualHumanAirborne *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanAirborne(void) { }
-        static   IndividualHumanAirborne *CreateHuman(INodeContext *context, suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
 
         // Infections and Susceptibility
         virtual void CreateSusceptibility(float=1.0, float=1.0) override;
@@ -36,6 +41,7 @@ namespace Kernel
 
         virtual IInfection* createInfection(suids::suid _suid) override;
 
-        DECLARE_SERIALIZABLE(IndividualHumanAirborne);
+    private:
+        static void InitializeStaticsAirborne( const Configuration* config );
     };
 }

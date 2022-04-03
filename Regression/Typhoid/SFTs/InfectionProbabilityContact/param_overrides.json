@@ -1,0 +1,18 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Infection_Probability_Contact",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_100_overlay.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Typhoid_Chronic_Relative_Infectiousness": 0.15,
+        "Typhoid_Contact_Exposure_Rate": 0.99,
+        "Typhoid_Environmental_Exposure_Rate": 0.1,
+        "Typhoid_Prepatent_Relative_Infectiousness": 0.55,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.95,
+        "x_Base_Population": 7,
+        "logLevel_IndividualTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

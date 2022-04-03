@@ -23,6 +23,14 @@ SETUP_LOGGING( "IndividualEnvironmental" )
 
 namespace Kernel
 {
+    bool IndividualHumanEnvironmentalConfig::Configure( const Configuration* config ) // just called once!
+    {
+        LOG_DEBUG( "Configure\n" );
+
+        bool ret = JsonConfigurable::Configure( config );
+        return ret;
+    }
+
     BEGIN_QUERY_INTERFACE_DERIVED(IndividualHumanEnvironmental, IndividualHuman)
     END_QUERY_INTERFACE_DERIVED(IndividualHumanEnvironmental, IndividualHuman)
 
@@ -47,7 +55,17 @@ namespace Kernel
     IndividualHumanEnvironmental::~IndividualHumanEnvironmental()
     {
     }
-    
+
+    void IndividualHumanEnvironmental::InitializeStaticsEnvironmental( const Configuration * config )
+    {
+        SusceptibilityEnvironmentalConfig immunity_config;
+        immunity_config.Configure( config );
+        InfectionEnvironmentalConfig infection_config;
+        infection_config.Configure( config );
+        IndividualHumanEnvironmentalConfig human_config;
+        human_config.Configure( config );
+    }
+
     void IndividualHumanEnvironmental::CreateSusceptibility(float imm_mod, float risk_mod)
     {
         susceptibility = SusceptibilityEnvironmental::CreateSusceptibility(this, m_age, imm_mod, risk_mod);

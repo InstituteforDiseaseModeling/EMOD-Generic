@@ -60,7 +60,7 @@ namespace Kernel
     bool ReportSurveillanceEventRecorder::Configure( const Configuration* inputJson )
     {
         m_StatsByIpKeyNames.value_source = IPKey::GetConstrainedStringConstraintKey();
-        initConfigTypeMap( STATS_BY_IP_PARAMETER_NAME.c_str(), &m_StatsByIpKeyNames, Report_Surveillance_Event_Recorder_Stats_By_IPs_DESC_TEXT, ENABLE_PARAMETER_NAME.c_str() );
+        initConfigTypeMap( STATS_BY_IP_PARAMETER_NAME.c_str(), &m_StatsByIpKeyNames, Report_Surveillance_Event_Recorder_Stats_By_IPs_DESC_TEXT, GetEnableParameterName().c_str() );
 
         return ReportEventRecorderCoordinator::Configure( inputJson );
     }

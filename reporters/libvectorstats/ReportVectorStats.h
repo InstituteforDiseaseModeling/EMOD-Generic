@@ -35,7 +35,7 @@ namespace Kernel
         virtual std::string GetHeader() const override;
         virtual void LogNodeData( Kernel::INodeContext * pNC ) override;
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override;
+                                    const EventTrigger::Enum& trigger ) override;
 
         // IVectorMigrationReporting
         virtual void LogVectorMigration( ISimulationContext* pSim, 

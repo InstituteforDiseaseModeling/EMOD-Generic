@@ -51,11 +51,11 @@ SUITE(HivSimpleDiagnosticTest)
 
             m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
 
-            EventTriggerFactory::DeleteInstance();
+            //EventTriggerFactoryDeleteInstance();
 
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
 
             std::map<std::string, float> ip_values_state ;
@@ -94,7 +94,7 @@ SUITE(HivSimpleDiagnosticTest)
         std::unique_ptr<Configuration> p_config( Configuration_Load( "testdata/HIVSimpleDiagnosticTest/TestDisqualifyingPropertiesAndInterventionStatus.json" ) );
         m_Diag.Configure( p_config.get() ); 
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() );
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger );
         CHECK_EQUAL( std::string("no_state"), m_Human.GetProperties()->Get( IPKey("InterventionStatus" ) ).GetValueAsString() );
         CHECK( !m_Diag.Expired() );
 
@@ -106,7 +106,7 @@ SUITE(HivSimpleDiagnosticTest)
 
         m_Diag.Update( 1.0 ); // call during the same timestep as Distribute
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() );
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger );
         CHECK_EQUAL( std::string( "non_abort_state" ), m_Human.GetProperties()->Get( IPKey( "InterventionStatus" ) ).GetValueAsString() );
         CHECK( !m_Diag.Expired() );
 
@@ -118,8 +118,8 @@ SUITE(HivSimpleDiagnosticTest)
 
         m_Diag.Update( 1.0 );
 
-        CHECK( !m_NEC.GetTriggeredEvent().IsUninitialized() );
-        CHECK_EQUAL( EventTrigger::InterventionDisqualified.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK( !m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger );
+        CHECK_EQUAL( std::string( "InterventionDisqualified" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) );
         CHECK_EQUAL( std::string( "abort_state_2" ), m_Human.GetProperties()->Get( IPKey( "InterventionStatus" ) ).GetValueAsString() );
         CHECK( m_Diag.Expired() );
     }
@@ -135,7 +135,7 @@ SUITE(HivSimpleDiagnosticTest)
         std::unique_ptr<Configuration> p_config( Configuration_Load( "testdata/HIVSimpleDiagnosticTest/TestDisqualifyingPropertiesAndInterventionStatus.json" ) );
         m_Diag.Configure( p_config.get() );
 
-        CHECK( m_NEC.GetTriggeredEvent().IsUninitialized() );
+        CHECK( m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger );
         CHECK_EQUAL( std::string( "abort_state_2" ), m_Human.GetProperties()->Get( IPKey( "InterventionStatus" ) ).GetValueAsString() );
         CHECK( !m_Diag.Expired() );
 
@@ -144,8 +144,8 @@ SUITE(HivSimpleDiagnosticTest)
 
         CHECK( !distributed );
         CHECK( m_Diag.Expired() );
-        CHECK( !m_NEC.GetTriggeredEvent().IsUninitialized() );
-        CHECK_EQUAL( EventTrigger::InterventionDisqualified.ToString(), m_NEC.GetTriggeredEvent().ToString() ) ;
+        CHECK( !m_NEC.GetTriggeredEvent() == EventTrigger::NoTrigger );
+        CHECK_EQUAL( std::string( "InterventionDisqualified" ), std::string( EventTrigger::pairs::lookup_key( m_NEC.GetTriggeredEvent() ) ) );
         CHECK_EQUAL( std::string( "abort_state_2" ), m_Human.GetProperties()->Get( IPKey( "InterventionStatus" ) ).GetValueAsString() );
     }
 }

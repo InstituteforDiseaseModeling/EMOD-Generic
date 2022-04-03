@@ -39,7 +39,7 @@ namespace Kernel {
         virtual ~RapidJsonObj();
 
         // IJsonAdapter interface
-        virtual void CreateNewWriter(bool bCacheWriter = false) override;
+        virtual void CreateNewWriter(bool bCacheWriter = false, bool defaultPrecision = true) override;
         virtual void FinishWriter() override;
         virtual void BeginObject() override;
         virtual void EndObject() override;

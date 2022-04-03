@@ -240,9 +240,6 @@
     <ClInclude Include="EventTrigger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RandomNumberGeneratorFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ExternalNodeId.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -385,10 +382,7 @@
     </ClCompile>
     <ClCompile Include="Memory.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RandomNumberGeneratorFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    </ClCompile> 
     <ClCompile Include="EventTrigger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

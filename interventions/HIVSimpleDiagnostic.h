@@ -46,7 +46,7 @@ namespace Kernel
         bool result_of_positive_test;
         float original_days_to_diagnosis;
         float absoluteDuration;
-        EventTrigger negative_diagnosis_event;
+        EventTrigger::Enum negative_diagnosis_event;
 
         DECLARE_SERIALIZABLE(HIVSimpleDiagnostic);
 #pragma warning( pop )

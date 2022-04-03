@@ -1,0 +1,23 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Number_of_Exposures",
+        "Demographics_Filenames": [
+            "../../Santiago_Demographics.json",
+            "../../Santiago_100_overlay.json"
+        ],
+        "Python_Script_Path": "SHARED",
+        "Simulation_Duration": 1095,
+        "Typhoid_3year_Susceptible_Fraction": 0.29,
+        "Typhoid_6month_Susceptible_Fraction": 0.14,
+        "Typhoid_6year_Susceptible_Fraction": 0.61,
+        "Typhoid_Acute_Infectiousness": 4000,
+        "Typhoid_Chronic_Relative_Infectiousness": 0.15,
+        "Typhoid_Contact_Exposure_Rate": 2,
+        "Typhoid_Environmental_Exposure_Rate": 10,
+        "Typhoid_Prepatent_Relative_Infectiousness": 0.55,
+        "Typhoid_Subclinical_Relative_Infectiousness": 0.95,
+        "x_Base_Population": 5,
+        "logLevel_IndividualTyphoid": "VALID"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

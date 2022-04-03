@@ -15,7 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmApi.h"
 #include "Types.h"
 
-struct Gamma
+/*struct Gamma
 {
     inline static double WindschitlApproximation ( double z )
     {
@@ -31,14 +31,14 @@ struct Gamma
         }
         return (2.5066282746310002 * sqrt(1.0/z) * pow((z/2.718281828459045) * sqrt(z*sinh(1/z) + 1/(810*pow(z,6))), z));
     }
-};
+}; */
 
 namespace Kernel {
     class RANDOMBASE;
 
     // ENUM defs for INCUBATION_DISTRIBUTION, INFECTIOUS_DISTRIBUTION
     ENUM_DEFINE(DistributionFunction, 
-        ENUM_VALUE_SPEC( NOT_INITIALIZED                                     ,-1 )
+        ENUM_VALUE_SPEC( NOT_INITIALIZED                                     ,-1 ) 
         ENUM_VALUE_SPEC( CONSTANT_DISTRIBUTION                               , 0 )
         ENUM_VALUE_SPEC( UNIFORM_DISTRIBUTION                                , 1 )
         ENUM_VALUE_SPEC( GAUSSIAN_DISTRIBUTION                               , 2 )
@@ -51,34 +51,6 @@ namespace Kernel {
         ENUM_VALUE_SPEC( WEIBULL_DISTRIBUTION                                , 9 )
         ENUM_VALUE_SPEC( DUAL_EXPONENTIAL_DISTRIBUTION                       ,10 )
         )
-
-class IDMAPI Probability
-{
-    public:
-        static Probability * getInstance()
-        {
-            if( _instance == nullptr )
-            {
-                _instance = new Probability();
-            }
-            return _instance;
-        }
-
-        double Probability::fromDistribution( Kernel::RANDOMBASE* pRNG,
-                                              Kernel::DistributionFunction::Enum distribution_flag,
-                                              double param1, 
-                                              double param2 = 0.0, 
-                                              double param3 = 0.0,
-                                              double default_value = 0.0);
-
-    protected:
-
-        Probability()
-        {
-        }
-
-        static Probability * _instance;
-};
 
 #define LOG_2 0.6931472f
 

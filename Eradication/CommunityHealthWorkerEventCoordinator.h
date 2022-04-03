@@ -67,7 +67,7 @@ namespace Kernel
 
         // IIndividualEventObserver methods
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& StateChange) override;
+                                    const EventTrigger::Enum& StateChange) override;
 
         // Other Methods
         bool Qualifies( INodeEventContext* pNEC );
@@ -87,7 +87,7 @@ namespace Kernel
         void RegisterForEvents( INodeEventContext* pNEC );
         void UnregisterForEvents( INodeEventContext* pNEC );
 
-        bool IsRemoveIndividualEvent( const EventTrigger& rTrigger ) const;
+        bool IsRemoveIndividualEvent( const EventTrigger::Enum& rTrigger ) const;
         void RemoveEntity( IIndividualHumanEventContext *context );
 
         template<typename T>
@@ -112,14 +112,14 @@ namespace Kernel
 
         float                           m_CoordinatorDaysRemaining;
         DemographicRestrictions         m_DemographicRestrictions;
-        std::vector<EventTrigger>       m_TriggerConditionList;
+        std::vector<EventTrigger::Enum>       m_TriggerConditionList;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> m_NodePropertyRestrictions;
 
         int                                                 m_MaxDistributedPerDay; //interventions per day
         float                                               m_QueueWaitingPeriodDays;
         std::list<QueueEntry<INodeEventContext>>            m_QueueNode;
         std::list<QueueEntry<IIndividualHumanEventContext>> m_QueueIndividual;
-        std::vector<EventTrigger>                           m_RemoveIndividualEventList;
+        std::vector<EventTrigger::Enum>                           m_RemoveIndividualEventList;
 
         float                    m_MapTime;
         std::map<uint32_t,float> m_InQueueMap;

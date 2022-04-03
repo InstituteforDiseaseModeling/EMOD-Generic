@@ -139,12 +139,12 @@ namespace Kernel {
     bool
     ReportHIVMortalityEvents::notifyOnEvent(
         IIndividualHumanEventContext *context,
-        const EventTrigger& trigger
+        const EventTrigger::Enum& trigger
     )
     {
         LOG_DEBUG_F( "Individual %d experienced event %s\n",
                      context->GetSuid().data,
-                     trigger.c_str()
+                     EventTrigger::pairs::lookup_key( trigger )
                    );
         IIndividualHumanHIV* hiv_individual = nullptr;
         if ( context->QueryInterface( GET_IID(IIndividualHumanHIV), (void**)&hiv_individual ) != s_OK )
@@ -235,7 +235,7 @@ namespace Kernel {
             }
             else
             {
-                LOG_DEBUG_F( "Un-handled event: %s\n", trigger.c_str() );
+                LOG_DEBUG_F( "Un-handled event: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
             }
         }
 

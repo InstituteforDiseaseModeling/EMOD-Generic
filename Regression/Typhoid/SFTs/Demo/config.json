@@ -97,6 +97,7 @@
         "Post_Infection_Mortality_Multiplier": 0,
         "Post_Infection_Transmission_Multiplier": 0,
         "Python_Script_Path": "LOCAL",
+        "Python_Inprocessing_Tsteps": [],
         "Rainfall_Scale_Factor": 1,
         "Relative_Humidity_Scale_Factor": 1,
         "Relative_Humidity_Variance": 0.05,

@@ -67,23 +67,16 @@ SUITE(SerializationTest)
         // --------------------
         // --- Initialize test
         // --------------------
-        EventTriggerFactory::DeleteInstance();
+        //EventTriggerFactoryDeleteInstance();
 
         json::Object fakeConfigJson;
         Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-        EventTriggerFactory::GetInstance()->Configure( fakeConfigValid );
+        //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
 
         try
         {
             JsonObjectDemog json ;
             json.ParseFile( "testdata/SerializationTest/SerializationTest.json" );
-            CHECK( json.Contains( "Custom_Individual_Events" ) );
-            CHECK( json["Custom_Individual_Events"].IsArray() );
-
-            for( int i = 0 ; i < json["Custom_Individual_Events"].size() ; i++ )
-            {
-                EventTriggerFactory::GetInstance()->CreateUserEventTrigger( json["Custom_Individual_Events"][i].AsString() );
-            }
 
             std::map<std::string, float> ip_values_state ;
             CHECK( json.Contains( "Valid_Intervention_Statuses" ) );

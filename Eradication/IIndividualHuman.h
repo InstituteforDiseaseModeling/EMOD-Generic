@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Common.h"
 #include "IInfection.h"
 #include "SimulationEnums.h"
+#include "IntranodeTransmissionTypes.h"
 
 namespace Kernel
 {
@@ -29,8 +30,8 @@ namespace Kernel
     {
         // Setup
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) = 0;
+        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) = 0;
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, int incubation_period_override = -1) = 0;
-        virtual void SetInitialInfections(int init_infs, const IStrainIdentity *infstrain = nullptr) = 0;
         virtual void SetParameters( INodeContext* pParent, float infsample, float imm_mod, float risk_mod, float mig_mod) = 0;
         virtual void InitializeHuman() = 0;
         virtual void SetMigrationModifier( float modifier ) = 0;
@@ -40,14 +41,15 @@ namespace Kernel
         virtual void UpdateInfectiousness(float dt) = 0;
         virtual void UpdateGroupMembership() = 0;
         virtual void UpdateGroupPopulation(float size_changes) = 0;
+        virtual void Die(HumanStateChange newState) = 0;
 
         // Inspection
         virtual suids::suid GetSuid() const = 0;
         virtual double GetAge() const = 0;
-        virtual float GetImmuneFailage() const = 0;
+        virtual float GetImmuneFailAgeAcquire() const = 0;
         virtual bool IsAdult() const = 0;
         virtual int GetGender() const = 0;
-        virtual double GetMonteCarloWeight() const = 0;
+        virtual float GetMonteCarloWeight() const = 0;
         virtual bool IsInfected() const = 0;
         virtual bool AtHome() const = 0;
         virtual bool IsOnFamilyTrip() const = 0 ;

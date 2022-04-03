@@ -18,7 +18,7 @@
 # "Environmental_Ramp_Up_Duration": 30
 
 
-import dtk_SeasonalAttenuation_Support as dtk_SAS
+import dtk_test.dtk_SeasonalAttenuation_Support as dtk_SAS
 import dtk_test.dtk_sft as sft
 
 def application(output_folder="output",

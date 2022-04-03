@@ -1,0 +1,39 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.01,
+                "Infectious_Period_Constant": 5
+            }
+        },
+        "ENVIRONMENTAL": {
+            "Environmental_Ramp_Down_Duration": 2e-38,
+            "Environmental_Ramp_Up_Duration": 2e-38
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 0
+        },
+        "OUTPUT": {
+            "Enable_Property_Output": 0,
+            "Report_Node_Event_Recorder": 1,
+            "Report_Node_Event_Recorder_Events": [
+                "PositiveResult",
+                "NegativeResult"
+            ]
+        },
+        "PRIMARY": {
+            "Config_Name": "EnvironmentalDiagnostic_Events",
+            "Simulation_Duration": 180
+        },
+        "LOGLEVEL": {
+            "logLevel_EnvironmentalDiagnostic": "DEBUG"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

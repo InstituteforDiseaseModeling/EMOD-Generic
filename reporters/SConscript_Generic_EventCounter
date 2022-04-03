@@ -8,16 +8,23 @@ Import('env')
 report_env = env.Clone()
 report_env[ "REPORT_DIR" ] = 'libreporteventcounter'
 
-lib_report_dllSrcFiles = [ "$REPORT_DIR/ReportEventCounter.cpp", "$REPORT_DIR/stdafx.cpp" ]
+lib_report_dllSrcFiles = [ "$REPORT_DIR/ReportEventCounter.cpp" ]
+if os.name != "posix":
+    lib_report_dllSrcFiles.extend( [ "$REPORT_DIR/stdafx.cpp" ] )
+
 lib_report_dllIncFiles = [ "$REPORT_DIR/ReportEventCounter.h" ]
 lib_report_dllLocalInc = [ "$REPORT_DIR/stdafx.h" ]
 
-#stdobj = env.Object()
-
+# This obviously totally sucks. We only want each lib once. Couldn't get this guy to work without doing this though. TBD.
+report_env.Append(LIBS=['campaign'])
 report_env.Append(LIBS=['baseReportLib'])
 report_env.Append(LIBS=['utils'])
-report_env.Append(LIBPATH=['$BUILD_DIR/baseReportLib'])
-report_env.Append(LIBPATH=['$BUILD_DIR/utils'])
+report_env.Append(LIBS=['cajun'])
+report_env.Append(LIBS=['campaign'])
+report_env.Append(LIBS=['baseReportLib'])
+report_env.Append(LIBS=['utils'])
+report_env.Append(LIBS=['cajun'])
+
 
 report_dir = report_env[ "BUILD_DIR" ] + 'reporter_plugins/' + report_env[ "REPORT_DIR" ]
 

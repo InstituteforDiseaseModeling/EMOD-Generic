@@ -32,7 +32,8 @@
             ],
             "Geography": "",
             "Run_Number": 1,
-            "Simulation_Duration": 7302
+            "Simulation_Duration": 7302,
+            "_Python_Script_Path": "LOCAL"
         }
     }
 }

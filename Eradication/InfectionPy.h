@@ -12,7 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class InfectionPyConfig : public JsonConfigurable
+    class InfectionPyConfig : public InfectionConfig
     {
         friend class IndividualPy;
         GET_SCHEMA_STATIC_WRAPPER(InfectionPyConfig)
@@ -20,10 +20,10 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
     public:
-        bool Configure( const Configuration* config );
+        virtual bool Configure( const Configuration* config ) override;
 
     protected:
-       
+        friend class InfectionPy;
     };
 
     class IInfectionPy : public ISupports

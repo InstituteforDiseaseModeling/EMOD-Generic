@@ -46,6 +46,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmMpi.h"
 #include "Properties.h"
 #include "NodeProperties.h"
+#include "PythonSupport.h"
 
 #ifdef _DEBUG
 #include "BinaryArchiveReader.h"
@@ -225,6 +226,8 @@ namespace Kernel
         initConfigTypeMap( "Campaign_Filename",       &campaign_filename,      Campaign_Filename_DESC_TEXT, "", "Enable_Interventions" );
         initConfigTypeMap( "Load_Balance_Filename",   &loadbalance_filename,   Load_Balance_Filename_DESC_TEXT ); 
         initConfigTypeMap( "Minimum_End_Time",        &min_sim_endtime,        Minimum_End_Time_DESC_TEXT, 0.0f, 1000000.0f, 0.0f, "Enable_Termination_On_Zero_Total_Infectivity" );
+        std::vector< int > py_inproc_tsteps_tmp_vec;
+        initConfigTypeMap( "Python_Inprocessing_Tsteps",        &py_inproc_tsteps_tmp_vec,        "Array of timesteps when you want to call out to python" );
 
         if( JsonConfigurable::_dryrun || EnvPtr->Config->Exist( "Custom_Reports_Filename" ) )
         {
@@ -268,6 +271,11 @@ namespace Kernel
                                                    "Start_Time + Simulation_Duration must be greater than Minimum_End_Time." );
         }
 
+        // convert vector into queue
+        for( auto elem : py_inproc_tsteps_tmp_vec )
+        {
+            py_inproc_tsteps.push( elem );
+        }
         return ret;
     }
 
@@ -308,6 +316,7 @@ namespace Kernel
     Simulation *Simulation::CreateSimulation(const ::Configuration *config)
     {
         Simulation *newsimulation = _new_ Simulation();
+
         if (newsimulation)
         {
             // This sequence is important: first
@@ -316,7 +325,7 @@ namespace Kernel
             if(!ValidateConfiguration(config))
             {
                 delete newsimulation;
-                newsimulation = nullptr;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "GENERIC_SIM requested with invalid configuration." );
             }
         }
 
@@ -401,7 +410,7 @@ namespace Kernel
             {
                 throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Campaign_Filename' is empty.  You must have a file." );
             }
-            campaignFilename = campaign_filename ;
+            campaignFilename = campaign_filename;
         }
 
         loadBalanceFilename  = Environment::FindFileOnPath( loadbalance_filename  );
@@ -502,7 +511,7 @@ namespace Kernel
         }
     }
 
-    void Simulation::DistributeEventToOtherNodes( const EventTrigger& rEventTrigger, INodeQualifier* pQualifier )
+    void Simulation::DistributeEventToOtherNodes( const EventTrigger::Enum& rEventTrigger, INodeQualifier* pQualifier )
     {
         release_assert( pQualifier );
 
@@ -597,13 +606,11 @@ namespace Kernel
 
         ReportInstantiatorMap report_instantiator_map ;
         SimType::Enum st_enum = m_simConfigObj->sim_type;
-#ifdef WIN32
         DllLoader dllLoader(SimType::pairs::lookup_key(st_enum));
         if( !dllLoader.LoadReportDlls( report_instantiator_map ) )
         {
             LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(st_enum), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
         }
-#endif
         Reports_Instantiate( report_instantiator_map );
     }
 
@@ -658,6 +665,8 @@ namespace Kernel
 
     void Simulation::Reports_Instantiate( ReportInstantiatorMap& rReportInstantiatorMap )
     {
+        auto cachedValue = JsonConfigurable::_useDefaults;
+        JsonConfigurable::_useDefaults = true;
         Configuration* p_cr_config = Reports_GetCustomReportConfiguration();
 
         bool load_all_reports = (p_cr_config == nullptr) ||
@@ -736,6 +745,7 @@ namespace Kernel
         }
         delete p_cr_config;
         p_cr_config = nullptr;
+        JsonConfigurable::_useDefaults = cachedValue;
     }
 
     void Simulation::Reports_UpdateEventRegistration( float _currentTime, float dt )
@@ -886,6 +896,18 @@ namespace Kernel
         PrintTimeAndPopulation();
 
         Reports_EndTimestep( currentTime.time, dt );
+
+        // Call out to Embedded Python IN-processing script if any
+        // Check if time now elapsed is greater than next timestep in 
+        // Python_Inprocessing_Tsteps array.
+        LOG_DEBUG_F( "current tstep = %d, next ep4 tstep = %d.\n", int(currentTime.timestep), py_inproc_tsteps.front() );
+        if( py_inproc_tsteps.size() > 0 && currentTime.timestep > py_inproc_tsteps.front() )
+        {
+            auto newCampaignFilename = Kernel::PythonSupport::RunPyFunction( std::to_string( currentTime.time ), Kernel::PythonSupport::SCRIPT_IN_PROCESS );
+            py_inproc_tsteps.pop();
+            const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
+            loadCampaignFromFile(newCampaignFilename, nodeIDs);
+        }
 
         // Unconditionally checking against potential memory blowup with minimum cost
         MemoryGauge::CheckMemoryFailure( false );

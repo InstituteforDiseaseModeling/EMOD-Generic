@@ -143,7 +143,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     }
 
     bool ReportHumanMigrationTracking::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                                      const EventTrigger& trigger )
+                                                      const EventTrigger::Enum& trigger )
     {
         IIndividualHuman* p_ih = nullptr;
         if (s_OK != context->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_ih) )
@@ -234,7 +234,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
                        << "," << from_node_id 
                        << "," << to_node_id 
                        << "," << mig_type_str 
-                       << "," << trigger.ToString() 
+                       << "," << EventTrigger::pairs::lookup_key( trigger )
                        << endl;
         }
         return true;

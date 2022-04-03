@@ -54,7 +54,7 @@ Environment::Environment()
 
     Report.Validation = nullptr;
 
-    event_trigger_factories.resize( Kernel::EventType::pairs::count(), nullptr );
+    //event_trigger_factories.resize( Kernel::EventType::pairs::count(), nullptr );
 }
 
 bool Environment::Initialize(
@@ -247,19 +247,12 @@ Environment* Environment::getInstance()
 
 void Environment::setInstance(Environment * env)
 {
-    if( localEnv != nullptr )
+    if( localEnv != nullptr && env != localEnv )
+    //if( localEnv != nullptr )
     {
         delete localEnv ;
     }
     localEnv = env ;
-
-    // The factory can be null when getting just the version information of the DLL
-    if( localEnv->getEventTriggerFactory(Kernel::EventType::INDIVIDUAL) != nullptr )
-    {
-        Kernel::EventTriggerFactory::SetBuiltIn();
-        Kernel::EventTriggerNodeFactory::SetBuiltIn();
-        Kernel::EventTriggerCoordinatorFactory::SetBuiltIn();
-    }
 }
 
 void Environment::setLogger(SimpleLogger* log)

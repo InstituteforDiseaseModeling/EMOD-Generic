@@ -30,7 +30,7 @@ namespace Kernel
 
         virtual std::string GetHeader() const override;
         virtual bool notifyOnEvent( IIndividualHumanEventContext *context, 
-                                    const EventTrigger& trigger ) override;
+                                    const EventTrigger::Enum& trigger ) override;
         virtual void LogIndividualData( IIndividualHuman* individual ) override;
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const override;
         virtual void EndTimestep( float currentTime, float dt ) override;

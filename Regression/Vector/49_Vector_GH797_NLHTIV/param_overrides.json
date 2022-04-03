@@ -30,6 +30,7 @@
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Run_Number": 1,
+            "Python_Script_Path": "LOCAL",
             "Simulation_Duration": 365
         }
     }

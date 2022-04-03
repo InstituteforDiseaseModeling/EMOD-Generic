@@ -40,7 +40,7 @@ namespace Kernel
     bool HIVDrawBlood::Configure(const Configuration* inputJson)
     {
         bool ret = HIVSimpleDiagnostic::Configure( inputJson );
-        if( !negative_diagnosis_event.IsUninitialized() )
+        if( negative_diagnosis_event != EventTrigger::NoTrigger )
         {
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "HIVDrawBlood can't have a Negative_Diagnosis_Event." );
         }

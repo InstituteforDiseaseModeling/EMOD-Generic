@@ -34,6 +34,11 @@ namespace Kernel
     NodeEnvironmental::NodeEnvironmental()
     : Node()
     , contagion(0)
+    , node_contagion_decay_fraction(0.0f)
+    , environmental_ramp_up_duration(0.0f)
+    , environmental_ramp_down_duration(0.0f)
+    , environmental_peak_start(0.0f)
+    , environmental_cutoff_days(0.0f)
     , txEnvironment(nullptr)
     {
     }
@@ -41,6 +46,11 @@ namespace Kernel
     NodeEnvironmental::NodeEnvironmental(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     : Node(_parent_sim, externalNodeId, node_suid)
     , contagion(0)
+    , node_contagion_decay_fraction(0.0f)
+    , environmental_ramp_up_duration(0.0f)
+    , environmental_ramp_down_duration(0.0f)
+    , environmental_peak_start(0.0f)
+    , environmental_cutoff_days(0.0f)
     , txEnvironment(nullptr)
     {
     }
@@ -87,14 +97,7 @@ namespace Kernel
         return IndividualHumanEnvironmental::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    void NodeEnvironmental::updateInfectivity(float dt)
-    {
-        Node::updateInfectivity(dt);
-        txEnvironment->EndUpdate(getSeasonalAmplitude());
-        GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers( GetEventContext(), EventTriggerNode::SheddingComplete );
-    }
-
-    float NodeEnvironmental::getClimateInfectivityCorrection() const
+    float NodeEnvironmental::getClimateCorrection() const
     {
         // Environmental infectivity depends on rainfall.
         // TODO: make more configurable to accommodate different modalities:
@@ -119,6 +122,13 @@ namespace Kernel
         LOG_DEBUG_F( "Infectivity scale factor = %f at rainfall = %f.\n", correction, rainfall );
 
         return correction;
+    }
+
+    void NodeEnvironmental::updateInfectivity(float dt)
+    {
+        Node::updateInfectivity(dt);
+        txEnvironment->EndUpdate(getSeasonalAmplitude());
+        GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers( GetEventContext(), EventTriggerNode::SheddingComplete );
     }
 
     ITransmissionGroups* NodeEnvironmental::CreateTransmissionGroups()

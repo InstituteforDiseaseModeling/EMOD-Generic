@@ -111,10 +111,7 @@ namespace Kernel
         LOG_DEBUG_F( "min_adult_age_years = %d\n", min_adult_age_years  );
     }
 
-    bool
-    IndividualHumanConfig::Configure(
-        const Configuration* config
-    )
+    bool IndividualHumanConfig::Configure( const Configuration* config )
     {
         LOG_DEBUG( "Configure\n" );
         initConfigTypeMap( "Enable_Aging", &aging, Enable_Aging_DESC_TEXT, true, "Enable_Vital_Dynamics" );
@@ -135,7 +132,7 @@ namespace Kernel
             )
           )
         {
-            initConfigTypeMap( "Enable_Skipping", &enable_skipping, Enable_Skipping_DESC_TEXT, 0, "Infectivity_Scale_Type", "CONSTANT_INFECTIVITY" );
+            initConfigTypeMap( "Enable_Skipping", &enable_skipping, Enable_Skipping_DESC_TEXT, false );
         }
 
         initConfig( "Migration_Pattern", migration_pattern, config, MetadataDescriptor::Enum("migration_pattern", Migration_Pattern_DESC_TEXT, MDD_ENUM_ARGS(MigrationPattern)), "Migration_Model", "FIXED_RATE_MIGRATION" );
@@ -224,11 +221,6 @@ namespace Kernel
                 throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Skipping", 1, "Enable_Heterogeneous_Intranode_Transmission", 1);
             }
         }
-
-        InfectionConfig fakeInfection;
-        fakeInfection.Configure( config );
-        SusceptibilityConfig fakeImmunity;
-        fakeImmunity.Configure( config );
 
         return bRet;
     }
@@ -364,6 +356,10 @@ namespace Kernel
 
     void IndividualHuman::InitializeStatics( const Configuration* config )
     {
+        SusceptibilityConfig immunity_config;
+        immunity_config.Configure( config );
+        InfectionConfig infection_config;
+        infection_config.Configure( config );
         IndividualHumanConfig human_config;
         human_config.Configure( config );
     }
@@ -435,10 +431,10 @@ namespace Kernel
 
     bool IndividualHuman::IsDead() const
     {
-        auto state_change = GetStateChange();
-        bool is_dead = ( (state_change == HumanStateChange::DiedFromNaturalCauses) || 
-                         (state_change == HumanStateChange::KilledByInfection    ) ) 
-                         || (state_change == HumanStateChange::KilledByMCSampling) ;
+        bool is_dead = (StateChange == HumanStateChange::DiedFromNaturalCauses) ||
+                       (StateChange == HumanStateChange::KilledByInfection)     ||
+                       (StateChange == HumanStateChange::KilledByMCSampling);
+
         return is_dead ;
     }
 
@@ -554,19 +550,14 @@ namespace Kernel
         }
     }
 
-    void IndividualHuman::SetInitialInfections(int init_infs, const IStrainIdentity *infstrain)
-    {
-        if (init_infs)
-        {
-            for (int i = 0; i < init_infs; i++)
-            {
-                AcquireNewInfection(infstrain);
-            }
-        }
-    }
-
     void IndividualHuman::UpdateMCSamplingRate(float desired_mc_weight)
     {
+
+        UpdateGroupPopulation(-1.0f);
+        m_mc_weight = desired_mc_weight;
+        UpdateGroupPopulation( 1.0f);
+        LOG_DEBUG_F( "Changed mc_weight to %f for individual %d\n.", m_mc_weight, suid.data );
+#if 0 // Nuked in G-O
         if (desired_mc_weight > m_mc_weight)
         {
             LOG_DEBUG_F("ratio = %f\n", m_mc_weight / desired_mc_weight);
@@ -583,6 +574,7 @@ namespace Kernel
                 LOG_DEBUG_F( "Individual %d will be deleted as part of downsampling.\n", GetSuid().data );
             }
         }
+#endif
     }
 
     void IndividualHuman::setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node)
@@ -691,12 +683,12 @@ namespace Kernel
                 }
 
                 m_newly_symptomatic = !prev_symptomatic && IsSymptomatic();
-                if( m_newly_symptomatic )
+                if( m_newly_symptomatic && broadcaster != nullptr )
                 {
                     broadcaster->TriggerObservers( GetEventContext(), EventTrigger::NewlySymptomatic );
                 }
 
-                if( prev_symptomatic && !IsSymptomatic() ) //no longer symptomatic 
+                if( prev_symptomatic && !IsSymptomatic() && broadcaster ) //no longer symptomatic 
                 {
                     broadcaster->TriggerObservers( GetEventContext(), EventTrigger::SymptomaticCleared );
                 }
@@ -797,9 +789,9 @@ namespace Kernel
         return interventions->GetInterventionReducedAcquire();
     }
 
-    float IndividualHuman::GetImmuneFailage() const
+    float IndividualHuman::GetImmuneFailAgeAcquire() const
     {
-        return susceptibility->getImmuneFailage();
+        return susceptibility->getImmuneFailAgeAcquire();
     }
 
     bool IndividualHuman::UpdatePregnancy(float dt)
@@ -1171,12 +1163,25 @@ namespace Kernel
         }
     }
 
-    void IndividualHuman::AcquireNewInfection( const IStrainIdentity *cp, int incubation_period_override )
+    bool
+    IndividualHuman::ShouldAcquire(
+        float contagion,
+        float dt,
+        float suscept_mod,
+        TransmissionRoute::Enum transmission_route
+    )
+    {
+        // multiple infections of the same type happen here
+        ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire()); // infection results from this strain?
+        return( GetRng()->SmartDraw( prob ) ); // local rng stops function from being const when it should
+    }
+
+    void IndividualHuman::AcquireNewInfection( const IStrainIdentity *strain_ptr, int incubation_period_override )
     {
         StrainIdentity newStrainId;
-        if( cp != nullptr )
+        if( strain_ptr != nullptr )
         {
-            cp->ResolveInfectingStrain( &newStrainId ); // get the clade and genome ID
+            strain_ptr->ResolveInfectingStrain( &newStrainId ); // get the clade and genome ID
         }
 
         int numInfs = int(infections.size());
@@ -1226,8 +1231,8 @@ namespace Kernel
         }
         float raw_inf = infectiousness;
         infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
-        LOG_VALID_F( "Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f.\n", 
-                     GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), interventions->GetInterventionReducedTransmit() );
+		LOG_VALID_F("Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f, weight=%f).\n",
+			GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), interventions->GetInterventionReducedTransmit(), m_mc_weight);
     }
 
     bool IndividualHuman::InfectionExistsForThisStrain(IStrainIdentity* check_strain_id)
@@ -1322,6 +1327,16 @@ namespace Kernel
                 if( broadcaster )
                 {
                     broadcaster->TriggerObservers( GetEventContext(), EventTrigger::DiseaseDeaths );
+                }
+            }
+            break;
+
+            case HumanStateChange::KilledByMCSampling:
+            {
+                LOG_DEBUG_F( "%s: individual %d will be removed as part of downsampling\n", __FUNCTION__, suid.data );
+                if( broadcaster )
+                {
+                    // No event triggers currently associated with MC sampling.
                 }
             }
             break;

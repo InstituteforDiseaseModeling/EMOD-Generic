@@ -33,7 +33,7 @@ namespace Kernel
     protected:
         virtual void ProcessChoices(std::vector<std::string> &names, std::vector<float> &values);
 
-        std::vector<EventTrigger> event_names;
+        std::vector<EventTrigger::Enum> event_names;
         std::vector<float> event_probabilities;
 
         DECLARE_SERIALIZABLE(HIVRandomChoice);

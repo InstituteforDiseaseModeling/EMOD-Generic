@@ -1,0 +1,9 @@
+when:
+    day: 1
+    reps: 10
+    rep_gap: 180
+who:
+    fraction: 0.1
+what:
+    name: "OutbreakIndividual"
+

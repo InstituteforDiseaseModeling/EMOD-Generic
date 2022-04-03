@@ -9,7 +9,7 @@ if __name__ == '__main__':
 
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -19,6 +19,7 @@ from dtk_test.dtk_General_Support import ConfigKeys, DemographicsKeys, InsetKeys
 import dtk_test.dtk_General_Support as General_Support
 import dtk_test.dtk_HINT_Support as HINT_Support
 import dtk_test.dtk_InfectivityScalingSinusoidal_Support as Sinusoidal_Support
+import dtk_test.dtk_Generic_InfectionRate_Mod_Additive_Multiplicative_Support as IRMAM_support
 
 """
 
@@ -42,9 +43,7 @@ config_keys = [ConfigKeys.Config_Name, ConfigKeys.Simulation_Timestep,
                ConfigKeys.Environmental_Peak_Start,
                ConfigKeys.Environmental_Ramp_Down_Duration,
                ConfigKeys.Environmental_Ramp_Up_Duration,
-               ConfigKeys.Demographics_Filenames,
-               ConfigKeys.Infectivity_Sinusoidal_Forcing_Amplitude,
-               ConfigKeys.Infectivity_Sinusoidal_Forcing_Phase]
+               ConfigKeys.Demographics_Filenames]
 
 channels = [InsetKeys.ChannelsKeys.Infected,
             "New Infections By Route (ENVIRONMENT)",
@@ -113,11 +112,14 @@ def parse_stdout_file(stdout_filename="StdOut.txt", simulation_timestep=1, debug
     return stdout_df
 
 
-def create_report_file(param_obj, stdout_df, property_obj, property_df, report_name, debug):
+def create_report_file(param_obj, demo_obj, stdout_df, property_obj, property_df, report_name, debug):
     with open(report_name, "w") as outfile:
-        for name, param in param_obj.items():
+        for name, param in {**param_obj, **demo_obj}.items():
             outfile.write("{0} = {1}\n".format(name, param))
+
         success = True
+        sinusoidal_amp = float(demo_obj[IRMAM_support.Demo.sinusoid_amp])
+        sinusoidal_phase = float(demo_obj[IRMAM_support.Demo.sinusoid_phase])
         start_day = param_obj[ConfigKeys.Environmental_Peak_Start]
         ramp_up = param_obj[ConfigKeys.Environmental_Ramp_Up_Duration]
         ramp_down = param_obj[ConfigKeys.Environmental_Ramp_Down_Duration]
@@ -180,9 +182,9 @@ def create_report_file(param_obj, stdout_df, property_obj, property_df, report_n
             # Sinusoidal scaling
             sinusoidal_multiplier = Sinusoidal_Support.calculate_infectiousness(
                 infected_pop=1, index=t, simulation_timestep=param_obj[ConfigKeys.Simulation_Timestep],
-                phase=param_obj[ConfigKeys.Infectivity_Sinusoidal_Forcing_Phase],
+                phase=sinusoidal_phase,
                 base_infectivity=1,
-                amplitude=param_obj[ConfigKeys.Infectivity_Sinusoidal_Forcing_Amplitude], debug=debug)
+                amplitude=sinusoidal_amp, debug=debug)
             expected_contagion_e = param_obj[ConfigKeys.Base_Infectivity] * \
                                    expected_amplification * \
                                   (len(property_obj[DemographicsKeys.PropertyKeys.Values]) ** 2)
@@ -251,12 +253,13 @@ def application( output_folder="output", stdout_filename="test.txt", config_file
 
     demo_path = "Assets" if stdout_filename == "StdOut.txt" else ""
     property_list = HINT_Support.load_demo_mr_overlay_file(
-        config_obj[ConfigKeys.Demographics_Filenames][-1], demo_path, debug)
+        config_obj[ConfigKeys.Demographics_Filenames][-2], demo_path, debug)
     property_keys = HINT_Support.build_channel_string_for_property(property_list, channels, debug)
     property_df = HINT_Support.parse_property_report_json(property_report_name, output_folder, property_keys, debug)
     property_obj = property_list[0]  # this test only has one property object
 
-    create_report_file(config_obj, stdout_df, property_obj, property_df, report_name, debug)
+    demo_obj = IRMAM_support.load_demo_overlay_file(config_obj[ConfigKeys.Demographics_Filenames], debug)
+    create_report_file(config_obj, demo_obj, stdout_df, property_obj, property_df, report_name, debug)
 
 
 if __name__ == "__main__":

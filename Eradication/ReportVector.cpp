@@ -39,6 +39,7 @@ ReportVector::populateSummaryDataUnitsMap(
     units_map[_infectious_vectors_label]    = "Infectious %";
     units_map[_daily_eir_label]             = "Infectious Bites/Day";
     units_map[_daily_bites_per_human_label] = "Bites/Day";
+    //units_map[_log_prev_label]              = "Log Prevalence";
 }
 
 void
@@ -53,6 +54,9 @@ ReportVector::postProcessAccumulatedData()
     normalizeChannel(_adult_vectors_label,         (float)_nrmSize);
     normalizeChannel(_daily_eir_label,             _nrmSize);
     normalizeChannel(_daily_bites_per_human_label, (float)_nrmSize);
+
+    // add derived channels
+    //addDerivedLogScaleSummaryChannel("Infected", _log_prev_label);
 }
 
 void

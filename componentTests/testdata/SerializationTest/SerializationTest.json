@@ -1,16 +1,4 @@
 {
-    "Custom_Individual_Events" :
-    [
-        "Event_1",
-        "Event_2",
-        "Event_3",
-        "Event_4",
-        "Event_5",
-        "Event_6",
-        "Event_7",
-        "Event_8",
-        "Event_9"
-    ],
     "Valid_Intervention_Statuses" :
     [
         "abort_state_1",
@@ -22,7 +10,7 @@
     "Objects" :
     [
         {
-            "Test" :
+            "___Test" :
             {
                 "__class__"                : "InterventionForCurrentPartners",
                 "name"                     : "InterventionForCurrentPartners",
@@ -325,8 +313,8 @@
                 },
                 "m_TimeSinceVaccination"              : 123,
                 "m_DurationToWaitBeforeRevaccination" : 200,
-                "m_DistributedEventTrigger"           : "Event_8",
-                "m_ExpiredEventTrigger"               : "Event_7"
+                "m_DistributedEventTrigger"           : 66,
+                "m_ExpiredEventTrigger"               : 65
             }
         },
         {
@@ -528,7 +516,7 @@
                             "status_property"               : "InterventionStatus:non_abort_state",
                             "m_ReducedAcquire"              : 0.7,
                             "m_ApplyIfHigherReducedAcquire" : true,
-                            "m_DistrbutedEventTrigger"      : "Event_9"
+                            "m_DistrbutedEventTrigger"      : 67 
                         },
                         {
                             "__class__" : "ModifyStiCoInfectionStatus",
@@ -879,7 +867,7 @@
                         "status_property"               : "InterventionStatus:non_abort_state",
                         "m_ReducedAcquire"              : 0.7,
                         "m_ApplyIfHigherReducedAcquire" : true,
-                        "m_DistrbutedEventTrigger"      : "Event_9"
+                        "m_DistrbutedEventTrigger"      : 67
                     },
                     {
                         "__class__" : "ModifyStiCoInfectionStatus",
@@ -923,8 +911,8 @@
                             { "key" : 1993, "value" : 30 }
                         ],
                         "days_remaining"                : 99,
-                        "broadcast_event"               : "Event_1",
-                        "broadcast_on_expiration_event" : "Event_2"
+                        "broadcast_event"               : 59,
+                        "broadcast_on_expiration_event" : 60
                     }
                 ],
                 "is_circumcised" : true,
@@ -1144,7 +1132,7 @@
                 "first_time"            : false,
                 "disqualifying_properties" : ["InterventionStatus:abort_state_1", "InterventionStatus:abort_state_2", "InterventionStatus:abort_state_3" ],
                 "status_property"          : "InterventionStatus:non_abort_state",
-                "broadcast_event"       : "Event_8"
+                "broadcast_event"       : 66
             }
         },
         {
@@ -1205,13 +1193,14 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_9",
-                "enable_isSymptomatic"       : false,
+
+                "enable_isSymptomatic"       : false, 
+                "positive_diagnosis_event":67,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 11,
                 "absoluteDuration"           : 44,
-                "negative_diagnosis_event"   : "Event_2",
+                "negative_diagnosis_event"   : 60,
                 "rampMin"                    : 0.0,
                 "rampMax"                    : 1.0,
                 "rampMidYear"                : 0.5,
@@ -1256,14 +1245,14 @@
                     "_max_value" : 3.4e+038
                 },
                 "use_event_or_config": 0,
-                "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_7",
+                "positive_diagnosis_config":"null", 
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":65,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 55,
                 "absoluteDuration"           : 60,
-                "negative_diagnosis_event"   : "Event_1",
+                "negative_diagnosis_event"   : 59,
                 "m_ProbReceivedResults"      : 321.77
             }
         },
@@ -1305,14 +1294,14 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_7",
-                "enable_isSymptomatic"       : false,
+                "enable_isSymptomatic"       : false, 
+                "positive_diagnosis_event":65,
                 "firstUpdate"                : true,
                 "result_of_positive_test"    : false,
                 "original_days_to_diagnosis" : 11,
                 "absoluteDuration"           : 22,
-                "negative_diagnosis_event"   : "Event_8",
-                "event_names" : ["Event_1", "Event_2", "Event_3"],
+                "negative_diagnosis_event"   : 66,
+                "event_names" : ["GP_EVENT_001", "GP_EVENT_002", "GP_EVENT_003"],
                 "event_probabilities" : [19, 29, 39]
             }
         },
@@ -1354,13 +1343,13 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_1",
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":59,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 55,
                 "absoluteDuration"           : 60,
-                "negative_diagnosis_event"   : "Event_1",
+                "negative_diagnosis_event"   : 59,
                 "interpolation_order"        : 1,
                 "female_multiplier"          : 2.5,
                 "default_value"              : 0,
@@ -1407,8 +1396,8 @@
                     { "key" : 1996, "value" : 35 }
                 ],
                 "days_remaining"                : 99,
-                "broadcast_event"               : "Event_3",
-                "broadcast_on_expiration_event" : "Event_4",
+                "broadcast_event"               : 61,
+                "broadcast_on_expiration_event" : 62,
                 "max_entries"                   : 2,
                 "muxer_name"                    : "Seahawks",
                 "firstUpdate"                   : true
@@ -1452,13 +1441,13 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_6",
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":64,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 22,
                 "absoluteDuration"           : 33,
-                "negative_diagnosis_event"   : "Event_8"
+                "negative_diagnosis_event"   : 66
             }
         },
         {
@@ -1494,8 +1483,8 @@
                     { "key" : 1993, "value" : 30 }
                 ],
                 "days_remaining"                : 99,
-                "broadcast_event"               : "Event_1",
-                "broadcast_on_expiration_event" : "Event_2"
+                "broadcast_event"               : 59,
+                "broadcast_on_expiration_event" : 60
             }
         },
         {
@@ -1564,13 +1553,13 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_2",
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":60,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 77,
                 "absoluteDuration"           : 33,
-                "negative_diagnosis_event"   : "Event_1",
+                "negative_diagnosis_event"   : 59,
                 "ip_tb_value_expected"       : "Risk:LOW",
                 "adultAge"                   : 15,
                 "adultByWHOStage" :
@@ -1649,13 +1638,13 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_2",
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":60,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 77,
                 "absoluteDuration"           : 33,
-                "negative_diagnosis_event"   : "Event_1",
+                "negative_diagnosis_event"   : 59,
                 "ip_tb_value_expected"       : "Risk:LOW",
                 "threshold" :
                 [
@@ -1715,13 +1704,13 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_1",
                 "enable_isSymptomatic"       : false,
+                "positive_diagnosis_event":59,
                 "firstUpdate"                : false,
                 "result_of_positive_test"    : true,
                 "original_days_to_diagnosis" : 55,
                 "absoluteDuration"           : 60,
-                "negative_diagnosis_event"   : "Event_1"
+                "negative_diagnosis_event"   : 59
             }
         },
         {
@@ -1762,8 +1751,8 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_1",
-                "enable_isSymptomatic"       : false,
+                "enable_isSymptomatic"       : false, 
+                "positive_diagnosis_event":59,
                 "cd4_thresholds" :
                 {
                     "thresholds" :
@@ -1774,9 +1763,9 @@
                     ],
                     "thresh_events" :
                     [
-                        "Event_1",
-                        "Event_2",
-                        "Event_3"
+                        59,
+                        60,
+                        61
                     ]
                 }
             }
@@ -1847,8 +1836,8 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_1",
-                "enable_isSymptomatic"       : false,
+                "enable_isSymptomatic"       : false, 
+                "positive_diagnosis_event":59,
                 "age_thresholds" :
                 {
                     "thresholds" :
@@ -1859,9 +1848,9 @@
                     ],
                     "thresh_events" :
                     [
-                        "Event_1",
-                        "Event_2",
-                        "Event_3"
+                        59,
+                        60,
+                        61
                     ]
                 }
             }
@@ -1877,7 +1866,7 @@
                 "first_time"            : false,
                 "disqualifying_properties" : ["InterventionStatus:abort_state_1", "InterventionStatus:abort_state_2", "InterventionStatus:abort_state_3" ],
                 "status_property"          : "InterventionStatus:non_abort_state",
-                "event_trigger"         : "Event_8",
+                "event_trigger"         : 66,
                 "include_my_node"       : true,
                 "node_selection_type"   : 2,
                 "max_distance_km"       : 12.3
@@ -2215,7 +2204,7 @@
                             "status_property"          : "InterventionStatus:non_abort_state",
                             "m_ReducedAcquire"              : 0.7,
                             "m_ApplyIfHigherReducedAcquire" : true,
-                            "m_DistrbutedEventTrigger"      : "Event_9"
+                            "m_DistrbutedEventTrigger"      : 67
                         },
                         {
                             "__class__" : "ModifyStiCoInfectionStatus",
@@ -2606,7 +2595,7 @@
                         "status_property"          : "InterventionStatus:non_abort_state",
                         "m_ReducedAcquire"              : 0.7,
                         "m_ApplyIfHigherReducedAcquire" : true,
-                        "m_DistrbutedEventTrigger"      : "Event_9"
+                        "m_DistrbutedEventTrigger"      : 67
                     },
                     {
                         "__class__" : "ModifyStiCoInfectionStatus",
@@ -2680,9 +2669,9 @@
                         },
                         "use_event_or_config": 0,
                         "positive_diagnosis_config":"null",
-                        "positive_diagnosis_event":"Event_6",
-                        "enable_isSymptomatic" : false,
-                        "negative_diagnosis_event":"Event_7"
+                        "enable_isSymptomatic" : false, 
+                        "positive_diagnosis_event":64,
+                        "negative_diagnosis_event":65
                     }
                 ],
                 "is_circumcised" : false,
@@ -2760,9 +2749,9 @@
                 },
                 "use_event_or_config": 0,
                 "positive_diagnosis_config":"null",
-                "positive_diagnosis_event":"Event_1",
-                "enable_isSymptomatic" : false
-            }
+                "enable_isSymptomatic" : false,
+                "positive_diagnosis_event":59
+	    }
         },
         {
             "Test" :
@@ -2929,12 +2918,12 @@
                         },
                         "use_event_or_config"       : 0,
                         "positive_diagnosis_config" : "null",
-                        "positive_diagnosis_event"  : "Event_2",
                         "enable_isSymptomatic"      : false,
+                        "positive_diagnosis_event"  : 60,
                         "negative_diagnosis_config" : "null",
-                        "negative_diagnosis_event"  : "Event_3",
+                        "negative_diagnosis_event"  : 61,
                         "defaulters_config"         : "null",
-                        "defaulters_event"          : "Event_4",
+                        "defaulters_event"          : 62,
                         "m_gets_positive_test_intervention" : true
                     },
                     {
@@ -2949,7 +2938,7 @@
                         "probability_of_seeking"     : 0.1,
                         "use_event_or_config"        : 0,
                         "actual_intervention_config" : "null",
-                        "actual_intervention_event"  : "Event_5",
+                        "actual_intervention_event"  : 63,
                         "single_use" : true
                     }
                 ],

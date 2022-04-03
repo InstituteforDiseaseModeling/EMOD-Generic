@@ -1,0 +1,13 @@
+{
+    "Mode": "Shedding",
+    "Effect": 0.5,
+    "Changing_Effect": {
+        "class": "WaningEffectBox",
+        "Box_Duration": 60, 
+        "Initial_Effect": 0.75
+    },
+    ".Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
+    "Route": "TRANSMISSIONROUTE_CONTACT",
+    "class": "TyphoidVaccine"
+}
+        

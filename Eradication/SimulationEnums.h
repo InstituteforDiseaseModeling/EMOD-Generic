@@ -80,15 +80,17 @@ namespace Kernel
         ENUM_VALUE_SPEC(FIXED_DURATION_CONSTANT_EFFECT                      , 0)
         ENUM_VALUE_SPEC(CONCENTRATION_VERSUS_TIME                           , 1))
 
-    // ENUM defs for POPULATION_DENSITY_INFECTIVITY_CORRECTION
-    ENUM_DEFINE(PopulationDensityInfectivityCorrection, 
-        ENUM_VALUE_SPEC(CONSTANT_INFECTIVITY                                , 0)
-        ENUM_VALUE_SPEC(SATURATING_FUNCTION_OF_DENSITY                      , 1))
-
     // ENUM defs for POPULATION_SCALING
     ENUM_DEFINE(PopulationScaling, 
         ENUM_VALUE_SPEC(USE_INPUT_FILE                                      , 0)
         ENUM_VALUE_SPEC(FIXED_SCALING                                       , 1))
+
+
+    // ENUM defs for RANDOM_TYPE
+    ENUM_DEFINE(RandomType, 
+        ENUM_VALUE_SPEC(USE_PSEUDO_DES                                      , 0)
+        ENUM_VALUE_SPEC(USE_LINEAR_CONGRUENTIAL                             , 1)
+        ENUM_VALUE_SPEC(USE_AES_COUNTER                                     , 2))
 
     // ENUM defs for Infectivity_Scale_Type (was SEASONAL_INFECTIVITY)
     ENUM_DEFINE(InfectivityScaling, 
@@ -106,9 +108,8 @@ namespace Kernel
 
      // ENUM defs for Maternal_Protection_Type (Susceptibility variation with agent age)
      ENUM_DEFINE(MaternalProtectionType,
-        ENUM_VALUE_SPEC(NONE                                                , 0)
-        ENUM_VALUE_SPEC(LINEAR                                              , 1)
-        ENUM_VALUE_SPEC(SIGMOID                                             , 2))
+        ENUM_VALUE_SPEC(SIGMOID                                             , 0)
+        ENUM_VALUE_SPEC(LINEAR                                              , 1))
 
      // ENUM defs for Susceptibility_Type
      ENUM_DEFINE(SusceptibilityType,

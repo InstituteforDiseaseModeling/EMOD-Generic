@@ -13,6 +13,7 @@
             "Config_Name": "37_Generic_Namawala_Property_Restrictions_NLHTI",
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
+	    "Incubation_Period_Constant": 3,
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 180

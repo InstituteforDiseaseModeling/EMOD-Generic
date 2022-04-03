@@ -123,7 +123,7 @@ namespace Kernel
 
     }
 
-    void TBInterventionsContainer::UpdateTreatmentStatus( const EventTrigger& new_treatment_status )
+    void TBInterventionsContainer::UpdateTreatmentStatus( const EventTrigger::Enum& new_treatment_status )
     {
         //this function is called when the drug is started and stopped/expires
         

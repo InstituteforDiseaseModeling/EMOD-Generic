@@ -30,7 +30,7 @@ setuptools.setup(
     #packages=setuptools.find_packages(),
     packages=[ "dtk_app" ],
     package_data={
-        "dtk_app": "*.json"
+        "dtk_app": [ "*.json" ]
     },
     classifiers=[
         "Programming Language :: Python :: 3",

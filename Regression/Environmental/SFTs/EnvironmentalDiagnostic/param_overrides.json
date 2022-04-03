@@ -1,0 +1,46 @@
+{
+    "parameters": {
+        "CAMPAIGNS": {
+            "Custom_Individual_Events": [
+                "NegativeResult",
+                "PositiveResult"
+            ],
+            "Custom_Node_Events": [
+                "NegativeResult",
+                "PositiveResult"
+            ]
+        },
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../Demographics/demographics.json",
+                "../Demographics/demographics_1000_overlay.json",
+                "../Demographics/demographics_2groups_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity": 0.1,
+                "Infectious_Period_Constant": 10
+            }
+        },
+        "ENVIRONMENTAL": {
+            "Environmental_Ramp_Down_Duration": 2e-38,
+            "Environmental_Ramp_Up_Duration": 2e-38
+        },
+        "OUTPUT": {
+            "Report_Node_Event_Recorder": 1,
+            "Report_Node_Event_Recorder_Events": [
+                "NegativeResult",
+                "PositiveResult"
+            ]
+        },
+        "PRIMARY": {
+            "Config_Name": "EnvironmentalDiagnostic_Test_All",
+            "Simulation_Duration": 180
+        },
+        "LOGLEVEL": {
+            "logLevel_EnvironmentalDiagnostic": "DEBUG"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

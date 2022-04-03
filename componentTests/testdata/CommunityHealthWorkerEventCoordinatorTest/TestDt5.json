@@ -6,10 +6,9 @@
     "Days_Between_Shipments": 30,
     "Amount_In_Shipment": 10,
     "Max_Stock": 12,
-    "Initial_Amount_Distribution": "CONSTANT_DISTRIBUTION",
-    "Trigger_Condition_List": [
-        "ListenForEvent"
-    ],
+    "Initial_Amount_Distribution": "CONSTANT_DISTRIBUTION", 
+    "Initial_Amount" : 10,
+    "Trigger_Condition_List" : [ "GP_EVENT_000" ],
     "Intervention_Config": {
         "class": "SpaceSpraying",
         "Cost_To_Consumer": 10.0,

@@ -23,9 +23,11 @@ namespace Kernel
 
     class IndividualHumanMalariaConfig : public JsonConfigurable 
     {
-        GET_SCHEMA_STATIC_WRAPPER(IndividualHumanMalariaConfig)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
+        friend class SimulationMalaria;
+
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
+        GET_SCHEMA_STATIC_WRAPPER( IndividualHumanMalariaConfig )
 
     public:
         virtual bool Configure( const Configuration* config );
@@ -41,8 +43,10 @@ namespace Kernel
     class IndividualHumanMalaria : public IndividualHumanVector, public IMalariaHumanContext, public IMalariaHumanInfectable
     {
         friend class SimulationMalaria;
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
-        DECLARE_QUERY_INTERFACE();
+
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        DECLARE_SERIALIZABLE( IndividualHumanMalaria )
 
     public:
         static IndividualHumanMalaria *CreateHuman(INodeContext *context, suids::suid _suid, double monte_carlo_weight = 1.0f, double initial_age = 0.0f, int gender = 0);
@@ -109,7 +113,6 @@ namespace Kernel
         /* clorton virtual */ const SimulationConfig *params() const /* clorton override */;
         virtual void PropagateContextToDependents() override;
 
-        DECLARE_SERIALIZABLE(IndividualHumanMalaria);
         friend void serialize(IArchive&, gametocytes_strain_map_t&);
 
     private:

@@ -2,19 +2,6 @@
     "Default_Config_Path": "../../defaults/generic_default_config.json",
     "logLevel_ImmunityBloodTest": "DEBUG",
     "parameters": {
-        "Custom_Coordinator_Events": [
-            "Start_Surveillance",
-            "Start_SIA_2",
-            "Start_SIA_4",
-            "Coordinator_Event_1",
-            "Start_Delayed_SIA",
-            "SIA_Finished"
-        ],
-        "Custom_Individual_Events": [],
-        "Custom_Node_Events": [
-            "Node_Event_1",
-            "Node_Event_2"
-        ],
         "Custom_Reports_Filename": "",
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -32,6 +19,7 @@
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Simulation_Duration": 70
         },
@@ -41,7 +29,6 @@
             "Start_Surveillance",
             "Start_SIA_2",
             "Start_SIA_4",
-            "Coordinator_Event_1",
             "Start_Delayed_SIA",
             "SIA_Finished"
         ],

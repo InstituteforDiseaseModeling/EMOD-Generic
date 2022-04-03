@@ -15,6 +15,14 @@ SETUP_LOGGING( "InfectionVector" )
 
 namespace Kernel
 {
+    bool InfectionVectorConfig::Configure( const Configuration * config )
+    {
+        LOG_DEBUG("Configure\n");
+
+        bool bRet = JsonConfigurable::Configure( config );
+        return bRet;
+    }
+
     InfectionVector::InfectionVector() : Kernel::Infection()
     {
     }

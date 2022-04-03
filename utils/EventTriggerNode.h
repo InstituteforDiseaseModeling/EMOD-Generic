@@ -9,8 +9,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
+#if 0
 #include "BaseEventTrigger.h"
-
 namespace Kernel
 {
     class EventTriggerInternal;
@@ -48,3 +48,4 @@ namespace Kernel
         EventTriggerNodeFactory();
     };
 }
+#endif

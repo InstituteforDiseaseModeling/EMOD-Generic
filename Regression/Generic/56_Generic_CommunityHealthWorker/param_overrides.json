@@ -56,6 +56,7 @@
             "Custom_Reports_Filename": "custom_reports.json",
             "Geography": "MigrationTest",
             "Num_Cores": 1,
+            "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Simulation_Duration": 500,
             "Simulation_Timestep": 1

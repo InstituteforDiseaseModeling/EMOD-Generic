@@ -27,7 +27,8 @@ if __name__=="__main__":
     import argparse
     p = argparse.ArgumentParser()
     p.add_argument('-c', '--configname', default="config.json", help="config filename (config.json")
+    p.add_argument('-d', '--debug', action='store_true', help="Turns on debugging")
     args = p.parse_args()
 
     application(config_filename=args.configname,
-                debug=True)
+                debug=args.debug)

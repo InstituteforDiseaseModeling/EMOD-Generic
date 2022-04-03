@@ -1,0 +1,19 @@
+{
+    "parameters": {
+        "Config_Name": "SFT:Typhoid:Report_Typhoid_By_Age_And_Gender:Incidence",
+        "Demographics_Filenames": [
+            "../../../Santiago_Demographics.json",
+            "../../../Santiago_1K_overlay.json"
+        ],
+        "Enable_Vital_Dynamics": 0,
+        "Python_Script_Path": "SHARED",
+        "Report_Typhoid_ByAgeAndGender_Start_Year": 1900,
+        "Run_Number": 2,
+        "Simulation_Duration": 1460,
+        "Typhoid_Carrier_Probability": 0.13,
+        "Typhoid_Symptomatic_Fraction": 0.55,
+        "logLevel_IndividualTyphoid": "DEBUG",
+        "logLevel_InfectionTyphoid": "DEBUG"
+    },
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+}

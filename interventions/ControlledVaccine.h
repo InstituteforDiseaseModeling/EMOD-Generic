@@ -43,8 +43,8 @@ namespace Kernel
 
         float        m_DurationToWaitBeforeRevaccination;
         float        m_TimeSinceVaccination;
-        EventTrigger m_DistributedEventTrigger;
-        EventTrigger m_ExpiredEventTrigger;
+        EventTrigger::Enum m_DistributedEventTrigger;
+        EventTrigger::Enum m_ExpiredEventTrigger;
 
         DECLARE_SERIALIZABLE(ControlledVaccine);
     };

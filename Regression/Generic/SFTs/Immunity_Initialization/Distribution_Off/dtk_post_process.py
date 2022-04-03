@@ -2,7 +2,7 @@
 
 import dtk_test.dtk_sft as sft
 import json
-np=sft.np
+import numpy as np
 with open("config.json") as infile:
     run_number=json.load(infile)['parameters']['Run_Number']
 np.random.seed(run_number)
@@ -26,12 +26,13 @@ NOTE: Always make sure that the expected immunity isn't close to 50%
 
 
 def application(output_folder="output", config_filename="config.json",
-                jsonreport_name="InsetChart.json", stdout_filename="test.txt",
+                stdout_filename="test.txt", jsonreport_name="InsetChart.json",
                 report_name=sft.sft_output_filename, debug=False):
     if debug:
         print("output_folder: " + output_folder)
         print("config_filename: " + config_filename)
-        print("insetchart_name: " + jsonreport_name)
+        print("stdout_filename: " + stdout_filename)
+        print("jsonreport_name: " + jsonreport_name)
         print("report_name: " + report_name)
         print("debug: " + str(debug))
 
@@ -47,7 +48,7 @@ def application(output_folder="output", config_filename="config.json",
 
     demographics_object = dtk_iis.load_demographics_file(
         demographics_filename=demographics_overlay_name,
-        susceptibility_initialization_type=config_object[dtk_iis.ConfigKeys.SUS_INIT_DIST_TYPE],
+        immunity_initialization_type=config_object[dtk_iis.ConfigKeys.SUS_DIST_TYPE],
         debug=debug)
     average_immunity = demographics_object[dtk_iis.DemographicFileKeys.KEY_AVERAGE_IMMUNITY]
 
@@ -58,7 +59,6 @@ def application(output_folder="output", config_filename="config.json",
                                            expected_immunity=0.0)
     dtk_iis.test_immunity_within_age_range(individual_df, max_age=730,
                                            expected_immunity=0.4)
-
 
     report_data_object = dtk_iis.parse_json_report(output_folder=output_folder,
                                                    report_name=jsonreport_name,
@@ -73,7 +73,7 @@ def application(output_folder="output", config_filename="config.json",
                                                               debug=debug)
 
     actual_infections = dtk_iis.get_actual_infections(new_infections_channel,
-                                              outbreak_day)
+                                                      outbreak_day)
 
     dtk_iis.create_report_file(expected_infections_obj, actual_infections,
                                outbreak_day, report_name,
@@ -86,11 +86,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-o', '--output', default="output", help="Folder to load outputs from (output)")
     parser.add_argument('-c', '--config', default="config.json", help="Config name to load (config.json)")
+    parser.add_argument('-s', '--stdout', default="test.txt", help="Stdout name to load (test.txt)")
     parser.add_argument('-j', '--jsonreport', default="InsetChart.json", help="Json report to load (InsetChart.json)")
     parser.add_argument('-r', '--reportname', default=sft.sft_output_filename, help="Report file to generate")
     parser.add_argument('-d', '--debug', action='store_true', help="Turns on debugging")
     args = parser.parse_args()
 
     application(output_folder=args.output, config_filename=args.config,
-                jsonreport_name=args.jsonreport,
+                stdout_filename=args.stdout, jsonreport_name=args.jsonreport,
                 report_name=args.reportname, debug=args.debug)

@@ -138,6 +138,7 @@
             "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
             "Node_Grid_Size": 0.042,
+            "Python_Inprocessing_Tsteps": [],
             "Run_Number": 0,
             "Simulation_Duration": 365,
             "Simulation_Timestep": 1,

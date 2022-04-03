@@ -17,6 +17,7 @@
         },
         "PRIMARY": {
             "Config_Name": "Immune Initialization Distribution Off",
+            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
             "Simulation_Duration": 10
         }
