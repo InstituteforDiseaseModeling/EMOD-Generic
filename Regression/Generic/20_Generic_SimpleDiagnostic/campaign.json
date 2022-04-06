@@ -17,9 +17,8 @@
                                 "Cost_To_Consumer": 0.333,
                                 "Secondary_Decay_Time_Constant": 1,
                                 "Vaccine_Take": 1,
-                                "Vaccine_Type": "AcquisitionBlocking",
-                                "class": "SimpleVaccine",
-                                "Waning_Config": {
+                                "class": "Vaccine",
+                                "Acquire_Config": {
                                     "Box_Duration": 3650, 
                                     "Initial_Effect": 0.1, 
                                     "class": "WaningEffectBox"
@@ -29,9 +28,8 @@
                                 "Cost_To_Consumer": 0.333,
                                 "Secondary_Decay_Time_Constant": 1,
                                 "Vaccine_Take": 1,
-                                "Vaccine_Type": "TransmissionBlocking",
-                                "class": "SimpleVaccine",
-                                "Waning_Config": {
+                                "class": "Vaccine",
+                                "Transmit_Config": {
                                     "Box_Duration": 3650, 
                                     "Initial_Effect": 0.9, 
                                     "class": "WaningEffectBox"
@@ -41,9 +39,8 @@
                                 "Cost_To_Consumer": 0.333,
                                 "Secondary_Decay_Time_Constant": 1,
                                 "Vaccine_Take": 1,
-                                "Vaccine_Type": "MortalityBlocking",
-                                "class": "SimpleVaccine",
-                                "Waning_Config": {
+                                "class": "Vaccine",
+                                "Mortality_Config": {
                                     "Box_Duration": 3650, 
                                     "Initial_Effect": 0.5, 
                                     "class": "WaningEffectBox"
@@ -68,9 +65,8 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Cost_To_Consumer": 1.0,
-                        "Vaccine_Type": "TransmissionBlocking",
-                        "class": "SimpleVaccine",
-                        "Waning_Config": {
+                        "class": "Vaccine",
+                        "Transmit_Config": {
                             "Initial_Effect": 1.0,
                             "Box_Duration": 1000,
                             "class": "WaningEffectBox"
@@ -119,13 +115,12 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Cost_To_Consumer": 1.0,
-                        "Vaccine_Type": "AcquisitionBlocking",
-                        "class": "SimpleVaccine",
-			"Waning_Config": {
-			    "Box_Duration": 1000, 
-			    "Initial_Effect": 1, 
-			    "class": "WaningEffectBox"
-			}
+                        "class": "Vaccine",
+                        "Acquire_Config": {
+                            "Box_Duration": 1000, 
+                            "Initial_Effect": 1, 
+                            "class": "WaningEffectBox"
+                        }
                     },
                     "Demographic_Coverage": 1.0,
                     "Trigger_Condition_List": [ "TestedNegative_ProtectMeNow" ],

@@ -85,13 +85,22 @@
                     "Actual_IndividualIntervention_Config": {
                         "Cost_To_Consumer": 10,
                         "Vaccine_Take": 1,
-                        "Vaccine_Type": "Generic",
-                        "Waning_Config": {
+                        "Acquire_Config": {
                             "Box_Duration": 60,
                             "Initial_Effect": 1.0,
                             "class": "WaningEffectBox"
                         },
-                        "class": "SimpleVaccine"
+                        "Transmit_Config": {
+                            "Box_Duration": 60,
+                            "Initial_Effect": 1.0,
+                            "class": "WaningEffectBox"
+                        },
+                        "Mortality_Config": {
+                            "Box_Duration": 60,
+                            "Initial_Effect": 1.0,
+                            "class": "WaningEffectBox"
+                        },
+                        "class": "Vaccine"
                     },
                     "Demographic_Coverage": 1.0,
                     "Node_Property_Restrictions": [

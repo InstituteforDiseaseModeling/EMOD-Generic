@@ -68,6 +68,7 @@ class StubNode : public INodeContext
         virtual void VisitIndividuals( INodeEventContext::individual_visit_function_t func) { std::cout << __FUNCTION__ << std::endl; }
         virtual int VisitIndividuals(IVisitIndividual* pIndividualVisitImpl ) { std::cout << __FUNCTION__ << std::endl; return 0; } 
         //virtual const NodeDemographics& GetDemographics() { std::cout << __FUNCTION__ << std::endl; return &demographics; }
+        virtual const NodeParams* GetParams() const { std::cout << __FUNCTION__ << std::endl; return nullptr; } 
         virtual bool GetUrban() const { std::cout << __FUNCTION__ << std::endl; return false; }
         virtual const IdmDateTime& GetTime() const { std::cout << __FUNCTION__ << std::endl; static IdmDateTime time(0); return time; }
         virtual void UpdateInterventions(float = 0.0f) { std::cout << __FUNCTION__ << std::endl; } 
@@ -101,6 +102,7 @@ class StubNode : public INodeContext
         virtual float GetTotalContagion( void ) { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual ITransmissionGroups* GetTransmissionGroups() const override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
         virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override  { std::cout << __FUNCTION__ << std::endl; return 0; }
+        virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) override { std::cout << __FUNCTION__ << std::endl; }
 
 
         virtual const RouteList_t& GetTransmissionRoutes( ) const override { std::cout << __FUNCTION__ << std::endl; return m_RouteList; }
@@ -157,9 +159,8 @@ class StubNode : public INodeContext
         virtual INodeEventContext* GetEventContext() override { return nullptr; }
         virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual bool IsEveryoneHome() const override { std::cout << __FUNCTION__ << std::endl; return false; }
-        virtual float GetBasePopulationScaleFactor() const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual ProbabilityNumber GetProbMaternalTransmission() const override { std::cout << __FUNCTION__ << std::endl; return 0; }
-        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, MigrationStructure::Enum ms, const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override { std::cout << __FUNCTION__ << std::endl; }
+        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const override { std::cout << __FUNCTION__ << std::endl; return std::vector<bool>(); }
         virtual void SetWaitingForFamilyTrip( suids::suid migrationDestination, MigrationType::Enum migrationType, float timeUntilTrip, float timeAtDestination, bool isDestinationNewHome ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void InitializeTransmissionGroupPopulations() {}

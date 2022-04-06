@@ -279,47 +279,6 @@
         {
             "Test" :
             {
-                "__class__":"ControlledVaccine",
-                "name"                          : "class Kernel::ControlledVaccine",
-                "cost_per_unit"                 : 1,
-                "expired"                       : false,
-                "dont_allow_duplicates"         : false,
-                "first_time"                    : false,
-                "disqualifying_properties"      : [ ],
-                "status_property"               : "InterventionStatus:non_abort_state",
-                "vaccine_type"                  : 2,
-                "vaccine_take"                  : 3.3,
-                "vaccine_took"                  : true,
-                "efficacy_is_multiplicative"    : false,
-                "waning_effect" :
-                {
-                    "__class__":"WaningEffectMapLinear",
-                    "currentEffect"            : 0.5,
-                    "m_Expired"                : false,
-                    "m_EffectOriginal"         : 1.0,
-                    "m_ExpireAtDurationMapEnd" : true,
-                    "m_TimeSinceStart"         :
-                    {
-                        "_value"     : 123,
-                        "_min_value" : 0,
-                        "_max_value" : 3.4e+038
-                    },
-                    "m_DurationMap"            :
-                    [
-                        { "key": 1990, "value" : 0.1 },
-                        { "key": 1995, "value" : 0.2 },
-                        { "key": 2000, "value" : 0.3 }
-                    ]
-                },
-                "m_TimeSinceVaccination"              : 123,
-                "m_DurationToWaitBeforeRevaccination" : 200,
-                "m_DistributedEventTrigger"           : 66,
-                "m_ExpiredEventTrigger"               : 65
-            }
-        },
-        {
-            "Test" :
-            {
                 "__class__":"WaningEffectMapPiecewise",
                 "currentEffect"            : 0.4,
                 "m_Expired"                : false,
@@ -1051,19 +1010,18 @@
         {
             "Test" :
             {
-                "__class__":"SimpleVaccine",
-                "name"                          : "class Kernel::SimpleVaccine",
+                "__class__":"Vaccine",
+                "name"                          : "class Kernel::Vaccine",
                 "cost_per_unit"                 : 1,
                 "expired"                       : false,
                 "dont_allow_duplicates"         : false,
                 "first_time"                    : false,
                 "disqualifying_properties"      : ["InterventionStatus:abort_state_1", "InterventionStatus:abort_state_2", "InterventionStatus:abort_state_3" ],
                 "status_property"               : "InterventionStatus:non_abort_state",
-                "vaccine_type"                  : 2,
                 "vaccine_take"                  : 3.3,
                 "vaccine_took"                  : false,
                 "efficacy_is_multiplicative"    : false,
-                "waning_effect" :
+                "effect_transmit" :
                 {
                     "__class__":"WaningEffectBoxExponential",
                     "currentEffect"     : 0.1,
@@ -1753,21 +1711,24 @@
                 "positive_diagnosis_config":"null",
                 "enable_isSymptomatic"       : false, 
                 "positive_diagnosis_event":59,
-                "cd4_thresholds" :
-                {
-                    "thresholds" :
-                    [
-                        { "first" : 1, "second" : 2 },
-                        { "first" : 2, "second" : 4 },
-                        { "first" : 3, "second" : 6 }
-                    ],
-                    "thresh_events" :
-                    [
-                        59,
-                        60,
-                        61
-                    ]
-                }
+                "range_thresholds" :
+                [
+                    {
+                        "m_Low" : 1,
+                        "m_High" : 2,
+                        "m_Event" : "Event_1"
+                    },
+                    {
+                        "m_Low" : 2,
+                        "m_High" : 3,
+                        "m_Event" : "Event_2"
+                    },
+                    {
+                        "m_Low" : 3,
+                        "m_High" : 4,
+                        "m_Event" : "Event_3"
+                    }
+                ]
             }
         },
         {
@@ -1838,21 +1799,24 @@
                 "positive_diagnosis_config":"null",
                 "enable_isSymptomatic"       : false, 
                 "positive_diagnosis_event":59,
-                "age_thresholds" :
-                {
-                    "thresholds" :
-                    [
-                        { "first" : 1, "second" : 2 },
-                        { "first" : 2, "second" : 4 },
-                        { "first" : 3, "second" : 6 }
-                    ],
-                    "thresh_events" :
-                    [
-                        59,
-                        60,
-                        61
-                    ]
-                }
+                "range_thresholds" :
+                [
+                    {
+                        "m_Low" : 3,
+                        "m_High" : 4,
+                        "m_Event" : "Event_2"
+                    },
+                    {
+                        "m_Low" : 2,
+                        "m_High" : 3,
+                        "m_Event" : "Event_3"
+                    },
+                    {
+                        "m_Low" : 1,
+                        "m_High" : 2,
+                        "m_Event" : "Event_1"
+                    }
+                ]
             }
         },
         {
@@ -2860,28 +2824,6 @@
                         "TB_drug_relapse_rate"      : 0.4,
                         "TB_drug_mortality_rate"    : 0.5
                     }, 
-                    {
-                        "__class__" : "BCGVaccine",
-                        "name"                          : "class Kernel::BCGVaccine",
-                        "cost_per_unit"                 : 3,
-                        "expired"                       : false,
-                        "dont_allow_duplicates"         : false,
-                        "first_time"                    : false,
-                        "disqualifying_properties"      : ["InterventionStatus:abort_state_1", "InterventionStatus:abort_state_2", "InterventionStatus:abort_state_3" ],
-                        "status_property"               : "InterventionStatus:non_abort_state",
-                        "vaccine_type"                  : 1,
-                        "vaccine_take"                  : 0.1,
-                        "vaccine_took"                  : true,
-                        "efficacy_is_multiplicative"    : true,
-                        "waning_effect" :
-                        {
-                            "__class__":"WaningEffectBoxExponential",
-                            "currentEffect"     : 0.1,
-                            "boxDuration"       : 0.2,
-                            "decayTimeConstant" : 0.3
-                        },
-                        "vaccine_take_age_decay_rate"   : 0.7
-                    },
                     {
                         "__class__" : "DiagnosticTreatNeg",
                         "name"            : "class Kernel::DiagnosticTreatNeg",

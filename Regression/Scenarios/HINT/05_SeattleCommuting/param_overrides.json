@@ -3,7 +3,8 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "hint_seattlecommuting_demographics.json"
+                "hint_seattlecommuting_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Duration_Before_Decay": 270,
@@ -22,8 +23,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Infectious_Period_Constant": 7
+                "Infectious_Period_Constant": 7,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             },
             "Max_Individual_Infections": 5
         },

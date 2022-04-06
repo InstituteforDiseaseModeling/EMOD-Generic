@@ -86,7 +86,8 @@ const std::vector<std::string> getSimTypeList()
 
 void IDMAPI writeInputSchemas(
     const char* dll_path,
-    const char* output_path
+    const char* output_path,
+    const char* exe_name
 )
 {
     std::ofstream schema_ostream_file;
@@ -100,6 +101,7 @@ void IDMAPI writeInputSchemas(
     versionSchema["DTK_Version"] = json::String( pv.getVersion() );
     versionSchema["DTK_Branch"] = json::String( pv.getSccsBranch() );
     versionSchema["DTK_Build_Date"] = json::String( pv.getBuildDate() );
+    versionSchema["Creator"] = json::String( exe_name );
     total_schema["Version"] = versionSchema.As<json::Object>();
 
     std::string szOutputPath = std::string( output_path );
@@ -187,7 +189,7 @@ void IDMAPI writeInputSchemas(
     camp_schema["idmTypes" ][ "idmType:WaningEffect"] = we_schema[ "schema" ].As<json::Object>();
 
     total_schema[ "interventions" ] = camp_schema.As< json::Object> ();
-    json::Writer::Write( total_schema, schema_ostream );
+    json::Writer::Write( total_schema, schema_ostream, "    " );
     schema_ostream_file.close();
 
     // PythonSupportPtr can be null during componentTests

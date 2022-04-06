@@ -40,7 +40,7 @@ namespace Kernel
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
 
-        static bool ValidateConfiguration(const ::Configuration *config);
+        virtual bool ValidateConfiguration(const ::Configuration *config) override;
 
         virtual void InitializeFlags(const ::Configuration *config);  // override in derived classes to instantiate correct flag classes
 

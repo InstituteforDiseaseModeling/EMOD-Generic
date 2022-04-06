@@ -42,7 +42,7 @@ namespace Kernel
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
 
-        static bool ValidateConfiguration(const ::Configuration *config);
+        virtual bool ValidateConfiguration(const ::Configuration *config) override;
 
         // Allows correct type of Node to be added by classes derived from Simulation
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

@@ -16,9 +16,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventTrigger.h"
 #include "Configuration.h"
 #include "ConfigurationImpl.h"
-
+#include "ConfigParams.h"
 #include "IndividualCoInfection.h"
 #include "IContagionPopulation.h"
+#include "IMigrationInfo.h"
 #include "IndividualEventContext.h"
 #include "InfectionTB.h"
 #include "SusceptibilityTB.h"
@@ -35,7 +36,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "Infection.h"
 #include "NodeTBHIV.h"
-#include "SimulationConfig.h"
 
 #include "NodeDemographics.h"
 #include "StrainIdentity.h"
@@ -120,10 +120,10 @@ namespace Kernel
 
         initConfigTypeMap( "CoInfection_Mortality_Rate_On_ART",           &coinfection_mortality_on_ART,  CoInfection_Mortality_Rate_On_ART_DESC_TEXT, 0.0f, FLT_MAX, 0.0f, "Enable_Coinfection");
         initConfigTypeMap( "CoInfection_Mortality_Rate_Off_ART",          &coinfection_mortality_off_ART, CoInfection_Mortality_Rate_Off_ART_DESC_TEXT, 0.0f, FLT_MAX, 0.0f, "Enable_Coinfection");
-        initConfigTypeMap( "TB_CD4_Infectiousness",                       &TB_CD4_infectiousness,         TB_CD4_Infectiousness_DESC_TEXT, 0.0f, 1.0f, 1.0f, false, "Enable_Coinfection");  //capped at 1.0 by biology should be less infectious
-        initConfigTypeMap( "TB_CD4_Susceptibility",                       &TB_CD4_susceptibility,         TB_CD4_Susceptibility_DESC_TEXT, 1.0f, FLT_MAX, 1.0, false, "Enable_Coinfection");  //should always be as susceptible or more biological bound
-        initConfigTypeMap( "TB_CD4_Primary_Progression",                  &TB_CD4_Primary,                TB_CD4_Primary_Progression_DESC_TEXT, 1.0f, FLT_MAX, 1.0f, false, "Enable_Coinfection");
-        initConfigTypeMap( "TB_CD4_Strata_Infectiousness_Susceptibility", &TB_CD4_strata_for_infectiousness_susceptibility, TB_CD4_Strata_Infectiousness_Susceptibility_DESC_TEXT, 0.0f, FLT_MAX, 1.0f, false, "Enable_Coinfection");
+        initConfigTypeMap( "TB_CD4_Infectiousness",                       &TB_CD4_infectiousness,         TB_CD4_Infectiousness_DESC_TEXT, 0.0f, 1.0f, false, "Enable_Coinfection");  //capped at 1.0 by biology should be less infectious
+        initConfigTypeMap( "TB_CD4_Susceptibility",                       &TB_CD4_susceptibility,         TB_CD4_Susceptibility_DESC_TEXT, 1.0f, FLT_MAX, false, "Enable_Coinfection");  //should always be as susceptible or more biological bound
+        initConfigTypeMap( "TB_CD4_Primary_Progression",                  &TB_CD4_Primary,                TB_CD4_Primary_Progression_DESC_TEXT, 1.0f, FLT_MAX, false, "Enable_Coinfection");
+        initConfigTypeMap( "TB_CD4_Strata_Infectiousness_Susceptibility", &TB_CD4_strata_for_infectiousness_susceptibility, TB_CD4_Strata_Infectiousness_Susceptibility_DESC_TEXT, 0.0f, FLT_MAX, false, "Enable_Coinfection");
         initConfigTypeMap( "ART_Reactivation_Factor",                     &ART_extra_reactivation_reduction, ART_Reactivation_Factor_DESC_TEXT , 0.0, 1.0, 1.0, "Enable_Coinfection");
         initConfigTypeMap( "TB_Enable_Exogenous",                         &enable_exogenous,              TB_Enable_Exogenous_DESC_TEXT , false);
         initConfigTypeMap( "Enable_Coinfection_Mortality",                &enable_coinfection_mortality,  Enable_Coinfection_Mortality_DESC_TEXT, false, "Enable_Vital_Dynamics");
@@ -136,24 +136,9 @@ namespace Kernel
         return bret;
     }
 
-    void IndividualHumanCoInfection::InitializeStaticsCoInfection( const Configuration* config )
+    void IndividualHumanCoInfectionConfig::SetCD4Map(std::map <float,float> cd4_map)
     {
-        SusceptibilityTBConfig tb_immunity_config;
-        tb_immunity_config.Configure( config );
-        InfectionTBConfig tb_infection_config;
-        tb_infection_config.Configure( config );
-        IndividualHumanCoInfectionConfig individual_config;
-        individual_config.Configure( config );
-
-        if( IndividualHumanCoInfectionConfig::enable_coinfection )
-        {
-            // Now create static, constant map between CD4 and factor for increased reactivation rate. This is only done once.
-            IndividualHumanCoInfectionConfig::CD4_act_map = tb_infection_config.GetCD4Map();
-            SusceptibilityHIVConfig hiv_immunity_config;
-            hiv_immunity_config.Configure( config );
-            InfectionHIVConfig hiv_infection_config;
-            hiv_infection_config.Configure( config );
-        }
+        CD4_act_map = cd4_map;
     }
 
     IndividualHumanCoInfection *IndividualHumanCoInfection::CreateHuman(INodeContext *context, suids::suid _suid, float MCweight, float init_age, int gender)
@@ -169,10 +154,11 @@ namespace Kernel
 
     void IndividualHumanCoInfection::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        susceptibility_tb = SusceptibilityTB::CreateSusceptibility( this, m_age, imm_mod, risk_mod );
+        susceptibility_tb = SusceptibilityTB::CreateSusceptibility( this, imm_mod, risk_mod );
+        susceptibility    = susceptibility_tb;
         if( IndividualHumanCoInfectionConfig::enable_coinfection )
         {
-            susceptibility_hiv = SusceptibilityHIV::CreateSusceptibility( this, m_age, imm_mod, risk_mod );
+            susceptibility_hiv = SusceptibilityHIV::CreateSusceptibility( this, imm_mod, risk_mod );
             susceptibilitylist.push_back( susceptibility_hiv );
         }
         susceptibilitylist.push_back( susceptibility_tb );
@@ -457,7 +443,7 @@ namespace Kernel
             CheckHIVVitalDynamics(dt);
         }
 
-        if (StateChange == HumanStateChange::None && IndividualHumanConfig::migration_structure) // Individual can't migrate if they're already dead
+        if (StateChange == HumanStateChange::None && parent->GetMigrationInfo() && parent->GetMigrationInfo()->GetParams()->migration_structure) // Individual can't migrate if they're already dead
         {
             CheckForMigration(currenttime, dt);
         }
@@ -1429,27 +1415,38 @@ namespace Kernel
     void IndividualHumanCoInfection::Die(HumanStateChange newState)
     {
         StateChange = newState;
-        switch (newState)
+    }
+
+    void IndividualHumanCoInfection::BroadcastDeath()
+    {
+        IIndividualEventBroadcaster* broadcaster = nullptr;
+        if( GetNodeEventContext() != nullptr )
+        {
+            broadcaster = GetNodeEventContext()->GetIndividualEventBroadcaster();
+        }
+
+        switch (StateChange)
         {
             case HumanStateChange::DiedFromNaturalCauses:
+            {
+                LOG_DEBUG_F("%s: individual %d (%s) died of natural causes at age %f with daily_mortality_rate = %f\n", __FUNCTION__, suid.data, (GetGender() == Gender::FEMALE ? "Female" : "Male"), GetAge() / DAYSPERYEAR, m_daily_mortality_rate);
+                if( broadcaster )
                 {
-                    LOG_DEBUG_F("%s: individual %d (%s) died of natural causes at age %f with daily_mortality_rate = %f\n", __FUNCTION__, suid.data, (GetGender() == Gender::FEMALE ? "Female" : "Male"), GetAge() / DAYSPERYEAR, m_daily_mortality_rate);
-                    if( broadcaster )
-                    {
-                        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::NonDiseaseDeaths);
-                    }
+                    broadcaster->TriggerObservers( GetEventContext(), EventTrigger::NonDiseaseDeaths );
                 }
+            }
             break;
 
             case HumanStateChange::KilledByInfection:
+            {
+                LOG_DEBUG_F("%s: individual %d died from infection\n", __FUNCTION__, suid.data);
+                if( broadcaster )
                 {
-                    LOG_DEBUG_F("%s: individual %d died from infection\n", __FUNCTION__, suid.data);
-                    if( broadcaster )
-                    {
-                        broadcaster->TriggerObservers(GetEventContext(), EventTrigger::DiseaseDeaths);
-                    }
+                    broadcaster->TriggerObservers( GetEventContext(), EventTrigger::DiseaseDeaths );
                 }
+            }
             break;
+
             case HumanStateChange::KilledByOpportunisticInfection:
                 {
                     LOG_DEBUG_F("%s: individual %d died from non-TB opportunistic infection\n", __FUNCTION__, suid.data);
@@ -1461,22 +1458,31 @@ namespace Kernel
                 }
             break;
 
+            case HumanStateChange::KilledByMCSampling:
+            {
+                if( broadcaster )
+                {
+                    broadcaster->TriggerObservers( GetEventContext(), EventTrigger::MonteCarloDeaths );
+                }
+            }
+            break;
+
             default:
-                release_assert(false);
+            {
+                release_assert( false );
+            }
             break;
         }
     }
 
     bool IndividualHumanCoInfection::IsDead() const
     {
-        auto state_change = GetStateChange();
-        bool is_dead = (
-                ((state_change == HumanStateChange::DiedFromNaturalCauses) ||
-                 (state_change == HumanStateChange::KilledByInfection) ||
-                 (state_change == HumanStateChange::KilledByOpportunisticInfection)||
-                 (state_change == HumanStateChange::KilledByCoinfection)
-                )
-                || (state_change == HumanStateChange::KilledByMCSampling) );
+        bool is_dead = (StateChange == HumanStateChange::DiedFromNaturalCauses)          ||
+                       (StateChange == HumanStateChange::KilledByInfection)              ||
+                       (StateChange == HumanStateChange::KilledByOpportunisticInfection) ||
+                       (StateChange == HumanStateChange::KilledByCoinfection)            ||
+                       (StateChange == HumanStateChange::KilledByMCSampling);
+
         return is_dead;
     }
 
@@ -1495,6 +1501,7 @@ namespace Kernel
             if (s_OK == suscept->QueryInterface(GET_IID(ISusceptibilityTB), (void**)&psustb))
             {
                 susceptibility_tb = suscept;
+                susceptibility    = suscept;
             }
             else if (s_OK == suscept->QueryInterface(GET_IID(ISusceptibilityHIV), (void**)&psushiv))
             {

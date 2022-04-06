@@ -42,6 +42,5 @@ namespace Kernel
         virtual IInfection* createInfection(suids::suid _suid) override;
 
     private:
-        static void InitializeStaticsAirborne( const Configuration* config );
     };
 }

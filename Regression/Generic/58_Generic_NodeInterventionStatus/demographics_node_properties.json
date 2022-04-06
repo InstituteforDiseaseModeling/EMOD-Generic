@@ -1,185 +1,213 @@
 {
-    "Metadata": {
-        "DateCreated": "Fri Dec 9, 2016", 
-        "Author": "dbridenbecker", 
-        "IdReference": "0", 
-        "NodeCount": 10
-    }, 
-    "Defaults" : {
-        "NodeAttributes": {
-            "Altitude": 0, 
-            "Airport": 0, 
-            "Region": 1, 
-            "Seaport": 0, 
-            "BirthRate": 0.0001
-        }, 
+    "Defaults": {
         "IndividualAttributes": {
-            "AgeDistributionFlag": 2, 
-            "AgeDistribution1": 10950, 
-            "AgeDistribution2": 7300, 
-            "PrevalenceDistributionFlag": 0, 
-            "PrevalenceDistribution1": 0.05, 
-            "PrevalenceDistribution2": 0.0, 
-            "SusceptibilityDistributionFlag": 0, 
-            "SusceptibilityDistribution1": 1, 
-            "SusceptibilityDistribution2": 0, 
-            "RiskDistributionFlag": 0, 
-            "RiskDistribution1": 1, 
-            "RiskDistribution2": 0, 
-            "MigrationHeterogeneityDistributionFlag": 0, 
-            "MigrationHeterogeneityDistribution1": 1, 
-            "MigrationHeterogeneityDistribution2": 0,
+            "AgeDistribution1": 10950,
+            "AgeDistribution2": 7300,
+            "AgeDistributionFlag": 2,
+            "InitialPrevalence": 0.05,
             "MortalityDistribution": {
-                "NumDistributionAxes": 2,
-                "AxisNames": [ "gender", "age" ],
-                "AxisUnits": [ "male=0,female=1", "years" ],
-                "AxisScaleFactors": [ 1, 365 ],
-                "NumPopulationGroups": [ 2, 3 ],
-                "PopulationGroups": [
-                    [ 0, 1 ],
-                    [ 0, 100, 2000 ]
+                "AxisNames": [
+                    "gender",
+                    "age"
                 ],
+                "AxisScaleFactors": [
+                    1,
+                    365
+                ],
+                "AxisUnits": [
+                    "male=0,female=1",
+                    "years"
+                ],
+                "NumDistributionAxes": 2,
+                "NumPopulationGroups": [
+                    2,
+                    3
+                ],
+                "PopulationGroups": [
+                    [
+                        0,
+                        1
+                    ],
+                    [
+                        0,
+                        100,
+                        2000
+                    ]
+                ],
+                "ResultScaleFactor": 2.7397260273972604e-06,
                 "ResultUnits": "annual deaths per 1000 individuals",
-                "ResultScaleFactor": 0.00000273972602739726027397260273973,
                 "ResultValues": [
-                    [ 0, 20.0000035, 400.00007 ],
-                    [ 0, 20.0000035, 400.00007 ]
+                    [
+                        0,
+                        20.0000035,
+                        400.00007
+                    ],
+                    [
+                        0,
+                        20.0000035,
+                        400.00007
+                    ]
                 ]
-            }
+            },
+            "RiskDistribution1": 1,
+            "RiskDistribution2": 0,
+            "RiskDistributionFlag": 0,
+            "SusceptibilityDistribution1": 1,
+            "SusceptibilityDistribution2": 0,
+            "SusceptibilityDistributionFlag": 0
+        },
+        "NodeAttributes": {
+            "Airport": 0,
+            "Altitude": 0,
+            "BirthRate": 0.0001,
+            "Region": 1,
+            "Seaport": 0
         }
+    },
+    "Metadata": {
+        "Author": "dbridenbecker",
+        "DateCreated": "Fri Dec 9, 2016",
+        "IdReference": "0",
+        "NodeCount": 10
     },
     "NodeProperties": [
         {
+            "Initial_Distribution": [
+                0.7,
+                0.3
+            ],
             "Property": "Place",
-            "Values": [ "RURAL", "URBAN"],
-            "Initial_Distribution": [ 0.7, 0.3]
+            "Values": [
+                "RURAL",
+                "URBAN"
+            ]
         },
         {
+            "Initial_Distribution": [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+            ],
             "Property": "InterventionStatus",
-            "Values": [ "NO_VISITS", "1_VISIT", "STOP_VACCINATING", "VACCINATING" ],
-            "Initial_Distribution": [ 1.0, 0.0, 0.0, 0.0 ]
+            "Values": [
+                "NO_VISITS",
+                "1_VISIT",
+                "STOP_VACCINATING",
+                "VACCINATING"
+            ]
         }
     ],
     "Nodes": [
         {
-            "NodeID": 1, 
             "NodeAttributes": {
-                "Latitude": 47.7601, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 10,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7601,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 1
         },
         {
-            "NodeID": 2, 
             "NodeAttributes": {
-                "Latitude": 47.7602, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 20,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7602,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 2
         },
         {
-            "NodeID": 3, 
             "NodeAttributes": {
-                "Latitude": 47.7603, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 30,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7603,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 3
         },
         {
-            "NodeID": 4, 
             "NodeAttributes": {
-                "Latitude": 47.7604, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 40,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7604,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 4
         },
         {
-            "NodeID": 5, 
             "NodeAttributes": {
-                "Latitude": 47.7605, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 50,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7605,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 5
         },
         {
-            "NodeID": 6, 
             "NodeAttributes": {
-                "Latitude": 47.7606, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 60,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7606,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 6
         },
         {
-            "NodeID": 7, 
             "NodeAttributes": {
-                "Latitude": 47.7607, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 70,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7607,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL"
                 ]
-            }
+            },
+            "NodeID": 7
         },
         {
-            "NodeID": 8, 
             "NodeAttributes": {
-                "Latitude": 47.7608, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 80,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7608,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:URBAN"
                 ]
-            }
+            },
+            "NodeID": 8
         },
         {
-            "NodeID": 9, 
             "NodeAttributes": {
-                "Latitude": 47.7609, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 90,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.7609,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:URBAN"
                 ]
-            }
+            },
+            "NodeID": 9
         },
         {
-            "NodeID": 10, 
             "NodeAttributes": {
-                "Latitude": 47.7610, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 100,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.761,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:URBAN"
                 ]
-            }
+            },
+            "NodeID": 10
         }
     ]
 }

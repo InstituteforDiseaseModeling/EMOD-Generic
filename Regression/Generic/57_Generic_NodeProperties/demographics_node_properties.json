@@ -1,875 +1,920 @@
 {
-    "Metadata": {
-        "DateCreated": "Fri Dec 9, 2016", 
-        "Author": "dbridenbecker", 
-        "IdReference": "0", 
-        "NodeCount": 100
-    }, 
-    "Defaults" : {
-        "NodeAttributes": {
-            "Altitude": 0, 
-            "Airport": 0, 
-            "Region": 1, 
-            "Seaport": 0, 
-            "BirthRate": 0.0001
-        }, 
+    "Defaults": {
         "IndividualAttributes": {
-            "AgeDistributionFlag": 2, 
-            "AgeDistribution1": 10950, 
-            "AgeDistribution2": 7300, 
-            "PrevalenceDistributionFlag": 0, 
-            "PrevalenceDistribution1": 0.05, 
-            "PrevalenceDistribution2": 0.0, 
-            "SusceptibilityDistributionFlag": 0, 
-            "SusceptibilityDistribution1": 1, 
-            "SusceptibilityDistribution2": 0, 
-            "RiskDistributionFlag": 0, 
-            "RiskDistribution1": 1, 
-            "RiskDistribution2": 0, 
-            "MigrationHeterogeneityDistributionFlag": 0, 
-            "MigrationHeterogeneityDistribution1": 1, 
-            "MigrationHeterogeneityDistribution2": 0,
+            "AgeDistribution1": 10950,
+            "AgeDistribution2": 7300,
+            "AgeDistributionFlag": 2,
+            "InitialPrevalence": 0.05,
             "MortalityDistribution": {
-                "NumDistributionAxes": 2,
-                "AxisNames": [ "gender", "age" ],
-                "AxisUnits": [ "male=0,female=1", "years" ],
-                "AxisScaleFactors": [ 1, 365 ],
-                "NumPopulationGroups": [ 2, 3 ],
-                "PopulationGroups": [
-                    [ 0, 1 ],
-                    [ 0, 100, 2000 ]
+                "AxisNames": [
+                    "gender",
+                    "age"
                 ],
+                "AxisScaleFactors": [
+                    1,
+                    365
+                ],
+                "AxisUnits": [
+                    "male=0,female=1",
+                    "years"
+                ],
+                "NumDistributionAxes": 2,
+                "NumPopulationGroups": [
+                    2,
+                    3
+                ],
+                "PopulationGroups": [
+                    [
+                        0,
+                        1
+                    ],
+                    [
+                        0,
+                        100,
+                        2000
+                    ]
+                ],
+                "ResultScaleFactor": 2.7397260273972604e-06,
                 "ResultUnits": "annual deaths per 1000 individuals",
-                "ResultScaleFactor": 0.00000273972602739726027397260273973,
                 "ResultValues": [
-                    [ 0, 20.0000035, 400.00007 ],
-                    [ 0, 20.0000035, 400.00007 ]
+                    [
+                        0,
+                        20.0000035,
+                        400.00007
+                    ],
+                    [
+                        0,
+                        20.0000035,
+                        400.00007
+                    ]
                 ]
-            }
+            },
+            "RiskDistribution1": 1,
+            "RiskDistribution2": 0,
+            "RiskDistributionFlag": 0,
+            "SusceptibilityDistribution1": 1,
+            "SusceptibilityDistribution2": 0,
+            "SusceptibilityDistributionFlag": 0
+        },
+        "NodeAttributes": {
+            "Airport": 0,
+            "Altitude": 0,
+            "BirthRate": 0.0001,
+            "Region": 1,
+            "Seaport": 0
         }
+    },
+    "Metadata": {
+        "Author": "dbridenbecker",
+        "DateCreated": "Fri Dec 9, 2016",
+        "IdReference": "0",
+        "NodeCount": 100
     },
     "NodeProperties": [
         {
+            "Initial_Distribution": [
+                0.6,
+                0.4
+            ],
             "Property": "Place",
-            "Values": [ "RURAL", "URBAN"],
-            "Initial_Distribution": [ 0.6, 0.4]
+            "Values": [
+                "RURAL",
+                "URBAN"
+            ]
         },
         {
+            "Initial_Distribution": [
+                0.1,
+                0.2,
+                0.7
+            ],
             "Property": "Risk",
-            "Values": [ "HIGH", "MED", "LOW"],
-            "Initial_Distribution": [ 0.1, 0.2, 0.7 ]
+            "Values": [
+                "HIGH",
+                "MED",
+                "LOW"
+            ]
         },
         {
+            "Initial_Distribution": [
+                0.4,
+                0.2,
+                0.3,
+                0.1
+            ],
             "Property": "InterventionStatus",
-            "Values": [ "NONE", "SPRAYED_A", "SPRAYED_B", "FENCE_AND_TRAP" ],
-            "Initial_Distribution": [ 0.4, 0.2, 0.3, 0.1 ]
+            "Values": [
+                "NONE",
+                "SPRAYED_A",
+                "SPRAYED_B",
+                "FENCE_AND_TRAP"
+            ]
         }
     ],
     "Nodes": [
         {
-            "NodeID": 1, 
             "NodeAttributes": {
-                "Latitude": 47.7601, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 10
-            }
+                "InitialPopulation": 10,
+                "Latitude": 47.7601,
+                "Longitude": -122.2038
+            },
+            "NodeID": 1
         },
         {
-            "NodeID": 2, 
             "NodeAttributes": {
-                "Latitude": 47.7602, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 20
-            }
+                "InitialPopulation": 20,
+                "Latitude": 47.7602,
+                "Longitude": -122.2038
+            },
+            "NodeID": 2
         },
         {
-            "NodeID": 3, 
             "NodeAttributes": {
-                "Latitude": 47.7603, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 30
-            }
+                "InitialPopulation": 30,
+                "Latitude": 47.7603,
+                "Longitude": -122.2038
+            },
+            "NodeID": 3
         },
         {
-            "NodeID": 4, 
             "NodeAttributes": {
-                "Latitude": 47.7604, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 40
-            }
+                "InitialPopulation": 40,
+                "Latitude": 47.7604,
+                "Longitude": -122.2038
+            },
+            "NodeID": 4
         },
         {
-            "NodeID": 5, 
             "NodeAttributes": {
-                "Latitude": 47.7605, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 50
-            }
+                "InitialPopulation": 50,
+                "Latitude": 47.7605,
+                "Longitude": -122.2038
+            },
+            "NodeID": 5
         },
         {
-            "NodeID": 6, 
             "NodeAttributes": {
-                "Latitude": 47.7606, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 60
-            }
+                "InitialPopulation": 60,
+                "Latitude": 47.7606,
+                "Longitude": -122.2038
+            },
+            "NodeID": 6
         },
         {
-            "NodeID": 7, 
             "NodeAttributes": {
-                "Latitude": 47.7607, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 70
-            }
+                "InitialPopulation": 70,
+                "Latitude": 47.7607,
+                "Longitude": -122.2038
+            },
+            "NodeID": 7
         },
         {
-            "NodeID": 8, 
             "NodeAttributes": {
-                "Latitude": 47.7608, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 80
-            }
+                "InitialPopulation": 80,
+                "Latitude": 47.7608,
+                "Longitude": -122.2038
+            },
+            "NodeID": 8
         },
         {
-            "NodeID": 9, 
             "NodeAttributes": {
-                "Latitude": 47.7609, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 90
-            }
+                "InitialPopulation": 90,
+                "Latitude": 47.7609,
+                "Longitude": -122.2038
+            },
+            "NodeID": 9
         },
         {
-            "NodeID": 10, 
             "NodeAttributes": {
-                "Latitude": 47.7610, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 100
-            }
+                "InitialPopulation": 100,
+                "Latitude": 47.761,
+                "Longitude": -122.2038
+            },
+            "NodeID": 10
         },
         {
-            "NodeID": 11, 
             "NodeAttributes": {
-                "Latitude": 47.7611, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 110
-            }
+                "InitialPopulation": 110,
+                "Latitude": 47.7611,
+                "Longitude": -122.2038
+            },
+            "NodeID": 11
         },
         {
-            "NodeID": 12, 
             "NodeAttributes": {
-                "Latitude": 47.7612, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 120
-            }
+                "InitialPopulation": 120,
+                "Latitude": 47.7612,
+                "Longitude": -122.2038
+            },
+            "NodeID": 12
         },
         {
-            "NodeID": 13, 
             "NodeAttributes": {
-                "Latitude": 47.7613, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 130
-            }
+                "InitialPopulation": 130,
+                "Latitude": 47.7613,
+                "Longitude": -122.2038
+            },
+            "NodeID": 13
         },
         {
-            "NodeID": 14, 
             "NodeAttributes": {
-                "Latitude": 47.7614, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 140
-            }
+                "InitialPopulation": 140,
+                "Latitude": 47.7614,
+                "Longitude": -122.2038
+            },
+            "NodeID": 14
         },
         {
-            "NodeID": 15, 
             "NodeAttributes": {
-                "Latitude": 47.7615, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 150
-            }
+                "InitialPopulation": 150,
+                "Latitude": 47.7615,
+                "Longitude": -122.2038
+            },
+            "NodeID": 15
         },
         {
-            "NodeID": 16, 
             "NodeAttributes": {
-                "Latitude": 47.7616, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 160
-            }
+                "InitialPopulation": 160,
+                "Latitude": 47.7616,
+                "Longitude": -122.2038
+            },
+            "NodeID": 16
         },
         {
-            "NodeID": 17, 
             "NodeAttributes": {
-                "Latitude": 47.7617, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 170
-            }
+                "InitialPopulation": 170,
+                "Latitude": 47.7617,
+                "Longitude": -122.2038
+            },
+            "NodeID": 17
         },
         {
-            "NodeID": 18, 
             "NodeAttributes": {
-                "Latitude": 47.7618, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 180
-            }
+                "InitialPopulation": 180,
+                "Latitude": 47.7618,
+                "Longitude": -122.2038
+            },
+            "NodeID": 18
         },
         {
-            "NodeID": 19, 
             "NodeAttributes": {
-                "Latitude": 47.7619, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 190
-            }
+                "InitialPopulation": 190,
+                "Latitude": 47.7619,
+                "Longitude": -122.2038
+            },
+            "NodeID": 19
         },
         {
-            "NodeID": 20, 
             "NodeAttributes": {
-                "Latitude": 47.7620, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 200
-            }
+                "InitialPopulation": 200,
+                "Latitude": 47.762,
+                "Longitude": -122.2038
+            },
+            "NodeID": 20
         },
         {
-            "NodeID": 21, 
             "NodeAttributes": {
-                "Latitude": 47.7621, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 210
-            }
+                "InitialPopulation": 210,
+                "Latitude": 47.7621,
+                "Longitude": -122.2038
+            },
+            "NodeID": 21
         },
         {
-            "NodeID": 22, 
             "NodeAttributes": {
-                "Latitude": 47.7622, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 220
-            }
+                "InitialPopulation": 220,
+                "Latitude": 47.7622,
+                "Longitude": -122.2038
+            },
+            "NodeID": 22
         },
         {
-            "NodeID": 23, 
             "NodeAttributes": {
-                "Latitude": 47.7623, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 230
-            }
+                "InitialPopulation": 230,
+                "Latitude": 47.7623,
+                "Longitude": -122.2038
+            },
+            "NodeID": 23
         },
         {
-            "NodeID": 24, 
             "NodeAttributes": {
-                "Latitude": 47.7624, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 240
-            }
+                "InitialPopulation": 240,
+                "Latitude": 47.7624,
+                "Longitude": -122.2038
+            },
+            "NodeID": 24
         },
         {
-            "NodeID": 25, 
             "NodeAttributes": {
-                "Latitude": 47.7625, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 250
-            }
+                "InitialPopulation": 250,
+                "Latitude": 47.7625,
+                "Longitude": -122.2038
+            },
+            "NodeID": 25
         },
         {
-            "NodeID": 26, 
             "NodeAttributes": {
-                "Latitude": 47.7626, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 260
-            }
+                "InitialPopulation": 260,
+                "Latitude": 47.7626,
+                "Longitude": -122.2038
+            },
+            "NodeID": 26
         },
         {
-            "NodeID": 27, 
             "NodeAttributes": {
-                "Latitude": 47.7627, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 270
-            }
+                "InitialPopulation": 270,
+                "Latitude": 47.7627,
+                "Longitude": -122.2038
+            },
+            "NodeID": 27
         },
         {
-            "NodeID": 28, 
             "NodeAttributes": {
-                "Latitude": 47.7628, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 280
-            }
+                "InitialPopulation": 280,
+                "Latitude": 47.7628,
+                "Longitude": -122.2038
+            },
+            "NodeID": 28
         },
         {
-            "NodeID": 29, 
             "NodeAttributes": {
-                "Latitude": 47.7629, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 290
-            }
+                "InitialPopulation": 290,
+                "Latitude": 47.7629,
+                "Longitude": -122.2038
+            },
+            "NodeID": 29
         },
         {
-            "NodeID": 30, 
             "NodeAttributes": {
-                "Latitude": 47.7630, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 300
-            }
+                "InitialPopulation": 300,
+                "Latitude": 47.763,
+                "Longitude": -122.2038
+            },
+            "NodeID": 30
         },
         {
-            "NodeID": 31, 
             "NodeAttributes": {
-                "Latitude": 47.7631, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 310
-            }
+                "InitialPopulation": 310,
+                "Latitude": 47.7631,
+                "Longitude": -122.2038
+            },
+            "NodeID": 31
         },
         {
-            "NodeID": 32, 
             "NodeAttributes": {
-                "Latitude": 47.7632, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 320
-            }
+                "InitialPopulation": 320,
+                "Latitude": 47.7632,
+                "Longitude": -122.2038
+            },
+            "NodeID": 32
         },
         {
-            "NodeID": 33, 
             "NodeAttributes": {
-                "Latitude": 47.7633, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 330
-            }
+                "InitialPopulation": 330,
+                "Latitude": 47.7633,
+                "Longitude": -122.2038
+            },
+            "NodeID": 33
         },
         {
-            "NodeID": 34, 
             "NodeAttributes": {
-                "Latitude": 47.7634, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 340
-            }
+                "InitialPopulation": 340,
+                "Latitude": 47.7634,
+                "Longitude": -122.2038
+            },
+            "NodeID": 34
         },
         {
-            "NodeID": 35, 
             "NodeAttributes": {
-                "Latitude": 47.7635, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 350
-            }
+                "InitialPopulation": 350,
+                "Latitude": 47.7635,
+                "Longitude": -122.2038
+            },
+            "NodeID": 35
         },
         {
-            "NodeID": 36, 
             "NodeAttributes": {
-                "Latitude": 47.7636, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 360
-            }
+                "InitialPopulation": 360,
+                "Latitude": 47.7636,
+                "Longitude": -122.2038
+            },
+            "NodeID": 36
         },
         {
-            "NodeID": 37, 
             "NodeAttributes": {
-                "Latitude": 47.7637, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 370
-            }
+                "InitialPopulation": 370,
+                "Latitude": 47.7637,
+                "Longitude": -122.2038
+            },
+            "NodeID": 37
         },
         {
-            "NodeID": 38, 
             "NodeAttributes": {
-                "Latitude": 47.7638, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 380
-            }
+                "InitialPopulation": 380,
+                "Latitude": 47.7638,
+                "Longitude": -122.2038
+            },
+            "NodeID": 38
         },
         {
-            "NodeID": 39, 
             "NodeAttributes": {
-                "Latitude": 47.7639, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 390
-            }
+                "InitialPopulation": 390,
+                "Latitude": 47.7639,
+                "Longitude": -122.2038
+            },
+            "NodeID": 39
         },
         {
-            "NodeID": 40, 
             "NodeAttributes": {
-                "Latitude": 47.7640, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 400
-            }
+                "InitialPopulation": 400,
+                "Latitude": 47.764,
+                "Longitude": -122.2038
+            },
+            "NodeID": 40
         },
         {
-            "NodeID": 41, 
             "NodeAttributes": {
-                "Latitude": 47.7641, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 410
-            }
+                "InitialPopulation": 410,
+                "Latitude": 47.7641,
+                "Longitude": -122.2038
+            },
+            "NodeID": 41
         },
         {
-            "NodeID": 42, 
             "NodeAttributes": {
-                "Latitude": 47.7642, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 420
-            }
+                "InitialPopulation": 420,
+                "Latitude": 47.7642,
+                "Longitude": -122.2038
+            },
+            "NodeID": 42
         },
         {
-            "NodeID": 43, 
             "NodeAttributes": {
-                "Latitude": 47.7643, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 430
-            }
+                "InitialPopulation": 430,
+                "Latitude": 47.7643,
+                "Longitude": -122.2038
+            },
+            "NodeID": 43
         },
         {
-            "NodeID": 44, 
             "NodeAttributes": {
-                "Latitude": 47.7644, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 440
-            }
+                "InitialPopulation": 440,
+                "Latitude": 47.7644,
+                "Longitude": -122.2038
+            },
+            "NodeID": 44
         },
         {
-            "NodeID": 45, 
             "NodeAttributes": {
-                "Latitude": 47.7645, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 450
-            }
+                "InitialPopulation": 450,
+                "Latitude": 47.7645,
+                "Longitude": -122.2038
+            },
+            "NodeID": 45
         },
         {
-            "NodeID": 46, 
             "NodeAttributes": {
-                "Latitude": 47.7646, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 460
-            }
+                "InitialPopulation": 460,
+                "Latitude": 47.7646,
+                "Longitude": -122.2038
+            },
+            "NodeID": 46
         },
         {
-            "NodeID": 47, 
             "NodeAttributes": {
-                "Latitude": 47.7647, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 470
-            }
+                "InitialPopulation": 470,
+                "Latitude": 47.7647,
+                "Longitude": -122.2038
+            },
+            "NodeID": 47
         },
         {
-            "NodeID": 48, 
             "NodeAttributes": {
-                "Latitude": 47.7648, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 480
-            }
+                "InitialPopulation": 480,
+                "Latitude": 47.7648,
+                "Longitude": -122.2038
+            },
+            "NodeID": 48
         },
         {
-            "NodeID": 49, 
             "NodeAttributes": {
-                "Latitude": 47.7649, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 490
-            }
+                "InitialPopulation": 490,
+                "Latitude": 47.7649,
+                "Longitude": -122.2038
+            },
+            "NodeID": 49
         },
         {
-            "NodeID": 50, 
             "NodeAttributes": {
-                "Latitude": 47.7650, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 500
-            }
+                "InitialPopulation": 500,
+                "Latitude": 47.765,
+                "Longitude": -122.2038
+            },
+            "NodeID": 50
         },
         {
-            "NodeID": 51, 
             "NodeAttributes": {
-                "Latitude": 47.7651, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 510
-            }
+                "InitialPopulation": 510,
+                "Latitude": 47.7651,
+                "Longitude": -122.2038
+            },
+            "NodeID": 51
         },
         {
-            "NodeID": 52, 
             "NodeAttributes": {
-                "Latitude": 47.7652, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 520
-            }
+                "InitialPopulation": 520,
+                "Latitude": 47.7652,
+                "Longitude": -122.2038
+            },
+            "NodeID": 52
         },
         {
-            "NodeID": 53, 
             "NodeAttributes": {
-                "Latitude": 47.7653, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 530
-            }
+                "InitialPopulation": 530,
+                "Latitude": 47.7653,
+                "Longitude": -122.2038
+            },
+            "NodeID": 53
         },
         {
-            "NodeID": 54, 
             "NodeAttributes": {
-                "Latitude": 47.7654, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 540
-            }
+                "InitialPopulation": 540,
+                "Latitude": 47.7654,
+                "Longitude": -122.2038
+            },
+            "NodeID": 54
         },
         {
-            "NodeID": 55, 
             "NodeAttributes": {
-                "Latitude": 47.7655, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 550
-            }
+                "InitialPopulation": 550,
+                "Latitude": 47.7655,
+                "Longitude": -122.2038
+            },
+            "NodeID": 55
         },
         {
-            "NodeID": 56, 
             "NodeAttributes": {
-                "Latitude": 47.7656, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 560
-            }
+                "InitialPopulation": 560,
+                "Latitude": 47.7656,
+                "Longitude": -122.2038
+            },
+            "NodeID": 56
         },
         {
-            "NodeID": 57, 
             "NodeAttributes": {
-                "Latitude": 47.7657, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 570
-            }
+                "InitialPopulation": 570,
+                "Latitude": 47.7657,
+                "Longitude": -122.2038
+            },
+            "NodeID": 57
         },
         {
-            "NodeID": 58, 
             "NodeAttributes": {
-                "Latitude": 47.7658, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 580
-            }
+                "InitialPopulation": 580,
+                "Latitude": 47.7658,
+                "Longitude": -122.2038
+            },
+            "NodeID": 58
         },
         {
-            "NodeID": 59, 
             "NodeAttributes": {
-                "Latitude": 47.7659, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 590
-            }
+                "InitialPopulation": 590,
+                "Latitude": 47.7659,
+                "Longitude": -122.2038
+            },
+            "NodeID": 59
         },
         {
-            "NodeID": 60, 
             "NodeAttributes": {
-                "Latitude": 47.7660, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 600
-            }
+                "InitialPopulation": 600,
+                "Latitude": 47.766,
+                "Longitude": -122.2038
+            },
+            "NodeID": 60
         },
         {
-            "NodeID": 61, 
             "NodeAttributes": {
-                "Latitude": 47.7661, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 610
-            }
+                "InitialPopulation": 610,
+                "Latitude": 47.7661,
+                "Longitude": -122.2038
+            },
+            "NodeID": 61
         },
         {
-            "NodeID": 62, 
             "NodeAttributes": {
-                "Latitude": 47.7662, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 620
-            }
+                "InitialPopulation": 620,
+                "Latitude": 47.7662,
+                "Longitude": -122.2038
+            },
+            "NodeID": 62
         },
         {
-            "NodeID": 63, 
             "NodeAttributes": {
-                "Latitude": 47.7663, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 630
-            }
+                "InitialPopulation": 630,
+                "Latitude": 47.7663,
+                "Longitude": -122.2038
+            },
+            "NodeID": 63
         },
         {
-            "NodeID": 64, 
             "NodeAttributes": {
-                "Latitude": 47.7664, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 640
-            }
+                "InitialPopulation": 640,
+                "Latitude": 47.7664,
+                "Longitude": -122.2038
+            },
+            "NodeID": 64
         },
         {
-            "NodeID": 65, 
             "NodeAttributes": {
-                "Latitude": 47.7665, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 650
-            }
+                "InitialPopulation": 650,
+                "Latitude": 47.7665,
+                "Longitude": -122.2038
+            },
+            "NodeID": 65
         },
         {
-            "NodeID": 66, 
             "NodeAttributes": {
-                "Latitude": 47.7666, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 660
-            }
+                "InitialPopulation": 660,
+                "Latitude": 47.7666,
+                "Longitude": -122.2038
+            },
+            "NodeID": 66
         },
         {
-            "NodeID": 67, 
             "NodeAttributes": {
-                "Latitude": 47.7667, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 670
-            }
+                "InitialPopulation": 670,
+                "Latitude": 47.7667,
+                "Longitude": -122.2038
+            },
+            "NodeID": 67
         },
         {
-            "NodeID": 68, 
             "NodeAttributes": {
-                "Latitude": 47.7668, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 680
-            }
+                "InitialPopulation": 680,
+                "Latitude": 47.7668,
+                "Longitude": -122.2038
+            },
+            "NodeID": 68
         },
         {
-            "NodeID": 69, 
             "NodeAttributes": {
-                "Latitude": 47.7669, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 690
-            }
+                "InitialPopulation": 690,
+                "Latitude": 47.7669,
+                "Longitude": -122.2038
+            },
+            "NodeID": 69
         },
         {
-            "NodeID": 70, 
             "NodeAttributes": {
-                "Latitude": 47.7670, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 700
-            }
+                "InitialPopulation": 700,
+                "Latitude": 47.767,
+                "Longitude": -122.2038
+            },
+            "NodeID": 70
         },
         {
-            "NodeID": 71, 
             "NodeAttributes": {
-                "Latitude": 47.7671, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 710
-            }
+                "InitialPopulation": 710,
+                "Latitude": 47.7671,
+                "Longitude": -122.2038
+            },
+            "NodeID": 71
         },
         {
-            "NodeID": 72, 
             "NodeAttributes": {
-                "Latitude": 47.7672, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 720
-            }
+                "InitialPopulation": 720,
+                "Latitude": 47.7672,
+                "Longitude": -122.2038
+            },
+            "NodeID": 72
         },
         {
-            "NodeID": 73, 
             "NodeAttributes": {
-                "Latitude": 47.7673, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 730
-            }
+                "InitialPopulation": 730,
+                "Latitude": 47.7673,
+                "Longitude": -122.2038
+            },
+            "NodeID": 73
         },
         {
-            "NodeID": 74, 
             "NodeAttributes": {
-                "Latitude": 47.7674, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 740
-            }
+                "InitialPopulation": 740,
+                "Latitude": 47.7674,
+                "Longitude": -122.2038
+            },
+            "NodeID": 74
         },
         {
-            "NodeID": 75, 
             "NodeAttributes": {
-                "Latitude": 47.7675, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 750
-            }
+                "InitialPopulation": 750,
+                "Latitude": 47.7675,
+                "Longitude": -122.2038
+            },
+            "NodeID": 75
         },
         {
-            "NodeID": 76, 
             "NodeAttributes": {
-                "Latitude": 47.7676, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 760
-            }
+                "InitialPopulation": 760,
+                "Latitude": 47.7676,
+                "Longitude": -122.2038
+            },
+            "NodeID": 76
         },
         {
-            "NodeID": 77, 
             "NodeAttributes": {
-                "Latitude": 47.7677, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 770
-            }
+                "InitialPopulation": 770,
+                "Latitude": 47.7677,
+                "Longitude": -122.2038
+            },
+            "NodeID": 77
         },
         {
-            "NodeID": 78, 
             "NodeAttributes": {
-                "Latitude": 47.7678, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 780
-            }
+                "InitialPopulation": 780,
+                "Latitude": 47.7678,
+                "Longitude": -122.2038
+            },
+            "NodeID": 78
         },
         {
-            "NodeID": 79, 
             "NodeAttributes": {
-                "Latitude": 47.7679, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 790
-            }
+                "InitialPopulation": 790,
+                "Latitude": 47.7679,
+                "Longitude": -122.2038
+            },
+            "NodeID": 79
         },
         {
-            "NodeID": 80, 
             "NodeAttributes": {
-                "Latitude": 47.7680, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 800
-            }
+                "InitialPopulation": 800,
+                "Latitude": 47.768,
+                "Longitude": -122.2038
+            },
+            "NodeID": 80
         },
         {
-            "NodeID": 81, 
             "NodeAttributes": {
-                "Latitude": 47.7681, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 810
-            }
+                "InitialPopulation": 810,
+                "Latitude": 47.7681,
+                "Longitude": -122.2038
+            },
+            "NodeID": 81
         },
         {
-            "NodeID": 82, 
             "NodeAttributes": {
-                "Latitude": 47.7682, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 820
-            }
+                "InitialPopulation": 820,
+                "Latitude": 47.7682,
+                "Longitude": -122.2038
+            },
+            "NodeID": 82
         },
         {
-            "NodeID": 83, 
             "NodeAttributes": {
-                "Latitude": 47.7683, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 830
-            }
+                "InitialPopulation": 830,
+                "Latitude": 47.7683,
+                "Longitude": -122.2038
+            },
+            "NodeID": 83
         },
         {
-            "NodeID": 84, 
             "NodeAttributes": {
-                "Latitude": 47.7684, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 840
-            }
+                "InitialPopulation": 840,
+                "Latitude": 47.7684,
+                "Longitude": -122.2038
+            },
+            "NodeID": 84
         },
         {
-            "NodeID": 85, 
             "NodeAttributes": {
-                "Latitude": 47.7685, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 850
-            }
+                "InitialPopulation": 850,
+                "Latitude": 47.7685,
+                "Longitude": -122.2038
+            },
+            "NodeID": 85
         },
         {
-            "NodeID": 86, 
             "NodeAttributes": {
-                "Latitude": 47.7686, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 860
-            }
+                "InitialPopulation": 860,
+                "Latitude": 47.7686,
+                "Longitude": -122.2038
+            },
+            "NodeID": 86
         },
         {
-            "NodeID": 87, 
             "NodeAttributes": {
-                "Latitude": 47.7687, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 870
-            }
+                "InitialPopulation": 870,
+                "Latitude": 47.7687,
+                "Longitude": -122.2038
+            },
+            "NodeID": 87
         },
         {
-            "NodeID": 88, 
             "NodeAttributes": {
-                "Latitude": 47.7688, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 880
-            }
+                "InitialPopulation": 880,
+                "Latitude": 47.7688,
+                "Longitude": -122.2038
+            },
+            "NodeID": 88
         },
         {
-            "NodeID": 89, 
             "NodeAttributes": {
-                "Latitude": 47.7689, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 890
-            }
+                "InitialPopulation": 890,
+                "Latitude": 47.7689,
+                "Longitude": -122.2038
+            },
+            "NodeID": 89
         },
         {
-            "NodeID": 90, 
             "NodeAttributes": {
-                "Latitude": 47.7690, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 900
-            }
+                "InitialPopulation": 900,
+                "Latitude": 47.769,
+                "Longitude": -122.2038
+            },
+            "NodeID": 90
         },
         {
-            "NodeID": 91, 
             "NodeAttributes": {
-                "Latitude": 47.7691, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 910
-            }
+                "InitialPopulation": 910,
+                "Latitude": 47.7691,
+                "Longitude": -122.2038
+            },
+            "NodeID": 91
         },
         {
-            "NodeID": 92, 
             "NodeAttributes": {
-                "Latitude": 47.7692, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 920
-            }
+                "InitialPopulation": 920,
+                "Latitude": 47.7692,
+                "Longitude": -122.2038
+            },
+            "NodeID": 92
         },
         {
-            "NodeID": 93, 
             "NodeAttributes": {
-                "Latitude": 47.7693, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 930
-            }
+                "InitialPopulation": 930,
+                "Latitude": 47.7693,
+                "Longitude": -122.2038
+            },
+            "NodeID": 93
         },
         {
-            "NodeID": 94, 
             "NodeAttributes": {
-                "Latitude": 47.7694, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 940
-            }
+                "InitialPopulation": 940,
+                "Latitude": 47.7694,
+                "Longitude": -122.2038
+            },
+            "NodeID": 94
         },
         {
-            "NodeID": 95, 
             "NodeAttributes": {
-                "Latitude": 47.7695, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 950
-            }
+                "InitialPopulation": 950,
+                "Latitude": 47.7695,
+                "Longitude": -122.2038
+            },
+            "NodeID": 95
         },
         {
-            "NodeID": 96, 
             "NodeAttributes": {
-                "Latitude": 47.7696, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 960
-            }
+                "InitialPopulation": 960,
+                "Latitude": 47.7696,
+                "Longitude": -122.2038
+            },
+            "NodeID": 96
         },
         {
-            "NodeID": 97, 
             "NodeAttributes": {
-                "Latitude": 47.7697, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 970
-            }
+                "InitialPopulation": 970,
+                "Latitude": 47.7697,
+                "Longitude": -122.2038
+            },
+            "NodeID": 97
         },
         {
-            "NodeID": 98, 
             "NodeAttributes": {
-                "Latitude": 47.7698, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 980
-            }
+                "InitialPopulation": 980,
+                "Latitude": 47.7698,
+                "Longitude": -122.2038
+            },
+            "NodeID": 98
         },
         {
-            "NodeID": 99, 
             "NodeAttributes": {
-                "Latitude": 47.7699, 
-                "Longitude": -122.2038, 
-                "InitialPopulation": 990
-            }
+                "InitialPopulation": 990,
+                "Latitude": 47.7699,
+                "Longitude": -122.2038
+            },
+            "NodeID": 99
         },
         {
-            "NodeID": 100, 
             "NodeAttributes": {
-                "Latitude": 47.7700, 
-                "Longitude": -122.2038, 
                 "InitialPopulation": 1000,
-                "NodePropertyValues" :
-                [
+                "Latitude": 47.77,
+                "Longitude": -122.2038,
+                "NodePropertyValues": [
                     "Place:RURAL",
                     "InterventionStatus:SPRAYED_B"
                 ]
-            }
+            },
+            "NodeID": 100
         }
     ]
 }

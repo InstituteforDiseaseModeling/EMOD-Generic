@@ -69,16 +69,6 @@ namespace Kernel
         return JsonConfigurable::Configure( config );
     }
 
-    void IndividualHumanMalaria::InitializeStaticsMalaria( const Configuration * config )
-    {
-        SusceptibilityMalariaConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionMalariaConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanMalariaConfig individual_config;
-        individual_config.Configure( config );
-    }
-
     // ----------------- IndividualHumanMalaria ---------------
     BEGIN_QUERY_INTERFACE_DERIVED(IndividualHumanMalaria, IndividualHumanVector)
         HANDLE_INTERFACE(IMalariaHumanContext)
@@ -156,7 +146,7 @@ namespace Kernel
 
     void IndividualHumanMalaria::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        SusceptibilityMalaria *newsusceptibility = SusceptibilityMalaria::CreateSusceptibility(dynamic_cast<IIndividualHumanContext*>(this), m_age, imm_mod, risk_mod);
+        SusceptibilityMalaria *newsusceptibility = SusceptibilityMalaria::CreateSusceptibility(dynamic_cast<IIndividualHumanContext*>(this), imm_mod, risk_mod);
         malaria_susceptibility = newsusceptibility;
         vector_susceptibility = newsusceptibility;
         susceptibility = newsusceptibility;
@@ -521,7 +511,8 @@ namespace Kernel
 
             // then gametocytes
             float gametocyte_density = (m_female_gametocytes + m_male_gametocytes) * m_inv_microliters_blood;
-            m_gametocytes_detected = float(1.0 / params()->malaria_params->parasiteSmearSensitivity * GetRng()->Poisson(params()->malaria_params->parasiteSmearSensitivity * gametocyte_density));
+            m_gametocytes_detected = float(1.0 / GET_CONFIGURABLE(SimulationConfig)->malaria_params->parasiteSmearSensitivity *
+                                                 GetRng()->Poisson(GET_CONFIGURABLE(SimulationConfig)->malaria_params->parasiteSmearSensitivity * gametocyte_density) );
         }
         else if (test_type == MALARIA_TEST_NEW_DIAGNOSTIC)
         {
@@ -592,18 +583,6 @@ namespace Kernel
     void IndividualHumanMalaria::Drug_Report()
     {
         //malaria_susceptibility->Drug_Action_Report();
-    }
-
-    /*void IndividualHumanMalaria::malaria_infectivity_report()
-    {
-        EnvPtr->Report.Plotting << m_female_gametocytes * m_inv_microliters_blood << '\t' << infectiousness << std::endl;
-    }*/
-
-    const SimulationConfig*
-    IndividualHumanMalaria::params()
-    const
-    {
-        return GET_CONFIGURABLE(SimulationConfig);
     }
 
     void IndividualHumanMalaria::SetContextTo(INodeContext* context)

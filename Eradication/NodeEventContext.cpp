@@ -340,16 +340,13 @@ namespace Kernel
 
     void NodeEventContextHost::PurgeExisting( const std::string& iv_name )
     {
-        for (auto intervention : node_interventions)
+        std::list<INodeDistributableIntervention*> iv_list = GetInterventionsByType(iv_name);
+
+        for (auto iv_ptr : iv_list)
         {
-            std::string cur_iv_type_name = typeid( *intervention ).name();
-            if( cur_iv_type_name == iv_name )
-            {
-                LOG_INFO_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
-                node_interventions.remove( intervention );
-                delete intervention;
-                break;
-            }
+            LOG_INFO_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
+            node_interventions.remove( iv_ptr );
+            delete iv_ptr;
         }
     }
 
@@ -387,12 +384,12 @@ namespace Kernel
         sources.clear();
     }
 
-    void NodeEventContextHost::AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node )
+    void NodeEventContextHost::AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float female_prob, float mc_weight )
     {
         for (int i = 0; i < num_cases_per_node; i++)
         {
-            // ind_MCweight = 1.0f; ind_init_age = import_age; comm_init_prev = 0.0f; comm_female_ratio = 0.5f; init_mod_acquire = 1.0f
-            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(1.0f, import_age, 0.0f, 0.5f, 1.0f);
+            // Add individual (init_prev = 0.0f; init_mod_acquire = 1.0f)
+            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(mc_weight, import_age, 0.0f, female_prob, 1.0f);
 
             // Start as infectious (incubation_period = 0)
             new_individual->AcquireNewInfection( outbreak_strainID, 0.0f );

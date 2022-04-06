@@ -40,6 +40,7 @@ namespace Kernel {
         : relationship_manager(manager)
         , p_concurrency( new ConcurrencyConfiguration() )
         , pfa_selection_threshold(0.2f)
+        , pfa_burnin_duration(0.0f)
     {
         for( int irel = 0; irel < RelationshipType::COUNT; irel++ )
         {
@@ -87,6 +88,7 @@ namespace Kernel {
         // --- Parameters from config.json
         // -------------------------------
         initConfigTypeMap( "PFA_Cum_Prob_Selection_Threshold", &pfa_selection_threshold, PFA_Cum_Prob_Selection_Threshold_DESC_TEXT, 0.0f, 1.0f, 0.2f );
+        initConfigTypeMap( "PFA_Burnin_Duration_In_Days", &pfa_burnin_duration, PFA_Burnin_Duration_In_Days_DESC_TEXT, 1, FLT_MAX, 1000 * DAYSPERYEAR );
 
         bool ret = JsonConfigurable::Configure( config );
         return ret ;
@@ -179,13 +181,18 @@ namespace Kernel {
     void
     SocietyImpl::UpdatePairFormationRates( const IdmDateTime& rCurrentTime, float dt )
     {
-        LOG_INFO_F( "%s: --------------------========== START society->UpdatePairFormationRates() ==========--------------------\n", __FUNCTION__ );
-        LOG_DEBUG_F("%s()\n", __FUNCTION__);
-        for( int irel = 0; irel < RelationshipType::COUNT; irel++ )
+        if (pfa_burnin_duration > 0.0f)
         {
-            controller[ irel ]->UpdateEntryRates( rCurrentTime, dt );
+            pfa_burnin_duration -= dt;
+
+            LOG_INFO_F( "%s: --------------------========== START society->UpdatePairFormationRates() ==========--------------------\n", __FUNCTION__ );
+            LOG_DEBUG_F("%s()\n", __FUNCTION__);
+            for( int irel = 0; irel < RelationshipType::COUNT; irel++ )
+            {
+                controller[ irel ]->UpdateEntryRates( rCurrentTime, dt );
+            }
+            LOG_INFO_F( "%s: --------------------========== society->UpdatePairFormationRates() FINISH ==========--------------------\n", __FUNCTION__ );
         }
-        LOG_INFO_F( "%s: --------------------========== society->UpdatePairFormationRates() FINISH ==========--------------------\n", __FUNCTION__ );
     }
 
     void

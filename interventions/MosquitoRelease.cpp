@@ -26,9 +26,10 @@ namespace Kernel
         const std::string& key
     )
     {
+        const Configuration* pJson = Configuration::CopyFromElement((*inputJson)[key], inputJson->GetDataLocation());
         try
         {
-            initConfig( "Pesticide_Resistance", pesticideResistance, &(*inputJson)[key], MetadataDescriptor::Enum("Pesticide_Resistance", MR_Released_Pesticide_Resistance_DESC_TEXT , MDD_ENUM_ARGS(VectorAllele)));
+            initConfig( "Pesticide_Resistance", pesticideResistance, pJson, MetadataDescriptor::Enum("Pesticide_Resistance", MR_Released_Pesticide_Resistance_DESC_TEXT , MDD_ENUM_ARGS(VectorAllele)));
         }
         catch( Kernel::DetailedException &e )
         {
@@ -37,7 +38,7 @@ namespace Kernel
         }
         try
         {
-            initConfig( "HEG", HEG, &(*inputJson)[key], MetadataDescriptor::Enum("HEG", MR_Released_HEGs_DESC_TEXT, MDD_ENUM_ARGS(VectorAllele)));
+            initConfig( "HEG", HEG, pJson, MetadataDescriptor::Enum("HEG", MR_Released_HEGs_DESC_TEXT, MDD_ENUM_ARGS(VectorAllele)));
         }
         catch( Kernel::DetailedException &e )
         { 
@@ -45,6 +46,7 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, e.GetMsg() );
         }
         LOG_INFO_F( "pesticideResistance = %s, HEG = %s\n", VectorAllele::pairs::lookup_key(pesticideResistance), VectorAllele::pairs::lookup_key(HEG) );
+        delete pJson;
     }
 
     json::QuickBuilder

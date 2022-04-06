@@ -1,6 +1,7 @@
 {
     "BRANCHING": {
-        "Serialization_Type": "NONE"
+        "Serialized_Population_Writing_Type": "NONE",
+        "Serialized_Population_Reading_Type": "NONE"
     },
     "CAMPAIGNS": {
         "Campaign_Filename": "campaign.json",
@@ -76,16 +77,17 @@
     "FUDGE_FACTORS": {
         "x_Air_Migration": 1,
         "x_Birth": 1,
+        "x_Larval_Habitats": 1,
         "x_Local_Migration": 1,
         "x_Other_Mortality": 1,
         "x_Regional_Migration": 1,
-        "x_Sea_Migration": 1,
-        "x_Larval_Habitats": 1
+        "x_Sea_Migration": 1
     },
     "GENERAL_DISEASE": {
         "Acquisition_Blocking_Immunity_Decay_Rate": 0.01,
         "Acquisition_Blocking_Immunity_Duration_Before_Decay": 90,
         "Base_Mortality": 0,
+        "Enable_Infection_Rate_Overdispersion": 0,
         "Enable_Infectivity_Reservoir": 0,
         "Enable_Infectivity_Scaling": 0,
         "Enable_Maternal_Infection_Transmission": 0,
@@ -400,6 +402,7 @@
     "OUTPUT": {
         "Custom_Reports_Filename": "",
         "Enable_Default_Reporting": 1,
+        "Enable_Event_DB": 0,
         "Enable_Property_Output": 0,
         "Enable_Spatial_Output": 0,
         "Report_Coordinator_Event_Recorder": 0,
@@ -413,7 +416,6 @@
         "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
         "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
         "Node_Grid_Size": 0.042,
-        "Python_Inprocessing_Tsteps": [],
         "Run_Number": 5,
         "Simulation_Duration": 1825,
         "Simulation_Timestep": 1,

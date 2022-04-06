@@ -19,7 +19,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "VectorPopulation.h"
 #include "IMigrate.h"
 #include "INodeContext.h"
-#include "SimulationConfig.h"
+#include "ISimulationContext.h"
+#include "IdmDateTime.h"
 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // !!! CREATING NEW REPORTS
@@ -112,29 +113,29 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
-        if( ret && !JsonConfigurable::_dryrun )
+        for( auto node_id : valid_external_node_id_list )
         {
-            if( m_StartDay >= m_EndDay )
-            {
-                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "End_Day", m_EndDay );
-            }
-
-            const SimulationConfig *config = static_cast<const SimulationConfig*>(EnvPtr->getSimulationConfig());
-            float sim_start_time = config->starttime;
-            float sim_duration = config->Sim_Duration;
-            if (m_StartDay > sim_start_time + sim_duration)
-            {
-                throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "Start_Time + Simulation_Duration", sim_start_time + sim_duration);
-            }
-
-            for( auto node_id : valid_external_node_id_list )
-            {
-                m_NodesToInclude.insert( std::make_pair( node_id, true ) );
-            }
-
-            channelDataMap.SetStartTime(m_StartDay);
+            m_NodesToInclude.insert( std::make_pair( node_id, true ) );
         }
+
+        channelDataMap.SetStartTime(m_StartDay);
+
         return ret;
+    }
+
+    bool ReportMalariaFiltered::Validate( const ISimulationContext *parent_sim )
+    {
+        if( m_StartDay >= m_EndDay )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "End_Day", m_EndDay );
+        }
+
+        if (m_StartDay > parent_sim->GetSimulationTime().GetTimeEnd())
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "Start_Time + Simulation_Duration", parent_sim->GetSimulationTime().GetTimeEnd());
+        }
+
+        return true;
     }
 
     void ReportMalariaFiltered::Initialize( unsigned int nrmSize )

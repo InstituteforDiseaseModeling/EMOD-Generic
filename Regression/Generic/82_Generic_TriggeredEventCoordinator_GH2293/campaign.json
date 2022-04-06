@@ -25,13 +25,12 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 730,
                         "Initial_Effect": 0.59,
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Node_Property_Restrictions": [],
                 "Number_Repetitions": 1,
@@ -127,13 +126,12 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 2,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 730,
                         "Initial_Effect": 0.59,
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Node_Property_Restrictions": [],
                 "Number_Repetitions": 1,

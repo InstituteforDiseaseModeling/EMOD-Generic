@@ -121,7 +121,7 @@ class DtkModuleTest(unittest.TestCase):
             'family_migration_type', 'Inf_Sample_Rate', 'infections', 'infectiousness',
             'is_on_family_trip', 'is_pregnant', 'leave_on_family_trip', 'm_daily_mortality_rate',
             'm_is_infected', 'm_new_infection_state', 'm_newly_symptomatic', 'max_waypoints',
-            'migration_is_destination_new_home', 'migration_mod', 'migration_outbound',
+            'migration_is_destination_new_home', 'migration_outbound',
             'migration_time_at_destination', 'migration_time_until_trip', 'migration_type',
             'migration_will_return', 'pregnancy_timer', 'Properties', 'StateChange',
             'waiting_for_family_trip', 'waypoints', 'waypoints_trip_type'

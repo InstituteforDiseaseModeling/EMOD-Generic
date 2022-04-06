@@ -39,7 +39,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ControllerFactory.h"
 
 #include "SerializedPopulation.h"
-#include "SerializationTimeCalc.h"
+#include "SerializationParameters.h"
 
 #pragma warning(disable : 4244)
 
@@ -108,17 +108,34 @@ typedef enum {
 
 tPlayback playback = playing;
 
+void CheckMissingParameters()
+{
+    if( !JsonConfigurable::missing_parameters_set.empty() )
+    {
+        std::stringstream errMsg;
+        errMsg << "The following necessary parameters were not specified" << std::endl;
+        for (auto& key : JsonConfigurable::missing_parameters_set)
+        {
+            errMsg << "\t \"" << key.c_str() << "\"" << std::endl;
+        }
+        //LOG_ERR( errMsg.str().c_str() );
+        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, errMsg.str().c_str() );
+    }
+}
+
 // Basic simulation main loop with reporting
 template <class SimulationT> 
 void RunSimulation(SimulationT &sim, int steps)
 {
     LOG_DEBUG( "RunSimulation\n" );
 
-    SerializationTimeCalc stc;
-    stc.Configure(EnvPtr->Config);
+    bool use_full_precision = (SerializationParameters::GetInstance()->GetPrecision() == SerializationPrecision::FULL);
+
+    float start_time = sim.GetSimulationTime().GetTimeStart();
+    float step_size  = sim.GetSimulationTime().GetTimeDelta();
 
     // Calculate the sorted set of time steps to serialize
-    std::deque< int32_t > serialization_time_steps = stc.GetSerializedTimeSteps(steps, sim.GetSimulationTime().time, sim.GetSimulationTime().GetTimeDelta());
+    std::deque< int32_t > serialization_time_steps = SerializationParameters::GetInstance()->GetSerializedTimeSteps(steps, start_time, step_size);
 
     for (int t = 0; t < steps; t++)
     {
@@ -226,6 +243,12 @@ bool DefaultController::execute_internal()
 
     LOG_INFO("DefaultController::Execute<>()...\n");
 
+    JsonConfigurable::_useDefaults = false;
+    JsonConfigurable::_track_missing = true;
+    SerializationParameters::GetInstance()->Configure(EnvPtr->Config);  // Has to be configured before CreateSimulation()
+    CheckMissingParameters();
+
+
     // NB: BIG INTENTIONAL HACK
     // the exact nature of pool allocators substantially helps communication performance BUT unwinding them all at the end can double the simulation runtime for a real production scenario.
     // for processes that dont need to have more than one simulation in memory, its faster to just leak the whole object
@@ -252,20 +275,10 @@ bool DefaultController::execute_internal()
     LOG_INFO("DefaultController populate simulation...\n");
     if(sim->Populate())
     {
-        if( !JsonConfigurable::missing_parameters_set.empty() )
-        {
-            std::stringstream errMsg;
-            errMsg << "The following necessary parameters were not specified" << std::endl;
-            for (auto& key : JsonConfigurable::missing_parameters_set)
-            {
-                errMsg << "\t \"" << key.c_str() << "\"" << std::endl;
-            }
-            //LOG_ERR( errMsg.str().c_str() );
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, errMsg.str().c_str() );
-        }
+        CheckMissingParameters();
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) / sim->GetSimulationTime().GetTimeDelta();
+        int simulation_steps = static_cast<int>( sim->GetSimulationTime().GetSimDuration() / sim->GetSimulationTime().GetTimeDelta() );
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;
@@ -317,6 +330,11 @@ bool DefaultController::execute_internal()
 
     LOG_INFO("DefaultController::execute_internal()...\n");
 
+    JsonConfigurable::_useDefaults = false;
+    JsonConfigurable::_track_missing = true;
+    SerializationParameters::GetInstance()->Configure( EnvPtr->Config );  // Has to be configured before CreateSimulation()
+    CheckMissingParameters();
+
 #ifdef _DLLS_
     ISimulation * sim = SimulationFactory::CreateSimulation(); 
     release_assert(sim);
@@ -342,20 +360,10 @@ bool DefaultController::execute_internal()
         // Need to reset back to false; will be set as appropriate by campaign related code after this based on
         // "Use_Defaults" in campaign.json.
         JsonConfigurable::_useDefaults = false;
-        if( !JsonConfigurable::missing_parameters_set.empty() )
-        {
-            std::stringstream errMsg;
-            errMsg << "The following necessary parameters were not specified" << std::endl;
-            for (auto& key : JsonConfigurable::missing_parameters_set)
-            {
-                errMsg << "\t \"" << key.c_str() << "\"" << std::endl;
-            }
-            //LOG_ERR( errMsg.str().c_str() );
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, errMsg.str().c_str() );
-        }
+        CheckMissingParameters();
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        int simulation_steps = int(GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) / sim->GetSimulationTime().GetTimeDelta();;
+        int simulation_steps = static_cast<int>( sim->GetSimulationTime().GetSimDuration() / sim->GetSimulationTime().GetTimeDelta() );
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;

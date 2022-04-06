@@ -20,72 +20,76 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanContext.h"
 #include "ISimulationContext.h"
 #include "RANDOM.h"
+#include "JsonConfigurableCollection.h"
 
 SETUP_LOGGING( "IVCalendar" )
 
 namespace Kernel
 {
-    void
-    TargetAgeArrayConfig::ConfigureFromJsonAndKey(
-        const Configuration* inputJson,
-        const std::string& key
-    )
+    // --------------------
+    // --- AgeAndProbability
+    // --------------------
+    class AgeAndProbability : public JsonConfigurable
     {
-        // Now's as good a time as any to parse in the calendar schedule.
-        json::QuickInterpreter taa_qi( (*inputJson)[key] );
-        try {
-            json::QuickInterpreter scheduleJson( taa_qi.As<json::Array>() );
-            assert( taa_qi.As<json::Array>().Size() );
-            for( unsigned int idx=0; idx<taa_qi.As<json::Array>().Size(); idx++ )
-            {
-                float age, probability;
-                try {
-                    age = float(scheduleJson[idx]["Age"].As<json::Number>());
-                }
-                catch( const json::Exception & )
-                {
-                    throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Age", scheduleJson[idx], "Expected NUMBER" );
-                }
+        IMPLEMENT_NO_REFERENCE_COUNTING()
+        virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) { return e_NOINTERFACE; }
 
-                try {
-                    probability = float(scheduleJson[idx]["Probability"].As<json::Number>());
-                }
-                catch( const json::Exception & )
-                {
-                    throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Probability", scheduleJson[idx], "Expected NUMBER" );
-                }
-
-                age2ProbabilityMap.insert( std::make_pair( age, probability ) );
-            }
-        }
-        catch( const json::Exception & )
+    public:
+        AgeAndProbability()
+            : JsonConfigurable()
+            , m_Age( 0.0 )
+            , m_Prob( 0.0 )
         {
-            throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), taa_qi, "Expected ARRAY" );
         }
-    }
 
-    json::QuickBuilder
-    TargetAgeArrayConfig::GetSchema()
+        AgeAndProbability( const AgeAndProbability& rMaster )
+            : JsonConfigurable( rMaster )
+            , m_Age( rMaster.m_Age )
+            , m_Prob( rMaster.m_Prob )
+        {
+        }
+
+        virtual ~AgeAndProbability()
+        {
+        }
+
+        virtual bool Configure( const Configuration* inputJson ) override
+        {
+            initConfigTypeMap("Age", &m_Age, CAL_Age_DESC_TEXT, 0.0, MAX_HUMAN_AGE*DAYSPERYEAR, 0.0 );
+            initConfigTypeMap("Probability", &m_Prob, CAL_Probability_DESC_TEXT, 0.0, 1.0, 0.0 );
+
+            bool configured = JsonConfigurable::Configure( inputJson );
+            return configured;
+        }
+
+        float m_Age;
+        float m_Prob;
+    };
+
+    class AgeAndProbabilityList : public JsonConfigurableCollection<AgeAndProbability>
     {
-        json::QuickBuilder schema( GetSchemaBase() );
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-        schema[ tn ] = json::String( "idmType:CalendarIV" );
+    public:
+        AgeAndProbabilityList()
+            : JsonConfigurableCollection("AgeAndProbabilityList")
+        {
+        }
 
-        schema[ts] = json::Array();
-        schema[ts][0] = json::Object();
-        schema[ts][0]["Age"] = json::Object();
-        schema[ts][0]["Age"][ "type" ] = json::String( "float" );
-        schema[ts][0]["Age"][ "min" ] = json::Number( 0 );
-        schema[ts][0]["Age"][ "max" ] = json::Number( MAX_HUMAN_AGE*DAYSPERYEAR );
-        schema[ts][0]["Age"][ "description" ] = json::String( CAL_Age_DESC_TEXT );
-        schema[ts][0]["Probability"] = json::Object();
-        schema[ts][0]["Probability"][ "type" ] = json::String( "float" );
-        schema[ts][0]["Probability"][ "min" ] = json::Number( 0 );
-        schema[ts][0]["Probability"][ "max" ] = json::Number( 1.0 );
-        schema[ts][0]["Probability"][ "description" ] = json::String( CAL_Probability_DESC_TEXT );
-        return schema;
-    }
+        AgeAndProbabilityList( const AgeAndProbabilityList& rMaster )
+            : JsonConfigurableCollection( rMaster )
+        {
+        }
+
+        virtual ~AgeAndProbabilityList()
+        {
+        }
+
+    protected:
+        virtual AgeAndProbability* CreateObject() override
+        {
+            return new AgeAndProbability();
+        }
+    };
+
 
     BEGIN_QUERY_INTERFACE_BODY(IVCalendar)
         HANDLE_INTERFACE(IConfigurable)
@@ -98,7 +102,7 @@ namespace Kernel
 
     IVCalendar::IVCalendar()
     : BaseIntervention()
-    , target_age_array()
+    , age2ProbabilityMap()
     , actual_intervention_config()
     , dropout(false)
     , scheduleAges()
@@ -115,17 +119,25 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
+        AgeAndProbabilityList age_prob_list;
         initConfigTypeMap("Dropout", &dropout, CAL_Dropout_DESC_TEXT, false);
-        initConfigComplexType("Calendar", &target_age_array, CAL_Calendar_DESC_TEXT);
+        initConfigComplexCollectionType("Calendar", &age_prob_list, CAL_Calendar_DESC_TEXT);
         initConfigComplexType("Actual_IndividualIntervention_Configs", &actual_intervention_config, CAL_Actual_Intervention_Configs_DESC_TEXT);
 
         bool ret = BaseIntervention::Configure( inputJson );
-        if( ret )
+        if( ret && !JsonConfigurable::_dryrun )
         {
             InterventionValidator::ValidateInterventionArray( GetTypeName(), 
                                                               InterventionTypeValidation::INDIVIDUAL,
                                                               actual_intervention_config._json,
                                                               inputJson->GetDataLocation() );
+
+            for( int i = 0; i < age_prob_list.Size(); ++i )
+            {
+                float age = age_prob_list[ i ]->m_Age;
+                float prob = age_prob_list[ i ]->m_Prob;
+                age2ProbabilityMap.insert( std::make_pair( age, prob ) );
+            }
         }
         return ret ;
     }
@@ -143,7 +155,7 @@ namespace Kernel
         release_assert( parent->GetRng() );
 
         // Now's as good a time as any to parse in the calendar schedule.
-        for( auto &entry: target_age_array.age2ProbabilityMap )
+        for( auto &entry: age2ProbabilityMap )
         {
             float age = entry.first;
             float probability = entry.second;
@@ -269,17 +281,9 @@ namespace Kernel
     {
         BaseIntervention::serialize( ar, obj );
         IVCalendar& cal = *obj;
-        ar.labelElement("target_age_array") & cal.target_age_array;
+        ar.labelElement("age2ProbabilityMap") & cal.age2ProbabilityMap;
         ar.labelElement("actual_intervention_config") & cal.actual_intervention_config;
         ar.labelElement("dropout") & cal.dropout;
         ar.labelElement("scheduleAges") & cal.scheduleAges;
-    }
-
-    void TargetAgeArrayConfig::serialize(IArchive& ar, TargetAgeArrayConfig& age_array)
-    {
-        ar.startObject();
-            ar.labelElement("age2ProbabilityMap") & age_array.age2ProbabilityMap;
-            ar.labelElement("dropout") & age_array.dropout;
-        ar.endObject();
     }
 }

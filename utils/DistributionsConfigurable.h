@@ -126,9 +126,18 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
     };
 
+    class DistributionGammaConfigurable : public DistributionGamma
+    {
+        IMPLEMENT_NO_REFERENCE_COUNTING()
+        DECLARE_SERIALIZABLE( DistributionGammaConfigurable )
+    public:
+        DistributionGammaConfigurable( );
+        ~DistributionGammaConfigurable();
+        virtual bool Configure( JsonConfigurable* pParent, std::string& parameter, const Configuration* config );
+        virtual IDistribution* Clone() const override;
+        DECLARE_QUERY_INTERFACE()
+    };
 
-
-    //******************  PiecewiseDistribution ******************
     class DistributionPiecewiseConstantConfigurable : public DistributionPiecewiseConstant
     {
         IMPLEMENT_NO_REFERENCE_COUNTING()

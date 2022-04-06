@@ -5,7 +5,8 @@
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
                 "Madagascar_Nosibe_2.5arcmin_demographics.json",
-                "Madagascar_Nosibe_2.5arcmin_demographics_overlay.json"
+                "Madagascar_Nosibe_2.5arcmin_demographics_overlay.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1,
             "Enable_Strain_Tracking": 0,

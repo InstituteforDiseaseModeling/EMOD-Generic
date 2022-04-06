@@ -60,8 +60,6 @@ namespace Kernel
     protected:
         InfectionTyphoid(); 
 
-        const SimulationConfig* params();
-
         InfectionTyphoid(IIndividualHumanContext *context);
         void Initialize(suids::suid _suid);
         void handlePrepatentExpiry();

@@ -26,7 +26,8 @@ namespace Kernel
         ENUM_VALUE_SPEC(DepartingRoadTravellers     , 9)
         ENUM_VALUE_SPEC(AllArrivingTravellers       , 10)
         ENUM_VALUE_SPEC(AllDepartingTravellers      , 11)
-        ENUM_VALUE_SPEC(ExplicitDiseaseState        , 12))
+        ENUM_VALUE_SPEC(ExplicitDiseaseState        , 12)
+        ENUM_VALUE_SPEC(ExplicitIDs                 , 13))
 
     ENUM_DEFINE(TargetGroupType,
         ENUM_VALUE_SPEC(Everyone                , 1) 

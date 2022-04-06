@@ -30,6 +30,7 @@ namespace Kernel
     struct NodeDemographics;
     class NodeDemographicsFactory;
     struct NodeDemographicsDistribution;
+    struct NodeParams;
     class  Climate;
     class  ClimateFactory;
     struct INodeEventContext;
@@ -55,11 +56,12 @@ namespace Kernel
 
         virtual ISimulationContext* GetParent() = 0;
 
+        virtual const NodeParams* GetParams() const = 0;
+
         //individual can get an id of their parent to compare against, for instance, their home node id
         virtual suids::suid GetSuid() const = 0;
 
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     MigrationStructure::Enum ms,
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
 
         virtual void SetContextTo( ISimulationContext* ) = 0;
@@ -77,6 +79,7 @@ namespace Kernel
         virtual const std::vector<IIndividualHuman*>& GetHumans() const = 0;
 
         // heterogeneous intra-node transmission
+        virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) = 0;
         virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) = 0;
         virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) = 0;
         virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) = 0;
@@ -139,7 +142,6 @@ namespace Kernel
                                               float timeAtDestination,
                                               bool isDestinationNewHome ) = 0;
 
-        virtual float GetBasePopulationScaleFactor() const = 0;
         virtual ProbabilityNumber GetProbMaternalTransmission() const = 0;
 
         virtual float GetMaxInfectionProb( TransmissionRoute::Enum tx_route )        const = 0;

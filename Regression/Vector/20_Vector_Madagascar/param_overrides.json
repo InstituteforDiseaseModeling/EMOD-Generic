@@ -22,7 +22,8 @@
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
             "Demographics_Filenames": [
-                "Madagascar_2_5arcmin_demographics.json"
+                "Madagascar_2_5arcmin_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1,
             "SAMPLING": {
@@ -37,8 +38,8 @@
             }
         },
         "FUDGE_FACTORS": {
-            "x_Local_Migration": 0.1,
-            "x_Larval_Habitats": 0.1
+            "x_Larval_Habitats": 0.1,
+            "x_Local_Migration": 0.1
         },
         "HPC": {
             "LB": {

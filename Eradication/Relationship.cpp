@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "Environment.h"
 #include "Types.h"
-#include "SimulationConfig.h"
 #include "MathFunctions.h"
 #include "RANDOM.h"
 #include "INodeContext.h"

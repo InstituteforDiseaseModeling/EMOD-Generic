@@ -180,7 +180,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     {
         if( inputJson->Exist("Age_Bins") )
         {
-            initConfigTypeMap("Age_Bins", &ages, "Age Bins (in years) to aggregate within and report", 0, MAX_HUMAN_AGE, 0, true);
+            initConfigTypeMap("Age_Bins", &ages, "Age Bins (in years) to aggregate within and report", 0, MAX_HUMAN_AGE, true);
         }
         else
         {

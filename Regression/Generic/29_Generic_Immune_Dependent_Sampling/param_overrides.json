@@ -10,8 +10,10 @@
             "Sample_Rate_Birth": 1
         },
         "DISEASE": {
-            "Base_Infectivity": 0.3,
+            "Base_Infectivity_Constant": 0.3,
+            "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
             "Enable_Immune_Decay": 0,
+            "Immune_Downsample_Min_Age": 0,
             "Immune_Threshold_For_Downsampling": 0.5,
             "Incubation_Period_Constant": 0,
             "Individual_Sampling_Type": "ADAPTED_SAMPLING_BY_IMMUNE_STATE",

@@ -30,14 +30,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect": 0.59,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 27620,
@@ -65,14 +64,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect": 0.29,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 27618,
@@ -100,14 +98,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 22168,
@@ -135,14 +132,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 1095,
                         "Initial_Effect": 0.49,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 21598,
@@ -170,14 +166,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 1095,
                         "Initial_Effect": 0.44,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 66615,
@@ -205,14 +200,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 64783,
@@ -240,14 +234,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 58421,
@@ -275,14 +268,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 21128,
@@ -310,14 +302,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 13568,
@@ -345,14 +336,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.78,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 22586,
@@ -380,14 +370,13 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.78,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
                         "class": "WaningEffectBox"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 1,
                 "Number_Vaccinated": 14037,

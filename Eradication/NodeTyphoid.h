@@ -36,7 +36,6 @@ namespace Kernel
     public:
         static NodeTyphoid *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual ~NodeTyphoid(void);
-        bool Configure( const Configuration* config );
 
         virtual void SetupIntranodeTransmission() override;
         virtual void resetNodeStateCounters(void);

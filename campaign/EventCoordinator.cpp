@@ -33,7 +33,7 @@ json::Object Kernel::EventCoordinatorFactory::ecSchema;
     at each simulation timestep, all DMs are updated. this is a hook for simulation-wide information exchange and will eventually require some kind of messaging system. we'll leave that out for now 
     and see what the first implementations of dynamic campaigns need
 
-    Campaign file structure:   
+    Campaign file structure:
     {
         "Events" :
         [
@@ -63,13 +63,13 @@ json::Object Kernel::EventCoordinatorFactory::ecSchema;
 
     2. Each campaign event instantiates the event coordinator and nodeset but does not activate
 
-    3. Each campaig event is added to the simulation global queue
+    3. Each campaign event is added to the simulation global queue
 
     4. When a campaign event's start day arrives, it is executed which
         - assigns nodes to the EC using the NodeSet
-            - if static, can be separate from the DM description 
+            - if static, can be separate from the DM description
             - if reevaluatable (this might only make sense for extreme efficiency cases, probably not relevant), could be embedded in the DMs themselves
-            - architecturally, theres no reason this couldn't be done in an outer dm wrapper with its own parameters controlling the reeval time
+            - architecturally, there's no reason this couldn't be done in an outer dm wrapper with its own parameters controlling the reeval time
                 - a country-level manager could work this way, by deploying local campaigns in nodes with specific properties
                     - requires the node property interfaces to be exposed, obviously
 
@@ -92,16 +92,6 @@ json::Object Kernel::EventCoordinatorFactory::ecSchema;
 
 namespace Kernel
 {
-
-    // TODO: FINISH PORTING THIS TO NEW MECHANISM
-/*    IEventCoordinator* EventCoordinatorFactory::CreateInstance( const Configuration* config )
-    {
-        // TODO: make this mechanism fancier, implement and access a global class factory registration method
-        CI_CREATE_SPEC_LIST(spec_list,
-            CI_SUPPORT_SPEC(SimpleInterventionDistributionEventCoordinator));
-        return CreateInstanceFromSpecs<IEventCoordinator>(config, spec_list, true);
-
-    }*/
     IEventCoordinatorFactory * EventCoordinatorFactory::_instance = nullptr;
     bool EventCoordinatorFactory::doThisOnce = false;
     IEventCoordinator* EventCoordinatorFactory::CreateInstance( const Configuration *config )

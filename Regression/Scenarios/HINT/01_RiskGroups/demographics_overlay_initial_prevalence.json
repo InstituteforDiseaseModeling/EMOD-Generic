@@ -1,0 +1,14 @@
+{
+    "Defaults": {},
+    "Metadata": {
+        "IdReference": "SampleContent"
+    },
+    "Nodes": [
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.0
+            },
+            "NodeID": 340461476
+        }
+    ]
+}

@@ -1,27 +1,41 @@
+/***************************************************************************************************
+
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+
+EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+
+***************************************************************************************************/
+
 #include <Python.h>
 #include <iostream>
 #include "RANDOM.h"
 
 #include "suids.hpp"
+#include "ConfigParams.h"
 #include "Environment.h"
-#include "SimulationConfig.h"
 #include "NodeEventContext.h"
 #include "IndividualCoInfection.h"
 #include "INodeContext.h"
 #include "Properties.h"
 #include "JsonFullWriter.h"
 #include "InfectionTB.h"
+#include "InfectionHIV.h"
 #include "SusceptibilityTB.h"
+#include "SusceptibilityHIV.h"
 #include "NodeTB.h"
 #include "NodeTBHIV.h"
 #include "StrainIdentity.h"
+#include "IdmDateTime.h"
 
+Kernel::IndividualHumanCoInfection * person = nullptr;
 Configuration * configStubJson = nullptr;
 
 using namespace Kernel;
 void pyMathFuncInit() { }
 #include "../pymod_stubnode.h"
 #include "../base_pymod_individual.h"
+
 PyObject * StubNode::my_callback = nullptr;
 PyObject * StubNode::deposit_callback = nullptr;
 PyObject * StubNode::mortality_callback = nullptr;
@@ -185,25 +199,48 @@ static Kernel::IndividualHumanCoInfection* initInd( int sex, float age, float mc
 
         std::cout << "configStubJson initialized from gi.json." << std::endl;
         //Kernel::JsonConfigurable::_useDefaults = true;
-        Kernel::IndividualHuman::InitializeStatics( configStubJson );
 
-        Kernel::InfectionTBConfig fakeInfection;
-        fakeInfection.Configure( configStubJson ); // protected 
-        Kernel::InfectionConfig fakeInfectionG;
-        fakeInfectionG.Configure( configStubJson ); // protected 
-        //std/::cout << "Configured InfectionTB." << std::endl;
-        Kernel::SusceptibilityConfig fakeImmunity;
-        fakeImmunity.Configure( configStubJson ); // protected 
-        //std::cout << "Configured SusceptibilityTB." << std::endl;
+        ConfigParams                       gen_config_obj;
+        IndividualHumanConfig              gen_individual_config_obj;
+        SusceptibilityConfig               gen_susceptibility_config_obj;
+        InfectionConfig                    gen_infection_config_obj;
 
-        Kernel::SusceptibilityHIVConfig fakeImmunity2;
-        fakeImmunity2.Configure( configStubJson ); // protected 
+        InfectionAirborneConfig            air_infection_config;
+
+        IndividualHumanCoInfectionConfig   coi_individual_config_obj;
+        SusceptibilityTBConfig             coi_susceptibility_config_obj;
+        InfectionTBConfig                  coi_infection_config_obj;
+
+        InfectionSTIConfig                 sti_infection_config_obj;
+
+        SusceptibilityHIVConfig            hiv_susceptibility_config_obj;
+        InfectionHIVConfig                 hiv_infection_config_obj;
+
+        gen_config_obj.Configure( configStubJson );
+        gen_individual_config_obj.Configure( configStubJson );
+        gen_susceptibility_config_obj.Configure( configStubJson );
+        gen_infection_config_obj.Configure( configStubJson );
+
+        air_infection_config.Configure( configStubJson );
+
+        coi_individual_config_obj.Configure( configStubJson );
+        coi_susceptibility_config_obj.Configure( configStubJson );
+        coi_infection_config_obj.Configure( configStubJson );
+
+        if( IndividualHumanCoInfectionConfig::enable_coinfection )
+        {
+            coi_individual_config_obj.SetCD4Map( coi_infection_config_obj.GetCD4Map() );
+
+            sti_infection_config_obj.Configure( configStubJson );
+
+            hiv_susceptibility_config_obj.Configure( configStubJson );
+            hiv_infection_config_obj.Configure( configStubJson );
+        }
 
         std::cout << "Initialized Statics from gi.json." << std::endl;
-        Kernel::IndividualHumanCoInfection::InitializeStaticsCoInfection( configStubJson );
     }
     Kernel::JsonConfigurable::_useDefaults = false; 
-    person->SetParameters( &node, 0.0f, 1.0f, 1.0f, 0.0f );
+    person->SetParameters( &node, 0.0f, 1.0f, 1.0f );
     return person;
 }
 

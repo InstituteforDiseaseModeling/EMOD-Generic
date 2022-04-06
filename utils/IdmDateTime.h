@@ -29,15 +29,17 @@ namespace Kernel {
 
     public:
         IdmDateTime()
-        : time(0.0f)
-        , timestep(0)
-        , _base_year(0.0f)
-        , time_delta(0.0f)
+          : time(0.0f)
+          , timestep(0)
+          , _base_year(0.0f)
+          , time_delta(0.0f)
+          , time_start(0.0f)
+          , sim_duration(0.0f)
         { }
 
-        explicit IdmDateTime( NonNegativeFloat start_time )
+        explicit IdmDateTime( float time_start_in )
         {
-            time = start_time;
+            time = time_start_in;
         }
 
         bool operator<( const float& compThis ) const
@@ -102,9 +104,34 @@ namespace Kernel {
             return _base_year;
         }
 
+        float GetSimDuration() const
+        {
+            return sim_duration;
+        }
+
+        float GetTimeStart() const
+        {
+            return time_start;
+        }
+
         float GetTimeDelta() const
         {
             return time_delta;
+        }
+
+        float GetTimeEnd() const
+        {
+            return time_start+sim_duration;
+        }
+
+        void SetSimDuration(float sim_duration_in)
+        {
+            sim_duration = sim_duration_in;
+        }
+
+        void SetTimeStart(float time_start_in)
+        {
+            time_start = time_start_in;
         }
 
         void SetTimeDelta(float time_delta_in)
@@ -117,6 +144,10 @@ namespace Kernel {
 
     private:
         NonNegativeFloat _base_year;
+
+        float sim_duration;
+        float time_start;
         float time_delta;
+
     };
 }

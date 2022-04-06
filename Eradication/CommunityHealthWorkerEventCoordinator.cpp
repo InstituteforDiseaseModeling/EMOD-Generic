@@ -59,9 +59,11 @@ namespace Kernel
     , m_AmountInShipment(INT_MAX)
     , m_DaysToNextShipment(FLT_MAX)
     {
-        m_RemoveIndividualEventList.push_back( EventTrigger::DiseaseDeaths    );
-        m_RemoveIndividualEventList.push_back( EventTrigger::NonDiseaseDeaths );
-        m_RemoveIndividualEventList.push_back( EventTrigger::Emigrating       );
+        m_RemoveIndividualEventList.push_back( EventTrigger::DiseaseDeaths                );
+        m_RemoveIndividualEventList.push_back( EventTrigger::OpportunisticInfectionDeath  );
+        m_RemoveIndividualEventList.push_back( EventTrigger::NonDiseaseDeaths             );
+        m_RemoveIndividualEventList.push_back( EventTrigger::MonteCarloDeaths             );
+        m_RemoveIndividualEventList.push_back( EventTrigger::Emigrating                   );
     }
 
     CommunityHealthWorkerEventCoordinator::~CommunityHealthWorkerEventCoordinator()

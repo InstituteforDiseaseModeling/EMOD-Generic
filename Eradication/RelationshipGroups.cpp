@@ -164,6 +164,11 @@ namespace Kernel {
         infectionRate.resize( vector_size );
     }
 
+    void RelationshipGroups::ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix)
+    {
+        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Not implemented for RelationshipGroups." );
+    }
+
     void
     RelationshipGroups::GetGroupMembershipForProperties(
         const std::map<std::string,uint32_t>& properties,
@@ -403,7 +408,7 @@ namespace Kernel {
     }
 
     void
-    RelationshipGroups::EndUpdate(float infectivityMultiplier, float infectivityAddition)
+    RelationshipGroups::EndUpdate(float infectivityMultiplier, float infectivityAddition, float infectivityOverdispersion)
     {
         LOG_DEBUG_F( "%s: shedContagion.size() = %d\n", __FUNCTION__, shedContagion.size() );
 

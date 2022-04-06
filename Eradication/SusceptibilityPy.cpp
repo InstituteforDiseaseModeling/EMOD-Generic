@@ -44,10 +44,10 @@ namespace Kernel
         // Everything initialized to 0 in Initialize
     }
 
-    void SusceptibilityPy::Initialize(float _age, float _immmod, float _riskmod)
+    void SusceptibilityPy::Initialize(float _immmod, float _riskmod)
     {
-        LOG_DEBUG_F( "Initializing Py immunity object for new individual: id=%lu, age=%f, immunity modifier=%f, risk modifier=%f\n", parent->GetSuid().data, _age, _immmod, _riskmod );
-        Susceptibility::Initialize(_age, _immmod, _riskmod);
+        LOG_DEBUG_F( "Initializing Py immunity object for new individual: id=%lu, immunity modifier=%f, risk modifier=%f\n", parent->GetSuid().data, _immmod, _riskmod );
+        Susceptibility::Initialize(_immmod, _riskmod);
 
         // throws exception on error, no return type. 
     }
@@ -56,19 +56,17 @@ namespace Kernel
     {
     }
 
-    SusceptibilityPy *SusceptibilityPy::CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod)
+    SusceptibilityPy *SusceptibilityPy::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
-        //LOG_DEBUG_F( "Creating Py immunity object for new individual: age=%f, immunity modifier=%f, risk modifier=%f\n", age, immmod, riskmod );
+        //LOG_DEBUG_F( "Creating Py immunity object for new individual: immunity modifier=%f, risk modifier=%f\n", immmod, riskmod );
         SusceptibilityPy *newsusceptibility = _new_ SusceptibilityPy(context);
-        newsusceptibility->Initialize(age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
 
     void SusceptibilityPy::Update(float dt)
-    {
-        age += dt; // tracks age for immune purposes
-    }
+    { }
 }
 
 #endif // ENABLE_PYTHON

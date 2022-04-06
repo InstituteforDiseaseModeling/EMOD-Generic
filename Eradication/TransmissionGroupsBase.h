@@ -140,7 +140,7 @@ namespace Kernel
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) {}
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const {}
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) {}
-        virtual void EndUpdate(float infectivityCorrection, float infectivityAddition) {}
+        virtual void EndUpdate(float infectivityCorrection, float infectivityAddition, float infectivityOverdispersion) {}
 
         virtual act_prob_vec_t DiscreteGetTotalContagion( void );
    };

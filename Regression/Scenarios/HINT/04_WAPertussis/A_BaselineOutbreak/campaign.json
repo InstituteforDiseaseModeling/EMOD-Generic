@@ -25,7 +25,7 @@
                             },
                             "Vaccine_Take": 0.95,
                             "Vaccine_Type": "Generic",
-                            "class": "MultiEffectVaccine"
+                            "class": "Vaccine"
                         }
                     ],
                     "Calendar": [
@@ -94,7 +94,7 @@
                     },
                     "Vaccine_Take": 1,
                     "Vaccine_Type": "Generic",
-                    "class": "MultiEffectVaccine"
+                    "class": "Vaccine"
                 },
                 "Property_Restrictions": [
                     "Accessibility:VaccineTake"
@@ -134,7 +134,7 @@
                         },
                         "Vaccine_Take": 0.95,
                         "Vaccine_Type": "Generic",
-                        "class": "MultiEffectVaccine"
+                        "class": "Vaccine"
                     },
                     "Event_Or_Config": "Config",
                     "Single_Use": 1,
@@ -180,7 +180,7 @@
                                 },
                                 "Vaccine_Take": 0.95,
                                 "Vaccine_Type": "Generic",
-                                "class": "MultiEffectVaccine"
+                                "class": "Vaccine"
                             }
                         ],
                         "Calendar": [

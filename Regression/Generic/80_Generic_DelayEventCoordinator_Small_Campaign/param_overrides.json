@@ -5,7 +5,8 @@
         "Custom_Reports_Filename": "",
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Namawala_single_node_demographics.json"
+                "Namawala_single_node_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },

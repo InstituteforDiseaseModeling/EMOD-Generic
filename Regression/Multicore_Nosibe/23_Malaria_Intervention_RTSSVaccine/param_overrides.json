@@ -17,7 +17,8 @@
         },
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Madagascar_Nosibe_2.5arcmin_demographics.json"
+                "Madagascar_Nosibe_2.5arcmin_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },

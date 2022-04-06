@@ -92,6 +92,11 @@ namespace Kernel
         ENUM_VALUE_SPEC(NegativeResult, 63)
         ENUM_VALUE_SPEC(Blackout, 64)
         ENUM_VALUE_SPEC(ReceivedTreatment, 65)
+        ENUM_VALUE_SPEC(SixMonthsOld, 66)
+        ENUM_VALUE_SPEC(OneYearOld, 67)
+        ENUM_VALUE_SPEC(MonteCarloDeaths, 68)
+        ENUM_VALUE_SPEC(Recovered, 69)
+        ENUM_VALUE_SPEC(DiedOfDisease, 70)
 
 	// This is the end of the regular event section. Below is a 'bank' of 100 'GPIO' style events.
 	// These are used where a suitable event does not exist, usually for campaigns. Your campaign

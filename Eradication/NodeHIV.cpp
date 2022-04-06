@@ -23,19 +23,14 @@ namespace Kernel
 
     NodeHIV::NodeHIV(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
         : NodeSTI(_parent_sim, externalNodeId, node_suid)
-    {
-        enable_maternal_infection_transmission = true;
-    }
+    { }
 
     NodeHIV::NodeHIV()
         : NodeSTI()
-    {
-        enable_maternal_infection_transmission = true;
-    }
+    { }
 
     NodeHIV::~NodeHIV(void)
-    {
-    }
+    { }
 
     NodeHIV *NodeHIV::CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     {
@@ -49,18 +44,6 @@ namespace Kernel
     {
         return IndividualHumanHIV::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
-
-/*
-    const vector<RelationshipStartInfo>& NodeHIV::GetNewRelationships() const
-    {
-        return new_relationships;
-    }
-
-    const std::vector<RelationshipEndInfo>& NodeHIV::GetTerminatedRelationships() const
-    {
-        return terminated_relationships;
-    }
-*/
 
     REGISTER_SERIALIZABLE(NodeHIV);
 

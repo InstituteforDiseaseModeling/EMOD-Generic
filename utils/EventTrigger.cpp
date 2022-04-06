@@ -40,6 +40,7 @@ namespace Kernel
     const EventTrigger& EventTrigger::DiseaseDeaths              = EventTriggerFactory::CreateBuiltInEventTrigger( "DiseaseDeaths"             );
     const EventTrigger& EventTrigger::OpportunisticInfectionDeath = EventTriggerFactory::CreateBuiltInEventTrigger("OpportunisticInfectionDeath");
     const EventTrigger& EventTrigger::NonDiseaseDeaths           = EventTriggerFactory::CreateBuiltInEventTrigger( "NonDiseaseDeaths"          );
+    const EventTrigger& EventTrigger::MonteCarloDeaths           = EventTriggerFactory::CreateBuiltInEventTrigger( "MonteCarloDeaths"          );
     const EventTrigger& EventTrigger::TBActivationSmearPos       = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationSmearPos"      );
     const EventTrigger& EventTrigger::TBActivationSmearNeg       = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationSmearNeg"      );
     const EventTrigger& EventTrigger::TBActivationExtrapulm      = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivationExtrapulm"     );
@@ -75,6 +76,8 @@ namespace Kernel
     const EventTrigger& EventTrigger::TwelveWeeksPregnant        = EventTriggerFactory::CreateBuiltInEventTrigger( "TwelveWeeksPregnant"       );
     const EventTrigger& EventTrigger::FourteenWeeksPregnant      = EventTriggerFactory::CreateBuiltInEventTrigger( "FourteenWeeksPregnant"     );
     const EventTrigger& EventTrigger::SixWeeksOld                = EventTriggerFactory::CreateBuiltInEventTrigger( "SixWeeksOld"               );
+    const EventTrigger& EventTrigger::SixMonthsOld               = EventTriggerFactory::CreateBuiltInEventTrigger( "SixMonthsOld"              );
+    const EventTrigger& EventTrigger::OneYearOld                 = EventTriggerFactory::CreateBuiltInEventTrigger( "OneYearOld"                );
     const EventTrigger& EventTrigger::EighteenMonthsOld          = EventTriggerFactory::CreateBuiltInEventTrigger( "EighteenMonthsOld"         );
     const EventTrigger& EventTrigger::STIPreEmigrating           = EventTriggerFactory::CreateBuiltInEventTrigger( "STIPreEmigrating"          );
     const EventTrigger& EventTrigger::STIPostImmigrating         = EventTriggerFactory::CreateBuiltInEventTrigger( "STIPostImmigrating"        );

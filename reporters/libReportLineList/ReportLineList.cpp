@@ -168,12 +168,7 @@ namespace Kernel
       if(individual->GetNewInfectionState() == NewInfectionState::NewInfection   ||
          individual->GetNewInfectionState() == NewInfectionState::NewAndDetected   )
       {
-        GetOutputStream() << individual->GetParent()->GetTime().time             << ","
-                          << individual->GetParent()->GetExternalID()            << ","
-                          << individual->GetAge()                                << ","
-                          << individual->IsInfected()                            << ","
-                          << individual->GetMonteCarloWeight()                   << ","
-                          << individual->GetAcquisitionImmunity()                << std::endl;
+        OutputLine(individual);
       }
     }
 
@@ -184,12 +179,7 @@ namespace Kernel
       if(individual->GetStateChange() == HumanStateChange::DiedFromNaturalCauses ||
          individual->GetStateChange() == HumanStateChange::KilledByInfection       )
       {
-        GetOutputStream() << individual->GetParent()->GetTime().time             << ","
-                          << individual->GetParent()->GetExternalID()            << ","
-                          << individual->GetAge()                                << ","
-                          << individual->IsInfected()                            << ","
-                          << individual->GetMonteCarloWeight()                   << ","
-                          << individual->GetAcquisitionImmunity()                << std::endl;
+        OutputLine(individual);
       }
     }
 
@@ -221,18 +211,23 @@ namespace Kernel
       IIndividualHuman* human = human_list[node->GetRng()->uniformZeroToN32(human_list.size())];
       if(!human->IsInfected())
       {
-        GetOutputStream() << human->GetParent()->GetTime().time            << ","
-                          << human->GetParent()->GetExternalID()           << ","
-                          << human->GetAge()                               << ","
-                          << human->IsInfected()                           << ","
-                          << human->GetMonteCarloWeight()                  << ","
-                          << human->GetAcquisitionImmunity()               << std::endl;
+        OutputLine(human);
       }
     }
 
     return;
   }
 
+  void ReportLineList::OutputLine(const IIndividualHuman* agent)
+  {
+    GetOutputStream() << agent->GetParent()->GetTime().time            << ","
+                      << agent->GetParent()->GetExternalID()           << ","
+                      << agent->GetAge()                               << ","
+                      << agent->IsInfected()                           << ","
+                      << agent->GetMonteCarloWeight()                  << ","
+                      << agent->GetImmunityReducedAcquire()*
+                         agent->GetInterventionReducedAcquire()        << std::endl;
+  }
 
   // End of timestep outputs
   void ReportLineList::EndTimestep(float currentTime, float dt)

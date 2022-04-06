@@ -32,6 +32,6 @@ namespace Kernel
     protected:
         virtual void Expire();
 
-        IndividualInterventionConfig intervention_list;
+        IndividualInterventionConfigList intervention_list;
     };
 }

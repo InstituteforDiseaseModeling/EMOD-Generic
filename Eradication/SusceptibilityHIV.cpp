@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "RANDOM.h"
 #include "math.h"
 #include "NodeEventContext.h"   // Needed for parent->GetEventContext()->GetNodeEventContext()
-#include "SimulationConfig.h"
 #include "EventTrigger.h"
 
 #ifndef DISABLE_TBHIV
@@ -129,10 +128,10 @@ namespace Kernel
         HANDLE_INTERFACE(ISusceptibilityHIV)
     END_QUERY_INTERFACE_BODY(SusceptibilityHIV)
 
-    Susceptibility *SusceptibilityHIV::CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod)
+    Susceptibility *SusceptibilityHIV::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
         SusceptibilityHIV *newsusceptibility = _new_ SusceptibilityHIV(context);
-        newsusceptibility->Initialize(age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
@@ -186,7 +185,6 @@ namespace Kernel
     // suppression intervention (e.g., ART) -- increases. 
     void SusceptibilityHIV::Update(float dt)
     {
-        age += dt; // tracks age for immune purposes
         Susceptibility::Update(dt);
 
         release_assert( hiv_parent );
@@ -268,9 +266,9 @@ namespace Kernel
         //placeholder, in TB it counts the number of simultaneous infections you have
     }
 
-    void SusceptibilityHIV::Initialize(float _age, float _immmod, float _riskmod)
+    void SusceptibilityHIV::Initialize(float _immmod, float _riskmod)
     {
-        Susceptibility::Initialize(_age, _immmod, _riskmod);
+        Susceptibility::Initialize(_immmod, _riskmod);
 
         if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&hiv_parent) )
         {

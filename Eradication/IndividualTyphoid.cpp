@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IContagionPopulation.h"
 #include "TyphoidInterventionsContainer.h"
 #include "IdmString.h"
-#include "SimulationConfig.h"
 #include "NodeTyphoid.h"
 #include "NodeTyphoidEventContext.h"
 #include "IdmDateTime.h"
@@ -97,16 +96,6 @@ namespace Kernel
         return ret;
     }
 
-    void IndividualHumanTyphoid::InitializeStaticsTyphoid( const Configuration * config )
-    {
-        SusceptibilityTyphoidConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionTyphoidConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanTyphoidConfig human_config;
-        human_config.Configure( config );
-    }
-
     class Stopwatch
     {
         public:
@@ -149,7 +138,7 @@ namespace Kernel
 #ifdef ENABLE_PYTHOID
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         // Call into python script to notify of new individual
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "create" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "create" ));
         if( pFunc )
         {
             // pass individual id
@@ -165,10 +154,6 @@ namespace Kernel
             PyTuple_SetItem(vars, 3, py_newsex_str );
             PyObject_CallObject( pFunc, vars );
 
-            //Py_DECREF( vars );
-            //Py_DECREF( py_newid_str );
-            //Py_DECREF( py_newmcweight_str );
-            //Py_DECREF( py_newage_str );
             PyErr_Print();
         }
         delete check;
@@ -184,15 +169,13 @@ namespace Kernel
 #ifdef ENABLE_PYTHOID
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         // Call into python script to notify of new individual
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "destroy" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "destroy" ));
         if( pFunc )
         {
             static PyObject * vars = PyTuple_New(1);
             PyObject* py_id = PyLong_FromLong( GetSuid().data );
             PyTuple_SetItem(vars, 0, py_id );
             PyObject_CallObject( pFunc, vars );
-            //Py_DECREF( vars );
-            //Py_DECREF( py_id_str  );
             PyErr_Print();
         }
         delete check;
@@ -221,7 +204,7 @@ namespace Kernel
 
     void IndividualHumanTyphoid::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        SusceptibilityTyphoid *newsusceptibility = SusceptibilityTyphoid::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        SusceptibilityTyphoid *newsusceptibility = SusceptibilityTyphoid::CreateSusceptibility(this, imm_mod, risk_mod);
         typhoid_susceptibility = newsusceptibility;
         susceptibility = newsusceptibility;
     }
@@ -257,7 +240,7 @@ namespace Kernel
         }
 
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "expose" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "expose" ));
         if( pFunc )
         {
             // pass individual id AND dt
@@ -284,11 +267,6 @@ namespace Kernel
                 StrainIdentity strainId;
                 AcquireNewInfection(&strainId);
             }
-            //Py_DECREF( vars );
-            //Py_DECREF( py_existing_id_str );
-            //Py_DECREF( py_contagion_pop );
-            //Py_DECREF( py_dt );
-            //Py_DECREF( py_tx_route );
             Py_DECREF( retVal );
         }
         delete check;
@@ -394,7 +372,7 @@ namespace Kernel
                     auto ira = interventions->GetInterventionReducedAcquire();
                     if ( ira < 1.0f )
                     {
-                        LOG_VALID_F( "SimpleVaccine(?) modifier for individual %d (enviro route) = %f.\n", GetSuid().data, ira );
+                        LOG_VALID_F( "Vaccine modifier for individual %d (enviro route) = %f.\n", GetSuid().data, ira );
                     }
                     try
                     {
@@ -467,7 +445,7 @@ namespace Kernel
                 auto ira = interventions->GetInterventionReducedAcquire();
                 if( ira < 1.0f )
                 {
-                    LOG_VALID_F( "SimpleVaccine(?) modifier for individual %d (contact route) = %f.\n", GetSuid().data, ira );
+                    LOG_VALID_F( "Vaccine modifier for individual %d (contact route) = %f.\n", GetSuid().data, ira );
                 }
                 try
                 {
@@ -535,7 +513,7 @@ namespace Kernel
         //volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         for( auto &route: parent->GetTransmissionRoutes() )
         {
-            static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "update_and_return_infectiousness" );
+            static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "update_and_return_infectiousness" ));
             if( pFunc )
             {
                 // pass individual id ONLY
@@ -552,9 +530,6 @@ namespace Kernel
                 release_assert( transmissionGroupMembershipByRoute.find( route ) != transmissionGroupMembershipByRoute.end() );
                 LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, route.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                 parent->DepositFromIndividual( tmp_strainID, (float) val, &transmissionGroupMembershipByRoute.at( route ) );
-                //Py_DECREF( vars );
-                //Py_DECREF( py_existing_id_str );
-                //Py_DECREF( py_route_str );
                 Py_DECREF( retVal );
             }
         }
@@ -630,7 +605,7 @@ namespace Kernel
     {
 #ifdef ENABLE_PYTHOID
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "update" );
+        static auto pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "update" ));
         if( pFunc )
         {
             // pass individual id AND dt
@@ -655,9 +630,6 @@ namespace Kernel
             {
                 state_to_report = "DED";
             }
-            //Py_DECREF( vars );
-            //Py_DECREF( py_existing_id_str );
-            //Py_DECREF( py_dt_str );
             PyErr_Print();
         }
         delete check;
@@ -704,7 +676,7 @@ namespace Kernel
         IndividualHumanEnvironmental::AcquireNewInfection( infstrain, incubation_period_override );
 #ifdef ENABLE_PYTHOID
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "acquire_infection" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "acquire_infection" ));
         if( pFunc )
         {
             // pass individual id ONLY
@@ -712,7 +684,6 @@ namespace Kernel
             PyObject* py_existing_id = PyLong_FromLong( GetSuid().data );
             PyTuple_SetItem(vars, 0, py_existing_id );
             PyObject_CallObject( pFunc, vars );
-            //Py_DECREF( vars );
         }
         delete check;
 #else

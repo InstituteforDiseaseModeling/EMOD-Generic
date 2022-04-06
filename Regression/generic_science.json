@@ -16,24 +16,6 @@
             "path": "Generic/SFTs/Individual_Properties/02_Property_Targeting"
         },
         {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Acquisition"
-        },
-        {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Acquisition_BoostNaturalImmunity"
-        },
-        {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Transmission"
-        },
-        {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Transmission_BoostNaturalImmunity"
-        },
-        {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Mortality"
-        },
-        {
-            "path": "Generic/SFTs/SimpleBoosterVaccine/Generic"
-        },
-        {
             "path": "Generic/SFTs/MultiEffectBoosterVaccine/Generic"
         },
         {
@@ -263,7 +245,17 @@
         },
         {
             "path": "Generic/SFTs/SpatialReports/StatisticalPopulation"
+        },
+        {
+            "path": "Generic/SFTs/Individual_Properties/ChangeIPMatrix"
+        },
+        {
+            "path": "Generic/SFTs/Overdispersion/MultiNodes"
+        },
+        {
+            "path": "Generic/SFTs/Overdispersion/SingleNode"
         }
+        
     ],
     "skipped": [
         {

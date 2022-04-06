@@ -25,6 +25,8 @@
         "Family_Migration_Filename": "", 
         "x_Family_Migration": 1,
 
+        "Simulation_Type": "VECTOR_SIM",
+
         "Enable_Vector_Migration": 1,
 
         "Enable_Vector_Migration_Local" : 1,

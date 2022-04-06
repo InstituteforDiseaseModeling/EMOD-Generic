@@ -56,7 +56,6 @@
             },
             "Minimum_Adult_Age_Years": 15,
             "Population_Density_C50": 30,
-            "Population_Scale_Type": "USE_INPUT_FILE",
             "SAMPLING": {
                 "Base_Individual_Sample_Rate": 1,
                 "Individual_Sampling_Type": "TRACK_ALL",
@@ -71,7 +70,9 @@
             }
         },
         "DISEASE": {
+            "Enable_Infection_Rate_Overdispersion": 0,
             "Enable_Infectivity_Reservoir": 0,
+            "Enable_Infectivity_Scaling": 0,
             "Enable_Superinfection": 0,
             "INCUBATION": {
                 "Incubation_Period_Constant": 3,
@@ -101,6 +102,7 @@
         },
         "FUDGE_FACTORS": {
             "x_Air_Migration": 1,
+            "x_Base_Population": 1,
             "x_Birth": 1,
             "x_Larval_Habitats": 1,
             "x_Local_Migration": 1,
@@ -122,6 +124,7 @@
         "OUTPUT": {
             "Custom_Reports_Filename": "",
             "Enable_Default_Reporting": 1,
+            "Enable_Event_DB": 0,
             "Enable_Property_Output": 0,
             "Enable_Spatial_Output": 0,
             "Report_Coordinator_Event_Recorder": 0,
@@ -139,14 +142,14 @@
             "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
             "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
             "Node_Grid_Size": 0.042,
-            "Python_Inprocessing_Tsteps": [],
             "Run_Number": 0,
             "Simulation_Duration": 365,
             "Simulation_Timestep": 1,
             "Start_Time": 0
         },
         "SERIALIZATION": {
-            "Serialization_Type": "NONE"
+            "Serialized_Population_Writing_Type": "NONE",
+            "Serialized_Population_Reading_Type": "NONE"
         },
         "STRAIN_TRACKING": {}
     }

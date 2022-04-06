@@ -67,7 +67,7 @@ namespace Kernel
                           inputJson,
                           MetadataDescriptor::VectorOfEnum("Non_Adherence_Options", AD_Non_Adherence_Options_DESC_TEXT, MDD_ENUM_ARGS( NonAdherenceOptionsType )));
 
-        initConfigTypeMap(     "Non_Adherence_Distribution",      &non_adherence_probability, AD_Non_Adherence_Distribution_DESC_TEXT, 0.0f, 1.0f, 0.0f ); 
+        initConfigTypeMap(     "Non_Adherence_Distribution",      &non_adherence_probability, AD_Non_Adherence_Distribution_DESC_TEXT, 0.0f, 1.0f ); 
         initConfigTypeMap(     "Max_Dose_Consideration_Duration", &m_MaxDuration,             AD_Max_Dose_Consideration_Duration_DESC_TEXT, (1.0f/24.0f), FLT_MAX, FLT_MAX ); // 1-hour=1/24
         initConfig( "Took_Dose_Event", m_TookDoseEvent, inputJson, MetadataDescriptor::Enum("Non_Adherence_Options", AD_Took_Dose_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) ); 
                           

@@ -30,6 +30,8 @@ namespace Kernel
             return new DistributionPoisson();
         case DistributionFunction::EXPONENTIAL_DISTRIBUTION:
             return new DistributionExponential();
+        case DistributionFunction::GAMMA_DISTRIBUTION:
+            return new DistributionGamma();
         case DistributionFunction::LOG_NORMAL_DISTRIBUTION:
             return new DistributionLogNormal();
         case DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION:
@@ -76,6 +78,12 @@ namespace Kernel
             case DistributionFunction::EXPONENTIAL_DISTRIBUTION:
             {
                 DistributionExponentialConfigurable* distribution = new DistributionExponentialConfigurable();
+                distribution->Configure( pParent, base_parameter_name, config );
+                return distribution;
+            }
+            case DistributionFunction::GAMMA_DISTRIBUTION:
+            {
+                DistributionGammaConfigurable* distribution = new DistributionGammaConfigurable();
                 distribution->Configure( pParent, base_parameter_name, config );
                 return distribution;
             }
@@ -131,11 +139,14 @@ namespace Kernel
         DistributionExponentialConfigurable distribution_exponential;
         distribution_exponential.Configure( pParent, base_parameter_name, config );
 
+        DistributionGammaConfigurable distribution_gamma;
+        distribution_gamma.Configure( pParent, base_parameter_name, config );
+
         DistributionLogNormalConfigurable distribution_log_normal;
         distribution_log_normal.Configure( pParent, base_parameter_name, config );
 
-		DistributionDualExponentialConfigurable distribution_dual_exponential;
-		distribution_dual_exponential.Configure(pParent, base_parameter_name, config);
+        DistributionDualExponentialConfigurable distribution_dual_exponential;
+        distribution_dual_exponential.Configure(pParent, base_parameter_name, config);
 
         DistributionWeibullConfigurable distribution_weibull;
         distribution_weibull.Configure( pParent, base_parameter_name, config );

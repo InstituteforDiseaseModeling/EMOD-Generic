@@ -373,7 +373,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
     {
         if( inputJson->Exist("Age_Bins") )
         {
-            initConfigTypeMap("Age_Bins", &ages, "Age Bins (in years) to aggregate within and report", 0, MAX_HUMAN_AGE, 0, true );
+            initConfigTypeMap("Age_Bins", &ages, "Age Bins (in years) to aggregate within and report", 0, MAX_HUMAN_AGE, true );
         }
         else
         {
@@ -392,7 +392,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
         if( inputJson->Exist("Parasitemia_Bins") )
         {
-            initConfigTypeMap("Parasitemia_Bins", &PfPRbins, "Parasitemia Bins to aggregate within and report.  A value <= 0 in the first bin indicates that the uninfected people should be added to this bin.", -FLT_MAX, FLT_MAX, 0, true);
+            initConfigTypeMap("Parasitemia_Bins", &PfPRbins, "Parasitemia Bins to aggregate within and report.  A value <= 0 in the first bin indicates that the uninfected people should be added to this bin.", -FLT_MAX, FLT_MAX, true);
         }
         else
         {

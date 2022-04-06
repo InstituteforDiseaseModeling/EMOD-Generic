@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct INodeContext;
+    struct SimParams;
     class RANDOMBASE;
 
     struct IDMAPI ISimulation : ISerializable
@@ -25,6 +26,8 @@ namespace Kernel
         virtual void Initialize(const ::Configuration *config) = 0;
         virtual bool Populate() = 0;
         virtual void Update() = 0;
+
+        virtual const SimParams* GetParams() const = 0;
 
         virtual int  GetSimulationTimestep() const = 0;
         virtual const IdmDateTime& GetSimulationTime() const = 0;

@@ -35,9 +35,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -70,9 +69,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -105,9 +103,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -140,9 +137,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -175,9 +171,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -210,9 +205,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
@@ -245,9 +239,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -281,9 +274,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration1": "<-- MARKER",
                         "Box_Duration": 2745.587459435645,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
@@ -317,9 +309,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration1": "<-- MARKER",
                         "Box_Duration": 2745.587459435645,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
@@ -353,9 +344,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -389,9 +379,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -425,9 +414,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -461,9 +449,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -497,9 +484,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
@@ -533,9 +519,8 @@
                     "Cost_To_Consumer": 10.0,
                     "Durability_Time_Profile": "BOXDURABILITY",
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Box_Duration__KP_Duration2": "<-- MARKER",
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",

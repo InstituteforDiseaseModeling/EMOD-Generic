@@ -9,7 +9,7 @@ using namespace Kernel;
 // layer that can get passed to another extension module.
 
 void destroy_intervention(PyObject* intervention) {
-    delete (SimpleVaccine*)PyCapsule_GetPointer( intervention, "val" );
+    delete (Vaccine*)PyCapsule_GetPointer( intervention, "val" );
 }
 
 // This just creates an object. it can be returned to py layer and passed to another
@@ -18,10 +18,9 @@ void destroy_intervention(PyObject* intervention) {
 // "val" is from the tutorial. Not really sure about what that does if anything for us.
 static PyObject*
 getIntervention(PyObject *self, PyObject *args) {
-    auto new_vaccine = new SimpleVaccine();
+    auto new_vaccine = new Vaccine();
     auto vaccine_config_json = Configuration::Load( "sv.json" );
     new_vaccine->Configure( vaccine_config_json );
-    //new_vaccine->ApplyVaccineTake( nullptr ); // need to change something to make this work. I still have questions about how we do vaccine take
     // TBD: I haven't really investigated or thought about deallocation yet.
     return PyCapsule_New( (void*) new_vaccine, nullptr, nullptr );
 }
@@ -35,7 +34,7 @@ distribute(PyObject *self, PyObject *args) {
     }
     auto * man = (IndividualHuman *)PyCapsule_GetPointer(pf, nullptr );
     
-    auto * new_iv = new SimpleVaccine();
+    auto * new_iv = new Vaccine();
     Kernel::JsonConfigurable::_useDefaults = true;
     auto iv_config_json = Configuration::Load("sv.json");
     Kernel::JsonConfigurable::_useDefaults = false;

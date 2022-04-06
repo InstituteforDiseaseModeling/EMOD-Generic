@@ -71,7 +71,7 @@ def load_campaign_file(campaign_filename="campaign.json", debug=False):
     with open(campaign_filename) as infile:
         cf = json.load(infile)
     campaign_obj = {}
-    initial_effect = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"]["Waning_Config"][KEY_INITIAL_EFFECT]
+    initial_effect = cf["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"]["Acquire_Config"][KEY_INITIAL_EFFECT]
     campaign_obj[KEY_INITIAL_EFFECT] = initial_effect
     demographic_coverage_v = cf["Events"][0]["Event_Coordinator_Config"][KEY_DEMOGRAPHIC_COVERAGE]
     campaign_obj[KEY_DEMOGRAPHIC_COVERAGE_V] = demographic_coverage_v

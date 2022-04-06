@@ -56,7 +56,7 @@ namespace Kernel
         virtual void Initialize() override;
         virtual void Initialize(const ::Configuration *config) override;
 
-        static bool ValidateConfiguration(const ::Configuration *config);
+        virtual bool ValidateConfiguration(const ::Configuration *config) override;
 
         // holds a vector of migrating vectors for each node rank
         vector<vector<IVectorCohort*>> migratingVectorQueues;

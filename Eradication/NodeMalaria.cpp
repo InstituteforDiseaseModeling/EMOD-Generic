@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Malaria.h"
 #include "NodeMalariaEventContext.h"
 #include "MalariaParameters.h"
-#include "SimulationConfig.h"
 #include "IGenomeMarkers.h"
 #include "MathFunctions.h"
 #include "DistributionFactory.h"
@@ -79,11 +78,6 @@ namespace Kernel
         NodeMalaria::setupEventContextHost();    // This is marked as a virtual function, but isn't virtualized here because we're still in the ctor.
     }
 
-    bool NodeMalaria::Configure( const Configuration * config )
-    { 
-        return NodeVector::Configure( config );
-    }
-
     void NodeMalaria::Initialize()
     {
         NodeVector::Initialize();
@@ -115,10 +109,10 @@ namespace Kernel
         return IndividualHumanMalaria::CreateHuman(getContextPointer(), suid, monte_carlo_weight, initial_age, gender);
     }
 
-    IIndividualHuman* NodeMalaria::addNewIndividual( float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam, float mighet)
+    IIndividualHuman* NodeMalaria::addNewIndividual( float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam)
     {
         // just the base class for now
-        return NodeVector::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam, mighet);
+        return NodeVector::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam);
     }
 
     void NodeMalaria::LoadImmunityDemographicsDistribution()
@@ -268,11 +262,6 @@ namespace Kernel
         m_New_Severe_Cases        = 0;
 
         m_Maternal_Antibody_Fraction = 0;
-    }
-
-    const SimulationConfig* NodeMalaria::params()
-    {
-        return GET_CONFIGURABLE(SimulationConfig);
     }
 
     void NodeMalaria::setupEventContextHost()

@@ -12,8 +12,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "RANDOM.h"
 
 #include "suids.hpp"
+#include "ConfigParams.h"
 #include "Environment.h"
-#include "SimulationConfig.h"
 #include "NodeEventContext.h"
 #include "IndividualTyphoid.h"
 #include "INodeContext.h"
@@ -29,6 +29,8 @@ Configuration * configStubJson = nullptr;
 using namespace Kernel;
 void pyMathFuncInit() { }
 #include "../pymod_stubnode.h"
+
+
 PyObject *StubNode::my_callback = nullptr;
 PyObject *StubNode::mortality_callback = nullptr;
 PyObject *StubNode::deposit_callback = nullptr;
@@ -193,33 +195,37 @@ static Kernel::IndividualHumanTyphoid* initInd( int sex, float age, float mcw )
 
         std::cout << "configStubJson initialized from ti.json." << std::endl;
         //Kernel::JsonConfigurable::_useDefaults = true;
-        Kernel::IndividualHumanTyphoid::InitializeStatics( configStubJson );
-        {
-            Kernel::IndividualHumanConfig adam; // Malaria doesn't have anything to configure
-            adam.Configure( configStubJson ); // protected
-        }
-        {
-            Kernel::IndividualHumanTyphoidConfig adam; // Malaria doesn't have anything to configure
-            adam.Configure( configStubJson ); // protected
-        }
-        {
-            Kernel::IndividualHumanTyphoidConfig adam; // Malaria doesn't have anything to configure
-            adam.Configure( configStubJson ); // protected
-        }
-        {
-            Kernel::InfectionConfig fakeInfection;
-            fakeInfection.Configure( configStubJson ); // protected
-        }
-        {
-            Kernel::SusceptibilityConfig fakeImmunity;
-            fakeImmunity.Configure( configStubJson ); // protected
-            Kernel::SusceptibilityTyphoidConfig fakeImmunityMal;
-            fakeImmunityMal.Configure( configStubJson ); // protected
-        }
+
+        ConfigParams                         gen_config_obj;
+        IndividualHumanConfig                gen_individual_config_obj;
+        SusceptibilityConfig                 gen_susceptibility_config_obj;
+        InfectionConfig                      gen_infection_config_obj;
+
+        IndividualHumanEnvironmentalConfig   env_individual_config_obj;
+        SusceptibilityEnvironmentalConfig    env_susceptibility_config_obj;
+        InfectionEnvironmentalConfig         env_infection_config_obj;
+
+        IndividualHumanTyphoidConfig         typ_individual_config_obj;
+        SusceptibilityTyphoidConfig          typ_susceptibility_config_obj;
+        InfectionTyphoidConfig               typ_infection_config_obj;
+
+        gen_config_obj.Configure( configStubJson );
+        gen_individual_config_obj.Configure( configStubJson );
+        gen_susceptibility_config_obj.Configure( configStubJson );
+        gen_infection_config_obj.Configure( configStubJson );
+
+        env_individual_config_obj.Configure( configStubJson );
+        env_susceptibility_config_obj.Configure( configStubJson );
+        env_infection_config_obj.Configure( configStubJson );
+
+        typ_individual_config_obj.Configure( configStubJson );
+        typ_susceptibility_config_obj.Configure( configStubJson );
+        typ_infection_config_obj.Configure( configStubJson );
+
         std::cout << "Initialized Statics from gi.json." << std::endl;
     }
     Kernel::JsonConfigurable::_useDefaults = false; 
-    person->SetParameters( &node, 0.0f, 1.0f, 0.0f, 0.0f );
+    person->SetParameters( &node, 0.0f, 1.0f, 0.0f );
     return person;
 }
 
@@ -455,9 +461,8 @@ getImmunity(PyObject* self, PyObject* args)
     }
     else
     {
-        //std::cout << "Calling GetAcquisitionImmunity for individual " << id << std::endl;
-        imm = population.at( id )->GetAcquisitionImmunity();
-        //std::cout << "GetAcquisitionImmunity returned " << imm << " for individual " << id << std::endl;
+        imm = population.at( id )->GetImmunityReducedAcquire()*
+              population.at( id )->GetInterventionReducedAcquire();
     }
     return Py_BuildValue("f", imm );
 }

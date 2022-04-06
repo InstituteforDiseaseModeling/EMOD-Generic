@@ -25,10 +25,6 @@ namespace Kernel
     class ClimateConstant : public Climate
     {
     public:
-        GET_SCHEMA_STATIC_WRAPPER(ClimateConstant)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-        bool Configure( const Configuration* config );
         static ClimateConstant * CreateClimate( ClimateUpdateResolution::Enum update_resolution,
                                                 INodeContext * _parent,
                                                 float start_time,

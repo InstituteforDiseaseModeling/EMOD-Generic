@@ -125,7 +125,6 @@ namespace Kernel
         SetContextTo( context );
         getUpdatePointer();
 
-        //pNodeContext->PurgeExisting( typeid(*this).name() ); // hmm?  let's come back to this and query the right interfaces everywhere.
         bool distribute = BaseNodeIntervention::Distribute( context, pCCO ); 
         changing_effect->SetCurrentTime( context->GetTime().time );
         return distribute;

@@ -1,0 +1,11 @@
+{
+    "Default_Config_Path": "defaults/dengue_science_default_config.json",
+    "parameters": {
+        "Config_Name": "Dengue_SFT_InfectiousnessProbabilityThreshold",
+        "Demographics_Filenames": [
+            "../../Dengue_single_node_demographics.json"
+        ],
+        "Incubation_Period_Log_Normal_Mu": 0.758,
+        "logLevel_InfectionDengue": "VALID"
+    }
+}

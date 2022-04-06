@@ -9,7 +9,8 @@
     },
     "DEMOGRAPHICS": {
         "Demographics_Filenames": [
-            "Namawala_single_node_demographics.json"
+            "Namawala_single_node_demographics.json",
+            "demographics_overlay_initial_prevalence.json"
         ],
         "Enable_Initial_Prevalence": 1
     },
@@ -72,7 +73,9 @@
             65,
             66
         ],
-        "Serialization_Type": "TIMESTEP",
+        "Serialization_Precision" : "REDUCED",
+        "Serialized_Population_Writing_Type": "TIMESTEP",
+        "Serialization_Mask_Node_Write": 0,
         "Simulation_Duration": 66
     }
 }

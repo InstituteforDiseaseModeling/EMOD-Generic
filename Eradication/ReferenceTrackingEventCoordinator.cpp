@@ -45,9 +45,9 @@ namespace Kernel
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ReferenceTrackingEventCoordinator can only be used in STI, HIV, and TYPHOID simulations." );
         }
 
-        initConfigComplexType("Time_Value_Map", &year2ValueMap, RTEC_Time_Value_Map_DESC_TEXT );
-        initConfigTypeMap(    "Update_Period",  &update_period, RTEC_Update_Period_DESC_TEXT, 1.0,      10*DAYSPERYEAR, DAYSPERYEAR );
-        initConfigTypeMap(    "End_Year",       &end_year,      RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
+        initConfigTypeMap("Time_Value_Map", &year2ValueMap, RTEC_Time_Value_Map_DESC_TEXT );
+        initConfigTypeMap("Update_Period",  &update_period, RTEC_Update_Period_DESC_TEXT, 1.0,      10*DAYSPERYEAR, DAYSPERYEAR );
+        initConfigTypeMap("End_Year",       &end_year,      RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
 
         auto ret = StandardInterventionDistributionEventCoordinator::Configure( inputJson );
         num_repetitions = -1; // unlimited

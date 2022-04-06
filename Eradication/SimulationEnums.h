@@ -70,6 +70,12 @@ namespace Kernel
         ENUM_VALUE_SPEC(FAMILY_MIGRATION                                    , 5)
         ENUM_VALUE_SPEC(INTERVENTION_MIGRATION                              , 6))
 
+    // ENUM defs for Vector_Migration_Modifier_Equation
+    ENUM_DEFINE(ModiferEquationType,
+        ENUM_VALUE_SPEC(NOT_DEFINED                                         , 0)
+        ENUM_VALUE_SPEC(LINEAR                                              , 1)
+        ENUM_VALUE_SPEC(EXPONENTIAL                                         , 2))
+
     // ENUM defs for MORTALITY_TIME_COURSE
     ENUM_DEFINE(MortalityTimeCourse,
         ENUM_VALUE_SPEC(DAILY_MORTALITY                                     , 0)
@@ -80,31 +86,11 @@ namespace Kernel
         ENUM_VALUE_SPEC(FIXED_DURATION_CONSTANT_EFFECT                      , 0)
         ENUM_VALUE_SPEC(CONCENTRATION_VERSUS_TIME                           , 1))
 
-    // ENUM defs for POPULATION_SCALING
-    ENUM_DEFINE(PopulationScaling, 
-        ENUM_VALUE_SPEC(USE_INPUT_FILE                                      , 0)
-        ENUM_VALUE_SPEC(FIXED_SCALING                                       , 1))
-
-
     // ENUM defs for RANDOM_TYPE
     ENUM_DEFINE(RandomType, 
         ENUM_VALUE_SPEC(USE_PSEUDO_DES                                      , 0)
         ENUM_VALUE_SPEC(USE_LINEAR_CONGRUENTIAL                             , 1)
         ENUM_VALUE_SPEC(USE_AES_COUNTER                                     , 2))
-
-    // ENUM defs for Infectivity_Scale_Type (was SEASONAL_INFECTIVITY)
-    ENUM_DEFINE(InfectivityScaling, 
-        ENUM_VALUE_SPEC(CONSTANT_INFECTIVITY                                , 0)
-        ENUM_VALUE_SPEC(FUNCTION_OF_TIME_AND_LATITUDE                       , 1)
-        ENUM_VALUE_SPEC(FUNCTION_OF_CLIMATE                                 , 2)
-        ENUM_VALUE_SPEC(SINUSOIDAL_FUNCTION_OF_TIME                         , 3)
-        ENUM_VALUE_SPEC(ANNUAL_BOXCAR_FUNCTION                              , 4)
-        ENUM_VALUE_SPEC(EXPONENTIAL_FUNCTION_OF_TIME                        , 5))
-
-     // ENUM defs for Susceptibility_Scaling_Type (Susceptibility variation with simulation time)
-    ENUM_DEFINE(SusceptibilityScalingType,
-        ENUM_VALUE_SPEC(CONSTANT_SUSCEPTIBILITY                             , 0)
-        ENUM_VALUE_SPEC(LOG_LINEAR_FUNCTION_OF_TIME                         , 1))
 
      // ENUM defs for Maternal_Protection_Type (Susceptibility variation with agent age)
      ENUM_DEFINE(MaternalProtectionType,

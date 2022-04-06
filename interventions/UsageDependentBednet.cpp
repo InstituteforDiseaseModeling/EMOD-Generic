@@ -58,6 +58,8 @@ namespace Kernel
         schema[ ts ] = json::Array();
         schema[ ts ][ 0 ] = config.GetSchema();
 
+        schema["default"] = json::Array();
+
         return schema;
     }
 

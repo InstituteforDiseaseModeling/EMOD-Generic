@@ -37,7 +37,6 @@ namespace Kernel
     public:
         virtual ~NodeTB(void);
         static NodeTB *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
-        virtual bool Configure( const Configuration* config ) override;
 
         virtual ITransmissionGroups* CreateTransmissionGroups() override;
         virtual void BuildTransmissionRoutes( float contagionDecayRate ) override;
@@ -49,8 +48,7 @@ namespace Kernel
             int gender = 0,
             int initial_infections = 0,
             float immunity_parameter = 1.0,
-            float risk_parameter = 1.0,
-            float migration_heterogeneity = 1.0) override;
+            float risk_parameter = 1.0) override;
 
         //for event observers going to reporter
         virtual float GetIncidentCounter() const override;

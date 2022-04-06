@@ -25,16 +25,31 @@ SETUP_LOGGING("PythonSupport")
 
 namespace Kernel
 {
-    std::string PythonSupport::FUNCTION_NAME              = "application";
+#ifdef ENABLE_PYTHON
+    // Need custom NoneType because of delay-load DLL
+    void*       PythonSupport::PythonNoneType             = Py_BuildValue("");
+#endif
+
     std::string PythonSupport::SCRIPT_PRE_PROCESS         = "dtk_pre_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS        = "dtk_post_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS_SCHEMA = "dtk_post_process_schema";
     std::string PythonSupport::SCRIPT_IN_PROCESS          = "dtk_in_process";
-
     std::string PythonSupport::SCRIPT_PYTHON_FEVER        = "dtk_pydemo_individual";
     std::string PythonSupport::SCRIPT_TYPHOID             = "dtk_typhoid_individual";
+
+    std::string PythonSupport::FUNCTION_NAME              = "application";
+
     bool PythonSupport::m_PythonInitialized               = false; 
     std::string PythonSupport::m_PythonScriptPath         = PYTHON_SCRIPT_PATH_NOT_SET;
+
+    // PyObjectsMap[ModuleName][MemberName]
+    std::map<std::string, std::map<std::string, void*>> 
+                              PythonSupport::PyObjectsMap = {{PythonSupport::SCRIPT_PRE_PROCESS,         std::map<std::string, void*>()},
+                                                             {PythonSupport::SCRIPT_POST_PROCESS,        std::map<std::string, void*>()},
+                                                             {PythonSupport::SCRIPT_POST_PROCESS_SCHEMA, std::map<std::string, void*>()},
+                                                             {PythonSupport::SCRIPT_IN_PROCESS,          std::map<std::string, void*>()},
+                                                             {PythonSupport::SCRIPT_PYTHON_FEVER,        std::map<std::string, void*>()},
+                                                             {PythonSupport::SCRIPT_TYPHOID,             std::map<std::string, void*>()}};
 
     PythonSupport::PythonSupport()
     {
@@ -48,18 +63,6 @@ namespace Kernel
     bool PythonSupport::IsPythonInitialized()
     {
         return m_PythonInitialized;
-    }
-
-    bool PythonSupport::PythonScriptsExist()
-    {
-         // Simple business-logic check to see if python initialized but no scripts.
-         bool fcheck1 = FileSystem::FileExistsInPath(                ".", std::string( SCRIPT_PRE_PROCESS )  + ".py" );
-         bool fcheck2 = FileSystem::FileExistsInPath(                ".", std::string( SCRIPT_POST_PROCESS ) + ".py" );
-         bool fcheck3 = FileSystem::FileExistsInPath(                ".", std::string( SCRIPT_PYTHON_FEVER ) + ".py" );
-         bool fcheck4 = FileSystem::FileExistsInPath( m_PythonScriptPath, std::string( SCRIPT_PRE_PROCESS )  + ".py" );
-         bool fcheck5 = FileSystem::FileExistsInPath( m_PythonScriptPath, std::string( SCRIPT_POST_PROCESS ) + ".py" );
-
-        return ( fcheck1 || fcheck2 || fcheck3 || fcheck4 || fcheck5 );
     }
 
     void PythonSupport::SetupPython( const std::string& pythonScriptPath )
@@ -124,6 +127,22 @@ namespace Kernel
         PyObject* path_default = PyUnicode_FromString( "" );
         release_assert( path_default );
         release_assert( !PyList_Insert(sys_path, 0, path_default) );
+
+        // Import all possible modules and module contents on setup; re-assign nullptr if script not present
+        bool found_py_module = false;
+        for (auto PyModuleEntry : PyObjectsMap)
+        {
+            bool module_found  = ImportPyModule( PyModuleEntry.first );
+            found_py_module   |= module_found;
+        }
+
+        // Simple business-logic check to see if python initialized but no modules.
+        if( m_PythonInitialized && !found_py_module )
+        {
+            std::stringstream msg;
+            msg << "--python-script-path specified but no python scripts found.";
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
 #endif
         return;
     }
@@ -150,22 +169,13 @@ namespace Kernel
         return;
     }
 
-    std::string PythonSupport::RunPyFunction( const std::string& arg_string, const std::string& python_module, const std::string& python_function )
+    std::string PythonSupport::RunPyFunction( const std::string& arg_string, const std::string& python_module_name, const std::string& python_function_name )
     {
         std::string returnString = arg_string;
 
-        // Return immediately if no python or script doesn't exist
+        // Return immediately if no python
         if( !m_PythonInitialized )
         {
-            return returnString;
-        }
-
-        LOG_DEBUG_F( "Checking current working directory and python script path for embedded python script %s.\n", python_module.c_str() );
-        // Check for script on two paths: python-script-path and current directory
-        if( !FileSystem::FileExistsInPath( ".", std::string(python_module)+".py" ) &&
-            !FileSystem::FileExistsInPath( m_PythonScriptPath, std::string(python_module)+".py" ) )
-        {
-            LOG_DEBUG("File not found.\n");
             return returnString;
         }
 
@@ -173,43 +183,38 @@ namespace Kernel
         // Flush output in preparation for processing
         EnvPtr->Log->Flush();
 
-        // Get function pointer from script
-        PyObject* pFunc = GetPyFunction( python_module.c_str(), python_function.c_str() );
-
-        // Initialize function arguments
-        PyObject* vars  = PyTuple_New(1);
-        release_assert( vars );
-        PyObject* py_argstring = PyUnicode_FromString( arg_string.c_str() );
-        release_assert( py_argstring );
-        if (PyTuple_SetItem(vars, 0, py_argstring))
+        // Check if module present
+        if( PyObjectsMap.count(python_module_name) == 0 || PyObjectsMap[python_module_name].count(python_function_name) == 0 )
         {
-            std::stringstream msg;
-            msg << "Failed to construct arguments to python function.";
-            cleanPython();
-            throw Kernel::InitializationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+            return returnString;
         }
 
+        // Get function pointer from script
+        PyObject* pFunc = static_cast<PyObject*>(GetPyFunction( python_module_name, python_function_name ));
+
         // Call python function with arguments
-        PyObject* retValue = PyObject_CallObject( pFunc, vars );
-        if(!retValue)
+        PyObject* vars   = Py_BuildValue( "(s)", arg_string.c_str() );
+        PyObject* retVal = PyObject_CallObject( pFunc, vars );
+
+        if(!retVal)
         {
             std::stringstream msg;
-            msg << "Python function '" << python_function << "' in " << python_module << ".py failed.";
+            msg << "Python function '" << python_function_name << "' in " << python_module_name << ".py failed.";
             cleanPython();
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
         // Handle return value
-        if(PyUnicode_Check(retValue))
+        if(PyUnicode_Check(retVal))
         {
-            const char* retValuePtr = PyUnicode_AsUTF8(retValue);
+            const char* retValuePtr = PyUnicode_AsUTF8(retVal);
             release_assert( retValuePtr );
             returnString.assign( retValuePtr );
         }
-        else if (retValue != Py_BuildValue(""))
+        else if (retVal != PythonSupport::PythonNoneType)
         {
             std::stringstream msg;
-            msg << "Python function '" << python_function << "' in " << python_module
+            msg << "Python function '" << python_function_name << "' in " << python_module_name
                 << ".py did not provide an expected return value. Expected: string or None.";
             cleanPython();
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
@@ -219,40 +224,89 @@ namespace Kernel
         PyObject* sys_stdout = PySys_GetObject("stdout");
         release_assert( sys_stdout );
         release_assert(PyObject_CallMethod(sys_stdout, "flush", nullptr));
+
+        // Memory cleanup
+        Py_XDECREF(vars);
+        Py_XDECREF(retVal);
 #endif
         return returnString;
     }
 
-#ifdef ENABLE_PYTHON
-    PyObject* PythonSupport::GetPyFunction( const char * python_module, const char * python_function )
+    void* PythonSupport::GetPyFunction( const std::string& python_module_name, const std::string& python_function_name )
     {
+        void* retVal = nullptr;
+
+#ifdef ENABLE_PYTHON
+        // Check if module present
+        if( PyObjectsMap.count(python_module_name) == 0 )
+        {
+            std::stringstream msg;
+            msg << "Python module " << python_module_name << " does not exist.";
+            cleanPython();
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        // Check if module present
+        if( PyObjectsMap[python_module_name].count(python_function_name) == 0 )
+        {
+            std::stringstream msg;
+            msg << "Python module " << python_module_name << " does not contain function '"
+                << python_function_name << "'.";
+            cleanPython();
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        retVal = PyObjectsMap[python_module_name][python_function_name];
+#endif
+        // Return pointer to an unverified python function; can't verify here with a delay-load dll
+        return retVal;
+    }
+
+    bool PythonSupport::ImportPyModule( const std::string& python_module_name )
+    {
+#ifdef ENABLE_PYTHON
+        LOG_DEBUG_F( "Checking current working directory and python script path for embedded python script %s.\n", python_module_name.c_str() );
+        // Check for script on two paths: python-script-path and current directory
+        if( !FileSystem::FileExistsInPath( ".", python_module_name+".py" ) &&
+            !FileSystem::FileExistsInPath( m_PythonScriptPath, python_module_name+".py" ) )
+        {
+            LOG_DEBUG("File not found.\n");
+            return false;
+        }
+
         // Loads contents of script as a module into current python instance
-        PyObject* pName = PyUnicode_FromString( python_module );
+        PyObject* pName = PyUnicode_FromString( python_module_name.c_str() );
         release_assert( pName );
         PyObject* pModule = PyImport_Import( pName );
         if(PyErr_Occurred())
         {
             std::stringstream msg;
-            msg << "Python script '" << python_module << "' failed to import as module.";
+            msg << "Python script '" << python_module_name << "' failed to import as module.";
             cleanPython();
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        // Verifies existance of function in module
+        // Get dictionary of module contents
         PyObject* pDict = PyModule_GetDict( pModule );
         release_assert( pDict );
-        PyObject* pFunc = PyDict_GetItemString( pDict, python_function );
-        if(!pFunc)
-        {
-            std::stringstream msg;
-            msg << "Python module " << python_module << " does not contain function '"
-                << python_function << "'.";
-            cleanPython();
-            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
 
-        // Return pointer to an unverified python function; can't verify here with a delay-load dll
-        return pFunc;
-    }
+        PyObject *dict_key, *dict_value;
+        Py_ssize_t dict_pos = 0;
+
+        // Store pointers to everything within the python module
+        while (PyDict_Next(pDict, &dict_pos, &dict_key, &dict_value))
+        {
+            std::string python_dict_entry;
+            char* retValuePtr = PyUnicode_AsUTF8( dict_key );
+            release_assert( retValuePtr );
+            python_dict_entry.assign( retValuePtr );
+            if(PyCallable_Check(dict_value))
+            {
+                PyObjectsMap[python_module_name][python_dict_entry] = dict_value;
+            }
+        }
 #endif
+        return true;
+    }
+
 }

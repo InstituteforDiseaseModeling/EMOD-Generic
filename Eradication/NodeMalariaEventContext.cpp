@@ -11,9 +11,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include "NodeMalariaEventContext.h"
-#include "InterventionsContainer.h" //IDrugVaccineInterventionEffects
+#include "InterventionsContainer.h"
 #include "MalariaContexts.h" // for IMalariaHumanInfectable
 #include "IInfectable.h"     // for IInfectionAcquirable
+#include "IIndividualHumanContext.h"
 #include "RANDOM.h"
 
 SETUP_LOGGING( "NodeMalariaEventContext" )
@@ -43,17 +44,11 @@ namespace Kernel
                 relative_risk = risk(ihec->GetAge());
             }
 
-            IDrugVaccineInterventionEffects* idvie = nullptr;
-            if ( s_OK != ihec->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "ihec->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext");
-            }
-
             // Allow the bite challenge rate to be modified the individual factors that are usually handled in the Expose logic
             // GetRelativeBitingRate is already handled by the flexibility to pass in an age-risk function
             // Susceptibility::getModAcquire is only used in GENERIC and VECTOR immunity but not MALARIA
-            // InterventionsContainer::GetInterventionReducedAcquire can be modified by a SimpleVaccine intervention used in MALARIA_SIM
-            relative_risk *= idvie->GetInterventionReducedAcquire();
+            // InterventionsContainer::GetInterventionReducedAcquire can be modified by a Vaccine intervention used in MALARIA_SIM
+            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire();
 
             IMalariaHumanInfectable* imhi = nullptr;
             if ( s_OK !=  ihec->QueryInterface(GET_IID(IMalariaHumanInfectable), (void**)&imhi) )
@@ -86,17 +81,11 @@ namespace Kernel
                 relative_risk = risk(ihec->GetAge());
             }
 
-            IDrugVaccineInterventionEffects* idvie = nullptr;
-            if ( s_OK != ihec->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "ihec->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext");
-            }
-
             // Allow the bite challenge rate to be modified the individual factors that are usually handled in the Expose logic
             // GetRelativeBitingRate is already handled by the flexibility to pass in an age-risk function
             // Susceptibility::getModAcquire is only used in GENERIC and VECTOR immunity but not MALARIA
-            // InterventionsContainer::GetInterventionReducedAcquire can be modified by a SimpleVaccine intervention used in MALARIA_SIM
-            relative_risk *= idvie->GetInterventionReducedAcquire();
+            // InterventionsContainer::GetInterventionReducedAcquire can be modified by a Vaccine intervention used in MALARIA_SIM
+            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire();
 
             IMalariaHumanInfectable* imhi = nullptr;
             if ( s_OK !=  ihec->QueryInterface(GET_IID(IMalariaHumanInfectable), (void**)&imhi) )

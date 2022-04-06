@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Outbreak.h"
 
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "InterventionFactory.h"
 #include "NodeEventContext.h"  // for IOutbreakConsumer methods
 #include "StrainIdentity.h"
@@ -19,9 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "RANDOM.h"
 
 SETUP_LOGGING( "Outbreak" )
-
-// Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
 
 namespace Kernel
 {
@@ -40,19 +36,24 @@ namespace Kernel
     Outbreak::Outbreak()
         : clade(0)
         , genome(0)
-        , import_age(DAYSPERYEAR)
         , num_cases_per_node(0)
+        , import_age(0.0f)
+        , female_prob(0.0f)
+        , mc_weight(0.0f)
     {
         // Schema documentation
-        initSimTypes( 11, "GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM" );
+        initSimTypes( 12, "GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "AIRBORNE_SIM", "POLIO_SIM", "TBHIV_SIM", "STI_SIM", "HIV_SIM", "PY_SIM", "TYPHOID_SIM", "ENVIRONMENTAL_SIM", "DENGUE_SIM" );
     }
 
     bool Outbreak::Configure(const Configuration * inputJson)
     {
-        initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
-        initConfigTypeMap( "Genome",  &genome,  Genome_DESC_TEXT, 0, 16777215, 0, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,AIRBORNE_SIM,POLIO_SIM,TBHIV_SIM,STI_SIM,HIV_SIM,PY_SIM,DENGUE_SIM,MALARIA_SIM" );
-        initConfigTypeMap( "Import_Age", &import_age, Import_Age_DESC_TEXT, 0, MAX_HUMAN_AGE*DAYSPERYEAR, DAYSPERYEAR );
-        initConfigTypeMap( "Number_Cases_Per_Node",  &num_cases_per_node,  Num_Import_Cases_Per_Node_DESC_TEXT, 0, INT_MAX, 1 );
+        initConfigTypeMap( "Clade",                 &clade,               Clade_DESC_TEXT,                         0,         9,   0 );
+        initConfigTypeMap( "Genome",                &genome,              Genome_DESC_TEXT,                        0,  16777215,   0 );
+        initConfigTypeMap( "Number_Cases_Per_Node", &num_cases_per_node,  Num_Import_Cases_Per_Node_DESC_TEXT,     0,   INT_MAX,   1 );
+
+        initConfigTypeMap( "Import_Age",              &import_age,        Import_Age_DESC_TEXT,                 0.0f,  MAX_HUMAN_AGE*DAYSPERYEAR, DAYSPERYEAR );
+        initConfigTypeMap( "Import_Female_Prob",      &female_prob,       Import_Female_Prob_DESC_TEXT,         0.0f,                       1.0f,        0.5f );
+        initConfigTypeMap( "Import_Agent_MC_Weight",  &mc_weight,         Import_Agent_MC_Weight_DESC_TEXT,  FLT_MIN,                    FLT_MAX,        1.0f );
 
         // --------------------------------------------------------------
         // --- Don't call BaseIntervention::Configure() because we don't
@@ -69,7 +70,7 @@ namespace Kernel
 
         if (s_OK == context->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
         {
-            ioc->AddImportCases(&outbreak_strain, import_age, num_cases_per_node);
+            ioc->AddImportCases(&outbreak_strain, import_age, num_cases_per_node, female_prob, mc_weight);
             wasDistributed = true;
         }
         else

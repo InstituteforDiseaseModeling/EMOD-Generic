@@ -18,7 +18,7 @@ SETUP_LOGGING( "BaseEventReport" )
 namespace Kernel
 {
     BaseEventReport::BaseEventReport( const std::string& rReportName )
-        : IReport()
+        : BaseReport()
         , reportName(rReportName)
         , startDay(0.0f)
         , durationDays(0.0f)

@@ -8,17 +8,16 @@
             "Intervention_Config": {
                 "Cost_To_Consumer": 1.0, 
                 "Vaccine_Take": 1, 
-                "Vaccine_Type": "AcquisitionBlocking", 
-                "Waning_Config": {
+                "Acquire_Config": {
                     "Box_Duration": 20, 
                     "Initial_Effect": 0.25, 
                     "class": "WaningEffectBox"
                 }, 
-                "class": "SimpleVaccine",
-				"Efficacy_Is_Multiplicative" : 0
+                "class": "Vaccine",
+                "Efficacy_Is_Multiplicative" : 0
             }, 
-			"Number_Repetitions": 1,
-			"Timesteps_Between_Repetitions": 30,
+            "Number_Repetitions": 1,
+            "Timesteps_Between_Repetitions": 30,
             "Property_Restrictions": [ "QualityOfCare:1_VaccineOnly" ],
             "Target_Demographic": "Everyone", 
             "class": "StandardInterventionDistributionEventCoordinator"
@@ -29,23 +28,22 @@
         "Start_Day": 1, 
         "class": "CampaignEvent"
     },
-	{
+    {
         "Event_Coordinator_Config": {
             "Demographic_Coverage": 1.0, 
             "Intervention_Config": {
                 "Cost_To_Consumer": 1.0, 
                 "Vaccine_Take": 1, 
-                "Vaccine_Type": "AcquisitionBlocking", 
-                "Waning_Config": {
+                "Acquire_Config": {
                     "Box_Duration": 20, 
                     "Initial_Effect": 0.25, 
                     "class": "WaningEffectBox"
                 }, 
-                "class": "SimpleVaccine",
-				"Efficacy_Is_Multiplicative" : 0
+                "class": "Vaccine",
+                "Efficacy_Is_Multiplicative" : 0
             }, 
-			"Number_Repetitions": 2,
-			"Timesteps_Between_Repetitions": 1,
+            "Number_Repetitions": 2,
+            "Timesteps_Between_Repetitions": 1,
             "Property_Restrictions": [ "QualityOfCare:2_2Vaccines" ],
             "Target_Demographic": "Everyone", 
             "class": "StandardInterventionDistributionEventCoordinator"
@@ -56,23 +54,22 @@
         "Start_Day": 1, 
         "class": "CampaignEvent"
     },
-	{
+    {
         "Event_Coordinator_Config": {
             "Demographic_Coverage": 1.0, 
             "Intervention_Config": {
                 "Cost_To_Consumer": 1.0, 
                 "Vaccine_Take": 1, 
-                "Vaccine_Type": "AcquisitionBlocking", 
-                "Waning_Config": {
+                "Acquire_Config": {
                     "Box_Duration": 20, 
                     "Initial_Effect": 0.25, 
                     "class": "WaningEffectBox"
                 }, 
-                "class": "SimpleVaccine",
-				"Efficacy_Is_Multiplicative" : 0
+                "class": "Vaccine",
+                "Efficacy_Is_Multiplicative" : 0
             }, 
-			"Number_Repetitions": 3,
-			"Timesteps_Between_Repetitions": 1,
+            "Number_Repetitions": 3,
+            "Timesteps_Between_Repetitions": 1,
             "Property_Restrictions": [ "QualityOfCare:3_3Vaccines" ],
             "Target_Demographic": "Everyone", 
             "class": "StandardInterventionDistributionEventCoordinator"
@@ -83,23 +80,22 @@
         "Start_Day": 1, 
         "class": "CampaignEvent"
     },
-	{
+    {
         "Event_Coordinator_Config": {
             "Demographic_Coverage": 1.0, 
             "Intervention_Config": {
                 "Cost_To_Consumer": 1.0, 
                 "Vaccine_Take": 1, 
-                "Vaccine_Type": "AcquisitionBlocking", 
-                "Waning_Config": {
+                "Acquire_Config": {
                     "Box_Duration": 20, 
                     "Initial_Effect": 0.25, 
                     "class": "WaningEffectBox"
                 }, 
-                "class": "SimpleVaccine",
-				"Efficacy_Is_Multiplicative" : 0
+                "class": "Vaccine",
+                "Efficacy_Is_Multiplicative" : 0
             }, 
-			"Number_Repetitions": 5,
-			"Timesteps_Between_Repetitions": 1,
+            "Number_Repetitions": 5,
+            "Timesteps_Between_Repetitions": 1,
             "Property_Restrictions": [ "QualityOfCare:4_5Vaccines" ],
             "Target_Demographic": "Everyone", 
             "class": "StandardInterventionDistributionEventCoordinator"
@@ -110,26 +106,26 @@
         "Start_Day": 1, 
         "class": "CampaignEvent"
     },
-	{
-		"Event_Coordinator_Config": {
-			"Demographic_Coverage": 1.0,
-			"Intervention_Config": {
-				"Antigen": 0,
-				"Genome": 0,
-				"class": "OutbreakIndividual",
-				"Ignore_Immunity": 0
-			},
-			"Number_Repetitions": 1,
-			"Timesteps_Between_Repetitions": 30,
-			"Target_Demographic": "Everyone",
-			"class": "StandardInterventionDistributionEventCoordinator"
-		},
-		"Event_Name": "Outbreak",
-		"Nodeset_Config": {
-			"class": "NodeSetAll"
-		},
-		"Start_Day": 10,
-		"class": "CampaignEvent"
-	}
+    {
+        "Event_Coordinator_Config": {
+            "Demographic_Coverage": 1.0,
+            "Intervention_Config": {
+                "Antigen": 0,
+                "Genome": 0,
+                "class": "OutbreakIndividual",
+                "Ignore_Immunity": 0
+            },
+            "Number_Repetitions": 1,
+            "Timesteps_Between_Repetitions": 30,
+            "Target_Demographic": "Everyone",
+            "class": "StandardInterventionDistributionEventCoordinator"
+        },
+        "Event_Name": "Outbreak",
+        "Nodeset_Config": {
+            "class": "NodeSetAll"
+        },
+        "Start_Day": 10,
+        "class": "CampaignEvent"
+    }
     ]
 }

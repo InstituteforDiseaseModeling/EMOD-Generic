@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InfectionAirborne.h"
 #include "NodeAirborne.h"
 #include "SusceptibilityAirborne.h"
-#include "SimulationConfig.h"
 
 SETUP_LOGGING( "SimulationAirborne" )
 
@@ -33,7 +32,10 @@ namespace Kernel
     void SimulationAirborne::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
-        IndividualHumanAirborne::InitializeStaticsAirborne( config );
+
+        InfectionAirborneConfig  air_infection_config;
+
+        air_infection_config.Configure( config );
     }
 
     SimulationAirborne *SimulationAirborne::CreateSimulation()
@@ -53,7 +55,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "AIRBORNE_SIM requested with invalid configuration." );
@@ -65,13 +67,9 @@ namespace Kernel
 
     bool SimulationAirborne::ValidateConfiguration(const ::Configuration *config)
     {
-        if (!Simulation::ValidateConfiguration(config))
-            return false;
-
         // TODO: any disease-specific validation goes here.
-        // Warning: static climate parameters are not configured until after this function is called
 
-        return true;
+        return Simulation::ValidateConfiguration(config);
     }
 
     void SimulationAirborne::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

@@ -1,0 +1,98 @@
+{
+    "Defaults": {},
+    "Metadata": {
+        "IdReference": "Gridded world grump2.5arcmin"
+    },
+    "Nodes": [
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.11
+            },
+            "NodeID": 358876977
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.13
+            },
+            "NodeID": 358876978
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.12
+            },
+            "NodeID": 358942512
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.11
+            },
+            "NodeID": 358942513
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.11
+            },
+            "NodeID": 358942514
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.11
+            },
+            "NodeID": 359008047
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.19
+            },
+            "NodeID": 359008048
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.18
+            },
+            "NodeID": 359008049
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.14
+            },
+            "NodeID": 359008050
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.15
+            },
+            "NodeID": 359008051
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.18
+            },
+            "NodeID": 359073583
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.19
+            },
+            "NodeID": 359073584
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.17
+            },
+            "NodeID": 359073585
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.2
+            },
+            "NodeID": 359073587
+        },
+        {
+            "IndividualAttributes": {
+                "InitialPrevalence": 0.14
+            },
+            "NodeID": 359139117
+        }
+    ]
+}

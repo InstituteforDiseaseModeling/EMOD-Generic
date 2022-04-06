@@ -261,7 +261,7 @@ def application( output_folder="output", stdout_filename="test.txt", config_file
 
     demo_path = "Assets" if stdout_filename == "StdOut.txt" else ""
     property_list = HINT_Support.load_demo_mr_overlay_file(
-        config_obj[ConfigKeys.Demographics_Filenames][-1], demo_path, debug)
+        config_obj[ConfigKeys.Demographics_Filenames][-2], demo_path, debug)
     property_keys = HINT_Support.build_channel_string_for_property(property_list, channels, debug)
     property_df = HINT_Support.parse_property_report_json(property_report_name, output_folder, property_keys, debug)
     property_obj = property_list[0]  # this test only has one property object

@@ -21,7 +21,8 @@
         },
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Garki_single_demographics.json"
+                "Garki_single_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },

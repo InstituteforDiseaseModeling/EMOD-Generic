@@ -5,7 +5,8 @@
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
                 "hint_ageandaccess_demographics.json",
-                "hint_ageandaccess_overlay.json"
+                "hint_ageandaccess_overlay.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,

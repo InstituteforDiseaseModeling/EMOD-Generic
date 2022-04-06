@@ -35,9 +35,7 @@ namespace Kernel
     public:
         static NodePy *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual ~NodePy(void);
-        bool Configure( const Configuration* config );
 
-        //virtual void SetupIntranodeTransmission();
         virtual void resetNodeStateCounters(void);
         virtual void updateNodeStateCounters(IndividualHuman *ih);
         virtual void finalizeNodeStateCounters(void);

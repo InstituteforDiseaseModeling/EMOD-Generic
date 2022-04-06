@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SusceptibilityEnvironmental.h"
 #include "ReportEnvironmental.h"
 #include "PropertyReportEnvironmental.h"
-#include "SimulationConfig.h"
 #include "ProgVersion.h"
 
 using namespace Kernel;
@@ -46,7 +45,14 @@ namespace Kernel
     void SimulationEnvironmental::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
-        IndividualHumanEnvironmental::InitializeStaticsEnvironmental( config );
+
+        IndividualHumanEnvironmentalConfig   env_individual_config_obj;
+        SusceptibilityEnvironmentalConfig    env_susceptibility_config_obj;
+        InfectionEnvironmentalConfig         env_infection_config_obj;
+
+        env_individual_config_obj.Configure( config );
+        env_susceptibility_config_obj.Configure( config );
+        env_infection_config_obj.Configure( config );
     }
 
     SimulationEnvironmental *SimulationEnvironmental::CreateSimulation()
@@ -66,7 +72,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "ENVIRONMENTAL_SIM requested with invalid configuration." );
@@ -78,14 +84,11 @@ namespace Kernel
 
     bool SimulationEnvironmental::ValidateConfiguration(const ::Configuration *config)
     {
-        if (!Kernel::Simulation::ValidateConfiguration(config))
-            return false;
-
         // TODO: any disease-specific validation goes here.
-        // Warning: static climate parameters are not configured until after this function is called
 
-        return true;
+        return Simulation::ValidateConfiguration(config);
     }
+
     void SimulationEnvironmental::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                               suids::suid node_suid,
                                                               NodeDemographicsFactory *nodedemographics_factory,

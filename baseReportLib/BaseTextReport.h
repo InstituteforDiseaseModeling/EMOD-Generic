@@ -53,8 +53,8 @@ namespace Kernel
         void SetReportName(const std::string& new_name);
         void AddHeaderNewline(bool add_endl);
 
-        void GetDataFromOtherCores();
-        void WriteData( const std::string& rStringData );
+        virtual void GetDataFromOtherCores();
+        virtual void WriteData( const std::string& rStringData );
 
         // make protected so derived classes can set in Configure()
         bool write_every_time_step ;

@@ -101,46 +101,24 @@ class PythonFeverIndividual(PyIndividual):
 This is the 'shim' layer between the C++ and Python code. It connects by individual id.
 """
 def create( new_id, new_mcw, new_age, new_sex ):
-    #print( "py: creating new individual: " + str(new_id) )
     population[new_id] = PythonFeverIndividual( new_id, new_mcw, new_age, new_sex )
-    #population[new_id] = PyIndividual( new_id, new_mcw, new_age, new_sex )
 
 def destroy( dead_id ):
     del population[ dead_id ]
 
 def update( update_id, dt ):
-    #pdb.set_trace()
-    #print( "py: updating individual: " + str(update_id) )
     return population[update_id].Update( dt )
 
 def update_and_return_infectiousness( update_id, route ):
-    #pdb.set_trace()
-    #print( "py: getting individual infectiousness by route for individual " + str(update_id) + " and route " + route )
     return population[ update_id ].GetInfectiousness()
 
 def acquire_infection( update_id ):
-    #pdb.set_trace()
-    #print( "py: acquire_infection: " + str(update_id) )
     population[ update_id ].AcquireInfection( )
 
 def expose( update_id, contagion_population, dt, route ):
-    #pdb.set_trace()
-    #print( "py: expose: " + str( update_id ) )
     return population[ update_id ].Expose( contagion_population, dt )
 
 def start_timestep():
     for i in population:
         population[ i ]._age = population[ i ]._age + 1
 
-# Show how to read config.json params directly into python layer
-if os.path.exists( "config.json" ) == False:
-    print( "Failed to find or open config.json. Exiting." )
-    sys.exit()
-config_json = json.loads( open( "config.json" ).read() )["parameters"]
-
-#for param in ["PythonFever_Acute_Infectivity","PythonFever_Prepatent_Infectivity","PythonFever_Subclinical_Infectivity","PythonFever_Chronic_Infectivity"]:
-#    if param not in config_json:
-#        print( "Failed to find key (parameter) " + param + " in config.json." )
-#        sys.exit()
-
-#PythonFeverIndividual._acute_infectivity = config_json["PythonFever_Acute_Infectivity"]

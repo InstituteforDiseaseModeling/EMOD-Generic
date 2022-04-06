@@ -4,7 +4,8 @@
             "Demographics_Filenames": [
                 "../../Demographics/demographics.json",
                 "../../Demographics/demographics_1000_overlay.json",
-                "../../Demographics/demographics_mr_2groups_overlay.json"
+                "../../Demographics/demographics_mr_2groups_overlay.json",
+                "Exponential_overlay.json"
             ]
         },
         "DISEASE": {

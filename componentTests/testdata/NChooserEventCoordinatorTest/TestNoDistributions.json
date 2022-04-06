@@ -4,23 +4,30 @@
     [
     ],
     "Intervention_Config": {
-        "class": "ControlledVaccine",
-        "Intervention_Name" : "TheVaccine",
-        "Vaccine_Type": "AcquisitionBlocking",
+        "Cost_To_Consumer": 10,
+        "Intervention_Name": "TheVaccine",
         "Vaccine_Take": 0.75,
-        "Waning_Config": {
-            "class": "WaningEffectMapLinear",
-            "Initial_Effect" : 1.0,
-            "Expire_At_Durability_Map_End" : 1,
-            "Durability_Map" :
-            {
-                "Times"  : [   0, 120, 240, 360 ],
-                "Values" : [ 0.7, 0.8, 1.0, 0.0 ]
-            }
+        "Acquire_Config": {
+            "Durability_Map": {
+                "Times": [
+                    0,
+                    120,
+                    240,
+                    360
+                ],
+                "Values": [
+                    0.7,
+                    0.8,
+                    1.0,
+                    0.0
+                ]
+            },
+            "Expire_At_Durability_Map_End": 1,
+            "Initial_Effect": 1.0,
+            "class": "WaningEffectMapLinear"
         },
-        "Distributed_Event_Trigger" : "Vaccinated",
-        "Expired_Event_Trigger"     : "VaccineExpired",
-        "Duration_To_Wait_Before_Revaccination" : 240,
-        "Cost_To_Consumer": 10
+        "Event_Trigger_Distributed" : "GP_EVENT_000",
+        "Event_TriggerExpired"     : "GP_EVENT_001",
+        "class": "Vaccine"
     }
 }

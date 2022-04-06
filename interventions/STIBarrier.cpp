@@ -63,7 +63,7 @@ namespace Kernel
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTIBarrierConsumer", "IIndividualHumanInterventionsContext" );
         }
-        //context->PurgeExisting( typeid(*this).name() );
+
         return BaseIntervention::Distribute( context, pCCO );
     }
 

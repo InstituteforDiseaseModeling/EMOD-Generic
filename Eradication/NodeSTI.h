@@ -25,7 +25,6 @@ namespace Kernel
         static NodeSTI *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
 
         virtual void Initialize() override;
-        virtual bool Configure( const Configuration* config ) override;
 
         virtual void GetGroupMembershipForIndividual_STI( const std::map<std::string, uint32_t>& properties, std::map< int, TransmissionGroupMembership_t>& membershipOut ) override;
 
@@ -56,8 +55,5 @@ namespace Kernel
         
 
         DECLARE_SERIALIZABLE(NodeSTI);
-
-    private:
-        float pfa_burnin_duration;
     };
 }

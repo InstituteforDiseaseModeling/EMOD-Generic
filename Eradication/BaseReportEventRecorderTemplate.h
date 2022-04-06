@@ -42,7 +42,7 @@ namespace Kernel
     {
         std::vector<EventTrigger::Enum> tmp_event_trigger_list;
 
-        JsonConfigurable::initVectorConfig( m_EventsListName.c_str(), tmp_event_trigger_list, inputJson, MetadataDescriptor::VectorOfEnum(m_EventsListName.c_str(), m_EventsListDesc.c_str(), MDD_ENUM_ARGS(EventTrigger))); // , m_EnableParameterName.c_str() );
+        JsonConfigurable::initVectorConfig( m_EventsListName.c_str(), tmp_event_trigger_list, inputJson, MetadataDescriptor::VectorOfEnum(m_EventsListName.c_str(), m_EventsListDesc.c_str(), MDD_ENUM_ARGS(EventTrigger)), m_EnableParameterName.c_str());
         JsonConfigurable::initConfigTypeMap( m_IgnoreEventsListName.c_str(), &ignore_events_in_list,  m_IgnoreEventsListDesc.c_str(), false, m_EnableParameterName.c_str() );
 
         
@@ -59,29 +59,24 @@ namespace Kernel
                 LOG_WARN( ss.str().c_str() );
             }
             else
-	    {
-                // This logic goes through all possible events.  It checks to see if that event
-                // is in the listen-to-these event_list provided by the user. But that list can be a 
-                // whitelist or blacklist. If using whitelist AND event-requested is in master THEN listen.
-                // else if using blacklist AND if event-(de)requested is not in master THEN listen.
-
+            {
                 // This is a pile of crap from the old way of doing it. Just iterate through an enum now. 
                 std::vector<EventTrigger::Enum> all_trigger_list;
-		for( unsigned int trigger_idx = EventTrigger::NoTrigger; trigger_idx < EventTrigger::NUM_EVENT_TRIGGERS; trigger_idx++ )
-		{
-		    EventTrigger::Enum trigger = EventTrigger::Enum( trigger_idx );
-		    all_trigger_list.push_back( trigger );
-		}
+                for( unsigned int trigger_idx = EventTrigger::NoTrigger; trigger_idx < EventTrigger::NUM_EVENT_TRIGGERS; trigger_idx++ )
+                {
+                    EventTrigger::Enum trigger = EventTrigger::Enum( trigger_idx );
+                    all_trigger_list.push_back( trigger );
+                }
 
-		for( auto idx : all_trigger_list )
-		{
-		    bool in_event_list = std::find( tmp_event_trigger_list.begin(), tmp_event_trigger_list.end(), idx ) != tmp_event_trigger_list.end(); 
-		    if( ignore_events_in_list != in_event_list )
-		    {
-		         // list of events to listen for
-			BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::eventTriggerList.push_back( idx );
-		    }
-		}
+                for( auto idx : all_trigger_list )
+                {
+                    bool in_event_list = std::find( tmp_event_trigger_list.begin(), tmp_event_trigger_list.end(), idx ) != tmp_event_trigger_list.end(); 
+                    if( ignore_events_in_list != in_event_list )
+                    {
+                        // list of events to listen for
+                        BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>::eventTriggerList.push_back( idx );
+                    }
+                }
             }
         }
 

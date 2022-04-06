@@ -180,12 +180,12 @@ namespace Kernel
         return configured;
     }
 
-    void SusceptibilityMalaria::Initialize(float _age, float immmod, float riskmod)
+    void SusceptibilityMalaria::Initialize(float immmod, float riskmod)
     {
-        SusceptibilityVector::Initialize(_age, immmod, riskmod);
+        SusceptibilityVector::Initialize(immmod, riskmod);
 
         // how many RBC's a person should have determined by age
-        if (_age > (20 * DAYSPERYEAR))
+        if (GetParent()->GetAge() > (20 * DAYSPERYEAR))
         {
             // This initializes the daily production of red blood cells for adults to maintain standard equilibrium RBC concentrations given RBC lifetime
             // N.B. Heavily caveated, because not all adults are same size.  However, this keeps consistent equilibrium RBC densities, allowing study of anemia, etc...
@@ -199,8 +199,8 @@ namespace Kernel
         {
             // Initializes daily production of red blood cells for children to grow linearly from INFANT_RBC_PRODUCTION to ADULT_RBC_PRODUCTION by age 20
             // Only approximate due to linear increase in blood volume from 0.5 to 5 liters from birth to age 20 years.  Non-linear growth model might be better...
-            m_RBCproduction = int64_t(INFANT_RBC_PRODUCTION + (_age * 0.000137) * (ADULT_RBC_PRODUCTION - INFANT_RBC_PRODUCTION)); //*.000137==/7300 (linear growth to age 20)
-            m_inv_microliters_blood = float(1 / ( (0.225 * (_age/DAYSPERYEAR) + 0.5 ) * 1e6)); // linear growth from 0.5 liters at birth to 5 liters at age 20
+            m_RBCproduction = int64_t(INFANT_RBC_PRODUCTION + (GetParent()->GetAge() * 0.000137) * (ADULT_RBC_PRODUCTION - INFANT_RBC_PRODUCTION)); //*.000137==/7300 (linear growth to age 20)
+            m_inv_microliters_blood = float(1 / ( (0.225 * (GetParent()->GetAge()/DAYSPERYEAR) + 0.5 ) * 1e6)); // linear growth from 0.5 liters at birth to 5 liters at age 20
         }
 
         m_RBCcapacity = m_RBCproduction * AVERAGE_RBC_LIFESPAN;  // Health equilibrium of RBC is production*lifetime.  This is the total number of RBC per human
@@ -227,13 +227,13 @@ namespace Kernel
                 // Roucher et al., Changing Malaria Epidemiology and Diagnostic Criteria for Plasmodium falciparum Clinical Malaria, PLoS One, 2012; 7(9): e46188
                 // KM:10/15/2013 - TODO: Promote these function parameters to config variables: 
                 //                 age of max threshold, max threshold, min threshold, threshold at 0, exponential decay rate
-                if (_age < (2 * DAYSPERYEAR))
+                if (GetParent()->GetAge() < (2 * DAYSPERYEAR))
                 {
-                    m_ind_pyrogenic_threshold = 15000 + 500*_age/DAYSPERYEAR;
+                    m_ind_pyrogenic_threshold = 15000 + 500*GetParent()->GetAge()/DAYSPERYEAR;
                 }
                 else
                 {
-                    m_ind_pyrogenic_threshold = 14500 * exp(-.09*(_age/DAYSPERYEAR - 2)) + 1500;
+                    m_ind_pyrogenic_threshold = 14500 * exp(-.09*(GetParent()->GetAge()/DAYSPERYEAR - 2)) + 1500;
                 }
                 break;
 
@@ -248,7 +248,7 @@ namespace Kernel
 
         // Only need to do immunity initialization of initial population.
         // New births during the simulation can stop here.
-        if (_age == 0) return;
+        if (GetParent()->GetAge() == 0) return;
 
         if(SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_COMPLEX )
         {
@@ -260,25 +260,25 @@ namespace Kernel
 
             float rand = parent->GetRng()->eGauss();
             // -- MSP --
-            float msp_mean_antibody_fraction     = p_node_malaria->GetMSP_mean_antibody_distribution()->DrawResultValue(age);
-            float msp_variance_antibody_fraction = p_node_malaria->GetMSP_variance_antibody_distribution()->DrawResultValue(age);
+            float msp_mean_antibody_fraction     = p_node_malaria->GetMSP_mean_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
+            float msp_variance_antibody_fraction = p_node_malaria->GetMSP_variance_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
             InitializeAntibodyVariants(MalariaAntibodyType::MSP1, msp_mean_antibody_fraction + rand*msp_variance_antibody_fraction);
             // -- non-spec PfEMP-1 minor epitopes --
-            float nonspec_mean_antibody_fraction     = p_node_malaria->GetNonspec_mean_antibody_distribution()->DrawResultValue(age);
-            float nonspec_variance_antibody_fraction = p_node_malaria->GetNonspec_variance_antibody_distribution()->DrawResultValue(age);
+            float nonspec_mean_antibody_fraction     = p_node_malaria->GetNonspec_mean_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
+            float nonspec_variance_antibody_fraction = p_node_malaria->GetNonspec_variance_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
             InitializeAntibodyVariants(MalariaAntibodyType::PfEMP1_minor, nonspec_mean_antibody_fraction + rand*nonspec_variance_antibody_fraction);
             // -- major PfEMP-1 epitopes
-            float pfemp1_mean_antibody_fraction     = p_node_malaria->GetPfEMP1_mean_antibody_distribution()->DrawResultValue(age);
-            float pfemp1_variance_antibody_fraction = p_node_malaria->GetPfEMP1_variance_antibody_distribution()->DrawResultValue(age);
+            float pfemp1_mean_antibody_fraction     = p_node_malaria->GetPfEMP1_mean_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
+            float pfemp1_variance_antibody_fraction = p_node_malaria->GetPfEMP1_variance_antibody_distribution()->DrawResultValue(GetParent()->GetAge());
             InitializeAntibodyVariants(MalariaAntibodyType::PfEMP1_major, pfemp1_mean_antibody_fraction + rand*pfemp1_variance_antibody_fraction);
         }
     }
 
-    SusceptibilityMalaria *SusceptibilityMalaria::CreateSusceptibility(IIndividualHumanContext *context, float _age, float immmod, float riskmod)
+    SusceptibilityMalaria *SusceptibilityMalaria::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
         SusceptibilityMalaria *newsusceptibility = _new_ SusceptibilityMalaria(context);
         release_assert(newsusceptibility);
-        newsusceptibility->Initialize(_age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
@@ -308,9 +308,8 @@ namespace Kernel
         LOG_VALID("\n--------------------------------------------------\n\n");
         release_assert( params() );
 
-        age += dt;
-        m_age_dependent_biting_risk = BitingRiskAgeFactor(age);
-        recalculateBloodCapacity(age);
+        m_age_dependent_biting_risk = BitingRiskAgeFactor();
+        recalculateBloodCapacity();
 
         // Red blood cell dynamics
         if (SusceptibilityMalariaConfig::erythropoiesis_anemia_effect > 0)
@@ -526,15 +525,15 @@ namespace Kernel
         m_antigenic_flag = 1;
     }
 
-    void SusceptibilityMalaria::recalculateBloodCapacity( float _age )
+    void SusceptibilityMalaria::recalculateBloodCapacity()
     {
         // How many RBCs a person should have determined by age.
         // This sets the daily production of red blood cells for adults to maintain 
         // standard equilibrium RBC concentrations given RBC lifetime
-        if ( _age > (20 * DAYSPERYEAR) )
+        if ( GetParent()->GetAge() > (20 * DAYSPERYEAR) )
         {
             // Update adults every year.  TODO: this presumes DAYSPERYEAR is a multiple of dt
-            if ( int(_age) % DAYSPERYEAR == 0 )
+            if ( int(GetParent()->GetAge()) % DAYSPERYEAR == 0 )
             {
                 // 2.0*10^11 (RBCs/day)*(120 days)=2.4x10^13 RBCs ~= 5 liters * 5x10^6 RBCs/microliter
                 m_RBCproduction         = ADULT_RBC_PRODUCTION;
@@ -547,8 +546,8 @@ namespace Kernel
             // Update children every day.
             // Sets daily production of red blood cells for children to set their equilibrium RBC concentrations and blood volume given an RBC lifetime
             // Only approximate due to linear increase in blood volume from 0.5 to 5 liters with age, a better growth model would be nonlinear
-            m_RBCproduction         = int64_t(INFANT_RBC_PRODUCTION + (_age * .000137) * (ADULT_RBC_PRODUCTION - INFANT_RBC_PRODUCTION)); //*.000137==/(20*DAYSPERYEAR)
-            m_inv_microliters_blood = float(1 / ( (0.225 * (_age/DAYSPERYEAR) + 0.5 ) * 1e6 )); 
+            m_RBCproduction         = int64_t(INFANT_RBC_PRODUCTION + (GetParent()->GetAge() * .000137) * (ADULT_RBC_PRODUCTION - INFANT_RBC_PRODUCTION)); //*.000137==/(20*DAYSPERYEAR)
+            m_inv_microliters_blood = float(1 / ( (0.225 * (GetParent()->GetAge()/DAYSPERYEAR) + 0.5 ) * 1e6 )); 
             m_RBCcapacity           = m_RBCproduction * AVERAGE_RBC_LIFESPAN; // Health equilibrium of RBC is production*lifetime
         }
     }
@@ -623,7 +622,7 @@ namespace Kernel
                     else if ( rand < ( prob_severe * ( anemiaSevereFraction + parasiteSevereFraction + feverSevereFraction ) ) ) { severetype = SevereCaseTypesEnum::FEVER; }
                     else { LOG_WARN("This new severe case cannot be attributed to a cause (e.g. fever) because the sum of the partial fractions by cause exceed unity!\n"); }
 
-                    LOG_DEBUG_F("New SEVERE case in %0.1f-year old: type = %s (Hg=%0.1f, parasites=%3.2e, fever=%0.1f C)\n", age/DAYSPERYEAR, SevereCaseTypesEnum::pairs::lookup_key(severetype), GetHemoglobin(), m_parasite_density, 37+current_fever);
+                    LOG_DEBUG_F("New SEVERE case in %0.1f-year old: type = %s (Hg=%0.1f, parasites=%3.2e, fever=%0.1f C)\n", GetParent()->GetAge()/DAYSPERYEAR, SevereCaseTypesEnum::pairs::lookup_key(severetype), GetHemoglobin(), m_parasite_density, 37+current_fever);
                 }
                 cumulative_days_of_severe_incident += dt;
             }
@@ -640,12 +639,7 @@ namespace Kernel
 
             // check for fatal case (even if disease mortality is off just for logging purposes)
             // To query for mortality-reducing effects of drugs or vaccines
-            IDrugVaccineInterventionEffects* idvie = nullptr;
-            if ( s_OK != parent->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext" );
-            }
-            if ( rand < prob_fatal * idvie->GetInterventionReducedMortality() )
+            if ( rand < prob_fatal * parent->GetVaccineContext()->GetInterventionReducedMortality() )
             {
                 if ( InfectionConfig::enable_disease_mortality )
                 { 
@@ -974,7 +968,6 @@ namespace Kernel
 
     float SusceptibilityMalaria::get_maternal_antibodies()     const
     {
-        //if (m_maternal_antibody_strength > 0 ) LOG_DEBUG_F("Individual with age = %f days has m_maternal_antibody_strength = %f\n", age, m_maternal_antibody_strength);
         return m_maternal_antibody_strength;
     }
 

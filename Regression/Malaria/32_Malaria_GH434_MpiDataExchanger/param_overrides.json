@@ -55,7 +55,8 @@
         "Default_Geography_Initial_Node_Population": 100,
         "Default_Geography_Torus_Size": 10,
         "Demographics_Filenames": [
-            "LHM_Restructure/Munyumbwe_households_all_demographics_MN.json"
+            "LHM_Restructure/Munyumbwe_households_all_demographics_MN.json",
+            "demographics_overlay_initial_prevalence.json"
         ],
         "Egg_Hatch_Delay_Distribution": "NO_DELAY",
         "Egg_Saturation_At_Oviposition": "SATURATION_AT_OVIPOSITION",

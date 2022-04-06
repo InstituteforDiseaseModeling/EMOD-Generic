@@ -81,7 +81,7 @@ namespace Kernel
 
     public:
 
-        static SusceptibilityMalaria *CreateSusceptibility(IIndividualHumanContext *context, float _age = 20 * DAYSPERYEAR, float immmod = 1.0f, float riskmod = 1.0f);
+        static SusceptibilityMalaria *CreateSusceptibility(IIndividualHumanContext *context, float immmod = 1.0f, float riskmod = 1.0f);
         virtual ~SusceptibilityMalaria();
 
         virtual void Update(float dt) override;
@@ -125,7 +125,7 @@ namespace Kernel
         void  updateImmunityPfEMP1Minor( float dt );
         void  updateImmunityPfEMP1Major( float dt );
         void  decayAllAntibodies( float dt );
-        void  recalculateBloodCapacity( float _age );
+        void  recalculateBloodCapacity();
         void  countAntibodyVariations();
 
         // Immune initialization
@@ -191,6 +191,6 @@ namespace Kernel
 
         SusceptibilityMalaria();
         SusceptibilityMalaria(IIndividualHumanContext *context);
-        virtual void Initialize(float _age, float immmod, float riskmod) override;
+        virtual void Initialize(float immmod, float riskmod) override;
     };
 }

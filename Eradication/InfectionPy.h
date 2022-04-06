@@ -53,8 +53,6 @@ namespace Kernel
     protected:
         InfectionPy(); 
 
-        const SimulationConfig* params();
-
         InfectionPy(IIndividualHumanContext *context);
         void Initialize(suids::suid _suid);
 

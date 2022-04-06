@@ -20,12 +20,15 @@ namespace json
 class Writer : private ConstVisitor
 {
 public:
-   static void Write(const Element& elementRoot, std::ostream& ostr);
+   static void Write(const Element& elementRoot, std::ostream& ostr, const std::string& indentChars="\t");
       
 private:
-   Writer(std::ostream& ostr) :
+   Writer(std::ostream& ostr, const std::string& indentChars) :
       m_ostr(ostr),
+      m_indentChars(indentChars),
       m_nTabDepth(0) {}
+
+   std::string MultiIndent(int nReps);
 
    virtual void Visit(const Array& array);
    virtual void Visit(const Object& object);
@@ -35,6 +38,7 @@ private:
    virtual void Visit(const Null& null);
 
    std::ostream& m_ostr;
+   std::string m_indentChars;
    int m_nTabDepth;
 };
 

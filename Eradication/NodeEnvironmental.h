@@ -33,16 +33,9 @@ namespace Kernel
         NodeEnvironmental( ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid );
 
         double contagion;
-         // Environmental and Polio sims, unlike Generic, may have partial persistence of environmental contagion
-        ProbabilityNumber node_contagion_decay_fraction;
-        float environmental_ramp_up_duration;
-        float environmental_ramp_down_duration;
-        float environmental_peak_start;
-        float environmental_cutoff_days;
         ITransmissionGroups* txEnvironment;
 
         NodeEnvironmental();
-        virtual bool Configure( const Configuration* config ) override;
 
         // Factory methods
         virtual IIndividualHuman* createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender) override;

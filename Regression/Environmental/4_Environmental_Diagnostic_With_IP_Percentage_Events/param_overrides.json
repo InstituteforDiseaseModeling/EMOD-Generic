@@ -4,7 +4,8 @@
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
                 "Namawala_single_node_demographics.json",
-                "IP_overlay.json"
+                "IP_overlay.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Heterogeneous_Intranode_Transmission": 1
         },
@@ -17,7 +18,7 @@
         "Enable_Initial_Prevalence": 1,
         "PRIMARY": {
             "Config_Name": "4_Environmental_Diagnostic_With_IP_Percentage_Events",
-	    "Enable_Strain_Tracking": 0,
+            "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Node_Grid_Size": 0.009,

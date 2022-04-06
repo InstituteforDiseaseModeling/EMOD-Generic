@@ -18,7 +18,8 @@
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
             "Demographics_Filenames": [
-                "Garki_30arcsec_demographics.json"
+                "Garki_30arcsec_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1,
             "Enable_Natural_Mortality": 0,

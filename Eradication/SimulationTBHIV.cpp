@@ -56,7 +56,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "TBHIV_SIM requested with invalid configuration." );
@@ -68,12 +68,9 @@ namespace Kernel
 
     bool SimulationTBHIV::ValidateConfiguration(const ::Configuration *config)
     {
-        if (!SimulationAirborne::ValidateConfiguration(config))
-            return false;
+        // TODO: any disease-specific validation goes here.
 
-        // TODO: are there any more checks on configuration parameters we want to do here?
-
-        return true;
+        return SimulationAirborne::ValidateConfiguration(config);
     }
 
     void SimulationTBHIV::Initialize()
@@ -84,7 +81,26 @@ namespace Kernel
     void SimulationTBHIV::Initialize( const ::Configuration *config )
     {
         SimulationAirborne::Initialize( config );
-        IndividualHumanCoInfection::InitializeStaticsCoInfection( config );
+
+        IndividualHumanCoInfectionConfig   coi_individual_config_obj;
+        SusceptibilityTBConfig             coi_susceptibility_config_obj;
+        InfectionTBConfig                  coi_infection_config_obj;
+
+        SusceptibilityHIVConfig            hiv_susceptibility_config_obj;
+        InfectionHIVConfig                 hiv_infection_config_obj;
+
+        coi_individual_config_obj.Configure( config );
+        coi_susceptibility_config_obj.Configure( config );
+        coi_infection_config_obj.Configure( config );
+
+        if( IndividualHumanCoInfectionConfig::enable_coinfection )
+        {
+            // Create static, constant map between CD4 and factor for increased reactivation rate
+            coi_individual_config_obj.SetCD4Map( coi_infection_config_obj.GetCD4Map() );
+
+            hiv_susceptibility_config_obj.Configure( config );
+            hiv_infection_config_obj.Configure( config );
+        }
     }
 
     void SimulationTBHIV::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

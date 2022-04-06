@@ -58,56 +58,50 @@ namespace Kernel
         LOG_DEBUG("IndividualImmunityChanger destructor \n");
     }
 
-    bool
-    IndividualImmunityChanger::Configure(
-        const Configuration * inputJson
-    )
+    bool IndividualImmunityChanger::Configure(const Configuration * inputJson)
     {
+        initConfigTypeMap("Prime_Acquire",              &prime_acquire,              MEBV_Prime_Acquire_DESC_TEXT,              0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Prime_Transmit",             &prime_transmit,             MEBV_Prime_Transmit_DESC_TEXT,             0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Prime_Mortality",            &prime_mortality,            MEBV_Prime_Mortality_DESC_TEXT,            0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Acquire",              &boost_acquire,              MEBV_Boost_Acquire_DESC_TEXT,              0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Transmit",             &boost_transmit,             MEBV_Boost_Transmit_DESC_TEXT,             0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Mortality",            &boost_mortality,            MEBV_Boost_Mortality_DESC_TEXT,            0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Threshold_Acquire",    &boost_threshold_acquire,    MEBV_Boost_Threshold_Acquire_DESC_TEXT,    0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Threshold_Transmit",   &boost_threshold_transmit,   MEBV_Boost_Threshold_Transmit_DESC_TEXT,   0.0f, 1.0f, 0.0f);
+        initConfigTypeMap("Boost_Threshold_Mortality",  &boost_threshold_mortality,  MEBV_Boost_Threshold_Mortality_DESC_TEXT,  0.0f, 1.0f, 0.0f);
 
-        initConfigTypeMap("Prime_Acquire", &prime_acquire, MEBV_Prime_Acquire_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Prime_Transmit", &prime_transmit, MEBV_Prime_Transmit_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Prime_Mortality", &prime_mortality, MEBV_Prime_Mortality_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Acquire", &boost_acquire, MEBV_Boost_Acquire_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Transmit", &boost_transmit, MEBV_Boost_Transmit_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Mortality", &boost_mortality, MEBV_Boost_Mortality_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Threshold_Acquire", &boost_threshold_acquire, MEBV_Boost_Threshold_Acquire_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Threshold_Transmit", &boost_threshold_transmit, MEBV_Boost_Threshold_Transmit_DESC_TEXT, 0.0, 1.0, 0.0);
-        initConfigTypeMap("Boost_Threshold_Mortality", &boost_threshold_mortality, MEBV_Boost_Threshold_Mortality_DESC_TEXT, 0.0, 1.0, 0.0);
         bool ret = JsonConfigurable::Configure( inputJson );
+
         return ret;
     }
 
-    bool
-    IndividualImmunityChanger::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool IndividualImmunityChanger::Distribute( IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pCCO )
     {
         ApplyPrimingAndBoostingEffects(context);
+        
         return BaseIntervention::Distribute( context, pCCO );
     }
 
     void IndividualImmunityChanger::ApplyPrimingAndBoostingEffects(IIndividualHumanInterventionsContext *context)
     {
-        IDrugVaccineInterventionEffects* idvie = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie))
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext");
-        }
         isc = context->GetParent()->GetSusceptibilityContext();
+        release_assert(isc);
 
-        update_acquire = 1.0f - prime_acquire;
-        update_transmit = 1.0f - prime_transmit;
-        update_mortality= 1.0f - prime_mortality;
-        if ((idvie->GetInterventionReducedAcquire()*isc->getModAcquire()) < (1.0f - boost_threshold_acquire))
+        update_acquire   = 1.0f - prime_acquire;
+        update_transmit  = 1.0f - prime_transmit;
+        update_mortality = 1.0f - prime_mortality;
+
+        IVaccineConsumer* ivc = context->GetParent()->GetVaccineContext();
+
+        if ((ivc->GetInterventionReducedAcquire()*isc->getModAcquire()) < (1.0f - boost_threshold_acquire))
         {
             update_acquire = 1.0f - boost_acquire;
         }
-        if ((idvie->GetInterventionReducedTransmit()* isc->getModTransmit()) < (1.0f - boost_threshold_transmit))
+        if ((ivc->GetInterventionReducedTransmit()*isc->getModTransmit()) < (1.0f - boost_threshold_transmit))
         {
             update_transmit = 1.0f - boost_transmit;
         }
-        if ((idvie->GetInterventionReducedMortality()*isc->getModMortality()) < (1.0f - boost_threshold_mortality))
+        if ((ivc->GetInterventionReducedMortality()*isc->getModMortality()) < (1.0f - boost_threshold_mortality))
         {
             update_mortality = 1.0f - boost_mortality;
         }
@@ -120,28 +114,24 @@ namespace Kernel
         isc->updateModAcquire(update_acquire);
         isc->updateModTransmit(update_transmit);
         isc->updateModMortality(update_mortality);
+
         expired = true;
     }
 
-    void IndividualImmunityChanger::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void IndividualImmunityChanger::SetContextTo( IIndividualHumanContext *context )
     {
         parent = context;
     }
 
-    int
-    IndividualImmunityChanger::AddRef()
+    int IndividualImmunityChanger::AddRef()
     {
         return BaseIntervention::AddRef();
     }
 
-    int
-    IndividualImmunityChanger::Release()
+    int IndividualImmunityChanger::Release()
     {
         return BaseIntervention::Release();
     }
-
 
     REGISTER_SERIALIZABLE(IndividualImmunityChanger);
 
@@ -162,6 +152,5 @@ namespace Kernel
         ar.labelElement("update_acquire") & changer.update_acquire;
         ar.labelElement("update_transmit") & changer.update_transmit;
         ar.labelElement("update_mortality") & changer.update_mortality;
-
     }
 }

@@ -264,13 +264,13 @@ SUITE(ConcurrencyParametersTest)
     TEST_FIXTURE(ConcurrencyParametersFixture, TestBadConfigInvalidSuperSpreader)
     {
         TestHelper_Exception( __LINE__, "testdata/ConcurrencyParametersTest/TestBadConfigInvalidSuperSpreader.json",
-            "Configuration variable Probability_Person_Is_Behavioral_Super_Spreader with value -0.77 out of range: less than 0. Occured while reading 'Concurrency_Configuration' from the demographics." );
+            "Configuration variable 'Probability_Person_Is_Behavioral_Super_Spreader' with value -0.77 out of range: less than 0. Occured while reading 'Concurrency_Configuration' from the demographics." );
     }
 
     TEST_FIXTURE(ConcurrencyParametersFixture, TestBadConfigMissingExtraRelFlag)
     {
         TestHelper_Exception( __LINE__, "testdata/ConcurrencyParametersTest/TestBadConfigMissingExtraRelFlag.json",
-            "While trying to parse json data for param/key >>> Extra_Relational_Flag_Type <<< in otherwise valid json segment..." );
+            "Parameter 'Extra_Relational_Flag_Type of ConcurrencyConfigurationByProperty' not found in input file 'Unknown'.\n Occured while reading 'Concurrency_Configuration' from the demographics." );
     }
 
     TEST_FIXTURE(ConcurrencyParametersFixture, TestBadConfigInvalidExtraRelFlag)
@@ -312,6 +312,6 @@ SUITE(ConcurrencyParametersTest)
     TEST_FIXTURE(ConcurrencyParametersFixture, TestBadConcurrInvalidMax)
     {
         TestHelper_Exception( __LINE__, "testdata/ConcurrencyParametersTest/TestBadConcurrInvalidMax.json",
-            "Configuration variable Max_Simultaneous_Relationships_Male with value -9 out of range: less than 0. Occured while reading the 'Concurrency_Parameters' in 'TRANSITORY' from the demographics." );
+            "Configuration variable 'Max_Simultaneous_Relationships_Male' with value -9 out of range: less than 0. Occured while reading the 'Concurrency_Parameters' in 'TRANSITORY' from the demographics." );
     }
 }

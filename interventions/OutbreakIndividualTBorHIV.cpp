@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ConfigurationImpl.h"
 #include "NodeEventContext.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "IdmString.h"
 #include "OutbreakIndividualTBorHIV.h"
 #include "IndividualCoInfection.h"
@@ -25,8 +24,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 SETUP_LOGGING( "OutbreakIndividualTBorHIV" )
 
-// Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
 namespace Kernel
 {
     BEGIN_QUERY_INTERFACE_BODY(OutbreakIndividualTBorHIV)

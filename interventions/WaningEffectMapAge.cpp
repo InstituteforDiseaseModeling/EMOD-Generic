@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "WaningEffectMapAge.h"
+#include "WaningEffect.h"
 #include "IndividualEventContext.h"
 #include "IIndividualHumanContext.h"
 

@@ -8,12 +8,11 @@
                     "Cost_To_Consumer": 10,
                     "Efficacy_Is_Multiplicative": 0,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Initial_Effect": 0.3,
                         "class": "WaningEffectConstant"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -47,12 +46,11 @@
                     "Cost_To_Consumer": 10,
                     "Efficacy_Is_Multiplicative": 0,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Initial_Effect": 0.3,
                         "class": "WaningEffectConstant"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -70,12 +68,11 @@
                     "Cost_To_Consumer": 10,
                     "Efficacy_Is_Multiplicative": 0,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Initial_Effect": 0.3,
                         "class": "WaningEffectConstant"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"

@@ -19,8 +19,6 @@
             "Target_Demographic": "Everyone",
             "class": "CampaignEvent"
         },
-
-
         {
             "NOTE": "TYPHOIDVACCINE: ENVIRONMENTAL ROUTE TOTAL SUPPRESSION: ALL CURRENTLY ALIVE",
             "Event_Coordinator_Config": {
@@ -31,11 +29,21 @@
                     "Changing_Effect": {
                         "class": "WaningEffectMapLinear",
                         "Initial_Effect": 1.0,
-                        "Expire_At_Durability_Map_End": 1, 
+                        "Expire_At_Durability_Map_End": 1,
                         "Durability_Map": {
-                            "Times": [ 0, 385, 390, 10000 ], 
-                            "Values": [ 0, 0.0, 0.5, 0.5 ]
-                        } 
+                            "Times": [
+                                0,
+                                385,
+                                390,
+                                10000
+                            ],
+                            "Values": [
+                                0,
+                                0.0,
+                                0.5,
+                                0.5
+                            ]
+                        }
                     },
                     "Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "class": "TyphoidVaccine"
@@ -48,60 +56,62 @@
             "Start_Day": 1,
             "Target_Demographic": "Everyone",
             "class": "CampaignEvent"
-        }, 
+        },
         {
             "NOTE": "TYPHOIDVACCINE: ENVIRONMENTAL ROUTE TOTAL SUPPRESSION: NEWBORNS FROM HERE ON OUT",
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Trigger_Condition": "TriggerList",
-                    "Trigger_Condition_List": [ "Births" ],
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
                     "class": "NodeLevelHealthTriggeredIV",
                     "Actual_IndividualIntervention_Config": {
-                        "Mode": "Dose", 
+                        "Mode": "Dose",
                         "Changing_Effect": {
-                            "Initial_Effect": 1.0, 
-                            "class": "WaningEffectMapLinear", 
-                            "Expire_At_Durability_Map_End": 1, 
-                            "Reference_Timer": 1, 
+                            "Initial_Effect": 1.0,
+                            "class": "WaningEffectMapLinear",
+                            "Expire_At_Durability_Map_End": 1,
+                            "Reference_Timer": 1,
                             "Durability_Map": {
-                                "Times": [ 0, 385, 390, 10000 ], 
-                                "Values": [ 0, 0.0, 0.5, 0.5 ]
+                                "Times": [
+                                    0,
+                                    385,
+                                    390,
+                                    10000
+                                ],
+                                "Values": [
+                                    0,
+                                    0.0,
+                                    0.5,
+                                    0.5
+                                ]
                             }
-                        }, 
+                        },
                         "Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                         "class": "TyphoidVaccine"
                     }
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 390, 
-            "Target_Demographic": "Everyone", 
+            },
+            "Start_Day": 390,
+            "Target_Demographic": "Everyone",
             "class": "CampaignEvent"
         },
-
-
-
-
-
-
-
-
-
         {
             "NOTE": "SIMPLEVACCINE: DUAL ROUTE TOTAL SUPPRESSION: ALL CURRENTLY ALIVE",
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "class": "WaningEffectBox",
                         "Initial_Effect": 1.0,
                         "Box_Duration": 10000
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
@@ -117,28 +127,28 @@
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Trigger_Condition": "TriggerList",
-                    "Trigger_Condition_List": [ "Births" ],
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
                     "class": "NodeLevelHealthTriggeredIV",
                     "Actual_IndividualIntervention_Config": {
-                        "Waning_Config": {
+                        "Acquire_Config": {
                             "class": "WaningEffectBox",
                             "Initial_Effect": 1.0,
                             "Box_Duration": 10000
                         },
-                        "Vaccine_Type": "AcquisitionBlocking", 
-                        "class": "SimpleVaccine"
+                        "class": "Vaccine"
                     }
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
-            }, 
+            },
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            }, 
-            "Start_Day": 2000, 
-            "Target_Demographic": "Everyone", 
+            },
+            "Start_Day": 2000,
+            "Target_Demographic": "Everyone",
             "class": "CampaignEvent"
         }
     ],
     "Use_Defaults": 1
 }
-

@@ -14,204 +14,159 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 SETUP_LOGGING( "InterpolatedValueMap" )
 
-static const std::string TIMES = "Times" ;
-static const std::string VALUES = "Values" ;
+#define IVM_TIMES   "Times"
+#define IVM_VALUE   "Values"
 
 namespace Kernel
 {
-    template< typename T >
-    void checkRange( const char* parameterName, T minValue, T value, T maxValue )
-    {
-        if( value < minValue )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__,
-                                               parameterName, value, minValue );
-        }
-        else if( value > maxValue )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__,
-                                               parameterName, value, maxValue );
-        }
-    }
-
     InterpolatedValueMap::InterpolatedValueMap( float min_time, 
                                                 float max_time,
                                                 float min_value,
                                                 float max_value )
-        : tFloatFloatMapConfigType()
+        : m_TimeValueMap()
         , m_MinTime( min_time )
         , m_MaxTime( max_time )
         , m_MinValue( min_value )
         , m_MaxValue( max_value )
+    { }
+
+    InterpolatedValueMap::InterpolatedValueMap(const InterpolatedValueMap& existing_instance)
+        : m_TimeValueMap()
+        , m_MinTime(existing_instance.m_MinTime)
+        , m_MaxTime(existing_instance.m_MaxTime)
+        , m_MinValue(existing_instance.m_MinValue)
+        , m_MaxValue(existing_instance.m_MaxValue)
     {
+        m_TimeValueMap.insert(existing_instance.m_TimeValueMap.begin(), existing_instance.m_TimeValueMap.end());
     }
 
-    void
-    InterpolatedValueMap::ConfigureFromJsonAndKey(
-        const Configuration* inputJson,
-        const std::string& key
-    )
+    bool InterpolatedValueMap::Configure( const Configuration * inputJson )
     {
-        std::vector< float > times, values;
+        std::vector<float> times, values;
+        initConfigTypeMap( IVM_TIMES, &times,  Interpolated_Value_Map_Times_DESC_TEXT, m_MinTime,  m_MaxTime, true );
+        initConfigTypeMap( IVM_VALUE, &values, Interpolated_Value_Map_Value_DESC_TEXT, m_MinValue, m_MaxValue );
 
-        // Temporary object created so we can 'operate' on json with the desired tools
-        auto config = Configuration::CopyFromElement( (*inputJson)[key], inputJson->GetDataLocation() );
-        // Do not copy this pattern. This 'low-level' API to parse out values is not preferred.
-        times = GET_CONFIG_VECTOR_FLOAT( config, TIMES );
-        values = GET_CONFIG_VECTOR_FLOAT( config, VALUES );
+        bool ret = JsonConfigurable::Configure( inputJson );
 
-        if( times.size() != values.size() )
+        if( ret && !JsonConfigurable::_dryrun )
         {
-            std::stringstream ss;
-            ss << key << ": The number of elements in " << TIMES << " (=" << times.size() << ") "
-               << "does not match the number of elements in " << VALUES << " (=" << values.size() << ")." ;
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-        }
-
-        std::string time_str  = key + ":" + TIMES ;
-        std::string value_str = key + ":" + VALUES ;
-
-        float prev_time = m_MinTime ;
-
-        // Now we have the values in our local variables, populate our map.
-        for( auto idx=0; idx<times.size(); idx++ )
-        {
-            checkRange<float>( time_str.c_str(),  m_MinTime,  times[idx],  m_MaxTime  );
-            checkRange<float>( value_str.c_str(), m_MinValue, values[idx], m_MaxValue );
-
-            if( (idx > 0) && (times[idx] <= prev_time) )
+            if( times.size() != values.size() )
             {
                 std::stringstream ss;
-                ss << key << ":" << TIMES << " - Element number " << (idx+1) << " (=" << times[idx] << ") is <= element number "
-                   << (idx) << " (=" << times[idx-1] << ").  '" << TIMES << "' must be in increasing order." ;
+                ss << "The number of elements in '" << IVM_TIMES << "' (=" << times.size() << ") "
+                   << "does not match the number of elements in '" << IVM_VALUE << "' (=" << values.size() << ")." ;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
             }
-
-            (this)->insert( std::make_pair( times[idx], values[idx] ) );
-            LOG_DEBUG_F( "Inserting year %f and delay %f into map.\n", times[idx], values[idx] );
-
-            prev_time = times[idx] ;
+            for( int i = 0; i < times.size(); ++i )
+            {
+                m_TimeValueMap.insert( std::make_pair( times[ i ], values[ i ] ) );
+            }
         }
 
-        delete config;
-        config = nullptr;
+        return ret;
     }
 
-    json::QuickBuilder
-    InterpolatedValueMap::GetSchema()
+    size_t InterpolatedValueMap::size() const
     {
-        json::QuickBuilder schema( GetSchemaBase() );
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-        schema[ tn ] = json::String( "idmType:InterpolatedValueMap" );
-    
-        schema[ts] = json::Object();
-        schema[ts][TIMES] = json::Array();
-        schema[ts][TIMES][0][ "type" ] = json::String( "float" );
-        schema[ts][TIMES][0][ "min" ] = json::Number( m_MinTime );
-        schema[ts][TIMES][0][ "max" ] = json::Number( m_MaxTime );
-        schema[ts][TIMES][0][ "description" ] = json::String( Interpolated_Value_Map_Times_DESC_TEXT );
-        schema[ts][VALUES] = json::Array();
-        schema[ts][VALUES][0][ "type" ] = json::String( "float" );
-        schema[ts][VALUES][0][ "min" ] = json::Number( m_MinValue );
-        schema[ts][VALUES][0][ "max" ] = json::Number( m_MaxValue );
-        schema[ts][VALUES][0][ "description" ] = json::String( Interpolated_Value_Map_Value_DESC_TEXT );
-        return schema;
+        return m_TimeValueMap.size();
     }
 
-    float
-    InterpolatedValueMap::getValuePiecewiseConstant(
-        float current_year,
-        float default_value
-    )
-    const
+    std::map<float, float>::const_iterator InterpolatedValueMap::begin() const
     {
+        return m_TimeValueMap.begin();
+    }
+
+    std::map<float, float>::const_iterator InterpolatedValueMap::end() const
+    {
+        return m_TimeValueMap.end();
+    }
+
+    std::map<float, float>::const_reverse_iterator InterpolatedValueMap::rbegin() const
+    {
+        return m_TimeValueMap.rbegin();
+    }
+
+    std::map<float, float>::const_reverse_iterator InterpolatedValueMap::rend() const
+    {
+        return m_TimeValueMap.rend();
+    }
+
+    void InterpolatedValueMap::add( float time, float value )
+    {
+        m_TimeValueMap.insert( std::make_pair( time, value ) );
+    }
+
+    float InterpolatedValueMap::getValuePiecewiseConstant( float current_time, float default_value ) const
+    {
+        // Returns default value if empty or before first time point
         float ret_rdd = default_value;
 
-        // go through years in map, 2000->2005->2014. Stop as soon as we get to year that is greater than our current year. keep previous value.
-        for( auto &entry: (*this) )
+        for( auto &entry: m_TimeValueMap  )
         {
-            auto map_year = entry.first;
-            //std::cout << "map_year = " << map_year << std::endl;
-            //std::cout << "current_year = " << current_year << std::endl;
-            if( map_year > current_year )
+            auto map_time = entry.first;
+            if( map_time > current_time )
             {
-                //LOG_DEBUG_F( "Breaking from lookup loop with %f as delay days because map year %d is > current year %d\n", remaining_delay_days, map_year, current_year );
                 break;
             }
-            //ret_rdd = (int)year2DelayMap[ map_year ];
-            ret_rdd = (*this).at( float(map_year) );
+            ret_rdd = m_TimeValueMap.at( float(map_time) );
         }
+
         return ret_rdd;
     }
 
 
-    float
-    InterpolatedValueMap::getValueLinearInterpolation(
-        float year,
-        float default_value
-    )
-    const
+    float InterpolatedValueMap::getValueLinearInterpolation( float current_time, float default_value ) const
     {
-        float map_year, previous_year;
+        // Returns default value if empty or before first time point
+        if (m_TimeValueMap.empty() || m_TimeValueMap.begin()->first > current_time)
+        {
+            return default_value;
+        }
+
+        float map_time, previous_time;
         float map_value, previous_value;
 
-        // if there are no values in the map, return the default value
-        if (this->empty())
+        previous_time  = m_TimeValueMap.begin()->first;
+        previous_value = m_TimeValueMap.at(previous_time);
+        for (auto &entry : m_TimeValueMap)
         {
-            return default_value;
-        }
+            map_time = entry.first;
+            map_value = m_TimeValueMap.at(map_time);
 
-        // if the first year in the map is greater than the current year, return the default value
-        previous_year = (*this->begin()).first;
-        if (previous_year > year)
-        {
-            return default_value;
-        }
-
-        // go through the map entries and do linear interpolation on the value
-        previous_value = this->at(previous_year);
-        for (auto &entry : (*this))
-        {
-            map_year = entry.first;
-            map_value = this->at(map_year);
-
-            // if the map_year is greater than the input year, return the liner interpolation of the value
-            if (map_year > year)
+            if (map_time > current_time)
             {
-                if (map_year == previous_year)
+                if (map_time == previous_time)
                 {
-                    return this->at(map_year);
+                    return m_TimeValueMap.at(map_time);
                 }
-                return ((year - previous_year)/(map_year - previous_year)) * (map_value - previous_value) + previous_value;
+                return ((current_time - previous_time)/(map_time - previous_time)) * (map_value - previous_value) + previous_value;
             }
 
-            // update the previous year and value
-            previous_year = map_year;
+            previous_time = map_time;
             previous_value = map_value;
         }
 
-        // if we made it here, the year is after the last mapped year.  return the last value.
         return map_value;
     }
 
-    bool InterpolatedValueMap::isAtEnd( float currentYear ) const
+    bool InterpolatedValueMap::isAtEnd( float current_time ) const
     {
-        auto it = this->rend();
-        ++it;
-        float last_year = it->first;
-        bool at_end = (last_year <= currentYear);
-        return at_end;
+        if (m_TimeValueMap.empty())
+        {
+            return true;
+        }
+
+        return (m_TimeValueMap.rbegin()->first <= current_time);
     }
 
     void InterpolatedValueMap::serialize( IArchive& ar, InterpolatedValueMap& mapping )
     {
-        size_t count = ar.IsWriter() ? mapping.size() : -1;
+        size_t count = ar.IsWriter() ? mapping.m_TimeValueMap.size() : -1;
 
         ar.startArray(count);
         if( ar.IsWriter() )
         {
-            for( auto& entry : mapping )
+            for( auto& entry : mapping.m_TimeValueMap )
             {
                 float key   = entry.first;
                 float value = entry.second;
@@ -231,7 +186,7 @@ namespace Kernel
                     ar.labelElement("key"  ) & key;
                     ar.labelElement("value") & value;
                 ar.endObject();
-                mapping[key] = value;
+                mapping.m_TimeValueMap[key] = value;
             }
         }
         ar.endArray();

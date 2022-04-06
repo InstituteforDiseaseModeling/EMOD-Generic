@@ -20,7 +20,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISimulationEventContextFake.h"
 #include "Node.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
 
@@ -41,14 +40,12 @@ SUITE( IncidenceEventCoordinatorTest )
         std::vector< IndividualHumanInterventionsContextFake* > m_hic_list;
         std::vector< IndividualHumanContextFake*              > m_human_list;
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig;
         EventTrigger::Enum m_ActionEvent1;
         EventTrigger::Enum m_ActionEvent2;
 
         IecFixture()
             : m_hic_list()
             , m_human_list()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             JsonConfigurable::ClearMissingParameters();
@@ -68,10 +65,6 @@ SUITE( IncidenceEventCoordinatorTest )
             string dllPath( "" );
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, dllPath, false );
 
-            Environment::setSimulationConfig( m_pSimulationConfig );
-
-            //EventTriggerFactoryDeleteInstance();
-            //EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
             m_ActionEvent1 = EventTrigger::GP_EVENT_000;
             m_ActionEvent2 = EventTrigger::GP_EVENT_001;
 

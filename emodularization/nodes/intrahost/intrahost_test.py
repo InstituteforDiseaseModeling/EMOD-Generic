@@ -761,12 +761,12 @@ class IntrahostTest(unittest.TestCase):
                 json.dump(incubation_duration_dict, file)
             with open(os.path.join(path, test_name, "incubation_timer.json"), "w") as file:
                 json.dump(incubation_timer_dict, file)
-        sft.plot_data_sorted(incubation_duration_dict.values(), incubation_timer_dict.values(),
+        sft.plot_data(incubation_duration_dict.values(), incubation_timer_dict.values(),
                           label1="incubation duration", label2="incubation timer",
                           title= "test {} incubation duration".format(test_name),
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_{}_duration'.format(test_name)),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
 
         self.assertTrue(len(incubation_duration_dict) > 0, "BAD: Found no incubation period.")
 
@@ -848,12 +848,12 @@ class IntrahostTest(unittest.TestCase):
 
         dist_gaussian_scipy = stats.norm.rvs(incubation_period_gaussian_mean, incubation_period_gaussian_std_dev,
                                              len(incubation_timer_dict))
-        sft.plot_data_sorted(list(incubation_timer_dict.values()), dist_gaussian_scipy, label1="test duration",
+        sft.plot_data(list(incubation_timer_dict.values()), dist_gaussian_scipy, label1="test duration",
                           label2="Scipy Gaussian sample",
                           title="test gaussian incubation duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_gaussian_incubation_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(incubation_timer_dict.values(), dist_gaussian_scipy, precision=0, label1="test duration",
                                  label2="Scipy Gaussian sample",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -902,12 +902,12 @@ class IntrahostTest(unittest.TestCase):
                                                                          path=path, test_name=test_name, debug=debug)
 
         dist_exponential_np = np.random.exponential(incubation_period_exponential, len(incubation_timer_dict))
-        sft.plot_data_sorted(list(incubation_timer_dict.values()), dist_exponential_np, label1="test duration",
+        sft.plot_data(list(incubation_timer_dict.values()), dist_exponential_np, label1="test duration",
                           label2="np data",
                           title="test exponential incubation duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_exponential_incubation_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(incubation_timer_dict.values(), dist_exponential_np, precision=0,
                                  label1="test duration", label2="np data",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -956,11 +956,11 @@ class IntrahostTest(unittest.TestCase):
                                                                          path=path, test_name=test_name, debug=debug)
 
         dist_poisson_np = np.random.poisson(incubation_period_poisson_mean, len(incubation_timer_dict))
-        sft.plot_data_sorted(incubation_timer_dict.values(), dist_poisson_np, label1="test duration", label2="numpy poisson sample",
+        sft.plot_data(incubation_timer_dict.values(), dist_poisson_np, label1="test duration", label2="numpy poisson sample",
                           title="test poisson incubation duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_poisson_incubation_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(incubation_timer_dict.values(), dist_poisson_np, precision=0, label1="test duration",
                                  label2="numpy poisson sample",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -1023,12 +1023,12 @@ class IntrahostTest(unittest.TestCase):
                     file.write("{}\n".format(data))
         dist_lognormal = stats.lognorm.rvs(incubation_period_log_normal_width, 0, math.exp(incubation_period_log_normal_mean),
                                            len(lognormal_duration))
-        sft.plot_data_sorted(lognormal_duration, dist_lognormal, label1="test duration",
+        sft.plot_data(lognormal_duration, dist_lognormal, label1="test duration",
                           label2="numpy lognormal sample",
                           title="test lognormal incubation duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_lognormal_incubation_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(lognormal_duration, dist_lognormal, precision=0, label1="test duration",
                                  label2="numpy lognormal sample",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -1210,12 +1210,12 @@ class IntrahostTest(unittest.TestCase):
                 json.dump(infectious_duration_dict, file)
             with open(os.path.join(path, test_name, "infectious_timer.json"), "w") as file:
                 json.dump(infectious_timer_dict, file)
-        sft.plot_data_sorted(infectious_duration_dict.values(), infectious_timer_dict.values(),
+        sft.plot_data(infectious_duration_dict.values(), infectious_timer_dict.values(),
                           label1="infectious duration", label2="infectious timer",
                           title="test {} infectious duration".format(test_name),
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_{}_duration'.format(test_name)),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
 
         self.assertTrue(len(infectious_duration_dict) > 0, "BAD: Found no infectious period.")
 
@@ -1295,12 +1295,12 @@ class IntrahostTest(unittest.TestCase):
 
         dist_gaussian_scipy = stats.norm.rvs(infectious_period_mean, infectious_period_std_dev,
                                              len(infectious_timer_dict))
-        sft.plot_data_sorted(infectious_timer_dict.values(), dist_gaussian_scipy, label1="test duration",
+        sft.plot_data(infectious_timer_dict.values(), dist_gaussian_scipy, label1="test duration",
                           label2="Scipy Gaussian sample",
                           title="test gaussian infectious duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_gaussian_infectious_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(infectious_timer_dict.values(), dist_gaussian_scipy, precision=0,
                                  label1="test duration",
                                  label2="Scipy Gaussian sample",
@@ -1351,11 +1351,11 @@ class IntrahostTest(unittest.TestCase):
                                                                          debug=debug)
 
         dist_exponential_np = np.random.exponential(infectious_period_exponential, len(infectious_timer_dict))
-        sft.plot_data_sorted(infectious_timer_dict.values(), dist_exponential_np, label1="test duration", label2="np data",
+        sft.plot_data(infectious_timer_dict.values(), dist_exponential_np, label1="test duration", label2="np data",
                           title="test exponential infectious duration",
                           xlabel="data point", ylabel="days",
                           category=os.path.join(path, test_name, 'test_exponential_infectious_duration'),
-                          show=True, line=False)
+                          show=True, line=False, sort=True)
         sft.plot_probability(infectious_timer_dict.values(), dist_exponential_np, precision=0, label1="test duration",
                                  label2="np data",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -1405,11 +1405,11 @@ class IntrahostTest(unittest.TestCase):
                                                                          debug=debug)
 
         dist_poisson_np = np.random.poisson(infectious_period_poisson_mean, len(infectious_timer_dict))
-        sft.plot_data_sorted(infectious_timer_dict.values(), dist_poisson_np, label1="test duration", label2="numpy poisson sample",
+        sft.plot_data(infectious_timer_dict.values(), dist_poisson_np, label1="test duration", label2="numpy poisson sample",
                           title="test poisson incubation duration",
                           xlabel="data point", ylabel="days",
-                          category=os.path.join(path, test_name, 'test_poisson_incubation_duration'),
-                          show=True, line=False)
+                          category=os.path.join(path, test_name, 'test_poisson_infectious_duration'),
+                          show=True, line=False, sort=True)
         sft.plot_probability(infectious_timer_dict.values(), dist_poisson_np, precision=0, label1="test duration",
                                  label2="numpy poisson sample",
                                  title='probability mass function', xlabel='k', ylabel='probability',
@@ -1485,12 +1485,12 @@ class IntrahostTest(unittest.TestCase):
                     file.write("{}\n".format(data))
             dist_lognormal = stats.lognorm.rvs(infectious_period_width, 0, infectious_period_mean,
                                                len(lognormal_duration))
-            sft.plot_data_sorted(lognormal_duration, dist_lognormal, label1="test duration",
+            sft.plot_data(lognormal_duration, dist_lognormal, label1="test duration",
                               label2="numpy lognormal sample",
                               title="test lognormal infectious duration",
                               xlabel="data point", ylabel="days",
                               category=os.path.join(path, test_name, 'test_lognormal_infectious_duration'),
-                              show=True, line=False)
+                              show=True, line=False, sort=True)
             sft.plot_probability(lognormal_duration, dist_lognormal, precision=0, label1="test duration",
                                      label2="numpy lognormal sample",
                                      title='probability mass function', xlabel='k', ylabel='probability',

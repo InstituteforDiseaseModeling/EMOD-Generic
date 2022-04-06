@@ -221,7 +221,7 @@ namespace Kernel
         }
         else if( formation_rate_type == FormationRateType::INTERPOLATED_VALUES )
         {
-            initConfigComplexType("Formation_Rate_Interpolated_Values", &formation_rate_value_map, "TBD"/*Formation_Rate_Interpolated_Values_DESC_TEXT*/ );
+            initConfigTypeMap("Formation_Rate_Interpolated_Values", &formation_rate_value_map, "TBD"/*Formation_Rate_Interpolated_Values_DESC_TEXT*/ );
         }
         else
         {
@@ -238,7 +238,7 @@ namespace Kernel
         initConfigTypeMap( "Age_of_First_Bin_Edge_Female",   &initial_female_age,       Age_of_First_Bin_Edge_Female_DESC_TEXT,   0,        100,    1      );
         initConfigTypeMap( "Years_Between_Bin_Edges_Male",   &male_age_increment,       Years_Between_Bin_Edges_Male_DESC_TEXT,   0.1f,     100.0f, 1.0f   );
         initConfigTypeMap( "Years_Between_Bin_Edges_Female", &female_age_increment,     Years_Between_Bin_Edges_Female_DESC_TEXT, 0.1f,     100.0f, 1.0f   );
-        initConfigTypeMap( "Joint_Probabilities",            &joint_probabilities,      Joint_Probabilities_DESC_TEXT,            0.0,  FLT_MAX,    0.0f   ); 
+        initConfigTypeMap( "Joint_Probabilities",            &joint_probabilities,      Joint_Probabilities_DESC_TEXT,            0.0,  FLT_MAX            ); 
 
         bool ret = false;
         bool prev_use_defaults = JsonConfigurable::_useDefaults ;
@@ -420,6 +420,6 @@ namespace Kernel
         ar.labelElement("formation_rate_type"           ) & (uint32_t&)parameters.formation_rate_type;
         ar.labelElement("formation_rate_constant"       ) & parameters.formation_rate_constant;
         ar.labelElement("formation_rate_sigmoid"        ) & parameters.formation_rate_sigmoid;
-        ar.labelElement("formation_rate_value_map"      ) & (std::map<float,float>&)parameters.formation_rate_value_map;
+        ar.labelElement("formation_rate_value_map"      ) & parameters.formation_rate_value_map;
     }
 }

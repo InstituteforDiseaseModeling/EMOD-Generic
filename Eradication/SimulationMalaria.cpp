@@ -11,6 +11,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "SimulationMalaria.h"
 #include "IndividualMalaria.h"
+#include "InfectionMalaria.h"
+#include "SusceptibilityMalaria.h"
 #include "NodeMalaria.h"
 #include "ReportMalaria.h"
 #include "BinnedReportMalaria.h"
@@ -117,7 +119,14 @@ namespace Kernel
     void SimulationMalaria::Initialize(const ::Configuration *config)
     {
         SimulationVector::Initialize(config);
-        IndividualHumanMalaria::InitializeStaticsMalaria( config );
+
+        IndividualHumanMalariaConfig   mal_individual_config_obj;
+        SusceptibilityMalariaConfig    mal_susceptibility_config_obj;
+        InfectionMalariaConfig         mal_infection_config_obj;
+
+        mal_individual_config_obj.Configure( config );
+        mal_susceptibility_config_obj.Configure( config );
+        mal_infection_config_obj.Configure( config );
     }
 
     SimulationMalaria *SimulationMalaria::CreateSimulation()
@@ -137,7 +146,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "MALARIA_SIM requested with invalid configuration.");
@@ -151,12 +160,13 @@ namespace Kernel
     {
         config->Add("Enable_Immunity", 1);
         config->Add("Enable_Immune_Decay", 1);
-        config->Add("Enable_Maternal_Protection", 0);
     }
 
     bool SimulationMalaria::ValidateConfiguration(const ::Configuration *config)
     {
-        return Kernel::SimulationVector::ValidateConfiguration(config);
+        // TODO: any disease-specific validation goes here.
+
+        return SimulationVector::ValidateConfiguration(config);
     }
 
     SimulationMalaria::~SimulationMalaria()

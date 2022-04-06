@@ -89,12 +89,13 @@ namespace Kernel
         // ITransmissionGroups
         virtual void AddProperty(const string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) override;
         virtual void Build(float contagionDecayRate, int numberOfClades = 1, int numberOfGenomes = 1) override;
+        virtual void ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
         virtual void GetGroupMembershipForProperties(const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) const override;
         virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight) override;
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) override;
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route) const override;
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) override;
-        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float InfectivityAddition = 0.0f ) override;
+        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float InfectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) override;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) override;
 
         virtual void UseTotalPopulationForNormalization() override { normalizeByTotalPopulation = true; }

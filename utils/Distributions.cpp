@@ -22,6 +22,9 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_BODY( DistributionExponential )
     END_QUERY_INTERFACE_BODY( DistributionExponential )
 
+    BEGIN_QUERY_INTERFACE_BODY( DistributionGamma )
+    END_QUERY_INTERFACE_BODY( DistributionGamma )
+
     BEGIN_QUERY_INTERFACE_BODY( DistributionGaussian )
     END_QUERY_INTERFACE_BODY( DistributionGaussian )
 
@@ -81,7 +84,6 @@ namespace Kernel
     }
 
 
-
     //---------------- DistributionFunction::EXPONENTIAL_DISTRIBUTION  -------------------
     DistributionExponential::DistributionExponential()
         : DistributionBase()
@@ -114,6 +116,33 @@ namespace Kernel
         DistributionBase::serialize( ar, obj );
     }
 
+
+    //---------------- DistributionFunction::GAMMA_DISTRIBUTION  -------------------
+    DistributionGamma::DistributionGamma()
+        : DistributionBase()
+    {
+        type = DistributionFunction::GAMMA_DISTRIBUTION;
+    }
+
+    DistributionGamma::~DistributionGamma()
+    {
+    }
+
+    float DistributionGamma::Calculate( RANDOMBASE* pRNG ) const
+    {
+        return pRNG->rand_gamma(m_Param1, m_Param2);
+    }
+
+    IDistribution* DistributionGamma::Clone() const
+    {
+        return new DistributionGamma(*this);
+    }
+
+    REGISTER_SERIALIZABLE(DistributionGamma);
+    void DistributionGamma::serialize(IArchive& ar, DistributionGamma* obj)
+    {
+        DistributionBase::serialize(ar, obj);
+    }
 
 
     //---------------- DistributionFunction::GAUSSIAN_DISTRIBUTION  -------------------
@@ -172,7 +201,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionLogNormal  -------------------
+    //---------------- DistributionFunction::LOG_NORMAL_DISTRIBUTION  -------------------
     DistributionLogNormal::DistributionLogNormal()
         : DistributionBase()
     {
@@ -200,7 +229,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionFunction::WEIBULL  -------------------
+    //---------------- DistributionFunction::WEIBULL_DISTRIBUTION  -------------------
     DistributionWeibull::DistributionWeibull()
         : DistributionBase()
     {
@@ -257,7 +286,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionFunction::DUAL_TIMESCALE -------------------
+    //---------------- DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION -------------------
     DistributionDualExponential::DistributionDualExponential()
         : DistributionBase()
     {
@@ -292,7 +321,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionFunction::UNIFORM  -------------------
+    //---------------- DistributionFunction::UNIFORM_DISTRIBUTION  -------------------
     DistributionUniform::DistributionUniform()
         : DistributionBase()
     {
@@ -319,6 +348,7 @@ namespace Kernel
     {
         DistributionBase::serialize(ar, obj);
     }
+
 
     //---------------- DistributionFunction::PIECEWISE_CONSTANT  -------------------
     DistributionPiecewiseConstant::DistributionPiecewiseConstant()

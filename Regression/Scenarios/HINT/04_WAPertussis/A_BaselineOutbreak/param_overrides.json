@@ -4,7 +4,8 @@
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
                 "hint_wapertussis_demographics.json",
-                "hint_wapertussis_demographics_overlay.json"
+                "hint_wapertussis_demographics_overlay.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.00017,

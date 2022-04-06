@@ -53,12 +53,11 @@
                 "Intervention_Config": {
                     "Reduced_Acquire": 1.0,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Initial_Effect": 1,
                         "class": "WaningEffectConstant"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,

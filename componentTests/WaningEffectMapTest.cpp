@@ -12,7 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <fstream>
 #include <memory> // unique_ptr
 #include "UnitTest++.h"
-#include "WaningEffectMap.h"
+#include "WaningEffect.h"
 #include "componentTests.h"
 
 using namespace Kernel; 
@@ -29,20 +29,20 @@ SUITE(WaningEffectMapTest)
 
         piecewise.Configure( p_config.get() );
 
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 0.0f ) );
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 0.5f ) );
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 1.0f ) );
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 1.5f ) );
-        CHECK_EQUAL( 3.0f, piecewise.GetMultiplier( 2.0f ) );
-        CHECK_EQUAL( 3.0f, piecewise.GetMultiplier( 2.5f ) );
-        CHECK_EQUAL( 5.0f, piecewise.GetMultiplier( 3.0f ) );
-        CHECK_EQUAL( 5.0f, piecewise.GetMultiplier( 3.5f ) );
-        CHECK_EQUAL( 7.0f, piecewise.GetMultiplier( 4.0f ) );
-        CHECK_EQUAL( 7.0f, piecewise.GetMultiplier( 4.5f ) );
-        CHECK_EQUAL( 5.0f, piecewise.GetMultiplier( 5.0f ) );
-        CHECK_EQUAL( 5.0f, piecewise.GetMultiplier( 5.5f ) );
-        CHECK_EQUAL( 3.0f, piecewise.GetMultiplier( 6.0f ) );
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 6.5f ) );
-        CHECK_EQUAL( 1.0f, piecewise.GetMultiplier( 7.0f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 0.0f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 0.5f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 1.0f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 1.5f ) );
+        CHECK_EQUAL( 0.3f, piecewise.GetMultiplier( 2.0f ) );
+        CHECK_EQUAL( 0.3f, piecewise.GetMultiplier( 2.5f ) );
+        CHECK_EQUAL( 0.5f, piecewise.GetMultiplier( 3.0f ) );
+        CHECK_EQUAL( 0.5f, piecewise.GetMultiplier( 3.5f ) );
+        CHECK_EQUAL( 0.7f, piecewise.GetMultiplier( 4.0f ) );
+        CHECK_EQUAL( 0.7f, piecewise.GetMultiplier( 4.5f ) );
+        CHECK_EQUAL( 0.5f, piecewise.GetMultiplier( 5.0f ) );
+        CHECK_EQUAL( 0.5f, piecewise.GetMultiplier( 5.5f ) );
+        CHECK_EQUAL( 0.3f, piecewise.GetMultiplier( 6.0f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 6.5f ) );
+        CHECK_EQUAL( 0.1f, piecewise.GetMultiplier( 7.0f ) );
     }
 }

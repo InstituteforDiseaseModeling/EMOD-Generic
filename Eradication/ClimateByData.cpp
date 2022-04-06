@@ -8,10 +8,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 #include "ClimateByData.h"
 #include "Environment.h"
 #include "Common.h"
 #include "Exceptions.h"
+#include "ISimulationContext.h"
+#include "INodeContext.h"
 
 #ifdef WIN32
 #include <float.h>
@@ -22,9 +25,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 SETUP_LOGGING( "ClimateByData" )
 
 namespace Kernel {
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(Climate.ByData,ClimateByData)
-    BEGIN_QUERY_INTERFACE_BODY(ClimateByData)
-    END_QUERY_INTERFACE_BODY(ClimateByData)
 
     ClimateByData * ClimateByData::CreateClimate( ClimateUpdateResolution::Enum update_resolution,
                                                   INodeContext * _parent,
@@ -37,7 +37,6 @@ namespace Kernel {
                                                   RANDOMBASE* pRNG )
     {
         ClimateByData * new_climate = _new_ ClimateByData(update_resolution, _parent);
-        new_climate->Configure( EnvPtr->Config );
 
         new_climate->ReadDataFromFiles(datapoints, airtemperature_file, landtemperature_file, rainfall_file, humidity_file);
 
@@ -50,22 +49,9 @@ namespace Kernel {
     ClimateByData::ClimateByData() { }
     ClimateByData::ClimateByData(ClimateUpdateResolution::Enum update_resolution, INodeContext * _parent) : Climate(update_resolution, _parent) { }
 
-    bool
-    ClimateByData::Configure(
-        const Configuration* config
-    )
-    {
-        LOG_DEBUG( "Configure\n" );
-        initConfigTypeMap( "Air_Temperature_Offset", &airtemperature_offset, Air_Temperature_Offset_DESC_TEXT, -20.0f, 20.0f, 0.0f, "Climate_Model","CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Land_Temperature_Offset", &landtemperature_offset, Land_Temperature_Offset_DESC_TEXT, -20.0f, 20.0f, 0.0f,"Climate_Model","CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Rainfall_Scale_Factor", &rainfall_scale_factor, Rainfall_Scale_Factor_DESC_TEXT, 0.1f, 10.0f, 1.0f, "Climate_Model", "CLIMATE_BY_DATA" );
-        initConfigTypeMap( "Relative_Humidity_Scale_Factor", &humidity_scale_factor, Relative_Humidity_Scale_Factor_DESC_TEXT, 0.1f, 10.0f, 1.0f, "Climate_Model", "CLIMATE_BY_DATA" );
-        return Climate::Configure( config );
-    }
-
     bool ClimateByData::IsPlausible()
     {
-
+        const ClimateParams* cp = ClimateConfig::GetClimateParams();
         // check to see whether fewer than 2.5% of the values will exceed the upper- and lower-bounds
 
         int low_index = int(num_datapoints * 0.025);
@@ -74,8 +60,8 @@ namespace Kernel {
         std::vector<float> sorted = airtemperature_data;
         sort(sorted.begin(), sorted.end());
 
-        if( sorted[high_index] + (2 * airtemperature_variance) > max_airtemp ||
-            sorted[low_index] - (2 * airtemperature_variance) < min_airtemp )
+        if( sorted[high_index] + (2 * cp->airtemperature_variance) > max_airtemp ||
+            sorted[low_index] - (2 * cp->airtemperature_variance) < min_airtemp )
         {
             return false;
         }
@@ -83,8 +69,8 @@ namespace Kernel {
         sorted = landtemperature_data;
         sort(sorted.begin(), sorted.end());
 
-        if( sorted[high_index] + (2 * landtemperature_variance) > max_landtemp ||
-            sorted[low_index] - (2 * landtemperature_variance) < min_landtemp )
+        if( sorted[high_index] + (2 * cp->landtemperature_variance) > max_landtemp ||
+            sorted[low_index] - (2 * cp->landtemperature_variance) < min_landtemp )
         {
             return false;
         }
@@ -101,8 +87,8 @@ namespace Kernel {
         if(sorted[low_index] < 0)
             return false;
 
-        if((rainfall_variance_enabled && (EXPCDF(-1 / sorted[high_index] * resolution_correction * max_rainfall) < 0.975)) ||
-            (!rainfall_variance_enabled && sorted[high_index] * resolution_correction > max_rainfall))
+        if((cp->rainfall_variance_enabled && (EXPCDF(-1 / sorted[high_index] * resolution_correction * max_rainfall) < 0.975)) ||
+           (!cp->rainfall_variance_enabled && sorted[high_index] * resolution_correction > max_rainfall))
         {
             return false;
         }
@@ -151,6 +137,8 @@ namespace Kernel {
         rainfall_data.resize(datapoints);
         humidity_data.resize(datapoints);
 
+        const ClimateParams* cp = ClimateConfig::GetClimateParams();
+
         num_datapoints = datapoints;
         num_years = int((float(num_datapoints) / (resolution_correction * DAYSPERYEAR)) + 0.01 /* compensate for rounding errors */);
 
@@ -170,27 +158,25 @@ namespace Kernel {
         CheckForNanOrInf( humidity_data, "relative humidity data" );
 
         // apply scaling factors to data
-
-
-        if(airtemperature_offset != 0.0f)
+        if(cp->airtemperature_offset != 0.0f)
             for(int i = 0; i < datapoints; i++)
-                airtemperature_data[i] += airtemperature_offset;
+                airtemperature_data[i] += cp->airtemperature_offset;
 
-        if(landtemperature_offset != 0.0f)
+        if(cp->landtemperature_offset != 0.0f)
             for(int i = 0; i < datapoints; i++)
-                landtemperature_data[i] += landtemperature_offset;
+                landtemperature_data[i] += cp->landtemperature_offset;
 
         // correct rainfall from mm to m
         float scale = 1.0f / MILLIMETERS_PER_METER;
-        if(rainfall_scale_factor != 1.0f)
-            scale *= rainfall_scale_factor;
+        if(cp->rainfall_scale_factor != 1.0f)
+            scale *= cp->rainfall_scale_factor;
 
         for(int i = 0; i < datapoints; i++)
             rainfall_data[i] *= scale;
 
-        if(humidity_scale_factor != 1.0f)
+        if(cp->humidity_scale_factor != 1.0f)
             for(int i = 0; i < datapoints; i++)
-                humidity_data[i] *= humidity_scale_factor;
+                humidity_data[i] *= cp->humidity_scale_factor;
     }
 
     void ClimateByData::UpdateWeather( float time, float dt, RANDOMBASE* pRNG )

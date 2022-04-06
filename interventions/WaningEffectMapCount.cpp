@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "WaningEffectMapCount.h"
+#include "WaningEffect.h"
 #include "IndividualEventContext.h"
 
 SETUP_LOGGING( "WaningEffectMapCount" )
@@ -26,7 +26,7 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED( WaningEffectMapCount, WaningEffectMapPiecewise )
 
     WaningEffectMapCount::WaningEffectMapCount()
-        : WaningEffectMapPiecewise( 0.0f, 999999.0f, 0.0f, 1.0f ) // 0 <= time <= 999999, 0 <= value < 1.0
+        : WaningEffectMapPiecewise( 0.0f, 999999.0f ) // 0 <= time <= 999999
         , m_SetCountCalled(false)
     {
     }

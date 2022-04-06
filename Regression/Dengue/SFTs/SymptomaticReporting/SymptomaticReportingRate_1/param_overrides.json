@@ -1,0 +1,17 @@
+{
+    "Default_Config_Path": "defaults/dengue_science_default_config.json",
+    "parameters": {
+        "Config_Name": "Dengue_SFT_SymptomaticReporting_SymptomaticReportingRate_1",
+        "Demographics_Filenames": [
+            "../../../Dengue_single_node_demographics.json"
+        ],
+        "Enable_Vector_Mortality": 0,
+        "Incubation_Period_Log_Normal_Mu": -2,
+        "Incubation_Period_Log_Normal_Sigma": 0.01,
+        "Reporting_Period_Constant": 0,
+        "Reporting_Period_Log_Normal_Mu": -2,
+        "Reporting_Period_Log_Normal_Sigma": 0.01,
+        "Symptom_Onset_Delay_Mean": 0,
+        "logLevel_InfectionDengue": "VALID"
+    }
+}

@@ -15,5 +15,5 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 const std::vector<std::string> getSimTypeList();
 
-void writeInputSchemas( const char* dll_path, const char* output_path );
+void writeInputSchemas( const char* dll_path, const char* output_path, const char* exe_name );
 

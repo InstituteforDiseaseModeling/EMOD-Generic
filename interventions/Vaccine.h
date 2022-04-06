@@ -15,57 +15,52 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionEnums.h"
 #include "Configure.h"
 #include "IWaningEffect.h"
+#include "InterpolatedValueMap.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(SimpleVaccineType,
-        ENUM_VALUE_SPEC(Generic              , 1)
-        ENUM_VALUE_SPEC(TransmissionBlocking , 2)
-        ENUM_VALUE_SPEC(AcquisitionBlocking  , 3)
-        ENUM_VALUE_SPEC(MortalityBlocking    , 4))
-
     struct IVaccineConsumer;
     struct ICampaignCostObserver;
 
-    struct IVaccine : public ISupports
+    class Vaccine : public BaseIntervention
     {
-        virtual bool ApplyVaccineTake( IIndividualHumanContext* pihc ) = 0;
-        virtual ~IVaccine() { } // needed for cleanup via interface pointer
-    };
+        DECLARE_FACTORY_REGISTERED(InterventionFactory, Vaccine, IDistributableIntervention)
 
-    class SimpleVaccine : public BaseIntervention, public IVaccine
-    {
-        DECLARE_FACTORY_REGISTERED(InterventionFactory, SimpleVaccine, IDistributableIntervention)
+        DECLARE_SERIALIZABLE(Vaccine);
 
     public:
-        SimpleVaccine();
-        SimpleVaccine( const SimpleVaccine& );
-        virtual ~SimpleVaccine();
-        virtual int AddRef() override { return BaseIntervention::AddRef(); }
-        virtual int Release() override { return BaseIntervention::Release(); }
-        virtual bool Configure( const Configuration* pConfig ) override;
+        Vaccine();
+        Vaccine(const Vaccine&);
+        virtual ~Vaccine();
+
+        virtual bool Configure(const Configuration*) override;
 
         // IDistributableIntervention
-        virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pCCO ) override;
-        virtual void SetContextTo(IIndividualHumanContext *context) override;
+        virtual bool Distribute(IIndividualHumanInterventionsContext*, ICampaignCostObserver* const) override;
+        virtual void SetContextTo(IIndividualHumanContext*) override;
         virtual void Update(float dt) override;
         virtual bool NeedsInfectiousLoopUpdate() const;
 
         // ISupports
-        virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) override;
-
-        // IVaccine
-        virtual bool  ApplyVaccineTake( IIndividualHumanContext* pihc ); 
+        virtual QueryResult QueryInterface(iid_t, void**) override;
 
     protected:
 
-        int   vaccine_type;
-        float vaccine_take;
         bool  vaccine_took;
-        bool efficacy_is_multiplicative;
-        IWaningEffect* waning_effect;
-        IVaccineConsumer * ivc; // interventions container
+        bool  efficacy_is_multiplicative;
 
-        DECLARE_SERIALIZABLE(SimpleVaccine);
+        float vaccine_take;
+        float frac_acq_blocking_take;
+
+        InterpolatedValueMap  take_by_age_map;
+        InterpolatedValueMap  init_acq_by_effect_map;
+        InterpolatedValueMap  init_trn_by_effect_map;
+        InterpolatedValueMap  init_mor_by_effect_map;
+
+        IWaningEffect* effect_acquire;
+        IWaningEffect* effect_transmit;
+        IWaningEffect* effect_mortality;
+
+        IVaccineConsumer* ivc;
     };
 }

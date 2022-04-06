@@ -179,6 +179,15 @@ namespace Kernel
             {
                 return "Vector Enum";
             }
+
+            virtual Element GetSchemaElement()
+            {
+                Element member = Enum::GetSchemaElement();
+                QuickBuilder qb(member);
+                auto default_array = json::Array();
+                qb["default"] = default_array;
+                return member;
+            }
         };
 
         struct Bool : public Base

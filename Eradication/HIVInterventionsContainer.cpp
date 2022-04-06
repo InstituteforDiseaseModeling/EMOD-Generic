@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualEventContext.h"
 #include "IIndividualHumanContext.h"
 #include "NodeEventContext.h"
-#include "SimulationConfig.h"
 #include "EventTrigger.h"
 #include "IdmDateTime.h"
 

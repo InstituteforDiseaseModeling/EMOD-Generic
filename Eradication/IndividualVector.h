@@ -38,7 +38,6 @@ namespace Kernel
         // TODO change double to float
         static IndividualHumanVector *CreateHuman(INodeContext *context, suids::suid _suid, double monte_carlo_weight = 1.0, double initial_age = 0.0, int gender = 0);
         virtual ~IndividualHumanVector();
-        static void InitializeStaticsVector( const Configuration * config );
 
         virtual void CreateSusceptibility(float immunity_modifier = 1.0, float risk_modifier = 1.0) override;
         virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership) override;

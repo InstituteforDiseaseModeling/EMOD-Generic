@@ -9,9 +9,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#pragma warning(disable : 4996)
-
 #ifdef ENABLE_PYTHON
+
 #include "Debug.h"
 #include "RANDOM.h"
 #include "Environment.h"
@@ -21,7 +20,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IContagionPopulation.h"
 #include "PyInterventionsContainer.h"
 #include "IdmString.h"
-#include "SimulationConfig.h"
 #include "PythonSupport.h"
 #include "StrainIdentity.h"
 #include "INodeContext.h"
@@ -49,22 +47,15 @@ namespace Kernel
     {
 #ifdef ENABLE_PYTHON_FEVER
         // Call into python script to notify of new individual 
-        static auto pFunc = Kernel::PythonSupport::GetPyFunction( Kernel::PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "create" );
+        PyObject* pFunc = static_cast<PyObject*>(Kernel::PythonSupport::GetPyFunction( Kernel::PythonSupport::SCRIPT_PYTHON_FEVER, "create" ));
         if( pFunc )
         {
             // pass individual id
-            static PyObject * vars = PyTuple_New(4); 
-            vars = Py_BuildValue( "lffs", _suid.data, monte_carlo_weight, initial_age, PyUnicode_FromFormat( "%s", ( ( gender==0 ) ? "MALE" : "FEMALE" ) ) );
-            // now ready to call function
-            auto ret = PyObject_CallObject( pFunc, vars );
-            if( ret == nullptr )
-            {
-                PyErr_Print();
-                std::stringstream msg;
-                msg << "Embedded python code failed: PyObject_CallObject failed in call to 'create'.";
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
-            // vars ref count is always 1 here
+            PyObject* vars   = Py_BuildValue( "lffs", _suid.data, monte_carlo_weight, initial_age, (gender==0 ? "MALE" : "FEMALE") );
+            PyObject* retVal = PyObject_CallObject( pFunc, vars );
+
+            Py_XDECREF(vars);
+            Py_XDECREF(retVal);
         }
 #endif
     }
@@ -73,36 +64,16 @@ namespace Kernel
     {
 #ifdef ENABLE_PYTHON_FEVER
         // Call into python script to notify of new individual
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "destroy" );
+        PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "destroy" ));
         if( pFunc )
         {
-            static PyObject * vars = PyTuple_New(1);
-            //vars = Py_BuildValue( "l", GetSuid().data ); // this gives errors. :(
-            PyObject* py_id = PyLong_FromLong( GetSuid().data );
-            PyTuple_SetItem(vars, 0, py_id );
-            auto ret = PyObject_CallObject( pFunc, vars );
-            if( ret == nullptr )
-            {
-                PyErr_Print();
-                std::stringstream msg;
-                msg << "Embedded python code failed: PyObject_CallObject failed in call to 'destroy'.";
-#pragma warning (push)
-#pragma warning(disable: 4297)
-                    throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-#pragma warning( pop )
-            }
+            PyObject* vars   = Py_BuildValue( "(l)", GetSuid().data );
+            PyObject* retVal = PyObject_CallObject( pFunc, vars );
+
+            Py_XDECREF(vars);
+            Py_XDECREF(retVal);
         }
 #endif
-    }
-
-    void IndividualHumanPy::InitializeStaticsPy( const Configuration* config ) // just called once!
-    {
-        SusceptibilityPyConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionPyConfig infection_config;
-        infection_config.Configure( config );
-        //IndividualHumanPyConfig human_config;
-        //human_config.Configure( config );
     }
 
     IndividualHumanPy *IndividualHumanPy::CreateHuman(INodeContext *context, suids::suid id, float monte_carlo_weight, float initial_age, int gender)
@@ -127,29 +98,28 @@ namespace Kernel
 
     void IndividualHumanPy::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        SusceptibilityPy *newsusceptibility = SusceptibilityPy::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        SusceptibilityPy *newsusceptibility = SusceptibilityPy::CreateSusceptibility(this, imm_mod, risk_mod);
         pydemo_susceptibility = newsusceptibility;
         susceptibility = newsusceptibility;
     }
 
     void IndividualHumanPy::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route )
     { 
-#ifdef ENABLE_PYTHON_FEVER
         if( cp->GetTotalContagion() == 0 )
         {
             return;
         }
 
+#ifdef ENABLE_PYTHON_FEVER
         LOG_DEBUG_F( "Calling py:expose with contagion pop %f\n", cp->GetTotalContagion() );
 
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "expose" );
+        PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "expose" ));
         if( pFunc )
         {
             // pass individual id AND dt
-            static PyObject * vars = PyTuple_New(4);
+            PyObject* vars   = Py_BuildValue( "lfll", GetSuid().data, cp->GetTotalContagion(), static_cast<int>(dt), (transmission_route==TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ? 0 : 1) );
+            PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
-            vars = Py_BuildValue( "lfll", GetSuid().data, cp->GetTotalContagion(), int(dt), PyLong_FromLong( transmission_route == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ? 0 : 1 ) ); 
-            PyObject * retVal = PyObject_CallObject( pFunc, vars );
             if( retVal == nullptr )
             {
                 PyErr_Print();
@@ -164,12 +134,12 @@ namespace Kernel
                 StrainIdentity strainId;
                 AcquireNewInfection(&strainId);
             }
-#if !defined(_WIN32) || !defined(_DEBUG)
-            Py_DECREF( retVal );
-#endif
+
+            Py_XDECREF(vars);
+            Py_XDECREF(retVal);
         }
-        return;
 #endif
+        return;
     }
 
     void IndividualHumanPy::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
@@ -182,14 +152,13 @@ namespace Kernel
 #ifdef ENABLE_PYTHON_FEVER
         for( auto &route: parent->GetTransmissionRoutes() )
         {
-            static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "update_and_return_infectiousness" );
+            PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "update_and_return_infectiousness" ));
             if( pFunc )
             {
                 // pass individual id ONLY
-                static PyObject * vars = PyTuple_New(2);
+                PyObject* vars   = Py_BuildValue( "ls", GetSuid().data, route.c_str() );
+                PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
-                vars = Py_BuildValue( "ls", GetSuid().data, PyUnicode_FromFormat( "%s", route.c_str() ) );
-                auto retVal = PyObject_CallObject( pFunc, vars );
                 if( retVal == nullptr )
                 {
                     PyErr_Print();
@@ -206,13 +175,13 @@ namespace Kernel
                     LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, route.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                     parent->DepositFromIndividual( tmp_strainID, (float) val, transmissionGroupMembershipByRoute.at( route ) );
                 }
-#if !defined(_WIN32) || !defined(_DEBUG)
-                Py_DECREF( retVal );
-#endif
+
+                Py_XDECREF(vars);
+                Py_XDECREF(retVal);
             }
         }
-        return;
 #endif
+        return;
     }
 
     Infection* IndividualHumanPy::createInfection( suids::suid _suid )
@@ -228,17 +197,17 @@ namespace Kernel
     void IndividualHumanPy::Update( float currenttime, float dt)
     {
 #ifdef ENABLE_PYTHON_FEVER
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "update" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "update" ));
         if( pFunc )
         {
             // pass individual id AND dt
-            static PyObject * vars = PyTuple_New(2);
-            vars = Py_BuildValue( "ll", GetSuid().data, int(dt) );
-            auto pyVal = PyObject_CallObject( pFunc, vars );
-            if( pyVal != nullptr )
+            PyObject* vars   = Py_BuildValue( "ll", GetSuid().data, int(dt) );
+            PyObject* retVal = PyObject_CallObject( pFunc, vars );
+
+            if( retVal != nullptr )
             {
                 char * state = "UNSET";
-                PyArg_ParseTuple(pyVal,"si",&state, &state_changed ); //o-> pyobject |i-> int|s-> char*
+                PyArg_ParseTuple(retVal,"si",&state, &state_changed );
                 state_to_report = state;
             }
             else
@@ -249,10 +218,10 @@ namespace Kernel
                 throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
                 state_to_report = "D";
             }
-#if !defined(_WIN32) || !defined(_DEBUG)
-            Py_DECREF(pyVal);
-#endif
             PyErr_Print();
+
+            Py_DECREF(vars);
+            Py_DECREF(retVal);
         }
         else
         {
@@ -288,27 +257,28 @@ namespace Kernel
     {
         LOG_DEBUG_F("AcquireNewInfection: route %d\n", _routeOfInfection);
         IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );
+
 #ifdef ENABLE_PYTHON_FEVER
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER.c_str(), "acquire_infection" );
+        PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "acquire_infection" ));
         if( pFunc )
         {
             // pass individual id ONLY
-            static PyObject * vars = PyTuple_New(1);
+            PyObject* vars   = Py_BuildValue( "(l)", GetSuid().data );
+            PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
-            PyObject* py_existing_id = PyLong_FromLong( GetSuid().data );
-            PyTuple_SetItem(vars, 0, py_existing_id );
-
-            //vars = Py_BuildValue( "l", GetSuid().data ); // BuildValue with 1 param seems to give errors
-            auto ret = PyObject_CallObject( pFunc, vars );
-            if( ret == nullptr )
+            if( retVal == nullptr )
             {
                 PyErr_Print();
                 std::stringstream msg;
                 msg << "Embedded python code failed: PyObject_CallObject failed in call to 'acquire_infection'.";
                 throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
             }
+
+            Py_XDECREF(vars);
+            Py_XDECREF(retVal);
         }
 #endif
+        return;
     }
 
     HumanStateChange IndividualHumanPy::GetStateChange() const

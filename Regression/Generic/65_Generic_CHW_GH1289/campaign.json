@@ -14,12 +14,11 @@
                             "Cost_To_Consumer": 1,
                             "Efficacy_Is_Multiplicative": 1,
                             "Vaccine_Take": 1,
-                            "Vaccine_Type": "AcquisitionBlocking",
-                            "Waning_Config": {
+                            "Acquire_Config": {
                                 "Initial_Effect": 0.9,
                                 "class": "WaningEffectConstant"
                             },
-                            "class": "SimpleVaccine"
+                            "class": "Vaccine"
                         },
                         {
                             "Broadcast_Event": "ReceivedTreatment",

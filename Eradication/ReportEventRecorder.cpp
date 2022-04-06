@@ -100,28 +100,6 @@ namespace Kernel
                 IIndividualEventBroadcaster* broadcaster = pNEC->GetIndividualEventBroadcaster();
                 UpdateRegistration( broadcaster, true );
                 broadcaster_list.push_back( broadcaster );
-#if 0
-                // This logic goes through all possible events.  It checks to see if that event
-                // is in the listen-to-these event_list provided by the user. But that list can be a 
-                // whitelist or blacklist. If using whitelist AND event-requested is in master THEN listen.
-                // else if using blacklist AND if event-(de)requested is not in master THEN listen.
-
-                //std::vector<EventTrigger::Enum> all_trigger_list = EventTrigger::NUM_EVENT_TRIGGERS;
-                //for( auto trigger : all_trigger_list )
-                for( unsigned int trigger_idx = EventTrigger::NoTrigger; trigger_idx < EventTrigger::NUM_EVENT_TRIGGERS; trigger_idx++ )
-                {
-                    EventTrigger::Enum trigger = EventTrigger::Enum( trigger_idx );
-                    bool in_event_list = std::find( tmp_event_trigger_list.begin(), 
-                                                    tmp_event_trigger_list.end(), trigger ) != tmp_event_trigger_list.end() ;
-
-                    if( (!ignore_events_in_list &&  in_event_list) ||
-                        ( ignore_events_in_list && !in_event_list) )
-                    {
-                        // list of events to listen for
-                        eventTriggerList.push_back( trigger );
-                    }
-                }
-#endif
             }
             is_registered = true;
         }

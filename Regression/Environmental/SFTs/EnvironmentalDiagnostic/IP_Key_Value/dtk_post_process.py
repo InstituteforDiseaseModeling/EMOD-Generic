@@ -24,10 +24,10 @@ import dtk_test.dtk_EnvironmentalDiagnostic_Support as Diagnostic_Support
 
 This SFT is testing environmental feature 2.6 Interventions EnvironmentalDiagnostic: Environment_IP_Key_Value
 
-"If provided, this individual property key-value pair will indicate a specific transmission “pool”. 
+"If provided, this individual property key-value pair will indicate a specific transmission "pool". 
 Typically, this will be used to identify a location.
 If not provided or empty, then the sample is to be expected for the entire node.
-This is an IP key-value pair such that we have “key:value”."
+This is an IP key-value pair such that we have "key:value"."
 
 In this test we turn off other features in EnvironmentalDiagnostic and only look at Environment_IP_Key_Value.
 

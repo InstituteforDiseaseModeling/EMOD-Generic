@@ -55,18 +55,12 @@ const std::string NodeDemographicsFactory::default_node_demographics_str = strin
         \"AgeDistributionFlag\": 3, \n\
         \"AgeDistribution1\": 0.000118, \n\
         \"AgeDistribution2\": 0, \n\
-        \"PrevalenceDistributionFlag\": 0, \n\
-        \"PrevalenceDistribution1\": 0.0, \n\
-        \"PrevalenceDistribution2\": 0, \n\
         \"SusceptibilityDistributionFlag\": 0, \n\
         \"SusceptibilityDistribution1\": 0, \n\
         \"SusceptibilityDistribution2\": 0, \n\
         \"RiskDistributionFlag\": 0, \n\
         \"RiskDistribution1\": 0, \n\
-        \"RiskDistribution2\": 0, \n\
-        \"MigrationHeterogeneityDistributionFlag\": 0, \n\
-        \"MigrationHeterogeneityDistribution1\": 1, \n\
-        \"MigrationHeterogeneityDistribution2\": 0 \n\
+        \"RiskDistribution2\": 0 \n\
     } \n\
 } ");
 
@@ -344,17 +338,13 @@ bool NodeDemographics::operator!=( const NodeDemographics& rThat ) const
 }
 
 
-NodeDemographicsFactory * NodeDemographicsFactory::CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map,
-                                                                                  const ::Configuration *config,
-                                                                                  bool isDataInFiles,
-                                                                                  uint32_t torusSize,
-                                                                                  uint32_t defaultPopulation )
+NodeDemographicsFactory * NodeDemographicsFactory::CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const ::Configuration *config )
 {
     NodeDemographicsFactory* factory = _new_ NodeDemographicsFactory(nodeid_suid_map);
 
     try
     {
-        factory->Initialize( config, isDataInFiles, torusSize, defaultPopulation );
+        factory->Initialize( config );
     }
     catch( std::exception& )
     {
@@ -379,61 +369,37 @@ std::vector<std::string> NodeDemographicsFactory::ConvertLegacyStringToSet(const
 
 bool NodeDemographicsFactory::Configure(const Configuration* config)
 {
-    default_node_population = 1000;
-    initConfigTypeMap( "Demographics_Filenames", &demographics_filenames_list, Demographics_Filenames_DESC_TEXT );
+    initConfigTypeMap( "Enable_Demographics_Builtin",               &demographics_builtin,  Enable_Demographics_Builtin_DESC_TEXT,                true );
+    initConfigTypeMap( "Default_Geography_Torus_Size",              &torus_size,            Default_Geography_Torus_Size_DESC_TEXT,               3, 100,   10, "Enable_Demographics_Builtin");
+    initConfigTypeMap( "Default_Geography_Initial_Node_Population", &default_population,    Default_Geography_Initial_Node_Population_DESC_TEXT,  0, 1e6, 1000, "Enable_Demographics_Builtin");
 
-    bool resetDefaults = JsonConfigurable::_useDefaults;
-    bool resetTrackMissing = JsonConfigurable::_track_missing;
-    JsonConfigurable::_useDefaults=true;
-    JsonConfigurable::_track_missing=false;
+    // Only configure filenames if file list is empty; list may be non-empty via SetDemographicsFileList used from component testing
+    if( demographics_filenames_list.empty() )
+    {
+        std::set<std::string> empty_set;
+        initConfigTypeMap( "Demographics_Filenames", &demographics_filenames_list, Demographics_Filenames_DESC_TEXT, nullptr, empty_set, "Enable_Demographics_Builtin", "0");
+    }
+
     bool configured = JsonConfigurable::Configure( config );
-    JsonConfigurable::_useDefaults = resetDefaults;
-    JsonConfigurable::_track_missing = resetTrackMissing;
 
-    if (demographics_filenames_list.empty() && !JsonConfigurable::_dryrun)
+    // Allow_NodeID_Zero is an undocumented control that allows demographics files with nodeID = 0; created for backward compatibility.
+    if( config && config->Exist( "Allow_NodeID_Zero" ) )
     {
-        throw MissingParameterFromConfigurationException( __FILE__, __LINE__, __FUNCTION__, config->GetDataLocation().c_str(), "Demographics_Filenames" );
-    }
-
-    // -------------------------------------------------------------------------------------
-    // --- Allow_NodeID_Zero is an undocumented control that allows users to have
-    // --- demographics files with nodeID = 0.  This was created for backward compatibility.
-    // -------------------------------------------------------------------------------------
-    allow_nodeid_zero = false;
-    if( !JsonConfigurable::_dryrun && (config != nullptr) )
-    {
-        if( config->Exist( "Allow_NodeID_Zero" ) )
-        {
-            allow_nodeid_zero = ((*config)[ "Allow_NodeID_Zero" ].As<json::Number>() == 1);
-        }
-    }
-
-    // -------------------------------------------------------------------------------------
-    // --- Allow_NodeID_Zero is an undocumented control that allows users to have
-    // --- demographics files with nodeID = 0.  This was created for backward compatability.
-    // -------------------------------------------------------------------------------------
-    allow_nodeid_zero = false;
-    if( !JsonConfigurable::_dryrun && (config != nullptr) )
-    {
-        if( config->Exist( "Allow_NodeID_Zero" ) )
-        {
-            allow_nodeid_zero = ((*config)[ "Allow_NodeID_Zero" ].As<json::Number>() == 1);
-        }
+        allow_nodeid_zero = ((*config)[ "Allow_NodeID_Zero" ].As<json::Number>() == 1);
     }
 
     return configured;
 }
 
-void NodeDemographicsFactory::Initialize( const ::Configuration* config,
-                                          bool isDataInFiles,
-                                          uint32_t torusSize,
-                                          uint32_t defaultPopulation )
+void NodeDemographicsFactory::Initialize( const ::Configuration* config )
 {
+    Configure(config);
+
     try
     {
         full_string_table = new std::map<string, string>();
 
-        if( isDataInFiles )
+        if( !demographics_builtin )
         {
             demographics_filenames = GetDemographicFileNames( config );
 
@@ -556,8 +522,6 @@ void NodeDemographicsFactory::Initialize( const ::Configuration* config,
         }
         else // default geography
         {
-            torus_size = torusSize;
-            default_population = defaultPopulation; 
             release_assert( torus_size >= 3 );
 
             std::stringstream ss;
@@ -612,15 +576,6 @@ void NodeDemographicsFactory::Initialize( const ::Configuration* config,
 
 std::vector<std::string> NodeDemographicsFactory::GetDemographicFileNames(const ::Configuration* config)
 {
-    if( demographics_filenames_list.empty() )
-    {
-        Configure(config);
-    }
-    else
-    {
-        LOG_DEBUG("demographics_filenames_list already set, e.g. we have called SetDemographicsFileList from a component test before calling CreateNodeDemographicsFactory\n");
-    }
-
     if( demographics_filenames_list.empty() )
     {
         throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Enable_Demographics_Builtin", "0", "Demographics_Filenames", "<empty>" );

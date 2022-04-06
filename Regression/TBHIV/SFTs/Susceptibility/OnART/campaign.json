@@ -54,14 +54,12 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
                     "Vaccine_Take": 1,
-                    "Vaccine_Take_Age_Decay_Rate": 0,
-                    "Vaccine_Type": "TransmissionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Box_Duration": 54750,
                         "Initial_Effect": 1,
                         "class": "WaningEffectBox"
                     },
-                    "class": "BCGVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,

@@ -9,7 +9,8 @@
             "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
-                "Madagascar_Nosibe_2.5arcmin_demographics.json"
+                "Madagascar_Nosibe_2.5arcmin_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Aging": 1,
             "Enable_Birth": 0,

@@ -1,0 +1,126 @@
+{
+    "Metadata": {
+        "Author": "jsteinkraus",
+        "DateCreated": "Sun Sep 25 23:19:55 2011",
+        "IdReference": "Gridded world grump2.5arcmin",
+        "NodeCount": 1,
+        "Tool": "convertdemog.py"
+    },
+    "Nodes": [
+        {
+            "IndividualAttributes": {
+                "AgeDistribution1": 0.000118,
+                "AgeDistribution2": 0,
+                "AgeDistributionFlag": 3,
+                "InitialPrevalence": 0.0,
+                "MortalityDistribution": {
+                    "AxisNames": [
+                        "gender",
+                        "age"
+                    ],
+                    "AxisScaleFactors": [
+                        1,
+                        365
+                    ],
+                    "AxisUnits": [
+                        "male=0,female=1",
+                        "years"
+                    ],
+                    "NumDistributionAxes": 2,
+                    "NumPopulationGroups": [
+                        2,
+                        3
+                    ],
+                    "PopulationGroups": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            100,
+                            2000
+                        ]
+                    ],
+                    "ResultScaleFactor": 2.7397260273972604e-06,
+                    "ResultUnits": "annual deaths per 1000 individuals",
+                    "ResultValues": [
+                        [
+                            0,
+                            20.0000035,
+                            400.00007
+                        ],
+                        [
+                            0,
+                            20.0000035,
+                            400.00007
+                        ]
+                    ]
+                },
+                "RiskDistribution1": 1,
+                "RiskDistribution2": 0,
+                "RiskDistributionFlag": 0,
+                "SusceptibilityDistribution1": 1,
+                "SusceptibilityDistribution2": 0,
+                "SusceptibilityDistributionFlag": 0
+            },
+            "IndividualProperties": [
+                {
+                    "Initial_Distribution": [
+                        0.25,
+                        0.25,
+                        0.25,
+                        0.25
+                    ],
+                    "Property": "QualityOfCare",
+                    "Transitions": [],
+                    "TransmissionMatrix": {
+                        "Matrix": [
+                            [
+                                1.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                1.0,
+                                0.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                1.0,
+                                0.0
+                            ],
+                            [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ]
+                        ]
+                    },
+                    "Values": [
+                        "SimpleVaccineOnly",
+                        "BoosterVaccineOnly",
+                        "SimpleVaccinePlusBooster",
+                        "TwoBoosters"
+                    ]
+                }
+            ],
+            "NodeAttributes": {
+                "Airport": 0,
+                "Altitude": 0,
+                "BirthRate": 0.0001,
+                "InitialPopulation": 1000,
+                "Latitude": -8.5,
+                "Longitude": 36.5,
+                "Region": 1,
+                "Seaport": 0
+            },
+            "NodeID": 340461476
+        }
+    ]
+}

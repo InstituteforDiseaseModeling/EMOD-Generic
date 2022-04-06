@@ -201,11 +201,10 @@
                 "Property_Restrictions_Within_Node": [],
                 "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                   "class": "SimpleVaccine",
+                   "class": "Vaccine",
                    "Cost_To_Consumer": 2,
                    "Vaccine_Take": 1,
-                   "Vaccine_Type": "AcquisitionBlocking",
-                   "Waning_Config": {
+                   "Acquire_Config": {
                       "class": "WaningEffectBox",
                       "Initial_Effect": 1.0,
                       "Box_Duration": 100

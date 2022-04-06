@@ -22,13 +22,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class IReport;
-    class SimulationConfig;
     class IInterventionFactory;
     struct DemographicsContext;
     struct INodeQualifier; 
     struct IIndividualHuman;
     struct IdmDateTime;
     struct ISimulationEventContext;
+    struct SimParams;
 
     ////////////////////////////////////////////////////////////////////////
     /* Design pattern for allowing access of child objects to methods of Simulation
@@ -44,7 +44,6 @@ namespace Kernel
     // 2. Provide the common instances and variables that are needed for those components
     struct IDMAPI IGlobalContext : public ISupports
     {
-        virtual const SimulationConfig* GetSimulationConfigObj() const = 0;
         virtual const IInterventionFactory* GetInterventionFactory() const = 0;
     };
 
@@ -52,6 +51,9 @@ namespace Kernel
     {
         // demographics
         virtual const DemographicsContext* GetDemographicsContext() const = 0;
+
+        // parameters
+        virtual const SimParams* GetParams() const = 0;
 
         // time services
         virtual const IdmDateTime& GetSimulationTime() const = 0;

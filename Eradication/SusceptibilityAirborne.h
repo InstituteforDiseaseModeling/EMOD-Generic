@@ -22,16 +22,13 @@ namespace Kernel
     {
     public:
         virtual ~SusceptibilityAirborne(void);
-        static SusceptibilityAirborne *CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod);
+        static SusceptibilityAirborne *CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod);
 
     protected:
 
         SusceptibilityAirborne();
         SusceptibilityAirborne(IIndividualHumanContext *context);
-        virtual void Initialize(float age, float immmod, float riskmod) override;
-
-        // additional members of airborne susceptibility
-        float demographic_risk;
+        virtual void Initialize(float immmod, float riskmod) override;
 
         DECLARE_SERIALIZABLE(SusceptibilityAirborne);
     };

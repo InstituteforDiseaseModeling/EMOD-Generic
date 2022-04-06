@@ -21,7 +21,8 @@
         },
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Muheza_single_node_demographics.json"
+                "Muheza_single_node_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },

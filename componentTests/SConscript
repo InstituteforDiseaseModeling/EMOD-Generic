@@ -25,6 +25,8 @@ else:
         "CommunityHealthWorkerEventCoordinatorTest.cpp",
         "componentTests.cpp",
         "ConcurrencyParametersTest.cpp",
+        "ConfigureTest.cpp",
+        "DelayedInterventionTest.cpp",
         "FileSystemTest.cpp",
         "FlowControllerImplTest.cpp",
         "GenomeMarkersTest.cpp",
@@ -32,8 +34,8 @@ else:
         "HIVARTStagingCD4AgnosticDiagnosticTest.cpp",
         "HIVDrawBloodTest.cpp", 
         "HIVSimpleDiagnosticTest.cpp", 
+        "IncidenceEventCoordinatorTest.cpp",
         "InterventionForCurrentPartnersTest.cpp",
-        #"IncidenceEventCoordinatorTest.cpp",
         "InterpolatedValueMapTest.cpp",
         "JsonObjectDemogTest.cpp",
         "LarvalHabitatMultiplierTest.cpp",
@@ -50,13 +52,17 @@ else:
         "PrngTest.cpp",
         "ProgramOptionsTest.cpp",
         "PropertiesTest.cpp",
+        "RandomNumberGeneratorFactoryTest.cpp",
         "RateTableImplTest.cpp",
         "RelationshipParametersTest.cpp",
         "ReportUtilitiesMalariaTest.cpp",
         "ReportUtilitiesTest.cpp",
-        "SerializationTimeCalculatorTest.cpp",
+        #"SerializationTest.cpp",
+        "SerializationParametersTest.cpp",
         "SigmoidTest.cpp",
         "STIIsPostDebutTest.cpp",
+        "TestChiSquare.cpp",
+        "TransmissionGroupsTest.cpp",
         "WaningEffectComboTest.cpp",
         "WaningEffectMapTest.cpp",
         "FakeLogger.cpp"
@@ -91,7 +97,6 @@ else:
         erad_env.Append(LIBPATH = ["$BUILD_DIR/Eradication"])
         erad_env.Append(LIBS=["/WHOLEARCHIVE:coreLib"])
     else:
-        #erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,$BUILD_DIR/Eradication/libcoreLib.a,--no-whole-archive"])
         erad_env.Append( LIBS=[ "baseReportLib"] )
         erad_env.Append( LIBS=[ "campaign"] )
         erad_env.Append( LIBS=[ "utils"] )
@@ -99,9 +104,9 @@ else:
         erad_env.Append( LIBS=[ "snappy"] )
         erad_env.Append( LIBS=[ "lz4"] )
         if env["Debug"]:
-            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,--no-whole-archive"])
+            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,--no-whole-archive,-lsqlite3"])
         else:
-            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Release/Eradication/libcoreLib.a,--no-whole-archive"])
+            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Release/Eradication/libcoreLib.a,--no-whole-archive,-lsqlite3"])
 
     # Monolithic
     testsExe = erad_env.Program('componentTests', testsSrcFiles)

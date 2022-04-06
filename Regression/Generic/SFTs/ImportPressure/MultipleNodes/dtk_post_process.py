@@ -11,6 +11,7 @@ np.random.seed(run_number)
 import math
 import dtk_test.dtk_ImportPressure_Support as ips
 
+from scipy import stats
 
 KEY_NODE_COUNT = "NodeCount"
 KEY_NODE_LIST_COUNT = "Node_List_Count"
@@ -101,38 +102,28 @@ def create_report_file(param_obj, campaign_obj, demographics_obj, report_data_ob
                 json.dump(new_infections_dict, new_infections_file, indent=4)
 
         # test statistical population channel
-        diff_population = math.fabs(calculate_new_population - statistical_population[-1])
         if debug:
             print("calculated population is {0}, statistical population "
                   "from InsetChart is {1}.".format(calculate_new_population,
                                                    statistical_population[-1]))
-        error_tolerance = math.fabs(calculate_new_population - initial_population) * 0.1
-        low_acceptance_bound = round(calculate_new_population - error_tolerance)
-        high_acceptance_bound = round(calculate_new_population + error_tolerance)
-        if debug:
-            print("diff_population is {0}, error_tolerance is {1}".format(diff_population, error_tolerance))
-        success = diff_population < error_tolerance
+        delta_pop = math.fabs(calculate_new_population - initial_population)
+        low_acceptance_bound  = round(stats.poisson.ppf(0.0025, mu=delta_pop))+initial_population
+        high_acceptance_bound = round(stats.poisson.ppf(0.9975, mu=delta_pop))+initial_population
+        success = (low_acceptance_bound < statistical_population[-1] < high_acceptance_bound)
         result_string = "GOOD" if success else "BAD"
         within_acceptance_bounds = " " if success else " not "
-        outfile.write("{0}: statistical population is {1}, which is{2}within range of ({3}, {4}).  "
-                      "Expected about {5}.\n".format(result_string, statistical_population[-1],
-                                                     within_acceptance_bounds, low_acceptance_bound,
-                                                     high_acceptance_bound, calculate_new_population))
+        outfile.write("{0}: statistical population is {1}, which is{2}within range ({3}, {4})"
+                      ".  Expected about {5:d}.\n".format(result_string, statistical_population[-1],
+                                                       within_acceptance_bounds, low_acceptance_bound,
+                                                        high_acceptance_bound, int(calculate_new_population)))
         # test poisson distribution for new infections
         for rate in new_infections_dict:
             dist = new_infections_dict[rate]
-            title = "rate = " + str(rate)
-            result = sft.test_poisson(dist, rate, route=title, report_file=outfile, normal_approximation=False)
+            title = "rate = {0:.2f}".format(rate)
+            result = sft.test_poisson(dist, rate, route=title, report_file=outfile, confidence_interval=0.005)
             if not result:
                 success = False
-            numpy_distro = np.random.poisson(rate, len(dist))
-            sft.plot_data(dist, numpy_distro,
-                          title="new infections for {}".format(title),
-                          label1="new infection from model, {}".format(title),
-                          label2="Poisson distro from numpy",
-                          xlabel="data points", ylabel="new infection",
-                          category="plot_data_{0}".format(title), show=True,
-                          sort=True)
+            numpy_distro = np.random.poisson(rate, 1000)
             sft.plot_probability(dist, numpy_distro,
                                  title="probability mass function for {}".format(title),
                                  label1="new infection probability from model",

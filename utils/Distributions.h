@@ -118,6 +118,17 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
     };
 
+    class DistributionGamma : public DistributionBase
+    {
+        DECLARE_SERIALIZABLE( DistributionGamma )
+    public:
+        DistributionGamma();
+        ~DistributionGamma();
+        virtual float Calculate( RANDOMBASE* pRNG ) const override;
+        virtual IDistribution* Clone() const override;
+        DECLARE_QUERY_INTERFACE()
+    };
+
     /******************  PiecewiseDistribution ******************/
     class DistributionPiecewiseConstant : public PiecewiseDistributionBase
     {

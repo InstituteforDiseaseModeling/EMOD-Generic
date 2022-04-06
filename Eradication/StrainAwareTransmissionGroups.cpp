@@ -12,15 +12,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "StrainAwareTransmissionGroups.h"
 #include "Exceptions.h"
 
-// These includes are required to bring in randgen
 #include "Environment.h"
-//#include "Contexts.h"
 #include "RANDOM.h"
 
 #include "Log.h"
 #include "Debug.h"
 #include "StrainIdentity.h"
-#include "SimulationConfig.h"
 #include <numeric>
 
 SETUP_LOGGING( "StrainAwareTransmissionGroups" )
@@ -142,6 +139,47 @@ namespace Kernel
         allocateAccumulators(numberOfClades, numberOfGenomes);
 
         LOG_DEBUG_F("Built %d groups with %d clades and %d genomes.\n", getGroupCount(), numberOfClades, numberOfGenomes);
+    }
+
+    void StrainAwareTransmissionGroups::ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix)
+    {
+        if(propertyNameToMatrixMap.count(propertyName) == 0)
+        {
+            throw BadMapKeyException( __FILE__, __LINE__, __FUNCTION__, "propertyNameToMatrixMap", propertyName.c_str() );
+        }
+        else
+        {
+            if(propertyNameToMatrixMap[propertyName].size() != newScalingMatrix.size())
+            {
+                std::ostringstream msg;
+                msg << "Invalid Transmission Matrix for property '" << propertyName << "'. It has "
+                    << newScalingMatrix.size() << " rows when it should have " << propertyNameToMatrixMap[propertyName].size()
+                    << ". It should be square with one row/col per value for the property." ;
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+            }
+            else
+            {
+                for(int k1=0; k1<propertyNameToMatrixMap[propertyName].size(); k1++)
+                {
+                    if(propertyNameToMatrixMap[propertyName][k1].size() != newScalingMatrix[k1].size())
+                    {
+                        std::ostringstream msg;
+                        msg << "Invalid Transmission Matrix for property '" << propertyName << "'. It has a row with "
+                            << newScalingMatrix[k1].size() << " columns when all rows must have " << propertyNameToMatrixMap[propertyName].size()
+                            << " columns. It should be square with one row/col per value for the property." ;
+                        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                    }
+                    else
+                    {
+                        propertyNameToMatrixMap[propertyName][k1] = newScalingMatrix[k1];
+                    }
+                }
+            
+            }
+        }
+
+        // Rebuild cumulative matrix
+        buildScalingMatrix();
     }
 
     void StrainAwareTransmissionGroups::allocateAccumulators( NaturalNumber numberOfClades, NaturalNumber numberOfGenomes )
@@ -267,7 +305,7 @@ namespace Kernel
         }
     }
 
-    void StrainAwareTransmissionGroups::EndUpdate( float infectivityMultiplier, float infectivityAddition )
+    void StrainAwareTransmissionGroups::EndUpdate( float infectivityMultiplier, float infectivityAddition, float infectivityOverdispersion )
     {
         LOG_VALID_F( "(%s) Enter (%s)\n", tag.c_str(), __FUNCTION__ );
 
@@ -343,9 +381,15 @@ namespace Kernel
                 LOG_VALID_F( "(%s) Normalization (%s) for group %d is %f based on population %f\n", tag.c_str(), (normalizeByTotalPopulation ? "total population" : "group population"), iGroup, normalization, population);
                 LOG_VALID_F( "(%s) Contagion for [clade:%d,route:0] population scaled by %f\n", tag.c_str(), iClade, population);
 
-                refForceOfInfectionForCladeByGroup[iGroup] = refCurrentContagionForCladeByDestinationGroup[iGroup]
-                                                                * infectivityMultiplier
-                                                                * normalization;
+                float scaled_overdispersed_contagion = refCurrentContagionForCladeByDestinationGroup[iGroup]*infectivityMultiplier;
+                // Overdispersion is only applied here because refForceOfInfectionForCladeByGroup is used to determine number of infections;
+                //   values in refForceOfInfectionForCladeAndGroupByGenome are only used for selecting genome value (not infection probability) and don't need overdispersion
+                if( pRNG && infectivityOverdispersion > 0.001f )
+                {
+                     scaled_overdispersed_contagion = pRNG->rand_gamma(1.0f/infectivityOverdispersion, scaled_overdispersed_contagion*infectivityOverdispersion);
+                }
+
+                refForceOfInfectionForCladeByGroup[iGroup] = scaled_overdispersed_contagion * normalization;
                 LOG_VALID_F("(%s) Normalized contagion for group %d is %f and seasonally scaled by %f\n", tag.c_str(), iGroup, float(refCurrentContagionForCladeByDestinationGroup[iGroup]) * normalization, infectivityMultiplier);
             }
 

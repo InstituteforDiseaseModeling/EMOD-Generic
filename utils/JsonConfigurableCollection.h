@@ -9,10 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#ifndef WIN32
-#include <cxxabi.h>
-#endif
-
 #include "Configure.h"
 
 namespace Kernel
@@ -29,7 +25,18 @@ namespace Kernel
             : JsonConfigurable()
             , m_IdmTypeName( rIdmTypeName )
             , m_Collection()
+        { }
+
+        JsonConfigurableCollection( const JsonConfigurableCollection& rMaster )
+            : JsonConfigurable( rMaster )
+            , m_IdmTypeName( rMaster.m_IdmTypeName )
+            , m_Collection() // DO NOT COPY
         {
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            // !!! Do not copy the elements of m_Collection.  They are pointers to objects owned by rMaster.
+            // !!! Implementers of the template must implement their own copy constructor so that they
+            // !!! can copy the elements.
+            // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
         virtual ~JsonConfigurableCollection()
@@ -59,23 +66,19 @@ namespace Kernel
                 p_jcc->Configure( nullptr );
             }
 
-            std::string idm_type_schema = "idmType:" + m_IdmTypeName;
-            std::string object_name = typeid(*p_jcc).name();
-#ifdef WIN32
-            object_name = object_name.substr( 14 ); // remove "class Kernel::"
-#else
-            object_name = abi::__cxa_demangle( object_name.c_str(), 0, 0, nullptr );
-            object_name = object_name.substr( 8 ); // remove "Kernel::"
-#endif
-            std::string object_schema_name = "<" + object_name + " Value>";
+            std::string object_schema_name = p_jcc->GetTypeName();
+            std::string idm_type_schema = "idmType:" + object_schema_name;
 
             json::QuickBuilder schema( GetSchemaBase() );
             auto tn = JsonConfigurable::_typename_label();
             auto ts = JsonConfigurable::_typeschema_label();
             schema[ tn ] = json::String( idm_type_schema );
+            schema[ "item_type" ] = json::String( object_schema_name );
 
-            schema[ ts ] = json::Object();
-            schema[ ts ][ object_schema_name ] = p_jcc->GetSchema();
+            // Add the schema for the objects to be retrieved by JsonConfigurable::Configure()
+            // Also add the "class" parameter so the python classes will be generated
+            schema[ ts ] = p_jcc->GetSchema();
+            schema[ ts ][ "class" ] = json::String( object_schema_name );
 
             delete p_jcc;
 
@@ -120,6 +123,34 @@ namespace Kernel
         JsonConfigurableClass* operator[]( int index )
         {
             return m_Collection[ index ];
+        }
+
+        static void serialize( IArchive& ar, JsonConfigurableCollection<JsonConfigurableClass>& rJcc )
+        {
+            size_t count = ar.IsWriter() ? rJcc.m_Collection.size() : -1;
+
+            ar.startArray( count );
+            if( ar.IsWriter() )
+            {
+                for( JsonConfigurableClass* p_obj : rJcc.m_Collection )
+                {
+                    ar.startObject();
+                        ar & *p_obj;
+                    ar.endObject();
+                }
+            }
+            else
+            {
+                for( size_t i = 0; i < count; ++i )
+                {
+                    JsonConfigurableClass* p_obj = rJcc.CreateObject();
+                    ar.startObject();
+                        ar & *p_obj;
+                    ar.endObject();
+                    rJcc.m_Collection.push_back( p_obj );
+                }
+            }
+            ar.endArray();
         }
 
     protected:

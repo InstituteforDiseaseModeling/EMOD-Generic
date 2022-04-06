@@ -57,6 +57,11 @@ namespace Kernel
         LOG_VALID_F( "boxDuration = %f, currentEffect = %f.\n", boxDuration, currentEffect );
     }
 
+    bool WaningEffectBox::Expired() const
+    {
+        return (currentEffect <= 0.0f);
+    }
+
     REGISTER_SERIALIZABLE(WaningEffectBox);
 
     void WaningEffectBox::serialize(IArchive& ar, WaningEffectBox* obj)

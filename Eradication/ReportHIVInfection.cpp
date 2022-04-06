@@ -125,19 +125,6 @@ namespace Kernel
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualSTI", "IndividualHuman" );
         }
 
-        IDrugVaccineInterventionEffects *idvie = nullptr;
-        if( s_OK != individual->GetInterventionsContext()->QueryInterface( GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie ) ) {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, 
-                                           "individual->GetInterventionsContext()", 
-                                           "IDrugVaccineInterventionEffects",
-                                           "IIndividualHumanInterventionsContext" );
-        }
-
-        if( individual->QueryInterface( GET_IID( IIndividualHumanSTI ), (void**)&sti_individual ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualSTI", "IndividualHuman" );
-        }
-
         GetOutputStream() 
             << std::setprecision(10)
             << _parent->GetSimulationTime().Year()
@@ -171,9 +158,9 @@ namespace Kernel
             << "," << sti_individual->GetDebutAge()
             << "," << sti_individual->IsCircumcised()
             
-            << "," << idvie->GetInterventionReducedAcquire()
-            << "," << idvie->GetInterventionReducedTransmit()
-            << "," << idvie->GetInterventionReducedMortality()
+            << "," << individual->GetVaccineContext()->GetInterventionReducedAcquire()
+            << "," << individual->GetVaccineContext()->GetInterventionReducedTransmit()
+            << "," << individual->GetVaccineContext()->GetInterventionReducedMortality()
 
             << endl;
     }

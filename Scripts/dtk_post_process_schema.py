@@ -97,6 +97,11 @@ def application(schema_file):
             print("Leaf")
         # print( str(a), str(v) )
 
+    if('Version' in schema and 'Creator' in schema['Version']):
+        schema['Version']['Creator'] = 'dtk_post_process_schema.py'
+    else:
+        raise(LookupError('Creator field not found in Version schema object.'))
+
     # go through interventions and sort by node vs individual
     node_interventions = {}
     individual_interventions = {}

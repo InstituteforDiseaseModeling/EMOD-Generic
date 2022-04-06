@@ -1,22 +1,9 @@
 {
-    "_science": [
-        { "path": "TBHIV/SFTs/Outbreaks/Both" }
-    ],
     "science": [
         { "path": "TBHIV/SFTs/Outbreaks/TB_Only" },
         { "path": "TBHIV/SFTs/Outbreaks/HIV_Only" },
         { "path": "TBHIV/SFTs/Outbreaks/Both" },
         
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV_ART" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_Disable_Coinfection" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_Enable_Coinfection" },
-
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV_ART" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_Disable_Coinfection" },
-        { "path": "TBHIV/SFTs/ExogenousTB/TB_Enable_Coinfection" },
-
         { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV" },
         { "path": "TBHIV/SFTs/ExogenousTB/TB_HIV_ART" },
         { "path": "TBHIV/SFTs/ExogenousTB/TB_Disable_Coinfection" },

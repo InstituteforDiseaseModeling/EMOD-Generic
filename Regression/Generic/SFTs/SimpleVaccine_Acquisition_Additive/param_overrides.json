@@ -9,7 +9,6 @@
         "Campaign_Filename": "campaign.json",
         "Config_Name": "SimpleVaccine_Acquisition_Additive",
         "Custom_Reports_Filename": "NoCustomReports",
-        "Death_Rate_Dependence": "SimpleBoosterVaccine_Acquisition",
         "Demographics_Filenames": [
             "../demographics.json",
             "../demographics_4groups_overlay.json"

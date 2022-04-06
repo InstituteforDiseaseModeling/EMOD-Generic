@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #include "UnitTest++.h"
 #include "../utils/Common.h"
-#include "SimulationConfig.h"
 #include "IdmMpi.h"
 #include "RANDOM.h"
 #include "TransmissionGroupsFactory.h"
@@ -49,7 +48,6 @@ SUITE(TransmissionGroupsTest)
                 MatrixRow_t{ 0.125f, 0.625f, 0.125f, 0.125f },
                 MatrixRow_t{ 0.0f,   0.5f,   0.5f,   0.0f },
                 MatrixRow_t{ 0.0f,   0.125f, 0.125f, 0.75f } }
-            , p_simulation_config( new SimulationConfig() )
             , number_clades_save( InfectionConfig::number_clades )
             , number_genomes_save( InfectionConfig::number_genomes )
         {
@@ -57,7 +55,6 @@ SUITE(TransmissionGroupsTest)
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
             Environment::setLogger(new SimpleLogger(Logger::tLevel::WARNING));
-            Environment::setSimulationConfig( p_simulation_config );
 
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
@@ -79,7 +76,6 @@ SUITE(TransmissionGroupsTest)
 
             IPFactory::DeleteFactory();
             Environment::Finalize();
-            delete p_simulation_config;
         }
 
         std::string risk, high, medium, low;
@@ -91,7 +87,6 @@ SUITE(TransmissionGroupsTest)
         ScalingMatrix_t risk_matrix;
         ScalingMatrix_t location_matrix;
 
-        SimulationConfig* p_simulation_config;
         PSEUDO_DES rng;
 
         uint32_t number_clades_save;

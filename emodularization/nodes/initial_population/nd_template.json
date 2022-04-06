@@ -23,6 +23,7 @@
     "Enable_Demographics_Birth": 0,
     "Enable_Demographics_Builtin": 0,
     "Enable_Disease_Mortality": 0,
+    "Enable_Infection_Rate_Overdispersion": 0,
     "Enable_Infectivity_Reservoir": 0,
     "Enable_Infectivity_Scaling": 0,
     "Enable_Maternal_Transmission": 0,

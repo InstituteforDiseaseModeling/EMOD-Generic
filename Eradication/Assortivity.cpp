@@ -73,7 +73,7 @@ namespace Kernel
             {
                 initConfigTypeMap( "Axes", &m_Axes, "TBD - The axes (row/columns) of the weighting matrix." );
 
-                initConfigTypeMap( "Weighting_Matrix_RowMale_ColumnFemale", &m_WeightingMatrix, "TBD - Values to assign a possible pairing.  Rows are indexed by the male attribute and columns by the female attribute.", 0.0f, 1.0f, 0.0f );
+                initConfigTypeMap( "Weighting_Matrix_RowMale_ColumnFemale", &m_WeightingMatrix, "TBD - Values to assign a possible pairing.  Rows are indexed by the male attribute and columns by the female attribute.", 0.0f, 1.0f );
 
                 if( JsonConfigurable::_dryrun || (m_Group == AssortivityGroup::INDIVIDUAL_PROPERTY) )
                 {

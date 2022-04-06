@@ -18,10 +18,6 @@ namespace Kernel
 {
     struct IVectorSimulationContext;
 
-    ENUM_DEFINE(ModiferEquationType,
-        ENUM_VALUE_SPEC(LINEAR       , 1)
-        ENUM_VALUE_SPEC(EXPONENTIAL  , 2))
-
     // ----------------------------------
     // --- MigrationInfoNullVector
     // ----------------------------------
@@ -59,7 +55,6 @@ namespace Kernel
 
         virtual void PickMigrationStep( RANDOMBASE* pRNG,
                                         IIndividualHumanContext * traveler, 
-                                        float migration_rate_modifier, 
                                         suids::suid &destination, 
                                         MigrationType::Enum &migration_type,
                                         float &timeUntilTrip ) override;
@@ -114,37 +109,22 @@ namespace Kernel
 
     class IDMAPI MigrationInfoFactoryVector : public MigrationInfoFactoryFile, public IMigrationInfoFactoryVector
     {
-        GET_SCHEMA_STATIC_WRAPPER(MigrationInfoFactoryVector)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
-        DECLARE_QUERY_INTERFACE()
-
     public:
         MigrationInfoFactoryVector();
         virtual ~MigrationInfoFactoryVector();
 
         // MigrationInfoFactoryFile
-        virtual void Initialize( const ::Configuration *config, const std::string& idreference ) override;
+        virtual void Initialize( const std::string& idreference ) override;
 
         // IMigrationInfoFactoryVector
         virtual IMigrationInfoVector* CreateMigrationInfoVector( 
             INodeContext *parent_node, 
             const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
-        virtual bool IsVectorMigrationEnabled() const override;
-
-    protected:
-        // MigrationInfoFactoryFile
-        virtual void CreateInfoFileList() override;
-        virtual void InitializeInfoFileList( const Configuration* config ) override;
 
     private:
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
         std::vector<MigrationInfoFile*> m_InfoFileListVector;
-        bool m_IsVectorMigrationEnabled;
-        ModiferEquationType::Enum m_ModifierEquation;
-        float m_ModifierHabitat;
-        float m_ModifierFood;
-        float m_ModifierStayPut;
 #pragma warning( pop )
     };
 
@@ -154,28 +134,16 @@ namespace Kernel
 
     class IDMAPI MigrationInfoFactoryVectorDefault : public MigrationInfoFactoryDefault, public IMigrationInfoFactoryVector
     {
-        GET_SCHEMA_STATIC_WRAPPER(MigrationInfoFactoryVectorDefault)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
-        DECLARE_QUERY_INTERFACE()
-
     public:
         MigrationInfoFactoryVectorDefault( int defaultTorusSize );
         MigrationInfoFactoryVectorDefault();
         virtual ~MigrationInfoFactoryVectorDefault();
 
-        // JsonConfigurable methods
-        virtual bool Configure( const Configuration* config ) override;
-
         // IMigrationInfoFactoryVector
         virtual IMigrationInfoVector* CreateMigrationInfoVector( 
             INodeContext *parent_node, 
             const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
-        virtual bool IsVectorMigrationEnabled() const override;
-
-    protected:
 
     private:
-        bool m_IsVectorMigrationEnabled;
-        float m_xLocalModifierVector;
     };
 }

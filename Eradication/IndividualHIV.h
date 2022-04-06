@@ -43,8 +43,6 @@ namespace Kernel
 
         virtual void InitializeHuman() override;
 
-        virtual void Update( float currenttime, float dt ) override;
-
         // Infections and Susceptibility
         virtual void CreateSusceptibility( float imm_mod=1.0f, float risk_mod=1.0f ) override;
 
@@ -60,8 +58,6 @@ namespace Kernel
 
         // healthcare interactions
         virtual std::string toString() const override;
-
-        static void InitializeStaticsHIV( const Configuration* config );
 
         IndividualHumanHIV( suids::suid id = suids::nil_suid(), 
                             float monte_carlo_weight = 1.0f, 

@@ -53,8 +53,8 @@ namespace Kernel
 
     protected:
     public:
-        static SusceptibilityTyphoid *CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod);
-        void Initialize(float _age, float _immmod, float _riskmod);
+        static SusceptibilityTyphoid *CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod);
+        void Initialize(float _immmod, float _riskmod);
         SusceptibilityTyphoid(IIndividualHumanContext *context);
         SusceptibilityTyphoid() {}
         virtual ~SusceptibilityTyphoid(void);

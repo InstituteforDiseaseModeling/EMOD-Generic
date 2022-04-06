@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Sugar.h"
 #include "Environment.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "ProgVersion.h"
 
 using namespace std;

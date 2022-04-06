@@ -70,7 +70,7 @@ namespace Kernel
         virtual bool GiveIntervention( INodeDistributableIntervention * pIV ) override;
 
         // IOutbreakConsumer
-        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, NaturalNumber num_cases_per_node) override;
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float female_prob, float mc_weight) override;
         //virtual void IncreasePrevalence(StrainIdentity* outbreak_strainID, IEventCoordinator2* pEC) override;
 
         // IIndividualTriggeredInterventionConsumer

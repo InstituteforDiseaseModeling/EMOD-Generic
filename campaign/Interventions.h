@@ -51,9 +51,11 @@ namespace Kernel
         virtual void Update(float dt) = 0;
         virtual bool Expired() = 0;
         virtual void SetExpired( bool isExpired ) = 0;
+        virtual void OnExpiration() = 0;
         virtual void ValidateSimType( const std::string& simTypeStr ) = 0;
         virtual IDistributableIntervention * Clone()  = 0;
         virtual bool NeedsInfectiousLoopUpdate() const = 0;
+        virtual bool NeedsPreInfectivityUpdate() const = 0;
 
         virtual ~IDistributableIntervention() { }
     };
@@ -68,6 +70,7 @@ namespace Kernel
         virtual std::list<IDistributableIntervention*> GetInterventionsByName(const std::string &intervention_name) = 0;
         virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) = 0;
         virtual void PurgeExisting( const std::string &iv_name ) = 0;
+        virtual void PurgeExistingByName( const std::string &iv_name ) = 0;
         virtual bool ContainsExisting( const std::string &iv_name ) = 0;
         virtual bool ContainsExistingByName( const std::string &name ) = 0;
         virtual void ChangeProperty( const char *property, const char* new_value ) = 0;
@@ -121,8 +124,10 @@ namespace Kernel
         virtual float GetCostPerUnit() const override { return cost_per_unit; }
         virtual bool Expired() override ;
         virtual void SetExpired( bool isExpired ) override;
+        virtual void OnExpiration() override;
         virtual void ValidateSimType( const std::string& simTypeStr ) override;
         virtual bool NeedsInfectiousLoopUpdate() const { return false; }
+        virtual bool NeedsPreInfectivityUpdate() const { return occurs_pre_infectivity; }
 
     protected:
         BaseIntervention();
@@ -136,17 +141,18 @@ namespace Kernel
 
         static void serialize( IArchive& ar, BaseIntervention* obj );
 
-#pragma warning( push )
-#pragma warning( disable: 4251 ) // See IdmApi.h for details
         IIndividualHumanContext *parent;
         std::string name;
         float cost_per_unit;
+        bool occurs_pre_infectivity;
         bool expired;
-        bool dont_allow_duplicates ;
+        bool dont_allow_duplicates;
+        bool enable_iv_replacement;
         bool first_time;
         IPKeyValueContainer disqualifying_properties;
         IPKeyValue status_property;
-#pragma warning(pop)
+        EventTrigger::Enum event_trigger_distributed;
+        EventTrigger::Enum event_trigger_expired;
     };
 
     struct BaseNodeIntervention : IBaseIntervention, JsonConfigurable, INodeDistributableIntervention

@@ -7,8 +7,7 @@
                 "Intervention_Config": {
                     "Cost_To_Consumer": 10,
                     "Vaccine_Take": 1,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -29,7 +28,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "SimpleVaccine"
+                    "class": "Vaccine"
                 },
                 "Number_Repetitions": 3,
                 "Target_Demographic": "Everyone",

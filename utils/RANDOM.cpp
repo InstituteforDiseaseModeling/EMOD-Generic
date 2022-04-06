@@ -266,6 +266,7 @@ float RANDOMBASE::eGaussNonNeg(float mu, float sig)
 }
 
 // Gamma-distributed random number
+//   Adapted from random_standard_gamma_f in distributions.c in numpy.random
 float RANDOMBASE::rand_gamma(float k, float theta)
 {
     float retv = 0.0f;
@@ -343,6 +344,9 @@ float RANDOMBASE::rand_gamma(float k, float theta)
 
     // Account for scaling
     retv *= theta;
+
+    // Ensure > 0.0f
+    retv += FLT_MIN;
 
     return retv;
 }
@@ -427,26 +431,6 @@ uint64_t RANDOMBASE::Poisson(double ratetime)
         else
         {
             events = uint64_t(tempval);
-        }
-    }
-    return events;
-}
-
-// Poisson_true added by Philip Eckhoff, actual Poisson, without approximation
-uint32_t RANDOMBASE::Poisson_true(double ratetime)
-{
-    if (ratetime <= 0)
-    {
-        return 0;
-    }
-    uint32_t events = 0;
-    double Time = 0;
-    while (Time < 1)
-    {
-        Time += -log(e()) / ratetime;
-        if (Time < 1)
-        {
-            events++;
         }
     }
     return events;
@@ -654,7 +638,7 @@ uint64_t RANDOMBASE::binomial_approx2(uint64_t n, double p)
             if ( n < 9*(1-p_tmp)/p_tmp ) // 3-sigma within [0,1]
             {
                 // use poisson approximation for probabilities near p=0 or p=1
-                double poisson_tmp = Poisson_true(n * p_tmp);
+                double poisson_tmp = Poisson(n * p_tmp);
                 tempval = int64_t(under_50pct ? poisson_tmp : (n-poisson_tmp));
             }
             else

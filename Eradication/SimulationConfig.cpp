@@ -119,22 +119,6 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
     // ------
     initConfig( "Simulation_Type", sim_type,  inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
 
-    initConfigTypeMap( "Simulation_Duration", &Sim_Duration, Simulation_Duration_DESC_TEXT, 0.0f, 1000000.0f, 1.0f ); // 'global'? (controller only)
-    initConfigTypeMap( "Start_Time",          &starttime,    Start_Time_DESC_TEXT,          0.0f, 1000000.0f, 1.0f ); // simulation only (actually Climate also!)
-
-    bool demographics_builtin = false;
-    initConfigTypeMap( "Enable_Demographics_Builtin",               &demographics_builtin,    Enable_Demographics_Builtin_DESC_TEXT, false ); // 'global' (3 files)
-    initConfigTypeMap( "Default_Geography_Initial_Node_Population", &default_node_population, Default_Geography_Initial_Node_Population_DESC_TEXT, 0, 1e6, 1000, "Enable_Demographics_Builtin");
-    initConfigTypeMap( "Default_Geography_Torus_Size",              &default_torus_size,      Default_Geography_Torus_Size_DESC_TEXT,              3, 100,   10, "Enable_Demographics_Builtin");
-    initConfigTypeMap( "Node_Grid_Size", &node_grid_size, Node_Grid_Size_DESC_TEXT, 0.004167f, 90.0f, 0.004167f );
-
-    initConfig( "Migration_Model",       migration_structure,    inputJson, MetadataDescriptor::Enum(Migration_Model_DESC_TEXT,       Migration_Model_DESC_TEXT,       MDD_ENUM_ARGS(MigrationStructure)) ); // 'global'
-
-    initConfigTypeMap( "Enable_Interventions", &interventions, Enable_Interventions_DESC_TEXT, false );
-
-    initConfigTypeMap( "Enable_Heterogeneous_Intranode_Transmission", &heterogeneous_intranode_transmission_enabled, Enable_Heterogeneous_Intranode_Transmission_DESC_TEXT, false ); // generic
-
-
     //vector enums
     if (sim_type == SimType::VECTOR_SIM || sim_type == SimType::MALARIA_SIM || sim_type == SimType::DENGUE_SIM )
     {
@@ -160,27 +144,18 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
     LOG_DEBUG_F( "Calling main Configure..., use_defaults = %d\n", JsonConfigurable::_useDefaults );
 
     bool ret = JsonConfigurable::Configure( inputJson );
-    demographics_initial = !demographics_builtin;
 
     // ---------------------------------------
     // --- Return if just generating schema
     // ---------------------------------------
     if( JsonConfigurable::_dryrun == true )
     {
-        static string serialized_population_path;
-        static vector<string> serialized_population_filenames;
-
-        initConfigTypeMap( "Serialized_Population_Path",      &serialized_population_path,      Serialized_Population_Path_DESC_TEXT, "." );
-        initConfigTypeMap( "Serialized_Population_Filenames", &serialized_population_filenames, Serialized_Population_Filenames_DESC_TEXT );
-
         return true;
     }
 
     // ------------------------------------------------------------------
     // --- Update, check, and read other parameters given the input data
     // ------------------------------------------------------------------
-    lloffset = 0.5f * node_grid_size;
-
     if (sim_type == SimType::VECTOR_SIM || sim_type == SimType::MALARIA_SIM || sim_type == SimType::DENGUE_SIM )
     {
         VectorCheckConfig( inputJson );
@@ -218,17 +193,7 @@ QuickBuilder SimulationConfig::GetSchema()
 }
 
 SimulationConfig::SimulationConfig()
-    : migration_structure(MigrationStructure::NO_MIGRATION) 
-    , sim_type(SimType::GENERIC_SIM) 
-    , demographics_initial(false)
-    , default_torus_size( 10 )
-    , default_node_population( 1000 )
-    , lloffset(0) 
-    , interventions(false)
-    , heterogeneous_intranode_transmission_enabled(false)
-    , Sim_Duration(-42.0f)
-    , starttime(0.0f)
-    , node_grid_size(0.0f)
+    : sim_type(SimType::GENERIC_SIM) 
     , m_jsonConfig(nullptr)
     , vector_params(nullptr)
     , malaria_params(nullptr)
@@ -287,7 +252,8 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
     initConfigTypeMap( "HEG_Homing_Rate",        &(vector_params->HEGhomingRate),        HEG_Homing_Rate_DESC_TEXT,        0, 1, 0, "HEG_Model", "GERMLINE_HOMING,EGG_HOMING,DUAL_GERMLINE_HOMING,DRIVING_Y" );
     initConfigTypeMap( "HEG_Fecundity_Limiting", &(vector_params->HEGfecundityLimiting), HEG_Fecundity_Limiting_DESC_TEXT, 0, 1, 0, "HEG_Model", "GERMLINE_HOMING,EGG_HOMING,DUAL_GERMLINE_HOMING,DRIVING_Y" );
 
-    //initConfigTypeMap( "Enable_Vector_Species_Habitat_Competition", &enable_vector_species_habitat_competition, VECTOR_Enable_Vector_Species_Habitat_Competition, false );
+    // Value of lloffset is one-half of Node_Grid_Size ; store directly in lloffset and correct after configuration
+    initConfigTypeMap( "Node_Grid_Size",                      &(vector_params->lloffset),                            Node_Grid_Size_DESC_TEXT, 0.004167f, 90.0f, 0.004167f );
 
     initConfigTypeMap( "Enable_Vector_Aging",                 &(vector_params->vector_aging),                        Enable_Vector_Aging_DESC_TEXT, false );
     initConfig( "Temperature_Dependent_Feeding_Cycle", vector_params->temperature_dependent_feeding_cycle, inputJson, MetadataDescriptor::Enum(Temperature_Dependent_Feeding_Cycle_DESC_TEXT, Temperature_Dependent_Feeding_Cycle_DESC_TEXT, MDD_ENUM_ARGS(TemperatureDependentFeedingCycle)) ); // vector pop only
@@ -335,6 +301,9 @@ void SimulationConfig::VectorCheckConfig( const Configuration* inputJson )
         vector_params->vspMap[ vector_species_name ] = VectorSpeciesParameters::CreateVectorSpeciesParameters( inputJson,
                                                                                                                vector_species_name );
     }
+
+    // Correct lloffset; value read from config equal to Node_Grid_Size
+    vector_params->lloffset *= 0.5f;
 #endif // DISABLE_VECTOR
 }
 

@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeTBHIV.h"
 #include "NodeEventContextHost.h" //for node level trigger
 #include "IndividualCoInfection.h"
-#include "SimulationConfig.h"
 #include "TBHIVParameters.h"
 #include "EventTrigger.h"
 
@@ -49,11 +48,6 @@ namespace Kernel
     void NodeTBHIV::Initialize()
     {
         NodeTB::Initialize();
-    }
-
-    bool NodeTBHIV::Configure( const Configuration* config )
-    {   
-        return NodeTB::Configure( config );
     }
 
     void NodeTBHIV::RegisterObservers()
@@ -93,9 +87,9 @@ namespace Kernel
         return IndividualHumanCoInfection::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    IIndividualHuman *NodeTBHIV::addNewIndividual(float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam, float mighet)
+    IIndividualHuman *NodeTBHIV::addNewIndividual(float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam)
     {
-        auto tempind = NodeAirborne::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam, mighet);
+        auto tempind = NodeAirborne::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam);
 
         IIndividualHumanTB * tbhivp = NULL;
         if (s_OK != tempind->QueryInterface(GET_IID(IIndividualHumanTB), (void **) &tbhivp ) )

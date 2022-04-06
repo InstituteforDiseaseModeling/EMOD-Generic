@@ -40,18 +40,13 @@ namespace Kernel
         virtual bool Distribute(INodeEventContext *context, IEventCoordinator2* pEC);
 
     protected:
-        NonNegativeFloat duration_counter; // same datatype as Simulation_Timestep
-
         INodeEventContext* parent;
 
-        std::vector<int> durations; // simulation_time_ranges NaturalNumber possibly
-        std::vector<float> daily_import_pressures; //import pressure NonNegativeFloat
+        float duration_counter;
 
-        NaturalNumber num_imports; // NaturalNumber, number of particles randomly drawn using import_pressure as input
+        std::vector<float> durations; 
+        std::vector<float> daily_import_pressures;
 
-        typedef std::pair<NaturalNumber, NonNegativeFloat> duration_pressure_pair;
-        std::vector<duration_pressure_pair> durations_and_pressures;
-
-        void ConstructDistributionCalendar();
+        std::vector<std::pair<float, float>> durations_and_pressures;
     };
 }

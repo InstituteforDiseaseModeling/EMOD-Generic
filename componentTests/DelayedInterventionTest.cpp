@@ -15,7 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "DelayedIntervention.h"
 #include "IdmMpi.h"
-#include "SimulationConfig.h"
+#include "ConfigParams.h"
 
 using namespace Kernel;
 
@@ -24,11 +24,9 @@ SUITE( DelayedInterventionTest )
     struct DelayedFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig*         m_pSimulationConfig;
 
         DelayedFixture()
             : m_pMpi(nullptr)
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             JsonConfigurable::ClearMissingParameters();
@@ -47,8 +45,6 @@ SUITE( DelayedInterventionTest )
             string statePath( "testdata/DelayedInterventionTest" );
             string dllPath( "" );
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, dllPath, false );
-
-            Environment::setSimulationConfig( m_pSimulationConfig );
         }
 
         ~DelayedFixture()
@@ -62,6 +58,11 @@ SUITE( DelayedInterventionTest )
     {
         try
         {
+            ConfigParams gen_config_obj;
+            std::unique_ptr<Configuration> mig_config_file( Configuration_Load( "testdata/MigrationTest/config.json" ) );
+            std::unique_ptr<Configuration> mig_config( Environment::CopyFromElement( (*mig_config_file)["parameters"] ) );
+            gen_config_obj.Configure( mig_config.get() );
+
             unique_ptr<Configuration> p_config( Environment::LoadConfigurationFile( rFilename ) );
 
             DelayedIntervention di;
@@ -83,8 +84,6 @@ SUITE( DelayedInterventionTest )
 
     TEST_FIXTURE( DelayedFixture, TestIllegalNodeLevelIntervention )
     {
-        m_pSimulationConfig->migration_structure = MigrationStructure::FIXED_RATE_MIGRATION;
-
         TestHelper_Exception( __LINE__, "testdata/DelayedInterventionTest/TestIllegalNodeLevelIntervention.json",
                               "Invalid Intervention Type in 'DelayedIntervention'.\n'MigrateFamily' is a(n) NODE-level intervention.\nA(n) INDIVIDUAL-level intervention is required." );
     }

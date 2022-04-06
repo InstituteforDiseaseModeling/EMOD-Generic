@@ -84,7 +84,6 @@ namespace Kernel
 
     struct IMalariaHumanContext : public ISupports
     {
-        virtual const SimulationConfig *params() const = 0;
         virtual void  PerformMalariaTest(int test_type) = 0;
         virtual void  CountPositiveSlideFields(RANDOMBASE * rng, int nfields, float uL_per_field, int& positive_asexual_fields, int& positive_gametocyte_fields) const = 0;
         virtual bool  CheckForParasitesWithTest(int test_type) const = 0;

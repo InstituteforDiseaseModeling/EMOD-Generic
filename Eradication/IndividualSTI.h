@@ -73,7 +73,6 @@ namespace Kernel
 
         virtual void InitializeHuman() override;
 
-        virtual void Update(float currenttime, float dt) override;
         virtual void UpdateHistory( const IdmDateTime& rCurrentTime, float dt ) override;
         virtual void UpdatePausedRelationships( const IdmDateTime& rCurrentTime, float dt ) override;
 
@@ -175,8 +174,6 @@ namespace Kernel
         std::map< int, TransmissionGroupMembership_t > transmissionGroupMembershipByRelationship;
 
     private:
-        static void InitializeStaticsSTI( const Configuration* config );
-
         virtual void IndividualHumanSTI::SetConcurrencyParameters( const char *prop, const char* prop_value );
 
         RelationshipSet_t relationships_at_death ;

@@ -53,10 +53,10 @@ namespace Kernel
 
     protected:
     public:
-        static SusceptibilityPy *CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod);
-        void Initialize(float _age, float _immmod, float _riskmod);
+        static SusceptibilityPy *CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod);
+        void Initialize(float _immmod, float _riskmod);
         SusceptibilityPy(IIndividualHumanContext *context);
-    SusceptibilityPy() {}
+        SusceptibilityPy() {}
         virtual ~SusceptibilityPy(void);
 
         virtual void Update(float dt = 0.0);

@@ -129,8 +129,6 @@ namespace Kernel
         friend class NodeTyphoid;
 
     private:
-        static void InitializeStaticsTyphoid( const Configuration* config );
-
         SusceptibilityTyphoid * typhoid_susceptibility;
         std::map< TransmissionRoute::Enum, float > contagion_population_by_route;
     };

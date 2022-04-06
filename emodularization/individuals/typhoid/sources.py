@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_typhoidindividual_module.cpp',
+            '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualEnvironmental.cpp',
             '../../../Eradication/IndividualTyphoid.cpp',

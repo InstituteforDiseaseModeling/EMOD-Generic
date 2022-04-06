@@ -87,7 +87,6 @@ class ConfigParameters():
     DISTRIBUTION_OFF = "DISTRIBUTION_OFF"
 
 class Constant():
-    ci_probability = 0.9999  # 99.99% confidence interval
     days_per_year = 365
     two_percent_per_year = 0.02 / days_per_year
     individual_birthrate = 1.0 / 8 / days_per_year  # 1 child every 8 years of fertility (about 4 total)
@@ -737,7 +736,7 @@ class FertilityMortalityTest(unittest.TestCase):
             with open(os.path.join(path, test_name, "population_by_age.json"), "w") as outfile:
                 json.dump(self.population_by_age_gender, outfile, sort_keys=True, indent=4)
 
-        print ("test death rate for every time step")
+        print ("accumulate data by sex, age, and year")
         for sex in deaths_by_age:
             for age in deaths_by_age[sex]:
                 for t in range(duration):
@@ -764,57 +763,41 @@ class FertilityMortalityTest(unittest.TestCase):
                     expected_death_by_age_gender[sex][age] += death_rate
                     actual_death_by_age_gender[sex][age] += death
 
-                    low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, death_rate, 0)
-                    with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as outfile:
-                        result = True if low_ci <= death <= high_ci else False
-                        msg = "at time step {0}, test Poisson {1} confidence interval for sex {2} age {3} " \
-                              "result is {4}.\n".format(t, Constant.ci_probability, sex, age, result) \
-                              + "death count is {0}, while Poisson {1} confidence interval is " \
-                                "{2} - {3}.\n".format(death, Constant.ci_probability, low_ci, high_ci)
-                        if debug:
-                            outfile.write(msg)
-                        if not result:
-                            error_msg.append(msg)
-                            succeed = False
+        print("test total death by age and year for each gender")
+        if debug:
+            with open(os.path.join(path, test_name, "actual_death.json"), "a") as outfile:
+                json.dump(actual_death_by_age_gender, outfile, sort_keys=True, indent=4)
+            with open(os.path.join(path, test_name, "expected_death.json"), "a") as outfile:
+                json.dump(expected_death_by_age_gender, outfile, sort_keys=True, indent=4)
 
-            logging.info("test Poisson {0} confidence interval for death for every time step, result is {1}.".format(
-                Constant.ci_probability, succeed))
+        for sex in expected_death_by_age_gender:
+            for age in expected_death_by_age_gender[sex]:
+                expected_death = expected_death_by_age_gender[sex][age]
+                actual_death = actual_death_by_age_gender[sex][age]
+                error_tolerance = math.ceil(2e-1 * expected_death)
+                error_tolerance = max(error_tolerance, 5)
+                result = math.fabs(expected_death - actual_death) <= error_tolerance
+                msg = "For sex {0} age {1} actual deaths are {2}, while expected deaths are {3}, expected difference " \
+                      "is less than {4}, test result is {5}.\n".format(sex, age, actual_death, expected_death,
+                                                                       error_tolerance, result)
+                if not result:
+                    succeed = False
+                    error_msg.append(msg)
+                logging.info(msg)
 
-            print("test total death by age and year for each gender")
-            if debug:
-                with open(os.path.join(path, test_name, "actual_death.json"), "a") as outfile:
-                    json.dump(actual_death_by_age_gender, outfile, sort_keys=True, indent=4)
-                with open(os.path.join(path, test_name, "expected_death.json"), "a") as outfile:
-                    json.dump(expected_death_by_age_gender, outfile, sort_keys=True, indent=4)
+        print ("test no birth")
+        result, msg = self.no_birth_test()
+        if not result:
+            error_msg.append(msg)
+            succeed = False
 
-            for sex in expected_death_by_age_gender:
-                for age in expected_death_by_age_gender[sex]:
-                    expected_death = expected_death_by_age_gender[sex][age]
-                    actual_death = actual_death_by_age_gender[sex][age]
-                    error_tolerance = math.ceil(2e-1 * expected_death)
-                    error_tolerance = max(error_tolerance, 5)
-                    result = math.fabs(expected_death - actual_death) <= error_tolerance
-                    msg = "For sex {0} age {1} actual deaths are {2}, while expected deaths are {3}, expected difference " \
-                          "is less than {4}, test result is {5}.\n".format(sex, age, actual_death, expected_death,
-                                                                           error_tolerance, result)
-                    if not result:
-                        succeed = False
-                        error_msg.append(msg)
-                    logging.info(msg)
-
-            print ("test no birth")
-            result, msg = self.no_birth_test()
-            if not result:
-                error_msg.append(msg)
-                succeed = False
-
-            with open(os.path.join(path, test_name, "result.txt"), "a") as outfile:
-                for line in error_msg:
-                    outfile.write(line)
-            self.assertTrue(succeed, "test nondisease mortality by year and age for each gender 1 fails, please see {0}"
-                                     " for error message".format(os.path.join(path, test_name, "result.txt")))
-            logging.info("test nondisease mortality by year and age for each gender 1 passes")
-            print("test nondisease mortality by year and age for each gender 1 passes")
+        with open(os.path.join(path, test_name, "result.txt"), "a") as outfile:
+             for line in error_msg:
+                outfile.write(line)
+        self.assertTrue(succeed, "test nondisease mortality by year and age for each gender 1 fails, please see {0}"
+                                 " for error message".format(os.path.join(path, test_name, "result.txt")))
+        logging.info("test nondisease mortality by year and age for each gender 1 passes")
+        print("test nondisease mortality by year and age for each gender 1 passes")
 
     def test_nondisease_mortality_by_year_age_and_gender_2(self, duration=3 * Constant.days_per_year, debug=debug):
         # test year
@@ -879,7 +862,7 @@ class FertilityMortalityTest(unittest.TestCase):
             with open(os.path.join(path, test_name, "population_by_age.json"), "w") as outfile:
                 json.dump(self.population_by_age_gender, outfile, sort_keys=True, indent=4)
 
-        print("test death rate for every time step")
+        print ("accumulate data by sex, age, and year")
         for t in range(duration):
             sim_year = t / Constant.days_per_year + base_year
             for sex in deaths_by_gender:
@@ -900,22 +883,6 @@ class FertilityMortalityTest(unittest.TestCase):
                     death_rate = female_result_values[0][population_groups[1].index(int(sim_year))] * ResultScaleFactor * population
                 expected_death_by_year_gender[sex][int(sim_year)] += death_rate
                 actual_death_by_year_gender[sex][int(sim_year)] += death
-
-                low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, death_rate, 0)
-                with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as outfile:
-                    result = True if low_ci <= death <= high_ci else False
-                    msg = "at year {0} time step {1}, test Poisson {2} confidence interval for sex {3} " \
-                          "result is {4}.\n".format(sim_year, t, Constant.ci_probability, sex, result ) \
-                          + "death count is {0}, while Poisson {1} confidence interval is " \
-                            "{2} - {3}.\n".format(death, Constant.ci_probability, low_ci, high_ci)
-                    if debug:
-                        outfile.write(msg)
-                    if not result:
-                        error_msg.append(msg)
-                        succeed = False
-
-        logging.info("test Poisson {0} confidence interval for death for every time step, result is {1}.".format(
-            Constant.ci_probability, succeed))
 
         print("test total death by age and year for each gender")
         if debug:
@@ -1038,9 +1005,7 @@ class FertilityMortalityTest(unittest.TestCase):
             with open(os.path.join(path, test_name, "population_by_age.json"), "w") as outfile:
                 json.dump(self.population_by_age_gender, outfile, sort_keys=True, indent=4)
 
-        print("test death rate by gender and age for every time step")
-        fail_count = 0
-        fail_message = []
+        print ("accumulate data by sex, age, and year")
         for t in range(duration):
             sim_year = int(t / Constant.days_per_year + base_year)
             sim_year_float = float(t) / Constant.days_per_year + base_year
@@ -1094,25 +1059,6 @@ class FertilityMortalityTest(unittest.TestCase):
                     else:
                         expected_death_by_year_gender[sex][sim_year][age] += death_rate
                         actual_death_by_year_gender[sex][sim_year][age] += death
-                    low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, death_rate, 0)
-                    with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as outfile:
-                        if not low_ci <= death <= high_ci:
-                            msg = "at year {0} time step {1}, test Poisson {2} confidence interval for sex {3} age {4} " \
-                                  "result is {5}.\n".format(sim_year, t, Constant.ci_probability, sex, age, "False") \
-                                  + "death count is {0}, while Poisson {1} confidence interval is " \
-                                    "{2} - {3}.\n".format(death, Constant.ci_probability, low_ci, high_ci)
-
-                            fail_count += 1
-                            fail_message.append(msg)
-                            outfile.write(msg)
-        if fail_count/duration > 1e-2:
-            succeed = False
-            error_msg.extend(fail_message)
-        msg = "test Poisson {0} confidence interval for death for every time step, it failed {1} times during " \
-             "{2} total time step, test result is {3}.\n".format(Constant.ci_probability, fail_count,
-                                                                 duration, succeed)
-        logging.info(msg)
-        error_msg.append(msg)
 
         print("test total death for each gender and year")
         if debug:

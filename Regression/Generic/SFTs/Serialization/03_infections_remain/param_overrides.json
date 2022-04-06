@@ -12,7 +12,7 @@
             "Enable_Initial_Prevalence": 1,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
-            "Enable_Vital_Dynamics": 0,
+            "Enable_Vital_Dynamics": 1,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 0,
                 "Post_Infection_Acquisition_Multiplier": 1,
@@ -41,6 +41,11 @@
             "Serialized_Population_Filenames": [
                 "state-00050.dtk"
             ],
+            "Serialized_Population_Reading_Type": "READ",
+            "Serialized_Population_Writing_Type": "TIMESTEP",
+            "Enable_Random_Generator_From_Serialized_Population": 0,
+            "Serialization_Mask_Node_Read": 0,
+            "Serialization_Mask_Node_Write": 0,
             "Simulation_Duration": 5,
             "Start_Time": 50
         }

@@ -1,0 +1,67 @@
+{
+    "Campaign_Name": "COMMENT_FIELD",
+    "Events": [{
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "class": "ChangeIPMatrix",
+                    "Property_Name": "InterventionStatus",
+                    "New_Matrix": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0,
+                            3
+                        ]
+                    ]
+                },
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 45,
+            "class": "CampaignEvent"
+        }, {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": {
+                    "class": "OutbreakIndividual"
+                },
+                "Demographic_Coverage": 0.05,
+                "Property_Restrictions": [
+                    "InterventionStatus:group01"
+                ],
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Event_Purpose": "Initial outbreak to jump-start infectivity",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 47,
+            "class": "CampaignEvent"
+        }, {
+            "Event_Coordinator_Config": {
+                "Intervention_Config": { 
+
+                    "class": "OutbreakIndividual"
+                },
+                "Demographic_Coverage": 0.001,
+                "Property_Restrictions": [
+                    "InterventionStatus:group01"
+                ],
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Event_Purpose": "Initial outbreak to jump-start infectivity",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

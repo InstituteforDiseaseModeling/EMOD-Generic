@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualTyphoid.h"
 #include "InfectionTyphoid.h"
 #include "SusceptibilityTyphoid.h"
-#include "SimulationConfig.h"
 #include "suids.hpp"
 #include "ReportTyphoid.h"
 #include "TyphoidReportEventRecorder.h"
@@ -120,7 +119,14 @@ namespace Kernel
     void SimulationTyphoid::Initialize(const ::Configuration *config)
     {
         SimulationEnvironmental::Initialize(config);
-        IndividualHumanTyphoid::InitializeStaticsTyphoid( config );
+
+        IndividualHumanTyphoidConfig   typ_individual_config_obj;
+        SusceptibilityTyphoidConfig    typ_susceptibility_config_obj;
+        InfectionTyphoidConfig         typ_infection_config_obj;
+
+        typ_individual_config_obj.Configure( config );
+        typ_susceptibility_config_obj.Configure( config );
+        typ_infection_config_obj.Configure( config );
     }
 
     SimulationTyphoid *SimulationTyphoid::CreateSimulation()
@@ -140,7 +146,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "TYPHOID_SIM requested with invalid configuration." );
@@ -150,14 +156,11 @@ namespace Kernel
         return newsimulation;
     }
 
-    void SimulationTyphoid::SetFixedParameters(::Configuration * config)
-    {
-        config->Add("Enable_Maternal_Infection_Transmission", 0);  //must exist because fixed-off and depends on Enable_Birth
-    }
-
     bool SimulationTyphoid::ValidateConfiguration(const ::Configuration *config)
     {
-        return Kernel::SimulationEnvironmental::ValidateConfiguration(config);
+        // TODO: any disease-specific validation goes here.
+
+        return SimulationEnvironmental::ValidateConfiguration(config);
     }
 
     // called by demographic file Populate()

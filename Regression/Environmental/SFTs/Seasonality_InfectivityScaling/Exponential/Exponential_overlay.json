@@ -1,0 +1,15 @@
+{
+    "Metadata": {
+        "IdReference": "Gridded world grump2.5arcmin"
+    }, 
+    "Defaults": {
+    },
+    "Nodes": [
+        {
+            "NodeID": 1, 
+            "NodeAttributes": {
+                "InfectivityMultiplier": 1.0
+            }
+        }
+    ]
+}

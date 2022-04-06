@@ -15,10 +15,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    SusceptibilityAirborne *SusceptibilityAirborne::CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod)
+    SusceptibilityAirborne *SusceptibilityAirborne::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
         SusceptibilityAirborne *newsusceptibility = _new_ SusceptibilityAirborne(context);
-        newsusceptibility->Initialize(age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
@@ -27,13 +27,9 @@ namespace Kernel
     SusceptibilityAirborne::SusceptibilityAirborne() { }
     SusceptibilityAirborne::SusceptibilityAirborne(IIndividualHumanContext *context) : Susceptibility(context) { }
 
-    void SusceptibilityAirborne::Initialize(float _age, float _immmod, float _riskmod)
+    void SusceptibilityAirborne::Initialize(float _immmod, float _riskmod)
     {
-        Susceptibility::Initialize(_age, _immmod, _riskmod);
-
-        // TODO: what are we doing here? 
-        // initialize members of airborne susceptibility below
-        demographic_risk = _riskmod; 
+        Susceptibility::Initialize(_immmod, _riskmod);
     }
 
     REGISTER_SERIALIZABLE(SusceptibilityAirborne);
@@ -42,7 +38,6 @@ namespace Kernel
     {
         Susceptibility::serialize(ar, obj);
         SusceptibilityAirborne& susceptibility = *obj;
-        ar.labelElement("demographic_risk") & susceptibility.demographic_risk;
     }
 }
 

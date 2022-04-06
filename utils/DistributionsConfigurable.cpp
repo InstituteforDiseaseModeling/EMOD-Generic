@@ -22,6 +22,9 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_BODY( DistributionExponentialConfigurable )
     END_QUERY_INTERFACE_BODY( DistributionExponentialConfigurable )
 
+    BEGIN_QUERY_INTERFACE_BODY( DistributionGammaConfigurable )
+    END_QUERY_INTERFACE_BODY( DistributionGammaConfigurable )
+
     BEGIN_QUERY_INTERFACE_BODY( DistributionGaussianConfigurable )
     END_QUERY_INTERFACE_BODY( DistributionGaussianConfigurable )
 
@@ -100,7 +103,7 @@ namespace Kernel
 
         if( !JsonConfigurable::_dryrun && ret )
         {
-            m_Param1 = 1.0f/m_Param1;
+            m_Param1 = 1.0f/(m_Param1+FLT_MIN);
         }
         return ret;
     }
@@ -114,6 +117,38 @@ namespace Kernel
     void DistributionExponentialConfigurable::serialize( IArchive& ar, DistributionExponentialConfigurable* obj )
     {
         DistributionExponential::serialize( ar, obj );
+    }
+
+
+    //---------------- DistributionFunctionConfigurable::GAMMA_DISTRIBUTION  -------------------
+    DistributionGammaConfigurable::DistributionGammaConfigurable( )
+        : DistributionGamma()
+    { }
+
+    DistributionGammaConfigurable::~DistributionGammaConfigurable()
+    { }
+
+    bool DistributionGammaConfigurable::Configure( JsonConfigurable* pParent, std::string& param_name, const Configuration* config )
+    {
+        const std::string param_shape( param_name + "_Shape" );
+        const std::string param_scale( param_name + "_Scale" );
+        const std::string distribution_name( param_name + "_Distribution" );
+
+        pParent->initConfigTypeMap( param_shape.c_str(), &m_Param1, Distribution_Gamma_Shape_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "GAMMA_DISTRIBUTION" );
+        pParent->initConfigTypeMap( param_scale.c_str(), &m_Param2, Distribution_Gamma_Scale_DESC_TEXT, FLT_MIN, FLT_MAX, 1.0f, distribution_name.c_str(), "GAMMA_DISTRIBUTION" );
+
+        return pParent->JsonConfigurable::Configure( config );
+    }  
+
+    IDistribution* DistributionGammaConfigurable::Clone() const
+    {
+        return new DistributionGammaConfigurable( *this );
+    }
+
+    REGISTER_SERIALIZABLE( DistributionGammaConfigurable );
+    void DistributionGammaConfigurable::serialize(IArchive& ar, DistributionGammaConfigurable* obj)
+    {
+        DistributionGamma::serialize(ar, obj);
     }
 
 
@@ -208,7 +243,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionFunctionConfigurable::WEIBULL  -------------------
+    //---------------- DistributionFunctionConfigurable::WEIBULL_DISTRIBUTION  -------------------
     DistributionWeibullConfigurable::DistributionWeibullConfigurable( )
         : DistributionWeibull()
     { }
@@ -320,7 +355,7 @@ namespace Kernel
     }
 
 
-    //---------------- DistributionFunctionConfigurable::UNIFORM  -------------------
+    //---------------- DistributionFunctionConfigurable::UNIFORM_DISTRIBUTION  -------------------
     DistributionUniformConfigurable::DistributionUniformConfigurable( )
         : DistributionUniform()
     { }
@@ -369,7 +404,7 @@ namespace Kernel
     {
         const std::string param_piecewise_constant( param_name + "_Piecewise_Constant" );
         const std::string distribution_name( param_name + "_Distribution" );
-        pParent->initConfigComplexType( param_piecewise_constant.c_str(), &m_interpolatedValueMap, Distribution_PiecewiseConstant_DESC_TEXT, distribution_name.c_str(), "PIECEWISE_CONSTANT" );
+        pParent->initConfigTypeMap( param_piecewise_constant.c_str(), &m_interpolatedValueMap, Distribution_PiecewiseConstant_DESC_TEXT, distribution_name.c_str(), "PIECEWISE_CONSTANT" );
         return pParent->JsonConfigurable::Configure( config );
     }
 
@@ -398,7 +433,7 @@ namespace Kernel
         const std::string param_piecewise_linear( param_name + "_Piecewise_Linear" );
         const std::string distribution_name( param_name + "_Distribution" );
 
-        pParent->initConfigComplexType( param_piecewise_linear.c_str(), &m_interpolatedValueMap, Distribution_PiecewiseLinear_DESC_TEXT, distribution_name.c_str(), "PIECEWISE_LINEAR" );
+        pParent->initConfigTypeMap( param_piecewise_linear.c_str(), &m_interpolatedValueMap, Distribution_PiecewiseLinear_DESC_TEXT, distribution_name.c_str(), "PIECEWISE_LINEAR" );
         return pParent->JsonConfigurable::Configure( config );
     }
 

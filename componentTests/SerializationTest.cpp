@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "UnitTest++.h"
 #include "componentTests.h"
 #include "Environment.h"
-#include "SimulationConfig.h"
 #include "JsonFullReader.h"
 #include "JsonFullWriter.h"
 #include "BinaryArchiveReader.h"
@@ -34,14 +33,10 @@ SUITE(SerializationTest)
 
     struct SerializationFixture
     {
-        SimulationConfig* m_pSimulationConfig ;
-
         SerializationFixture()
-        :  m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger() );
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
@@ -55,8 +50,6 @@ SUITE(SerializationTest)
 
         ~SerializationFixture()
         {
-            delete m_pSimulationConfig;
-            m_pSimulationConfig = nullptr;
             IPFactory::DeleteFactory();
             Environment::Finalize();
         }

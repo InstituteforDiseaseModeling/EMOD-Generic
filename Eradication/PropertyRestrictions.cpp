@@ -58,6 +58,14 @@ namespace Kernel
     }
 
     template<class Key, class KeyValue, class Container>
+    json::QuickBuilder PropertyRestrictions<Key, KeyValue, Container>::GetSchema()
+    {
+        json::QuickBuilder obj_schema = JsonConfigurableCollection::GetSchema();
+        obj_schema["default"] = json::Array();
+        return obj_schema;
+    }
+
+    template<class Key, class KeyValue, class Container>
     void PropertyRestrictions<Key, KeyValue, Container>::ConfigureFromJsonAndKey( const Configuration * inputJson, const std::string& key )
     {
         JsonConfigurableCollection::ConfigureFromJsonAndKey(inputJson, key);

@@ -6209,7 +6209,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 39,6,F,40,2,0
 39,6,F,80,0,0
 39,6,F,125,0,0
-39,5,M,40,8,3
+39,5,M,40,8,2
 39,5,M,80,1,1
 39,5,M,125,0,0
 39,5,F,40,6,4
@@ -6365,7 +6365,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 40,6,F,40,2,0
 40,6,F,80,0,0
 40,6,F,125,0,0
-40,5,M,40,8,3
+40,5,M,40,8,2
 40,5,M,80,1,1
 40,5,M,125,0,0
 40,5,F,40,6,4
@@ -6521,7 +6521,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 41,6,F,40,2,0
 41,6,F,80,0,0
 41,6,F,125,0,0
-41,5,M,40,8,3
+41,5,M,40,8,2
 41,5,M,80,1,1
 41,5,M,125,0,0
 41,5,F,40,6,4
@@ -6677,10 +6677,10 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 42,6,F,40,2,0
 42,6,F,80,0,0
 42,6,F,125,0,0
-42,5,M,40,8,4
+42,5,M,40,8,3
 42,5,M,80,1,1
 42,5,M,125,0,0
-42,5,F,40,6,5
+42,5,F,40,6,4
 42,5,F,80,0,0
 42,5,F,125,0,0
 42,4,M,40,3,0
@@ -6833,10 +6833,10 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 43,6,F,40,2,0
 43,6,F,80,0,0
 43,6,F,125,0,0
-43,5,M,40,8,4
+43,5,M,40,8,5
 43,5,M,80,1,1
 43,5,M,125,0,0
-43,5,F,40,6,5
+43,5,F,40,6,4
 43,5,F,80,0,0
 43,5,F,125,0,0
 43,4,M,40,3,0
@@ -6989,10 +6989,10 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 44,6,F,40,2,0
 44,6,F,80,0,0
 44,6,F,125,0,0
-44,5,M,40,8,4
+44,5,M,40,8,6
 44,5,M,80,1,1
 44,5,M,125,0,0
-44,5,F,40,6,5
+44,5,F,40,6,4
 44,5,F,80,0,0
 44,5,F,125,0,0
 44,4,M,40,3,0
@@ -7145,7 +7145,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 45,6,F,40,2,0
 45,6,F,80,0,0
 45,6,F,125,0,0
-45,5,M,40,8,4
+45,5,M,40,8,7
 45,5,M,80,1,1
 45,5,M,125,0,0
 45,5,F,40,6,6
@@ -7301,7 +7301,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 46,6,F,40,2,0
 46,6,F,80,0,0
 46,6,F,125,0,0
-46,5,M,40,8,5
+46,5,M,40,8,8
 46,5,M,80,1,1
 46,5,M,125,0,0
 46,5,F,40,6,6
@@ -7457,7 +7457,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 47,6,F,40,2,0
 47,6,F,80,0,0
 47,6,F,125,0,0
-47,5,M,40,8,6
+47,5,M,40,8,8
 47,5,M,80,1,1
 47,5,M,125,0,0
 47,5,F,40,6,6
@@ -7613,7 +7613,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 48,6,F,40,2,0
 48,6,F,80,0,0
 48,6,F,125,0,0
-48,5,M,40,8,6
+48,5,M,40,8,8
 48,5,M,80,1,1
 48,5,M,125,0,0
 48,5,F,40,6,6
@@ -7769,7 +7769,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 49,6,F,40,2,0
 49,6,F,80,0,0
 49,6,F,125,0,0
-49,5,M,40,8,6
+49,5,M,40,8,8
 49,5,M,80,1,1
 49,5,M,125,0,0
 49,5,F,40,6,6
@@ -7925,7 +7925,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 50,6,F,40,2,0
 50,6,F,80,0,0
 50,6,F,125,0,0
-50,5,M,40,8,6
+50,5,M,40,8,8
 50,5,M,80,1,1
 50,5,M,125,0,0
 50,5,F,40,6,6
@@ -8081,7 +8081,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 51,6,F,40,2,0
 51,6,F,80,0,0
 51,6,F,125,0,0
-51,5,M,40,8,6
+51,5,M,40,8,8
 51,5,M,80,1,1
 51,5,M,125,0,0
 51,5,F,40,6,6
@@ -8237,7 +8237,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 52,6,F,40,2,0
 52,6,F,80,0,0
 52,6,F,125,0,0
-52,5,M,40,8,6
+52,5,M,40,8,8
 52,5,M,80,1,1
 52,5,M,125,0,0
 52,5,F,40,6,6
@@ -8393,7 +8393,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 53,6,F,40,2,0
 53,6,F,80,0,0
 53,6,F,125,0,0
-53,5,M,40,8,6
+53,5,M,40,8,8
 53,5,M,80,1,1
 53,5,M,125,0,0
 53,5,F,40,6,6
@@ -8549,7 +8549,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 54,6,F,40,2,0
 54,6,F,80,0,0
 54,6,F,125,0,0
-54,5,M,40,8,6
+54,5,M,40,8,8
 54,5,M,80,1,1
 54,5,M,125,0,0
 54,5,F,40,6,6
@@ -8705,7 +8705,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 55,6,F,40,2,0
 55,6,F,80,0,0
 55,6,F,125,0,0
-55,5,M,40,8,6
+55,5,M,40,8,8
 55,5,M,80,1,1
 55,5,M,125,0,0
 55,5,F,40,6,6
@@ -8861,7 +8861,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 56,6,F,40,2,0
 56,6,F,80,0,0
 56,6,F,125,0,0
-56,5,M,40,8,6
+56,5,M,40,8,8
 56,5,M,80,1,1
 56,5,M,125,0,0
 56,5,F,40,6,6
@@ -9017,7 +9017,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 57,6,F,40,2,0
 57,6,F,80,0,0
 57,6,F,125,0,0
-57,5,M,40,8,7
+57,5,M,40,8,8
 57,5,M,80,1,1
 57,5,M,125,0,0
 57,5,F,40,6,6
@@ -9173,7 +9173,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 58,6,F,40,2,0
 58,6,F,80,0,0
 58,6,F,125,0,0
-58,5,M,40,8,7
+58,5,M,40,8,8
 58,5,M,80,1,1
 58,5,M,125,0,0
 58,5,F,40,6,6
@@ -9329,7 +9329,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 59,6,F,40,2,0
 59,6,F,80,0,0
 59,6,F,125,0,0
-59,5,M,40,8,7
+59,5,M,40,8,8
 59,5,M,80,1,1
 59,5,M,125,0,0
 59,5,F,40,6,6
@@ -9485,7 +9485,7 @@ Time, NodeID, Gender, AgeYears, NumIndividuals, NumInfected
 60,6,F,40,2,0
 60,6,F,80,0,0
 60,6,F,125,0,0
-60,5,M,40,8,7
+60,5,M,40,8,8
 60,5,M,80,1,1
 60,5,M,125,0,0
 60,5,F,40,6,6

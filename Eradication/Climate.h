@@ -29,42 +29,18 @@ namespace std
 }
 #endif
 
-class Configuration;
-
 #define PI 3.141593
 
 namespace Kernel
 {
     class RANDOMBASE;
+    struct ClimateParams;
     struct INodeContext;
+    struct ISimulationContext;
 
-    class Climate : public JsonConfigurable
+    class Climate
     {
     public:
-        // for JsonConfigurable stuff...
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-        bool Configure( const Configuration* config );
-        ClimateUpdateResolution::Enum   climate_update_resolution;
-
-        float          base_airtemperature;
-        float          base_landtemperature;
-        float          base_rainfall;
-        float          base_humidity;
-
-        // scale params
-        float          airtemperature_offset;
-        float          landtemperature_offset;
-        float          rainfall_scale_factor;
-        float          humidity_scale_factor;
-
-        // stochasticity params
-        bool           enable_climate_stochasticity;
-        float          airtemperature_variance;
-        float          landtemperature_variance;
-        bool           rainfall_variance_enabled;
-        float          humidity_variance;
-
         inline float airtemperature()       const { return m_airtemperature; }
         inline float landtemperature()      const { return m_landtemperature; }
         inline float accumulated_rainfall() const { return m_accumulated_rainfall; }
@@ -98,45 +74,32 @@ namespace Kernel
 
         Climate(ClimateUpdateResolution::Enum update_resolution = ClimateUpdateResolution::CLIMATE_UPDATE_DAY, INodeContext * _parent = nullptr);
 
-        virtual void AddStochasticity( RANDOMBASE* pRNG,
-                                       float airtemp_variance,
-                                       float landtemp_variance,
-                                       bool rainfall_variance_enabled,
-                                       float humidity_variance );
+        virtual void AddStochasticity( RANDOMBASE* pRNG );
 
         virtual bool IsPlausible() = 0;
     };
 
 
-    class ClimateFactory : public JsonConfigurable
+    class ClimateFactory
     {
     public:
-        GET_SCHEMA_STATIC_WRAPPER(ClimateFactory)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
-        DECLARE_QUERY_INTERFACE()
-        bool Configure( const Configuration* config );
 
-        static ClimateFactory* CreateClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const ::Configuration *config, const std::string idreference);
+        static ClimateFactory* CreateClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const std::string idreference, ISimulationContext* parent_sim);
         ~ClimateFactory();
+
+        const ClimateParams* GetParams();
 
         Climate* CreateClimate( INodeContext *parent_node, float altitude, float latitude, RANDOMBASE* pRNG );
 
-        static ClimateStructure::Enum climate_structure;
-
     private:
-        ClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map);
-        ClimateFactory(){} // just for GetSchema
-        bool Initialize(const ::Configuration *config, const std::string idreference);
-        bool ParseMetadataForFile(std::string data_filepath, std::string idreference, ClimateUpdateResolution::Enum * const update_resolution, int * const num_datavalues, int * const num_nodes, std::unordered_map<uint32_t, uint32_t> &node_offsets);
+        ClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, ISimulationContext* parent_sim);
+        bool Initialize(const std::string idreference);
+        bool ParseMetadataForFile(std::string data_filepath, std::string idreference, int * const num_datavalues, int * const num_nodes, std::unordered_map<uint32_t, uint32_t> &node_offsets);
         bool OpenClimateFile(std::string filepath, uint32_t expected_size, std::ifstream &file);
 
         boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map;
 
-        std::string climate_airtemperature_filename;
-        std::string climate_koppen_filename;
-        std::string climate_landtemperature_filename;
-        std::string climate_rainfall_filename;
-        std::string climate_relativehumidity_filename;
+        ISimulationContext* parent;
 
         // data file stream handles for ClimateByData
         std::ifstream climate_landtemperature_file;
@@ -157,7 +120,6 @@ namespace Kernel
         std::unordered_map<uint32_t, uint32_t> koppentype_offsets;
 
         // metadata info
-        ClimateUpdateResolution::Enum climate_update_resolution;
         int num_datavalues;
         int num_nodes;
 

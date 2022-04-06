@@ -3,10 +3,12 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Namawala_single_node_demographics.json"
+                "Namawala_single_node_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },
+        "Incubation_Period_Constant": 3,
         "PRIMARY": {
             "Config_Name": "34_Generic_Namawala",
             "Enable_Strain_Tracking": 0,
@@ -14,7 +16,6 @@
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 180
-        },
-        "Incubation_Period_Constant": 3
+        }
     }
 }

@@ -23,17 +23,15 @@ namespace Kernel
     {
     }
 
-    void SusceptibilityEnvironmental::Initialize(float _age, float _immmod, float _riskmod)
+    void SusceptibilityEnvironmental::Initialize(float _immmod, float _riskmod)
     {
-        Susceptibility::Initialize(_age, _immmod, _riskmod);
-
-        demographic_risk = _riskmod; 
+        Susceptibility::Initialize(_immmod, _riskmod);
     }
 
-    SusceptibilityEnvironmental *SusceptibilityEnvironmental::CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod)
+    SusceptibilityEnvironmental *SusceptibilityEnvironmental::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
         SusceptibilityEnvironmental *newsusceptibility = _new_ SusceptibilityEnvironmental(context);
-        newsusceptibility->Initialize(age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
@@ -48,8 +46,7 @@ namespace Kernel
     {
         Susceptibility::serialize(ar, obj);
         SusceptibilityEnvironmental& susceptibility = *obj;
-        ar.labelElement("demographic_risk") & susceptibility.demographic_risk;
     }
 }
 
-#endif // ENABLE_POLIO
+#endif // ENABLE_ENVIRONMENTAL

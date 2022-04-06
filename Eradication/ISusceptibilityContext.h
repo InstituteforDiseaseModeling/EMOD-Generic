@@ -14,10 +14,10 @@ namespace Kernel
 {
     struct ISusceptibilityContext : ISerializable
     {
-        virtual float getAge() const = 0;
         virtual float getModAcquire() const = 0;
         virtual float getModTransmit() const = 0;
         virtual float getModMortality() const = 0;
+        virtual float getModRisk() const = 0;
         virtual float getImmuneFailAgeAcquire() const = 0;
         virtual void  updateModAcquire(float updateVal) = 0;
         virtual void  updateModTransmit(float updateVal) = 0;

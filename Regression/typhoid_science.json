@@ -1,5 +1,6 @@
 {
      "science": [
+        { "path" : "Typhoid/SFTs/SeasonalAttenuation/Base" },
         { "path" : "Typhoid/SFTs/SeasonalAttenuation/CDEquals0" },
         { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakDurationEquals1" },
         { "path" : "Typhoid/SFTs/SeasonalAttenuation/PeakStartAt0" },
@@ -37,7 +38,6 @@
         { "path" : "Typhoid/SFTs/ReportInsetChartTotalChr" },
         { "path" : "Typhoid/SFTs/ReportTyphoidByAgeAndGender/Incidence" },
         { "path" : "Typhoid/SFTs/ReportTyphoidByAgeAndGender/PopulationAndPrevalence" },
-        { "path" : "Typhoid/SFTs/SeasonalAttenuation" },
         { "path" : "Typhoid/SFTs/SheddingMultiroute" },
         { "path" : "Typhoid/SFTs/TyphoidCarrierClear" },
         { "path" : "Typhoid/SFTs/SubcToChrTransitionProbability/00_year_bucket" },
@@ -58,6 +58,8 @@
         { "path" : "Typhoid/SFTs/ChronicCarrierDiagnostic" }
     ], 
     "suspended_tests": [
-        { "path" : "Typhoid/SFTs/AcuteTreatment" }
+        { "path" : "Typhoid/SFTs/AcuteTreatment" },
+        { "path" : "Typhoid/SFTs/Demo" },
+        { "path" : "Typhoid/SFTs/MultiRouteHINT" }
     ]
 }

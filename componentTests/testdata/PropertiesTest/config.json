@@ -34,6 +34,7 @@
         "Enable_Birth": 1,
         "Enable_Climate_Stochasticity": 1,
         "Enable_Demographics_Birth": 0,
+        "Enable_Demographics_Builtin": 0,
         "Enable_Demographics_Initial": 1,
         "Enable_Demographics_Reporting": 1,
         "Enable_Disease_Mortality": 0,

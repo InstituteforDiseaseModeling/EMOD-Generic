@@ -4,7 +4,8 @@
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
-                "hint_schoolclosure_demographics.json"
+                "hint_schoolclosure_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.01,

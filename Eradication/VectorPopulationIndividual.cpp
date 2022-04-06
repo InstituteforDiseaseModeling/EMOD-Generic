@@ -566,7 +566,7 @@ namespace Kernel
             suids::suid destination = suids::nil_suid();
             MigrationType::Enum mig_type = MigrationType::NO_MIGRATION;
             float time = 0.0;
-            pMigInfo->PickMigrationStep( m_context->GetRng(), nullptr, 1.0, destination, mig_type, time );
+            pMigInfo->PickMigrationStep( m_context->GetRng(), nullptr, destination, mig_type, time );
 
             // test if each vector will migrate this time step
             if( !destination.is_nil() && (time <= dt) )

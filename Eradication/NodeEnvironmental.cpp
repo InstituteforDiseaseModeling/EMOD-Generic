@@ -13,9 +13,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "IdmDateTime.h"
 #include "NodeEnvironmental.h"
+#include "ConfigParams.h"
 #include "IndividualEnvironmental.h"
 #include "TransmissionGroupsFactory.h"
-#include "SimulationConfig.h"
 #include "INodeContext.h"
 #include "ISimulationContext.h"
 #include "SimulationEventContext.h"
@@ -27,37 +27,21 @@ SETUP_LOGGING( "NodeEnvironmental" )
 namespace Kernel
 {
     GET_SCHEMA_STATIC_WRAPPER_IMPL(NodeEnvironmental,NodeEnvironmental)
-    /*BEGIN_QUERY_INTERFACE_DERIVED(NodeTyphoid, Node)
-        HANDLE_INTERFACE(INodeTyphoid)
-    END_QUERY_INTERFACE_DERIVED(NodeTyphoid, Node)*/
 
     NodeEnvironmental::NodeEnvironmental()
     : Node()
     , contagion(0)
-    , node_contagion_decay_fraction(0.0f)
-    , environmental_ramp_up_duration(0.0f)
-    , environmental_ramp_down_duration(0.0f)
-    , environmental_peak_start(0.0f)
-    , environmental_cutoff_days(0.0f)
     , txEnvironment(nullptr)
-    {
-    }
+    { }
 
     NodeEnvironmental::NodeEnvironmental(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     : Node(_parent_sim, externalNodeId, node_suid)
     , contagion(0)
-    , node_contagion_decay_fraction(0.0f)
-    , environmental_ramp_up_duration(0.0f)
-    , environmental_ramp_down_duration(0.0f)
-    , environmental_peak_start(0.0f)
-    , environmental_cutoff_days(0.0f)
     , txEnvironment(nullptr)
-    {
-    }
+    { }
 
     NodeEnvironmental::~NodeEnvironmental(void)
-    {
-    }
+    { }
 
     NodeEnvironmental *NodeEnvironmental::CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     {
@@ -65,31 +49,6 @@ namespace Kernel
         newnode->Initialize();
 
         return newnode;
-    }
-
-    bool NodeEnvironmental::Configure( const Configuration* config )
-    {
-        initConfigTypeMap( "Node_Contagion_Decay_Rate", &node_contagion_decay_fraction, Node_Contagion_Decay_Rate_DESC_TEXT, 1.0f ); //this value represents *fraction* of contagion not carried over to the next time step, see EndUpdate() in transmissiongroups
-        initConfigTypeMap( "Environmental_Ramp_Up_Duration", &environmental_ramp_up_duration, Environmental_Ramp_Up_Duration_DESC_TEXT, FLT_MIN, 365, 2 );
-        initConfigTypeMap( "Environmental_Ramp_Down_Duration", &environmental_ramp_down_duration, Environmental_Ramp_Down_Duration_DESC_TEXT, FLT_MIN, 365, 2 );
-        initConfigTypeMap( "Environmental_Cutoff_Days", &environmental_cutoff_days, Environmental_Cutoff_Days_DESC_TEXT, 0, DAYSPERYEAR, 2 );
-        initConfigTypeMap( "Environmental_Peak_Start", &environmental_peak_start, Environmental_Peak_Start_DESC_TEXT, 0, 500, 2 );
-        bool ret = Node::Configure( config );
-        if( environmental_ramp_up_duration + environmental_ramp_down_duration + environmental_cutoff_days >= DAYSPERYEAR )
-        {
-            std::ostringstream msg;
-            msg << "Environmental_Ramp_Up_Duration ("
-                << environmental_ramp_up_duration
-                << ") + Environmental_Ramp_Down_Duration ("
-                << environmental_ramp_down_duration
-                << ") + Environmental_Cutoff_Days ("
-                << environmental_cutoff_days
-                << ") must be < 365. Equals "
-                << environmental_ramp_up_duration + environmental_ramp_down_duration + environmental_cutoff_days
-                << ".\n";
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-        return ret;
     }
 
     IIndividualHuman* NodeEnvironmental::createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
@@ -148,7 +107,7 @@ namespace Kernel
     {
         LOG_DEBUG_F("Number of clades: %d\n", InfectionConfig::number_clades);
         transmissionGroups->Build( contagionDecayRate, InfectionConfig::number_clades, InfectionConfig::number_genomes );
-        txEnvironment->Build( node_contagion_decay_fraction, InfectionConfig::number_clades, InfectionConfig::number_genomes );
+        txEnvironment->Build(NodeConfig::GetNodeParams()->node_contagion_decay_fraction, InfectionConfig::number_clades, InfectionConfig::number_genomes );
     }
 
     bool NodeEnvironmental::IsValidTransmissionRoute( const string& transmissionRoute )
@@ -163,10 +122,10 @@ namespace Kernel
         float amplification = 0.0f;
 
         float peak_amplification = 1.0f;
-        float ramp_down_days = environmental_ramp_down_duration;
-        float ramp_up_days = environmental_ramp_up_duration;
-        float cutoff_days = environmental_cutoff_days;
-        float peak_start_day = floor(environmental_peak_start);
+        float ramp_down_days = NodeConfig::GetNodeParams()->environmental_ramp_down_duration;
+        float ramp_up_days = NodeConfig::GetNodeParams()->environmental_ramp_up_duration;
+        float cutoff_days = NodeConfig::GetNodeParams()->environmental_cutoff_days;
+        float peak_start_day = floor(NodeConfig::GetNodeParams()->environmental_peak_start);
         if (peak_start_day > DAYSPERYEAR)
         {
             peak_start_day = peak_start_day - DAYSPERYEAR;
@@ -266,7 +225,7 @@ namespace Kernel
     {
         transmissionGroups = CreateTransmissionGroups();
 
-        if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && params()->heterogeneous_intranode_transmission_enabled )
+        if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && NodeConfig::GetNodeParams()->enable_hint )
         {
             ValidateIntranodeTransmissionConfiguration();
 
@@ -387,8 +346,7 @@ namespace Kernel
         Node::serialize(ar, obj);
         NodeEnvironmental& node = *obj;
         ar.labelElement("contagion") & node.contagion;
-        ar.labelElement("node_contagion_decay_fraction") & node.node_contagion_decay_fraction;
     }
 }
 
-#endif // ENABLE_POLIO
+#endif // ENABLE_ENVIRONMENTAL

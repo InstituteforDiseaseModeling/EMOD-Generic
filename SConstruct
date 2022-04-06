@@ -215,6 +215,7 @@ if os.sys.platform == 'win32':
                           "#/Eradication",
                           "#/interventions",
                           "#/campaign",
+                          "#/libsqlite",
                           "#/baseReportLib",
                           "#/utils",
                           "#/libgeneric_static",

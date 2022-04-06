@@ -24,10 +24,6 @@ namespace Kernel
 
     class ClimateKoppen : public Climate
     {
-        GET_SCHEMA_STATIC_WRAPPER(ClimateKoppen)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-        bool Configure( const Configuration* config );
 
     public:
         enum KoppenType { Af, Am, As, Aw,
@@ -72,11 +68,7 @@ namespace Kernel
 
         virtual bool IsPlausible();
 
-        virtual void AddStochasticity( RANDOMBASE* pRNG,
-                                       float airtemp_variance,
-                                       float landtemp_variance,
-                                       bool rainfall_variance_enabled,
-                                       float humidity_variance);
+        virtual void AddStochasticity( RANDOMBASE* pRNG );
 
     private:
         void RoomUpDown(const float Ta, const float Tr, float &RoomUp, float &RoomDown);

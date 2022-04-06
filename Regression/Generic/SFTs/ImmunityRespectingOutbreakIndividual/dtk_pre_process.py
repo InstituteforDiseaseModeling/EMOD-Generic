@@ -17,7 +17,7 @@ def set_random_campaign_file(campaign_filename="campaign.json", campaign_templat
     initial_effect = random.random()
     demographic_coverage_v = random.random()
     demographic_coverage_o = random.random()
-    campaign_json["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"]["Waning_Config"][KEY_INITIAL_EFFECT] = initial_effect
+    campaign_json["Events"][0]["Event_Coordinator_Config"]["Intervention_Config"]["Acquire_Config"][KEY_INITIAL_EFFECT] = initial_effect
     campaign_json["Events"][0]["Event_Coordinator_Config"][KEY_DEMOGRAPHIC_COVERAGE] = demographic_coverage_v
     campaign_json["Events"][1]["Event_Coordinator_Config"][KEY_DEMOGRAPHIC_COVERAGE] = demographic_coverage_o
     with open(campaign_filename, "w") as outfile:

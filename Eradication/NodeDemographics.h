@@ -133,11 +133,8 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
     public:
-        static NodeDemographicsFactory* CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map,
-                                                                       const ::Configuration *config,
-                                                                       bool isDataInFiles, 
-                                                                       uint32_t torusSize, 
-                                                                       uint32_t defaultPopulation );
+        static NodeDemographicsFactory* CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const ::Configuration *config );
+
         ~NodeDemographicsFactory();
 
         DemographicsContext* CreateDemographicsContext();
@@ -156,6 +153,9 @@ namespace Kernel
         const std::string& GetIdReference() { return idreference; }
 
         const JsonObjectDemog& GetNodePropertiesJson() { return node_properties; }
+
+        bool     GetEnableDemographicsBuiltin()  const  { return demographics_builtin; }
+        uint32_t GetTorusSize()                  const  { return torus_size; }
 
         JsonObjectDemog GetJsonForNode( ExternalNodeId_t externalNodeId );
 
@@ -198,18 +198,33 @@ namespace Kernel
         std::vector<std::map<ExternalNodeId_t,JsonObjectDemog>> nodedata_maps ;
 
         // values used when generating the default geography
+        bool     demographics_builtin;
         uint32_t torus_size;
         uint32_t default_population;
 
-        int default_torus_size;
-        int default_node_population;
         bool allow_nodeid_zero;
 
         static std::vector<std::string> demographics_filenames_list;
 
 #pragma warning( pop )
 
-        NodeDemographicsFactory() : nodeid_suid_map(), nodeIDs(), idreference(), full_string_table( nullptr ), demographics_filenames(), layer_defaults(), layer_string_sub_tables(), layer_string_value2key_tables(), nodedata_maps() { };
+        NodeDemographicsFactory()
+            : nodeid_suid_map()
+            , nodeIDs()
+            , idreference()
+            , full_string_table( nullptr )
+            , demographics_filenames()
+            , node_properties()
+            , layer_defaults()
+            , layer_string_sub_tables()
+            , layer_string_value2key_tables()
+            , nodedata_maps()
+            , demographics_builtin(true)
+            , torus_size(10)
+            , default_population(1000)
+            , allow_nodeid_zero(false)
+        { };
+
         NodeDemographicsFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map)
             : nodeid_suid_map( nodeid_suid_map )
             , nodeIDs()
@@ -221,12 +236,13 @@ namespace Kernel
             , layer_string_sub_tables()
             , layer_string_value2key_tables()
             , nodedata_maps()
+            , demographics_builtin(true)
             , torus_size(10)
             , default_population(1000)
             , allow_nodeid_zero(false)
-        { 
-        };
-        void Initialize( const ::Configuration *config, bool isDataInFiles, uint32_t torusSize, uint32_t defaultPopulation );
+        { };
+
+        void Initialize( const ::Configuration *config );
 
         virtual bool Configure( const Configuration* config ) override;
 

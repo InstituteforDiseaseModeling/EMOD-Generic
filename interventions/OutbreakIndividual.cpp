@@ -17,15 +17,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ConfigurationImpl.h"
 #include "NodeEventContext.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "StrainIdentity.h"
 #include "IdmString.h"
 #include "RANDOM.h"
 
 SETUP_LOGGING( "OutbreakIndividual" )
-
-// Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-// NO USAGE like this:  GET_CONFIGURABLE(SimulationConfig)->example_variable in DLL
 
 namespace Kernel
 {
@@ -71,15 +67,16 @@ namespace Kernel
         // TBD: Get individual from context, and infect
         IIndividualHuman* individual = dynamic_cast<IIndividualHuman*>(context->GetParent()); // QI in new code
 
+        float mod_acq = individual->GetImmunityReducedAcquire()*individual->GetInterventionReducedAcquire();
         LOG_DEBUG( "Infecting individual from Outbreak.\n" );
-        if( ignoreImmunity || context->GetParent()->GetRng()->SmartDraw( individual->GetAcquisitionImmunity() ) )
+        if( ignoreImmunity || context->GetParent()->GetRng()->SmartDraw(mod_acq) )
         {
             individual->AcquireNewInfection(&outbreak_strain, incubation_period_override);
             distributed = true;
         }
         else
         {
-            LOG_DEBUG_F( "We didn't infect individual %d with immunity %f (ignore=%d).\n", individual->GetSuid().data, individual->GetAcquisitionImmunity(), ignoreImmunity );
+            LOG_DEBUG_F( "We didn't infect individual %d with immunity %f (ignore=%d).\n", individual->GetSuid().data, mod_acq, ignoreImmunity );
         }
 
         return distributed;

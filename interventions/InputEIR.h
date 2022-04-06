@@ -9,6 +9,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
+#include <vector>
+
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
@@ -21,20 +23,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class InputEIRConfig : public JsonConfigurable, 
-                           public IComplexJsonConfigurable, 
-                           public std::vector<float>
-    {
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) { return e_NOINTERFACE; }
-
-        public:
-            InputEIRConfig() : std::vector<float>(MONTHSPERYEAR) {}
-            virtual void ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key );
-            virtual json::QuickBuilder GetSchema();
-            virtual bool  HasValidDefault() const override { return false; }
-    };
-
     class InputEIR : public BaseNodeIntervention
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
@@ -54,7 +42,7 @@ namespace Kernel
         virtual float GetCostPerUnit() const override;
     protected:
         AgeDependentBitingRisk::Enum age_dependence;
-        InputEIRConfig monthly_EIR; // 12 values of EIR by month
+        std::vector<float> monthly_EIR; // 12 values of EIR by month
         float today;
         float daily_EIR;
         tAgeBitingFunction risk_function;

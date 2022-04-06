@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #include "IMigrationInfo.h"
 #include "Migration.h"
+
 #ifndef DISABLE_VECTOR
 #include "MigrationInfoVector.h"
 #endif
@@ -18,34 +19,28 @@ SETUP_LOGGING( "IMigrationInfo" )
 
 namespace Kernel
 {
-    namespace MigrationFactory
+    IMigrationInfoFactory* ConstructMigrationInfoFactory( const std::string& idreference,
+                                                          SimType::Enum sim_type,
+                                                          bool useDefaultMigration,
+                                                          int defaultTorusSize )
     {
-        IMigrationInfoFactory* ConstructMigrationInfoFactory( const ::Configuration *config, 
-                                                              const std::string& idreference,
-                                                              SimType::Enum sim_type,
-                                                              MigrationStructure::Enum ms,
-                                                              bool useDefaultMigration,
-                                                              int defaultTorusSize )
+        IMigrationInfoFactory* p_mif = nullptr;
+
+        if( (sim_type == SimType::VECTOR_SIM) || (sim_type == SimType::MALARIA_SIM) || (sim_type == SimType::DENGUE_SIM) )
         {
-            IMigrationInfoFactory* p_mif = nullptr ;
 #ifndef DISABLE_VECTOR
-            if( (sim_type == SimType::VECTOR_SIM) || (sim_type == SimType::MALARIA_SIM)
-#ifdef ENABLE_DENGUE
-                || (sim_type == SimType::DENGUE_SIM)
-#endif
-                )
+            if( useDefaultMigration )
             {
-                if( useDefaultMigration )
-                {
-                    p_mif = new MigrationInfoFactoryVectorDefault( defaultTorusSize );
-                }
-                else
-                {
-                    p_mif = new MigrationInfoFactoryVector();
-                }
+                p_mif = new MigrationInfoFactoryVectorDefault( defaultTorusSize );
             }
-            else 
+            else
+            {
+                p_mif = new MigrationInfoFactoryVector();
+            }
 #endif
+        }
+        else
+        {
             if( useDefaultMigration )
             {
                 p_mif = new MigrationInfoFactoryDefault( defaultTorusSize );
@@ -54,8 +49,13 @@ namespace Kernel
             {
                 p_mif = new MigrationInfoFactoryFile();
             }
-            p_mif->Initialize( config, idreference );
-            return p_mif;
         }
+
+        if(p_mif)
+        {
+            p_mif->Initialize( idreference );
+        }
+
+        return p_mif;
     }
 }

@@ -41,9 +41,9 @@ namespace Kernel
 
     bool HIVARTStagingByCD4Diagnostic::Configure( const Configuration* inputJson )
     {
-        initConfigComplexType("Threshold",    &threshold,  HIV_ASBCD_Threshold_DESC_TEXT    );
-        initConfigComplexType("If_Active_TB", &ifActiveTB, HIV_ASBCD_If_Active_TB_DESC_TEXT );
-        initConfigComplexType("If_Pregnant",  &ifPregnant, HIV_ASBCD_If_Pregnant_DESC_TEXT  );
+        initConfigTypeMap("Threshold",    &threshold,  HIV_ASBCD_Threshold_DESC_TEXT    );
+        initConfigTypeMap("If_Active_TB", &ifActiveTB, HIV_ASBCD_If_Active_TB_DESC_TEXT );
+        initConfigTypeMap("If_Pregnant",  &ifPregnant, HIV_ASBCD_If_Pregnant_DESC_TEXT  );
 
         return HIVARTStagingAbstract::Configure( inputJson );
     }

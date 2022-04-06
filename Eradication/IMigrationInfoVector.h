@@ -31,7 +31,5 @@ namespace Kernel
         virtual IMigrationInfoVector* CreateMigrationInfoVector(
             INodeContext *parent_node, 
             const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
-
-        virtual bool IsVectorMigrationEnabled() const = 0;
     };
 }

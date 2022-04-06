@@ -2,8 +2,9 @@
 
 sources =  [
             'dtk_vaccine_intervention.cpp',
-            '../../../interventions/SimpleVaccine.cpp',
+            '../../../interventions/Vaccine.cpp',
             '../../../interventions/WaningEffectFactory.cpp',
+            '../../../interventions/WaningEffectNull.cpp',
             '../../../interventions/WaningEffectConstant.cpp',
             '../../../interventions/WaningEffectBox.cpp',
             '../../../interventions/WaningEffectExponential.cpp',

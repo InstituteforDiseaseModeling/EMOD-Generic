@@ -35,37 +35,10 @@ namespace Kernel
         HANDLE_INTERFACE(IConfigurable)
     END_QUERY_INTERFACE_DERIVED(NodeSTI, Node)
 
-    bool NodeSTI::Configure( const Configuration* config )
-    {
-        // A PFA burnin of at least 1 day is required to ensure transmission
-        initConfigTypeMap( "PFA_Burnin_Duration_In_Days", &pfa_burnin_duration, PFA_Burnin_Duration_In_Days_DESC_TEXT, 1, FLT_MAX, 1000 * DAYSPERYEAR );
-
-        bool ret = society->Configure( config );
-        if( ret )
-        {
-            ret = Node::Configure( config );
-        }
-
-        if( ret &&
-            !JsonConfigurable::_dryrun &&
-            (ind_sampling_type != IndSamplingType::TRACK_ALL     ) &&
-            (ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                    "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(ind_sampling_type),
-                                                    "Simulation_Type", SimType::pairs::lookup_key( GET_CONFIGURABLE( SimulationConfig )->sim_type ),
-                                                    "Relationship-based transmission network only works with 100% sampling."
-                                                    );
-        }
-
-        return ret ;
-    }
-
     NodeSTI::NodeSTI(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
         : Node(_parent_sim, externalNodeId, node_suid)
         , relMan(nullptr)
         , society(nullptr)
-        , pfa_burnin_duration( 15 * DAYSPERYEAR )
     {
         relMan = RelationshipManagerFactory::CreateManager( this );
         society = SocietyFactory::CreateSociety( relMan );
@@ -75,7 +48,6 @@ namespace Kernel
         : Node()
         , relMan(nullptr)
         , society(nullptr)
-        , pfa_burnin_duration( 15 * DAYSPERYEAR )
     {
         relMan = RelationshipManagerFactory::CreateManager( this );
         society = SocietyFactory::CreateSociety( relMan );
@@ -97,6 +69,8 @@ namespace Kernel
 
     void NodeSTI::Initialize()
     {
+        society->Configure( EnvPtr->Config );
+
         Node::Initialize();
     }
 
@@ -149,11 +123,7 @@ namespace Kernel
             sti_person->UpdateHistory( GetTime(), dt );
         }
 
-        if (pfa_burnin_duration > 0)
-        {
-            pfa_burnin_duration -= dt;
-            society->UpdatePairFormationRates( GetTime(), dt );
-        }
+        society->UpdatePairFormationRates( GetTime(), dt );
 
         for (auto& person : individualHumans)
         {

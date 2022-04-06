@@ -173,7 +173,6 @@
     <ClCompile Include="BaseProperties.cpp" />
     <ClCompile Include="RANDOM.cpp" />
     <ClCompile Include="RapidJsonImpl.cpp" />
-    <ClCompile Include="Serialization.cpp" />
     <ClCompile Include="Serializer.cpp" />
     <ClCompile Include="Sigmoid.cpp" />
     <ClCompile Include="StatusReporter.cpp" />
@@ -258,7 +257,6 @@
     <ClInclude Include="PropertiesString.h" />
     <ClInclude Include="RANDOM.h" />
     <ClInclude Include="RapidJsonImpl.h" />
-    <ClInclude Include="Serialization.h" />
     <ClInclude Include="Serializer.h" />
     <ClInclude Include="Sigmoid.h" />
     <ClInclude Include="StatusReporter.h" />

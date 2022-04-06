@@ -3,7 +3,7 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "demog/Namawala_singlenode_4group_demographics.properties.json"
+                "Namawala_singlenode_4group_demographics.properties.json"
             ],
             "Enable_Initial_Prevalence": 1,
             "Population_Scale_Type": "FIXED_SCALING"

@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_malariaindividual_module.cpp',
+            '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualVector.cpp',
             '../../../Eradication/IndividualMalaria.cpp',

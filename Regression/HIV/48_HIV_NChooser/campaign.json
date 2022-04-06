@@ -116,13 +116,11 @@
                 ],
                 "Intervention_Config": {
                     "Cost_To_Consumer": 10,
-                    "Distributed_Event_Trigger": "Vaccinated",
-                    "Duration_To_Wait_Before_Revaccination": 240,
-                    "Expired_Event_Trigger": "VaccineExpired",
+                    "Event_Trigger_Distributed": "Vaccinated",
+                    "Event_Trigger_Expired": "VaccineExpired",
                     "Intervention_Name": "Vaccine48",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -141,7 +139,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "class": "NChooserEventCoordinatorHIV"
             },

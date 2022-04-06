@@ -126,7 +126,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_TYPHOID;ENABLE_ENVIRONMENTAL;WIN32;IDM_EXPORT;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;..\lz4\lib;$(IDM_PYTHON3_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\libsqlite;..\snappy;..\lz4\lib;$(IDM_PYTHON3_PATH)\include</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -175,7 +175,7 @@
       </FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_TYPHOID;ENABLE_ENVIRONMENTAL;WIN32;IDM_EXPORT;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;..\lz4\lib;$(IDM_PYTHON3_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\libsqlite;..\snappy;..\lz4\lib;$(IDM_PYTHON3_PATH)\include</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -235,7 +235,6 @@
     <ClInclude Include="..\interventions\AntiTBDrug.h" />
     <ClInclude Include="..\interventions\ARTBasic.h" />
     <ClInclude Include="..\interventions\ARTDropout.h" />
-    <ClInclude Include="..\interventions\BCGVaccine.h" />
     <ClInclude Include="..\interventions\Bednet.h" />
     <ClInclude Include="..\interventions\BirthTriggeredIV.h" />
     <ClInclude Include="..\interventions\BitingRisk.h" />
@@ -244,7 +243,6 @@
     <ClInclude Include="..\interventions\BroadcastEventToOtherNodes.h" />
     <ClInclude Include="..\interventions\CalendarIV.h" />
     <ClInclude Include="..\interventions\CD4Diagnostic.h" />
-    <ClInclude Include="..\interventions\ControlledVaccine.h" />
     <ClInclude Include="..\interventions\DelayedIntervention.h" />
     <ClInclude Include="..\interventions\Diagnostics.h" />
     <ClInclude Include="..\interventions\DiagnosticsTreatNeg.h" />
@@ -279,13 +277,10 @@
     <ClInclude Include="..\interventions\MalariaChallenge.h" />
     <ClInclude Include="..\interventions\MalariaDiagnostic.h" />
     <ClInclude Include="..\interventions\MaleCircumcision.h" />
-    <ClInclude Include="..\interventions\MeaslesVaccine.h" />
     <ClInclude Include="..\interventions\MigrateFamily.h" />
     <ClInclude Include="..\interventions\MigrateIndividuals.h" />
     <ClInclude Include="..\interventions\ModifyStiCoInfectionStatus.h" />
     <ClInclude Include="..\interventions\MosquitoRelease.h" />
-    <ClInclude Include="..\interventions\MultiEffectBoosterVaccine.h" />
-    <ClInclude Include="..\interventions\MultiEffectVaccine.h" />
     <ClInclude Include="..\interventions\MultiInterventionDistributor.h" />
     <ClInclude Include="..\interventions\MultiNodeInterventionDistributor.h" />
     <ClInclude Include="..\interventions\NodeLevelHealthTriggeredIV.h" />
@@ -300,7 +295,6 @@
     <ClInclude Include="..\interventions\ResistanceDiagnostics.h" />
     <ClInclude Include="..\interventions\RTSSVaccine.h" />
     <ClInclude Include="..\interventions\ScaleLarvalHabitat.h" />
-    <ClInclude Include="..\interventions\SimpleBoosterVaccine.h" />
     <ClInclude Include="..\interventions\SmearDiagnostics.h" />
     <ClInclude Include="..\interventions\STIBarrier.h" />
     <ClInclude Include="..\interventions\StiCoInfectionDiagnostic.h" />
@@ -311,12 +305,6 @@
     <ClInclude Include="..\interventions\Vaccine.h" />
     <ClInclude Include="..\interventions\VectorControlNodeTargeted.h" />
     <ClInclude Include="..\interventions\WaningEffect.h" />
-    <ClInclude Include="..\interventions\WaningEffectCombo.h" />
-    <ClInclude Include="..\interventions\WaningEffectMap.h" />
-    <ClInclude Include="..\interventions\WaningEffectMapAge.h" />
-    <ClInclude Include="..\interventions\WaningEffectMapCount.h" />
-    <ClInclude Include="..\interventions\WaningEffectMapSeasonal.h" />
-    <ClInclude Include="..\interventions\WaningEffectRandomBox.h" />
     <ClInclude Include="..\utils\Types.h" />
     <ClInclude Include="Assortivity.h" />
     <ClInclude Include="AssortivityFactory.h" />
@@ -340,6 +328,7 @@
     <ClInclude Include="ClimateKoppen.h" />
     <ClInclude Include="CommunityHealthWorkerEventCoordinator.h" />
     <ClInclude Include="ConcurrencyParameters.h" />
+    <ClInclude Include="ConfigParams.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerFactory.h" />
     <ClInclude Include="CoverageByNodeEventCoordinator.h" />
@@ -517,7 +506,6 @@
     <ClInclude Include="ReportUtilitiesSTI.h" />
     <ClInclude Include="ReportVector.h" />
     <ClInclude Include="Schema.h" />
-    <ClInclude Include="SerializationTimeCalc.h" />
     <ClInclude Include="SerializedPopulation.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="SimulationAirborne.h" />
@@ -541,6 +529,8 @@
     <ClInclude Include="SpatialReportTB.h" />
     <ClInclude Include="SpatialReportTyphoid.h" />
     <ClInclude Include="SpatialReportVector.h" />
+    <ClInclude Include="SqlLogger.h" />
+    <ClInclude Include="SQLReporter.h" />
     <ClInclude Include="StandardEventCoordinator.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="STIInterventionsContainer.h" />
@@ -600,7 +590,6 @@
     <ClCompile Include="..\interventions\AntiTBDrug.cpp" />
     <ClCompile Include="..\interventions\ARTBasic.cpp" />
     <ClCompile Include="..\interventions\ARTDropout.cpp" />
-    <ClCompile Include="..\interventions\BCGVaccine.cpp" />
     <ClCompile Include="..\interventions\Bednet.cpp" />
     <ClCompile Include="..\interventions\BirthTriggeredIV.cpp" />
     <ClCompile Include="..\interventions\BitingRisk.cpp" />
@@ -609,7 +598,6 @@
     <ClCompile Include="..\interventions\BroadcastEventToOtherNodes.cpp" />
     <ClCompile Include="..\interventions\CalendarIV.cpp" />
     <ClCompile Include="..\interventions\CD4Diagnostic.cpp" />
-    <ClCompile Include="..\interventions\ControlledVaccine.cpp" />
     <ClCompile Include="..\interventions\DelayedIntervention.cpp" />
     <ClCompile Include="..\interventions\Diagnostics.cpp" />
     <ClCompile Include="..\interventions\DiagnosticsTreatNeg.cpp" />
@@ -641,13 +629,10 @@
     <ClCompile Include="..\interventions\MalariaChallenge.cpp" />
     <ClCompile Include="..\interventions\MalariaDiagnostic.cpp" />
     <ClCompile Include="..\interventions\MaleCircumcision.cpp" />
-    <ClCompile Include="..\interventions\MeaslesVaccine.cpp" />
     <ClCompile Include="..\interventions\MigrateFamily.cpp" />
     <ClCompile Include="..\interventions\MigrateIndividuals.cpp" />
     <ClCompile Include="..\interventions\ModifyStiCoInfectionStatus.cpp" />
     <ClCompile Include="..\interventions\MosquitoRelease.cpp" />
-    <ClCompile Include="..\interventions\MultiEffectBoosterVaccine.cpp" />
-    <ClCompile Include="..\interventions\MultiEffectVaccine.cpp" />
     <ClCompile Include="..\interventions\MultiInterventionDistributor.cpp" />
     <ClCompile Include="..\interventions\MultiNodeInterventionDistributor.cpp" />
     <ClCompile Include="..\interventions\NodeLevelHealthTriggeredIV.cpp" />
@@ -662,8 +647,6 @@
     <ClCompile Include="..\interventions\ResistanceDiagnostics.cpp" />
     <ClCompile Include="..\interventions\RTSSVaccine.cpp" />
     <ClCompile Include="..\interventions\ScaleLarvalHabitat.cpp" />
-    <ClCompile Include="..\interventions\SimpleBoosterVaccine.cpp" />
-    <ClCompile Include="..\interventions\SimpleVaccine.cpp" />
     <ClCompile Include="..\interventions\SmearDiagnostics.cpp" />
     <ClCompile Include="..\interventions\STIBarrier.cpp" />
     <ClCompile Include="..\interventions\StiCoInfectionDiagnostic.cpp" />
@@ -674,6 +657,7 @@
     <ClCompile Include="..\interventions\TyphoidCarrierDiagnostic.cpp" />
     <ClCompile Include="..\interventions\TyphoidCarrierClear.cpp" />
     <ClCompile Include="..\interventions\UsageDependentBednet.cpp" />
+    <ClCompile Include="..\interventions\Vaccine.cpp" />
     <ClCompile Include="..\interventions\VectorControlNodeTargeted.cpp" />
     <ClCompile Include="..\interventions\WaningEffectBox.cpp" />
     <ClCompile Include="..\interventions\WaningEffectBoxExponential.cpp" />
@@ -685,6 +669,7 @@
     <ClCompile Include="..\interventions\WaningEffectMapAge.cpp" />
     <ClCompile Include="..\interventions\WaningEffectMapCount.cpp" />
     <ClCompile Include="..\interventions\WaningEffectMapSeasonal.cpp" />
+    <ClCompile Include="..\interventions\WaningEffectNull.cpp" />
     <ClCompile Include="..\interventions\WaningEffectRandomBox.cpp" />
     <ClCompile Include="Assortivity.cpp" />
     <ClCompile Include="AssortivityFactory.cpp" />
@@ -705,6 +690,7 @@
     <ClCompile Include="ClimateKoppen.cpp" />
     <ClCompile Include="CommunityHealthWorkerEventCoordinator.cpp" />
     <ClCompile Include="ConcurrencyParameters.cpp" />
+    <ClCompile Include="ConfigParams.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="ControllerFactory.cpp" />
     <ClCompile Include="CoverageByNodeEventCoordinator.cpp" />
@@ -829,7 +815,7 @@
     <ClCompile Include="ReportUtilitiesSTI.cpp" />
     <ClCompile Include="ReportVector.cpp" />
     <ClCompile Include="Schema.cpp" />
-    <ClCompile Include="SerializationTimeCalc.cpp" />
+    <ClCompile Include="SerializationParameters.cpp" />
     <ClCompile Include="SerializedPopulation.cpp" />
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="SimulationAirborne.cpp" />
@@ -852,6 +838,8 @@
     <ClCompile Include="SpatialReportTB.cpp" />
     <ClCompile Include="SpatialReportTyphoid.cpp" />
     <ClCompile Include="SpatialReportVector.cpp" />
+    <ClCompile Include="SqlLogger.cpp" />
+    <ClCompile Include="SQLReporter.cpp" />
     <ClCompile Include="StandardEventCoordinator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

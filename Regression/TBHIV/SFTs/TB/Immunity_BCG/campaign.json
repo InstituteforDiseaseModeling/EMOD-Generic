@@ -7,14 +7,13 @@
                     "Actual_IndividualIntervention_Config": {
                         "Efficacy_Is_Multiplicative": 1,
                         "Vaccine_Take": 1,
-                        "Vaccine_Type": "TransmissionBlocking",
-                        "Waning_Config": {
+                        "Transmit_Config": {
                             "Box_Duration": 1000,
                             "Decay_Rate_Factor": 3650,
                             "Initial_Effect": 1.0,
                             "class": "WaningEffectBoxExponential"
                         },
-                        "class": "SimpleVaccine"
+                        "class": "Vaccine"
                     },
                     "Blackout_Event_Trigger": "Blackout",
                     "Blackout_On_First_Occurrence": 0,
@@ -44,14 +43,13 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Vaccine_Take": 1,
-                        "Vaccine_Take_Age_Decay_Rate": 0,
-                        "Waning_Config": {
+                        "Acquire_Config": {
                             "Box_Duration": 1000,
                             "Decay_Rate_Factor": 3650,
                             "Initial_Effect": 0.8,
                             "class": "WaningEffectBoxExponential"
                         },
-                        "class": "BCGVaccine"
+                        "class": "Vaccine"
                     },
                     "Blackout_Event_Trigger": "Blackout",
                     "Blackout_On_First_Occurrence": 0,

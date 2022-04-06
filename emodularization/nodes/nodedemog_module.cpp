@@ -11,9 +11,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <iostream>
 #include "RANDOM.h"
 
+#include "ConfigParams.h"
 #include "Environment.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "NodeDemographics.h"
 #include "Node.h"
 #include "Individual.h"
@@ -49,7 +49,6 @@ pyNodeDemogInit()
 PyObject*
 my_set_callback(PyObject *dummy, PyObject *args)
 {
-    PyObject *result = NULL;
     PyObject *temp;
 
     if (PyArg_ParseTuple(args, "O:set_callback", &temp))
@@ -61,17 +60,14 @@ my_set_callback(PyObject *dummy, PyObject *args)
         Py_XINCREF(temp);         /* Add a reference to new callback */ 
         Py_XDECREF(create_person_callback);  /* Dispose of previous callback */ 
         create_person_callback = temp;       /* Remember new callback */
-        /* Boilerplate to return "None" */
-        Py_INCREF(Py_None);
-        result = Py_None;
     }
-    return result;
+
+    Py_RETURN_NONE;
 }
 
 PyObject*
 set_conceive_baby_callback(PyObject *dummy, PyObject *args)
 {
-    PyObject *result = NULL;
     PyObject *temp;
 
     if (PyArg_ParseTuple(args, "O:set_callback", &temp))
@@ -83,17 +79,14 @@ set_conceive_baby_callback(PyObject *dummy, PyObject *args)
         Py_XINCREF(temp);         /* Add a reference to new callback */ 
         Py_XDECREF(conceive_baby_callback);  /* Dispose of previous callback */ 
         conceive_baby_callback = temp;       /* Remember new callback */
-        /* Boilerplate to return "None" */
-        Py_INCREF(Py_None);
-        result = Py_None;
     }
-    return result;
+
+    Py_RETURN_NONE;
 }
 
 PyObject*
 set_update_preg_callback(PyObject *dummy, PyObject *args)
 {
-    PyObject *result = NULL;
     PyObject *temp;
 
     if (PyArg_ParseTuple(args, "O:set_callback", &temp))
@@ -105,11 +98,9 @@ set_update_preg_callback(PyObject *dummy, PyObject *args)
         Py_XINCREF(temp);         /* Add a reference to new callback */ 
         Py_XDECREF(update_preg_callback);  /* Dispose of previous callback */ 
         update_preg_callback = temp;       /* Remember new callback */
-        /* Boilerplate to return "None" */
-        Py_INCREF(Py_None);
-        result = Py_None;
     }
-    return result;
+
+    Py_RETURN_NONE;
 }
  
 
@@ -121,7 +112,6 @@ namespace Test {
             //static std::string result;
             TestSimulation()
                 : time(1.0f)
-                , m_pRNG(nullptr)
                 , fake_reports()
             {
                 Kernel::JsonConfigurable::_dryrun = true;
@@ -138,11 +128,6 @@ namespace Test {
                 // TBD: Parse dt
                 float dt = 1.0;
                 time.SetTimeDelta(dt);
-
-                unsigned int randomseed[2];
-                randomseed[0] = 0;
-                randomseed[1] = 0;
-                m_pRNG = new PSEUDO_DES(*reinterpret_cast<uint32_t*>(randomseed));
             }
 
             QueryResult QueryInterface( iid_t iid, void** ppinstance )
@@ -170,12 +155,20 @@ namespace Test {
                 return status;
             }
 
+            static void SeedRNG(int rng_seed)
+            {
+                if(!m_pRNG)
+                {
+                    m_pRNG = new PSEUDO_DES(rng_seed);
+                }
+            }
+
             virtual int32_t AddRef() override { return 0; }
             virtual int32_t Release() override { return 0; }
 
-            virtual const SimulationConfig* GetSimulationConfigObj() const override { return nullptr; }
             virtual const IInterventionFactory* GetInterventionFactory() const override { return nullptr; }
             virtual const DemographicsContext* GetDemographicsContext() const override { return demographics_factory->CreateDemographicsContext(); }
+            virtual const SimParams* GetParams() const override { return nullptr; }
 
             // time services
             virtual const IdmDateTime& GetSimulationTime() const override
@@ -244,7 +237,7 @@ namespace Test {
             
     private:
             IdmDateTime time;
-            RANDOMBASE* m_pRNG;
+            static RANDOMBASE* m_pRNG;
     };
 
     class TestNode : public Kernel::Node
@@ -284,8 +277,7 @@ namespace Test {
                 int gender = 0,
                 int initial_infections = 0,
                 float immunity_parameter = 1.0,
-                float risk_parameter = 1.0,
-                float migration_heterogeneity = 1.0
+                float risk_parameter = 1.0
             ) override
             {
                 //std::cout << "Would have created individual with mcw=" << monte_carlo_weight << ", age = " << initial_age << ", gender = " << gender << std::endl;
@@ -296,6 +288,7 @@ namespace Test {
                 }
                 PyObject *arglist = Py_BuildValue("(f, f, i)", monte_carlo_weight, initial_age, gender );
                 PyObject_CallObject(create_person_callback, arglist);
+                Py_XDECREF(arglist);
                 return nullptr;
             }
         public:
@@ -305,6 +298,7 @@ namespace Test {
                 // Call out to Py layer so it can call into dtk_generic_individual API
                 PyObject *arglist = Py_BuildValue("(i, f)", individual_id, duration );
                 PyObject_CallObject(conceive_baby_callback, arglist);
+                Py_XDECREF(arglist);
                 return 0;
             }
             virtual bool updatePregnancyForIndividual( int individual_id, float dt ) override
@@ -312,9 +306,11 @@ namespace Test {
                 //std::cout << "updatePregnancyForIndividual: individual_id = " << individual_id << std::endl;
                 // TBD: Call out to Py layer so it can call into dtk_generic_individual API
                 PyObject *arglist = Py_BuildValue("(i, f)", individual_id, dt );
-                PyObject * pyRetValue = PyObject_CallObject(update_preg_callback, arglist);
+                PyObject *pyRetValue = PyObject_CallObject(update_preg_callback, arglist);
                 bool retValue = false;
                 PyArg_Parse( pyRetValue, "b", &retValue );
+                Py_XDECREF(arglist);
+                Py_XDECREF(pyRetValue);
                 return retValue;
             }
             virtual void populateNewIndividualFromMotherId( unsigned int mother_id ) // override?
@@ -324,8 +320,11 @@ namespace Test {
             }
             static std::string result;
     };
+
     std::string TestNode::result = "";
+    RANDOMBASE* TestSimulation::m_pRNG = nullptr;
 }
+
 Test::TestSimulation* p_testParentSim = nullptr;
 
 // Json-configure & Initialize a (single) individual
@@ -337,7 +336,14 @@ static void initSim( const char* filename = "nd.json" )
         delete configStubJson;
     }
     configStubJson = Configuration::Load( filename );
-    
+
+    int rng_seed = 0;
+    if( configStubJson->Exist("Run_Number") )
+    {
+        rng_seed = (*configStubJson)["Run_Number"].As<json::Number>();
+    }
+    Test::TestSimulation::SeedRNG(rng_seed);
+
     // create test sim if it does not exist
     if( p_testParentSim != nullptr )
     {
@@ -376,10 +382,11 @@ static void initSim( const char* filename = "nd.json" )
 #endif
     EnvPtr->InputPaths.push_back( "." );
     EnvPtr->Config = configStubJson;
-    //SimulationConfigFactory::CreateInstance( EnvPtr->Config );
-    Environment::setSimulationConfig( configStubJson );
     NPFactory::CreateFactory();
     IPFactory::CreateFactory();
+
+    NodeConfig         node_config_obj;
+    node_config_obj.Configure(configStubJson);
 }
 
 // create nodes and populate from input files
@@ -406,12 +413,7 @@ pop(PyObject* self, PyObject* args)
         typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
         typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
         nodeid_suid_map_t nodeid_suid_map;
-        demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, 
-                EnvPtr->Config,
-                1, // isDataInFiles, 
-                3, // torus size (?)
-                10 // default population
-            );
+        demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config);
         if (demographics_factory == nullptr)
         {
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create NodeDemographicsFactory" );
@@ -467,7 +469,7 @@ getSchema(PyObject* self, PyObject* args)
     typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
     typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
     nodeid_suid_map_t nodeid_suid_map;
-    demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config, 1, 3, 10 ); 
+    demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config ); 
     vector<uint32_t> nodeIDs = demographics_factory->GetNodeIDs(); 
     auto suid_gen = suids::distributed_generator(0,0);
     Test::TestSimulation testParentSim_tmp;
@@ -475,8 +477,8 @@ getSchema(PyObject* self, PyObject* args)
     nodeid_suid_map.insert( nodeid_suid_pair( 1, node_suid ) ); 
     auto *node = new Test::TestNode(&testParentSim_tmp, 1, node_suid);
     node->getSchema();
+    
     return Py_BuildValue("s", Test::TestNode::result.c_str() );
-    Py_RETURN_NONE;
 }
 
 static PyObject*

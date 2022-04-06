@@ -195,27 +195,27 @@ namespace Kernel
         }
     }
 
-    void MasterInterventionsContainer::UpdateVaccineAcquireRate( float acq )
+    void MasterInterventionsContainer::UpdateVaccineAcquireRate( float acq, bool isMultiplicative )
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineAcquireRate(acq);
+            container->UpdateVaccineAcquireRate(acq, isMultiplicative);
         }    
     }
 
-    void MasterInterventionsContainer::UpdateVaccineTransmitRate( float xmit )
+    void MasterInterventionsContainer::UpdateVaccineTransmitRate( float xmit, bool isMultiplicative )
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineTransmitRate(xmit);
+            container->UpdateVaccineTransmitRate(xmit, isMultiplicative);
         }    
     }
 
-    void MasterInterventionsContainer::UpdateVaccineMortalityRate( float mort )
+    void MasterInterventionsContainer::UpdateVaccineMortalityRate( float mort, bool isMultiplicative )
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineMortalityRate(mort);
+            container->UpdateVaccineMortalityRate(mort, isMultiplicative);
         }    
     }
 

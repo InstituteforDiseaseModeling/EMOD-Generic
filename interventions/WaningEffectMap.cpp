@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "WaningEffectMap.h"
+#include "WaningEffect.h"
 #include "CajunIncludes.h"
 #include "ConfigurationImpl.h"
 #include "IArchive.h"
@@ -29,18 +29,18 @@ namespace Kernel
     , m_EffectOriginal(0.0)
     , m_ExpireAtDurationMapEnd(false)
     , m_TimeSinceStart(0.0)
-    , m_DurationMap( 0.0, maxTime )
+    , m_DurationMap( 0.0, maxTime, 0.0f, 1.0f )
     , m_RefTime(0)
     {
     }
 
-    WaningEffectMapAbstract::WaningEffectMapAbstract( float minTime, float maxTime, float minValue, float maxValue )
+    WaningEffectMapAbstract::WaningEffectMapAbstract( float minTime, float maxTime )
     : WaningEffectConstant()
     , m_Expired( false )
     , m_EffectOriginal( 0.0 )
     , m_ExpireAtDurationMapEnd( false )
     , m_TimeSinceStart( 0.0 )
-    , m_DurationMap( minTime, maxTime, minValue, maxValue )
+    , m_DurationMap( minTime, maxTime, 0.0f, 1.0f )
     , m_RefTime( 0 )
     {
     }
@@ -72,7 +72,7 @@ namespace Kernel
 
         if( configured || JsonConfigurable::_dryrun )
         {
-            initConfigComplexType( "Durability_Map", &m_DurationMap, WEM_Durability_Map_End_DESC_TEXT );
+            initConfigTypeMap( "Durability_Map", &m_DurationMap, WEM_Durability_Map_End_DESC_TEXT );
 
             configured = WaningEffectConstant::Configure( pInputJson );
             if( configured && !JsonConfigurable::_dryrun )
@@ -214,8 +214,8 @@ namespace Kernel
     {
     }
 
-    WaningEffectMapPiecewise::WaningEffectMapPiecewise( float minTime, float maxTime, float minValue, float maxValue )
-        : WaningEffectMapAbstract( minTime, maxTime, minValue, maxValue )
+    WaningEffectMapPiecewise::WaningEffectMapPiecewise( float minTime, float maxTime )
+        : WaningEffectMapAbstract( minTime, maxTime )
     {
     }
 

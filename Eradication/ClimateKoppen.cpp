@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "Common.h"
 #include "Exceptions.h"
+#include "RANDOM.h"
 
 
 using namespace std;
@@ -27,9 +28,6 @@ using namespace std;
 //                  EF, ET };
 
 namespace Kernel {
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(Climate.Koppen,ClimateKoppen)
-    BEGIN_QUERY_INTERFACE_BODY(ClimateKoppen)
-    END_QUERY_INTERFACE_BODY(ClimateKoppen)
 
     bool ClimateKoppen::rainfall_flip[] = { false, true, true, true,
                                                         false, false, false, false,
@@ -85,7 +83,6 @@ namespace Kernel {
                                                   RANDOMBASE* pRNG )
     {
         ClimateKoppen * new_climate = _new_ ClimateKoppen(update_resolution, _parent, climate_type, altitude, latitude);
-        new_climate->Configure( EnvPtr->Config );
 
         // initialize climate values
         new_climate->UpdateWeather( start_time, 1.0f, pRNG );
@@ -179,14 +176,6 @@ namespace Kernel {
         }
     }
 
-    bool
-    ClimateKoppen::Configure(
-        const Configuration* config
-    )
-    {
-        return Climate::Configure( config );
-    }
-
     bool ClimateKoppen::IsPlausible()
     {
         if( t_average + (t_range / 2) + (2 * temperature_variance) > max_airtemp ||
@@ -236,9 +225,17 @@ namespace Kernel {
         Climate::UpdateWeather( time, dt, pRNG ); // call base-class UpdateWeather() to add stochasticity and check values are within valid bounds
     }
 
-    void ClimateKoppen::AddStochasticity( RANDOMBASE* pRNG, float, float, bool, float)
+    void ClimateKoppen::AddStochasticity( RANDOMBASE* pRNG )
     {
-        Climate::AddStochasticity( pRNG, temperature_variance, temperature_variance, true, humidity_variance[koppen_type][humidity_index] );
+        if(temperature_variance != 0.0)
+            m_airtemperature  += float( pRNG->eGauss() * temperature_variance ); // varies as a Gaussian with stdev as specified in degree C
+            m_landtemperature += float( pRNG->eGauss() * temperature_variance ); // varies as a Gaussian with stdev as specified in degree C
+
+        if(m_accumulated_rainfall > 0.0)
+            m_accumulated_rainfall = float( pRNG->expdist(1.0 / m_accumulated_rainfall) ); // varies over exponential distribution with mean of calculated rainfall value
+
+        if(humidity_variance[koppen_type][humidity_index] != 0.0)
+            m_humidity += float( pRNG->eGauss() * humidity_variance[koppen_type][humidity_index] ); // varies as a Gaussian with stdev as specified in %
     }
 
     void ClimateKoppen::RoomUpDown(const float Ta, const float Tr, float &RoomUp, float &RoomDown)

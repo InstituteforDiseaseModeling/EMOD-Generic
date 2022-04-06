@@ -14,7 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "UnitTest++.h"
 #include "componentTests.h"
 
-#include "WaningEffectCombo.h"
+#include "WaningEffect.h"
 #include "IndividualHumanContextFake.h"
 
 using namespace Kernel;

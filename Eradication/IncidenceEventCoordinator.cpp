@@ -177,7 +177,7 @@ namespace Kernel
     {
         initConfig( "Threshold_Type", m_ThresholdType, inputJson, MetadataDescriptor::Enum( "ThresholdType", ICE_Threshold_Type_DESC_TEXT, MDD_ENUM_ARGS( ThresholdType ) ) );
 
-        initConfigComplexType( "Action_List", &m_ActionList, ICE_Action_List_DESC_TEXT );
+        initConfigComplexCollectionType( "Action_List", &m_ActionList, ICE_Action_List_DESC_TEXT );
 
         bool ret = JsonConfigurable::Configure( inputJson );
         if( ret && !JsonConfigurable::_dryrun )

@@ -728,7 +728,7 @@ class FertilityMortalityTest(unittest.TestCase):
         error_msg = []
         succeed = True
 
-        print("test birth rate at each timestep")
+        print ("accumulate data by age and year")
         baby_count, boy_count, girl_count = self.get_baby_count(duration)
         if debug:
             category = os.path.join(path, test_name, "new_births")
@@ -754,26 +754,10 @@ class FertilityMortalityTest(unittest.TestCase):
             birthrate = ResultValues[0][PopulationGroups[1].index(sim_year)]
             rate_per_day = x_Birth * self.possible_mother[t] * birthrate * ResultScaleFactor
 
-            low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, rate_per_day, 0)
-            with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as file:
-                result = True if low_ci <= num_pregnancy <= high_ci else False
-                msg = "at time step {0}, test Poisson {1} confidence interval for number of new pregnancies " \
-                      "result is {2}.\n".format(t, Constant.ci_probability, result) \
-                      + "new pregnancies count is {0}, while Poisson {1} confidence interval is " \
-                        "{2} - {3}.\n".format(num_pregnancy, Constant.ci_probability, low_ci, high_ci)
-                if debug:
-                    file.write(msg)
-                if not result:
-                    error_msg.append(msg)
-                    succeed = False
-                    # self.assertTrue(result, msg)
             if sim_year in expected_new_pregnancies:
                 expected_new_pregnancies[sim_year] += rate_per_day
             else:
                 expected_new_pregnancies[sim_year] = rate_per_day
-        logging.info(
-            "test Poisson {0} confidence interval for new pregnancies result is {1}.".format(Constant.ci_probability,
-                                                                                             succeed))
 
         print("test accumulative new pregnancies")
         for sim_year in expected_new_pregnancies:
@@ -853,7 +837,7 @@ class FertilityMortalityTest(unittest.TestCase):
         error_msg = []
         succeed = True
 
-        print("test birth rate at each timestep")
+        print ("accumulate data by age and year")
         baby_count, boy_count, girl_count = self.get_baby_count(duration)
 
         if debug:
@@ -890,20 +874,7 @@ class FertilityMortalityTest(unittest.TestCase):
                 rate_per_day = x_Birth * possible_mother[age] * birthrate * ResultScaleFactor
                 num_pregnancy = self.new_pregnancy[t][age] if t in self.new_pregnancy and age in self.new_pregnancy[
                     t] else 0
-                low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, rate_per_day, 0)
-                # print age, birthrate, rate_per_day, possible_mother[age], num_pregnancy
-                with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as file:
-                    result = True if low_ci <= num_pregnancy <= high_ci else False
-                    msg = "at time step {0}/year{1}, test Poisson {2} confidence interval for number of new " \
-                          "pregnancies for age {3} result is {4}.\n".format(t, sim_year, Constant.ci_probability, age,
-                                                                            result) \
-                          + "new pregnancies count is {0}, while Poisson {1} confidence interval is " \
-                            "{2} - {3}.\n".format(num_pregnancy, Constant.ci_probability, low_ci, high_ci)
-                    if debug:
-                        file.write(msg)
-                    if not result:
-                        error_msg.append(msg)
-                        succeed = False
+
                 if age in expected_new_pregnancies[int(sim_year)]:
                     expected_new_pregnancies[int(sim_year)][age] += rate_per_day
                 else:
@@ -1013,7 +984,7 @@ class FertilityMortalityTest(unittest.TestCase):
         error_msg = []
         succeed = True
 
-        print ("test birth rate at each timestep")
+        print ("accumulate data by age and year")
         baby_count, boy_count, girl_count = self.get_baby_count(duration)
 
         if debug:
@@ -1030,8 +1001,6 @@ class FertilityMortalityTest(unittest.TestCase):
         for year in range(base_year, int(base_year + math.ceil(float(duration) / Constant.days_per_year))):
             expected_new_pregnancies[int(year)] = {}
             actual_new_pregnancies[int(year)] = {}
-        fail_count = 0
-        fail_message = []
         rates = {}
         for t in range(0, duration):
             possible_mother = self.possible_mom_by_age_time[t]
@@ -1072,20 +1041,6 @@ class FertilityMortalityTest(unittest.TestCase):
                 rates[sim_year].append(x_Birth * birthrate * ResultScaleFactor)
                 num_pregnancy = self.new_pregnancy[t][age] if t in self.new_pregnancy and age in self.new_pregnancy[
                     t] else 0
-                low_ci, high_ci = scipy.stats.poisson.interval(Constant.ci_probability, rate_per_day, 0)
-                # print age, birthrate, rate_per_day, possible_mother[age], num_pregnancy
-                with open(os.path.join(path, test_name, "test_poisson_99ci.txt"), "a") as file:
-                    result = True if low_ci <= num_pregnancy <= high_ci else False
-                    msg = "at time step {0}/year{1}, test Poisson {2} confidence interval for number of new " \
-                          "pregnancies for age {3} result is {4}.\n".format(t, sim_year, Constant.ci_probability, age,
-                                                                            result) \
-                          + "new pregnancies count is {0}, while Poisson {1} confidence interval is " \
-                            "{2} - {3}.\n".format(num_pregnancy, Constant.ci_probability, low_ci, high_ci)
-                    if debug:
-                        file.write(msg)
-                    if not result:
-                        fail_message.append(msg)
-                        fail_count += 1
                 if int(age) in expected_new_pregnancies[
                     sim_year]:  # age is float number like 17.01 here, since the birth_by_age_year_flag is true
                     expected_new_pregnancies[sim_year][int(age)] += rate_per_day
@@ -1101,14 +1056,6 @@ class FertilityMortalityTest(unittest.TestCase):
                 json.dump(expected_new_pregnancies, file, indent=4, sort_keys=True)
             with open(os.path.join(path, test_name, "actual_new_pregnancies.json"), "w") as file:
                 json.dump(actual_new_pregnancies, file, indent=4, sort_keys=True)
-        if fail_count/duration > 1e-2:
-            succeed = False
-            error_msg.extend(fail_message)
-        msg = "test Poisson {0} confidence interval for new pregnancies for every time step, it failed {1} times during " \
-              "{2} total time step, test result is {3}.\n".format(Constant.ci_probability, fail_count,
-                                                                  duration, succeed)
-        logging.info(msg)
-        error_msg.append(msg)
 
         print ("test accumulative new pregnancies for each year")
         for sim_year in expected_new_pregnancies:

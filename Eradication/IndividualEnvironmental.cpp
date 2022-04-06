@@ -56,19 +56,9 @@ namespace Kernel
     {
     }
 
-    void IndividualHumanEnvironmental::InitializeStaticsEnvironmental( const Configuration * config )
-    {
-        SusceptibilityEnvironmentalConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionEnvironmentalConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanEnvironmentalConfig human_config;
-        human_config.Configure( config );
-    }
-
     void IndividualHumanEnvironmental::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        susceptibility = SusceptibilityEnvironmental::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        susceptibility = SusceptibilityEnvironmental::CreateSusceptibility(this, imm_mod, risk_mod);
     }
 
     void IndividualHumanEnvironmental::ReportInfectionState()

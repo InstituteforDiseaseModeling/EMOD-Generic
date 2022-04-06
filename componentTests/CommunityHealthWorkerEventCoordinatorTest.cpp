@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISimulationEventContextFake.h"
 #include "Node.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
 #include "componentTests.h"
@@ -39,14 +38,12 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
         std::vector< IndividualHumanInterventionsContextFake* > m_hic_list ;
         std::vector< IndividualHumanContextFake*              > m_human_list ;
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig ;
         EventTrigger::Enum m_ListenForEvent = EventTrigger::GP_EVENT_000;
         EventTrigger::Enum m_EventFromIntervention = EventTrigger::GP_EVENT_001;
 
         ChwFixture()
             : m_hic_list()
             , m_human_list()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             JsonConfigurable::ClearMissingParameters();
@@ -65,12 +62,6 @@ SUITE(CommunityHealthWorkerEventCoordinatorTest)
             string statePath("testdata/CommunityHealthWorkerEventCoordinatorTest");
             string dllPath("");
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, /*statePath, */dllPath, false);
-
-            Environment::setSimulationConfig( m_pSimulationConfig );
-
-            ////EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
-            //m_ListenForEvent        = //EventTriggerFactoryGetInstance()->CreateUserEventTrigger( "ListenForEvent"        );
-            //m_EventFromIntervention = //EventTriggerFactoryGetInstance()->CreateUserEventTrigger( "EventFromIntervention" );
 
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();

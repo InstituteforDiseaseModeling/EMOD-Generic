@@ -89,26 +89,7 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
         // Enum type name                                    Enum variable name                                name in config.json
-        MigrationStructure::Enum                             migration_structure;                              // MIGRATION_STRUCTURE
         SimType::Enum                                        sim_type;                                         // Sim_Type
-
-
-        bool demographics_initial;
-        int default_torus_size;
-        int default_node_population;
-
-        float lloffset; // half the size of a grid edge in degrees, set by SetFlags()
-
-        // parameters for individual
-        int infection_updates_per_tstep;
-        bool interventions;
-
-        // flag for heterogeneity in mixing (true) or uniform mixing (false)
-        bool heterogeneous_intranode_transmission_enabled;
-
-        float Sim_Duration;
-        float starttime;
-        float node_grid_size;
 
         VectorParameters*  vector_params;
         MalariaParameters* malaria_params;

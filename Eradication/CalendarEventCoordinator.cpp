@@ -34,8 +34,8 @@ namespace Kernel
     {
         std::vector<int> distribution_times;
         std::vector<float> distribution_coverages;
-        initConfigTypeMap("Distribution_Times", &distribution_times, Distribution_Times_DESC_TEXT, 1, INT_MAX, 0 );
-        initConfigTypeMap("Distribution_Coverages", &distribution_coverages, Distribution_Coverages_DESC_TEXT, 0.0f, 1.0f, 0.0f );
+        initConfigTypeMap("Distribution_Times", &distribution_times, Distribution_Times_DESC_TEXT, 1, INT_MAX );
+        initConfigTypeMap("Distribution_Coverages", &distribution_coverages, Distribution_Coverages_DESC_TEXT, 0.0f, 1.0f );
 
         bool retValue = StandardInterventionDistributionEventCoordinator::Configure( inputJson );
 

@@ -16,12 +16,13 @@
             }
         },
         "DEMOGRAPHICS": {
+            "Base_Individual_Sample_Rate": 0.01,
             "Demographics_Filenames": [
                 "Madagascar_Nosibe_2.5arcmin_demographics.json",
-                "Madagascar_Nosibe_2.5arcmin_larval_habitat.json"
+                "Madagascar_Nosibe_2.5arcmin_larval_habitat.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1,
-            "Base_Individual_Sample_Rate": 0.01,
             "Individual_Sampling_Type": "FIXED_SAMPLING"
         },
         "HPC": {

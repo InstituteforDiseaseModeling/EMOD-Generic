@@ -69,20 +69,6 @@ static PyObject* poisson(PyObject* self, PyObject* args)
     return Py_BuildValue("K", retval);
 }
 
-static PyObject* poissonTrue(PyObject* self, PyObject* args)
-{
-    double rate = 0.0;
-    pyRandomInit();
-
-    if (!PyArg_ParseTuple(args, "d", &rate ))
-    {
-        return nullptr;
-    }
-
-    uint64_t retval = p_RNG->Poisson_true(rate);
-    return Py_BuildValue("K", retval);
-}
-
 static PyObject* exponential(PyObject* self, PyObject* args)
 {
     double rate = 0.0;
@@ -240,7 +226,6 @@ static PyMethodDef DtkRANDOMMethods[] =
      {"gauss",             gauss,                METH_VARARGS,  "Gaussian random number."},
      {"gauss_non_neg",     gaussNonNeg,          METH_VARARGS,  "Non-negative Gaussian random number."},
      {"poisson",           poisson,              METH_VARARGS,  "Poisson random number."},
-     {"poisson_true",      poissonTrue,          METH_VARARGS,  "Poisson random number."},
      {"exponential",       exponential,          METH_VARARGS,  "Exponential random number."},
      {"gamma",             gamma,                METH_VARARGS,  "Gamma random number."},
      {"weibull",           weibull,              METH_VARARGS,  "Weibull random number."},

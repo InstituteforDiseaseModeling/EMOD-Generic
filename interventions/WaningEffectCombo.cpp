@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "WaningEffectCombo.h"
+#include "WaningEffect.h"
 
 SETUP_LOGGING( "WaningEffectCombo" )
 
@@ -93,7 +93,7 @@ namespace Kernel
     }
 
     // ------------------------------------------------------------------------
-    // --- WaningEffectCollection
+    // --- WaningEffectCombo
     // ------------------------------------------------------------------------
 
     IMPLEMENT_FACTORY_REGISTERED( WaningEffectCombo )

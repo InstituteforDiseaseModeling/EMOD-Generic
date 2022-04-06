@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionFactory.h"
 #include "HealthSeekingBehavior.h"
 #include "NodeEventContext.h"    // for INodeEventContext (ICampaignCostObserver)
-#include "SimulationConfig.h"
 #include "IIndividualHumanContext.h"
 #include "ISimulationContext.h"
 #include "RANDOM.h"

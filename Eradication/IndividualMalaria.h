@@ -110,14 +110,11 @@ namespace Kernel
         virtual void ApplyTotalBitingExposure() override;
         int  CalculateInfectiousBites();
 
-        /* clorton virtual */ const SimulationConfig *params() const /* clorton override */;
         virtual void PropagateContextToDependents() override;
 
         friend void serialize(IArchive&, gametocytes_strain_map_t&);
 
     private:
-        static void InitializeStaticsMalaria( const Configuration* config );
-
         IndividualHumanMalaria(suids::suid id = suids::nil_suid(), double monte_carlo_weight = 1.0, double initial_age = 0.0, int gender = 0);
         IndividualHumanMalaria(INodeContext *context);
         virtual IIndividualHumanContext* GetContextPointer() override { return (IIndividualHumanContext*)this; }

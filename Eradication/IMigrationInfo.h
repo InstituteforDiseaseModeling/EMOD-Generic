@@ -26,15 +26,17 @@ namespace Kernel
     class RANDOMBASE;
     struct IIndividualHumanContext;
     struct INodeContext;
+    struct MigrationParams;
 
     // IMigrationInfo is used to determine when and where an individual will migrate.
     struct IDMAPI IMigrationInfo
     {
         virtual ~IMigrationInfo() {};
 
+        virtual const MigrationParams* GetParams() const = 0;
+
         virtual void PickMigrationStep( RANDOMBASE* pRNG,
                                         IIndividualHumanContext * traveler, 
-                                        float migration_rate_modifier, 
                                         suids::suid &destination, 
                                         MigrationType::Enum &migration_type,
                                         float &durationToWaitBeforeMigrating ) = 0;
@@ -46,8 +48,6 @@ namespace Kernel
         virtual const std::vector<float>& GetCumulativeDistributionFunction() const = 0;
         virtual const std::vector<suids::suid>& GetReachableNodes() const = 0;
         virtual const std::vector<MigrationType::Enum>& GetMigrationTypes() const = 0;
-
-        virtual bool IsHeterogeneityEnabled() const = 0;
     };
 
     // IMigrationInfoFactory is used to create IMirationInfo objects for a node.
@@ -55,9 +55,9 @@ namespace Kernel
     {
         virtual ~IMigrationInfoFactory() {};
 
-        virtual bool Configure( const Configuration* config ) = 0;
+        virtual const MigrationParams* GetParams() const = 0;
 
-        virtual void Initialize( const ::Configuration *config, const std::string& idreference ) = 0;
+        virtual void Initialize( const std::string& idreference ) = 0;
         virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node, 
                                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
 
@@ -65,14 +65,9 @@ namespace Kernel
         virtual bool IsEnabled( MigrationType::Enum mt ) const = 0;
     };
 
-    namespace MigrationFactory
-    {
-        // Contructs and initializes the proper factory based on the initialization parameters
-        IMigrationInfoFactory IDMAPI * ConstructMigrationInfoFactory( const ::Configuration *config, 
-                                                                      const std::string& idreference,
-                                                                      SimType::Enum sim_type,
-                                                                      MigrationStructure::Enum ms,
-                                                                      bool useDefaultMigration,
-                                                                      int defaultTorusSize=10 );
-    }
+    // Contructs and initializes the proper factory based on the initialization parameters
+    IMigrationInfoFactory IDMAPI * ConstructMigrationInfoFactory( const std::string& idreference,
+                                                                  SimType::Enum sim_type,
+                                                                  bool useDefaultMigration,
+                                                                  int defaultTorusSize=10 );
 }

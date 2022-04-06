@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include <sstream> // for std::ostringstream
 #include <boost/lexical_cast.hpp> // for std::ostringstream
@@ -57,11 +58,12 @@ namespace Kernel
         , m_VectorPopulationReportingList()
         , m_vector_lifecycle_probabilities( nullptr )
         , larval_habitat_multiplier()
-        , vector_mortality( true )
-        , mosquito_weight( 0 )
         , vector_migration_info( nullptr )
         , txOutdoor( nullptr )
     {
+        serializationFlagsDefault.set( SerializationFlags::LarvalHabitats );
+        serializationFlagsDefault.set( SerializationFlags::VectorPopulation );
+        larval_habitat_multiplier.Initialize();
         delete event_context_host;
         NodeVector::setupEventContextHost();    // This is marked as a virtual function, but isn't virtualized here because we're still in the ctor.
     }
@@ -73,42 +75,21 @@ namespace Kernel
         , m_VectorPopulationReportingList()
         , m_vector_lifecycle_probabilities( nullptr )
         , larval_habitat_multiplier()
-        , vector_mortality( true )
-        , mosquito_weight( 1 )
         , vector_migration_info( nullptr )
         , txOutdoor( nullptr )
     {
+        serializationFlagsDefault.set( SerializationFlags::LarvalHabitats );
+        serializationFlagsDefault.set( SerializationFlags::VectorPopulation );
+        larval_habitat_multiplier.Initialize();
         delete event_context_host;
         NodeVector::setupEventContextHost();    // This is marked as a virtual function, but isn't virtualized here because we're still in the ctor.
     }
 
-    bool
-    NodeVector::Configure(
-        const Configuration * config
-    )
-    {
-        larval_habitat_multiplier.SetExternalNodeId(externalId);
-        larval_habitat_multiplier.Initialize();
-
-        initConfigTypeMap( "Enable_Vector_Mortality", &vector_mortality, Enable_Vector_Mortality_DESC_TEXT, true );
-        initConfigTypeMap( "Mosquito_Weight", &mosquito_weight, Mosquito_Weight_DESC_TEXT, 1, 1e4, 1, "Vector_Sampling_Type", "SAMPLE_IND_VECTORS" ); // should this be renamed vector_weight?
-
-        bool configured = Node::Configure( config );
-
-        return configured;
-    }
-
     void NodeVector::Initialize()
     {
+        larval_habitat_multiplier.SetExternalNodeId(externalId);
+
         Node::Initialize();
-
-
-        if (ClimateFactory::climate_structure == ClimateStructure::CLIMATE_OFF)
-        {
-            // This could be either a vector sim or a malaria sim. Let's get the correct sim type for the error message.
-            const char* simulation_type_name = SimType::pairs::lookup_key( GET_CONFIGURABLE( SimulationConfig )->sim_type );
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", simulation_type_name );
-        }
 
         m_vector_lifecycle_probabilities = VectorProbabilities::CreateVectorProbabilities();
     }
@@ -179,17 +160,16 @@ namespace Kernel
         return movedind;
     }
 
-    IIndividualHuman* NodeVector::addNewIndividual( float MCweight, float init_age, int gender, int init_infs, float immparam, float riskparam, float mighet)
+    IIndividualHuman* NodeVector::addNewIndividual( float MCweight, float init_age, int gender, int init_infs, float immparam, float riskparam)
     {
         // just the base class for now
-        return Node::addNewIndividual(MCweight, init_age, gender, init_infs, immparam, riskparam, mighet);
+        return Node::addNewIndividual(MCweight, init_age, gender, init_infs, immparam, riskparam);
     }
 
     void NodeVector::SetupMigration( IMigrationInfoFactory * migration_factory,
-                                     MigrationStructure::Enum ms,
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
     {
-        Node::SetupMigration( migration_factory, ms, rNodeIdSuidMap );
+        Node::SetupMigration( migration_factory, rNodeIdSuidMap );
 
         IMigrationInfoFactoryVector* p_mf_vector = dynamic_cast<IMigrationInfoFactoryVector*>(migration_factory);
         release_assert( p_mf_vector );
@@ -404,7 +384,7 @@ for (auto pop : m_vectorpopulations)
         }
         VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_sampling_type;
 
-        for( auto& vector_species_name : params()->vector_params->vector_species_names )
+        for( auto& vector_species_name : GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_species_names )
         {
             int32_t population_per_species = DEFAULT_VECTOR_POPULATION_SIZE;
             if( demographics[ "NodeAttributes" ].Contains( "InitialVectorsPerSpecies" ) )
@@ -428,9 +408,15 @@ for (auto pop : m_vectorpopulations)
             if (vector_sampling_type == VectorSamplingType::TRACK_ALL_VECTORS || 
                 vector_sampling_type == VectorSamplingType::SAMPLE_IND_VECTORS)
             {
+                int32_t mosq_weight = 1;
+                if(vector_sampling_type == VectorSamplingType::SAMPLE_IND_VECTORS)
+                {
+                    mosq_weight = NodeConfig::GetNodeParams()->mosquito_weight;
+                }
+
                 // Individual mosquito model
                 LOG_DEBUG( "Creating VectorPopulationIndividual instance(s).\n" );
-                vectorpopulation = VectorPopulationIndividual::CreatePopulation(getContextPointer(), vector_species_name, population_per_species, 0, mosquito_weight);
+                vectorpopulation = VectorPopulationIndividual::CreatePopulation(getContextPointer(), vector_species_name, population_per_species, 0, mosq_weight);
             }
             else
             {
@@ -551,12 +537,6 @@ for (auto pop : m_vectorpopulations)
         }
     }
 
-    const SimulationConfig*
-    NodeVector::params()
-    {
-        return GET_CONFIGURABLE(SimulationConfig);
-    }
-
     VectorProbabilities* NodeVector::GetVectorLifecycleProbabilities()
     {
         return m_vector_lifecycle_probabilities;
@@ -610,7 +590,7 @@ for (auto pop : m_vectorpopulations)
         // and keep a list of pointers so the node can update it with new rainfall, etc.
         vp->SetupLarvalHabitat(getContextPointer());
 
-        vp->SetVectorMortality( vector_mortality );
+        vp->SetVectorMortality( NodeConfig::GetNodeParams()->vector_mortality );
 
         // Add this new vector population to the list
         m_vectorpopulations.push_front(vp);
@@ -702,10 +682,14 @@ for (auto pop : m_vectorpopulations)
         Node::serialize(ar, obj);
         NodeVector& node = *obj;
 
-        if ((node.serializationMask & SerializationFlags::Population) != 0) {
+        if( node.serializationFlags.test( SerializationFlags::LarvalHabitats ) )
+        {
             ar.labelElement("m_larval_habitats") & node.m_larval_habitats;
-            ar.labelElement("m_vectorpopulations") & node.m_vectorpopulations;
+        }
 
+        if( node.serializationFlags.test( SerializationFlags::VectorPopulation ) )
+        {
+            ar.labelElement("m_vectorpopulations") & node.m_vectorpopulations;
             ar.labelElement("m_vector_lifecycle_probabilities"); VectorProbabilities::serialize( ar, node.m_vector_lifecycle_probabilities );
 
             if( ar.IsReader() )
@@ -722,13 +706,10 @@ for (auto pop : m_vectorpopulations)
             }
         }
 
-        if ((node.serializationMask & SerializationFlags::Parameters) != 0) {
-// clorton            ar.labelElement("larval_habitat_multiplier") & node.larval_habitat_multiplier;
-            ar.labelElement("vector_mortality") & node.vector_mortality;
-            ar.labelElement("mosquito_weight") & node.mosquito_weight;
-        }
+        if( node.serializationFlags.test( SerializationFlags::Parameters ) )
+        { }
 
-        if ((node.serializationMask & SerializationFlags::Properties) != 0) {
-        }
+        if( node.serializationFlags.test( SerializationFlags::Properties ) )
+        { }
     }
 } // end namespace Kernel

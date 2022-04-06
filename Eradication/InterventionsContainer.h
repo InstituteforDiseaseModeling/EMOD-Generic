@@ -24,20 +24,15 @@ namespace Kernel
         virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true ) = 0;
         virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true ) = 0;
         virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true ) = 0;
-    };
 
-    struct IDrugVaccineInterventionEffects : public ISupports
-    {
         virtual float GetInterventionReducedAcquire()   const = 0;
         virtual float GetInterventionReducedTransmit()  const = 0;
         virtual float GetInterventionReducedMortality() const = 0;
-        virtual ~IDrugVaccineInterventionEffects() { }
     };
 
     class InterventionsContainer : public IIndividualHumanInterventionsContext, 
                                    public IVaccineConsumer,
-                                   public IInterventionConsumer,
-                                   public IDrugVaccineInterventionEffects
+                                   public IInterventionConsumer
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
@@ -52,6 +47,7 @@ namespace Kernel
         virtual std::list<IDistributableIntervention*> GetInterventionsByName(const std::string &intervention_name) override;
         virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) override;
         virtual void PurgeExisting( const std::string& iv_name ) override;
+        virtual void PurgeExistingByName( const std::string& iv_name ) override;
         virtual bool ContainsExisting( const std::string &iv_name ) override;
         virtual bool ContainsExistingByName( const std::string &name ) override;
         virtual void ChangeProperty( const char *property, const char* new_value ) override;
@@ -64,16 +60,15 @@ namespace Kernel
         virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true ) override;
         virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true ) override;
 
-        // IDrugVaccineInterventionEffects
         virtual float GetInterventionReducedAcquire()   const override;
         virtual float GetInterventionReducedTransmit()  const override;
         virtual float GetInterventionReducedMortality() const override;
 
-
         virtual bool GiveIntervention( IDistributableIntervention * pIV ) override;
 
-        virtual void InfectiousLoopUpdate( float dt ); // update only interventions that need updating in Infectious Update loop
-        virtual void Update( float dt ); // update non-infectious loop update interventions once per time step
+        virtual void PreInfectivityUpdate( float dt );  // update only interventions that need updating before accumulating infectivity
+        virtual void InfectiousLoopUpdate( float dt );  // update only interventions that need updating in Infectious Update loop
+        virtual void Update( float dt );                // update non-infectious loop update interventions once per time step
 
     protected:
         float drugVaccineReducedAcquire;
@@ -86,8 +81,6 @@ namespace Kernel
         IIndividualHumanContext *parent;    // context for this interventions container
 
     private:
-        IDistributableIntervention* GetIntervention( const std::string& iv_name );
-
         DECLARE_SERIALIZABLE(InterventionsContainer);
     };
 }

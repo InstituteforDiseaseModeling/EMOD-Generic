@@ -44,9 +44,7 @@ namespace Kernel
         virtual const NodeDemographicsDistribution* GetNonspec_variance_antibody_distribution() const override { return nonspec_variance_antibody_distribution; };
         virtual const NodeDemographicsDistribution* GetPfEMP1_variance_antibody_distribution()  const override { return PfEMP1_variance_antibody_distribution; };
 
-        virtual bool Configure( const Configuration* config ) override;
-
-        virtual IIndividualHuman* addNewIndividual( float = 1.0f, float = 0.0f, int = 0, int = 0, float = 1.0f, float = 1.0f, float = 1.0f) override;
+        virtual IIndividualHuman* addNewIndividual( float = 1.0f, float = 0.0f, int = 0, int = 0, float = 1.0f, float = 1.0f) override;
 
     protected:
         float m_Parasite_positive;
@@ -79,7 +77,6 @@ namespace Kernel
         virtual void resetNodeStateCounters(void) override;
 
         virtual void setupEventContextHost() override;
-        /* clorton virtual */ const SimulationConfig *params() /* clorton override */;
 
         DECLARE_SERIALIZABLE(NodeMalaria);
         

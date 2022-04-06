@@ -65,11 +65,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SerializedPopulation.h"
 
 #include <chrono>
-#include "FileSystem.h"
 #include "EventTrigger.h"
 #include "EventTriggerNode.h"
 #include "EventTriggerCoordinator.h"
 #include "RandomNumberGeneratorFactory.h"
+#include "SerializationParameters.h"
 
 SETUP_LOGGING( "SimulationFactory" )
 
@@ -82,19 +82,10 @@ namespace Kernel
 
         ISimulation* newsim = nullptr;
 
-        if ( CONFIG_PARAMETER_EXISTS( EnvPtr->Config, "Serialized_Population_Filenames" ) )
+        if ( SerializationParameters::GetInstance()->GetSerializedPopulationReadingType() != SerializationTypeRead::NONE )
         {
-            std::string path(".");
-            if ( CONFIG_PARAMETER_EXISTS( EnvPtr->Config, "Serialized_Population_Path" ) )
-            {
-                path = GET_CONFIG_STRING(EnvPtr->Config, "Serialized_Population_Path");
-            }
-            std::vector<string> filenames = GET_CONFIG_VECTOR_STRING( EnvPtr->Config, "Serialized_Population_Filenames" );
-            if ( filenames.size() != EnvPtr->MPI.NumTasks )
-            {
-                throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "MPI.NumTasks", float(EnvPtr->MPI.NumTasks), "filenames.size()", float(filenames.size()), "Number of serialized population filenames doesn't match number of MPI tasks.");
-            }
-            std::string population_filename = FileSystem::Concat(path, filenames[EnvPtr->MPI.Rank]);
+            const std::string population_filename = SerializationParameters::GetInstance()->GetSerializedPopulationFilename();
+
             auto t_start = std::chrono::high_resolution_clock::now();
             newsim = SerializedState::LoadSerializedSimulation( population_filename.c_str() );
             auto t_finish = std::chrono::high_resolution_clock::now();
@@ -208,7 +199,7 @@ namespace Kernel
 #endif        
 #if defined( ENABLE_TYPHOID)
                 case SimType::TYPHOID_SIM:
-                    SimulationTyphoid::SetFixedParameters(EnvPtr->Config);
+                    // No fixed parameters to set
                     newsim = SimulationTyphoid::CreateSimulation(EnvPtr->Config);
                 break;
 #endif        
@@ -224,21 +215,18 @@ namespace Kernel
                     newsim = SimulationMalaria::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
-
 #ifndef DISABLE_AIRBORNE
                 case SimType::AIRBORNE_SIM:
                     throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "AIRBORNE_SIM currently disabled. Consider using GENERIC_SIM or TBHIV_SIM." );
                     newsim = SimulationAirborne::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
-
 #ifndef DISABLE_TBHIV
                 case SimType::TBHIV_SIM:
                     // No fixed parameters to set
                     newsim = SimulationTBHIV::CreateSimulation(EnvPtr->Config);
                 break;
 #endif // TBHIV
-
 #ifndef DISABLE_STI
                 case SimType::STI_SIM:
                     // No fixed parameters to set
@@ -264,9 +252,8 @@ namespace Kernel
                 break;
 #endif
                 default: 
-                // Is it even possible to get here anymore?  Won't the SimulationConfig error out earlier parsing the parameter-string?
-                //("SimulationFactory::CreateSimulation(): Error, Simulation_Type %d is not implemented.\n", sim_type);
-                //throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "sim_type", sim_type, SimType::pairs::lookup_key( sim_typ )); // JB
+                    // Should not be possible to get here
+                    release_assert(false);
                 break;
             }
 #endif

@@ -280,7 +280,7 @@ namespace Kernel {
         std::ostringstream _tmp_msg;
         _tmp_msg << "CalculatedValueOutOfRangeException: "
                  << what()
-                 << GET_VAR_NAME( var_name )
+                 << "'" << GET_VAR_NAME( var_name ) << "'"
                  << " assigned calculated value "
                  << bad_value
                  << " that violates range constraint "
@@ -295,7 +295,7 @@ namespace Kernel {
         _tmp_msg << "ConfigurationRangeException: "
             << what()
             << "Configuration variable "
-            << GET_VAR_NAME( var_name )
+            << "'" << GET_VAR_NAME( var_name ) << "'" 
             << " with value "
             << var_value
             << " out of range: "

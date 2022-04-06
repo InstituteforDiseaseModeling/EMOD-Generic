@@ -17,7 +17,6 @@ if False: # env['AllDlls'] or env[ 'DiseaseDll' ] !="" or env[ 'Report' ] != "" 
                            'libgeneric/LibcalendardllScons' + env['MSVSPROJECTSUFFIX'],
                            'libgeneric/LibhousingmoddllScons' + env['MSVSPROJECTSUFFIX'],
                            'libgeneric/LiboutbreakdllScons' + env['MSVSPROJECTSUFFIX'],
-                           'libgeneric/LibsimplevaccinedllScons' + env['MSVSPROJECTSUFFIX'],
                            'libgeneric/LibmalariadllScons' + env['MSVSPROJECTSUFFIX'],
                            'libgeneric/LibvectordllScons' + env['MSVSPROJECTSUFFIX'],
                            'libgeneric/LibgenericScons' + env['MSVSPROJECTSUFFIX'],

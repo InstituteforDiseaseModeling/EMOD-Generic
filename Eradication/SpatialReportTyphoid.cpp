@@ -17,12 +17,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BoostLibWrapper.h"
 
 #include "SpatialReportTyphoid.h"
-//#include "NodeTyphoid.h"
 #include "Sugar.h"
 #include "Environment.h"
 #include "Exceptions.h"
 #include "Individual.h"
-#include "SimulationConfig.h"
 #include "ProgVersion.h"
 
 using namespace std;

@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 
 #include "Common.h"
+#include "ConfigParams.h"
 #include "IContagionPopulation.h"
 #include "Debug.h"
 #include "Exceptions.h"
@@ -25,7 +26,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeContext.h"
 #include "NodeDemographics.h"
 #include "NodeEventContext.h"
-#include "SimulationConfig.h"
 #include "suids.hpp"
 #include "Susceptibility.h"
 #include "Properties.h"
@@ -40,29 +40,15 @@ SETUP_LOGGING( "Individual" )
 
 namespace Kernel
 {
-    bool IndividualHumanConfig::aging = true;
-    float IndividualHumanConfig::local_roundtrip_prob = 0.0f;
-    float IndividualHumanConfig::air_roundtrip_prob = 0.0f;
-    float IndividualHumanConfig::region_roundtrip_prob = 0.0f;
-    float IndividualHumanConfig::sea_roundtrip_prob = 0.0f;
-    float IndividualHumanConfig::family_roundtrip_prob = 0.0f;
-    float IndividualHumanConfig::local_roundtrip_duration_rate = 0.0f;
-    float IndividualHumanConfig::air_roundtrip_duration_rate = 0.0f;
-    float IndividualHumanConfig::region_roundtrip_duration_rate = 0.0f;
-    float IndividualHumanConfig::sea_roundtrip_duration_rate = 0.0f;
-    float IndividualHumanConfig::family_roundtrip_duration_rate = 0.0f;
-    int IndividualHumanConfig::infection_updates_per_tstep = 0.0f;
-    MigrationPattern::Enum IndividualHumanConfig::migration_pattern = MigrationPattern::RANDOM_WALK_DIFFUSION;
-    bool IndividualHumanConfig::enable_immunity = false;
-    int IndividualHumanConfig::roundtrip_waypoints = 0;
-    int IndividualHumanConfig::max_ind_inf = 1;
-    bool IndividualHumanConfig::superinfection = 0;
-    float IndividualHumanConfig::min_adult_age_years = 15.0f;
+    bool IndividualHumanConfig::aging            = false;
+    bool IndividualHumanConfig::enable_immunity  = false;
+    bool IndividualHumanConfig::superinfection   = false;
+    bool IndividualHumanConfig::enable_skipping  = false;
 
+    int   IndividualHumanConfig::infection_updates_per_tstep =  0;
+    int   IndividualHumanConfig::max_ind_inf                 =  1;
 
-    MigrationStructure::Enum   IndividualHumanConfig::migration_structure = MigrationStructure::NO_MIGRATION;
-    //VitalDeathDependence::Enum IndividualHumanConfig::vital_death_dependence = VitalDeathDependence::NONDISEASE_MORTALITY_OFF;
-    bool                       IndividualHumanConfig::enable_skipping = false;
+    float IndividualHumanConfig::min_adult_age_years         = 15.0f;
 
     // QI stuff in case we want to use it more extensively outside of campaigns
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Individual,IndividualHumanConfig)
@@ -74,181 +60,28 @@ namespace Kernel
         return (min_adult_age_years <= years);
     }
 
-    bool IndividualHumanConfig::CanSupportFamilyTrips( IMigrationInfoFactory* pmif )
-    {
-        bool not_supported = (migration_pattern != MigrationPattern::SINGLE_ROUND_TRIPS)
-                          || (pmif->IsEnabled( MigrationType::LOCAL_MIGRATION    ) && (local_roundtrip_prob  != 1.0))
-                          || (pmif->IsEnabled( MigrationType::AIR_MIGRATION      ) && (air_roundtrip_prob    != 1.0))
-                          || (pmif->IsEnabled( MigrationType::REGIONAL_MIGRATION ) && (region_roundtrip_prob != 1.0))
-                          || (pmif->IsEnabled( MigrationType::SEA_MIGRATION      ) && (sea_roundtrip_prob    != 1.0));
-
-        if( not_supported && pmif->IsEnabled( MigrationType::FAMILY_MIGRATION ) )
-        {
-            std::stringstream msg;
-            msg << "Invalid Configuration for Family Trips." << std::endl;
-            msg << "Migration_Pattern must be SINGLE_ROUND_TRIPS and the 'XXX_Migration_Roundtrip_Probability' must equal 1.0 if that Migration Type is enabled." << std::endl;
-            msg << "Migration_Pattern = " << MigrationPattern::pairs::lookup_key( migration_pattern ) << std::endl;
-            msg << "Enable_Local_Migration = "    << pmif->IsEnabled( MigrationType::LOCAL_MIGRATION    ) << " and Local_Migration_Roundtrip_Probability = "    << local_roundtrip_prob  << std::endl;
-            msg << "Enable_Air_Migration = "      << pmif->IsEnabled( MigrationType::AIR_MIGRATION      ) << " and Air_Migration_Roundtrip_Probability = "      << air_roundtrip_prob    << std::endl;
-            msg << "Enable_Regional_Migration = " << pmif->IsEnabled( MigrationType::REGIONAL_MIGRATION ) << " and Regional_Migration_Roundtrip_Probability = " << region_roundtrip_prob << std::endl;
-            msg << "Enable_Sea_Migration = "      << pmif->IsEnabled( MigrationType::SEA_MIGRATION      ) << " and Sea_Migration_Roundtrip_Probability = "      << sea_roundtrip_prob    << std::endl;
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-        return !not_supported;
-    }
-
     //------------------------------------------------------------------
     //   Initialization methods
     //------------------------------------------------------------------
 
-    void IndividualHumanConfig::PrintConfigs() const
-    {
-        LOG_DEBUG_F( "aging = %d\n", aging  );
-        LOG_DEBUG_F( "infection_updates_per_tstep = %d\n", infection_updates_per_tstep  );
-        LOG_DEBUG_F( "enable_immunity = %d\n", enable_immunity  );
-        LOG_DEBUG_F( "superinfection = %d\n", superinfection  );
-        LOG_DEBUG_F( "max_ind_inf = %d\n", max_ind_inf  );
-        LOG_DEBUG_F( "min_adult_age_years = %d\n", min_adult_age_years  );
-    }
-
     bool IndividualHumanConfig::Configure( const Configuration* config )
     {
         LOG_DEBUG( "Configure\n" );
-        initConfigTypeMap( "Enable_Aging", &aging, Enable_Aging_DESC_TEXT, true, "Enable_Vital_Dynamics" );
-        initConfigTypeMap( "Infection_Updates_Per_Timestep", &infection_updates_per_tstep, Infection_Updates_Per_Timestep_DESC_TEXT, 0, 144, 1 );
-        initConfigTypeMap( "Enable_Immunity", &enable_immunity, Enable_Immunity_DESC_TEXT, true, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,TBHIV_SIM,PY_SIM");
-        initConfigTypeMap( "Enable_Superinfection", &superinfection, Enable_Superinfection_DESC_TEXT, false, "Simulation_Type", "VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,MALARIA_SIM");
-        initConfigTypeMap( "Max_Individual_Infections", &max_ind_inf, Max_Individual_Infections_DESC_TEXT, 0, 1000, 1, "Enable_Superinfection" );
-        initConfigTypeMap( "Minimum_Adult_Age_Years", &min_adult_age_years, Minimum_Adult_Age_Years_DESC_TEXT, 0.0f, FLT_MAX, 15.0f, "Individual_Sampling_Type", "ADAPTED_SAMPLING_BY_AGE_GROUP" );
-        // Don't really like this; could put the conditional in the initConfigTypeMap but we already have a conditional and our API
-        // can only handle 1 conditional parameter key. 
-        if( JsonConfigurable::_dryrun ||
-            ( GET_CONFIGURABLE( SimulationConfig ) &&
-                (
-                  GET_CONFIGURABLE( SimulationConfig )->sim_type == SimType::GENERIC_SIM ||
-                  GET_CONFIGURABLE( SimulationConfig )->sim_type == SimType::TYPHOID_SIM ||
-                  GET_CONFIGURABLE( SimulationConfig )->sim_type == SimType::TBHIV_SIM
-                )
-            )
-          )
-        {
-            initConfigTypeMap( "Enable_Skipping", &enable_skipping, Enable_Skipping_DESC_TEXT, false );
-        }
 
-        initConfig( "Migration_Pattern", migration_pattern, config, MetadataDescriptor::Enum("migration_pattern", Migration_Pattern_DESC_TEXT, MDD_ENUM_ARGS(MigrationPattern)), "Migration_Model", "FIXED_RATE_MIGRATION" );
+        initConfigTypeMap( "Enable_Aging",           &aging,            Enable_Aging_DESC_TEXT,            true, "Enable_Vital_Dynamics" );
 
-        if ( JsonConfigurable::_dryrun )
-        {
-            RegisterRandomWalkDiffusionParameters();
-            RegisterSingleRoundTripsParameters();
-            RegisterWaypointsHomeParameters();
-        }
-        else if(migration_pattern == MigrationPattern::RANDOM_WALK_DIFFUSION)
-        {
-            LOG_DEBUG( "Following migration = RANDOM_WALK_DIFFUSION path\n" );
-            local_roundtrip_prob      = 0.0f;
-            air_roundtrip_prob        = 0.0f;
-            region_roundtrip_prob     = 0.0f;
-            sea_roundtrip_prob        = 0.0f;
+        initConfigTypeMap( "Enable_Immunity",        &enable_immunity,  Enable_Immunity_DESC_TEXT,         true, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,TBHIV_SIM,PY_SIM");
+        initConfigTypeMap( "Enable_Skipping",        &enable_skipping,  Enable_Skipping_DESC_TEXT,        false, "Simulation_Type", "GENERIC_SIM,TYPHOID_SIM,TBHIV_SIM" );
+        initConfigTypeMap( "Enable_Superinfection",  &superinfection,   Enable_Superinfection_DESC_TEXT,  false, "Simulation_Type", "VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,MALARIA_SIM");
 
-            RegisterRandomWalkDiffusionParameters();
-        }
-        else if( migration_pattern == MigrationPattern::SINGLE_ROUND_TRIPS )
-        {
-            LOG_DEBUG( "Following migration = single_round_trip path\n" );
-            RegisterSingleRoundTripsParameters();
+        initConfigTypeMap( "Infection_Updates_Per_Timestep",  &infection_updates_per_tstep,  Infection_Updates_Per_Timestep_DESC_TEXT,   0,     144,  1 );
+        initConfigTypeMap( "Max_Individual_Infections",       &max_ind_inf,                  Max_Individual_Infections_DESC_TEXT,        0,    1000,  1,    "Enable_Superinfection" );
 
-            roundtrip_waypoints = 1;
-        }
-        else if( migration_pattern == MigrationPattern::WAYPOINTS_HOME )
-        {
-            LOG_DEBUG( "Following migration = WAYPOINTS_HOME path\n" );
-            local_roundtrip_prob      = 1.0f;
-            air_roundtrip_prob        = 1.0f;
-            region_roundtrip_prob     = 1.0f;
-            sea_roundtrip_prob        = 1.0f;
-            family_roundtrip_prob     = 1.0f;
-
-            local_roundtrip_duration_rate  = 0.0f;
-            air_roundtrip_duration_rate    = 0.0f;
-            region_roundtrip_duration_rate = 0.0f;
-            sea_roundtrip_duration_rate    = 0.0f;
-            family_roundtrip_duration_rate = 0.0f;
-
-            RegisterWaypointsHomeParameters();
-        }
-
-        // This is sub-optimal. The conditional is for PyMod. Needs real solution. Doing this unconditionally breaks pymod
-        if( GET_CONFIGURABLE(SimulationConfig) != nullptr )
-        {
-            initConfig( "Migration_Model",       migration_structure,    config, MetadataDescriptor::Enum(Migration_Model_DESC_TEXT,       Migration_Model_DESC_TEXT,       MDD_ENUM_ARGS(MigrationStructure)) ); // 'global'
-        }
+        initConfigTypeMap( "Minimum_Adult_Age_Years",         &min_adult_age_years,          Minimum_Adult_Age_Years_DESC_TEXT,       0.0f, FLT_MAX, 15.0f, "Individual_Sampling_Type", "ADAPTED_SAMPLING_BY_AGE_GROUP" );
 
         bool bRet = JsonConfigurable::Configure( config );
-        PrintConfigs();
-
-        if( local_roundtrip_duration_rate != 0 )
-        {
-             local_roundtrip_duration_rate = 1.0f/local_roundtrip_duration_rate;
-        }
-        if( region_roundtrip_duration_rate != 0 )
-        {
-             region_roundtrip_duration_rate = 1.0f/region_roundtrip_duration_rate;
-        }
-        if( air_roundtrip_duration_rate != 0 )
-        {
-             air_roundtrip_duration_rate = 1.0f/air_roundtrip_duration_rate;
-        }
-        if( sea_roundtrip_duration_rate != 0 )
-        {
-             sea_roundtrip_duration_rate = 1.0f/sea_roundtrip_duration_rate;
-        }
-        if( family_roundtrip_duration_rate != 0 )
-        {
-             family_roundtrip_duration_rate = 1.0f/family_roundtrip_duration_rate;
-        }
-
-        if (superinfection && (max_ind_inf < 2))
-        {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Max_Individual_Infections", max_ind_inf, "Enable_Superinfection", superinfection);
-        }
-
-        // Check for Enable_Skipping incompatibilities
-        if( enable_skipping )
-        {
-            if( GET_CONFIGURABLE(SimulationConfig)->heterogeneous_intranode_transmission_enabled )
-            {
-                throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Skipping", 1, "Enable_Heterogeneous_Intranode_Transmission", 1);
-            }
-        }
 
         return bRet;
-    }
-
-    void IndividualHumanConfig::RegisterRandomWalkDiffusionParameters()
-    {
-        // Placeholder for now.
-    }
-
-    void IndividualHumanConfig::RegisterSingleRoundTripsParameters()
-    {
-        initConfigTypeMap( "Local_Migration_Roundtrip_Probability", &local_roundtrip_prob, Local_Migration_Roundtrip_Probability_DESC_TEXT, 0.0f, 1.0f, 0.95f, "Migration_Pattern", "SINGLE_ROUND_TRIPS" );
-        initConfigTypeMap( "Air_Migration_Roundtrip_Probability", &air_roundtrip_prob, Air_Migration_Roundtrip_Probability_DESC_TEXT, 0.0f, 1.0f, 0.8f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Regional_Migration_Roundtrip_Probability", &region_roundtrip_prob, Regional_Migration_Roundtrip_Probability_DESC_TEXT, 0.0f, 1.0f, 0.1f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Sea_Migration_Roundtrip_Probability", &sea_roundtrip_prob, Sea_Migration_Roundtrip_Probability_DESC_TEXT, 0.0f, 1.0f, 0.25f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        //initConfigTypeMap( "Family_Migration_Roundtrip_Probability", &family_roundtrip_prob, Family_Migration_Roundtrip_Probability_DESC_TEXT, 0.0f, 1.0f, 0.25f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        family_roundtrip_prob = 1.0;
-
-        initConfigTypeMap( "Local_Migration_Roundtrip_Duration", &local_roundtrip_duration_rate, Local_Migration_Roundtrip_Duration_DESC_TEXT, 0.0f, 10000.0f, 1.0f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Air_Migration_Roundtrip_Duration", &air_roundtrip_duration_rate, Air_Migration_Roundtrip_Duration_DESC_TEXT, 0.0f, 10000.0f, 1.0f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Regional_Migration_Roundtrip_Duration", &region_roundtrip_duration_rate, Regional_Migration_Roundtrip_Duration_DESC_TEXT, 0.0f, 10000.0f, 1.0f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Sea_Migration_Roundtrip_Duration", &sea_roundtrip_duration_rate, Sea_Migration_Roundtrip_Duration_DESC_TEXT, 0.0f, 10000.0f, 1.0f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-        initConfigTypeMap( "Family_Migration_Roundtrip_Duration", &family_roundtrip_duration_rate, Family_Migration_Roundtrip_Duration_DESC_TEXT, 0.0f, 10000.0f, 1.0f, "Migration_Pattern", "SINGLE_ROUND_TRIPS"  );
-    }
-
-    void IndividualHumanConfig::RegisterWaypointsHomeParameters()
-    {
-        initConfigTypeMap( "Roundtrip_Waypoints", &roundtrip_waypoints, Roundtrip_Waypoints_DESC_TEXT, 0, 1000, 10 , "Migration_Pattern", "WAYPOINTS_HOME");
     }
 
     IndividualHuman::IndividualHuman(suids::suid _suid, float mc_weight, float initial_age, int gender)
@@ -269,7 +102,6 @@ namespace Kernel
         , cumulativeInfs(0)
         , m_new_infection_state(NewInfectionState::Invalid)
         , StateChange(HumanStateChange::None)
-        , migration_mod(0)
         , migration_type(MigrationType::NO_MIGRATION)
         , migration_destination(suids::nil_suid())
         , migration_time_until_trip(0.0)
@@ -315,7 +147,6 @@ namespace Kernel
         , cumulativeInfs(0)
         , m_new_infection_state(NewInfectionState::Invalid)
         , StateChange(HumanStateChange::None)
-        , migration_mod(0)
         , migration_type(MigrationType::NO_MIGRATION)
         , migration_destination(suids::nil_suid())
         , migration_time_until_trip(0.0)
@@ -353,17 +184,6 @@ namespace Kernel
         delete susceptibility;
         delete interventions;
     }
-
-    void IndividualHuman::InitializeStatics( const Configuration* config )
-    {
-        SusceptibilityConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanConfig human_config;
-        human_config.Configure( config );
-    }
-
 
     QueryResult IndividualHuman::QueryInterface( iid_t iid, void** ppinstance )
     {
@@ -509,15 +329,14 @@ namespace Kernel
 
     void IndividualHuman::CreateSusceptibility(float susceptibility_modifier, float risk_modifier)
     {
-        susceptibility = Susceptibility::CreateSusceptibility(this, m_age, susceptibility_modifier, risk_modifier);
+        susceptibility = Susceptibility::CreateSusceptibility(this, susceptibility_modifier, risk_modifier);
     }
 
-    void IndividualHuman::SetParameters( INodeContext* pParent, float infsample, float susceptibility_modifier, float risk_modifier, float migration_modifier)
+    void IndividualHuman::SetParameters( INodeContext* pParent, float infsample, float susceptibility_modifier, float risk_modifier)
     {
         StateChange       = HumanStateChange::None;
 
         // migration stuff
-        max_waypoints         = 10;
         migration_outbound    = true;
         migration_will_return = true;
 
@@ -536,10 +355,6 @@ namespace Kernel
         interventions->SetContextTo(indcontext); //TODO: fix this when init pattern standardized <ERAD-291>  PE: See comment above
 
         Inf_Sample_Rate = infsample; // EAW: currently set to 1 by Node::addNewIndividual
-        migration_mod   = migration_modifier;
-
-        // set maximum number of waypoints for this individual--how far will they wander?
-        max_waypoints = IndividualHumanConfig::roundtrip_waypoints;
 
         CreateSusceptibility(susceptibility_modifier, risk_modifier);
 
@@ -557,24 +372,6 @@ namespace Kernel
         m_mc_weight = desired_mc_weight;
         UpdateGroupPopulation( 1.0f);
         LOG_DEBUG_F( "Changed mc_weight to %f for individual %d\n.", m_mc_weight, suid.data );
-#if 0 // Nuked in G-O
-        if (desired_mc_weight > m_mc_weight)
-        {
-            LOG_DEBUG_F("ratio = %f\n", m_mc_weight / desired_mc_weight);
-            if (GetRng()->e() < m_mc_weight / desired_mc_weight)
-            {
-                UpdateGroupPopulation(-1.0f);
-                m_mc_weight = desired_mc_weight;
-                UpdateGroupPopulation(1.0f);
-                LOG_DEBUG_F( "Changed mc_weight to %f for individual %d\n.", m_mc_weight, GetSuid().data );
-            }
-            else // TODO: It's possible to downsample the immune subpopulation (which could be entire node or hint group population) to 0. Add safeguards to prevent this.
-            {
-                StateChange = HumanStateChange::KilledByMCSampling;
-                LOG_DEBUG_F( "Individual %d will be deleted as part of downsampling.\n", GetSuid().data );
-            }
-        }
-#endif
     }
 
     void IndividualHuman::setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node)
@@ -728,7 +525,7 @@ namespace Kernel
             CheckVitalDynamics(currenttime, dt);
         }
 
-        if (StateChange == HumanStateChange::None && IndividualHumanConfig::migration_structure) // Individual can't migrate if they're already dead
+        if (StateChange == HumanStateChange::None && parent->GetMigrationInfo() && parent->GetMigrationInfo()->GetParams()->migration_structure) // Individual can't migrate if they're already dead
         {
             CheckForMigration(currenttime, dt);
         }
@@ -741,6 +538,28 @@ namespace Kernel
                 broadcaster->TriggerObservers( GetEventContext(), EventTrigger::NewInfection );
             }
         }
+
+        // Age-dependent event triggers go last for backward compatibility
+        if ( broadcaster && IndividualHumanConfig::aging )
+        {
+            if( ((m_age - dt) <  6.0f*DAYSPERWEEK)       && ( 6.0f*DAYSPERWEEK       <= m_age) )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::SixWeeksOld );
+            }
+            if( ((m_age - dt) <  6.0f*IDEALDAYSPERMONTH) && ( 6.0f*IDEALDAYSPERMONTH <= m_age) )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::SixMonthsOld );
+            }
+            if( ((m_age - dt) <  1.0f*DAYSPERYEAR)       && ( 1.0f*DAYSPERYEAR       <= m_age) )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::OneYearOld );
+            }
+            if( ((m_age - dt) < 18.0f*IDEALDAYSPERMONTH) && (18.0f*IDEALDAYSPERMONTH <= m_age) )
+            {
+                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::EighteenMonthsOld );
+            }
+        }
+
     }
 
     void IndividualHuman::UpdateAge( float dt )
@@ -770,14 +589,12 @@ namespace Kernel
         
         if( (GetRng()!= nullptr) && GetRng()->SmartDraw( adjusted_rate ) )
         {
-            // LOG_DEBUG_F("%s died of natural causes at age %f with daily_mortality_rate = %f\n", (GetGender() == Gender::FEMALE ? "Female" : "Male"), GetAge() / DAYSPERYEAR, m_daily_mortality_rate);
             Die( HumanStateChange::DiedFromNaturalCauses );
         }
     }
 
     void IndividualHuman::applyNewInterventionEffects(float dt)
-    {
-    }
+    { }
 
     float IndividualHuman::GetImmunityReducedAcquire() const
     {
@@ -860,7 +677,7 @@ namespace Kernel
     void IndividualHuman::CheckForMigration(float currenttime, float dt)
     {
         //  Determine if individual moves during this time step
-        switch (IndividualHumanConfig::migration_structure)
+        switch (parent->GetMigrationInfo()->GetParams()->migration_structure)
         {
         case MigrationStructure::FIXED_RATE_MIGRATION:
             if( leave_on_family_trip )
@@ -905,7 +722,7 @@ namespace Kernel
         case MigrationStructure::NO_MIGRATION:
         default:
             std::stringstream msg;
-            msg << "Invalid migration_structure=" << IndividualHumanConfig::migration_structure;
+            msg << "Invalid migration_structure=" << parent->GetMigrationInfo()->GetParams()->migration_structure;
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
             // break;
         }
@@ -913,7 +730,7 @@ namespace Kernel
 
     void IndividualHuman::SetNextMigration(void)
     {
-        IMigrationInfo *migration_info = parent->GetMigrationInfo();
+        IMigrationInfo* migration_info = parent->GetMigrationInfo();
 
         // ----------------------------------------------------------------------------------------
         // --- We don't want the check for reachable nodes here because one could travel to a node
@@ -921,16 +738,16 @@ namespace Kernel
         // --- That is, I should be able to travel to a node and return from it, even if the
         // --- residents of the node do not migrate.
         // ----------------------------------------------------------------------------------------
-        if( IndividualHumanConfig::migration_structure != MigrationStructure::NO_MIGRATION )
+        if( migration_info->GetParams()->migration_structure != MigrationStructure::NO_MIGRATION )
         {
             if(waypoints.size() == 0)
                 migration_outbound = true;
-            else if(waypoints.size() == max_waypoints)
+            else if(waypoints.size() == migration_info->GetParams()->roundtrip_waypoints)
                 migration_outbound = false;
 
             if( migration_outbound && (migration_info->GetReachableNodes().size() > 0) )
             {
-                migration_info->PickMigrationStep( GetRng(), this, migration_mod, migration_destination, migration_type, migration_time_until_trip );
+                migration_info->PickMigrationStep( GetRng(), this, migration_destination, migration_type, migration_time_until_trip );
 
                 if( migration_type == MigrationType::NO_MIGRATION )
                 {
@@ -954,15 +771,13 @@ namespace Kernel
                 }
                 else
                 {
-                    float return_prob; // = 0.0f;
+                    float return_prob;
                     switch(migration_type)
                     {
-                        case MigrationType::LOCAL_MIGRATION:    return_prob = IndividualHumanConfig::local_roundtrip_prob;  break;
-                        case MigrationType::AIR_MIGRATION:      return_prob = IndividualHumanConfig::air_roundtrip_prob;    break;
-                        case MigrationType::REGIONAL_MIGRATION: return_prob = IndividualHumanConfig::region_roundtrip_prob; break;
-                        case MigrationType::SEA_MIGRATION:      return_prob = IndividualHumanConfig::sea_roundtrip_prob;    break;
-                        case MigrationType::FAMILY_MIGRATION:   return_prob = IndividualHumanConfig::family_roundtrip_prob; break;
-                        case MigrationType::INTERVENTION_MIGRATION:
+                        case MigrationType::LOCAL_MIGRATION:    return_prob = migration_info->GetParams()->local_roundtrip_prob;  break;
+                        case MigrationType::AIR_MIGRATION:      return_prob = migration_info->GetParams()->air_roundtrip_prob;    break;
+                        case MigrationType::REGIONAL_MIGRATION: return_prob = migration_info->GetParams()->region_roundtrip_prob; break;
+                        case MigrationType::SEA_MIGRATION:      return_prob = migration_info->GetParams()->sea_roundtrip_prob;    break;
                         default:
                             throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "migration_type", migration_type, MigrationType::pairs::lookup_key(migration_type) );
                     }
@@ -991,25 +806,27 @@ namespace Kernel
 
     float IndividualHuman::GetRoundTripDurationRate( MigrationType::Enum trip_type )
     {
-        float return_duration_rate; // = 0.0f;
+        IMigrationInfo* migration_info = parent->GetMigrationInfo();
+
+        float duration_value = 0.0f;
+
         switch(trip_type)
         {
-            case MigrationType::LOCAL_MIGRATION:    return_duration_rate = IndividualHumanConfig::local_roundtrip_duration_rate;  break;
-            case MigrationType::AIR_MIGRATION:      return_duration_rate = IndividualHumanConfig::air_roundtrip_duration_rate;    break;
-            case MigrationType::REGIONAL_MIGRATION: return_duration_rate = IndividualHumanConfig::region_roundtrip_duration_rate; break;
-            case MigrationType::SEA_MIGRATION:      return_duration_rate = IndividualHumanConfig::sea_roundtrip_duration_rate;    break;
-            case MigrationType::FAMILY_MIGRATION:   return_duration_rate = IndividualHumanConfig::family_roundtrip_duration_rate; break;
-            case MigrationType::INTERVENTION_MIGRATION:
+            case MigrationType::LOCAL_MIGRATION:    duration_value = migration_info->GetParams()->local_roundtrip_duration;  break;
+            case MigrationType::AIR_MIGRATION:      duration_value = migration_info->GetParams()->air_roundtrip_duration;    break;
+            case MigrationType::REGIONAL_MIGRATION: duration_value = migration_info->GetParams()->region_roundtrip_duration; break;
+            case MigrationType::SEA_MIGRATION:      duration_value = migration_info->GetParams()->sea_roundtrip_duration;    break;
+            case MigrationType::FAMILY_MIGRATION:   duration_value = migration_info->GetParams()->family_roundtrip_duration; break;
             default:
                 throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "trip_type", trip_type, MigrationType::pairs::lookup_key( migration_type ) );
         }
 
-        float duration = 0.0;
-        if(return_duration_rate > 0.0f)
+        if( duration_value > 0.0f )
         {
-            duration = float( GetRng()->expdist( return_duration_rate ) );
+            duration_value = static_cast<float>( GetRng()->expdist( 1.0f/duration_value ) );
         }
-        return duration;
+
+        return duration_value;
     }
 
     const suids::suid& IndividualHuman::GetMigrationDestination()
@@ -1117,9 +934,9 @@ namespace Kernel
     // TODO: port normal exposure_to_infectivity logic to this pattern as well <ERAD-328>
     void IndividualHuman::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route)
     {
-        ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*interventions->GetInterventionReducedAcquire());
-        LOG_DEBUG_F( "id = %lu, group_id = %d, total contagion = %f, dt = %f, immunity factor = %f, interventions factor = %f, prob=%f\n",
-                     GetSuid().data, transmissionGroupMembership.group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob) );
+        ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*susceptibility->getModRisk()*interventions->GetInterventionReducedAcquire());
+        LOG_DEBUG_F( "id = %lu, group_id = %d, total contagion = %f, dt = %f, immunity factor = %f, interventions factor = %f, prob=%f, infectiousness=%f\n",
+                     GetSuid().data, transmissionGroupMembership.group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
         bool acquire = false; 
         if( IndividualHumanConfig::enable_skipping ) 
         {
@@ -1163,17 +980,9 @@ namespace Kernel
         }
     }
 
-    bool
-    IndividualHuman::ShouldAcquire(
-        float contagion,
-        float dt,
-        float suscept_mod,
-        TransmissionRoute::Enum transmission_route
-    )
+    bool IndividualHuman::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route)
     {
-        // multiple infections of the same type happen here
-        ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire()); // infection results from this strain?
-        return( GetRng()->SmartDraw( prob ) ); // local rng stops function from being const when it should
+        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Function exists due to inheritance. Not a valid code path for GENERIC_SIM." );
     }
 
     void IndividualHuman::AcquireNewInfection( const IStrainIdentity *strain_ptr, float incubation_period_override )
@@ -1203,6 +1012,8 @@ namespace Kernel
 
     void IndividualHuman::UpdateInfectiousness(float dt)
     {
+        interventions->PreInfectivityUpdate( dt );
+
         infectiousness = 0;
 
         if ( infections.size() == 0 )
@@ -1270,14 +1081,36 @@ namespace Kernel
     suids::suid IndividualHuman::GetNextInfectionSuid()  { return parent->GetNextInfectionSuid(); }
     RANDOMBASE* IndividualHuman::GetRng()              { return parent->GetRng(); }
 
-    const NodeDemographics* IndividualHuman::GetDemographics()           const { return parent->GetDemographics(); }
+    const NodeDemographics* IndividualHuman::GetDemographics() const
+    {
+        return parent->GetDemographics();
+    }
 
-    IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContext()  const { return static_cast<IIndividualHumanInterventionsContext*>(interventions); }
-    IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContextbyInfection(IInfection* infection) { 
+    IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContext() const
+    {
+        return static_cast<IIndividualHumanInterventionsContext*>(interventions);
+    }
+
+    IVaccineConsumer* IndividualHuman::GetVaccineContext() const
+    {
+        return static_cast<IVaccineConsumer*>(interventions);
+    }
+
+    IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContextbyInfection(IInfection* infection)
+    {
+        //Note can also throw exception here since it's not using the infection to find the intervention
         return static_cast<IIndividualHumanInterventionsContext*>(interventions); 
-        }; //Note can also throw exception here since it's not using the infection to find the intervention
-    IIndividualHumanEventContext*         IndividualHuman::GetEventContext()                { return static_cast<IIndividualHumanEventContext*>(this); }
-    ISusceptibilityContext*               IndividualHuman::GetSusceptibilityContext() const { return static_cast<ISusceptibilityContext*>(susceptibility); }
+    }
+
+    IIndividualHumanEventContext* IndividualHuman::GetEventContext()
+    {
+        return static_cast<IIndividualHumanEventContext*>(this);
+    }
+
+    ISusceptibilityContext* IndividualHuman::GetSusceptibilityContext() const
+    {
+        return static_cast<ISusceptibilityContext*>(susceptibility);
+    }
 
     bool IndividualHuman::IsPossibleMother() const
     {
@@ -1294,14 +1127,17 @@ namespace Kernel
     void IndividualHuman::Die( HumanStateChange newState )
     {
         StateChange = newState;
+    }
 
+    void IndividualHuman::BroadcastDeath()
+    {
         IIndividualEventBroadcaster* broadcaster = nullptr;
         if( GetNodeEventContext() != nullptr )
         {
             broadcaster = GetNodeEventContext()->GetIndividualEventBroadcaster();
         }
 
-        switch (newState)
+        switch (StateChange)
         {
             case HumanStateChange::DiedFromNaturalCauses:
             {
@@ -1328,22 +1164,17 @@ namespace Kernel
                 LOG_DEBUG_F( "%s: individual %d will be removed as part of downsampling\n", __FUNCTION__, suid.data );
                 if( broadcaster )
                 {
-                    // No event triggers currently associated with MC sampling.
+                    broadcaster->TriggerObservers( GetEventContext(), EventTrigger::MonteCarloDeaths );
                 }
             }
             break;
 
             default:
-            release_assert( false );
+            {
+                release_assert( false );
+            }
             break;
         }
-    }
-
-    float IndividualHuman::GetAcquisitionImmunity() const
-    {
-        release_assert( susceptibility );
-        release_assert( interventions );
-        return susceptibility->getModAcquire()*interventions->GetInterventionReducedAcquire();
     }
 
     INodeEventContext * IndividualHuman::GetNodeEventContext()
@@ -1395,101 +1226,6 @@ namespace Kernel
         return parent->GetProbMaternalTransmission();
     }
 
-/* clorton
-    std::string IndividualHuman::toJson()
-    {
-        IJsonObjectAdapter* adapter = CreateJsonObjAdapter();
-        adapter->CreateNewWriter();
-        adapter->BeginObject();
-
-        adapter->Insert("suid", suid.data);
-        adapter->Insert("age", m_age);
-        adapter->Insert("gender", m_gender);
-        adapter->Insert("mc_weight", m_mc_weight);
-        adapter->Insert("daily_mortality_rate", m_daily_mortality_rate);
-        adapter->Insert("above_poverty");
-        adapter->Insert("is_pregnant", is_pregnant);
-        adapter->Insert("pregnancy_timer", pregnancy_timer);
-
-        // susceptibility
-        // infections
-        // interventions
-        // transmissionGroupMembership
-        // transmissionGroupMembershipByRoute
-
-        adapter->Insert("is_infected", m_is_infected);
-        adapter->Insert("infectiousness", infectiousness);
-        adapter->Insert("Inf_Sample_Rate", Inf_Sample_Rate);
-        adapter->Insert("cumulativeInfs", cumulativeInfs);
-
-        adapter->Insert("new_infection_state", int(m_new_infection_state));
-        adapter->Insert("StateChange", int(StateChange));
-
-        adapter->Insert("migration_mod", migration_mod);
-        adapter->Insert("migration_type", migration_type);
-        adapter->Insert("migration_destination", migration_destination.data);
-        adapter->Insert("time_to_next_migration", time_to_next_migration);
-        adapter->Insert("will_return", will_return);
-        adapter->Insert("outbound", outbound);
-        adapter->Insert("max_waypoints", max_waypoints);
-        // waypoints
-        // waypoints_trip_type
-
-        // Properties
-
-        // parent
-
-        adapter->EndObject();
-
-        std::string s(adapter->ToString());
-        return s;
-    }
-
-    void IndividualHuman::fromJson(std::string& json)
-    {
-        IJsonObjectAdapter* adapter = CreateJsonObjAdapter();
-        adapter->Parse(json.c_str());
-
-        suid.data = adapter->GetUint("suid");
-        m_age = adapter->GetFloat("age");
-        m_gender = adapter->GetInt("gender");
-        m_mc_weight = adapter->GetFloat("mc_weight");
-        m_daily_mortality_rate = adapter->GetFloat("daily_mortality_rate");
-        is_pregnant = adapter->GetBool("is_pregnant");
-        pregnancy_timer = adapter->GetBool("pregnancy_timer");
-
-        // susceptibility
-        // infections
-        // interventions
-        // transmissionGroupMembership
-        // transmissionGroupMembershipByRoute
-
-        m_is_infected = adapter->GetBool("is_infected");
-        infectiousness = adapter->GetFloat("infectiousness");
-        Inf_Sample_Rate = adapter->GetFloat("Inf_Sample_Rate");
-        cumulativeInfs = adapter->GetInt("cumulativeInfs");
-
-        m_new_infection_state = NewInfectionState::_enum(adapter->GetInt("new_infection_state"));
-        StateChange = HumanStateChange(adapter->GetInt("StateChange"));
-
-        migration_mod = adapter->GetFloat("migration_mod");
-        migration_type = adapter->GetInt("migration_type");
-        migration_destination.data = adapter->GetUint("migration_destination");
-        time_to_next_migration = adapter->GetFloat("time_to_next_migration");
-        will_return = adapter->GetBool("will_return");
-        outbound = adapter->GetBool("outbound");
-        max_waypoints = adapter->GetInt("max_waypoints");
-        // waypoints
-        // waypoints_trip_type
-
-        // Properties
-
-        // parent
-
-        delete adapter;
-    }
-*/
-    
     void serialize_waypoint_types( IArchive& ar, std::vector<MigrationType::Enum>& waypointTripTypes )
     {
         size_t count = ar.IsWriter() ? waypointTripTypes.size() : -1;
@@ -1535,7 +1271,6 @@ namespace Kernel
         ar.labelElement("cumulativeInfs") & individual.cumulativeInfs;
         ar.labelElement("m_new_infection_state") & (uint32_t&)individual.m_new_infection_state;
         ar.labelElement("StateChange") & (uint32_t&)individual.StateChange;
-        ar.labelElement("migration_mod") & individual.migration_mod;
         ar.labelElement("migration_type") & (uint32_t&)individual.migration_type;
         ar.labelElement("migration_destination") & individual.migration_destination;
         ar.labelElement("migration_time_until_trip") & individual.migration_time_until_trip;

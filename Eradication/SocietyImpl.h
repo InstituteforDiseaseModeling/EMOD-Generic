@@ -66,5 +66,6 @@ namespace Kernel
         ConcurrencyConfiguration* p_concurrency;
 
         float pfa_selection_threshold ;
+        float pfa_burnin_duration;
     };
 }

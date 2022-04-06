@@ -110,8 +110,6 @@ namespace Kernel
         Infection(IIndividualHumanContext *context);
         virtual void Initialize(suids::suid _suid);
 
-        /* clorton virtual */ const SimulationConfig* params() /* clorton override */;
-
         virtual void CreateInfectionStrain(IStrainIdentity* infstrain);
         virtual void EvolveStrain(ISusceptibilityContext* immunity, float dt);
 

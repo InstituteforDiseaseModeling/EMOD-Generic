@@ -76,6 +76,9 @@ namespace Kernel
         target_property_key.constraints   = IPKey::GetConstrainedStringConstraintKey();
         target_property_value.constraints = IPKey::GetConstrainedStringConstraintValue();
 
+        // Group membership updates need to happen before accumulating infectivity
+        BaseIntervention::occurs_pre_infectivity = true;
+
         initConfigTypeMap("Target_Property_Key", &target_property_key, PC_Target_Property_Key_DESC_TEXT );
         initConfigTypeMap("Target_Property_Value", &target_property_value, PC_Target_Property_Value_DESC_TEXT );
         initConfigTypeMap("Daily_Probability", &probability, PC_Daily_Probability_DESC_TEXT, 0.0f, 1.0f );

@@ -24,16 +24,6 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_DERIVED(IndividualHumanAirborne, IndividualHuman)
     END_QUERY_INTERFACE_DERIVED(IndividualHumanAirborne, IndividualHuman)
 
-    void IndividualHumanAirborne::InitializeStaticsAirborne( const Configuration* config )
-    {
-        //SusceptibilityAirborneConfig immunity_config;
-        //immunity_config.Configure( config );
-        InfectionAirborneConfig infection_config;
-        infection_config.Configure( config );
-        //IndividualHumanAirborneConfig individual_config;
-        //individual_config.Configure( config );
-    }
-
     IndividualHumanAirborne *IndividualHumanAirborne::CreateHuman(INodeContext *context, suids::suid id, float MCweight, float init_age, int gender)
     {
         IndividualHumanAirborne *newindividual = _new_ IndividualHumanAirborne(id, MCweight, init_age, gender);
@@ -46,7 +36,7 @@ namespace Kernel
 
     void IndividualHumanAirborne::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        susceptibility = SusceptibilityAirborne::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        susceptibility = SusceptibilityAirborne::CreateSusceptibility(this, imm_mod, risk_mod);
     }
 
     IndividualHumanAirborne::IndividualHumanAirborne(suids::suid _suid, float monte_carlo_weight, float initial_age, int gender) :

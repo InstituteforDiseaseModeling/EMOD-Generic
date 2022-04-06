@@ -24,11 +24,6 @@ namespace Kernel
 
     class ClimateByData : public Climate
     {
-        GET_SCHEMA_STATIC_WRAPPER(ClimateByData)
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        DECLARE_QUERY_INTERFACE()
-        bool Configure( const Configuration* config );
-
     protected:
         int num_datapoints;
         int num_years;

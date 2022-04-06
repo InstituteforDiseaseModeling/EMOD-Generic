@@ -8,13 +8,22 @@
                         "Cost_To_Consumer": 10,
                         "Efficacy_Is_Multiplicative": 1,
                         "Vaccine_Take": 1,
-                        "Vaccine_Type": "Generic",
-                        "Waning_Config": {
+                        "Acquire_Config": {
                             "Expected_Discard_Time": 200,
                             "Initial_Effect": 1.0,
                             "class": "WaningEffectRandomBox"
                         },
-                        "class": "SimpleVaccine"
+                        "Transmit_Config": {
+                            "Expected_Discard_Time": 200,
+                            "Initial_Effect": 1.0,
+                            "class": "WaningEffectRandomBox"
+                        },
+                        "Mortality_Config": {
+                            "Expected_Discard_Time": 200,
+                            "Initial_Effect": 1.0,
+                            "class": "WaningEffectRandomBox"
+                        },
+                        "class": "Vaccine"
                     },
                     "Demographic_Coverage": 1.0,
                     "Trigger_Condition_List": [

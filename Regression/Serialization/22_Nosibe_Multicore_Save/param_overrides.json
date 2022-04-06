@@ -69,6 +69,9 @@
                 0,
                 30
             ],
+            "Serialization_Precision" : "REDUCED",
+            "Serialized_Population_Writing_Type": "TIMESTEP",
+            "Serialization_Mask_Node_Write": 0,
             "Simulation_Duration": 90,
             "Simulation_Timestep": 1
         }

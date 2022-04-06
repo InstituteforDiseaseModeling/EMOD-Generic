@@ -12,10 +12,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <map>
 #include <unordered_map>
-#include <queue>
 #include "suids.hpp"
 
 #include "BoostLibWrapper.h"
+#include "Climate.h"
 #include "IdmDateTime.h"
 #include "IIndividualHuman.h"
 #include "ISimulation.h"
@@ -26,7 +26,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IReport.h"
 #include "Configure.h"
 #include "IdmApi.h"
-#include "Serialization.h"
+#include "SerializationParameters.h"
 #include "EventsForOtherNodes.h"
 
 #include "SerializedPopulation.h"
@@ -40,6 +40,7 @@ namespace Kernel
     class  CampaignEvent;
     struct INodeContext;
     struct IEventCoordinator;
+    class  SimulationConfig;
     struct SimulationEventContext;
     class  SimulationEventContextHost;
     struct IMigrationInfoFactory;
@@ -67,7 +68,6 @@ namespace Kernel
         virtual bool TimeToStop() override;
 
         // IGlobalContext interfaces
-        virtual const SimulationConfig* GetSimulationConfigObj() const override;
         virtual const IInterventionFactory* GetInterventionFactory() const override;
 
         // ISimulation methods
@@ -78,6 +78,8 @@ namespace Kernel
         virtual void  RegisterNewNodeObserver(void* id, Kernel::ISimulation::callback_t observer) override;
         virtual void  UnregisterNewNodeObserver(void* id) override;
         virtual void  WriteReportsData() override;
+
+        virtual const SimParams* GetParams() const;
 
         virtual const DemographicsContext* GetDemographicsContext() const override;
 
@@ -114,16 +116,12 @@ namespace Kernel
         virtual void Initialize();
         virtual void Initialize(const ::Configuration *config) override;
 
-        static bool ValidateConfiguration(const ::Configuration *config);
+        virtual bool ValidateConfiguration(const ::Configuration *config);
 
         virtual void Reports_CreateBuiltIn();
         virtual void Reports_CreateCustom();
 
         // Initialization
-        virtual IMigrationInfoFactory* CreateMigrationInfoFactory ( const std::string& idreference,
-                                                                    MigrationStructure::Enum ms,
-                                                                    int torusSize );
-
         virtual void setupEventContextHost();
         virtual void setupMigrationQueues();
         void setupRng();
@@ -162,7 +160,7 @@ namespace Kernel
         friend Kernel::ISimulation* SerializedState::ReadDtkVersion2(FILE* f, const char* filename, Header& header);
         friend Kernel::ISimulation* SerializedState::ReadDtkVersion34(FILE* f, const char* filename, Header& header);
 
-        SerializationFlags serializationMask;
+        SerializationBitMask_t serializationFlags;
 
         // Nodes
         NodeMap_t nodes;
@@ -211,6 +209,7 @@ namespace Kernel
         tReportClassCreator nodeEventReportClassCreator;
         tReportClassCreator coordinatorEventReportClassCreator;
         tReportClassCreator surveillanceEventReportClassCreator;
+        tReportClassCreator sqlReportCreator;
 
         // Coordination of events for campaign intervention events
         std::list<IEventCoordinator*> event_coordinators;
@@ -222,7 +221,6 @@ namespace Kernel
 
         // Counters
         IdmDateTime currentTime;
-
         // JsonConfigurable variables
         SimType::Enum sim_type;
 
@@ -234,6 +232,7 @@ namespace Kernel
         bool enable_node_event_report;
         bool enable_coordinator_event_report;
         bool enable_surveillance_event_report;
+        bool enable_event_db;
         bool enable_termination_on_zero_total_infectivity;
         std::string campaign_filename;
         std::string custom_reports_filename;
@@ -245,7 +244,6 @@ namespace Kernel
         RandomNumberGeneratorFactory* m_pRngFactory;
 
         float min_sim_endtime; 
-        std::queue< int > py_inproc_tsteps;
 
 #pragma warning( pop )
     protected:

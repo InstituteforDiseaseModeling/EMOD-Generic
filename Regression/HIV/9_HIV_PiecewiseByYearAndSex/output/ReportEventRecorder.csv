@@ -95,9 +95,9 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 1999.04,1,OnART1,30,8676.64,F,0,0,N,N,1e+06,-1,None
 1999.04,1,OnART1,36,23682.4,F,0,0,N,N,1e+06,-1,None
 1999.04,1,OnART1,38,8367.87,M,0,0,N,N,1e+06,-1,None
-1999.04,1,NonDiseaseDeaths,78,12361.2,F,0,0,N,N,1e+06,-1,None
 1999.04,1,OnART1,80,3973.89,F,0,0,N,N,1e+06,-1,None
 1999.04,1,OnART1,107,21151.4,M,0,0,N,N,1e+06,-1,None
+1999.04,1,NonDiseaseDeaths,78,12361.2,F,0,0,N,N,1e+06,-1,None
 1999.12,1,OnART1,162,15766.4,F,0,0,N,N,1e+06,-1,None
 1999.12,1,OnART1,42,11025.3,M,0,0,N,N,1e+06,-1,None
 1999.12,1,OnART1,43,8797.04,F,0,0,N,N,1e+06,-1,None
@@ -108,7 +108,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 1999.12,1,OnART1,130,8981.2,F,0,0,N,N,1e+06,-1,None
 1999.12,1,OnART1,141,5665.84,M,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,4,12150.3,F,0,0,N,N,1e+06,-1,None
-1999.21,1,NonDiseaseDeaths,6,21705.9,M,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,7,5948.74,F,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,8,5459.17,F,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,14,13511.9,F,0,0,N,N,1e+06,-1,None
@@ -122,6 +121,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 1999.21,1,OnART1,82,8821.37,M,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,131,3731.96,F,0,0,N,N,1e+06,-1,None
 1999.21,1,OnART1,173,4510.15,M,0,0,N,N,1e+06,-1,None
+1999.21,1,NonDiseaseDeaths,6,21705.9,M,0,0,N,N,1e+06,-1,None
 1999.29,1,OnART1,16,7829.5,F,0,0,N,N,1e+06,-1,None
 1999.29,1,OnART1,20,11286.2,F,0,0,N,N,1e+06,-1,None
 1999.29,1,OnART1,24,4387.15,M,0,0,N,N,1e+06,-1,None
@@ -531,7 +531,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2000.27,1,OnART0,36,24132.4,F,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART0,38,8817.87,M,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART1,42,11445.3,M,0,0,N,N,1e+06,-1,None
-2000.27,1,NonDiseaseDeaths,42,11445.3,M,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART0,43,9217.04,F,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART0,44,7757.67,F,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART0,45,4933.22,M,0,0,N,N,1e+06,-1,None
@@ -590,6 +589,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2000.27,1,OnART1,145,13360.6,F,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART1,149,16436.6,F,0,0,N,N,1e+06,-1,None
 2000.27,1,OnART0,150,27027.4,M,0,0,N,N,1e+06,-1,None
+2000.27,1,NonDiseaseDeaths,42,11445.3,M,0,0,N,N,1e+06,-1,None
 2000.36,1,OnART0,5,26741.9,F,0,0,N,N,1e+06,-1,None
 2000.36,1,OnART0,156,13424.1,F,0,0,N,N,1e+06,-1,None
 2000.36,1,OnART0,9,8306.63,M,0,0,N,N,1e+06,-1,None
@@ -1210,7 +1210,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.1,1,OnART1,102,6951.46,M,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART0,163,5068.3,M,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART1,105,9857.84,M,0,0,N,N,1e+06,-1,None
-2001.1,1,NonDiseaseDeaths,108,16599.3,M,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART0,113,7268.59,F,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART0,114,15225.9,F,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART0,119,4980.74,M,0,0,N,N,1e+06,-1,None
@@ -1232,6 +1231,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.1,1,OnART0,149,16736.6,F,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART1,150,27327.4,M,0,0,N,N,1e+06,-1,None
 2001.1,1,OnART0,151,14944,F,0,0,N,N,1e+06,-1,None
+2001.1,1,NonDiseaseDeaths,108,16599.3,M,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,14,14231.9,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,16,8519.5,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,17,24512.5,M,0,0,N,N,1e+06,-1,None
@@ -1251,7 +1251,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.18,1,OnART1,48,4175.31,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART1,49,10991.8,M,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,55,21988.4,M,0,0,N,N,1e+06,-1,None
-2001.18,1,NonDiseaseDeaths,55,21988.4,M,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,57,4237.38,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,58,14938.2,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART1,170,5191.97,M,0,0,N,N,1e+06,-1,None
@@ -1291,6 +1290,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.18,1,OnART0,145,13690.6,F,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,173,5230.15,M,0,0,N,N,1e+06,-1,None
 2001.18,1,OnART0,151,14974,F,0,0,N,N,1e+06,-1,None
+2001.18,1,NonDiseaseDeaths,55,21988.4,M,0,0,N,N,1e+06,-1,None
 2001.26,1,OnART0,2,8060.41,F,0,0,N,N,1e+06,-1,None
 2001.26,1,OnART0,156,13754.1,F,0,0,N,N,1e+06,-1,None
 2001.26,1,OnART1,9,8636.63,M,0,0,N,N,1e+06,-1,None
@@ -1620,7 +1620,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.67,1,OnART0,8,6359.17,F,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART0,13,14847.2,M,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART1,14,14411.9,F,0,0,N,N,1e+06,-1,None
-2001.67,1,NonDiseaseDeaths,19,34643.9,M,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART0,22,13149.4,F,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART0,25,15697.1,F,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART0,28,14348.6,F,0,0,N,N,1e+06,-1,None
@@ -1679,6 +1678,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.67,1,OnART0,165,14042.1,F,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART1,148,5528.1,M,0,0,N,N,1e+06,-1,None
 2001.67,1,OnART0,164,11547.9,M,0,0,N,N,1e+06,-1,None
+2001.67,1,NonDiseaseDeaths,19,34643.9,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,3,6361.41,F,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,4,13080.3,F,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART1,5,27251.9,F,0,0,N,N,1e+06,-1,None
@@ -1727,7 +1727,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.75,1,OnART0,115,14788.4,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,116,15800.1,F,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,118,6663.67,F,0,0,N,N,1e+06,-1,None
-2001.75,1,NonDiseaseDeaths,121,16613.1,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,125,11479.7,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,127,9942.15,F,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,128,6824.85,M,0,0,N,N,1e+06,-1,None
@@ -1746,6 +1745,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2001.75,1,OnART0,148,5558.1,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART0,150,27567.4,M,0,0,N,N,1e+06,-1,None
 2001.75,1,OnART1,151,15184,F,0,0,N,N,1e+06,-1,None
+2001.75,1,NonDiseaseDeaths,121,16613.1,M,0,0,N,N,1e+06,-1,None
 2001.84,1,OnART0,5,27281.9,F,0,0,N,N,1e+06,-1,None
 2001.84,1,OnART1,11,17058.3,F,0,0,N,N,1e+06,-1,None
 2001.84,1,OnART0,16,8759.5,F,0,0,N,N,1e+06,-1,None
@@ -2097,7 +2097,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2002.41,1,OnART0,162,16966.4,F,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,164,11817.9,M,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,21,16755.8,M,0,0,N,N,1e+06,-1,None
-2002.41,1,NonDiseaseDeaths,21,16755.8,M,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,26,6158.53,F,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,27,9920.33,F,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,28,14618.6,F,0,0,N,N,1e+06,-1,None
@@ -2141,6 +2140,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2002.41,1,OnART0,141,6865.84,M,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART0,165,14312.1,F,0,0,N,N,1e+06,-1,None
 2002.41,1,OnART1,173,5680.15,M,0,0,N,N,1e+06,-1,None
+2002.41,1,NonDiseaseDeaths,21,16755.8,M,0,0,N,N,1e+06,-1,None
 2002.49,1,OnART1,3,6631.41,F,0,0,N,N,1e+06,-1,None
 2002.49,1,OnART0,4,13350.3,F,0,0,N,N,1e+06,-1,None
 2002.49,1,OnART1,7,7148.74,F,0,0,N,N,1e+06,-1,None
@@ -3072,12 +3072,12 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2005.29,1,OnART1,112,8768.31,M,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART1,122,5703.27,F,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART1,124,7173.99,F,0,0,N,N,1e+06,-1,None
-2005.29,1,NonDiseaseDeaths,129,32924,F,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART0,130,11231.2,F,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART1,136,9750.41,F,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART1,140,30045.8,M,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART0,160,14900.1,M,0,0,N,N,1e+06,-1,None
 2005.29,1,OnART0,143,14577.2,F,0,0,N,N,1e+06,-1,None
+2005.29,1,NonDiseaseDeaths,129,32924,F,0,0,N,N,1e+06,-1,None
 2005.37,1,OnART0,14,15761.9,F,0,0,N,N,1e+06,-1,None
 2005.37,1,OnART0,27,11000.3,F,0,0,N,N,1e+06,-1,None
 2005.37,1,OnART0,28,15698.6,F,0,0,N,N,1e+06,-1,None
@@ -3629,7 +3629,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2006.77,1,OnART0,171,9521.79,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART0,93,12040.5,M,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART0,94,9575.69,M,0,0,N,N,1e+06,-1,None
-2006.77,1,NonDiseaseDeaths,95,29715.5,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART0,96,33910.7,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART0,161,11745.7,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART1,163,7138.3,M,0,0,N,N,1e+06,-1,None
@@ -3643,6 +3642,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2006.77,1,OnART0,135,12715.7,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART1,136,10290.4,F,0,0,N,N,1e+06,-1,None
 2006.77,1,OnART0,143,15117.2,F,0,0,N,N,1e+06,-1,None
+2006.77,1,NonDiseaseDeaths,95,29715.5,F,0,0,N,N,1e+06,-1,None
 2006.85,1,OnART1,156,15794.1,F,0,0,N,N,1e+06,-1,None
 2006.85,1,OnART0,12,7820.4,M,0,0,N,N,1e+06,-1,None
 2006.85,1,OnART0,14,16301.9,F,0,0,N,N,1e+06,-1,None
@@ -3744,7 +3744,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2006.93,1,OnART0,145,15790.6,F,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART1,3,8281.41,F,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART1,5,29171.9,F,0,0,N,N,1e+06,-1,None
-2007.01,1,NonDiseaseDeaths,5,29171.9,F,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART1,14,16361.9,F,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART1,15,10899.3,M,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART0,16,10649.5,F,0,0,N,N,1e+06,-1,None
@@ -3790,6 +3789,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2007.01,1,OnART0,140,30675.8,M,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART1,141,8545.84,M,0,0,N,N,1e+06,-1,None
 2007.01,1,OnART0,145,15820.6,F,0,0,N,N,1e+06,-1,None
+2007.01,1,NonDiseaseDeaths,5,29171.9,F,0,0,N,N,1e+06,-1,None
 2007.1,1,OnART1,7,8828.74,F,0,0,N,N,1e+06,-1,None
 2007.1,1,OnART0,8,8339.17,F,0,0,N,N,1e+06,-1,None
 2007.1,1,OnART1,8,8339.17,F,0,0,N,N,1e+06,-1,None
@@ -4066,7 +4066,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2007.51,1,OnART1,49,13301.8,M,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART1,57,6547.38,F,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART1,58,17248.2,F,0,0,N,N,1e+06,-1,None
-2007.51,1,NonDiseaseDeaths,58,17248.2,F,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART0,59,7667.33,M,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART0,61,12529.3,F,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART1,61,12529.3,F,0,0,N,N,1e+06,-1,None
@@ -4097,9 +4096,10 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2007.51,1,OnART1,132,15650.2,M,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART1,134,7465.76,F,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART0,137,10639.7,M,0,0,N,N,1e+06,-1,None
-2007.51,1,NonDiseaseDeaths,140,30855.8,M,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART0,141,8725.84,M,0,0,N,N,1e+06,-1,None
 2007.51,1,OnART1,145,16000.6,F,0,0,N,N,1e+06,-1,None
+2007.51,1,NonDiseaseDeaths,58,17248.2,F,0,0,N,N,1e+06,-1,None
+2007.51,1,NonDiseaseDeaths,140,30855.8,M,0,0,N,N,1e+06,-1,None
 2007.59,1,OnART1,4,15210.3,F,0,0,N,N,1e+06,-1,None
 2007.59,1,OnART0,7,9008.74,F,0,0,N,N,1e+06,-1,None
 2007.59,1,OnART1,8,8519.17,F,0,0,N,N,1e+06,-1,None
@@ -4656,7 +4656,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2008.41,1,OnART1,8,8819.17,F,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART0,13,17307.2,M,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART1,17,27152.5,M,0,0,N,N,1e+06,-1,None
-2008.41,1,NonDiseaseDeaths,17,27152.5,M,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART1,162,19156.4,F,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART1,164,14007.9,M,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART0,20,14616.2,F,0,0,N,N,1e+06,-1,None
@@ -4720,6 +4719,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2008.41,1,OnART1,137,10969.7,M,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART1,138,15219.6,M,0,0,N,N,1e+06,-1,None
 2008.41,1,OnART1,160,16040.1,M,0,0,N,N,1e+06,-1,None
+2008.41,1,NonDiseaseDeaths,17,27152.5,M,0,0,N,N,1e+06,-1,None
 2008.49,1,OnART1,2,10700.4,F,0,0,N,N,1e+06,-1,None
 2008.49,1,OnART1,3,8821.41,F,0,0,N,N,1e+06,-1,None
 2008.49,1,OnART0,156,16394.1,F,0,0,N,N,1e+06,-1,None
@@ -5254,7 +5254,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.07,1,OnART0,163,7978.3,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,105,12767.8,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,106,12659.2,M,0,0,N,N,1e+06,-1,None
-2009.07,1,NonDiseaseDeaths,154,21310.3,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,109,14339.7,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,111,16230.8,F,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,113,10178.6,F,0,0,N,N,1e+06,-1,None
@@ -5282,6 +5281,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.07,1,OnART0,137,11209.7,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,166,8140.34,M,0,0,N,N,1e+06,-1,None
 2009.07,1,OnART0,141,9295.84,M,0,0,N,N,1e+06,-1,None
+2009.07,1,NonDiseaseDeaths,154,21310.3,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,2,10940.4,F,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,3,9061.41,F,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,4,15780.3,F,0,0,N,N,1e+06,-1,None
@@ -5360,7 +5360,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.15,1,OnART1,86,8047.61,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,87,32242.6,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART1,87,32242.6,M,0,0,N,N,1e+06,-1,None
-2009.15,1,NonDiseaseDeaths,87,32242.6,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,88,15331.5,F,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,89,11182,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,90,26451.6,M,0,0,N,N,1e+06,-1,None
@@ -5406,6 +5405,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.15,1,OnART0,138,15489.6,M,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART0,139,7970.05,F,0,0,N,N,1e+06,-1,None
 2009.15,1,OnART1,166,8170.34,M,0,0,N,N,1e+06,-1,None
+2009.15,1,NonDiseaseDeaths,87,32242.6,M,0,0,N,N,1e+06,-1,None
 2009.23,1,OnART0,2,10970.4,F,0,0,N,N,1e+06,-1,None
 2009.23,1,OnART1,2,10970.4,F,0,0,N,N,1e+06,-1,None
 2009.23,1,OnART0,3,9091.41,F,0,0,N,N,1e+06,-1,None
@@ -6122,7 +6122,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.64,1,OnART1,88,15511.5,F,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART0,89,11362,M,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART0,90,26631.6,M,0,0,N,N,1e+06,-1,None
-2009.64,1,NonDiseaseDeaths,90,26631.6,M,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART0,171,10571.8,F,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART1,171,10571.8,F,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART0,93,13090.5,M,0,0,N,N,1e+06,-1,None
@@ -6174,6 +6173,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2009.64,1,OnART0,137,11419.7,M,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART1,139,8150.05,F,0,0,N,N,1e+06,-1,None
 2009.64,1,OnART1,166,8350.34,M,0,0,N,N,1e+06,-1,None
+2009.64,1,NonDiseaseDeaths,90,26631.6,M,0,0,N,N,1e+06,-1,None
 2009.73,1,OnART0,2,11150.4,F,0,0,N,N,1e+06,-1,None
 2009.73,1,OnART1,2,11150.4,F,0,0,N,N,1e+06,-1,None
 2009.73,1,OnART0,3,9271.41,F,0,0,N,N,1e+06,-1,None
@@ -6925,7 +6925,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2010.14,1,OnART0,171,10751.8,F,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,93,13270.5,M,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,96,35140.7,F,0,0,N,N,1e+06,-1,None
-2010.14,1,NonDiseaseDeaths,96,35140.7,F,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,97,8569.43,M,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,161,12975.7,F,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,101,18072.3,F,0,0,N,N,1e+06,-1,None
@@ -6968,6 +6967,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2010.14,1,OnART0,137,11599.7,M,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,138,15849.6,M,0,0,N,N,1e+06,-1,None
 2010.14,1,OnART0,139,8330.05,F,0,0,N,N,1e+06,-1,None
+2010.14,1,NonDiseaseDeaths,96,35140.7,F,0,0,N,N,1e+06,-1,None
 2010.22,1,OnART1,2,11330.4,F,0,0,N,N,1e+06,-1,None
 2010.22,1,OnART1,3,9451.41,F,0,0,N,N,1e+06,-1,None
 2010.22,1,OnART0,4,16170.3,F,0,0,N,N,1e+06,-1,None
@@ -11543,7 +11543,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2013.18,1,OnART0,169,12420.1,F,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,40,15024.6,M,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,41,21674.6,M,0,0,N,N,1e+06,-1,None
-2013.18,1,NonDiseaseDeaths,155,21843.7,M,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,43,13927,F,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART1,43,13927,F,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,45,9643.22,M,0,0,N,N,1e+06,-1,None
@@ -11638,6 +11637,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2013.18,1,OnART0,135,15055.7,F,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,136,12630.4,F,0,0,N,N,1e+06,-1,None
 2013.18,1,OnART0,137,12709.7,M,0,0,N,N,1e+06,-1,None
+2013.18,1,NonDiseaseDeaths,155,21843.7,M,0,0,N,N,1e+06,-1,None
 2013.26,1,OnART1,2,12440.4,F,0,0,N,N,1e+06,-1,None
 2013.26,1,OnART0,3,10561.4,F,0,0,N,N,1e+06,-1,None
 2013.26,1,OnART1,3,10561.4,F,0,0,N,N,1e+06,-1,None
@@ -11854,7 +11854,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2013.34,1,OnART0,104,12773,F,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART1,104,12773,F,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART1,105,14327.8,M,0,0,N,N,1e+06,-1,None
-2013.34,1,NonDiseaseDeaths,107,26371.4,M,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART0,160,17840.1,M,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART0,109,15899.7,M,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART0,110,25998.5,F,0,0,N,N,1e+06,-1,None
@@ -11884,6 +11883,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2013.34,1,OnART0,136,12690.4,F,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART1,136,12690.4,F,0,0,N,N,1e+06,-1,None
 2013.34,1,OnART0,137,12769.7,M,0,0,N,N,1e+06,-1,None
+2013.34,1,NonDiseaseDeaths,107,26371.4,M,0,0,N,N,1e+06,-1,None
 2013.42,1,OnART1,4,17340.3,F,0,0,N,N,1e+06,-1,None
 2013.42,1,OnART0,148,9818.1,M,0,0,N,N,1e+06,-1,None
 2013.42,1,OnART1,156,18194.1,F,0,0,N,N,1e+06,-1,None
@@ -13272,7 +13272,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.33,1,OnART0,138,17379.6,M,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART1,48,8975.31,F,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART1,50,16320.2,F,0,0,N,N,1e+06,-1,None
-2014.33,1,NonDiseaseDeaths,51,20035.4,M,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART0,52,15265.7,F,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART1,52,15265.7,F,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART0,53,13535.7,F,0,0,N,N,1e+06,-1,None
@@ -13352,6 +13351,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.33,1,OnART0,134,9955.76,F,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART0,135,15475.7,F,0,0,N,N,1e+06,-1,None
 2014.33,1,OnART1,135,15475.7,F,0,0,N,N,1e+06,-1,None
+2014.33,1,NonDiseaseDeaths,51,20035.4,M,0,0,N,N,1e+06,-1,None
 2014.41,1,OnART0,4,17700.3,F,0,0,N,N,1e+06,-1,None
 2014.41,1,OnART0,148,10178.1,M,0,0,N,N,1e+06,-1,None
 2014.41,1,OnART0,156,18554.1,F,0,0,N,N,1e+06,-1,None
@@ -13812,7 +13812,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.66,1,OnART0,157,9146.26,M,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART1,157,9146.26,M,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART1,79,18305.7,M,0,0,N,N,1e+06,-1,None
-2014.66,1,NonDiseaseDeaths,79,18305.7,M,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART0,80,9673.89,F,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART1,82,14461.4,M,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART0,84,12367.1,M,0,0,N,N,1e+06,-1,None
@@ -13862,6 +13861,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.66,1,OnART0,172,15066.2,M,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART0,135,15595.7,F,0,0,N,N,1e+06,-1,None
 2014.66,1,OnART1,135,15595.7,F,0,0,N,N,1e+06,-1,None
+2014.66,1,NonDiseaseDeaths,79,18305.7,M,0,0,N,N,1e+06,-1,None
 2014.74,1,OnART0,2,12980.4,F,0,0,N,N,1e+06,-1,None
 2014.74,1,OnART0,156,18674.1,F,0,0,N,N,1e+06,-1,None
 2014.74,1,OnART0,7,11618.7,F,0,0,N,N,1e+06,-1,None
@@ -14333,7 +14333,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.99,1,OnART0,106,14819.2,M,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART0,110,26598.5,F,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART1,110,26598.5,F,0,0,N,N,1e+06,-1,None
-2014.99,1,NonDiseaseDeaths,110,26598.5,F,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART1,111,18390.8,F,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART0,113,12338.6,F,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART0,114,20295.9,F,0,0,N,N,1e+06,-1,None
@@ -14356,6 +14355,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2014.99,1,OnART1,132,18380.2,M,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART0,172,15186.2,M,0,0,N,N,1e+06,-1,None
 2014.99,1,OnART1,134,10195.8,F,0,0,N,N,1e+06,-1,None
+2014.99,1,NonDiseaseDeaths,110,26598.5,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,2,13100.4,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,3,11221.4,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,148,10418.1,M,0,0,N,N,1e+06,-1,None
@@ -14369,7 +14369,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.07,1,OnART0,14,19301.9,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART1,162,21586.4,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART1,20,17046.2,F,0,0,N,N,1e+06,-1,None
-2015.07,1,NonDiseaseDeaths,150,32427.4,M,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,22,18039.4,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART1,22,18039.4,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,25,20587.1,F,0,0,N,N,1e+06,-1,None
@@ -14468,6 +14467,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.07,1,OnART1,130,14801.2,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,131,9521.96,F,0,0,N,N,1e+06,-1,None
 2015.07,1,OnART0,172,15216.2,M,0,0,N,N,1e+06,-1,None
+2015.07,1,NonDiseaseDeaths,150,32427.4,M,0,0,N,N,1e+06,-1,None
 2015.15,1,OnART0,2,13130.4,F,0,0,N,N,1e+06,-1,None
 2015.15,1,OnART1,2,13130.4,F,0,0,N,N,1e+06,-1,None
 2015.15,1,OnART0,3,11251.4,F,0,0,N,N,1e+06,-1,None
@@ -14800,7 +14800,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.32,1,OnART1,114,20415.9,F,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART0,116,20750.1,F,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART1,116,20750.1,F,0,0,N,N,1e+06,-1,None
-2015.32,1,NonDiseaseDeaths,117,27355.2,M,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART1,118,11613.7,F,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART0,119,10170.7,M,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART1,119,10170.7,M,0,0,N,N,1e+06,-1,None
@@ -14813,6 +14812,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.32,1,OnART0,128,11774.8,M,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART0,149,21926.6,F,0,0,N,N,1e+06,-1,None
 2015.32,1,OnART1,149,21926.6,F,0,0,N,N,1e+06,-1,None
+2015.32,1,NonDiseaseDeaths,117,27355.2,M,0,0,N,N,1e+06,-1,None
 2015.4,1,OnART0,2,13220.4,F,0,0,N,N,1e+06,-1,None
 2015.4,1,OnART0,3,11341.4,F,0,0,N,N,1e+06,-1,None
 2015.4,1,OnART0,148,10538.1,M,0,0,N,N,1e+06,-1,None
@@ -15657,11 +15657,11 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.89,1,OnART1,122,9573.27,F,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART0,124,11044,F,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART0,127,15102.1,F,0,0,N,N,1e+06,-1,None
-2015.89,1,NonDiseaseDeaths,127,15102.1,F,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART0,128,11984.8,M,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART0,130,15101.2,F,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART0,131,9821.96,F,0,0,N,N,1e+06,-1,None
 2015.89,1,OnART1,131,9821.96,F,0,0,N,N,1e+06,-1,None
+2015.89,1,NonDiseaseDeaths,127,15102.1,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,2,13430.4,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,3,11551.4,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,4,18270.3,F,0,0,N,N,1e+06,-1,None
@@ -15726,7 +15726,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.97,1,OnART0,72,13773,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART1,72,13773,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,73,26546,F,0,0,N,N,1e+06,-1,None
-2015.97,1,NonDiseaseDeaths,73,26546,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,74,11229.8,M,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,158,24161.8,M,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART1,158,24161.8,M,0,0,N,N,1e+06,-1,None
@@ -15775,6 +15774,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2015.97,1,OnART1,149,22166.6,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART0,130,15131.2,F,0,0,N,N,1e+06,-1,None
 2015.97,1,OnART1,130,15131.2,F,0,0,N,N,1e+06,-1,None
+2015.97,1,NonDiseaseDeaths,73,26546,F,0,0,N,N,1e+06,-1,None
 2016.05,1,OnART0,2,13460.4,F,0,0,N,N,1e+06,-1,None
 2016.05,1,OnART1,2,13460.4,F,0,0,N,N,1e+06,-1,None
 2016.05,1,OnART0,3,11581.4,F,0,0,N,N,1e+06,-1,None
@@ -18505,7 +18505,6 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2017.86,1,OnART0,84,13537.1,M,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART0,85,25664.4,M,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART1,85,25664.4,M,0,0,N,N,1e+06,-1,None
-2017.86,1,NonDiseaseDeaths,85,25664.4,M,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART0,141,12505.8,M,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART1,141,12505.8,M,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART0,89,14362,M,0,0,N,N,1e+06,-1,None
@@ -18541,6 +18540,7 @@ Year,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness,HasHIV,
 2017.86,1,OnART0,131,10542,F,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART1,131,10542,F,0,0,N,N,1e+06,-1,None
 2017.86,1,OnART0,149,22856.6,F,0,0,N,N,1e+06,-1,None
+2017.86,1,NonDiseaseDeaths,85,25664.4,M,0,0,N,N,1e+06,-1,None
 2017.95,1,OnART0,2,14150.4,F,0,0,N,N,1e+06,-1,None
 2017.95,1,OnART0,3,12271.4,F,0,0,N,N,1e+06,-1,None
 2017.95,1,OnART1,3,12271.4,F,0,0,N,N,1e+06,-1,None

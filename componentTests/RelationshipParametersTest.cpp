@@ -92,13 +92,13 @@ SUITE(RelationshipParametersTest)
     TEST(TestMigrationActionsDistributionGreaterThanOne)
     {
         TestHelper_Exception( __LINE__, "testdata/RelationshipParametersTest/TestMigrationActionsDistributionGreaterThanOne.json",
-            "Configuration variable Migration_Actions_Distribution with value 5.5 out of range: greater than 1." );
+            "Configuration variable 'Migration_Actions_Distribution' with value 5.5 out of range: greater than 1." );
     }
 
     TEST(TestMigrationActionsDistributionLessThanZero)
     {
         TestHelper_Exception( __LINE__, "testdata/RelationshipParametersTest/TestMigrationActionsDistributionLessThanZero.json",
-            "Configuration variable Migration_Actions_Distribution with value -0.2 out of range: less than 0." );
+            "Configuration variable 'Migration_Actions_Distribution' with value -0.2 out of range: less than 0." );
     }
 
     TEST(TestMigrationActionsDistributionNotEqualToOne)

@@ -24,7 +24,7 @@
                                 "class": "WaningEffectExponential"
                             },
                             "Vaccine_Take": 0.95,
-                            "class": "MultiEffectVaccine"
+                            "class": "Vaccine"
                         }
                     ],
                     "Calendar": [
@@ -92,7 +92,7 @@
                         "class": "WaningEffectExponential"
                     },
                     "Vaccine_Take": 1,
-                    "class": "MultiEffectVaccine"
+                    "class": "Vaccine"
                 },
                 "Property_Restrictions": [
                     "Accessibility:VaccineTake"
@@ -131,7 +131,7 @@
                             "class": "WaningEffectExponential"
                         },
                         "Vaccine_Take": 0.95,
-                        "class": "MultiEffectVaccine"
+                        "class": "Vaccine"
                     },
                     "Event_Or_Config": "Config",
                     "Single_Use": 1,
@@ -176,7 +176,7 @@
                                     "class": "WaningEffectExponential"
                                 },
                                 "Vaccine_Take": 0.95,
-                                "class": "MultiEffectVaccine"
+                                "class": "Vaccine"
                             }
                         ],
                         "Calendar": [
@@ -296,7 +296,7 @@
                         "class": "WaningEffectExponential"
                     },
                     "Vaccine_Take": 1,
-                    "class": "MultiEffectVaccine"
+                    "class": "Vaccine"
                 },
                 "Property_Restrictions": [
                     "Accessibility:VaccineRefuse"

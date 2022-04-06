@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #include "StrainIdentity.h"
 #include "Infection.h"
-#include "SimulationConfig.h"
 #include "Log.h"
 
 SETUP_LOGGING( "StrainIdentity" )

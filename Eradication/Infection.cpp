@@ -219,17 +219,10 @@ namespace Kernel
         StateChange = InfectionStateChange::None;
         duration += dt;
 
-        // To query for mortality-reducing effects of drugs or vaccines
-        IDrugVaccineInterventionEffects* idvie = nullptr;
-
         // if disease has a daily mortality rate, and disease mortality is on, then check for death. mortality_time_course depends-on enable_disease_mortality BUT DAILY_MORTALITY is default
         if (InfectionConfig::enable_disease_mortality && (InfectionConfig::mortality_time_course == MortalityTimeCourse::DAILY_MORTALITY) && (duration > incubation_timer))
         {
-            if ( s_OK != GetParent()->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "GetParent()->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext" );
-            }
-            float prob = InfectionConfig::base_mortality * dt * immunity->getModMortality() * idvie->GetInterventionReducedMortality();
+            float prob = InfectionConfig::base_mortality * dt * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
             if( GetParent()->GetRng()->SmartDraw( prob ) )
             { 
                 StateChange = InfectionStateChange::Fatal; 
@@ -241,11 +234,7 @@ namespace Kernel
             // disease mortality active and is accounted for at end of infectious period. mortality_time_course depends-on enable_disease_mortality
             if (InfectionConfig::enable_disease_mortality && InfectionConfig::mortality_time_course == MortalityTimeCourse::MORTALITY_AFTER_INFECTIOUS )
             {
-                if ( s_OK != GetParent()->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-                {
-                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "GetParent()->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanInterventionsContext" );
-                }
-                float prob = InfectionConfig::base_mortality * immunity->getModMortality() * idvie->GetInterventionReducedMortality();
+                float prob = InfectionConfig::base_mortality * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
                 if( GetParent()->GetRng()->SmartDraw( prob ) )
                 {
                     StateChange = InfectionStateChange::Fatal;
@@ -317,12 +306,6 @@ namespace Kernel
     suids::suid Infection::GetSuid() const 
     {
         return suid;
-    }
-
-    // overridden in derived classes but with different return types to hide the casting operation
-    const SimulationConfig* Infection::params()
-    {
-        return GET_CONFIGURABLE(SimulationConfig);
     }
 
     InfectionStateChange::_enum Infection::GetStateChange() const

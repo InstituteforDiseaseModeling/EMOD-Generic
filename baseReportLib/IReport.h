@@ -20,6 +20,7 @@ namespace Kernel
     struct INodeContext;
     struct INodeEventContext;
     struct IIndividualHuman;
+    struct ISimulationContext;
     struct ISimulationEventContext;
 
     class IDMAPI IReport : public JsonConfigurable
@@ -37,6 +38,7 @@ namespace Kernel
         // --- Public Methods
         // ------------------
         virtual void Initialize(unsigned int nrmSize) = 0;
+        virtual bool Validate(const ISimulationContext *parent_sim)  = 0;
         virtual void CheckForValidNodeIDs(const std::vector<ExternalNodeId_t>& demographicNodeIds) = 0;
 
         virtual void UpdateEventRegistration( float currentTime, 
@@ -69,6 +71,7 @@ namespace Kernel
         // --- ISupport Methods
         // ---------------------
         virtual bool Configure( const Configuration* inputJson ) { return true ; };
+        virtual bool Validate( const ISimulationContext *parent_sim ) { return true; }
         virtual Kernel::QueryResult QueryInterface(Kernel::iid_t iid, void **ppvObject) { return Kernel::e_NOINTERFACE; }
         virtual int32_t AddRef()  { return -1 ; }
         virtual int32_t Release() { return -1 ; }

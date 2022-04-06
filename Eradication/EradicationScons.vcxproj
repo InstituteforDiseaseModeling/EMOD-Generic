@@ -36,7 +36,6 @@
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
   </PropertyGroup>
   <ItemGroup>
-    <ClInclude Include="Contexts.h" />
     <ClInclude Include="SimulationFactory.h" />
   </ItemGroup>
   <ItemGroup>

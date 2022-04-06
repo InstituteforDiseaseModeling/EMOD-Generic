@@ -56,7 +56,7 @@ namespace Kernel
     bool LinearSplineHabitat::Configure( const Configuration* inputJson )
     {
         initConfigTypeMap( "Max_Larval_Capacity", &m_max_larval_capacity, Max_Larval_Capacity_DESC_TEXT, 0.0f, FLT_MAX, 1E10 );
-        initConfigComplexType( "Capacity_Distribution_Per_Year", &capacity_distribution, Capacity_Distribution_Per_Year_DESC_TEXT );
+        initConfigTypeMap( "Capacity_Distribution_Per_Year", &capacity_distribution, Capacity_Distribution_Per_Year_DESC_TEXT );
 
         // -----------------------------------------------------------------------------------------------
         // --- This is a little different.  It is assumed that the inputJson element is the entire element
@@ -221,21 +221,21 @@ namespace Kernel
     void ConstantHabitat::UpdateCurrentLarvalCapacity(float dt, INodeContext* node)
     {
         LOG_DEBUG_F("Habitat type = CONSTANT, Max larval capacity = %f\n", m_max_larval_capacity);
-        m_current_larval_capacity = m_max_larval_capacity * params()->lloffset * params()->lloffset;
+        m_current_larval_capacity = m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset;
     }
 
     void TemporaryRainfallHabitat::UpdateCurrentLarvalCapacity(float dt, INodeContext* node)
     {
         const Climate* localWeather = node->GetLocalWeather();
         LOG_DEBUG_F("Habitat type = TEMPORARY_RAINFALL, Max larval capacity = %f\n", m_max_larval_capacity);
-        m_current_larval_capacity += float(localWeather->accumulated_rainfall() * m_max_larval_capacity * params()->lloffset * params()->lloffset - m_current_larval_capacity * exp(LARVAL_HABITAT_FACTOR1 / (localWeather->airtemperature() + CELSIUS_TO_KELVIN)) * LARVAL_HABITAT_FACTOR2 * params()->vector_params->tempHabitatDecayScalar * sqrt(LARVAL_HABITAT_FACTOR3 / (localWeather->airtemperature() + CELSIUS_TO_KELVIN)) * (1.0f - localWeather->humidity()) * dt);
+        m_current_larval_capacity += float(localWeather->accumulated_rainfall() * m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset - m_current_larval_capacity * exp(LARVAL_HABITAT_FACTOR1 / (localWeather->airtemperature() + CELSIUS_TO_KELVIN)) * LARVAL_HABITAT_FACTOR2 * params()->vector_params->tempHabitatDecayScalar * sqrt(LARVAL_HABITAT_FACTOR3 / (localWeather->airtemperature() + CELSIUS_TO_KELVIN)) * (1.0f - localWeather->humidity()) * dt);
     }
 
     void WaterVegetationHabitat::UpdateCurrentLarvalCapacity(float dt, INodeContext* node)
     {
         const Climate* localWeather = node->GetLocalWeather();
         LOG_DEBUG_F("Habitat type = WATER_VEGETATION, Max larval capacity = %f\n", m_max_larval_capacity);
-        m_current_larval_capacity += localWeather->accumulated_rainfall() * m_max_larval_capacity * params()->lloffset * params()->lloffset - params()->vector_params->semipermanentHabitatDecayRate * dt * m_current_larval_capacity;
+        m_current_larval_capacity += localWeather->accumulated_rainfall() * m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset - params()->vector_params->semipermanentHabitatDecayRate * dt * m_current_larval_capacity;
     }
 
     void HumanPopulationHabitat::UpdateCurrentLarvalCapacity(float dt, INodeContext* node)
@@ -248,10 +248,10 @@ namespace Kernel
     {
         const Climate* localWeather = node->GetLocalWeather();
         LOG_DEBUG_F("Habitat type = BRACKISH_SWAMP, Max larval capacity = %f\n", m_max_larval_capacity);
-        m_current_larval_capacity += localWeather->accumulated_rainfall() * float(MM_PER_METER) / params()->vector_params->mmRainfallToFillSwamp * m_max_larval_capacity * params()->lloffset * params()->lloffset - params()->vector_params->semipermanentHabitatDecayRate * dt * m_current_larval_capacity;
-        if(m_current_larval_capacity > m_max_larval_capacity * params()->lloffset * params()->lloffset)
+        m_current_larval_capacity += localWeather->accumulated_rainfall() * float(MM_PER_METER) / params()->vector_params->mmRainfallToFillSwamp * m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset - params()->vector_params->semipermanentHabitatDecayRate * dt * m_current_larval_capacity;
+        if(m_current_larval_capacity > m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset)
         {
-            m_current_larval_capacity = m_max_larval_capacity * params()->lloffset * params()->lloffset;
+            m_current_larval_capacity = m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset;
         }
     }
 
@@ -293,7 +293,7 @@ namespace Kernel
         {
             scale = exp( (stream_outflow_threshold - stream_level) / stream_outflow_threshold );
         }
-        m_current_larval_capacity = m_max_larval_capacity * scale * params()->lloffset * params()->lloffset;
+        m_current_larval_capacity = m_max_larval_capacity * scale * params()->vector_params->lloffset * params()->vector_params->lloffset;
 
         LOG_DEBUG_F( "stream_level = %0.2f, habitat = %0.2f\n", stream_level, m_current_larval_capacity );
     }
@@ -301,7 +301,7 @@ namespace Kernel
     void LinearSplineHabitat::UpdateCurrentLarvalCapacity(float dt, INodeContext* node)
     {
         float scale = capacity_distribution.getValueLinearInterpolation( day_of_year );
-        float area = params()->lloffset * params()->lloffset;
+        float area = params()->vector_params->lloffset * params()->vector_params->lloffset;
         float new_capacity = m_max_larval_capacity * scale * area;
 
         if( m_current_larval_capacity != new_capacity )
@@ -359,7 +359,7 @@ namespace Kernel
         }
         else if(params()->vector_params->vector_larval_rainfall_mortality == VectorRainfallMortality::SIGMOID_HABITAT_SHIFTING)
         {
-            float full_habitat = m_max_larval_capacity * params()->lloffset * params()->lloffset;
+            float full_habitat = m_max_larval_capacity * params()->vector_params->lloffset * params()->vector_params->lloffset;
             float fraction_empty = (full_habitat - m_current_larval_capacity) / full_habitat;
             if( rainfall * MM_PER_METER < params()->vector_params->larval_rainfall_mortality_threshold * dt * fraction_empty )
             {

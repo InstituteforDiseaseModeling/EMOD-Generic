@@ -8,11 +8,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 #include "MigrateIndividuals.h"
 #include "IMigrate.h"
-#include "SimulationConfig.h"
 #include "IIndividualHumanContext.h"
 #include "NodeEventContext.h"  // for INodeEventContext (ICampaignCostObserver)
+#include "IMigrationInfo.h"
 #include "INodeContext.h"
 #include "ISimulationContext.h"
 #include "DistributionFactory.h"
@@ -32,15 +33,6 @@ namespace Kernel
 
     bool MigrateIndividuals::Configure( const Configuration * inputJson )
     {
-        if ( !JsonConfigurable::_dryrun &&
-            //(EnvPtr->getSimulationConfig() != nullptr) &&
-            ( GET_CONFIGURABLE( SimulationConfig )->migration_structure == MigrationStructure::NO_MIGRATION ) )
-        {
-            std::stringstream msg;
-            msg << _module << " cannot be used when 'Migration_Model' = 'NO_MIGRATION'.";
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-        
         DistributionFunction::Enum before_leaving_function(DistributionFunction::NOT_INITIALIZED);
         initConfig( "Duration_Before_Leaving_Distribution", before_leaving_function, inputJson, MetadataDescriptor::Enum( "Duration_Before_Leaving_Distribution_Type", Duration_Before_Leaving_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction) ) );
         duration_before_leaving = DistributionFactory::CreateDistribution( this, before_leaving_function, "Duration_Before_Leaving", inputJson );
@@ -62,9 +54,7 @@ namespace Kernel
         , duration_before_leaving( nullptr )
         , duration_at_node( nullptr )
         , is_moving( false )
-    {
-        
-    }
+    { }
 
     MigrateIndividuals::MigrateIndividuals( const MigrateIndividuals& master )
         : BaseIntervention( master )
@@ -72,13 +62,25 @@ namespace Kernel
         , duration_before_leaving( master.duration_before_leaving->Clone() )
         , duration_at_node( master.duration_at_node->Clone() )
         , is_moving( master.is_moving )
-    {
-    }
+    { }
 
     MigrateIndividuals::~MigrateIndividuals()
     {
        delete duration_before_leaving;
        delete duration_at_node;
+    }
+
+    bool MigrateIndividuals::Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO )
+    {
+        IMigrationInfo* p_minfo = context->GetParent()->GetParent()->GetMigrationInfo();
+        if( !p_minfo ||  p_minfo->GetParams()->migration_structure == MigrationStructure::NO_MIGRATION )
+        {
+            std::stringstream msg;
+            msg << _module << " cannot be used when 'Migration_Model' = 'NO_MIGRATION'.";
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        return BaseIntervention::Distribute( context, pICCO );
     }
 
     void MigrateIndividuals::Update( float dt )

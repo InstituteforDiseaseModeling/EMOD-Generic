@@ -73,11 +73,9 @@
     ],
     "Intervention_Config": {
         "Cost_To_Consumer": 10,
-        "Duration_To_Wait_Before_Revaccination": 240,
         "Intervention_Name": "TheVaccine",
         "Vaccine_Take": 0.75,
-        "Vaccine_Type": "AcquisitionBlocking",
-        "Waning_Config": {
+        "Acquire_Config": {
             "Durability_Map": {
                 "Times": [
                     0,
@@ -96,9 +94,9 @@
             "Initial_Effect": 1.0,
             "class": "WaningEffectMapLinear"
         },
-        "Distributed_Event_Trigger" : "GP_EVENT_000",
-        "Expired_Event_Trigger"     : "GP_EVENT_001",
-        "class": "ControlledVaccine"
+        "Event_Trigger_Distributed" : "GP_EVENT_000",
+        "Event_Trigger_Expired"     : "GP_EVENT_001",
+        "class": "Vaccine"
     },
     "class": "NChooserEventCoordinatorHIV"
 }

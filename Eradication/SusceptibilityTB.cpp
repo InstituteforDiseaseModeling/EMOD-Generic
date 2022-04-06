@@ -75,18 +75,16 @@ namespace Kernel
 
 
     //---------------------------- SusceptibilityTB ----------------------------------------
-    SusceptibilityTB *SusceptibilityTB::CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod)
+    SusceptibilityTB *SusceptibilityTB::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
     {
         SusceptibilityTB *newsusceptibility = _new_ SusceptibilityTB(context);
-        newsusceptibility->Initialize(age, immmod, riskmod);
+        newsusceptibility->Initialize(immmod, riskmod);
 
         return newsusceptibility;
     }
 
     void SusceptibilityTB::Update(float dt)
     {
-        age += dt; // tracks age for immune purposes
-
         // Immune-incompetent individuals without any current infections can lose protective immunity (as a step function) after the offset time
         // Only acquisition immunity is modeled
         // Mortality and transmit immunity not modeled
@@ -129,7 +127,7 @@ namespace Kernel
             }
 
             //Assumes HIV progression has same relative effect on children and adults
-            float age_years = age / DAYSPERYEAR ;
+            float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
             if (!IndividualHumanConfig::IsAdultAge(age_years))
             {
                fast_fraction = SusceptibilityTBConfig::TB_fast_progressor_fraction_child * progression_modifier;
@@ -147,7 +145,7 @@ namespace Kernel
     float SusceptibilityTB::GetSmearPositiveFraction() 
     {
         float smear_positive_fraction = 0;
-        float age_years = age / DAYSPERYEAR ;
+        float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
         if (!IndividualHumanConfig::IsAdultAge(age_years))
         {
            smear_positive_fraction = SusceptibilityTBConfig::TB_smear_positive_fraction_child;
@@ -162,7 +160,7 @@ namespace Kernel
     float SusceptibilityTB::GetExtraPulmonaryFraction() 
     {
         float extrapulmonary_fraction = 0;
-        float age_years = age / DAYSPERYEAR ;
+        float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
         if (!IndividualHumanConfig::IsAdultAge(age_years))
         {
            extrapulmonary_fraction = SusceptibilityTBConfig::TB_extrapulmonary_fraction_child;
@@ -224,9 +222,9 @@ namespace Kernel
         mod_acquire = new_mod_acquire;
     }
 
-    void SusceptibilityTB::Initialize(float _age, float _immmod, float _riskmod)
+    void SusceptibilityTB::Initialize(float _immmod, float _riskmod)
     {
-        SusceptibilityAirborne::Initialize(_age, _immmod, _riskmod);
+        SusceptibilityAirborne::Initialize(_immmod, _riskmod);
         // TODO: can later add functionality that initializes prior immune exposure based on _immmod argument
         // and node-based risk factors based on _riskmod argument
         m_is_immune = false; 

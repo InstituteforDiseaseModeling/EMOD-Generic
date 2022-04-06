@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeTyphoidEventContext.h"
 #include "IndividualTyphoid.h"
 #include "TransmissionGroupsFactory.h"
-#include "SimulationConfig.h"
 #include "Properties.h"
 #include "PythonSupport.h"
 
@@ -53,13 +52,6 @@ namespace Kernel
         NodeEnvironmental::Initialize();
     }
 
-    bool NodeTyphoid::Configure(
-        const Configuration* config
-    )
-    {
-        return NodeEnvironmental::Configure( config );
-    }
-
     void NodeTyphoid::setupEventContextHost()
     {
         event_context_host = _new_ NodeTyphoidEventContextHost(this);
@@ -88,7 +80,7 @@ namespace Kernel
     {
         // This is a chance to do a single call into Pythoid at start of timestep
 #ifdef ENABLE_PYTHOID
-        static auto pFunc = PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID.c_str(), "start_timestep" );
+        static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "start_timestep" ));
         if( pFunc )
         {
             PyObject_CallObject( pFunc, nullptr );

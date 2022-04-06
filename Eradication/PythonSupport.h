@@ -12,8 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma warning(disable : 4996) // getenv function is deprecated
 
 #include <string>
-
-#include "Environment.h"
+#include <map>
 
 
 // This set of macros prevents the Python.h header from trying to use the _d.dll version of 
@@ -40,26 +39,29 @@ namespace Kernel
     class PythonSupport
     {
     public:
-        static std::string FUNCTION_NAME;
+        static void* PythonNoneType;
+
         static std::string SCRIPT_PRE_PROCESS;
         static std::string SCRIPT_POST_PROCESS;
         static std::string SCRIPT_POST_PROCESS_SCHEMA;
         static std::string SCRIPT_IN_PROCESS;
-
         static std::string SCRIPT_PYTHON_FEVER;
         static std::string SCRIPT_TYPHOID;
+
+        static std::string FUNCTION_NAME;
+
+        static std::map<std::string, std::map<std::string, void*>> PyObjectsMap;
 
         PythonSupport();
         ~PythonSupport();
 
         static bool          IsPythonInitialized();
-        static bool          PythonScriptsExist();
         static void          SetupPython( const std::string& pythonScriptPath );
-        static std::string   RunPyFunction( const std::string& arg_string, const std::string& python_module, const std::string& python_function = FUNCTION_NAME );
+        static std::string   RunPyFunction( const std::string& arg_string, const std::string& python_module_name, const std::string& python_function_name = FUNCTION_NAME );
 
-#ifdef ENABLE_PYTHON
-        static PyObject*     GetPyFunction( const char * python_module, const char * python_function );
-#endif
+        static bool          ImportPyModule( const std::string& python_module_name );
+
+        static void*         GetPyFunction( const std::string& python_module_name, const std::string& python_function_name );
 
     private:
         static void         cleanPython();

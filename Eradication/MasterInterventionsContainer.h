@@ -47,11 +47,10 @@ namespace Kernel
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
         // IVaccineConsumer
-        virtual void UpdateVaccineAcquireRate(   float acq  );
-        virtual void UpdateVaccineTransmitRate(  float xmit );
-        virtual void UpdateVaccineMortalityRate( float mort );
+        virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true );
+        virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true );
+        virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true );
 
-        // IDrugVaccineInterventionEffects
         virtual float GetInterventionReducedAcquire() const;
         virtual float GetInterventionReducedTransmit()  const;
         virtual float GetInterventionReducedMortality()  const;

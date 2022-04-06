@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "NChooserEventCoordinator.h"
 #include "InterventionFactory.h"
@@ -294,7 +295,7 @@ namespace Kernel
         initConfigTypeMap("Num_Targeted_Males",   &m_NumTargetedMales,   NC_TD_Num_Targeted_Males_DESC_TEXT,        0, INT_MAX,      0 );
         initConfigTypeMap("Num_Targeted_Females", &m_NumTargetedFemales, NC_TD_Num_Targeted_Females_DESC_TEXT,      0, INT_MAX,      0 );
 
-        initConfigComplexType("Age_Ranges_Years",                  &m_AgeRangeList,         NC_TD_Age_Ranges_Years_DESC_TEXT );
+        initConfigComplexCollectionType("Age_Ranges_Years", &m_AgeRangeList, NC_TD_Age_Ranges_Years_DESC_TEXT );
         initConfigComplexType("Property_Restrictions_Within_Node", &m_PropertyRestrictions, NC_TD_Property_Restrictions_Within_Node_DESC_TEXT );
 
         bool ret = JsonConfigurable::Configure( inputJson );
@@ -783,8 +784,8 @@ namespace Kernel
 
     bool NChooserEventCoordinator::Configure( const Configuration * inputJson )
     {
-        initConfigComplexType(     "Distributions",   &m_TargetedDistributionList, NC_Distributions_DESC_TEXT       );
-        initConfigComplexType( "Intervention_Config", &m_InterventionConfig,       NC_Intervention_Config_DESC_TEXT );
+        initConfigComplexCollectionType( "Distributions", &m_TargetedDistributionList, NC_Distributions_DESC_TEXT );
+        initConfigComplexType( "Intervention_Config", &m_InterventionConfig, NC_Intervention_Config_DESC_TEXT );
 
         bool retValue = JsonConfigurable::Configure( inputJson );
 
@@ -821,7 +822,7 @@ namespace Kernel
         INodeEventContext* pNEC = m_Parent->GetNodeEventContext( node_suid );
         if( !m_HasBeenScaled )
         {
-            m_TargetedDistributionList.ScaleTargets( pNEC->GetNodeContext()->GetBasePopulationScaleFactor() );
+            m_TargetedDistributionList.ScaleTargets( pNEC->GetNodeContext()->GetParams()->population_scaling_factor );
             m_HasBeenScaled = true;
         }
         m_CachedNodes.push_back( pNEC );

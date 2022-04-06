@@ -24,22 +24,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class TargetAgeArrayConfig : public JsonConfigurable, public IComplexJsonConfigurable
-    {
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) { return e_NOINTERFACE; }
-
-        public:
-            TargetAgeArrayConfig() {}
-            virtual void ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key ) override;
-            virtual json::QuickBuilder GetSchema() override;
-            virtual bool  HasValidDefault() const override { return false; }
-            std::map< float, float > age2ProbabilityMap;
-            bool dropout;
-
-            static void serialize(IArchive&, TargetAgeArrayConfig&);
-    };
-
     class IVCalendar : public BaseIntervention
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, IVCalendar, IDistributableIntervention)
@@ -60,7 +44,7 @@ namespace Kernel
         virtual void Update(float dt) override;
 
     protected:
-        TargetAgeArrayConfig target_age_array; // json list of floats
+        std::map< float, float > age2ProbabilityMap;
         IndividualInterventionConfig actual_intervention_config;
         bool dropout;
 

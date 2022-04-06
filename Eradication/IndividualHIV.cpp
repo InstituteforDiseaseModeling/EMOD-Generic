@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "SusceptibilityHIV.h"
 #include "HIVInterventionsContainer.h"
-#include "SimulationConfig.h"
 #include "EventTrigger.h"
 
 SETUP_LOGGING( "IndividualHIV" )
@@ -24,9 +23,6 @@ namespace Kernel
 {
     #define TWELVE_WEEKS    (12*7.0f)
     #define FOURTEEN_WEEKS  (14*7.0f)
-    #define SIX_WEEKS       (6*7.0f)
-    #define EIGHTEEN_MONTHS (18*30.0f)
-
 
     float IndividualHumanHIVConfig::maternal_transmission_ART_multiplier = 1.0f;
 
@@ -63,7 +59,7 @@ namespace Kernel
 
     void IndividualHumanHIV::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        auto susc = SusceptibilityHIV::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        auto susc = SusceptibilityHIV::CreateSusceptibility(this, imm_mod, risk_mod);
         susceptibility = susc; // serialization/migration?
         if ( susc->QueryInterface(GET_IID(ISusceptibilityHIV), (void**)&hiv_susceptibility) != s_OK)
         {
@@ -87,16 +83,6 @@ namespace Kernel
     IInfection* IndividualHumanHIV::createInfection( suids::suid _suid )
     {
         return InfectionHIV::CreateInfection(this, _suid);
-    }
-
-    void IndividualHumanHIV::InitializeStaticsHIV( const Configuration* config )
-    {
-        SusceptibilityHIVConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionHIVConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanHIVConfig individual_config;
-        individual_config.Configure( config );
     }
 
     void IndividualHumanHIV::setupInterventionsContainer()
@@ -176,24 +162,6 @@ namespace Kernel
     const
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Function exists due to inheritance but not implemented yet in HIV. Not needed or used for system-level operation." );
-    }
-
-    void
-    IndividualHumanHIV::Update( float curtime, float dt )
-    {
-        IndividualHumanSTI::Update( curtime, dt );
-
-        if (IndividualHumanConfig::aging && broadcaster )
-        {
-            if( ((m_age - dt) < SIX_WEEKS) && (SIX_WEEKS <= m_age) )
-            {
-                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::SixWeeksOld );
-            }
-            else if( ((m_age - dt) < EIGHTEEN_MONTHS) && (EIGHTEEN_MONTHS <= m_age) )
-            {
-                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::EighteenMonthsOld );
-            }
-        }
     }
 
     bool IndividualHumanHIV::UpdatePregnancy(float dt)

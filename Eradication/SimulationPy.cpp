@@ -112,7 +112,12 @@ namespace Kernel
     void SimulationPy::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
-        IndividualHumanPy::InitializeStaticsPy( config );
+
+        SusceptibilityPyConfig    pys_susceptibility_config_obj;
+        InfectionPyConfig         pys_infection_config_obj;
+
+        pys_susceptibility_config_obj.Configure( config );
+        pys_infection_config_obj.Configure( config );
     }
 
     SimulationPy *SimulationPy::CreateSimulation()
@@ -144,7 +149,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__, "PY_SIM requested with invalid configuration.");
@@ -156,7 +161,9 @@ namespace Kernel
 
     bool SimulationPy::ValidateConfiguration(const ::Configuration *config)
     {
-        return Kernel::Simulation::ValidateConfiguration(config);
+        // TODO: any disease-specific validation goes here.
+
+        return Simulation::ValidateConfiguration(config);
     }
 
     // called by demographic file Populate()

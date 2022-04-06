@@ -13,6 +13,7 @@
         {
             "NodeID": 1, 
             "NodeAttributes": {
+                "InfectivityMultiplier": 1.0,
                 "InfectivitySinusoidalAmplitude": 0.6,
                 "InfectivitySinusoidalPhase": 90
             }

@@ -1,15 +1,11 @@
 {
-    "1_Comment": "---------------------------------------------------------------------------",
-    "2_Comment": "This scenario takes Scenarios/Generic/04_SEIR_VitalDyamics and uses a",
-    "3_Comment": "demographics overlay to override the MoralityDistribution in the base file.",
-    "4_Comment": "---------------------------------------------------------------------------",
     "Default_Config_Path": "../../defaults/generic_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
                 "generic_scenarios_demographics.json",
-                "demog/generic_scenarios_demographics_overlay.json"
+                "generic_scenarios_demographics_overlay.json"
             ],
             "Enable_Demographics_Birth": 1,
             "IMMUNITY": {
@@ -33,7 +29,8 @@
                 "Incubation_Period_Exponential": 3
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 2.5
+                "Base_Infectivity_Constant": 2.5,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "FUDGE_FACTORS": {

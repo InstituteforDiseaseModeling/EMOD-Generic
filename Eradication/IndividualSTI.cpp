@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "Relationship.h"
 #include "RelationshipGroups.h"
-#include "SimulationConfig.h"
 #include "SusceptibilitySTI.h"
 #include "STIInterventionsContainer.h"
 #include "NodeSTI.h"
@@ -101,8 +100,8 @@ namespace Kernel
 
         initConfigTypeMap( "Min_Days_Between_Adding_Relationships", &min_days_between_adding_relationships, Min_Days_Between_Adding_Relationships_DESC_TEXT, 0.0f, 365.0f, 60.0f );
 
-        initConfigTypeMap( "Male_To_Female_Relative_Infectivity_Ages", &maleToFemaleRelativeInfectivityAges, Male_To_Female_Relative_Infectivity_Ages_DESC_TEXT, 0.0f, FLT_MAX, 0.0f );
-        initConfigTypeMap( "Male_To_Female_Relative_Infectivity_Multipliers", &maleToFemaleRelativeInfectivityMultipliers, Male_To_Female_Relative_Infectivity_Multipliers_DESC_TEXT, 0.0f, 25.0f, 1.0f );
+        initConfigTypeMap( "Male_To_Female_Relative_Infectivity_Ages", &maleToFemaleRelativeInfectivityAges, Male_To_Female_Relative_Infectivity_Ages_DESC_TEXT, 0.0f, FLT_MAX, false );
+        initConfigTypeMap( "Male_To_Female_Relative_Infectivity_Multipliers", &maleToFemaleRelativeInfectivityMultipliers, Male_To_Female_Relative_Infectivity_Multipliers_DESC_TEXT, 0.0f, 25.0f );
 
         initConfigTypeMap( "Condom_Transmission_Blocking_Probability", &condom_transmission_blocking_probability, Condom_Transmission_Blocking_Probability_DESC_TEXT, 0.0f, 1.0f, 0.9f );
 
@@ -263,7 +262,7 @@ namespace Kernel
 
     void IndividualHumanSTI::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        susceptibility = SusceptibilitySTI::CreateSusceptibility(this, m_age, imm_mod, risk_mod);
+        susceptibility = SusceptibilitySTI::CreateSusceptibility(this, imm_mod, risk_mod);
     }
 
     void IndividualHumanSTI::NotifyPotentialExposure()
@@ -435,14 +434,6 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanSTI::Update(
-        float currenttime,
-        float dt
-        )
-    {
-        IndividualHuman::Update( currenttime, dt );
-    }
-
     void IndividualHumanSTI::UpdatePausedRelationships( const IdmDateTime& rCurrentTime, float dt )
     {
         // ---------------------------------------------------------------
@@ -539,16 +530,6 @@ namespace Kernel
     IInfection* IndividualHumanSTI::createInfection( suids::suid _suid )
     {
         return InfectionSTI::CreateInfection(this, _suid);
-    }
-
-    void IndividualHumanSTI::InitializeStaticsSTI( const Configuration* config )
-    {
-        //SusceptibilitySTIConfig immunity_config;
-        //immunity_config.Configure( config );
-        InfectionSTIConfig infection_config;
-        infection_config.Configure( config );
-        IndividualHumanSTIConfig individual_config;
-        individual_config.Configure( config );
     }
 
     void IndividualHumanSTI::setupInterventionsContainer()

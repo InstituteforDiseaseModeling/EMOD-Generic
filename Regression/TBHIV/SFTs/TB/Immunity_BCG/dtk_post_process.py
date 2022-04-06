@@ -66,7 +66,7 @@ def load_campaign_file(campaign_filename="campaign.json", debug=False):
         cf = json.load(infile)
     campaign_obj = {}
     # get initial_effect of bcg vaccine
-    initial_effect = cf["Events"][1]["Event_Coordinator_Config"]["Intervention_Config"]["Actual_IndividualIntervention_Config"]["Waning_Config"][KEY_INITIAL_EFFECT]
+    initial_effect = cf["Events"][1]["Event_Coordinator_Config"]["Intervention_Config"]["Actual_IndividualIntervention_Config"]["Acquire_Config"][KEY_INITIAL_EFFECT]
     # get start day of import case
     start_day = cf["Events"][2][KEY_START_DAY]
     campaign_obj[KEY_INITIAL_EFFECT] = initial_effect

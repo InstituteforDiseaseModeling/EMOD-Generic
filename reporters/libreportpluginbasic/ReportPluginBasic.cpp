@@ -178,7 +178,7 @@ CustomReport::LogIndividualData(
         //std::ostringstream oss;
         //oss << "num intervs = " << intervs->size() << std::endl;
         //LOG_INFO( oss.str() );
-        const std::list<Kernel::IDistributableIntervention*> &intervsByTypeList = intervs->GetInterventionsByType( "class Kernel::SimpleVaccine" );
+        const std::list<Kernel::IDistributableIntervention*> &intervsByTypeList = intervs->GetInterventionsByType( "class Kernel::Vaccine" );
         if( intervsByTypeList.size() )
         {
             //LOG_INFO( "Found individual who received vaccine but got infected.\n" );

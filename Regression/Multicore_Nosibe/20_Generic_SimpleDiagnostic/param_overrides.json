@@ -7,16 +7,18 @@
         ],
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "Madagascar_Nosibe_2.5arcmin_demographics.json"
+                "Madagascar_Nosibe_2.5arcmin_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1
         },
         "Demographics_Reporting": 0,
         "HPC": {
             "Load_Balance_Filename": "Madagascar_Nosibe_2.5arcmin_load_balancing_8procs.bin",
-            "_Num_Cores": 8,
-            "Num_Cores": 2
+            "Num_Cores": 2,
+            "_Num_Cores": 8
         },
+        "Incubation_Period_Constant": 3,
         "MIGRATION": {
             "AIR": {
                 "Air_Migration_Filename": "",
@@ -25,10 +27,6 @@
             "Enable_Family_Migration": 0,
             "Enable_Migration_Heterogeneity": 0,
             "Family_Migration_Filename": "",
-            "SHARED": {
-                "Enable_Local_Migration": 1,
-                "Local_Migration_Filename": "Madagascar_Nosibe_2.5arcmin_local_migration.bin"
-            },
             "Migration_Model": "FIXED_RATE_MIGRATION",
             "Migration_Pattern": "WAYPOINTS_HOME",
             "REGIONAL": {
@@ -39,6 +37,10 @@
             "SEA": {
                 "Enable_Sea_Migration": 0,
                 "Sea_Migration_Filename": ""
+            },
+            "SHARED": {
+                "Enable_Local_Migration": 1,
+                "Local_Migration_Filename": "Madagascar_Nosibe_2.5arcmin_local_migration.bin"
             },
             "x_Family_Migration": 1
         },
@@ -51,7 +53,6 @@
             "Python_Script_Path": "LOCAL",
             "Run_Number": 1,
             "Simulation_Duration": 180
-	},
-	"Incubation_Period_Constant": 3
+        }
     }
 }

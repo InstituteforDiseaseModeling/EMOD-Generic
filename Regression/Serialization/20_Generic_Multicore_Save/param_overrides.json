@@ -28,6 +28,9 @@
             ".Serialized_Population_Filenames": [
                 "state-00010.dtk"
             ],
+            "Serialization_Precision" : "REDUCED",
+            "Serialized_Population_Writing_Type": "TIMESTEP",
+            "Serialization_Mask_Node_Write": 0,
             "Serialization_Time_Steps": [
                 0,
                 10

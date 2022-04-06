@@ -12,7 +12,8 @@
         "Demographics_Filenames": [
             "Namawala_single_node_demographics.json",
             "Namawala_single_node_demographics_complex_mortality.json",
-            "Namawala_single_node_demographics.immunity.json"
+            "Namawala_single_node_demographics.immunity.json",
+            "demographics_overlay_initial_prevalence.json"
         ],
         "Enable_Birth": 1,
         "Enable_Initial_Prevalence": 1,

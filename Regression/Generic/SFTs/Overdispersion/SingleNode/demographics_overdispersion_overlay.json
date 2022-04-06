@@ -1,0 +1,21 @@
+{
+   "Metadata": {
+      "Author": "yechen",
+      "DateCreated": "2018-07-03 10:43:48.070250",
+      "IdReference": "Gridded world grump2.5arcmin",
+      "NodeCount": 1,
+      "Resolution": 150,
+      "Tool": "dtk-tools"
+   },
+   "Nodes": [
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 1000,
+            "InfectivityOverdispersion": 1,
+            "InfectivityReservoirSize": 0,
+            "InfectivityMultiplier": 1
+         },
+         "NodeID": 1
+      }
+   ]
+}

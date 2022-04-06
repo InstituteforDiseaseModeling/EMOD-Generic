@@ -37,10 +37,9 @@
                 "Intervention_Config": {
                     ".Reduced_Acquire": 0.9, 
                     "Vaccine_Take": 1, 
-                    "Vaccine_Type": "AcquisitionBlocking", 
                     "Cost_To_Consumer": 10.0, 
-                    "class": "SimpleVaccine",
-                    "Waning_Config": {
+                    "class": "Vaccine",
+                    "Acquire_Config": {
                         "Initial_Effect": 0.9, 
                         "Box_Duration": 730, 
                         "class": "WaningEffectBox"

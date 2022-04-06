@@ -93,6 +93,7 @@ namespace Kernel
                 LOG_DEBUG_F( "Attempting to instantiate intervention of class %s\n", std::string( (*tmpConfig)[ "class" ].As<json::String>() ).c_str() );
                 INodeDistributableIntervention *ndi = const_cast<IInterventionFactory*>(ifobj)->CreateNDIIntervention( tmpConfig );
                 release_assert( ndi != nullptr ); // ValidateInterventionArray should have made sure these are valid individual interventions
+                LOG_INFO_F( "Distribute() distributed '%s' intervention to node %d\n", ndi->GetName().c_str(), context->GetId().data );
                 if( !ndi->Distribute( context, pEC ) )
                 {
                     ndi->Release();

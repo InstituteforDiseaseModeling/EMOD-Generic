@@ -23,13 +23,12 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
-                    "Distributed_Event_Trigger": "VaccinatedA",
-                    "Duration_To_Wait_Before_Revaccination": 40,
-                    "Expired_Event_Trigger": "VaccineExpiredA",
+                    "Event_Trigger_Distributed": "VaccinatedA",
+                    "Dont_Allow_Duplicates": 0,
+                    "Event_Trigger_Expired": "VaccineExpiredA",
                     "Intervention_Name": "VaccineA",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -46,7 +45,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -63,13 +62,12 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
-                    "Distributed_Event_Trigger": "VaccinatedA",
-                    "Duration_To_Wait_Before_Revaccination": 40,
-                    "Expired_Event_Trigger": "VaccineExpiredA",
+                    "Event_Trigger_Distributed": "VaccinatedA",
+                    "Dont_Allow_Duplicates": 1,
+                    "Event_Trigger_Expired": "VaccineExpiredA",
                     "Intervention_Name": "VaccineA",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -86,7 +84,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -103,13 +101,12 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
-                    "Distributed_Event_Trigger": "VaccinatedA",
-                    "Duration_To_Wait_Before_Revaccination": 40,
-                    "Expired_Event_Trigger": "VaccineExpiredA",
+                    "Event_Trigger_Distributed": "VaccinatedA",
+                    "Dont_Allow_Duplicates": 0,
+                    "Event_Trigger_Expired": "VaccineExpiredA",
                     "Intervention_Name": "VaccineA",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -126,7 +123,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -143,13 +140,11 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
-                    "Distributed_Event_Trigger": "VaccinatedB",
-                    "Duration_To_Wait_Before_Revaccination": 40,
-                    "Expired_Event_Trigger": "VaccineExpiredB",
+                    "Event_Trigger_Distributed": "VaccinatedB",
+                    "Event_Trigger_Expired": "VaccineExpiredB",
                     "Intervention_Name": "VaccineB",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -166,7 +161,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"
@@ -183,13 +178,12 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Cost_To_Consumer": 1,
-                    "Distributed_Event_Trigger": "VaccinatedB",
-                    "Duration_To_Wait_Before_Revaccination": 40,
-                    "Expired_Event_Trigger": "VaccineExpiredB",
+                    "Event_Trigger_Distributed": "VaccinatedB",
+                    "Dont_Allow_Duplicates": 1,
+                    "Event_Trigger_Expired": "VaccineExpiredB",
                     "Intervention_Name": "VaccineB",
                     "Vaccine_Take": 1.0,
-                    "Vaccine_Type": "AcquisitionBlocking",
-                    "Waning_Config": {
+                    "Acquire_Config": {
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -206,7 +200,7 @@
                         "Initial_Effect": 1.0,
                         "class": "WaningEffectMapLinear"
                     },
-                    "class": "ControlledVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"

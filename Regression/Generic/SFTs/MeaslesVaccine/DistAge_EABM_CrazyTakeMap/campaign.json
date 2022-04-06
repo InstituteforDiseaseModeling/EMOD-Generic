@@ -11,13 +11,13 @@
                         "Initial_Effect": 0.5, 
                         "class": "WaningEffectBox"
                     },
-                    "Vaccine_Take_Vs_Age_Map":
+                    "Take_By_Age_Multiplier":
                     {
                         "Times": [0, 90, 150, 180, 230, 400],
                         "Values": [0, 1, 0.3, 0.7, 0.4, 0]
                     },
-                    "Existing_Antibody_Blocking_Multiplier": 0.3,
-                    "class": "MeaslesVaccine"
+                    "Take_Reduced_By_Acquire_Immunity": 0.7,
+                    "class": "Vaccine"
                 }, 
                 "Target_Demographic": "Everyone", 
                 "class": "StandardInterventionDistributionEventCoordinator"

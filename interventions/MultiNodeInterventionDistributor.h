@@ -30,6 +30,6 @@ namespace Kernel
         virtual bool Distribute( INodeEventContext *context, IEventCoordinator2* pEC = nullptr ) override;
 
     protected:
-        NodeInterventionConfig intervention_list;
+        NodeInterventionConfigList intervention_list;
     };
 }

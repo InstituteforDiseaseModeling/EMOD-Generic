@@ -28,6 +28,8 @@ namespace Kernel
       void  LogIndividualData(IIndividualHuman* individual)          override;
 
     private:
+      void  OutputLine(const IIndividualHuman* individual);
+    
       bool                 m_all_done;
       float                m_time_start;
       float                m_time_end;

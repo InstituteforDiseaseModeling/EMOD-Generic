@@ -675,13 +675,13 @@ SUITE(AssortivityTest)
     TEST_FIXTURE(AssortivityFixture, TestBadMatrixValue)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/TestBadMatrixValue.json",
-            "Configuration variable Weighting_Matrix_RowMale_ColumnFemale with value 9999 out of range: greater than 1.\nWas reading values for TRANSITORY." );
+            "Configuration variable 'Weighting_Matrix_RowMale_ColumnFemale' with value 9999 out of range: greater than 1.\nWas reading values for TRANSITORY." );
     }
 
     TEST_FIXTURE(AssortivityFixture, TestBadStartYear)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/TestBadStartYear.json",
-            "Configuration variable Start_Year with value 9999 out of range: greater than 2200.\nWas reading values for TRANSITORY." );
+            "Configuration variable 'Start_Year' with value 9999 out of range: greater than 2200.\nWas reading values for TRANSITORY." );
     }
 
     TEST_FIXTURE(AssortivityFixture, TestMissingStartYear)
@@ -693,7 +693,7 @@ SUITE(AssortivityTest)
     TEST_FIXTURE(AssortivityFixture, TestMissingGroup)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/TestMissingGroup.json",
-            "While trying to parse json data for param/key >>> Group <<< in otherwise valid json segment" );
+            "Parameter 'Group of AssortivityHIV' not found in input file" );
     }
 
     TEST_FIXTURE(AssortivityFixture, TestMatrixRowAllZeros)

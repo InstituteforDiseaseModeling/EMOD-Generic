@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualHumanContextFake.h"
 #include "RandomFake.h"
 #include "IdmMpi.h"
+#include "ConfigParams.h"
 
 using namespace Kernel; 
 
@@ -57,7 +58,6 @@ SUITE(MigrationTest)
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, dllPath, false );
 
             m_pSimulationConfig->sim_type = SimType::VECTOR_SIM ;
-            m_pSimulationConfig->demographics_initial = true ;
             Environment::setSimulationConfig( m_pSimulationConfig );
 
         }
@@ -78,6 +78,9 @@ SUITE(MigrationTest)
 
             unique_ptr<Configuration> p_config( Environment::CopyFromElement( (*p_config_file)["parameters"] ) );
 
+            ConfigParams gen_config_obj;
+            gen_config_obj.Configure( p_config.get() );
+
             // --------------------
             // --- Initialize test
             // --------------------
@@ -91,12 +94,10 @@ SUITE(MigrationTest)
 
 
             std::string idreference = "ABC" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( p_config.get(), 
-                                                                                                     idreference, 
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     false, 
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   false,
+                                                                                   10 ) );
 
             CHECK( p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
@@ -105,8 +106,6 @@ SUITE(MigrationTest)
             // ---------------
             INodeContextFake nc_2( nodeid_suid_map.left.at(2) ) ;
             unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo( &nc_2, nodeid_suid_map ) );
-
-            CHECK( p_mi_2->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes_2 = p_mi_2->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_2.size() );
@@ -137,7 +136,7 @@ SUITE(MigrationTest)
             MigrationType::Enum mig_type = MigrationType::NO_MIGRATION;
             float trip_time = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -153,7 +152,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 4, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -169,7 +168,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 3, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -187,7 +186,7 @@ SUITE(MigrationTest)
 
             m_RandomFake.SetUL( 0 ); // 0.0 - need to change so we get the first in the list
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 1, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -203,7 +202,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -227,6 +226,9 @@ SUITE(MigrationTest)
 
             unique_ptr<Configuration> p_config( Environment::CopyFromElement( (*p_config_file)["parameters"] ) );
 
+            ConfigParams gen_config_obj;
+            gen_config_obj.Configure( p_config.get() );
+
             // --------------------
             // --- Initialize test
             // --------------------
@@ -240,12 +242,10 @@ SUITE(MigrationTest)
 
 
             std::string idreference = "ABC" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( p_config.get(),
-                                                                                                     idreference, 
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     false, 
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   false,
+                                                                                   10 ) );
 
             CHECK( p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
@@ -254,8 +254,6 @@ SUITE(MigrationTest)
             // ---------------
             INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
             unique_ptr<IMigrationInfo> p_mi_1( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
-
-            CHECK( p_mi_1->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes_1 = p_mi_1->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_1.size() );
@@ -275,8 +273,6 @@ SUITE(MigrationTest)
             INodeContextFake nc_2( nodeid_suid_map.left.at(2) ) ;
             unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo( &nc_2, nodeid_suid_map ) );
 
-            CHECK( p_mi_2->IsHeterogeneityEnabled() );
-
             const std::vector<suids::suid>& reachable_nodes_2 = p_mi_2->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_2.size() );
             CHECK_EQUAL( 1, reachable_nodes_2[ 0].data );
@@ -295,8 +291,6 @@ SUITE(MigrationTest)
             INodeContextFake nc_3( nodeid_suid_map.left.at(3) ) ;
             unique_ptr<IMigrationInfo> p_mi_3( p_mf->CreateMigrationInfo( &nc_3, nodeid_suid_map ) );
 
-            CHECK( p_mi_3->IsHeterogeneityEnabled() );
-
             const std::vector<suids::suid>& reachable_nodes_3 = p_mi_3->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_3.size() );
             CHECK_EQUAL( 1, reachable_nodes_3[ 0].data );
@@ -314,8 +308,6 @@ SUITE(MigrationTest)
             // ---------------
             INodeContextFake nc_4( nodeid_suid_map.left.at(4) ) ;
             unique_ptr<IMigrationInfo> p_mi_4( p_mf->CreateMigrationInfo( &nc_4, nodeid_suid_map ) );
-
-            CHECK( p_mi_4->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes_4 = p_mi_4->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_4.size() );
@@ -346,7 +338,7 @@ SUITE(MigrationTest)
             MigrationType::Enum mig_type = MigrationType::NO_MIGRATION;
             float trip_time = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -362,7 +354,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 4, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -378,7 +370,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 3, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -396,7 +388,7 @@ SUITE(MigrationTest)
 
             m_RandomFake.SetUL( 0 ); // 0.0 - need to change so we get the first in the list
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 1, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -412,7 +404,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -432,7 +424,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -448,7 +440,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 3, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -464,7 +456,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 3, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -482,7 +474,7 @@ SUITE(MigrationTest)
 
             m_RandomFake.SetUL( 0 ); // 0.0 - 
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 1, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -498,7 +490,7 @@ SUITE(MigrationTest)
             mig_type    = MigrationType::NO_MIGRATION;
             trip_time   = -1.0;
 
-            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi_2->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 0, destination.data );
             CHECK_EQUAL( MigrationType::NO_MIGRATION, mig_type );
@@ -516,6 +508,9 @@ SUITE(MigrationTest)
     {
         try
         {
+            ConfigParams gen_config_obj;
+            gen_config_obj.Configure( EnvPtr->Config );
+
             // --------------------
             // --- Initialize test
             // --------------------
@@ -529,19 +524,15 @@ SUITE(MigrationTest)
 
 
             std::string idreference = "Household-Scenario-Small" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( EnvPtr->Config,
-                                                                                                     idreference, 
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     false, 
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   false,
+                                                                                   10 ) );
 
             CHECK( p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
             INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
             unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
-
-            CHECK( p_mi->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes = p_mi->GetReachableNodes();
             CHECK_EQUAL( 20, reachable_nodes.size() );
@@ -600,7 +591,7 @@ SUITE(MigrationTest)
             suids::suid destination = suids::nil_suid();
             MigrationType::Enum mig_type = MigrationType::NO_MIGRATION ;
             float trip_time = -1.0 ;
-            p_mi->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 10, destination.data );
             CHECK_EQUAL( MigrationType::REGIONAL_MIGRATION, mig_type );
@@ -614,7 +605,7 @@ SUITE(MigrationTest)
             destination = suids::nil_suid();
             mig_type = MigrationType::NO_MIGRATION ;
             trip_time = -1.0 ;
-            p_mi->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 2, destination.data );
             CHECK_EQUAL( MigrationType::LOCAL_MIGRATION, mig_type );
@@ -628,7 +619,7 @@ SUITE(MigrationTest)
             destination = suids::nil_suid();
             mig_type = MigrationType::NO_MIGRATION ;
             trip_time = -1.0 ;
-            p_mi->PickMigrationStep( &m_RandomFake, &traveler, 1.0, destination, mig_type, trip_time );
+            p_mi->PickMigrationStep( &m_RandomFake, &traveler, destination, mig_type, trip_time );
 
             CHECK_EQUAL( 26, destination.data );
             CHECK_EQUAL( MigrationType::SEA_MIGRATION, mig_type );
@@ -657,12 +648,10 @@ SUITE(MigrationTest)
             }
 
             std::string idreference = "Default" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( EnvPtr->Config,
-                                                                                                     idreference, 
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     true, 
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   true,
+                                                                                   10 ) );
 
             CHECK( !p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
@@ -671,8 +660,6 @@ SUITE(MigrationTest)
             // ----------
             INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
             unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
-
-            CHECK( !p_mi->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes = p_mi->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes.size() );
@@ -773,12 +760,10 @@ SUITE(MigrationTest)
             }
 
             std::string idreference = "Default" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( EnvPtr->Config,
-                                                                                                     idreference, 
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     true, 
-                                                                                                     torus_size ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   true,
+                                                                                   torus_size ) );
 
             CHECK( !p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
@@ -787,8 +772,6 @@ SUITE(MigrationTest)
             // ----------
             INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
             unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
-
-            CHECK( !p_mi->IsHeterogeneityEnabled() );
 
             const std::vector<suids::suid>& reachable_nodes_1 = p_mi->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_1.size() );
@@ -863,6 +846,9 @@ SUITE(MigrationTest)
     {
         try
         {
+            ConfigParams gen_config_obj;
+            gen_config_obj.Configure( EnvPtr->Config );
+
             // --------------------
             // --- Initialize test
             // --------------------
@@ -875,12 +861,10 @@ SUITE(MigrationTest)
             }
 
             std::string idreference = "Household-Scenario-Small" ;
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( EnvPtr->Config,
-                                                                                                     idreference, 
-                                                                                                     SimType::VECTOR_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     false, 
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
+                                                                                   SimType::VECTOR_SIM,
+                                                                                   false,
+                                                                                   10 ) );
 
             CHECK( p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
@@ -1025,6 +1009,9 @@ SUITE(MigrationTest)
 
             unique_ptr<Configuration> p_config( Environment::CopyFromElement( (*p_config_file)["parameters"] ) );
 
+            ConfigParams gen_config_obj;
+            gen_config_obj.Configure( p_config.get() );
+
             nodeid_suid_map_t nodeid_suid_map;
             for( uint32_t node_id = 1 ; node_id <= numNodes ; node_id++ )
             {
@@ -1033,12 +1020,10 @@ SUITE(MigrationTest)
                 nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
             }
 
-            unique_ptr<IMigrationInfoFactory> p_mf( MigrationFactory::ConstructMigrationInfoFactory( p_config.get(),
-                                                                                                     rIdReference,
-                                                                                                     SimType::GENERIC_SIM,
-                                                                                                     MigrationStructure::FIXED_RATE_MIGRATION,
-                                                                                                     false,
-                                                                                                     10 ) );
+            unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( rIdReference,
+                                                                                   SimType::GENERIC_SIM,
+                                                                                   false,
+                                                                                   10 ) );
 
             suids::suid node_suid;
             node_suid.data = nodeId;
@@ -1068,7 +1053,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Variable or parameter 'Enable_Local_Migration' with value 1 is incompatible with variable or parameter 'Local_Migration_Filename' with value <empty>." );
+            "Migration_Filename is empty. You must specify a file." );
     }
 
     TEST_FIXTURE(MigrationFixture, TestNoAirFilename)
@@ -1079,7 +1064,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Variable or parameter 'Enable_Air_Migration' with value 1 is incompatible with variable or parameter 'Air_Migration_Filename' with value <empty>." );
+            "Migration_Filename is empty. You must specify a file." );
     }
 
     TEST_FIXTURE(MigrationFixture, TestNoRegionalFilename)
@@ -1090,7 +1075,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Variable or parameter 'Enable_Regional_Migration' with value 1 is incompatible with variable or parameter 'Regional_Migration_Filename' with value <empty>." );
+            "Migration_Filename is empty. You must specify a file." );
     }
 
     TEST_FIXTURE(MigrationFixture, TestNoSeaFilename)
@@ -1101,7 +1086,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Variable or parameter 'Enable_Sea_Migration' with value 1 is incompatible with variable or parameter 'Sea_Migration_Filename' with value <empty>." );
+            "Migration_Filename is empty. You must specify a file." );
     }
 
     TEST_FIXTURE(MigrationFixture, TestNoMetadataFile)

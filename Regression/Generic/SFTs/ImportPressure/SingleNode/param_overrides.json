@@ -1,24 +1,25 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
                 "../../demographics.json",
                 "../../demographics_100_overlay.json"
             ],
-            "Enable_Demographics_Reporting": 1,
-            "x_Base_Population": 0.01
+            "Enable_Demographics_Reporting": 1
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 1e-10,
+                "Base_Infectivity_Constant": 1e-10,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "PRIMARY": {
             "Config_Name": "ImportPressure/SingleNode",
             "Geography": "",
-            "Simulation_Duration": 1000
+            "Simulation_Duration": 1000,
+            "Python_Script_Path": "SHARED"
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

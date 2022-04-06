@@ -1,0 +1,129 @@
+{
+    "Defaults": {
+        "IndividualAttributes": {
+            "InitialPrevalence": 0
+        }
+    },
+    "Metadata": {
+        "IdReference": "SampleContent"
+    },
+    "Nodes": [
+        {
+            "NodeID": 1
+        },
+        {
+            "NodeID": 3
+        },
+        {
+            "NodeID": 5
+        },
+        {
+            "NodeID": 7
+        },
+        {
+            "NodeID": 9
+        },
+        {
+            "NodeID": 11
+        },
+        {
+            "NodeID": 13
+        },
+        {
+            "NodeID": 15
+        },
+        {
+            "NodeID": 17
+        },
+        {
+            "NodeID": 19
+        },
+        {
+            "NodeID": 21
+        },
+        {
+            "NodeID": 23
+        },
+        {
+            "NodeID": 25
+        },
+        {
+            "NodeID": 27
+        },
+        {
+            "NodeID": 29
+        },
+        {
+            "NodeID": 31
+        },
+        {
+            "NodeID": 33
+        },
+        {
+            "NodeID": 35
+        },
+        {
+            "NodeID": 37
+        },
+        {
+            "NodeID": 39
+        },
+        {
+            "NodeID": 41
+        },
+        {
+            "NodeID": 43
+        },
+        {
+            "NodeID": 45
+        },
+        {
+            "NodeID": 47
+        },
+        {
+            "NodeID": 49
+        },
+        {
+            "NodeID": 51
+        },
+        {
+            "NodeID": 53
+        },
+        {
+            "NodeID": 55
+        },
+        {
+            "NodeID": 57
+        },
+        {
+            "NodeID": 59
+        },
+        {
+            "NodeID": 61
+        },
+        {
+            "NodeID": 63
+        },
+        {
+            "NodeID": 65
+        },
+        {
+            "NodeID": 67
+        },
+        {
+            "NodeID": 69
+        },
+        {
+            "NodeID": 71
+        },
+        {
+            "NodeID": 73
+        },
+        {
+            "NodeID": 75
+        },
+        {
+            "NodeID": 77
+        }
+    ]
+}

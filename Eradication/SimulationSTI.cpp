@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BinnedReportSTI.h"
 #include "STIReportEventRecorder.h"
 #include "SusceptibilitySTI.h"
-#include "SimulationConfig.h"
 #include "StiObjectFactory.h"
 #include "NodeInfoSTI.h"
 
@@ -72,7 +71,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "STI_SIM requested with invalid configuration." );
@@ -90,7 +89,12 @@ namespace Kernel
     void SimulationSTI::Initialize( const ::Configuration *config )
     {
         Simulation::Initialize(config);
-        IndividualHumanSTI::InitializeStaticsSTI( config );
+
+        IndividualHumanSTIConfig   sti_individual_config_obj;
+        InfectionSTIConfig         sti_infection_config_obj;
+
+        sti_individual_config_obj.Configure( config );
+        sti_infection_config_obj.Configure( config );
     }
 
     bool
@@ -120,7 +124,7 @@ namespace Kernel
         // --- from a subclass like SimulationHIV.  SimulationHIV will only be calling
         // --- this if the simulation type is HIV_SIM
         // ---------------------------------------------------------------------------
-        if (report_relationship_start && (GET_CONFIGURABLE( SimulationConfig )->sim_type == SimType::STI_SIM))
+        if (report_relationship_start && (sim_type == SimType::STI_SIM))
         {
             LOG_INFO( "Using STI RelationshipStartReporter.\n" );
             reports.push_back(StiObjectFactory::CreateRelationshipStartReporter(this));
@@ -138,7 +142,7 @@ namespace Kernel
             reports.push_back(StiObjectFactory::CreateRelationshipConsummatedReporter(this));
         }
 
-        if (report_transmission && (GET_CONFIGURABLE( SimulationConfig )->sim_type == SimType::STI_SIM))
+        if (report_transmission && (sim_type == SimType::STI_SIM))
         {
             LOG_INFO( "Using STI TransmissionReporter.\n" );
             reports.push_back(StiObjectFactory::CreateTransmissionReporter(this));
@@ -148,13 +152,9 @@ namespace Kernel
 
     bool SimulationSTI::ValidateConfiguration(const ::Configuration *config)
     {
-        if (!Simulation::ValidateConfiguration(config))
-            return false;
-
         // TODO: any disease-specific validation goes here.
-        // Warning: static climate parameters are not configured until after this function is called
 
-        return true;
+        return Simulation::ValidateConfiguration(config);
     }
 
     void SimulationSTI::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

@@ -59,23 +59,6 @@ namespace Kernel
         auto tn = JsonConfigurable::_typename_label();
         auto ts = JsonConfigurable::_typeschema_label();
         schema[ tn ] = json::String( "idmType:LarvalHabitats" );
-#if 0
-        schema[ts] = json::Array();
-        schema[ts][0] = json::Object();
-        schema[ts][0]["Low"] = json::Object();
-        schema[ts][0]["Low"][ "type" ] = json::String( "float" );
-        schema[ts][0]["Low"][ "min" ] = json::Number( 0 );
-        schema[ts][0]["Low"][ "max" ] = json::Number( 1000.0 );
-        schema[ts][0]["Low"][ "description" ] = json::String( HIV_Age_Diagnostic_Low_DESC_TEXT );
-        schema[ts][0]["High"] = json::Object();
-        schema[ts][0]["High"][ "type" ] = json::String( "float" );
-        schema[ts][0]["High"][ "min" ] = json::Number( 0 );
-        schema[ts][0]["High"][ "max" ] = json::Number( 1000.0 );
-        schema[ts][0]["High"][ "description" ] = json::String( HIV_Age_Diagnostic_High_DESC_TEXT );
-        schema[ts][0]["Event"] = json::Object();
-        schema[ts][0]["Event"][ "type" ] = json::String( "String" );
-        schema[ts][0]["Event"][ "description" ] = json::String( HIV_Age_Diagnostic_Event_Name_DESC_TEXT );
-#endif
         return schema;
     }
 

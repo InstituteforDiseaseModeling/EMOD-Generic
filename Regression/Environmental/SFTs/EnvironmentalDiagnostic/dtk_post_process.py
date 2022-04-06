@@ -28,10 +28,10 @@ This SFT is testing environmental feature 2.6 Interventions EnvironmentalDiagnos
 threshold, and then broadcasts either a positive or negative node event. The user will need the ability to optionally 
 indicate an IP in case IP's are used to model different locations.
 Environment_IP_Key_Value
-    If provided, this individual property key-value pair will indicate a specific transmission “pool”. Typically, 
+    If provided, this individual property key-value pair will indicate a specific transmission "pool". Typically, 
     this will be used to identify a location.
     If not provided or empty, then the sample is to be expected for the entire node.
-    This is an IP key-value pair such that we have “key:value”.
+    This is an IP key-value pair such that we have "key:value".
 Sample_Threshold
     If the sample is greater than (NOT equal to) this threshold, then a positive finding will have been found. This 
     does not include values equal to the threshold so that the threshold can be set at zero. If the value is zero, 

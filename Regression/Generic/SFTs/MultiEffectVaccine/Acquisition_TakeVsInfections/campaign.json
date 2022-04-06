@@ -23,7 +23,7 @@
                         "Initial_Effect": 0.0,
                         "class": "WaningEffectBox"
                     },
-                    "class": "MultiEffectVaccine"
+                    "class": "Vaccine"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"

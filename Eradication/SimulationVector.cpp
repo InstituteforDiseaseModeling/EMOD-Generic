@@ -10,11 +10,14 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include "SimulationVector.h"
+#include "ConfigParams.h"
 #include "ReportVector.h"
 #include "SpatialReportVector.h"
 #include "VectorSpeciesReport.h"
 #include "NodeVector.h"
 #include "IndividualVector.h"
+#include "SusceptibilityVector.h"
+#include "InfectionVector.h"
 #include "Sugar.h"
 #include "Vector.h"
 #include "SimulationConfig.h"
@@ -43,6 +46,7 @@ namespace Kernel
         , node_populations_map()
     {
         LOG_DEBUG( "SimulationVector ctor\n" );
+        serializationFlags |= SerializationBitMask_t{}.set( SerializationFlags::VectorPopulation );
         reportClassCreator = ReportVector::CreateReport;
         spatialReportClassCreator = SpatialReportVector::CreateReport;
     }
@@ -55,7 +59,12 @@ namespace Kernel
     void SimulationVector::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
-        IndividualHumanVector::InitializeStaticsVector( config );
+
+        SusceptibilityVectorConfig    vec_susceptibility_config_obj;
+        InfectionVectorConfig         vec_infection_config_obj;
+
+        vec_susceptibility_config_obj.Configure( config );
+        vec_infection_config_obj.Configure( config );
 
         for( auto report : reports )
         {
@@ -84,7 +93,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "VECTOR_SIM requested with invalid configuration." );
@@ -96,14 +105,12 @@ namespace Kernel
 
     bool SimulationVector::ValidateConfiguration(const ::Configuration *config)
     {
-        bool validConfiguration = Kernel::Simulation::ValidateConfiguration(config);
-
-        if (GET_CONFIGURABLE(SimulationConfig)->heterogeneous_intranode_transmission_enabled)
+        if ( ClimateConfig::GetClimateParams()->climate_structure == ClimateStructure::CLIMATE_OFF )
         {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Sim_Type", "VECTOR_SIM", "Enable_Heterogeneous_Intranode_Transmission", "1" );
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", SimType::pairs::lookup_key(sim_type) );
         }
 
-        return validConfiguration;
+        return Simulation::ValidateConfiguration(config);
     }
 
     SimulationVector::~SimulationVector()
@@ -278,6 +285,11 @@ namespace Kernel
     {
         Simulation::serialize( ar, obj );
         SimulationVector& sim = *obj;
+
+        if( sim.serializationFlags.test( SerializationFlags::VectorPopulation) ) 
+        {
+            //ar.labelElement("m_VectorCohortSuidGenerator") & sim.m_VectorCohortSuidGenerator;
+        }
 
 //        ar.labelElement("migratingVectorQueues") & sim.migratingVectorQueues;         // no reason to keep track of migrating vectors "in-flight" :)
 //        ar.labelElement("vector_migration_reports") & sim.vector_migration_reports;

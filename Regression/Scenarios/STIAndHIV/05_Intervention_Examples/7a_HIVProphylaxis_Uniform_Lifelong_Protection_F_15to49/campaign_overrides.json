@@ -5,13 +5,12 @@
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
-                        "Vaccine_Type": "AcquisitionBlocking",
-                        "Waning_Config": {
+                        "Acquire_Config": {
                             "Box_Duration": 30000,
                             "Initial_Effect": 0.6,
                             "class": "WaningEffectBox"
                         },
-                        "class": "SimpleVaccine"
+                        "class": "Vaccine"
                     },
                     "Target_Age_Max": 49,
                     "Target_Age_Min": 15,

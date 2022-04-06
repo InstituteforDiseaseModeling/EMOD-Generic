@@ -15,14 +15,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configure.h"
 #include "SimulationEnums.h"
 #include "ISusceptibilityContext.h"
+#include "IIndividualHumanContext.h"
 
 class Configuration;
 
 namespace Kernel
 {
-    struct IIndividualHumanContext;
-    class SimulationConfig;
-
     class SusceptibilityConfig : public JsonConfigurable 
     {
         friend class Individual;
@@ -48,7 +46,7 @@ namespace Kernel
         static float baseacqupdate;
         static float basetranupdate;
         static float basemortupdate;
-        
+
         static bool  enable_immune_decay;
         static float acqdecayrate;
         static float trandecayrate;
@@ -69,7 +67,7 @@ namespace Kernel
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
     public:
-        static Susceptibility *Susceptibility::CreateSusceptibility(IIndividualHumanContext *context, float _age, float immmod, float riskmod);
+        static Susceptibility *Susceptibility::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod);
         virtual ~Susceptibility();
         virtual void SetContextTo(IIndividualHumanContext* context);
         IIndividualHumanContext* GetParent();
@@ -78,10 +76,10 @@ namespace Kernel
         virtual void  UpdateInfectionCleared();
 
         // ISusceptibilityContext interfaces
-        virtual float getAge() const override;
         virtual float getModAcquire() const override;
         virtual float getModTransmit() const override;
         virtual float getModMortality() const override;
+        virtual float getModRisk() const override;
         virtual float getImmuneFailAgeAcquire() const override;
         virtual void  updateModAcquire(float updateVal) override;
         virtual void  updateModTransmit(float updateVal) override;
@@ -91,9 +89,6 @@ namespace Kernel
         virtual bool  IsImmune() const override;
 
     protected:
-        // current status
-        float age;
-
         // immune modifiers
         float mod_acquire;
         float mod_transmit;
@@ -105,13 +100,13 @@ namespace Kernel
 
         float m_immune_failage_acquire;
 
+        float m_demographic_risk;
+
         Susceptibility();
         Susceptibility(IIndividualHumanContext *context);
-        virtual void Initialize(float _age, float immmod, float riskmod);
+        virtual void Initialize(float immmod, float riskmod);
 
         IIndividualHumanContext *parent;
-
-        const SimulationConfig* params();
 
         DECLARE_SERIALIZABLE(Susceptibility);
     };

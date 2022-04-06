@@ -61,7 +61,6 @@ namespace Kernel
         std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
     private:
-        static void InitializeStaticsPy( const Configuration* config );
 
 #ifdef ENABLE_PYTHON
         PyObject * expose_vars;

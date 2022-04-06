@@ -27,14 +27,9 @@ namespace Kernel
     struct IDMAPI IIndividualHumanEventContext : public ISupports 
     {
         // for example, individual attributes...
-        virtual bool   IsPregnant()                    const = 0;        
-        
-        /*virtual float  GetImmuneFailAgeAcquire()       const = 0;
-        virtual float  GetInterventionReducedAcquire() const = 0;
-        virtual float  GetImmunityReducedAcquire()     const = 0;
-        virtual float  GetAcquisitionImmunity()        const = 0;*/
+        virtual bool   IsPregnant()                    const = 0;
 
-        virtual double GetAge()              const = 0;
+        virtual float  GetAge()              const = 0;
         virtual int    GetGender()           const = 0;
         virtual float  GetMonteCarloWeight() const = 0;
         virtual bool   IsPossibleMother()    const = 0;

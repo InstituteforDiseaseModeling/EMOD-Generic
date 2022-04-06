@@ -10,7 +10,8 @@
         "DEMOGRAPHICS": {
             "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
             "Demographics_Filenames": [
-                "Garki_single_demographics.json"
+                "Garki_single_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Birth": 1,
             "Enable_Initial_Prevalence": 1,

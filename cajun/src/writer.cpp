@@ -26,10 +26,20 @@ namespace json
 {
 
 
-void Writer::Write(const Element& elementRoot, std::ostream& ostr) { 
-   Writer writer(ostr);
+void Writer::Write(const Element& elementRoot, std::ostream& ostr, const std::string& indentChars) { 
+   Writer writer(ostr, indentChars);
    elementRoot.Accept(writer);
    ostr.flush(); // all done
+}
+
+std::string Writer::MultiIndent(int nReps) {
+   std::string total_sep;
+   for (int k1 = 0; k1 < nReps; k1++)
+   {
+      total_sep += m_indentChars;
+   }
+
+   return total_sep;
 }
 
 void Writer::Visit(const Array& array) {
@@ -43,7 +53,7 @@ void Writer::Visit(const Array& array) {
       Array::const_iterator it(array.Begin()),
                             itEnd(array.End());
       while (it != itEnd) {
-         m_ostr << std::string(m_nTabDepth, '\t');
+         m_ostr << MultiIndent(m_nTabDepth);
          it->Accept(*this); 
 
          if (++it != itEnd)
@@ -52,7 +62,7 @@ void Writer::Visit(const Array& array) {
       }
 
       --m_nTabDepth;
-      m_ostr << std::string(m_nTabDepth, '\t') << ']';
+      m_ostr << MultiIndent(m_nTabDepth) << ']';
    }
 }
 
@@ -67,7 +77,7 @@ void Writer::Visit(const Object& object) {
       Object::const_iterator it(object.Begin()),
                              itEnd(object.End());
       while (it != itEnd) {
-         m_ostr << std::string(m_nTabDepth, '\t') << '"' << it->name << "\" : ";
+         m_ostr << MultiIndent(m_nTabDepth) << '"' << it->name << "\" : ";
          it->element.Accept(*this); 
 
          if (++it != itEnd)
@@ -76,7 +86,7 @@ void Writer::Visit(const Object& object) {
       }
 
       --m_nTabDepth;
-      m_ostr << std::string(m_nTabDepth, '\t') << '}';
+      m_ostr << MultiIndent(m_nTabDepth) << '}';
    }
 }
 

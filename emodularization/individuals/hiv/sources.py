@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_hivindividual_module.cpp',
+            '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualSTI.cpp',
             '../../../Eradication/IndividualHIV.cpp',

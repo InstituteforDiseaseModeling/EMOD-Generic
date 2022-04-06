@@ -130,7 +130,7 @@ def application(output_folder="output", stdout_filename="test.txt",
         print( "insetchart_name: " + insetchart_name + "\n" )
         print( "report_name: " + report_name + "\n" )
         print( "debug: " + str(debug) + "\n" )
-    #sft.wait_for_done()
+    sft.wait_for_done()
     param_obj = load_emod_parameters(config_filename)
 
     parsed_data = parse_stdout_file(debug=debug)

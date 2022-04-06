@@ -27,6 +27,9 @@
             "Run_Number": 27
         },
         "SERIALIZATION": {
+            "Serialization_Precision" : "REDUCED",
+            "Serialized_Population_Writing_Type": "TIMESTEP",
+            "Serialization_Mask_Node_Write": 0,
             "Serialization_Time_Steps": [
                 0,
                 365

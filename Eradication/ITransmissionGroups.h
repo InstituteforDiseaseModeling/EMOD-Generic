@@ -37,12 +37,13 @@ namespace Kernel
     {
         virtual void AddProperty(const std::string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) = 0;
         virtual void Build(float contagionDecayRate, int numberOfAntigens, int numberOfSubstrains) = 0;
+        virtual void ChangeMatrix(const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix) = 0;
         virtual void GetGroupMembershipForProperties(const tProperties& properties, TransmissionGroupMembership_t& membershipOut) const = 0;
         virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight) = 0;
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) = 0;
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const = 0;
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) = 0;
-        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityAddition = 0.0f ) = 0;
+        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) = 0;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) = 0;
 
         virtual void UseTotalPopulationForNormalization( void ) = 0;

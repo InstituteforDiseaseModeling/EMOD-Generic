@@ -1,0 +1,24 @@
+{
+    "Default_Config_Path": "defaults/dengue_science_default_config.json",
+    "parameters": {
+        "Acquisition_Blocking_Immunity_Duration_Before_Decay": 100,
+        "Config_Name": "Dengue_SFT_Imunity_SameStrain",
+        "Default_Geography_Initial_Node_Population": 10,
+        "Default_Geography_Torus_Size": 3,
+        "Demographics_Filenames": [
+            "../../../Dengue_single_node_demographics.json"
+        ],
+        "Enable_Aging": 0,
+        "Enable_Demographics_Builtin": 1,
+        "Enable_Vector_Mortality": 0,
+        "Enable_Vital_Dynamics": 0,
+        "Simulation_Duration": 365,
+        "Strain1_Background_Exposure": 0.0,
+        "Strain2_Background_Exposure": 0.0,
+        "Strain3_Background_Exposure": 0.0,
+        "Strain4_Background_Exposure": 0.0,
+        "Symptomatic_Probability_Reinfected": 0.0,
+        "logLevel_InfectionDengue": "VALID",
+        "x_Base_Population": 1
+    }
+}

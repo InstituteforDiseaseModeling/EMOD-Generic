@@ -252,13 +252,13 @@ SUITE(PairFormationParametersImplTest)
     TEST(TestBadMaleBinCount)
     {
         TestHelper_Exception( __LINE__, "testdata/PairFormationParametersTest/TestBadMaleBinCount.json",
-            "Configuration variable Number_Age_Bins_Male with value 0 out of range: less than 1.\nWas reading values for TRANSITORY." ) ;
+            "Configuration variable 'Number_Age_Bins_Male' with value 0 out of range: less than 1.\nWas reading values for TRANSITORY." ) ;
     }
 
     TEST(TestBadFemaleBinCount)
     {
         TestHelper_Exception( __LINE__, "testdata/PairFormationParametersTest/TestBadFemaleBinCount.json",
-            "Configuration variable Number_Age_Bins_Female with value 9999 out of range: greater than 1000.\nWas reading values for TRANSITORY." ) ;
+            "Configuration variable 'Number_Age_Bins_Female' with value 9999 out of range: greater than 1000.\nWas reading values for TRANSITORY." ) ;
     }
 
     TEST(TestMissingFemaleBinCount)
@@ -270,7 +270,7 @@ SUITE(PairFormationParametersImplTest)
     TEST(TestBadMarginalProbabilityValue)
     {
         TestHelper_Exception( __LINE__, "testdata/PairFormationParametersTest/TestBadMarginalProbabilityValue.json",
-            "Configuration variable Joint_Probabilities with value -99.0078 out of range: less than 0.\nWas reading values for TRANSITORY." ) ;
+            "Configuration variable 'Joint_Probabilities' with value -99.0078 out of range: less than 0.\nWas reading values for TRANSITORY." ) ;
     }
 
     TEST(TestMissingMarginalProbabilityValuesInThirdRow)

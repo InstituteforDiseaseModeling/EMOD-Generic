@@ -12,7 +12,7 @@
             "Enable_Initial_Prevalence": 1,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
-            "Enable_Vital_Dynamics": 0,
+            "Enable_Vital_Dynamics": 1,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 0,
                 "Post_Infection_Acquisition_Multiplier": 1,
@@ -27,13 +27,14 @@
                 "Base_Incubation_Period": 0
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.7
+                "Base_Infectivity_Constant": 0.7,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "PRIMARY": {
-            "Config_Name": "Generic serialization 01 writes files",
+            "Config_Name": "Generic serialization 02 reads files",
             "Geography": "SamplesInput",
-            "Python_Script_Path": "LOCAL",
+            "Python_Script_Path": "SHARED",
             "Run_Number": 1,
             "Serialization_Time_Steps": [
                 70
@@ -41,9 +42,13 @@
             "Serialized_Population_Filenames": [
                 "state-00050.dtk"
             ],
+            "Serialized_Population_Reading_Type": "READ",
+            "Serialized_Population_Writing_Type": "TIMESTEP",
+            "Enable_Random_Generator_From_Serialized_Population": 0,
+            "Serialization_Mask_Node_Read": 0,
+            "Serialization_Mask_Node_Write": 0,
             "Simulation_Duration": 70,
             "Start_Time": 50
-        },
-        "Serialization_Type": "TIMESTEP"
+        }
     }
 }

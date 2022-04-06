@@ -699,6 +699,14 @@ namespace Kernel
             for( int j = 0 ; j < rDemog[i].size() ; j++ )
             {
                 float val = rDemog[i][j].AsDouble();
+
+                if( val < 0.0f )
+                {
+                    std::ostringstream msg;
+                    msg << "Invalid Transmission Matrix for property '" << rKeyStr << "'. Matrix must be non-negative." ;
+                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                }
+
                 row.push_back( val );
             }
             m_Matrix.push_back( row );

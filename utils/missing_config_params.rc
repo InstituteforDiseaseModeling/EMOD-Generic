@@ -9,3 +9,20 @@
 #define Infectivity_Population_Density_HalfMax_DESC_TEXT "Population density at which at which total node infectivity is decreased to half of its unmodified value."
 
 #define Base_Infectivity_Distribution_DESC_TEXT "The distribution type to use when assigning a quantity of infectivity to an infection."
+
+#define Immune_Downsample_Min_Age_DESC_TEXT "Minimum agent age required for immunity dependent downsampling."
+
+#define Enable_Infection_Rate_Overdispersion_DESC_TEXT "Controls overdispersion of the infection process. Implemented as gamma-Poisson mixture; zero value for overdispersion implies Poisson statistics."
+
+#define Serialization_Precision_DESC_TEXT "TBD-Default is REDUCED to reduce the size of the serialized file.  FULL gives more floating point precision but creates larger files."
+#define SerializationMask_Node_Read_DESC_TEXT   "A bit mask to control from where data is read. If the mask is set the configuration file is used. Currently the only supported mask is 16 (Larval_Habitats)."
+#define SerializationMask_Node_Write_DESC_TEXT  "A bit mask to control writing of data, e.g. to reduce file size. If the mask is set the data of the masked module is not written to file. Currently the only supported mask is 16 (Larval_Habitats)."
+#define Serialized_Population_Reading_Type_DESC_TEXT "Set to READ to enable reading from a serialized population file, set to NONE otherwise."
+#define Serialized_Population_Writing_Type_DESC_TEXT "The type of serialization to perform. NONE for no serialization, TIME to use definition from Serialization_Times, and TIMESTEP to use definition from Serialization_Time_Steps."
+
+#define Enable_Event_DB_DESC_TEXT    "Write out SQLite database of events."
+
+#define Enable_Initial_Prevalence_DESC_TEXT    "Indicates that the InitialPrevalance value from demographics is the fraction of individuals to be infected at simulation initialization; zero initial prevalence otherwise."
+
+// *** Delete  ***
+// #define Serialized_Population_Writing_Type_DESC_TEXT "The type of serialization to perform. NONE for no serialization, TIME to use definition from Serialization_Times, and TIMESTEP to use definition from Serialization_Time_Steps."

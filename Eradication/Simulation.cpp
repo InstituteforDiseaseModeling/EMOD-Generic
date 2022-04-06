@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include "Simulation.h"
+#include "ConfigParams.h"
 
 #include <iomanip>      // std::setprecision
 
@@ -33,7 +34,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ReportEventRecorderNode.h"
 #include "ReportEventRecorderCoordinator.h"
 #include "ReportSurveillanceEventRecorder.h"
+#include "SQLReporter.h"
 #include "Individual.h"
+#include "Susceptibility.h"
+#include "Infection.h"
 #include "LoadBalanceScheme.h"
 #include "EventTrigger.h"
 #include "RandomNumberGeneratorFactory.h"
@@ -46,6 +50,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmMpi.h"
 #include "Properties.h"
 #include "NodeProperties.h"
+#include "SerializationParameters.h"
 #include "PythonSupport.h"
 
 #ifdef _DEBUG
@@ -82,7 +87,8 @@ namespace Kernel
     //------------------------------------------------------------------
 
     Simulation::Simulation()
-        : serializationMask(SerializationFlags(uint32_t(SerializationFlags::Population) | uint32_t(SerializationFlags::Parameters)))
+        : serializationFlags( SerializationBitMask_t{}.set( SerializationFlags::Population )
+                            | SerializationBitMask_t{}.set( SerializationFlags::Parameters ) )           
         , nodes()
         , nodeRankMap()
         , node_events_added()
@@ -109,6 +115,7 @@ namespace Kernel
         , nodeEventReportClassCreator( nullptr )
         , coordinatorEventReportClassCreator( nullptr )
         , surveillanceEventReportClassCreator( nullptr )
+        , sqlReportCreator( nullptr )
         , event_coordinators()
         , campaign_events()
         , event_context_host(nullptr)
@@ -122,6 +129,7 @@ namespace Kernel
         , enable_node_event_report( false )
         , enable_coordinator_event_report( false )
         , enable_surveillance_event_report( false )
+        , enable_event_db( false )
         , enable_termination_on_zero_total_infectivity(false)
         , campaign_filename()
         , custom_reports_filename( RUN_ALL_CUSTOM_REPORTS )
@@ -144,6 +152,7 @@ namespace Kernel
         nodeEventReportClassCreator         = ReportEventRecorderNode::CreateReport;
         coordinatorEventReportClassCreator  = ReportEventRecorderCoordinator::CreateReport;
         surveillanceEventReportClassCreator = ReportSurveillanceEventRecorder::CreateReport;
+        sqlReportCreator                    = SQLReporter::CreateReport;
 
         nodeRankMap.SetNodeInfoFactory( this );
 
@@ -160,12 +169,7 @@ namespace Kernel
         {
             release_assert( m_simConfigObj );
 
-            demographics_factory = NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map,
-                EnvPtr->Config,
-                m_simConfigObj->demographics_initial,
-                m_simConfigObj->default_torus_size,
-                m_simConfigObj->default_node_population
-            );
+            demographics_factory = NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config );
             if( demographics_factory == nullptr )
             {
                 throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create NodeDemographicsFactory" );
@@ -212,18 +216,22 @@ namespace Kernel
         LOG_DEBUG("Configure\n");
 
         // Temporary configuration values
+        float sim_start_time = 0.0f;
         float sim_delta_time = 0.0f;
+        float sim_total_time = 0.0f;
 
         initConfig( "Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum("sim_type", Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
 
+        initConfigTypeMap( "Start_Time",          &sim_start_time,  Start_Time_DESC_TEXT,          0.0f, FLT_MAX, 1.0f );
         initConfigTypeMap( "Simulation_Timestep", &sim_delta_time,  Simulation_Timestep_DESC_TEXT, 0.0f, FLT_MAX, 1.0f );
+        initConfigTypeMap( "Simulation_Duration", &sim_total_time,  Simulation_Duration_DESC_TEXT, 0.0f, FLT_MAX, 1.0f );
 
         initConfigTypeMap( "Enable_Termination_On_Zero_Total_Infectivity",  &enable_termination_on_zero_total_infectivity,  Enable_Termination_On_Zero_Total_Infectivity_DESC_TEXT,  false );
         initConfigTypeMap( "Enable_Default_Reporting",       &enable_default_report,          Enable_Default_Reporting_DESC_TEXT,       true  );
         initConfigTypeMap( "Enable_Demographics_Reporting",  &demographic_tracking,           Enable_Demographics_Reporting_DESC_TEXT,  true  );
         initConfigTypeMap( "Enable_Property_Output",         &enable_property_output,         Enable_Property_Output_DESC_TEXT,         false );
         initConfigTypeMap( "Enable_Spatial_Output",          &enable_spatial_output,          Enable_Spatial_Output_DESC_TEXT,          false );
-        initConfigTypeMap( "Report_Event_Recorder",          &enable_event_report,            Report_Event_Recorder_DESC_TEXT,          false );
+        initConfigTypeMap( "Enable_Event_DB",                &enable_event_db,                Enable_Event_DB_DESC_TEXT,                true  );
 
         initConfigTypeMap( ReportEventRecorder::GetEnableParameterName().c_str(),             &enable_event_report,              Report_Event_Recorder_DESC_TEXT,             false );
         initConfigTypeMap( ReportEventRecorderNode::GetEnableParameterName().c_str(),         &enable_node_event_report,         Report_Node_Event_Recorder_DESC_TEXT,        false );
@@ -231,58 +239,36 @@ namespace Kernel
         initConfigTypeMap( ReportSurveillanceEventRecorder::GetEnableParameterName().c_str(), &enable_surveillance_event_report, Report_Coordinator_Event_Recorder_DESC_TEXT, false );        
         
         initConfigTypeMap( "Campaign_Filename",       &campaign_filename,      Campaign_Filename_DESC_TEXT, "", "Enable_Interventions" );
-        initConfigTypeMap( "Load_Balance_Filename",   &loadbalance_filename,   Load_Balance_Filename_DESC_TEXT ); 
+        initConfigTypeMap( "Load_Balance_Filename",   &loadbalance_filename,   Load_Balance_Filename_DESC_TEXT, "" ); 
         initConfigTypeMap( "Minimum_End_Time",        &min_sim_endtime,        Minimum_End_Time_DESC_TEXT, 0.0f, 1000000.0f, 0.0f, "Enable_Termination_On_Zero_Total_Infectivity" );
-        std::vector< int > py_inproc_tsteps_tmp_vec;
-        initConfigTypeMap( "Python_Inprocessing_Tsteps",        &py_inproc_tsteps_tmp_vec,        "Array of timesteps when you want to call out to python" );
 
         if( JsonConfigurable::_dryrun || EnvPtr->Config->Exist( "Custom_Reports_Filename" ) )
         {
             initConfigTypeMap( "Custom_Reports_Filename", &custom_reports_filename, Custom_Reports_Filename_DESC_TEXT, RUN_ALL_CUSTOM_REPORTS );
         }
 
-        bool create_rng_from_serialized_data = false;
-        if( JsonConfigurable::_dryrun || EnvPtr->Config->Exist( "Enable_Random_Generator_From_Serialized_Population" ) )
-        {
-            initConfigTypeMap( "Enable_Random_Generator_From_Serialized_Population", &create_rng_from_serialized_data, Enable_Random_Generator_From_Serialized_Population_DESC_TEXT, false );
-        }
-
         bool ret = JsonConfigurable::Configure( inputJson );
 
         if( ret || JsonConfigurable::_dryrun )
         {
-            if( create_rng_from_serialized_data && !inputJson->Exist( "Serialized_Population_Filenames" ) )
-            {
-                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                        "Serialized_Population_Filenames", "<not exist>",
-                                                        "Enable_Random_Generator_From_Serialized_Population", "1",
-                                                        "'Enable_Random_Generator_From_Serialized_Population' can only be enabled if using a serialized population.");
-            }
-            m_pRngFactory->CreateFromSerializeData( create_rng_from_serialized_data );
-            if( JsonConfigurable::_dryrun || !create_rng_from_serialized_data )
+            m_pRngFactory->CreateFromSerializeData( SerializationParameters::GetInstance()->GetCreateRngFromSerializedData() );
+            if( JsonConfigurable::_dryrun || !SerializationParameters::GetInstance()->GetCreateRngFromSerializedData() )
             {
                 m_pRngFactory->Configure( inputJson );
             }
         }
 
-        if( !JsonConfigurable::_dryrun && 
-            ((GET_CONFIGURABLE(SimulationConfig)->starttime + GET_CONFIGURABLE(SimulationConfig)->Sim_Duration) < min_sim_endtime) )
-        {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Minimum_End_Time", min_sim_endtime, "maximum simulation time step",
-                                                    GET_CONFIGURABLE(SimulationConfig)->starttime + GET_CONFIGURABLE(SimulationConfig)->Sim_Duration,
-                                                   "Start_Time + Simulation_Duration must be greater than Minimum_End_Time." );
-        }
-
         // Set configuration from temporary values
+        currentTime.SetTimeStart(sim_start_time);
         currentTime.SetTimeDelta(sim_delta_time);
-
-        // convert vector into queue
-        for( auto elem : py_inproc_tsteps_tmp_vec )
-        {
-            py_inproc_tsteps.push( elem );
-        }
+        currentTime.SetSimDuration(sim_total_time);
 
         return ret;
+    }
+
+    const SimParams* Simulation::GetParams() const
+    {
+        return SimConfig::GetSimParams();
     }
 
     // Check simulation abort conditions
@@ -333,7 +319,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "GENERIC_SIM requested with invalid configuration." );
@@ -345,12 +331,82 @@ namespace Kernel
 
     bool Simulation::ValidateConfiguration(const ::Configuration *config)
     {
-        // NOTE: ClimateFactory::climate_structure, configured from the parameter "Climate_Model",
-        //       is only available after the factory is created in Simulation::populateFromDemographics
-        //       SimulationConfig and the various static individual/infection/susceptibility parameters
-        //       should be initialized by this point (see Simulation::Initialize).
-        //       However, this function still has access to the complete set of configurable parameters
-        //       from the  json::Configuration argument that is passed in by the SimulationFactory.
+        const ClimateParams* cp = ClimateConfig::GetClimateParams();
+        if( demographics_factory->GetEnableDemographicsBuiltin() && cp->climate_structure != ClimateStructure::CLIMATE_OFF 
+                                                                 && cp->climate_structure != ClimateStructure::CLIMATE_CONSTANT )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Enable_Demographics_Builtin", demographics_factory->GetEnableDemographicsBuiltin(),
+                                                                                      "Climate_Model", ClimateStructure::pairs::lookup_key(cp->climate_structure));
+        }
+
+        const MigrationParams* mp = MigrationConfig::GetMigrationParams();
+        can_support_family_trips = ( mp->migration_pattern == MigrationPattern::SINGLE_ROUND_TRIPS)   &&
+                                   (!mp->enable_mig_local     || (mp->local_roundtrip_prob  == 1.0f)) &&
+                                   (!mp->enable_mig_air       || (mp->air_roundtrip_prob    == 1.0f)) &&
+                                   (!mp->enable_mig_regional  || (mp->region_roundtrip_prob == 1.0f)) &&
+                                   (!mp->enable_mig_sea       || (mp->sea_roundtrip_prob    == 1.0f));
+
+        if( mp->enable_mig_family && !can_support_family_trips )
+        {
+            std::stringstream msg;
+            msg << "Invalid Configuration for Family Trips." << std::endl;
+            msg << "Migration_Pattern must be SINGLE_ROUND_TRIPS and the 'XXX_Migration_Roundtrip_Probability' must equal 1.0 if that Migration Type is enabled." << std::endl;
+            msg << "Migration_Pattern = " << MigrationPattern::pairs::lookup_key( mp->migration_pattern ) << std::endl;
+            msg << "Enable_Local_Migration = "    << mp->enable_mig_local    << " and Local_Migration_Roundtrip_Probability = "    << mp->local_roundtrip_prob  << std::endl;
+            msg << "Enable_Air_Migration = "      << mp->enable_mig_air      << " and Air_Migration_Roundtrip_Probability = "      << mp->air_roundtrip_prob    << std::endl;
+            msg << "Enable_Regional_Migration = " << mp->enable_mig_regional << " and Regional_Migration_Roundtrip_Probability = " << mp->region_roundtrip_prob << std::endl;
+            msg << "Enable_Sea_Migration = "      << mp->enable_mig_sea      << " and Sea_Migration_Roundtrip_Probability = "      << mp->sea_roundtrip_prob    << std::endl;
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        const NodeParams* np = NodeConfig::GetNodeParams();
+        if( np->environmental_ramp_up_duration + np->environmental_ramp_down_duration + np->environmental_cutoff_days >= DAYSPERYEAR )
+        {
+            std::ostringstream msg;
+            msg <<    "Environmental_Ramp_Up_Duration "   << "(" << np->environmental_ramp_up_duration   << ")"
+                << " + Environmental_Ramp_Down_Duration " << "(" << np->environmental_ramp_down_duration << ")"
+                << " + Environmental_Cutoff_Days "        << "(" << np->environmental_cutoff_days        << ")"
+                << " must be < 365. Equals "
+                << np->environmental_ramp_up_duration + np->environmental_ramp_down_duration + np->environmental_cutoff_days
+                << ".\n";
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        if( (sim_type == SimType::STI_SIM || sim_type == SimType::HIV_SIM) && (np->ind_sampling_type != IndSamplingType::TRACK_ALL) 
+                                                                           && (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
+                                                    "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(np->ind_sampling_type),
+                                                    "Simulation_Type", SimType::pairs::lookup_key(sim_type),
+                                                    "Relationship-based transmission network only works with 100% sampling.");
+        }
+
+        if (IndividualHumanConfig::superinfection && (IndividualHumanConfig::max_ind_inf < 2))
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Max_Individual_Infections", IndividualHumanConfig::max_ind_inf,
+                                                                                     "Enable_Superinfection", IndividualHumanConfig::superinfection);
+        }
+
+        if( currentTime.GetTimeEnd() < min_sim_endtime )
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Minimum_End_Time", min_sim_endtime, "maximum simulation time step",
+                                                    currentTime.GetTimeEnd(), "Start_Time + Simulation_Duration must be greater than Minimum_End_Time." );
+        }
+
+        if( IndividualHumanConfig::enable_skipping && np->enable_hint )
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Skipping", 1, "Enable_Heterogeneous_Intranode_Transmission", 1);
+        }
+
+        if( SimConfig::GetSimParams()->enable_interventions && campaign_filename.empty() )
+        {
+            throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Campaign_Filename' is empty.  You must have a file." );
+        }
+
+        for (auto report : reports)
+        {
+            report->Validate( this );
+        }
 
         return true;
     }
@@ -362,10 +418,21 @@ namespace Kernel
 
     void Simulation::Initialize(const ::Configuration *config)
     {
+        LOG_DEBUG( "Initialize\n" );
+
         Configure( config );
-        IndividualHuman::InitializeStatics( config );
-        MemoryGauge mg;
-        mg.Configure( config );
+
+        ConfigParams            gen_config_obj;
+        IndividualHumanConfig   gen_individual_config_obj;
+        SusceptibilityConfig    gen_susceptibility_config_obj;
+        InfectionConfig         gen_infection_config_obj;
+        MemoryGauge             mem_gauge_obj;
+
+        gen_config_obj.Configure( config );
+        gen_individual_config_obj.Configure( config );
+        gen_susceptibility_config_obj.Configure( config );
+        gen_infection_config_obj.Configure( config );
+        mem_gauge_obj.Configure( config );
 
         m_interventionFactoryObj = InterventionFactory::getInstance();
 
@@ -414,18 +481,9 @@ namespace Kernel
 
     void Simulation::setParams(const ::Configuration *config)
     {
-        // Seems to me that if enable_interventions is 0, we shouldn't have this exception here.
-        if( m_simConfigObj->interventions )
-        {
-            if( campaign_filename.empty() )
-            {
-                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Campaign_Filename' is empty.  You must have a file." );
-            }
-            campaignFilename = campaign_filename;
-        }
-
+        campaignFilename     = campaign_filename;
         loadBalanceFilename  = Environment::FindFileOnPath( loadbalance_filename  );
-        currentTime.time     = m_simConfigObj->starttime;
+        currentTime.time     = currentTime.GetTimeStart();
     }
 
     void Simulation::initSimulationState()
@@ -495,6 +553,13 @@ namespace Kernel
             IReport * surveillance_event_report = (*surveillanceEventReportClassCreator)();
             release_assert( surveillance_event_report );
             reports.push_back( surveillance_event_report );
+        }
+
+        if( enable_event_db )
+        {
+            IReport * report = (*sqlReportCreator)();
+            release_assert( report );
+            reports.push_back( report );
         }
 
         if(demographic_tracking)
@@ -616,11 +681,10 @@ namespace Kernel
         }
 
         ReportInstantiatorMap report_instantiator_map ;
-        SimType::Enum st_enum = m_simConfigObj->sim_type;
-        DllLoader dllLoader(SimType::pairs::lookup_key(st_enum));
+        DllLoader dllLoader(SimType::pairs::lookup_key(sim_type));
         if( !dllLoader.LoadReportDlls( report_instantiator_map ) )
         {
-            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(st_enum), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
+            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(sim_type), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
         }
         Reports_Instantiate( report_instantiator_map );
     }
@@ -875,6 +939,31 @@ namespace Kernel
 
         UpdateNodeEvents();
 
+        // ---------------------
+        // --- Python In-Process
+        // ---------------------
+
+        // Call out to embedded python in-processing script
+        std::string py_input_string, new_campaign_filename; 
+        py_input_string       = std::to_string( currentTime.time );
+        new_campaign_filename = Kernel::PythonSupport::RunPyFunction( py_input_string, Kernel::PythonSupport::SCRIPT_IN_PROCESS );
+
+        // Ensure all processes have the same new_campaign_filename
+        int fname_tmp_size = new_campaign_filename.size() + 1;
+        EnvPtr->MPI.p_idm_mpi->BroadcastInteger(&fname_tmp_size, 1, 0);
+        char* fname_tmp = static_cast<char*>(malloc(fname_tmp_size*sizeof(char)));
+        std::strcpy(fname_tmp, new_campaign_filename.c_str());
+        EnvPtr->MPI.p_idm_mpi->BroadcastChar(fname_tmp, fname_tmp_size, 0);
+        new_campaign_filename = fname_tmp;
+        free(fname_tmp); fname_tmp = nullptr;
+
+        // In-process call returns input string if no python, empty string if no new campaign;
+        if( new_campaign_filename != py_input_string && !new_campaign_filename.empty() )
+        {
+            const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
+            loadCampaignFromFile(new_campaign_filename, nodeIDs);
+        }
+
         // -------------------
         // --- Increment Time
         // -------------------
@@ -886,17 +975,6 @@ namespace Kernel
         PrintTimeAndPopulation();
 
         Reports_EndTimestep();
-
-        // Call out to Embedded Python IN-processing script if any
-        // Check if time now elapsed is greater than next timestep in 
-        // Python_Inprocessing_Tsteps array.
-        if( py_inproc_tsteps.size() > 0 && currentTime.timestep > py_inproc_tsteps.front() )
-        {
-            auto newCampaignFilename = Kernel::PythonSupport::RunPyFunction( std::to_string( currentTime.time ), Kernel::PythonSupport::SCRIPT_IN_PROCESS );
-            py_inproc_tsteps.pop();
-            const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
-            loadCampaignFromFile(newCampaignFilename, nodeIDs);
-        }
 
         // Unconditionally checking against potential memory blowup with minimum cost
         MemoryGauge::CheckMemoryFailure( false );
@@ -1006,26 +1084,13 @@ namespace Kernel
         }
     }
 
-    IMigrationInfoFactory* Simulation::CreateMigrationInfoFactory ( const std::string& idreference,
-                                                                    MigrationStructure::Enum ms,
-                                                                    int torusSize )
-    {
-        IMigrationInfoFactory* pmf = MigrationFactory::ConstructMigrationInfoFactory( EnvPtr->Config, 
-                                                                                      idreference,
-                                                                                      m_simConfigObj->sim_type,
-                                                                                      ms,
-                                                                                      !(m_simConfigObj->demographics_initial),
-                                                                                      torusSize );
-        return pmf ;
-    }
-
     void Simulation::LoadInterventions(const char* campaignfilename, const std::vector<ExternalNodeId_t>& demographic_node_ids)
     {
         // Set up campaign interventions from file
         release_assert( event_context_host );
         event_context_host->campaign_filename = campaignfilename;
-        release_assert( m_simConfigObj );
-        if (m_simConfigObj->interventions)
+
+        if( SimConfig::GetSimParams()->enable_interventions )
         {
             LOG_INFO_F( "Looking for campaign file %s\n", campaignfilename );
 
@@ -1042,8 +1107,7 @@ namespace Kernel
             DllLoader dllLoader;
             if (!dllLoader.LoadInterventionDlls())
             {
-                SimType::Enum st_enum = m_simConfigObj->sim_type;
-                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(st_enum), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
+                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(sim_type), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
             }
 #endif
 
@@ -1095,12 +1159,11 @@ namespace Kernel
         ClimateFactory * climate_factory = nullptr;
 #ifndef DISABLE_CLIMATE
         // Initialize climate from file
-        climate_factory = ClimateFactory::CreateClimateFactory(&nodeid_suid_map, EnvPtr->Config, idreference);
+        climate_factory = ClimateFactory::CreateClimateFactory(&nodeid_suid_map, idreference, this);
         if (climate_factory == nullptr)
         {
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create ClimateFactory" );
         }
-        // We can validate climate structure against sim_type now.
 #endif
 
         m_pRngFactory->SetNodeIds( nodeIDs );
@@ -1160,20 +1223,18 @@ namespace Kernel
         MergeNodeIdSuidBimaps( nodeid_suid_map, merged_map );
 
         // Initialize migration structure from file
-        IMigrationInfoFactory * migration_factory = CreateMigrationInfoFactory( idreference, 
-                                                                                m_simConfigObj->migration_structure, 
-                                                                                m_simConfigObj->default_torus_size );
+        IMigrationInfoFactory * migration_factory = ConstructMigrationInfoFactory( idreference,
+                                                                                   sim_type,
+                                                                                   demographics_factory->GetEnableDemographicsBuiltin(),
+                                                                                   demographics_factory->GetTorusSize() );
 
         if (migration_factory == nullptr)
         {
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "IMigrationInfoFactory" );
         }
 
-        can_support_family_trips = IndividualHumanConfig::CanSupportFamilyTrips( migration_factory );
-
-        release_assert( m_simConfigObj );
-        if( (m_simConfigObj->migration_structure != MigrationStructure::NO_MIGRATION) &&
-            m_simConfigObj->demographics_initial &&
+        if( (migration_factory->GetParams()->migration_structure != MigrationStructure::NO_MIGRATION) &&
+            !demographics_factory->GetEnableDemographicsBuiltin() &&
             !migration_factory->IsAtLeastOneTypeConfiguredForIndividuals() )
         {
             LOG_WARN("Enable_Demographics_Builtin is set to false,  Migration_Model != NO_MIGRATION, and no migration file names have been defined and enabled.  No file-based migration will occur.\n");
@@ -1182,7 +1243,7 @@ namespace Kernel
         for (auto& entry : nodes)
         {
             release_assert(entry.second);
-            (entry.second)->SetupMigration( migration_factory, m_simConfigObj->migration_structure, merged_map );
+            (entry.second)->SetupMigration( migration_factory, merged_map );
         } 
 
         LoadInterventions(campaignfilename, nodeIDs);
@@ -1452,12 +1513,6 @@ namespace Kernel
         }
     }
 
-    // IGlobalContext inferface for all the other components 
-    const SimulationConfig* Simulation::GetSimulationConfigObj() const
-    {
-        return m_simConfigObj;
-    }
-
     const IInterventionFactory* Simulation::GetInterventionFactory() const
     {
         return m_interventionFactoryObj;
@@ -1468,17 +1523,18 @@ namespace Kernel
     void Simulation::serialize(IArchive& ar, Simulation* obj)
     {
         Simulation& sim = *obj;
-        ar.labelElement("serializationMask") & (uint32_t&)sim.serializationMask;
+        ar.labelElement("serializationFlags") & (uint32_t&)sim.serializationFlags;
 
-        if (((sim.serializationMask & SerializationFlags::Population) != 0) ||
-            ((sim.serializationMask & SerializationFlags::Properties) != 0))
+        if ((sim.serializationFlags.test(SerializationFlags::Population)) ||
+            (sim.serializationFlags.test(SerializationFlags::Properties)))
         {
             ar.labelElement("infectionSuidGenerator") & sim.infectionSuidGenerator;
             ar.labelElement("m_RngFactory") & sim.m_pRngFactory;
             ar.labelElement( "rng" ) & sim.rng;
         }
 
-        if ((sim.serializationMask & SerializationFlags::Population) != 0) {
+        if (sim.serializationFlags.test(SerializationFlags::Population))
+        {
             if (ar.IsReader()) {
                 // Read the nodes element in case it's a version 1 serialized file which includes
                 // the nodes in the nodes element.
@@ -1493,7 +1549,8 @@ namespace Kernel
             }
         }
 
-        if ((sim.serializationMask & SerializationFlags::Parameters) != 0) {
+        if (sim.serializationFlags.test(SerializationFlags::Parameters))
+        {
             ar.labelElement( "campaignFilename" ) & sim.campaignFilename;
             ar.labelElement( "custom_reports_filename" ) & sim.custom_reports_filename;
 
@@ -1510,7 +1567,8 @@ namespace Kernel
             ar.labelElement("loadbalance_filename") & sim.loadbalance_filename;
         }
 
-        if ((sim.serializationMask & SerializationFlags::Properties) != 0) {
+        if (sim.serializationFlags.test(SerializationFlags::Properties))
+        {
             ar.labelElement("loadBalanceFilename") & sim.loadBalanceFilename;
             ar.labelElement("campaign_filename") & sim.campaign_filename;
         }

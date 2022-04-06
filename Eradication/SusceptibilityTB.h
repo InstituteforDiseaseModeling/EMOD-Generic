@@ -61,7 +61,7 @@ namespace Kernel
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  
         DECLARE_QUERY_INTERFACE()
 
-        static SusceptibilityTB *CreateSusceptibility(IIndividualHumanContext *context, float age, float immmod, float riskmod);
+        static SusceptibilityTB *CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod);
         virtual ~SusceptibilityTB(void);
 
         virtual void Update(float dt = 0.0) override;
@@ -84,7 +84,7 @@ namespace Kernel
         SusceptibilityTB();
         SusceptibilityTB(IIndividualHumanContext *context);
 
-        virtual void Initialize(float age, float immmod, float riskmod) override;
+        virtual void Initialize(float immmod, float riskmod) override;
 
         // additional members of SusceptibilityTB
         bool m_is_immune_competent;

@@ -1,0 +1,17 @@
+{
+    "Default_Config_Path": "defaults/dengue_science_default_config.json",
+    "parameters": {
+        "Config_Name": "Dengue_SFT_ImmunityPermanentSameStrain",
+        "Demographics_Filenames": [
+            "../../Dengue_single_node_demographics.json"
+        ],
+        "Simulation_Duration": 365,
+        "Strain1_Background_Exposure": 0.0,
+        "Strain2_Background_Exposure": 0.0,
+        "Strain3_Background_Exposure": 0.0,
+        "Strain4_Background_Exposure": 0.0,
+        "Symptomatic_Probability_Reinfected": 0.0,
+        "logLevel_InfectionDengue": "VALID",
+        "x_Base_Population": 0.1
+    }
+}

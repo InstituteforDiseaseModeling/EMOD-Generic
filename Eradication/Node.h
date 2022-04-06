@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "IdmApi.h"
 #include "BoostLibWrapper.h"
-#include "Configure.h"
 #include "Climate.h"
 #include "Common.h"
 #include "Environment.h"
@@ -24,10 +23,14 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "suids.hpp"
 #include "IInfectable.h"
 #include "MathFunctions.h"
-#include "Serialization.h"
+#include "SerializationParameters.h"
 #include "NodeProperties.h"
 #include "INodeContext.h"
 #include "StrainIdentity.h"
+
+#define BIRTHRATE_SANITY_VALUE        (0.005f)
+#define CONTACT                       "contact"
+
 
 class Report;
 class ReportVector;
@@ -36,10 +39,8 @@ class BaseChannelReport;
 
 namespace Kernel
 {
-    class SimulationConfig;
     class RANDOMBASE;
     struct INodeEventContext;
-    //typedef 
     class  NodeEventContextHost;
     struct ISimulation;
     struct IMigrationInfoFactory;
@@ -74,6 +75,7 @@ namespace Kernel
         virtual void SetRng( RANDOMBASE* prng ) override; 
         virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override;
 
+        virtual const NodeParams* GetParams() const;
 
         virtual IMigrationInfo*   GetMigrationInfo() override;
         virtual const NodeDemographics* GetDemographics()  const override;
@@ -83,7 +85,6 @@ namespace Kernel
 
         // Migration
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     MigrationStructure::Enum ms,
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) override;
         virtual void SortHumans() override;
@@ -123,12 +124,12 @@ namespace Kernel
         virtual long int GetPossibleMothers()    const override;
 
         virtual float GetMeanAgeInfection()      const override;
-        virtual float GetBasePopulationScaleFactor() const override;
 
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override;
 
 
         // Heterogeneous intra-node transmission
+        virtual void ChangePropertyMatrix(const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
         virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) override;
         virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) override;
         virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
@@ -184,8 +185,9 @@ namespace Kernel
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        
-        SerializationFlags serializationMask;
+
+        SerializationBitMask_t serializationFlags;
+        static SerializationBitMask_t serializationFlagsDefault;
 
         NodeDemographicsDistribution* SusceptibilityDistribution;
         NodeDemographicsDistribution* FertilityDistribution;
@@ -207,7 +209,6 @@ namespace Kernel
         // Enum type name                            Enum variable name                         Name in config.json
         IndSamplingType::Enum                        ind_sampling_type;                         // Individual_Sampling_Type
         DistributionType::Enum                       age_initialization_distribution_type;      // Age_Initialization_Distribution_Type
-        PopulationScaling::Enum                      population_scaling;                        // POPULATION_SCALING
         float susceptibility_dynamic_scaling;
 
         // Node properties
@@ -249,6 +250,7 @@ namespace Kernel
         bool  enable_infectivity_scaling_density;
         bool  enable_infectivity_scaling_exponential;
         bool  enable_infectivity_scaling_sinusoid;
+        bool  enable_infectivity_overdispersion;
 
         float infectivity_boxcar_amplitude;
         float infectivity_boxcar_start_time;
@@ -263,6 +265,7 @@ namespace Kernel
         float infectivity_reservoir_start_time;
         float infectivity_sinusoidal_amplitude;
         float infectivity_sinusoidal_phase;
+        float infectivity_overdispersion;
 
         // Event handling
         friend class NodeEventContextHost;
@@ -304,23 +307,13 @@ namespace Kernel
         bool demographics_birth;
         bool enable_demographics_risk;
 
-        float base_sample_rate;        // Fraction of individuals in each node to sample;
-        float max_sampling_cell_pop;
-        float sample_rate_birth;
-        float sample_rate_0_18mo;
-        float sample_rate_18mo_4yr;
-        float sample_rate_5_9;
-        float sample_rate_10_14;
-        float sample_rate_15_19;
-        float sample_rate_20_plus;
-        float rel_sample_rate_immune;
-        float immune_threshold_for_downsampling;
         float prob_maternal_infection_transmission;
-        float population_scaling_factor;
+
         bool vital_dynamics;
         bool enable_natural_mortality;
         bool enable_maternal_infection_transmission;
-        bool enable_initial_prevalence;
+
+        float initial_prevalence;
 
         std::vector<float> init_prev_fraction;
         std::vector<int>   init_prev_clade;
@@ -373,15 +366,13 @@ namespace Kernel
             int gender = 0,
             int initial_infections = 0,
             float susceptibility_parameter = 1.0,
-            float risk_parameter = 1.0,
-            float migration_heterogeneity = 1.0);
+            float risk_parameter = 1.0);
 
         virtual void RemoveHuman( int index );
 
         virtual IIndividualHuman* addNewIndividualFromSerialization();
 
         double calculateInitialAge( double temp_age );
-        Fraction adjustSamplingRateByImmuneState( Fraction sampling_rate, bool is_immune ) const;
         Fraction adjustSamplingRateByAge( Fraction sampling_rate, double age ) const;
 
         // Reporting
@@ -398,9 +389,6 @@ namespace Kernel
         // Fix up child object pointers after deserializing
         virtual INodeContext *getContextPointer();
         virtual void propagateContextToDependents();
-
-
-        const SimulationConfig* params() const;
 
         float birth_rate_sinusoidal_forcing_amplitude;  // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME
         float birth_rate_sinusoidal_forcing_phase;      // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME
@@ -430,5 +418,3 @@ namespace Kernel
 #pragma warning( pop )
     };
 }
-
-#define CONTACT "contact"

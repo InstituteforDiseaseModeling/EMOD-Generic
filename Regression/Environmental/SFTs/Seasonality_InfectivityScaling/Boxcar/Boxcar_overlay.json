@@ -13,6 +13,7 @@
         {
             "NodeID": 1, 
             "NodeAttributes": {
+                "InfectivityMultiplier": 1.0,
                 "InfectivityBoxcarAmplitude": 10,
                 "InfectivityBoxcarStartTime": 60,
                 "InfectivityBoxcarEndTime": 200

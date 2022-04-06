@@ -1,70 +1,91 @@
 {
-    "Metadata": {
-        "DateCreated": "Sun Sep 25 23:19:55 2011", 
-        "Tool": "convertdemog.py", 
-        "Author": "jsteinkraus", 
-        "IdReference": "SampleContent", 
-        "NodeCount": 1,
-		"Resolution": 150
-    }, 
     "Defaults": {
-    	"IndividualProperties": 
-        [
+        "IndividualProperties": [
             {
+                "Initial_Distribution": [
+                    1,
+                    0
+                ],
                 "Property": "DrugStatus",
-                "Values": [ "None", "RecentDrug" ],
-                "Initial_Distribution": [ 1, 0 ],
-                "Transitions": []
+                "Transitions": [],
+                "Values": [
+                    "None",
+                    "RecentDrug"
+                ]
             }
-    	]
+        ]
+    },
+    "Metadata": {
+        "Author": "jsteinkraus",
+        "DateCreated": "Sun Sep 25 23:19:55 2011",
+        "IdReference": "SampleContent",
+        "NodeCount": 1,
+        "Resolution": 150,
+        "Tool": "convertdemog.py"
     },
     "Nodes": [
         {
-            "NodeID": 1, 
-            "NodeAttributes": {
-                "Latitude": 0, 
-                "Longitude": 0, 
-                "Altitude": 0, 
-                "Airport": 0, 
-                "Region": 1, 
-                "Seaport": 0, 
-                "InitialPopulation": 10000, 
-                "BirthRate": 0.0000548
-            }, 
             "IndividualAttributes": {
-                "AgeDistributionFlag": 2, 
-                "AgeDistribution1": 3600, 
-                "AgeDistribution2": 25, 
-                "PrevalenceDistributionFlag": 0, 
-                "PrevalenceDistribution1": 0.0, 
-                "PrevalenceDistribution2": 0.0, 
-                "SusceptibilityDistributionFlag": 0, 
-                "SusceptibilityDistribution1": 1, 
-                "SusceptibilityDistribution2": 0, 
-                "RiskDistributionFlag": 0, 
-                "RiskDistribution1": 1, 
-                "RiskDistribution2": 0, 
-                "MigrationHeterogeneityDistributionFlag": 0, 
-                "MigrationHeterogeneityDistribution1": 1, 
-                "MigrationHeterogeneityDistribution2": 0,
+                "AgeDistribution1": 3600,
+                "AgeDistribution2": 25,
+                "AgeDistributionFlag": 2,
+                "InitialPrevalence": 0.0,
                 "MortalityDistribution": {
-                    "NumDistributionAxes": 2,
-                    "AxisNames": [ "gender", "age" ],
-                    "AxisUnits": [ "male=0,female=1", "years" ],
-                    "AxisScaleFactors": [ 1, 365 ],
-                    "NumPopulationGroups": [ 2, 1 ],
-                    "PopulationGroups": [
-                        [ 0, 1 ],
-                        [ 0 ]
+                    "AxisNames": [
+                        "gender",
+                        "age"
                     ],
-                    "ResultUnits": "deaths per day",
+                    "AxisScaleFactors": [
+                        1,
+                        365
+                    ],
+                    "AxisUnits": [
+                        "male=0,female=1",
+                        "years"
+                    ],
+                    "NumDistributionAxes": 2,
+                    "NumPopulationGroups": [
+                        2,
+                        1
+                    ],
+                    "PopulationGroups": [
+                        [
+                            0,
+                            1
+                        ],
+                        [
+                            0
+                        ]
+                    ],
                     "ResultScaleFactor": 1,
+                    "ResultUnits": "deaths per day",
                     "ResultValues": [
-                        [ 0.0000548 ],
-                        [ 0.0000548 ]
+                        [
+                            5.48e-05
+                        ],
+                        [
+                            5.48e-05
+                        ]
                     ]
-                }
-            }
+                },
+                "RiskDistribution1": 1,
+                "RiskDistribution2": 0,
+                "RiskDistributionFlag": 0,
+                "SusceptibilityDistribution1": 1,
+                "SusceptibilityDistribution2": 0,
+                "SusceptibilityDistributionFlag": 0
+            },
+            "NodeAttributes": {
+                "Airport": 0,
+                "Altitude": 0,
+                "BirthRate": 5.48e-05,
+                "InitialPopulation": 10000,
+                "Latitude": 0,
+                "Longitude": 0,
+                "Region": 1,
+                "Seaport": 0
+            },
+            "NodeID": 1
         }
     ]
 }

@@ -24,7 +24,7 @@ This is not reading data out of campaign.json.
 Intervention spec:
 This individual-targeted intervention immediately clears an infected individual’s Typhoid infection (and expires). 
 Note that despite its name it will clear Typhoid infections of all types. 
-And it takes a Clearance_Rate parameter but that is for “future expansion” and is not currently used.
+And it takes a Clearance_Rate parameter but that is for "future expansion" and is not currently used.
 
 Sweep suggestion:
 Run_Number, Population size 

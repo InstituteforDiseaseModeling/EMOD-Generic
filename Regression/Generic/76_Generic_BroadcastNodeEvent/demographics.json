@@ -1,98 +1,130 @@
 {
-    "Metadata": {
-        "DateCreated": "Mon Sep 25 08:19:55 2017", 
-        "Author": "bridenbecker", 
-        "IdReference": "0", 
-        "Resolution": 150,
-        "NodeCount": 4
-    }, 
     "Defaults": {
-        "NodeAttributes": {
-            "Altitude": 0, 
-            "Airport": 0, 
-            "Region": 1, 
-            "Seaport": 0, 
-            "BirthRate": 0.0
-        }, 
         "IndividualAttributes": {
-            "AgeDistributionFlag": 3, 
-            "AgeDistribution1": 0.000118, 
-            "AgeDistribution2": 0, 
-            "PrevalenceDistributionFlag": 0, 
-            "PrevalenceDistribution1": 0.0, 
-            "PrevalenceDistribution2": 0.2, 
-            "ImmunityDistributionFlag": 0, 
-            "ImmunityDistribution1": 1, 
-            "ImmunityDistribution2": 0, 
-            "RiskDistributionFlag": 0, 
-            "RiskDistribution1": 1, 
-            "RiskDistribution2": 0, 
-            "MigrationHeterogeneityDistributionFlag": 0, 
-            "MigrationHeterogeneityDistribution1": 1, 
-            "MigrationHeterogeneityDistribution2": 0,
+            "AgeDistribution1": 0.000118,
+            "AgeDistribution2": 0,
+            "AgeDistributionFlag": 3,
+            "ImmunityDistribution1": 1,
+            "ImmunityDistribution2": 0,
+            "ImmunityDistributionFlag": 0,
+            "InitialPrevalence": 0.0,
             "MortalityDistribution": {
-                "NumDistributionAxes": 2,
-                "AxisNames": [ "gender", "age" ],
-                "AxisUnits": [ "male=0,female=1", "years" ],
-                "AxisScaleFactors": [ 1, 365 ],
-                "NumPopulationGroups": [ 2, 1 ],
-                "PopulationGroups": [
-                    [ 0, 1 ],
-                    [ 0 ]
+                "AxisNames": [
+                    "gender",
+                    "age"
                 ],
-                "ResultUnits": "annual deaths per day",
+                "AxisScaleFactors": [
+                    1,
+                    365
+                ],
+                "AxisUnits": [
+                    "male=0,female=1",
+                    "years"
+                ],
+                "NumDistributionAxes": 2,
+                "NumPopulationGroups": [
+                    2,
+                    1
+                ],
+                "PopulationGroups": [
+                    [
+                        0,
+                        1
+                    ],
+                    [
+                        0
+                    ]
+                ],
                 "ResultScaleFactor": 1,
+                "ResultUnits": "annual deaths per day",
                 "ResultValues": [
-                    [ 0.0 ],
-                    [ 0.0 ]
+                    [
+                        0.0
+                    ],
+                    [
+                        0.0
+                    ]
                 ]
-            }
+            },
+            "RiskDistribution1": 1,
+            "RiskDistribution2": 0,
+            "RiskDistributionFlag": 0
+        },
+        "NodeAttributes": {
+            "Airport": 0,
+            "Altitude": 0,
+            "BirthRate": 0.0,
+            "Region": 1,
+            "Seaport": 0
         }
+    },
+    "Metadata": {
+        "Author": "bridenbecker",
+        "DateCreated": "Mon Sep 25 08:19:55 2017",
+        "IdReference": "0",
+        "NodeCount": 4,
+        "Resolution": 150
     },
     "NodeProperties": [
         {
+            "Initial_Distribution": [
+                0.75,
+                0.25
+            ],
             "Property": "Risk",
-            "Values": [ "LOW", "HIGH"],
-            "Initial_Distribution": [ 0.75, 0.25 ]
+            "Values": [
+                "LOW",
+                "HIGH"
+            ]
         },
         {
+            "Initial_Distribution": [
+                0.2,
+                0.2,
+                0.3,
+                0.3
+            ],
             "Property": "Geographic",
-            "Values": [ "EARTH", "VULCAN", "ANDORIA", "KRONOS" ],
-            "Initial_Distribution": [ 0.20, 0.20, 0.30, 0.30 ]
+            "Values": [
+                "EARTH",
+                "VULCAN",
+                "ANDORIA",
+                "KRONOS"
+            ]
         }
     ],
     "Nodes": [
         {
-            "NodeID": 1, 
             "NodeAttributes": {
-                "InitialPopulation": 10, 
-                "Latitude": 0.0, 
+                "InitialPopulation": 10,
+                "Latitude": 0.0,
                 "Longitude": 0.1
-            }
+            },
+            "NodeID": 1
         },
         {
-            "NodeID": 2, 
             "NodeAttributes": {
-                "InitialPopulation": 20, 
-                "Latitude": 0.0, 
+                "InitialPopulation": 20,
+                "Latitude": 0.0,
                 "Longitude": 0.2
-            }
+            },
+            "NodeID": 2
         },
         {
-            "NodeID": 3, 
             "NodeAttributes": {
-                "InitialPopulation": 30, 
-                "Latitude": 0.0, 
+                "InitialPopulation": 30,
+                "Latitude": 0.0,
                 "Longitude": 0.3
-            }
+            },
+            "NodeID": 3
         },
         {
-            "NodeID": 4, 
             "NodeAttributes": {
-                "InitialPopulation": 40, 
-                "Latitude": 0.0, 
+                "InitialPopulation": 40,
+                "Latitude": 0.0,
                 "Longitude": 0.4
-            }
+            },
+            "NodeID": 4
         }
     ]
 }

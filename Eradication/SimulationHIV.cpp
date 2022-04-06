@@ -12,8 +12,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SimulationHIV.h"
 
 #include "NodeHIV.h"
+#include "InfectionHIV.h"
+#include "Susceptibility.h"
 #include "ReportHIV.h"
-#include "SimulationConfig.h"
 #include "HivObjectFactory.h"
 #include "HIVReportEventRecorder.h"
 #include "IndividualHIV.h"
@@ -66,7 +67,7 @@ namespace Kernel
             // This sequence is important: first
             // Creation-->Initialization-->Validation
             newsimulation->Initialize(config);
-            if(!ValidateConfiguration(config))
+            if(!newsimulation->ValidateConfiguration(config))
             {
                 delete newsimulation;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "HIV_SIM requested with invalid configuration." );
@@ -80,8 +81,6 @@ namespace Kernel
     {
         config->Add("Enable_Disease_Mortality", 1);
         config->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
-        config->Add("Enable_Immune_Decay", 0);   //must exist because Enable_Immunity: 1
-        config->Add("Enable_Initial_Susceptibility_Distribution", 0); //must exist because Enable_Immunity: 1
         config->Add("Enable_Maternal_Infection_Transmission", 1);
         config->Add("Enable_Vital_Dynamics", 1);
     }
@@ -94,7 +93,14 @@ namespace Kernel
     void SimulationHIV::Initialize(const ::Configuration *config)
     {
         SimulationSTI::Initialize(config); 
-        IndividualHumanHIV::InitializeStaticsHIV(config);
+
+        IndividualHumanHIVConfig   hiv_individual_config_obj;
+        SusceptibilityHIVConfig    hiv_susceptibility_config_obj;
+        InfectionHIVConfig         hiv_infection_config_obj;
+
+        hiv_individual_config_obj.Configure( config );
+        hiv_susceptibility_config_obj.Configure( config );
+        hiv_infection_config_obj.Configure( config );
     }
 
     bool
@@ -160,13 +166,9 @@ namespace Kernel
 
     bool SimulationHIV::ValidateConfiguration(const ::Configuration *config)
     {
-        if (!Simulation::ValidateConfiguration(config))
-            return false;
-
         // TODO: any disease-specific validation goes here.
-        // Warning: static climate parameters are not configured until after this function is called
 
-        return true;
+        return SimulationSTI::ValidateConfiguration(config);
     }
 
     void SimulationHIV::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

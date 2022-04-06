@@ -21,7 +21,7 @@
 
 #define REP_VERSION            ("1.02")
 #define NUM_COLUMNS            ("8")
-#define DEFAULT_REP_NAME       ("ReportStrainTracking.json")
+#define DEFAULT_REP_NAME       ("ReportStrainTracking.csv")
 #define DESC_TEXT_REPORT_NAME  ("Output file name.")
 #define DESC_TEXT_TIME_START   ("No output prior to this timestep.")
 #define DESC_TEXT_TIME_END     ("No output after this timestep.")
@@ -99,9 +99,6 @@ namespace Kernel
   // Retrieves values from reporter-specific config file
   bool ReportStrainTracking::Configure(const Configuration* inputJson)
   {
-    // Turn off header newline
-    BaseTextReport::AddHeaderNewline(false);
-
     // Configure optional parameters
     JsonConfigurable::_useDefaults = true;
     std::string fName;

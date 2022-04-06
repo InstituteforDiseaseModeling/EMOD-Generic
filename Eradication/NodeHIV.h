@@ -26,22 +26,8 @@ namespace Kernel
         NodeHIV();
         NodeHIV(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
 
-        // virtual void Initialize() override;
-
         // Factory methods
         virtual IIndividualHuman* createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender) override;
-
-        //virtual void SetupIntranodeTransmission();
-        //virtual void Update( float dt );
-        //virtual void processEmigratingIndividual( IIndividualHuman *individual );
-        //virtual IIndividualHuman* NodeHIV::processImmigratingIndividual( IIndividualHuman* movedind );
-
-        // INodeHIV
-        // virtual const vector<RelationshipStartInfo>& GetNewRelationships() const;
-        // virtual const std::vector<RelationshipEndInfo>& GetTerminatedRelationships() const;
-
-        // NodeSTI
-        // std::multimap< unsigned long, int > migratedIndividualToRelationshipIdMap;
 
         DECLARE_SERIALIZABLE(NodeHIV);
     };

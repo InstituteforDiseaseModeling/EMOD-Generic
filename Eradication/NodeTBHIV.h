@@ -44,7 +44,6 @@ namespace Kernel
 
         virtual void SetNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih) override;
 
-        virtual bool Configure( const Configuration* config ) override; 
         virtual const NodeDemographicsDistribution* GetHIVCoinfectionDistribution() const override { return HIVCoinfectionDistribution; }
         virtual const NodeDemographicsDistribution* GetHIVMortalityDistribution()   const override { return HIVMortalityDistribution; }
 
@@ -57,8 +56,7 @@ namespace Kernel
             int gender = 0,
             int initial_infections = 0,
             float immunity_parameter = 1.0,
-            float risk_parameter = 1.0,
-            float migration_heterogeneity = 1.0);
+            float risk_parameter = 1.0);
 
          // Factory methods
         virtual IIndividualHuman *createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender);

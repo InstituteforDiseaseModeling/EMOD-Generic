@@ -128,9 +128,6 @@
     <ClCompile Include="MigrationTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SerializationTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LoadBalanceSchemeTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -206,10 +203,10 @@
     <ClCompile Include="CampaignEventByYearTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SerializationTimeCalculatorTest.cpp">
+    <ClCompile Include="FakeLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FakeLogger.cpp">
+    <ClCompile Include="SerializationParametersTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

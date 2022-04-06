@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_environmentalindividual_module.cpp',
+            '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualEnvironmental.cpp',
             '../../../Eradication/Susceptibility.cpp',

@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Interventions.h"
 #include "TBInterventionsContainer.h"
 #include "InterventionsContainer.h"
-#include "SimulationConfig.h"
 #include "SusceptibilityTB.h"
 #include "RANDOM.h"
 #include "Exceptions.h"
@@ -123,8 +122,8 @@ namespace Kernel
             }
         }
 
-        initConfigTypeMap( "TB_CD4_Activation_Vector", &TB_cd4_activation_vec, TB_CD4_Activation_Vector_DESC_TEXT, 0.0f, FLT_MAX, 1.0f, 0, "Enable_Coinfection" );
-        initConfigTypeMap( "CD4_Strata_Activation", &CD4_strata_act_vec, CD4_Strata_Activation_DESC_TEXT, -1.0f, 2000.0f, 1.0f, 0, "Enable_Coinfection" );
+        initConfigTypeMap( "TB_CD4_Activation_Vector", &TB_cd4_activation_vec, TB_CD4_Activation_Vector_DESC_TEXT, 0.0f, FLT_MAX, false, "Enable_Coinfection" );
+        initConfigTypeMap( "CD4_Strata_Activation", &CD4_strata_act_vec, CD4_Strata_Activation_DESC_TEXT, -1.0f, 2000.0f, false, "Enable_Coinfection" );
 
         bool cRet = JsonConfigurable::Configure(config);
 
@@ -542,17 +541,10 @@ namespace Kernel
         // Set infectiousness and mortality rates dependent on disease progression
         float rand = parent->GetRng()->e();
 
-        // To query for mortality-reducing effects of drugs or vaccines
         // TODO: depending on the decay profile of a mortality-reducing vaccine,
         //       we may prefer to change "death as a compartmental transition" to "death as a daily update"
         //       so that we aren't picking the death rate based on the efficacy of a vaccine at the beginning of the infection alone.
-        IDrugVaccineInterventionEffects* idvie = nullptr;
-        if ( s_OK != parent->GetInterventionsContext()->QueryInterface(GET_IID(IDrugVaccineInterventionEffects), (void**)&idvie) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionsContext()", "IDrugVaccineInterventionEffects", "IIndividualHumanEventContext" );
-        }
-
-        float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * idvie->GetInterventionReducedMortality();
+        float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
 
         infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() ) * immunityTB->GetCoughInfectiousness();
 
@@ -921,7 +913,7 @@ namespace Kernel
         float bigB = 1- AGE_DEP_REACTIVATION_BETA;
         float bigA = AGE_DEP_REACTIVATION_ALPHA / bigB;
         float rand = parent->GetRng()->e();
-        float current_age_years = immunity->getAge() / DAYSPERYEAR;
+        float current_age_years = GetParent()->GetAge() / DAYSPERYEAR;
         float reactivation_age_years = pow( pow(current_age_years, bigB) - (1 / bigA) * log(rand), (1/bigB));
         float calculated_incubation_timer = DAYSPERYEAR * (reactivation_age_years - current_age_years);
 
@@ -1057,7 +1049,6 @@ namespace Kernel
     {
         CreateInfectionStrain(exog_strain_id);
     }
-    //const SimulationConfig* InfectionTB::params() { return GET_CONFIGURABLE(SimulationConfig); }
 
     void InfectionTB::SetContextTo(IIndividualHumanContext* context)
     {

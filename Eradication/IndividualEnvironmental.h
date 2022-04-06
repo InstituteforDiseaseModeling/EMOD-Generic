@@ -52,6 +52,5 @@ namespace Kernel
         std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
     private:
-        static void InitializeStaticsEnvironmental( const Configuration* config );
     };
 }

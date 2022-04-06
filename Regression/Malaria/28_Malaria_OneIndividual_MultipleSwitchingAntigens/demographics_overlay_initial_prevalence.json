@@ -1,0 +1,15 @@
+{
+    "Defaults": {
+        "IndividualAttributes": {
+            "InitialPrevalence": 0.15
+        }
+    },
+    "Metadata": {
+        "IdReference": "Gridded world grump2.5arcmin"
+    },
+    "Nodes": [
+        {
+            "NodeID": 340461476
+        }
+    ]
+}

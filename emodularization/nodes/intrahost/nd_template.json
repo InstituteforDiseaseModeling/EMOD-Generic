@@ -17,6 +17,7 @@
     "Enable_Disease_Mortality": 0,
     "Enable_Heterogeneous_Intranode_Transmission": 0,
     "Enable_Immunity": 0,
+    "Enable_Infection_Rate_Overdispersion": 0,
     "Enable_Infectivity_Reservoir": 0,
     "Enable_Infectivity_Scaling": 0,
     "Enable_Initial_Prevalence": 0,

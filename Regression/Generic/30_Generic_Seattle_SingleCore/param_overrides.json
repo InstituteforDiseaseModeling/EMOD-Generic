@@ -4,15 +4,16 @@
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
-                "Seattle_30arcsec_demographics.json"
+                "Seattle_30arcsec_demographics.json",
+                "demographics_overlay_initial_prevalence.json"
             ],
             "Enable_Initial_Prevalence": 1,
             "Enable_Natural_Mortality": 0
         },
         "DISEASE": {
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 270,
-            "Infectious_Period_Constant": 7,
             "Incubation_Period_Constant": 3,
+            "Infectious_Period_Constant": 7,
             "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
             "Mortality_Blocking_Immunity_Decay_Rate": 0.1,
             "Mortality_Blocking_Immunity_Duration_Before_Decay": 270,

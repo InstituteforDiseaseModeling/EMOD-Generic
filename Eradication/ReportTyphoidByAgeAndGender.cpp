@@ -263,7 +263,7 @@ namespace Kernel
         }
 
         float mc_weight = individual->GetMonteCarloWeight();
-        int age_bin = (int)floor( (std::min)((double) MAX_AGE-1, individual->GetAge()/(float)DAYSPERYEAR) );
+        int age_bin = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, individual->GetAge()/static_cast<float>(DAYSPERYEAR)) ));
 
         int gender = individual->GetGender() == Gender::MALE ? 0 : 1;
 
@@ -345,7 +345,7 @@ namespace Kernel
 
         float mc_weight = context->GetMonteCarloWeight();
         int gender = context->GetGender() == Gender::MALE ? 0 : 1;
-        int age_bin = (int)floor( (std::min)((double) MAX_AGE-1, context->GetAge()/(float)DAYSPERYEAR) );
+        int age_bin = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, context->GetAge()/static_cast<float>(DAYSPERYEAR)) ));
         std::string reportingBucket = dynamic_cast<IIndividualHumanContext*>(context)->GetPropertyReportString();
         auto rbi = bucketToIdMap.at( reportingBucket );
 

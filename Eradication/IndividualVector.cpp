@@ -71,16 +71,6 @@ namespace Kernel
         // deletion of susceptibility handled by parent destructor
     }
 
-    void IndividualHumanVector::InitializeStaticsVector( const Configuration * config )
-    {
-        SusceptibilityVectorConfig immunity_config;
-        immunity_config.Configure( config );
-        InfectionVectorConfig infection_config;
-        infection_config.Configure( config );
-        //IndividualHumanVectorConfig individual_config;
-        //individual_config.Configure( config );
-    }
-
     void IndividualHumanVector::PropagateContextToDependents()
     {
         IndividualHuman::PropagateContextToDependents();
@@ -102,7 +92,7 @@ namespace Kernel
 
     void IndividualHumanVector::CreateSusceptibility(float imm_mod, float risk_mod)
     {
-        SusceptibilityVector *newsusceptibility = SusceptibilityVector::CreateSusceptibility(this, this->m_age, imm_mod, risk_mod);
+        SusceptibilityVector *newsusceptibility = SusceptibilityVector::CreateSusceptibility(this, imm_mod, risk_mod);
         vector_susceptibility = newsusceptibility;
         susceptibility = newsusceptibility; // initialize base class pointer to same object
 

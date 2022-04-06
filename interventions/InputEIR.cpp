@@ -19,58 +19,6 @@ SETUP_LOGGING( "InputEIR" )
 
 namespace Kernel
 {
-    void
-    InputEIRConfig::ConfigureFromJsonAndKey(
-        const Configuration* inputJson,
-        const std::string& key
-    )
-    {
-        // Now's as good a time as any to parse in the calendar schedule.
-        json::QuickInterpreter iec_qi( (*inputJson)[key] );
-        try {
-            const auto iec_qi_array = iec_qi.As<json::Array>();
-            json::QuickInterpreter scheduleJson( iec_qi_array );
-            release_assert( iec_qi_array.Size() );
-            if( iec_qi_array.Size() != MONTHSPERYEAR )
-            {
-                std::ostringstream msg;
-                msg << "InputEIR configuration key " << key << " must be array of size " << MONTHSPERYEAR;
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
-            for( unsigned int idx=0; idx<iec_qi_array.Size(); idx++ )
-            {
-                try {
-                    (*this)[idx] = float(scheduleJson[idx].As<json::Number>());
-                }
-                catch( const json::Exception & )
-                {
-                    throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), scheduleJson[idx], "Expected NUMBER" );
-                }
-            }
-        }
-        catch( const json::Exception & )
-        {
-            throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), iec_qi, "Expected ARRAY" );
-        }
-    }
-
-    json::QuickBuilder
-    InputEIRConfig::GetSchema()
-    {
-        json::QuickBuilder schema( GetSchemaBase() );
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-        schema[ tn ] = json::String( "idmType:InputEIRConfig" );
-    
-        schema[ts] = json::Array();
-        schema[ts][0] = json::Object();
-        schema[ts][0][ "type" ] = json::String( "float" );
-        schema[ts][0][ "min" ] = json::Number( 0 );
-        schema[ts][0][ "max" ] = json::Number( 1000.0f );
-        schema[ts][0][ "description" ] = json::String( IE_Monthly_EIR_DESC_TEXT );
-        return schema;
-    }
-
     BEGIN_QUERY_INTERFACE_BODY(InputEIR)
         HANDLE_INTERFACE(IConfigurable)
         HANDLE_INTERFACE(IBaseIntervention)
@@ -82,6 +30,8 @@ namespace Kernel
 
     InputEIR::InputEIR() 
     : BaseNodeIntervention()
+    , age_dependence(AgeDependentBitingRisk::OFF)
+    , monthly_EIR()
     , today(0)
     , daily_EIR(0.0f)
     , risk_function(nullptr)
@@ -91,6 +41,8 @@ namespace Kernel
 
     InputEIR::InputEIR( const InputEIR& master )
     : BaseNodeIntervention( master )
+    , age_dependence(master.age_dependence)
+    , monthly_EIR(master.monthly_EIR)
     , today( master.today )
     , daily_EIR( master.daily_EIR )
     , risk_function( master.risk_function )
@@ -100,7 +52,7 @@ namespace Kernel
     bool InputEIR::Configure( const Configuration * inputJson )
     {
         initConfig( "Age_Dependence", age_dependence, inputJson, MetadataDescriptor::Enum("Age_Dependence", IE_Age_Dependence_DESC_TEXT, MDD_ENUM_ARGS(AgeDependentBitingRisk)) );
-        initConfigComplexType( "Monthly_EIR", &monthly_EIR, IE_Monthly_EIR_DESC_TEXT);
+        initConfigTypeMap( "Monthly_EIR", &monthly_EIR, IE_Monthly_EIR_DESC_TEXT, 0.0f, 1000.0f );
 
         switch(age_dependence)
         {
@@ -126,11 +78,13 @@ namespace Kernel
         }
 
         bool configured = BaseNodeIntervention::Configure( inputJson );
-
-        if(monthly_EIR.size() != MONTHSPERYEAR && JsonConfigurable::_dryrun == false )
+        if( configured && ! JsonConfigurable::_dryrun )
         {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                "'Monthly_EIR' parameterizes the mean number of infectious bites experienced by an individual for each month of the year.  As such, it must be an array of EXACTLY length 12." );
+            if( monthly_EIR.size() != MONTHSPERYEAR )
+            {
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
+                    "'Monthly_EIR' parameterizes the mean number of infectious bites experienced by an individual for each month of the year.  As such, it must be an array of EXACTLY length 12." );
+            }
         }
 
         return configured;

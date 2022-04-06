@@ -50,14 +50,16 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreak
-        virtual int GetClade() const   { return clade; }
-        virtual int GetGenome() const  { return genome; }
-        virtual float GetImportAge() const { return import_age; }
+        virtual int    GetClade()     const   { return clade; }
+        virtual int    GetGenome()    const   { return genome; }
+        virtual float  GetImportAge() const   { return import_age; }
 
     protected:
-        int clade;
-        int genome;
-        float import_age;
-        int num_cases_per_node;
+        int    clade;
+        int    genome;
+        int    num_cases_per_node;
+        float  import_age;
+        float  female_prob;
+        float  mc_weight;
     };
 }

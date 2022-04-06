@@ -124,17 +124,7 @@ namespace Kernel
             nucleoside_analog = hivdtMap[drug_name]->nucleoside_analog;   // Used only for NRTI drugs to identify target
 
         IGlobalContext *pGC = NULL;
-        const SimulationConfig* simConfigObj = NULL;
-        if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            simConfigObj = pGC->GetSimulationConfigObj();
-        }
-        if (!simConfigObj)
-        {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer obtained to SimulationConfig object is not valid (could be DLL specific)" );
-        }
 
-        //durability_time_profile = simConfigObj->PKPD_model;
         //primary_decay_time_constant = hivdtMap[drug_name]->drug_decay_T1;
         //secondary_decay_time_constant = hivdtMap[drug_name]->drug_decay_T2;
 

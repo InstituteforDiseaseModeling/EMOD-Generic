@@ -202,7 +202,7 @@ namespace Kernel
         }
 
         LHMSpecList habitat_species_specs;
-        initConfigComplexType("LarvalHabitatMultiplier", &habitat_species_specs, LarvalHabitatMultiplier_DESC_TEXT);
+        initConfigComplexCollectionType("LarvalHabitatMultiplier", &habitat_species_specs, LarvalHabitatMultiplier_DESC_TEXT);
 
         bool result = false;
 

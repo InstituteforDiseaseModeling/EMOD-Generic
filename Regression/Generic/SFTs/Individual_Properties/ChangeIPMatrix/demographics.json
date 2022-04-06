@@ -1,0 +1,48 @@
+{
+    "Defaults": {
+        "IndividualAttributes": {},
+        "IndividualProperties": [
+            {
+                "Initial_Distribution": [
+                    0.5,
+                    0.5
+                ],
+                "Property": "InterventionStatus",
+                "Transitions": [],
+                "TransmissionMatrix": {
+                    "Matrix": [
+                        [
+                            0,
+                            0
+                        ],
+                        [
+                            0,
+                            0
+                        ]
+                    ],
+                    "Route": "Contact"
+                },
+                "Values": [
+                    "group01",
+                    "group02"
+                ]
+            }
+        ],
+        "NodeAttributes": {
+            "BirthRate": 0.0
+        }
+    },
+    "Metadata": {
+        "IdReference": "custom"
+    },
+    "Nodes": [
+        {
+            "NodeAttributes": {
+                "InitialPopulation": 30000,
+                "Latitude": 0.0,
+                "Longitude": 0.0
+            },
+            "NodeID": 1
+        }
+    ]
+}

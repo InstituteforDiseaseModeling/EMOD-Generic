@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "WaningEffectMapSeasonal.h"
+#include "WaningEffect.h"
 #include "Common.h"
 
 SETUP_LOGGING( "WaningEffectMapSeasonal" )

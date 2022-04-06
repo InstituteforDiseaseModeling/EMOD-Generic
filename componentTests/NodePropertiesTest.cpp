@@ -33,12 +33,10 @@ SUITE(NodePropertiesTest)
     struct NodePropertiesTestFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* pSimConfig ;
         suids::suid next_suid;
 
         NodePropertiesTestFixture()
-            : pSimConfig(nullptr)
-            , next_suid(suids::nil_suid())
+            : next_suid(suids::nil_suid())
         {
             next_suid.data++;
 
@@ -56,12 +54,6 @@ SUITE(NodePropertiesTest)
 
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, /*statePath, */dllPath, false);
 
-
-            pSimConfig = SimulationConfigFactory::CreateInstance(Environment::getInstance()->Config);
-            if (pSimConfig)
-            {
-                Environment::setSimulationConfig(pSimConfig);
-            }
             NPFactory::DeleteFactory();
             NPFactory::CreateFactory();
         }
@@ -69,7 +61,6 @@ SUITE(NodePropertiesTest)
         ~NodePropertiesTestFixture()
         {
             NPFactory::DeleteFactory();
-            delete pSimConfig ;
             Environment::Finalize();
             NodeDemographicsFactory::SetDemographicsFileList( std::vector<std::string>() ) ;
         }
@@ -86,11 +77,10 @@ SUITE(NodePropertiesTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            pSimConfig->demographics_initial = true ;
             NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet( rDemogFilename ) ) ;
 
             nodeid_suid_map_t node_id_suid_map;
-            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config, true, 10, 1000 ) );
+            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
 
             try
             {
@@ -148,7 +138,7 @@ SUITE(NodePropertiesTest)
         // --- Initialize test
         // --------------------
         nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config, true, 10, 1000 ) );
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
 
         NPFactory::GetInstance()->Initialize( factory->GetNodePropertiesJson(), true );
 

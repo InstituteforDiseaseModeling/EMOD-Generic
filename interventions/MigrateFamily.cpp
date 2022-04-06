@@ -8,9 +8,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 #include "MigrateFamily.h"
 #include "NodeEventContext.h"  // for INodeEventContext (ICampaignCostObserver)
-#include "SimulationConfig.h"
+#include "IMigrationInfo.h"
 #include "INodeContext.h"
 #include "ISimulationContext.h"
 #include "DistributionFactory.h"
@@ -28,19 +29,8 @@ namespace Kernel
 
     IMPLEMENT_FACTORY_REGISTERED(MigrateFamily)
 
-    bool MigrateFamily::Configure(
-        const Configuration * inputJson
-    )
+    bool MigrateFamily::Configure( const Configuration * inputJson )
     {
-        if( !JsonConfigurable::_dryrun && 
-            //(EnvPtr->getSimulationConfig() != nullptr) &&
-            (GET_CONFIGURABLE(SimulationConfig)->migration_structure == MigrationStructure::NO_MIGRATION) )
-        {
-            std::stringstream msg;
-            msg << _module << " cannot be used when 'Migration_Model' = 'NO_MIGRATION'.";
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-
         initConfigTypeMap( "NodeID_To_Migrate_To", &destination_external_node_id,NodeID_To_Migrate_To_DESC_TEXT, 0, UINT_MAX, 0 );
         initConfigTypeMap( "Is_Moving", &is_moving, Is_Moving_DESC_TEXT, false );
 
@@ -61,8 +51,7 @@ namespace Kernel
         , duration_before_leaving()
         , duration_at_node()
         , is_moving( false )
-    {
-    }
+    { }
 
     MigrateFamily::MigrateFamily( const MigrateFamily& master )
         : BaseNodeIntervention( master )
@@ -70,8 +59,7 @@ namespace Kernel
         , duration_before_leaving( master.duration_before_leaving->Clone() )
         , duration_at_node( master.duration_at_node->Clone() )
         , is_moving( master.is_moving )
-    {
-    }
+    { }
 
     MigrateFamily::~MigrateFamily()
     {
@@ -89,6 +77,15 @@ namespace Kernel
             msg << "Migration_Pattern must be SINGLE_ROUND_TRIPS and the 'XXX_Migration_Roundtrip_Probability' must equal 1.0 if that Migration Type is enabled." << std::endl;
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
+
+        IMigrationInfo* p_minfo = pNodeEventContext->GetNodeContext()->GetMigrationInfo();
+        if( !p_minfo ||  p_minfo->GetParams()->migration_structure == MigrationStructure::NO_MIGRATION )
+        {
+            std::stringstream msg;
+            msg << _module << " cannot be used when 'Migration_Model' = 'NO_MIGRATION'.";
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
         return BaseNodeIntervention::Distribute( pNodeEventContext, pEC );
     }
 

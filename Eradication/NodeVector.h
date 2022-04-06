@@ -38,7 +38,6 @@ namespace Kernel
     public:
         static NodeVector *CreateNode(ISimulationContext *context, ExternalNodeId_t externalNodeId, suids::suid suid);
         virtual ~NodeVector();
-        virtual bool Configure( const Configuration* config ) override;
 
         // INodeContext methods
         // IVectorNodeContext methods
@@ -48,7 +47,7 @@ namespace Kernel
         virtual float                GetLarvalHabitatMultiplier(VectorHabitatType::Enum type, const std::string& species ) const override;
 
         virtual IIndividualHuman* processImmigratingIndividual(IIndividualHuman*) override;
-        virtual IIndividualHuman* addNewIndividual(float = 1.0f, float = 0.0f, int = 0, int = 0, float = 1.0f, float = 1.0f, float = 1.0f) override;
+        virtual IIndividualHuman* addNewIndividual(float = 1.0f, float = 0.0f, int = 0, int = 0, float = 1.0f, float = 1.0f) override;
 
         virtual void PopulateFromDemographics() override;
         virtual void SetupIntranodeTransmission() override;
@@ -63,7 +62,6 @@ namespace Kernel
         virtual void AddVectors( const std::string& releasedSpecies, const VectorMatingStructure& _vector_genetics, uint32_t releasedNumber) override;
 
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     MigrationStructure::Enum ms,
                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
         virtual void processImmigratingVector( IVectorCohort* immigrant ) override;
         void processEmigratingVectors( float dt );
@@ -80,8 +78,6 @@ namespace Kernel
 
         LarvalHabitatMultiplier larval_habitat_multiplier;
 
-        bool vector_mortality;
-        int32_t mosquito_weight;
         IMigrationInfoVector* vector_migration_info;
 
         ITransmissionGroups* txOutdoor;
@@ -96,7 +92,6 @@ namespace Kernel
             
         virtual IIndividualHuman *createHuman( suids::suid id, float MCweight, float init_age, int gender) override;
 
-        /* clorton virtual */ const SimulationConfig *params() /* clorton override */;
         IVectorSimulationContext *context() const; // N.B. this is returning a non-const context because of the PostMigratingVector function
 
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override;

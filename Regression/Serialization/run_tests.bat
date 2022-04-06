@@ -6,6 +6,9 @@ rem
 rem There is no comparison of output, just that the loading scenarios pick up the saved state
 rem and run to completion without an error.
 
+REM echo Deleting all *.dtk files in this directory
+del *.dtk /S
+
 echo on
 
 setlocal

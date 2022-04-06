@@ -54,15 +54,11 @@ else:
         erad_env.Append(LIBPATH = ["$BUILD_DIR/Eradication"])
         erad_env.Append(LIBS=["/WHOLEARCHIVE:coreLib"])
     else:
-        # Note that these libraries are needed by the executable. But if we want 
-        # 'corelib' (such as it is) to be dl-loadable, we probably have to link these into it
-        # even on linux for symbol resolution to occur.
-        erad_env.Append(LIBS=["baseReportLib", "campaign", "utils", "cajun", "snappy", "lz4"])
         #NOTE: I couldn't get the use of $BUILD_DIR to work.  It kept putting in an extra '/'. 
         if env["Debug"]:
-            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,build/x64/Debug/campaign/libcampaign.a,--no-whole-archive"])
+            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,build/x64/Debug/campaign/libcampaign.a,--no-whole-archive,-lsqlite3"])
         else:
-            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Release/Eradication/libcoreLib.a,build/x64/Release/campaign/libcampaign.a,--no-whole-archive"])
+            erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Release/Eradication/libcoreLib.a,build/x64/Release/campaign/libcampaign.a,--no-whole-archive,-lsqlite3"])
 
     # Monolithic
     eradicationExe = erad_env.Program('Eradication', eradicationSrcFiles)

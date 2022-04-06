@@ -68,6 +68,11 @@ public:
         return m_suid ;
     }
 
+    virtual const NodeParams* GetParams() const override
+    {
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
+    }
+
     virtual suids::suid GetNextInfectionSuid() override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
@@ -81,6 +86,11 @@ public:
     virtual void SetRng( RANDOMBASE* prng ) override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." );
+    }
+
+    virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) override
+    {
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
     virtual void ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt ) override
@@ -297,7 +307,6 @@ public:
     }
 
     virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                 MigrationStructure::Enum ms,
                                  const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override
     { 
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented.");
@@ -319,11 +328,6 @@ public:
     virtual std::map<std::string, int>& GetStrainClades()                                                const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual const std::map<std::string, int>& GetStrainGenomes()                                         const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual std::map<std::string, std::vector<float>>& GetStrainData()                                   const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
-
-    virtual float GetBasePopulationScaleFactor() const
-    {
-        return 1.0;
-    }
 
     virtual ProbabilityNumber GetProbMaternalTransmission() const
     {

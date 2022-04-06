@@ -46,7 +46,7 @@ namespace Kernel
         initConfigTypeMap( "Clade", &clade, Clade_DESC_TEXT, 0, 9, 0 );
         initConfigTypeMap( "Genome_Markers", &m_GenomeMarkerNames, OIM_Genome_Markers_DESC_TEXT, "<configuration>.Genome_Markers", *p_known_markers );
         initConfigTypeMap( "Ignore_Immunity", &ignoreImmunity, OB_Ignore_Immunity_DESC_TEXT, true );
-        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1, INT_MAX, -1);
+        initConfigTypeMap( "Incubation_Period_Override", &incubation_period_override, Incubation_Period_Override_DESC_TEXT, -1.0f, FLT_MAX, -1.0f);
 
         bool ret = JsonConfigurable::Configure( inputJson );
 

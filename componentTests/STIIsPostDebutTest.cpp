@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ICampaignCostObserverFake.h"
 #include "Configuration.h"
 #include "Simulation.h"
-#include "SimulationConfig.h"
 
 using namespace Kernel;
 
@@ -31,20 +30,16 @@ SUITE(StiIsPostDebutTest)
         INodeEventContextFake                   m_NEC ;
         IndividualHumanInterventionsContextFake m_InterventionsContext ;
         IndividualHumanContextFake              m_Human ;
-        SimulationConfig*                       m_pSimulationConfig ;
         STIIsPostDebut                          * m_pDiag ;
 
         DiagnosticFixture()
             : m_NEC()
             , m_InterventionsContext()
             , m_Human( &m_InterventionsContext, &m_NC, &m_NEC, nullptr )
-            , m_pSimulationConfig( new SimulationConfig() )
-            //, m_Diag()
         {
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             m_InterventionsContext.SetContextTo( &m_Human );
 
@@ -61,11 +56,8 @@ SUITE(StiIsPostDebutTest)
 
             m_Human.GetProperties()->Add( IPKeyValue( "InterventionStatus:no_state" ) );
 
-            //EventTriggerFactoryDeleteInstance();
-
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
 
             m_pDiag = new STIIsPostDebut();
@@ -74,7 +66,6 @@ SUITE(StiIsPostDebutTest)
 
         ~DiagnosticFixture()
         {
-            delete m_pSimulationConfig;
             Environment::Finalize();
             delete m_pDiag;
         }

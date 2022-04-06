@@ -22,7 +22,7 @@ namespace Kernel
     // event oriented data.  This report is light weight and does NOT specify
     // what data is collected or how it is written out.  However, it does implement
     // the base code for registering and unregistering for event notification.
-    class IDMAPI BaseEventReport : public IReport, 
+    class IDMAPI BaseEventReport : public BaseReport, 
                                    public IIndividualEventObserver
     {
     public:

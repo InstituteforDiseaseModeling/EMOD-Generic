@@ -77,10 +77,9 @@ namespace Kernel
 
         // Added by Philip Eckhoff, Poisson takes in a rate, and returns the number of events in unit time
         // Or equivalently, takes in rate*time and returns number of events in that time
-        // Poisson uses a Gaussian approximation for large lambda, while Poisson_true is the fully accurate Poisson
+        // Poisson uses a Gaussian approximation for large lambda
         // expdist takes in a rate and returns the sample from an exponential distribution
         uint64_t Poisson(double=1.0);
-        uint32_t Poisson_true(double=1.0);
         double expdist(double=1.0);
         double Weibull(double lambda=1.0, double kappa=1.0);
         double Weibull2(float lambda=1.0, float inv_kappa=1.0);

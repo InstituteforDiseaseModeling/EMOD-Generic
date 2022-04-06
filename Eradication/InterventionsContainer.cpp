@@ -47,8 +47,6 @@ namespace Kernel
             foundInterface = static_cast<IInterventionConsumer*>(this);
         else if (iid == GET_IID(IVaccineConsumer))
             foundInterface = static_cast<IVaccineConsumer*>(this);
-        else if (iid == GET_IID(IDrugVaccineInterventionEffects))
-            foundInterface = static_cast<IDrugVaccineInterventionEffects*>(this);
         else
             foundInterface = nullptr;
 
@@ -101,10 +99,6 @@ namespace Kernel
                 LOG_DEBUG("Found one...\n");
                 interventions_of_type.push_back( intervention );
             }
-            /*else
-            {
-                LOG_INFO_F("No match: you asked about %s but I have %s\n", type_name, cur_iv_type_name);
-            }*/
         }
 
         return interventions_of_type;
@@ -140,36 +134,40 @@ namespace Kernel
         return interface_list;
     }
 
-    IDistributableIntervention* InterventionsContainer::GetIntervention( const std::string& iv_name )
+    void InterventionsContainer::PurgeExisting( const std::string &iv_name )
     {
-        for( auto p_intervention : interventions )
-        {
-            std::string cur_iv_type_name = typeid( *p_intervention ).name();
-            if( cur_iv_type_name == iv_name )
-            {
-                return p_intervention ;
-            }
-        }
-        return nullptr ;
-    }
+        std::list<IDistributableIntervention*> iv_list = GetInterventionsByType(iv_name);
 
-    void InterventionsContainer::PurgeExisting(
-        const std::string &iv_name
-    )
-    {
-        IDistributableIntervention* p_intervention = GetIntervention( iv_name );
-        if( p_intervention != nullptr )
+        for( auto iv_ptr : iv_list )
         {
             LOG_DEBUG_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
-            interventions.remove( p_intervention );
-            delete p_intervention;
+            interventions.remove( iv_ptr );
+            delete iv_ptr;
+        }
+    }
+
+    void InterventionsContainer::PurgeExistingByName( const std::string &iv_name )
+    {
+        std::list<IDistributableIntervention*> iv_list = GetInterventionsByName(iv_name);
+
+        for( auto iv_ptr : iv_list )
+        {
+            LOG_DEBUG_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
+            interventions.remove( iv_ptr );
+            delete iv_ptr;
         }
     }
 
     bool InterventionsContainer::ContainsExisting( const std::string &iv_name )
     {
-        IDistributableIntervention* p_intervention = GetIntervention( iv_name );
-        return (p_intervention != nullptr);
+        for( auto intervention : interventions )
+        {
+            if( typeid(*intervention).name() == iv_name )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     bool InterventionsContainer::ContainsExistingByName( const std::string& name )
@@ -182,6 +180,19 @@ namespace Kernel
             }
         }
         return false;
+    }
+
+    void InterventionsContainer::PreInfectivityUpdate( float dt )
+    {
+        // If group membership is affected by IP transitions, those transitions need to happen before
+        // infectivity is accumulated. Occurs at the start of individual->UpdateInfectiousness
+        for( auto intervention : interventions )
+        {
+            if( intervention->NeedsPreInfectivityUpdate() )
+            {
+                intervention->Update( dt );
+            }
+        }
     }
 
     void InterventionsContainer::InfectiousLoopUpdate( float dt )
@@ -218,7 +229,8 @@ namespace Kernel
             int i = 0;
             for( auto intervention : interventions )
             {
-                if( !intervention->NeedsInfectiousLoopUpdate() || (i >= orig_num) )
+                if( (i >= orig_num) || ( !intervention->NeedsInfectiousLoopUpdate() &&
+                                         !intervention->NeedsPreInfectivityUpdate()   ) )
                 {
                     intervention->Update( dt );
                 }
@@ -236,6 +248,7 @@ namespace Kernel
                 if( intervention->Expired() )
                 {
                     LOG_DEBUG("Found an expired intervention\n");
+                    intervention->OnExpiration();
                     dead_ivs.push_back( intervention );
                 }
             }
@@ -245,7 +258,6 @@ namespace Kernel
             {
                 LOG_DEBUG("Destroying an expired intervention.\n");
                 interventions.remove( intervention );
-                //pIV->Release(); // is refcounting implemented on interventions?
                 delete intervention;
             }
         }
@@ -270,7 +282,6 @@ namespace Kernel
         // and ref counter is decremented, the intervention object will delete itself.)
         iv->AddRef();
         iv->SetContextTo( parent );
-        // TODO: For vaccine, now vaccine intervention needs to call ApplyVaccineTake on itself (???)
         LOG_DEBUG_F("InterventionsContainer (individual %d) has %d interventions now\n", GetParent()->GetSuid().data, interventions.size());
         return true;
     }

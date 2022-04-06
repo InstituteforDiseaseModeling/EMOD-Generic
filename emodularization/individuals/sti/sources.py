@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_stiindividual_module.cpp',
+            '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualSTI.cpp',
             '../../../Eradication/Susceptibility.cpp',
@@ -12,7 +13,6 @@ sources =  [
             '../../../Eradication/InterventionsContainer.cpp',
             '../../../Eradication/STIInterventionsContainer.cpp',
             '../../../Eradication/StrainIdentity.cpp'
-            #'../../../Eradication/NodeSTI.cpp' # NOTE: We don't want to do this. This was added entirely to resolve GetGroupMembershipForIndividual_STI
         ]
 
 

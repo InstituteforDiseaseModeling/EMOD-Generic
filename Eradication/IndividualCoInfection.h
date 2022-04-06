@@ -75,6 +75,7 @@ namespace Kernel
     //class IndividualHumanCoInfection : public IIndividualHumanCoInfection, public IIndividualHumanTB, public IndividualHumanAirborne, public IIndividualHumanHIV 
     class IndividualHumanCoInfectionConfig : public IndividualHumanConfig
     {
+        friend class SimulationTBHIV;
         friend class IndividualHumanCoInfection;
         friend class NodeTBHIV;
 
@@ -85,6 +86,8 @@ namespace Kernel
     public:
         virtual bool Configure( const Configuration* config ) override;
         static bool enable_coinfection;
+
+        static void SetCD4Map(std::map <float,float> cd4_map);
 
     protected:
         static map <float,float> CD4_act_map;
@@ -119,7 +122,6 @@ namespace Kernel
         virtual ~IndividualHumanCoInfection(void);
 
         IndividualHumanCoInfection();  // just trying to make compiler happy: TBD
-        static void InitializeStaticsCoInfection( const Configuration* config );
 
         // Infections and Susceptibility
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
@@ -131,8 +133,9 @@ namespace Kernel
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
         virtual void CheckHIVVitalDynamics(float=1.0); // non-disease mortality, does not override
          //Deaths
-        virtual void Die(HumanStateChange) override;
-        virtual bool IsDead() const override;
+        virtual void BroadcastDeath()                       override;
+        virtual void Die(HumanStateChange)                  override;
+        virtual bool IsDead()                         const override;
 
         // For reporting of individual's infection status to NodeTB
         // TODO: Consider giving the individual an infection count to avoid repeated function calls

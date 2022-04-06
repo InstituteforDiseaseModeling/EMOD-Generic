@@ -38,22 +38,31 @@ if dst_path != "":
     sys.exit(0)
 
 # set the common libraries
-env.Append(LIBPATH = ["$BUILD_DIR/baseReportLib", "$BUILD_DIR/cajun", "$BUILD_DIR/campaign", "$BUILD_DIR/snappy", "$BUILD_DIR/lz4", "$BUILD_DIR/utils"])
+env.Append(LIBPATH = ["$BUILD_DIR/baseReportLib", "$BUILD_DIR/cajun", "$BUILD_DIR/campaign", "$BUILD_DIR/libsqlite", "$BUILD_DIR/snappy", "$BUILD_DIR/lz4", "$BUILD_DIR/utils"])
 
+print( "Link executable against cajun, campaign, snappy, and utils lib's." )
+liblist = ["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"]
 if os.name == "nt":
-    print( "Link executable against cajun, campaign, snappy, and utils lib's." )
-    env.Append(LIBS=["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"])
+    liblist.append( "libsqlite" )
+env.Append(LIBS=liblist)
 
 #print "builddir is " + env["BUILD_DIR"]
 
 # First static libs
-SConscript( [ 'baseReportLib/SConscript',
+statlibscriptlist = [
+              'baseReportLib/SConscript',
+              'baseReportLib/SConscript',
               'cajun/SConscript',
               'campaign/SConscript',
               'Eradication/SConscript_coreLib',
               'snappy/SConscript',
               'lz4/SConscript',
-              'utils/SConscript' ])
+              'utils/SConscript' ]
+
+if os.name == "nt":
+    statlibscriptlist.append( "libsqlite/SConscript" )
+
+SConscript( statlibscriptlist )
 
 # If DLL=true, build libgeneric_static.lib
 # to be used by other dlls
@@ -146,7 +155,6 @@ if env['AllDlls'] or env[ 'DiseaseDll' ] != "":
         SConscript( 'libgeneric/ActivediagnosticsSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/AntitbdrugSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/AntitbpropdepdrugSConscript', variant_dir=dll_op_path )
-        SConscript( 'libgeneric/BCGVaccineSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/DiagnosticstreatnegSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/HealthSeekingBehaviorUpdateSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/HealthSeekingBehaviorUpdateableSConscript', variant_dir=dll_op_path )
@@ -195,7 +203,6 @@ if env['AllDlls'] or env[ 'DiseaseDll' ] != "":
     SConscript( 'libgeneric/OutbreakSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/OutbreakIndividualSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/PropertyvaluechangerSConscript', variant_dir=dll_op_path )
-    SConscript( 'libgeneric/SimplevaccineSConscript', variant_dir=dll_op_path )
 
 # Finally executable
 SConscript('Eradication/SConscript')

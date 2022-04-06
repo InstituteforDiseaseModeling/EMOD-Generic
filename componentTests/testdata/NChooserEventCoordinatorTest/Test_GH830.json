@@ -15,11 +15,10 @@
         }
     ], 
     "Intervention_Config": {
-        "class": "ControlledVaccine", 
+        "class": "Vaccine", 
         "Cost_To_Consumer": 10, 
-        "Vaccine_Type": "AcquisitionBlocking", 
         "Vaccine_Take": 1.0, 
-        "Waning_Config": {
+        "Acquire_Config": {
             "class": "WaningEffectMapLinear", 
             "Initial_Effect": 1.0, 
             "Expire_At_Durability_Map_End": 1, 
@@ -28,8 +27,7 @@
                 "Values": [ 1.0, 1.0, 1.0, 0.0 ]
             }
         }, 
-        "Distributed_Event_Trigger": "Vaccinated", 
-        "Expired_Event_Trigger": "VaccineExpired", 
-        "Duration_To_Wait_Before_Revaccination": 0
+        "Event_Trigger_Distributed": "Vaccinated", 
+        "Event_Trigger_Expired": "VaccineExpired"
     }
 }

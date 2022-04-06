@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "TransmissionGroupsFactory.h" //for SetupIntranodeTransmission
 #include "NodeEventContextHost.h" //for node level trigger
 #include "IndividualCoInfection.h"
-#include "SimulationConfig.h"
 #include "EventTrigger.h"
 
 SETUP_LOGGING( "NodeTB" )
@@ -40,11 +39,6 @@ namespace Kernel
         newnode->Initialize();
 
         return newnode;
-    }
-
-    bool NodeTB::Configure( const Configuration* config )
-    {
-        return Node::Configure( config );
     }
 
     void NodeTB::Initialize()
@@ -79,10 +73,10 @@ namespace Kernel
         MDR_fast_incident_counter = 0.0f;
     }
 
-    IIndividualHuman* NodeTB::addNewIndividual( float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam, float mighet)
+    IIndividualHuman* NodeTB::addNewIndividual( float monte_carlo_weight, float initial_age, int gender, int initial_infection_count, float immparam, float riskparam)
     {
-        auto tempind = NodeAirborne::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam, mighet);
-        //dynamic_cast<IndividualHumanCoInfection*>(tempind)->RegisterInfectionIncidenceObserver( this );
+        auto tempind = NodeAirborne::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam);
+
         return tempind;
     }
 

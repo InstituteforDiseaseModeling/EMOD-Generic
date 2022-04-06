@@ -50,7 +50,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 using namespace std;
 
-int MPIInitWrapper(int argc, char* argv[]);
+
+int  MPIInitWrapper(int argc, char* argv[]);
+bool ControllerInitWrapper(int argc, char *argv[], IdmMpi::MessageInterface* pMpi ); // returns false if something broke
 
 
 #ifndef WIN32
@@ -59,13 +61,9 @@ void setStackSize();
 void setStackSize();
 #endif
 
+
 SETUP_LOGGING( "Eradication" )
 
-void Usage(char* cmd)
-{
-    LOG_INFO_F("For full usage, run: %s --help\n", cmd);
-    exit(1);
-}
 
 void FPE_SignalHandler( int signal )
 {
@@ -86,6 +84,7 @@ void FPE_SignalHandler( int signal )
     fflush( stdout );
     exit(-1);
 }
+
 
 void SetFloatingPointSignalHandler()
 {
@@ -111,6 +110,7 @@ void SetFloatingPointSignalHandler()
 
 }
 
+
 void DisableFloatingPointSignalHandler()
 {
 #ifdef WIN32
@@ -124,13 +124,15 @@ void DisableFloatingPointSignalHandler()
     std::signal(SIGFPE, SIG_DFL);	//set default signal handler for SIGFPE
 }
 
+
 int main(int argc, char* argv[])
 {    
     // First thing to do when app launches
     Environment::setLogger(new SimpleLogger());
     if (argc < 2)
     {
-        Usage(argv[0]);
+        LOG_INFO_F("For full usage, run: %s --help\n", argv[0]);
+        exit(1);
     }
 
 #ifndef WIN32
@@ -179,6 +181,7 @@ int main(int argc, char* argv[])
     return ret;
 }
 
+
 #ifndef WIN32
 
 #define sprintf_s sprintf   
@@ -208,8 +211,6 @@ void setStackSize()
 
 #endif
 
-
-bool ControllerInitWrapper(int argc, char *argv[], IdmMpi::MessageInterface* pMpi ); // returns false if something broke
 
 int MPIInitWrapper( int argc, char* argv[])
 {
@@ -255,6 +256,7 @@ int MPIInitWrapper( int argc, char* argv[])
         return -1;
     }
 }
+
 
 bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pMpi )
 {
@@ -306,7 +308,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             std::list<string> dllNames;
             std::list<string> dllVersions;
 #ifdef WIN32
-
             if( po.CommandLineHas( "dll-path" ) )
             {
                 DllLoader dllLoader;
@@ -364,25 +365,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
     }
     EnvPtr->Log->Flush();
 
-    bool is_getting_schema = po.CommandLineHas( "get-schema" );
-
-    // --------------------------------------------------------------------------------------------------
-    // --- DMB 9-9-2014 ERAD-1621 Users complained that a file not found exception on config.json
-    // --- really didn't tell them that they forgot to specify the configuration file on the command line.
-    // --- One should be able to get the schema without specifying a config file.
-    // --------------------------------------------------------------------------------------------------
-    if( (po.GetCommandLineValueString( "config" ) == po.GetCommandLineValueDefaultString( "config" )) &&
-       !is_getting_schema )
-    {
-        if( !FileSystem::FileExists( po.GetCommandLineValueDefaultString( "config" ) ) )
-        {
-            std::string msg ;
-            msg += "The configuration file '" + po.GetCommandLineValueDefaultString( "config" ) + "' could not be found.  " ;
-            msg += "Did you forget to define the configuration file on the command line with --config or -C?" ;
-            LOG_ERR_F( msg.c_str() );
-            return false ;
-        }
-    }
 
     /////////////////////////////////////////////////////////////////////////////////////////
     // Run model
@@ -398,35 +380,47 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             StatusReporter::updateScheduler = true;
         }
 
-        auto configFileName = po.GetCommandLineValueString( "config" );
-
-        auto schema_path = po.GetCommandLineValueString("schema-path");
+        bool is_getting_schema = po.CommandLineHas( "get-schema" );
+        auto schema_path       = po.GetCommandLineValueString("schema-path");
+        auto configFileName    = po.GetCommandLineValueString( "config" );
 
 #ifdef ENABLE_PYTHON
         // Start python interpreter if python-script-path is not empty; default value for python-script-path option is empty string
-        Kernel::PythonSupport::SetupPython(po.GetCommandLineValueString( "python-script-path" ));
+        if ( pMpi->GetRank() == 0 )
+        {
+            Kernel::PythonSupport::SetupPython(po.GetCommandLineValueString( "python-script-path" ));
+        }
 #endif
 
-        if( Kernel::PythonSupport::IsPythonInitialized() )
+        // Exceptions for misconfiguration of schema
+        if( Kernel::PythonSupport::IsPythonInitialized() && is_getting_schema && schema_path == "stdout")
         {
-            if( is_getting_schema && schema_path == "stdout")
-            {
-                std::stringstream msg;
-                msg << "--schema-path=stdout and --python-script-path defined:  Post processing only works on a file.  "
-                    << "Please define --schema-path as a filename.";
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
-            else if( !Kernel::PythonSupport::PythonScriptsExist() )
-            {
-                std::stringstream msg;
-                msg << "--python-script-path specified but no python scripts found.";
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
+            std::stringstream msg;
+            msg << "--schema-path=stdout and --python-script-path defined:  Post processing only works on a file.  "
+                << "Please define --schema-path as a filename.";
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
         // Run python pre-process script; does nothing and returns configFileName if no python.
         configFileName = Kernel::PythonSupport::RunPyFunction( configFileName, Kernel::PythonSupport::SCRIPT_PRE_PROCESS );
-        //EnvPtr->MPI.p_idm_mpi->Barrier(); // I would like to do this here to be safe but MPI ptr isn't initialized yet
+
+        // Ensure all processes have the same value for configFileName
+        int fname_tmp_size = configFileName.size() + 1;
+        pMpi->BroadcastInteger(&fname_tmp_size, 1, 0);
+        char* fname_tmp = static_cast<char*>(malloc(fname_tmp_size*sizeof(char)));
+        std::strcpy(fname_tmp, configFileName.c_str());
+        pMpi->BroadcastChar(fname_tmp, fname_tmp_size, 0);
+        configFileName = fname_tmp;
+        free(fname_tmp); fname_tmp = nullptr;
+
+        // Exceptions for missing simulation configuration file
+        if( !is_getting_schema && !FileSystem::FileExists( configFileName ) )
+        {
+            std::string msg;
+            msg += "The configuration file '" + configFileName + "' could not be found.";
+            LOG_ERR_F( msg.c_str() );
+            return false;
+        }
 
         // set up the environment
         EnvPtr->Log->Flush();
@@ -436,7 +430,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             configFileName,
             po.GetCommandLineValueString( "input-path"  ),
             po.GetCommandLineValueString( "output-path" ),
-// 2.5            po.GetCommandLineValueString( "state-path"  ),
             po.GetCommandLineValueString( "dll-path"    ),
             is_getting_schema
             );
@@ -449,7 +442,7 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 
         if( is_getting_schema )
         {
-            writeInputSchemas( po.GetCommandLineValueString( "dll-path" ).c_str(), po.GetCommandLineValueString( "schema-path" ).c_str() );
+            writeInputSchemas( po.GetCommandLineValueString( "dll-path" ).c_str(), po.GetCommandLineValueString( "schema-path" ).c_str(), argv[0] );
             return true;
         }
 
@@ -528,12 +521,11 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             if (status)
             {
                 DisableFloatingPointSignalHandler();	//prevent external programs from triggering fpe, e.g. Python dll
-            	release_assert( EnvPtr );
-                if ( EnvPtr->MPI.Rank == 0 )
-                {
-                    // Run python post-process script; does nothing if no python.
-                    Kernel::PythonSupport::RunPyFunction( EnvPtr->OutputPath, Kernel::PythonSupport::SCRIPT_POST_PROCESS );
-                }
+                release_assert( EnvPtr );
+
+                // Run python post-process script; does nothing if no python.
+                Kernel::PythonSupport::RunPyFunction( EnvPtr->OutputPath, Kernel::PythonSupport::SCRIPT_POST_PROCESS );
+
                 LOG_INFO( "Controller executed successfully.\n" );
             }
             else
@@ -613,14 +605,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 
     if( EnvPtr != nullptr )
     {
-        EnvPtr->Log->Flush();
-#if 0
-        // Workaround: let's not do this.
-        if((Kernel::SimulationConfig*)EnvPtr->SimConfig)
-        {
-            ((Kernel::SimulationConfig*)EnvPtr->SimConfig)->Release();
-        }
-#endif
         EnvPtr->Log->Flush();
     }
 

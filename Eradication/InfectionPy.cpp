@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "MathFunctions.h"
 #include "RANDOM.h"
 #include "Exceptions.h"
-#include "SimulationConfig.h"
 #include "StrainIdentity.h"
 
 using namespace std;
@@ -48,11 +47,6 @@ namespace Kernel
 
     InfectionPy::InfectionPy()
     {
-    }
-
-    const SimulationConfig* InfectionPy::params()
-    {
-        return GET_CONFIGURABLE(SimulationConfig);
     }
 
     InfectionPy::InfectionPy(IIndividualHumanContext *context) : Infection(context)
