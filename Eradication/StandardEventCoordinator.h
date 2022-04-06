@@ -33,11 +33,11 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
         StandardInterventionDistributionEventCoordinator( bool useDemographicCoverage = true );
-        virtual ~StandardInterventionDistributionEventCoordinator() { }
+        virtual ~StandardInterventionDistributionEventCoordinator();
 
         // IEventCoordinator
         virtual void SetContextTo(ISimulationEventContext *isec);
-        virtual void CheckStartDay( float campaignStartDay ) const override;
+        virtual void CheckStartDay( float campaignStartDay ) const override {};
 
         virtual void AddNode( const suids::suid& node_suid);
 
@@ -63,8 +63,6 @@ namespace Kernel
 
     protected:
         virtual void preDistribute(); 
-        virtual void ExtractInterventionNameForLogging();
-        virtual void InitializeInterventions();
         virtual void InitializeRepetitions( const Configuration* inputJson );
         virtual void CheckRepetitionConfiguration();
         virtual void UpdateRepetitions();
@@ -74,6 +72,9 @@ namespace Kernel
         virtual bool DistributeInterventionsToIndividual( IIndividualHumanEventContext *ihec,
                                                           float & incrementalCostOut,
                                                           ICampaignCostObserver * pICCO );
+        // helpers
+        void regenerateCachedNodeContextPointers();
+        virtual bool TargetedIndividualIsCovered(IIndividualHumanEventContext *ihec);
 
         ISimulationEventContext  *parent;
         bool distribution_complete;
@@ -83,22 +84,14 @@ namespace Kernel
         //bool include_emigrants;
         //bool include_immigrants;
         int intervention_activated;
-        InterventionConfig intervention_config;
         std::vector<INodeEventContext*> cached_nodes;
         std::vector<suids::suid> node_suids; // to help with serialization
-        IDistributableIntervention *_di;
         DemographicRestrictions demographic_restrictions;
         float demographic_coverage;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;
-
-        std::ostringstream log_intervention_name;
-
-        // helpers
-        void regenerateCachedNodeContextPointers();
-        void formatInterventionClassNames( std::ostringstream&, json::QuickInterpreter*);
-        virtual bool TargetedIndividualIsCovered(IIndividualHumanEventContext *ihec);
+        std::string log_intervention_name;
         bool avoid_duplicates;
-        bool has_node_level_intervention;
-
+        IDistributableIntervention* m_pInterventionIndividual;
+        INodeDistributableIntervention* m_pInterventionNode;
     };
 }

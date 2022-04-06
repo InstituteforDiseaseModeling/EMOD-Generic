@@ -120,9 +120,6 @@
     <ClInclude Include="..\Eradication\InterventionsContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\campaign\InterventionValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Eradication\IntranodeTransmissionTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>

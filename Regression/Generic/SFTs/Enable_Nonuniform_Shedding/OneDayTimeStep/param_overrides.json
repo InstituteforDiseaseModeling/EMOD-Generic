@@ -1,0 +1,48 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_100_overlay.json"
+            ],
+            "IMMUNITY": {
+                "Enable_Immunity": 0
+            },
+            "Infectivity_Population_Density_HalfMax": 0,
+            "MORTALITY": {
+                "Enable_Natural_Mortality": 0,
+                "Post_Infection_Mortality_Multiplier": 0
+            },
+            "SAMPLING": {
+                "Individual_Sampling_Type": "FIXED_SAMPLING"
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 2,
+                "Infectious_Period_Constant": 100,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
+            }
+        },
+        "LOGLEVEL": {
+            "logLevel_Individual": "DEBUG",
+            "logLevel_Infection": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "NoCustomReports",
+            "Enable_Report_Event_Recorder": 0,
+            "Report_Event_Recorder_Events": ["EveryUpdate"]
+        },
+        "PRIMARY": {
+            "Config_Name": "test_Enable_Nonuniform_Shedding",
+            "Simulation_Duration": 110,
+			"Enable_Nonuniform_Shedding": 1,
+			"Shedding_Distribution_Alpha": 1,
+			"Shedding_Distribution_Beta": 3
+			
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

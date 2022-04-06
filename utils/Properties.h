@@ -279,7 +279,7 @@ namespace Kernel
         // It is assumed that each node has the same Individual Property values in its demographics.
         // Hence, it will only read the demographics when it has no individual properties and
         // assume anything new / different is an error.
-        void Initialize( uint32_t externNodeId, const JsonObjectDemog& rDemog, bool isWhitelistEnabled );
+        void Initialize( uint32_t externNodeId, const JsonObjectDemog& rDemog );
 
         // This method will write the transition data into a campaign.json formatted file
         // that is read in later by the application's initialization.  Only one process needs

@@ -15,10 +15,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanContext.h"
 #include "InterventionEnums.h"
 #include "InterventionFactory.h"
-#include "InterventionValidator.h"
 #include "IndividualEventContext.h"
 #include "NodeEventContext.h"
 #include "IIndividualHumanSTI.h"
+#include "INodeContext.h"
+#include "INodeSTI.h"
 #include "Common.h"
 #include "RANDOM.h"
 
@@ -43,7 +44,7 @@ namespace Kernel
         , m_MaximumPartners( 1000.0f )
         , m_UseEventOrConfig( EventOrConfig::Event )
         , m_EventToBroadcast()
-        , m_InterventionConfig()
+        , m_di( nullptr )
     {
         initSimTypes( 2, "STI_SIM", "HIV_SIM" );
     }
@@ -57,12 +58,17 @@ namespace Kernel
         , m_MaximumPartners(      rMaster.m_MaximumPartners )
         , m_UseEventOrConfig(     rMaster.m_UseEventOrConfig )
         , m_EventToBroadcast(     rMaster.m_EventToBroadcast )
-        , m_InterventionConfig(   rMaster.m_InterventionConfig )
+        , m_di( nullptr )
     {
+        if( rMaster.m_di != nullptr )
+        {
+            m_di = rMaster.m_di->Clone();
+        }
     }
 
     InterventionForCurrentPartners::~InterventionForCurrentPartners()
     {
+        delete m_di;
     }
 
     bool InterventionForCurrentPartners::Configure( const Configuration * inputJson )
@@ -78,7 +84,9 @@ namespace Kernel
 
         initConfig( "Event_Or_Config", m_UseEventOrConfig, inputJson, MetadataDescriptor::Enum( "EventOrConfig", Event_Or_Config_DESC_TEXT, MDD_ENUM_ARGS( EventOrConfig ) ) );
         initConfig( "Broadcast_Event", m_EventToBroadcast, inputJson, MetadataDescriptor::Enum("Broadcast_Event", IFCP_Broadcast_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ), "Event_Or_Config", "Event" );
-        initConfigComplexType( "Intervention_Config", &m_InterventionConfig, IFCP_Intervention_Config_DESC_TEXT, "Event_Or_Config", "Config" );
+
+        IndividualInterventionConfig intervention_config;
+        initConfigComplexType( "Intervention_Config", &intervention_config, IFCP_Intervention_Config_DESC_TEXT, "Event_Or_Config", "Config" );
 
         bool ret = BaseIntervention::Configure( inputJson );
         if( ret && !JsonConfigurable::_dryrun )
@@ -90,17 +98,17 @@ namespace Kernel
             }
             if( m_UseEventOrConfig == EventOrConfig::Config )
             {
-                if( m_InterventionConfig._json.Type() == ElementType::NULL_ELEMENT )
+                if( intervention_config._json.Type() == ElementType::NULL_ELEMENT )
                 {
                     throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                             "If you set 'Event_Or_Config' = 'Config', then you must define 'Intervention_Config'" );
                 }
                 else
                 {
-                    InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                                 InterventionTypeValidation::INDIVIDUAL,
-                                                                 m_InterventionConfig._json,
-                                                                 inputJson->GetDataLocation() );
+                    m_di = InterventionFactory::getInstance()->CreateIntervention( intervention_config._json,
+                                                                                   inputJson->GetDataLocation(),
+                                                                                   "Intervention_Config",
+                                                                                   true );
                 }
             }
             m_RelationshipTypes = ConvertStringsToRelationshipTypes( "Relationship_Types", rel_type_strings );
@@ -361,14 +369,9 @@ namespace Kernel
                                            "INodeEventContext" );
         }
 
-        auto config = Configuration::CopyFromElement( (m_InterventionConfig._json), "campaign" );
-        IDistributableIntervention *di = InterventionFactory::getInstance()->CreateIntervention( config );
-        delete config;
-        config = nullptr;
-
         for( auto p_human_event : partners )
         {
-            IDistributableIntervention *clone_di = di->Clone();
+            IDistributableIntervention *clone_di = m_di->Clone();
             clone_di->AddRef();
             clone_di->Distribute( p_human_event->GetInterventionsContext(), pICCO );
             clone_di->Release();
@@ -395,11 +398,7 @@ namespace Kernel
         ar.labelElement( "m_MaximumPartners"      ) & ifcp.m_MaximumPartners;
         ar.labelElement( "m_UseEventOrConfig"     ) & (uint32_t&)ifcp.m_UseEventOrConfig;
         ar.labelElement( "m_EventToBroadcast"     ) & (uint32_t&)ifcp.m_EventToBroadcast;
-        //ar.labelElement( "m_InterventionConfig"   ) & ifcp.m_InterventionConfig;
-
-        // Haven't tested this so assert if someone tries it but I don't think this will
-        // ever be serialized in practice.
-        release_assert( ifcp.m_InterventionConfig._json.Type() == ElementType::NULL_ELEMENT );
+        ar.labelElement( "m_di"                   ) & ifcp.m_di;
 
         ifcp.m_RelationshipTypes.clear();
         for( auto irel : rel_types )

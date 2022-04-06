@@ -156,6 +156,7 @@ namespace Kernel
         {
             m_NumTargetedPerTimeStep[i] += 1;
         }
+        m_QualifyingIndividuals.reserve( m_NumTargeted );
     }
 
     TargetedByAgeAndGender::~TargetedByAgeAndGender()
@@ -173,14 +174,16 @@ namespace Kernel
         return m_NumTargetedPerTimeStep[ m_TimeStep ];
     }
 
-    void TargetedByAgeAndGender::FindQualifyingIndividuals( INodeEventContext* pNEC, 
+    void TargetedByAgeAndGender::ClearQualifyingIndividuals()
+    {
+        m_QualifyingIndividuals.clear();
+    }
+
+    void TargetedByAgeAndGender::FindQualifyingIndividuals( INodeEventContext* pNEC,
                                                             const DiseaseQualifications& rDisease,
                                                             PropertyRestrictions<IPKey, IPKeyValue, IPKeyValueContainer>& rPropertyRestrictions )
     {
-        m_QualifyingIndividuals.clear();
-        m_QualifyingIndividuals.reserve( pNEC->GetIndividualHumanCount() );
-
-        INodeEventContext::individual_visit_function_t fn = 
+        INodeEventContext::individual_visit_function_t fn =
             [ this, &rDisease, &rPropertyRestrictions ](IIndividualHumanEventContext *ihec)
         {
             if( !m_AgeRange.IsInRange( ihec->GetAge()/DAYSPERYEAR ) ) return;
@@ -522,6 +525,8 @@ namespace Kernel
 
         for( auto p_ag : m_AgeAndGenderList )
         {
+            p_ag->ClearQualifyingIndividuals();
+
             for( auto p_nec : nodeList )
             {
                 p_ag->FindQualifyingIndividuals( p_nec, *m_pDiseaseQualifications, m_PropertyRestrictions );
@@ -696,6 +701,7 @@ namespace Kernel
         }
     }
 
+
     // ------------------------------------------------------------------------
     // --- NChooserObjectFactory
     // ------------------------------------------------------------------------
@@ -740,7 +746,6 @@ namespace Kernel
     , m_CachedNodes()
     , m_InterventionName()
     , m_pIntervention( nullptr )
-    , m_InterventionConfig()
     , m_TargetedDistributionList( m_pObjectFactory )
     , m_DistributionIndex(0)
     , m_IsFinished(false)
@@ -755,7 +760,6 @@ namespace Kernel
     , m_CachedNodes()
     , m_InterventionName()
     , m_pIntervention( nullptr )
-    , m_InterventionConfig()
     , m_TargetedDistributionList( m_pObjectFactory )
     , m_DistributionIndex(0)
     , m_IsFinished(false)
@@ -767,13 +771,15 @@ namespace Kernel
     NChooserEventCoordinator::~NChooserEventCoordinator()
     {
         delete m_pObjectFactory;
+        delete m_pIntervention;
     }
 
 
     bool NChooserEventCoordinator::Configure( const Configuration * inputJson )
     {
+        InterventionConfig intervention_config;
         initConfigComplexCollectionType( "Distributions", &m_TargetedDistributionList, NC_Distributions_DESC_TEXT );
-        initConfigComplexType( "Intervention_Config", &m_InterventionConfig, NC_Intervention_Config_DESC_TEXT );
+        initConfigComplexType( "Intervention_Config", &intervention_config, NC_Intervention_Config_DESC_TEXT );
 
         bool retValue = JsonConfigurable::Configure( inputJson );
 
@@ -781,10 +787,12 @@ namespace Kernel
         {
             m_TargetedDistributionList.CheckConfiguration();
 
-            InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                         InterventionTypeValidation::INDIVIDUAL,
-                                                         m_InterventionConfig._json,
-                                                         inputJson->GetDataLocation() );
+            m_pIntervention = InterventionFactory::getInstance()->CreateIntervention( intervention_config._json,
+                                                                                     inputJson->GetDataLocation(),
+                                                                                     "Intervention_Config",
+                                                                                      true );
+
+            m_InterventionName = std::string( json::QuickInterpreter(intervention_config._json)["class"].As<json::String>() );
         }
 
         return retValue;
@@ -811,29 +819,8 @@ namespace Kernel
         m_CachedNodes.push_back( pNEC );
     }
 
-    void NChooserEventCoordinator::UpdateInterventionToBeDistributed( const IdmDateTime& rDateTime, float dt )
-    {
-        if( m_pIntervention == nullptr )
-        {
-            // intervention class names for informative logging
-            std::ostringstream intervention_name;
-            intervention_name << std::string( json::QuickInterpreter(m_InterventionConfig._json)["class"].As<json::String>() );
-            m_InterventionName = intervention_name.str();
-
-            auto qi_as_config = Configuration::CopyFromElement( m_InterventionConfig._json, "campaign" );
-            m_pIntervention = InterventionFactory::getInstance()->CreateIntervention( qi_as_config );
-            delete qi_as_config;
-            qi_as_config = nullptr;
-        }
-    }
-
     void NChooserEventCoordinator::Update( float dt )
     {
-        // --------------------------------------------------------------------------------
-        // --- Update the intervention to be distributed.  This is probably only done once.
-        // --------------------------------------------------------------------------------
-        UpdateInterventionToBeDistributed( m_Parent->GetSimulationTime(), dt );
-
         // --------------------------------------------------------------------------------------
         // --- Update who is to be targeted
         // --- NOTE: We can't determine who gets the intervention because things could change
@@ -864,18 +851,16 @@ namespace Kernel
             {
                 IDistributableIntervention *di = m_pIntervention->Clone();
                 release_assert(di);
-                if (di)
-                {
-                    ICampaignCostObserver* p_icco = nullptr;
-                    if (s_OK != pIHEC->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&p_icco))
-                    {
-                        throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIHEC->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext" );
-                    }
 
-                    di->AddRef();
-                    di->Distribute( pIHEC->GetInterventionsContext(), p_icco );
-                    di->Release();
+                ICampaignCostObserver* p_icco = nullptr;
+                if (s_OK != pIHEC->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&p_icco))
+                {
+                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIHEC->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext" );
                 }
+
+                di->AddRef();
+                di->Distribute( pIHEC->GetInterventionsContext(), p_icco );
+                di->Release();
             }
 
             std::stringstream ss;

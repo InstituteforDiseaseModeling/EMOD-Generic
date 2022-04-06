@@ -62,22 +62,3 @@ else:
 
 eradicationResource = ['Eradication.rc']
 eradicationLocalInc = ['StdAfx.h']
-
-msvc = GetOption( "MSVC" )
-if msvc is not None and msvc != False and msvc != "":
-
-    bvar = env['BUILD_VARIANT'] + '|x64'
-    print( "Eradication: Generating MSVS" + env['MSVS_VERSION'] + " project files for '%s'" % bvar )
-    
-    env.MSVSProject(target = 'EradicationScons' + env['MSVSPROJECTSUFFIX'],
-                    srcs = eradicationSrcFiles,
-                    incs = eradicationIncFiles,
-                    localincs = eradicationLocalInc,
-                    resources = eradicationResource,
-                    buildtarget = eradicationExe,
-                    auto_build_solution = 0,
-                    variant = bvar)
-
-else:
-    print( "CC is:", env['CC'] )
-    print( "CXX is:", env['CXX'] )

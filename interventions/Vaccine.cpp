@@ -111,9 +111,9 @@ namespace Kernel
 
         bool retVal = BaseIntervention::Configure(inputJson);
 
-        effect_acquire   = WaningEffectFactory::CreateInstance(waning_config_acqr);
-        effect_transmit  = WaningEffectFactory::CreateInstance(waning_config_trns);
-        effect_mortality = WaningEffectFactory::CreateInstance(waning_config_mort);
+        effect_acquire   = WaningEffectFactory::getInstance()->CreateInstance(waning_config_acqr._json, inputJson->GetDataLocation(), "Acquire_Config");
+        effect_transmit  = WaningEffectFactory::getInstance()->CreateInstance(waning_config_trns._json, inputJson->GetDataLocation(), "Transmit_Config");
+        effect_mortality = WaningEffectFactory::getInstance()->CreateInstance(waning_config_mort._json, inputJson->GetDataLocation(), "Mortality_Config");
 
         return retVal;
     }

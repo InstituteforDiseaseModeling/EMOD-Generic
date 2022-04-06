@@ -237,9 +237,6 @@
     <ClInclude Include="NodeSet.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="InterventionValidator.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="InterventionEnums.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -264,9 +261,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Interventions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InterventionValidator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NodeSetAll.cpp">

@@ -47,6 +47,7 @@ protected:
     BaseChannelReport( const std::string& rReportName );
 
     virtual void Accumulate(const std::string& channel_name, float value);
+    virtual void SetLastValue(const std::string& channel_name, float value);
 
     void normalizeChannel( const std::string &channel_name, const std::string &normalization_channel );
     void normalizeChannel( const std::string &channel_name, float normalization_value );

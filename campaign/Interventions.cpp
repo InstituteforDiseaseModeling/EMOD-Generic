@@ -28,40 +28,6 @@ SETUP_LOGGING( "Interventions" )
 
 namespace Kernel
 {
-    void CheckSimType( const std::string& rSimTypeStr,
-                       const json::Object& rJsonObject,
-                       const char* pClassName )
-    {
-        json::QuickInterpreter sim_type_qi( rJsonObject[ "Sim_Types" ] );
-        json::QuickInterpreter sim_type_array( sim_type_qi.As<json::Array>() );
-
-        int num_types = sim_type_qi.As<json::Array>().Size() ;
-        assert( num_types > 0 );
-
-        if( std::string(sim_type_array[0].As<json::String>()) == std::string("*") )
-        {
-            // wild card means it is valid for any simulation type
-            return ;
-        }
-
-        std::string supported ;
-        for( int i = 0 ; i < num_types ; i++ )
-        {
-            std::string supported_sim_type = std::string(sim_type_array[i].As<json::String>()) ;
-            if( rSimTypeStr == supported_sim_type )
-            {
-                return ;
-            }
-            supported += "'"+supported_sim_type + "', " ;
-        }
-        supported = supported.substr( 0, supported.length() - 2 );
-
-        std::stringstream ss ;
-        ss << "The '" << pClassName << "' intervention is not valid with the current 'Simulation_Type' (='" << rSimTypeStr << "').  " ;
-        ss << "This intervention is only supported for the following simulation types: " << supported ;
-        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-    }
-
     BaseIntervention::BaseIntervention()
         : parent(nullptr)
         , name()
@@ -91,10 +57,12 @@ namespace Kernel
         , status_property(original.status_property)
         , event_trigger_distributed(original.event_trigger_distributed)
         , event_trigger_expired(original.event_trigger_expired)
-    { }
+    {
+    }
 
     BaseIntervention::~BaseIntervention()
-    { }
+    {
+    }
 
     bool BaseIntervention::Configure(const Configuration * inputJson)
     {
@@ -156,7 +124,8 @@ namespace Kernel
         return ret ;
     }
 
-    bool BaseIntervention::Expired()
+    bool
+    BaseIntervention::Expired()
     {
         return expired;
     }
@@ -172,11 +141,6 @@ namespace Kernel
         {
             parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster()->TriggerObservers(parent->GetEventContext(), event_trigger_expired);
         }
-    }
-
-    void BaseIntervention::ValidateSimType( const std::string& rSimTypeStr )
-    {
-        CheckSimType( rSimTypeStr, GetSchemaBase(), typeid(*this).name() );
     }
 
     bool BaseIntervention::Distribute( IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO )
@@ -205,16 +169,13 @@ namespace Kernel
             assert(ic);
             if( ic->GiveIntervention(this) )
             {
-                wasDistributed = true;
-
                 // Need to get Individual pointer from interventions container pointer. Try parent.
                 IIndividualHumanEventContext * pIndiv = (context->GetParent())->GetEventContext();
-
                 if( pICCO )
                 {
                     pICCO->notifyCampaignExpenseIncurred( cost_per_unit, pIndiv );
                 }
-
+                wasDistributed = true;
                 if(event_trigger_distributed != EventTrigger::NoTrigger)
                 {
                     pIndiv->GetNodeEventContext()->GetIndividualEventBroadcaster()->TriggerObservers(pIndiv, event_trigger_distributed);
@@ -315,10 +276,12 @@ namespace Kernel
         , first_time(original.first_time)
         , disqualifying_properties(original.disqualifying_properties)
         , status_property(original.status_property)
-    { }
+    {
+    }
 
     BaseNodeIntervention::~BaseNodeIntervention()
-    { }
+    {
+    }
 
     bool BaseNodeIntervention::Configure( const Configuration * inputJson )
     {
@@ -376,7 +339,8 @@ namespace Kernel
         return ret ;
     }
 
-    bool BaseNodeIntervention::Expired()
+    bool
+    BaseNodeIntervention::Expired()
     {
         return expired;
     }
@@ -387,11 +351,7 @@ namespace Kernel
     }
 
     void BaseNodeIntervention::OnExpiration()
-    { }
-
-    void BaseNodeIntervention::ValidateSimType( const std::string& rSimTypeStr )
     {
-        CheckSimType( rSimTypeStr, GetSchemaBase(), typeid(*this).name() );
     }
 
     bool BaseNodeIntervention::Distribute( INodeEventContext *context, IEventCoordinator2 * ec )
@@ -433,6 +393,10 @@ namespace Kernel
         return wasDistributed;
     }
 
+    void BaseNodeIntervention::SetContextTo( INodeEventContext *context )
+    {
+        parent = context;
+    }
     bool BaseNodeIntervention::AbortDueToDisqualifyingInterventionStatus( INodeEventContext* context )
     {
         NPKeyValueContainer& node_propeties = context->GetNodeContext()->GetNodeProperties();
@@ -444,7 +408,6 @@ namespace Kernel
                 found.ToString().c_str(), name.c_str(), context->GetExternalId() );
 
             IIndividualEventBroadcaster* broadcaster = context->GetIndividualEventBroadcaster();
-
             broadcaster->TriggerObservers( nullptr, EventTrigger::InterventionDisqualified );
             expired = true;
 
@@ -467,11 +430,6 @@ namespace Kernel
             first_time = false;
         }
         return true;
-    }
-
-    void BaseNodeIntervention::SetContextTo( INodeEventContext *context )
-    {
-        parent = context;
     }
 
     void BaseNodeIntervention::serialize( IArchive& ar, BaseNodeIntervention* obj )

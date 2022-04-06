@@ -310,7 +310,6 @@ namespace Kernel
     NPFactory::NPFactory()
         : BaseFactory()
     {
-        m_KeyWhiteList.erase( "Age_Bin" );
     }
 
     NPFactory::~NPFactory()
@@ -351,7 +350,7 @@ namespace Kernel
         return p_factory;
     }
 
-    void  NPFactory::Initialize( const JsonObjectDemog& rDemog, bool isWhitelistEnabled )
+    void  NPFactory::Initialize( const JsonObjectDemog& rDemog )
     {
         if( !rDemog.IsNull() )
         {
@@ -366,7 +365,7 @@ namespace Kernel
             JsonObjectDemog np_json( JsonObjectDemog::JsonObjectType::JSON_OBJECT_OBJECT );
             np_json.Add( NP_KEY, rDemog );
 
-            BaseFactory::Initialize( NP_KEY, NP_NAME_KEY, read_fn, 0, np_json, isWhitelistEnabled );
+            BaseFactory::Initialize( NP_KEY, NP_NAME_KEY, read_fn, 0, np_json );
         }
     }
 

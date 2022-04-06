@@ -114,7 +114,6 @@ namespace Kernel
         , event_context_host(nullptr)
         , currentTime()
         , custom_reports_filename( RUN_ALL_CUSTOM_REPORTS )
-        , m_IPWhiteListEnabled(true)
         , demographics_factory(nullptr)
         , m_pRngFactory( new RandomNumberGeneratorFactory() )
         , new_node_observers()
@@ -139,14 +138,6 @@ namespace Kernel
 
         nodeRankMap.SetNodeInfoFactory( this );
 
-        if( (EnvPtr != nullptr) &&
-            (EnvPtr->Config != nullptr) &&
-            EnvPtr->Config->Exist( "Disable_IP_Whitelist" ) &&
-            (*(EnvPtr->Config))[ "Disable_IP_Whitelist" ].As<json::Number>() == 1 )
-        {
-            m_IPWhiteListEnabled = false;
-        }
-
         // Initialize node demographics from file
         if( !JsonConfigurable::_dryrun )
         {
@@ -159,9 +150,9 @@ namespace Kernel
 
             ExternalNodeId_t first_node_id = demographics_factory->GetNodeIDs()[ 0 ];
             JsonObjectDemog json_for_first_node = demographics_factory->GetJsonForNode( first_node_id );
-            IPFactory::GetInstance()->Initialize( first_node_id, json_for_first_node, m_IPWhiteListEnabled );
+            IPFactory::GetInstance()->Initialize( first_node_id, json_for_first_node );
 
-            NPFactory::GetInstance()->Initialize( demographics_factory->GetNodePropertiesJson(), m_IPWhiteListEnabled );
+            NPFactory::GetInstance()->Initialize( demographics_factory->GetNodePropertiesJson() );
         }
     }
 
@@ -1260,7 +1251,7 @@ namespace Kernel
                     suids::suid node_suid;
                     node_suid.data = node_index + 1;
                     LOG_DEBUG_F( "Creating/adding new node: external_node_id = %lu, node_suid = %lu\n", external_node_id, node_suid.data );
-                    addNewNodeFromDemographics( external_node_id, node_suid, demographics_factory, climate_factory, m_IPWhiteListEnabled );
+                    addNewNodeFromDemographics( external_node_id, node_suid, demographics_factory, climate_factory );
                 }
                 ++node_index;
             }
@@ -1271,7 +1262,7 @@ namespace Kernel
             {
                 auto node = entry.second;
                 node->SetContextTo(this);
-                initializeNode( node, demographics_factory, climate_factory, m_IPWhiteListEnabled );
+                initializeNode( node, demographics_factory, climate_factory );
             }
         }
 
@@ -1295,17 +1286,15 @@ namespace Kernel
     void Kernel::Simulation::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                          suids::suid node_suid, 
                                                          NodeDemographicsFactory *nodedemographics_factory, 
-                                                         ClimateFactory *climate_factory,
-                                                         bool white_list_enabled )
+                                                         ClimateFactory *climate_factory )
     {
         Node *node = Node::CreateNode(this, externalNodeId, node_suid);
-        addNode_internal( node, nodedemographics_factory, climate_factory, white_list_enabled );
+        addNode_internal( node, nodedemographics_factory, climate_factory );
     }
 
     void Kernel::Simulation::addNode_internal( INodeContext *node,
                                                NodeDemographicsFactory *nodedemographics_factory,
-                                               ClimateFactory *climate_factory,
-                                               bool white_list_enabled )
+                                               ClimateFactory *climate_factory )
     {
 
         release_assert(node);
@@ -1317,7 +1306,7 @@ namespace Kernel
         node->SetRng( m_pRngFactory->CreateRng( node->GetExternalID() ) );
 
         // Node initialization 
-        node->SetParameters( nodedemographics_factory, climate_factory, white_list_enabled );
+        node->SetParameters( nodedemographics_factory, climate_factory );
 
         // Populate node
         node->PopulateFromDemographics();
@@ -1332,8 +1321,7 @@ namespace Kernel
 
     void Kernel::Simulation::initializeNode( INodeContext* node, 
                                              NodeDemographicsFactory* nodedemographics_factory, 
-                                             ClimateFactory* climate_factory,
-                                             bool white_list_enabled )
+                                             ClimateFactory* climate_factory )
     {
         release_assert( node );
         release_assert( nodedemographics_factory );
@@ -1341,7 +1329,7 @@ namespace Kernel
         release_assert( climate_factory );
 #endif
 
-        node->SetParameters( nodedemographics_factory, climate_factory, white_list_enabled );
+        node->SetParameters( nodedemographics_factory, climate_factory );
 
         // node->PopulateFromDemographics();    // Skip this, node already is populated.
         node->InitializeTransmissionGroupPopulations();

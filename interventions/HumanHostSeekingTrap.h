@@ -25,11 +25,6 @@ namespace Kernel
 {
     struct IVectorInterventionEffectsSetter;
 
-    /* Keep around as an identity solution??? */
-    struct IHumanHostSeekingTrap : public ISupports
-    {
-    };
-
     class HumanHostSeekingTrap : public BaseIntervention
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, HumanHostSeekingTrap, IDistributableIntervention)

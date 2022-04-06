@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configure.h"
 #include "InterventionEnums.h"
 #include "ISerializable.h"
+#include "ObjectFactory.h"
 
 namespace Kernel
 {
@@ -34,34 +35,8 @@ namespace Kernel
         virtual std::vector<ExternalNodeId_t> IsSubset(const std::vector<ExternalNodeId_t>& demographic_node_ids) = 0;
     };
 
-    class IDMAPI INodeSetFactory
+    class NodeSetFactory : public ObjectFactory<INodeSet,NodeSetFactory>
     {
-    public:
-        virtual void Register(string classname, instantiator_function_t _if) = 0;
-        virtual json::QuickBuilder GetSchema() = 0;
-    };            
-
-    class IDMAPI NodeSetFactory : public INodeSetFactory
-    {
-    public:
-        static INodeSetFactory * getInstance() { return _instance ? _instance : _instance = new NodeSetFactory(); }
-
-        static INodeSet* CreateInstance(const Configuration * config)
-        {
-            return CreateInstanceFromSpecs<INodeSet>(config, getRegisteredClasses(), true);
-        }
-        void Register(string classname, instantiator_function_t _if)  {  getRegisteredClasses()[classname] = _if;  }
-        json::QuickBuilder GetSchema();
-
-    protected:
-#pragma warning( push )
-#pragma warning( disable: 4251 ) // See IdmApi.h for details
-        static json::Object campaignSchema;
-        static support_spec_map_t& getRegisteredClasses() { static support_spec_map_t registered_classes; return registered_classes; }
-#pragma warning( pop )
-
-    private:
-        static INodeSetFactory * _instance;
     };
 
 

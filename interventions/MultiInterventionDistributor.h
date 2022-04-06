@@ -20,6 +20,7 @@ namespace Kernel
     
     public: 
         MultiInterventionDistributor();
+        MultiInterventionDistributor( const MultiInterventionDistributor& rMaster );
         virtual ~MultiInterventionDistributor();
 
         bool Configure( const Configuration* config );
@@ -32,6 +33,6 @@ namespace Kernel
     protected:
         virtual void Expire();
 
-        IndividualInterventionConfigList intervention_list;
+        std::vector<IDistributableIntervention*> m_Interventions;
     };
 }

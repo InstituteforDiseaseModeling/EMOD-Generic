@@ -68,7 +68,7 @@ namespace Kernel
         float m_MaximumPartners;
         EventOrConfig::Enum m_UseEventOrConfig;
         EventTrigger::Enum m_EventToBroadcast;
-        IndividualInterventionConfig m_InterventionConfig;
+        IDistributableIntervention* m_di;
 
         DECLARE_SERIALIZABLE( InterventionForCurrentPartners );
     };

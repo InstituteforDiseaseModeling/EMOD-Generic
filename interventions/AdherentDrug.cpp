@@ -82,9 +82,12 @@ namespace Kernel
             if( (adherence_config._json.Type() == json::ElementType::NULL_ELEMENT) ||
                 !json::QuickInterpreter( adherence_config._json ).Exist( "class") )
             {
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The Adherence_Config must be defined with a valid WaningEffect.");
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,
+                                                     "The Adherence_Config must be defined with a valid WaningEffect.");
             }
-            m_pAdherenceEffect = WaningEffectFactory::CreateInstance( adherence_config );
+            m_pAdherenceEffect = WaningEffectFactory::getInstance()->CreateInstance( adherence_config._json,
+                                                                                     inputJson->GetDataLocation(),
+                                                                                     "Adherence_Config" );
 
             // --------------------------------------------------------------
             // --- Check to see if IWaningEffectCount type is being used.

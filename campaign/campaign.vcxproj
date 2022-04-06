@@ -131,7 +131,6 @@
     </ClCompile>
     <ClCompile Include="InterventionFactory.cpp" />
     <ClCompile Include="Interventions.cpp" />
-    <ClCompile Include="InterventionValidator.cpp" />
     <ClCompile Include="NodeSetAll.cpp" />
     <ClCompile Include="NodeSetFactory.cpp" />
     <ClCompile Include="NodeSetNodeList.cpp" />
@@ -217,7 +216,6 @@
     <ClInclude Include="InterventionEnums.h" />
     <ClInclude Include="InterventionFactory.h" />
     <ClInclude Include="Interventions.h" />
-    <ClInclude Include="InterventionValidator.h" />
     <ClInclude Include="NodeSet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

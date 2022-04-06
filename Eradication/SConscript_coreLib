@@ -107,6 +107,7 @@ else:
                             "../interventions/NodeBirthRateMult.cpp",
                             "../interventions/NodeInfectivityMult.cpp",
                             "../interventions/NodeLevelHealthTriggeredIV.cpp",
+                            "../interventions/NodeLevelHealthTriggeredIVScaleUpSwitch.cpp",
                             "../interventions/NLHTIVNode.cpp",
                             "../interventions/NodePropertyValueChanger.cpp",
                             "../interventions/Outbreak.cpp",
@@ -287,8 +288,7 @@ else:
                             "../interventions/HealthSeekingBehaviorUpdate.cpp",
                             "../interventions/HealthSeekingBehaviorUpdateable.cpp",
                             "../interventions/ResistanceDiagnostics.cpp",
-                            "../interventions/SmearDiagnostics.cpp",
-                            "../interventions/NodeLevelHealthTriggeredIVScaleUpSwitch.cpp"
+                            "../interventions/SmearDiagnostics.cpp"
                         ]
 
     # TBHIV
@@ -455,17 +455,3 @@ else:
 
     coreLib = env.StaticLibrary('coreLib', coreSrcFiles)
     env.Alias("CoreLibAlias",coreLib)
-
-    msvc = GetOption( "MSVC" )
-    if msvc is not None and msvc != False and msvc != "":
-
-        bvar = env['BUILD_VARIANT'] + '|x64'
-        print( "coreLib: Generating MSVS" + env['MSVS_VERSION'] + " project files for '%s'" % bvar )
-
-        env.MSVSProject(target = 'coreLibScons' + env['MSVSPROJECTSUFFIX'],
-            srcs = coreSrcFiles,
-            incs = coreIncFiles,
-            localincs = coreLocalInc,
-            buildtarget = coreLib,
-                    auto_build_solution = 0,
-                    variant = bvar)

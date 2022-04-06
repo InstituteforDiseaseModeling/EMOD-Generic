@@ -10,7 +10,6 @@
             "demographics_STIDebut.json",
             "../../HIV/input/PFA_overlay.json"
         ],
-        "Disable_IP_Whitelist": 1,
         "Enable_Birth": 0,
         "Enable_Natural_Mortality": 0,
         "Enable_Report_Event_Recorder": 1,

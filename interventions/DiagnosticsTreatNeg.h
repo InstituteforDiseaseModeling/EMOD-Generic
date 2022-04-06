@@ -26,31 +26,25 @@ namespace Kernel
     public:
         DiagnosticTreatNeg();
         DiagnosticTreatNeg( const DiagnosticTreatNeg& master );
-        virtual ~DiagnosticTreatNeg();// { }
+        virtual ~DiagnosticTreatNeg();
         virtual bool Configure( const Configuration* pConfig ) override;
 
         virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO ) override;
         virtual void Update(float dt) override;
 
         virtual bool positiveTestResult() override;
-
         void onDiagnosisComplete( float dt );
         virtual void onNegativeTestResult() override;
         virtual void negativeTestDistribute();
-
         virtual void onPatientDefault() override;
 
+    protected:
         virtual float getTreatmentFractionNegative() const;
 
-    protected:
-        IndividualInterventionConfig negative_diagnosis_config;
-#pragma warning( push )
-#pragma warning( disable: 4251 ) // See IdmApi.h for details
         EventTrigger::Enum negative_diagnosis_event;
-
-        IndividualInterventionConfig defaulters_config;
+        IndividualInterventionConfig negative_diagnosis_config;
         EventTrigger::Enum defaulters_event;
-#pragma warning( pop )
+        IndividualInterventionConfig defaulters_config;
 
     private:
         bool m_gets_positive_test_intervention;

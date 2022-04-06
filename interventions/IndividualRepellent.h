@@ -44,7 +44,7 @@ namespace Kernel
 
     protected:
         IWaningEffect* blocking_effect;
-        IIndividualRepellentConsumer *ihmc; // aka individual or individual vector interventions container
+        IIndividualRepellentConsumer *m_pIRC; // aka individual or individual vector interventions container
 
         DECLARE_SERIALIZABLE(SimpleIndividualRepellent);
     };

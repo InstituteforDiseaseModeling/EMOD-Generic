@@ -142,17 +142,3 @@ utilsIncFiles = [
 utilsLocalInc = ['stdafx.h']
 
 utilsLib = env.StaticLibrary('utils', utilsSrcFiles)
-
-msvc = GetOption( "MSVC" )
-if msvc is not None and msvc != False and msvc != "":
-
-    bvar = env['BUILD_VARIANT'] + '|x64'
-    print( "Utils: Generating MSVS" + env['MSVS_VERSION'] + " project files for '%s'" % bvar )
-    
-    env.MSVSProject(target = 'UtilsScons' + env['MSVSPROJECTSUFFIX'],
-		srcs = utilsSrcFiles,
-		incs = utilsIncFiles,
-		localincs = utilsLocalInc,
-		buildtarget = utilsLib,
-                auto_build_solution = 0,
-                variant = bvar)

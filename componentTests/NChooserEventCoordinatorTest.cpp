@@ -197,6 +197,7 @@ SUITE(NChooserEventCoordinatorTest)
         CHECK_EQUAL( 13, selected_list_1[2]->GetSuid().data );
         CHECK_EQUAL( 15, selected_list_1[3]->GetSuid().data );
 
+        ag1.ClearQualifyingIndividuals();
         ag1.IncrementNextNumTargets();
 
         ag1.FindQualifyingIndividuals( &nec, disease_qual, pr );
@@ -207,6 +208,7 @@ SUITE(NChooserEventCoordinatorTest)
         CHECK_EQUAL( 15, selected_list_2[1]->GetSuid().data );
         CHECK_EQUAL( 16, selected_list_2[2]->GetSuid().data );
 
+        ag1.ClearQualifyingIndividuals();
         ag1.IncrementNextNumTargets();
 
         ag1.FindQualifyingIndividuals( &nec, disease_qual, pr );

@@ -40,7 +40,7 @@ namespace Kernel
 
     protected:
         IWaningEffect* killing_effect;
-        IVectorInterventionEffectsSetter *ivies; // aka individual vector interventions container
+        IVectorInterventionEffectsSetter* m_pIVIES; // aka individual vector interventions container
 
         DECLARE_SERIALIZABLE(Ivermectin);
     };

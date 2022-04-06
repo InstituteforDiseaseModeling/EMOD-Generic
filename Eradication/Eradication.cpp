@@ -120,7 +120,7 @@ void DisableFloatingPointSignalHandler()
 
     _controlfp_s(&currentlControl, currentlControl | _EM_ZERODIVIDE | _EM_INVALID , _MCW_EM);	// disable FPE signals by setting bits    
 #else
-    feclearexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);    // disable FPE signals
+    fedisableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);    // disable FPE signals
 #endif
     std::signal(SIGFPE, SIG_DFL);	//set default signal handler for SIGFPE
 }
@@ -237,7 +237,7 @@ int MPIInitWrapper( int argc, char* argv[])
         // caught, tear everything down, decisively.
         if (!fSuccessful)
         {
-            if( EnvPtr != nullptr && EnvPtr->Log != nullptr )
+            if( (EnvPtr != nullptr) && (EnvPtr->Log != nullptr) )
             {
                 EnvPtr->Log->Flush();
             }

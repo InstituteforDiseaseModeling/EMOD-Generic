@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include <numeric>
+#include <cfloat>
 
 #include "ChannelDataMap.h"
 #include "Log.h"
@@ -152,7 +153,7 @@ void ChannelDataMap::Accumulate( const std::string& channel_name, int index, Cha
 void ChannelDataMap::ExponentialValues( const std::string& channel_name )
 {
     channel_data_t& r_channel_data = channel_data_map[ channel_name ];
-    for( auto& r_data : r_channel_data )
+    for( float& r_data : r_channel_data )
     {
         r_data = exp( r_data );
     }
@@ -181,45 +182,71 @@ void ChannelDataMap::Reduce()
     ar.labelElement("Channels") & send_name_size_map;
 
     const char* buffer = ar.GetBuffer();
-    size_t buffer_size = ar.GetBufferSize();
+    uint32_t buffer_size = ar.GetBufferSize();
 
-    EnvPtr->MPI.p_idm_mpi->PostChars( (char*)buffer, buffer_size, EnvPtr->MPI.Rank );
+    // send my channel names and number of channels to all other cores
+    IdmMpi::RequestList outbound_requests;
+    for( int to_rank = 0 ; to_rank < EnvPtr->MPI.NumTasks ; ++to_rank )
+    {
+        if( to_rank == EnvPtr->MPI.Rank ) continue;
 
+        IdmMpi::Request size_request;
+        EnvPtr->MPI.p_idm_mpi->SendIntegers( &buffer_size, 1, to_rank, &size_request );
+        outbound_requests.Add( size_request );
+
+        if( buffer_size > 0 )
+        {
+            IdmMpi::Request buffer_request;
+            EnvPtr->MPI.p_idm_mpi->SendChars( const_cast<char*>(buffer), buffer_size, to_rank, &buffer_request );
+            outbound_requests.Add( buffer_request );
+        }
+    }
+
+    // Get from the other cores their channel names and sizes and update my map
     for( int from_rank = 0 ; from_rank < EnvPtr->MPI.NumTasks ; ++from_rank )
     {
         if( from_rank == EnvPtr->MPI.Rank ) continue;
 
         std::vector<char> receive_json;
 
-        EnvPtr->MPI.p_idm_mpi->GetChars( receive_json, from_rank );
+        int receive_size = 0;
+        EnvPtr->MPI.p_idm_mpi->ReceiveIntegers( &receive_size, 1, from_rank );
 
-        receive_json.push_back( '\0' );
-
-        Kernel::JsonFullReader reader( receive_json.data() );
-        Kernel::IArchive* reader_par = static_cast<Kernel::IArchive*>(&reader);
-        Kernel::IArchive& reader_ar = *reader_par;
-
-        std::map<std::string,int> get_name_size_map;
-        reader_ar.labelElement("Channels") & get_name_size_map;
-
-        for( auto& entry : get_name_size_map )
+        if (receive_size > 0)
         {
-            std::string name = entry.first;
-            int         size = entry.second;
+            receive_json.resize( receive_size + 1 );
+            EnvPtr->MPI.p_idm_mpi->ReceiveChars( receive_json.data(), receive_size, from_rank );
+            receive_json.push_back( '\0' );
 
-            if( channel_data_map.count( name ) == 0 )
+            Kernel::JsonFullReader reader( receive_json.data() );
+            Kernel::IArchive* reader_par = static_cast<Kernel::IArchive*>(&reader);
+            Kernel::IArchive& reader_ar = *reader_par;
+
+            std::map<std::string,int> get_name_size_map;
+            reader_ar.labelElement("Channels") & get_name_size_map;
+
+            for( auto& entry : get_name_size_map )
             {
-                channel_data_t data(size);
-                channel_data_map[ name ] = data;
-            }
-            else if( channel_data_map[ name ].size() != size )
-            {
-                std::stringstream ss;
-                ss << "Channel=" << name << "  from rank=" << from_rank << " had size=" << size << " while this rank=" << EnvPtr->MPI.Rank << " had size=" << channel_data_map[ name ].size() << "\n";
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+                std::string name = entry.first;
+                int         size = entry.second;
+
+                if( channel_data_map.count( name ) == 0 )
+                {
+                    channel_data_t data(size);
+                    channel_data_map[ name ] = data;
+                }
+                else if( channel_data_map[ name ].size() != size )
+                {
+                    std::stringstream ss;
+                    ss << "Channel=" << name << "  from rank=" << from_rank << " had size=" << size << " while this rank=" << EnvPtr->MPI.Rank << " had size=" << channel_data_map[ name ].size() << "\n";
+                    throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+                }
             }
         }
     }
+
+    // synchronize with other cores
+    EnvPtr->MPI.p_idm_mpi->WaitAll( outbound_requests );
 
     // -----------------------------------------------
     // --- Reduce the data in each channel of the map

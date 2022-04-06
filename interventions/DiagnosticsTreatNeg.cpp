@@ -45,36 +45,6 @@ namespace Kernel
         }
 
         bool ret = SimpleDiagnostic::Configure( inputJson );
-        if( ret  )
-        {
-            if( use_event_or_config == EventOrConfig::Config || JsonConfigurable::_dryrun )
-            {
-                InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                             InterventionTypeValidation::INDIVIDUAL,
-                                                             negative_diagnosis_config._json,
-                                                             inputJson->GetDataLocation() );
-                InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                             InterventionTypeValidation::INDIVIDUAL,
-                                                             defaulters_config._json,
-                                                             inputJson->GetDataLocation() );
-            }
-
-            if( !JsonConfigurable::_dryrun && 
-                negative_diagnosis_event == EventTrigger::NoTrigger &&
-                (negative_diagnosis_config._json.Type() == ElementType::NULL_ELEMENT) )
-            {
-                const char* msg = "You must define either Negative_Diagnosis_Event or Negative_Diagnosis_Config";
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg );
-            }
-
-            if( !JsonConfigurable::_dryrun && 
-                defaulters_event == EventTrigger::NoTrigger &&
-                (defaulters_config._json.Type() == ElementType::NULL_ELEMENT) )
-            {
-                const char* msg = "You must define either Defaulters_Event or Defaulters_Config";
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg );
-            }
-        }
         return ret ;
     }
 
@@ -230,13 +200,8 @@ namespace Kernel
         }
         else if( negative_diagnosis_config._json.Type() != ElementType::NULL_ELEMENT )
         {
-            auto tmp_config = Configuration::CopyFromElement( negative_diagnosis_config._json, "campaign" );
-
             // Distribute the test-negative intervention
-            IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention( tmp_config );
-
-            delete tmp_config;
-            tmp_config = nullptr;
+            IDistributableIntervention* di = InterventionFactory::getInstance()->CreateIntervention( negative_diagnosis_config._json, "", "campaign");
 
             ICampaignCostObserver* pICCO;
             // Now make sure cost of the test-positive intervention is reported back to node
@@ -282,13 +247,8 @@ namespace Kernel
         }
         else if( defaulters_config._json.Type() != ElementType::NULL_ELEMENT )
         {
-            auto tmp_config = Configuration::CopyFromElement( defaulters_config._json, "campaign" );
-
             // Distribute the defaulters intervention, right away (do not use the days_to_diagnosis
-            IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention( tmp_config );
-
-            delete tmp_config;
-            tmp_config = nullptr;
+            IDistributableIntervention* di = InterventionFactory::getInstance()->CreateIntervention( defaulters_config._json, "", "campaign");
 
             ICampaignCostObserver* pICCO;
             // Now make sure cost of the test-positive intervention is reported back to node

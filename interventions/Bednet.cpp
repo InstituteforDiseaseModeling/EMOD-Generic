@@ -96,8 +96,16 @@ namespace Kernel
 
         if( configured && !JsonConfigurable::_dryrun )
         {
-            m_pEffectKilling = WaningEffectFactory::CreateInstance( killing_config );
-            m_pEffectBlocking = WaningEffectFactory::CreateInstance( blocking_config );
+            if( (killing_config._json.Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(killing_config._json).Empty() )
+            {
+                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Killing_Config' must be defined.");
+            }
+            if( (blocking_config._json.Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(blocking_config._json).Empty() )
+            {
+                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Blocking_Config' must be defined.");
+            }
+            m_pEffectKilling  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,  inputJson->GetDataLocation(), "Killing_Config" );
+            m_pEffectBlocking = WaningEffectFactory::getInstance()->CreateInstance( blocking_config._json, inputJson->GetDataLocation(), "Blocking_Config" );
         }
 
         return configured;
@@ -236,7 +244,9 @@ namespace Kernel
 
         if( configured && !JsonConfigurable::_dryrun )
         {
-            m_pEffectUsage = WaningEffectFactory::CreateInstance( usage_config );
+            m_pEffectUsage = WaningEffectFactory::getInstance()->CreateInstance( usage_config._json,
+                                                                                 inputJson->GetDataLocation(),
+                                                                                 "Usage_Config" );
         }
 
         return configured;

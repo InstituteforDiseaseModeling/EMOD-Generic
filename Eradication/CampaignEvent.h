@@ -17,38 +17,27 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FactorySupport.h"
 #include "Configure.h"
 #include "NodeSet.h"
+#include "ObjectFactory.h"
 
 namespace Kernel
 {
     struct INodeEventContext;
     struct ISimulationContext;
     struct ISimulationEventContext;
-
-    class ICampaignEventFactory
-    {
-    public:
-        virtual void Register(string classname, instantiator_function_t _if) = 0;
-        virtual json::QuickBuilder GetSchema() = 0;
-    };            
-
-
     class CampaignEvent;
 
-    class CampaignEventFactory : public ICampaignEventFactory
+    class CampaignEventFactory : public ObjectFactory<CampaignEvent,CampaignEventFactory>
     {
     public:
-        static ICampaignEventFactory * getInstance() { return _instance ? _instance : _instance = new CampaignEventFactory(); }
-
-        static CampaignEvent* CreateInstance(const Configuration * config, ISimulationEventContext *isec );
-        void Register(string classname, instantiator_function_t _if);
-        virtual json::QuickBuilder GetSchema();
+        virtual CampaignEvent* CreateInstance( const json::Element& rJsonElement,
+                                               const std::string& rDataLocation,
+                                               const char* parameterName,
+                                               bool nullOrEmptyOrNoClassNotError = false ) override;
 
     protected:
-        static support_spec_map_t& getRegisteredClasses();
+        template<class IObject, class Factory> friend class Kernel::ObjectFactory;
 
-    private:
-        static ICampaignEventFactory * _instance;
-        static json::Object ceSchema;
+        CampaignEventFactory();
     };
 
 

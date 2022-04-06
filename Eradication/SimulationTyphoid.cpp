@@ -165,12 +165,11 @@ namespace Kernel
     void SimulationTyphoid::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                         suids::suid node_suid,
                                                         NodeDemographicsFactory *nodedemographics_factory, 
-                                                        ClimateFactory *climate_factory,
-                                                        bool white_list_enabled )
+                                                        ClimateFactory *climate_factory )
     {
         NodeTyphoid *node = NodeTyphoid::CreateNode(this, externalNodeId, node_suid);
 
-        addNode_internal( node, nodedemographics_factory, climate_factory, white_list_enabled );
+        addNode_internal( node, nodedemographics_factory, climate_factory );
     }
 
     void SimulationTyphoid::resolveMigration()

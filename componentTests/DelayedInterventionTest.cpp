@@ -85,6 +85,6 @@ SUITE( DelayedInterventionTest )
     TEST_FIXTURE( DelayedFixture, TestIllegalNodeLevelIntervention )
     {
         TestHelper_Exception( __LINE__, "testdata/DelayedInterventionTest/TestIllegalNodeLevelIntervention.json",
-                              "Invalid Intervention Type in 'DelayedIntervention'.\n'MigrateFamily' is a(n) NODE-level intervention.\nA(n) INDIVIDUAL-level intervention is required." );
+                              "Error loading 'MigrateFamily' via 'InterventionFactory' for 'Actual_IndividualIntervention_Configs[1]'" );
     }
 }

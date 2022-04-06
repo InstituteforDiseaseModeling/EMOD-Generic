@@ -65,7 +65,7 @@ namespace Kernel
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) = 0;
 
         virtual void SetContextTo( ISimulationContext* ) = 0;
-        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled ) = 0;
+        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) = 0;
         virtual void PopulateFromDemographics() = 0;
         virtual void InitializeTransmissionGroupPopulations() = 0;
 

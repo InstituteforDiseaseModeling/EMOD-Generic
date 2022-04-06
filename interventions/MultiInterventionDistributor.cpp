@@ -28,26 +28,42 @@ namespace Kernel
 
     bool MultiInterventionDistributor::Configure( const Configuration * inputJson )
     {
+        IndividualInterventionConfig intervention_list;
         initConfigComplexType("Intervention_List", &intervention_list, MID_Intervention_List_DESC_TEXT);
 
         bool ret = BaseIntervention::Configure( inputJson );
-        if( ret )
+        if( ret && !JsonConfigurable::_dryrun )
         {
-            InterventionValidator::ValidateInterventionArray( GetTypeName(),
-                                                              InterventionTypeValidation::INDIVIDUAL,
-                                                              intervention_list._json, 
-                                                              inputJson->GetDataLocation() );
+            InterventionFactory::getInstance()->CreateInterventionList( intervention_list._json,
+                                                                        inputJson->GetDataLocation(),
+                                                                        "Intervention_List",
+                                                                        m_Interventions );
         }
         return ret ;
     }
 
     MultiInterventionDistributor::MultiInterventionDistributor()
-    : BaseIntervention()
+        : BaseIntervention()
+        , m_Interventions()
     {
+    }
+
+    MultiInterventionDistributor::MultiInterventionDistributor( const MultiInterventionDistributor& rMaster )
+        : BaseIntervention( rMaster )
+        , m_Interventions()
+    {
+        for( auto p_master_intervention : rMaster.m_Interventions )
+        {
+            m_Interventions.push_back( p_master_intervention->Clone() );
+        }
     }
 
     MultiInterventionDistributor::~MultiInterventionDistributor()
     {
+        for( auto p_intervention : m_Interventions )
+        {
+            delete p_intervention;
+        }
     }
 
     void MultiInterventionDistributor::Update( float dt )
@@ -65,44 +81,12 @@ namespace Kernel
             return false;
         }
 
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        IGlobalContext *pGC = nullptr;
-        const IInterventionFactory* ifobj = nullptr;
-        release_assert(context->GetParent());
-        if (s_OK == context->GetParent()->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
+        for( auto p_intervention : m_Interventions )
         {
-            ifobj = pGC->GetInterventionFactory();
-        }
-        if (!ifobj)
-        {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-        } 
-
-        try
-        {
-            // Parse intervention_list
-            const json::Array & interventions_array = json::QuickInterpreter(intervention_list._json).As<json::Array>();
-            LOG_DEBUG_F("interventions array size = %d\n", interventions_array.Size());
-            for( int idx=0; idx<interventions_array.Size(); idx++ )
-            {
-                const json::Object& actualIntervention = json_cast<const json::Object&>(interventions_array[idx]);
-                Configuration * tmpConfig = Configuration::CopyFromElement( actualIntervention, "campaign" );
-                assert( tmpConfig );
-
-                // Instantiate and distribute interventions
-                LOG_DEBUG_F( "Attempting to instantiate intervention of class %s\n", std::string((*tmpConfig)["class"].As<json::String>()).c_str() );
-                IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention(tmpConfig);
-                release_assert( di != nullptr ); // ValidateInterventionArray should have made sure these are valid individual interventions
-                if (!di->Distribute( context, pICCO ) )
-                {
-                    di->Release();
-                }
-            }
-        }
-        catch(json::Exception &e)
-        {
-            // ERROR: ::cerr << "exception casting intervention_config to array! " << e.what() << std::endl;
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, e.what() ); // ( "Intervention_List json problem: intervention_list is valid json but needs to be an array." );
+            IDistributableIntervention* p_di = p_intervention->Clone();
+            p_di->AddRef();
+            p_di->Distribute( context, pICCO );
+            p_di->Release();
         }
 
         // Nothing more for this class to do...

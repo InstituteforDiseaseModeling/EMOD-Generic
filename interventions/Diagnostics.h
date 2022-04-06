@@ -32,7 +32,7 @@ namespace Kernel
     public:
         SimpleDiagnostic();
         SimpleDiagnostic( const SimpleDiagnostic& master );
-        virtual ~SimpleDiagnostic() {  }
+        virtual ~SimpleDiagnostic();
         virtual bool Configure( const Configuration* pConfig ) override;
 
         virtual void CheckConfigTriggers( const Configuration * inputJson ); 
@@ -57,8 +57,6 @@ namespace Kernel
         virtual EventOrConfig::Enum getEventOrConfig( const Configuration* );
         void CheckPostiveEventConfig();
 
-#pragma warning( push )
-#pragma warning( disable: 4251 ) // See IdmApi.h for details
         int   diagnostic_type;
         ProbabilityNumber base_specificity;
         ProbabilityNumber base_sensitivity;
@@ -71,6 +69,5 @@ namespace Kernel
         EventTrigger::Enum positive_diagnosis_event;
 
         DECLARE_SERIALIZABLE(SimpleDiagnostic);
-#pragma warning( pop )
     };
 }

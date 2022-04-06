@@ -50,31 +50,32 @@ namespace Kernel
         // Zero out targeted_ip variable in case it was set but flag says to ignore.
         if( use_property_targeting == false )
         {
-            targeted_individual_properties == "default";
+            targeted_individual_properties = "default";
         }
 
-        if( !JsonConfigurable::_dryrun )
+        if( configured && !JsonConfigurable::_dryrun )
         {
-            auto tmp_waning = Configuration::CopyFromElement( changing_config._json, inputJson->GetDataLocation() );
-            // Would really like to find the right way to see if user omitted the Changing_Config instead of using exception handling.
-            try {
-                changing_effect = WaningEffectFactory::CreateInstance( tmp_waning );
+            if( changing_config._json.Type() != ElementType::NULL_ELEMENT )
+            {
+                changing_effect = WaningEffectFactory::getInstance()->CreateInstance( changing_config._json,
+                                                                                      inputJson->GetDataLocation(),
+                                                                                      "Changing_Effect" );
             }
-            catch( JsonTypeConfigurationException e )
+            else
             {
                 LOG_INFO_F( "Looks like we're just going with fixed-value effect and not a variable-over-time effect structure.\n" );
             }
-            delete tmp_waning;
-            tmp_waning = nullptr;
         }
         LOG_DEBUG_F( "Vaccine configured with type %d and effect %f.\n", vaccine_mode, effect );
         return configured;
     }
 
     TyphoidWASH::TyphoidWASH() 
-    : changing_effect( nullptr )
-    , effect( 1.0f )
+    : BaseNodeIntervention()
     , vaccine_mode( TyphoidVaccineMode::Shedding )
+    , effect( 1.0f )
+    , itvc( nullptr )
+    , changing_effect( nullptr )
     , targeted_individual_properties( "default" )
     , use_property_targeting( true )
     {
@@ -82,9 +83,12 @@ namespace Kernel
     }
 
     TyphoidWASH::TyphoidWASH( const TyphoidWASH& master )
-    : changing_effect( nullptr )
-    , effect( master.effect )
+    : BaseNodeIntervention( master )
     , vaccine_mode( master.vaccine_mode )
+    , effect( master.effect )
+    , itvc( nullptr )
+    , changing_effect( nullptr )
+    , targeted_individual_properties( master.targeted_individual_properties )
     , use_property_targeting( master.use_property_targeting )
     {
         if( master.changing_effect != nullptr )
@@ -112,8 +116,10 @@ namespace Kernel
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context->GetInterventionsContext()", "INodeTyphoidInterventionEffectsApply", "INodeContext" );
         }
-        changing_effect->SetCurrentTime( parent->GetTime().time );
-        //LOG_DEBUG_F( "Vaccine configured with type %d and take %f for individual %d\n", vaccine_type, vaccine_take, parent->GetSuid().data );
+        if( changing_effect != nullptr )
+        {
+            changing_effect->SetCurrentTime( parent->GetTime().time );
+        }
     }
 
     bool
@@ -126,7 +132,6 @@ namespace Kernel
         getUpdatePointer();
 
         bool distribute = BaseNodeIntervention::Distribute( context, pCCO ); 
-        changing_effect->SetCurrentTime( context->GetTime().time );
         return distribute;
     }
 

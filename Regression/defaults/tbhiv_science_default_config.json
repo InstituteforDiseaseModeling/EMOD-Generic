@@ -56,7 +56,6 @@
             "SA_working_demog.json",
             "Myoverlay_mines_simple.json"
         ],
-        "Disable_IP_Whitelist": 1,
         "Enable_Aging": 1,
         "Enable_Air_Migration": 0,
         "Enable_Birth": 1,

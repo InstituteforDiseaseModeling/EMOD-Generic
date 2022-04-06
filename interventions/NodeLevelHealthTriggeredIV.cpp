@@ -48,22 +48,52 @@ namespace Kernel
     , blackout_time_remaining(0.0)
     , blackout_event_trigger( EventTrigger::NoTrigger )
     , blackout_on_first_occurrence(false)
-    , notification_occured(false)
+    , notification_occurred(false)
     , distribute_on_return_home(false)
-    , event_occured_list()
+    , event_occurred_list()
     , event_occurred_while_resident_away()
     , actual_individual_intervention_config()
     , actual_node_intervention_config()
-    , _di(nullptr)
-    , _ndi(nullptr)
-    , using_individual_config(false)
+    , m_di(nullptr)
+    , m_ndi(nullptr)
     {
+    }
+
+    NodeLevelHealthTriggeredIV::NodeLevelHealthTriggeredIV( const NodeLevelHealthTriggeredIV& rMaster )
+    : BaseNodeIntervention( rMaster )
+    , m_trigger_conditions( rMaster.m_trigger_conditions )
+    , max_duration( rMaster.max_duration )
+    , duration( rMaster.duration )
+    , node_property_restrictions( rMaster.node_property_restrictions )
+    , demographic_restrictions( rMaster.demographic_restrictions )
+    , m_disqualified_by_coverage_only( rMaster.m_disqualified_by_coverage_only )
+    , blackout_period( rMaster.blackout_period )
+    , blackout_time_remaining( rMaster.blackout_time_remaining )
+    , blackout_event_trigger( rMaster.blackout_event_trigger )
+    , blackout_on_first_occurrence( rMaster.blackout_on_first_occurrence )
+    , notification_occurred( rMaster.notification_occurred )
+    , distribute_on_return_home( rMaster.distribute_on_return_home )
+    , event_occurred_list( rMaster.event_occurred_list )
+    , event_occurred_while_resident_away( rMaster.event_occurred_while_resident_away )
+    , actual_individual_intervention_config( rMaster.actual_individual_intervention_config )
+    , actual_node_intervention_config( rMaster.actual_node_intervention_config )
+    , m_di( nullptr )
+    , m_ndi( nullptr )
+    {
+        if( rMaster.m_di != nullptr )
+        {
+            m_di = rMaster.m_di->Clone();
+        }
+        if( rMaster.m_ndi != nullptr )
+        {
+            m_ndi = rMaster.m_ndi->Clone();
+        }
     }
 
     NodeLevelHealthTriggeredIV::~NodeLevelHealthTriggeredIV()
     { 
-        delete _di;
-        delete _ndi;
+        delete m_di;
+        delete m_ndi;
     }
     int NodeLevelHealthTriggeredIV::AddRef()
     {
@@ -74,10 +104,11 @@ namespace Kernel
         return BaseNodeIntervention::Release();
     }
 
-    bool NodeLevelHealthTriggeredIV::Configure(const Configuration* inputJson)
+    bool
+    NodeLevelHealthTriggeredIV::Configure(
+        const Configuration * inputJson
+    )
     {
-        JsonConfigurable::_useDefaults = InterventionFactory::useDefaults;
-
         if( JsonConfigurable::_dryrun || inputJson->Exist( "Actual_NodeIntervention_Config" ) )
         {
             initConfigComplexType( "Actual_NodeIntervention_Config", &actual_node_intervention_config, BT_Actual_NodeIntervention_Config_DESC_TEXT );
@@ -114,7 +145,6 @@ namespace Kernel
         // ---                      Trigger_Condition_String for backward compatibility (and I'm lazy).
         // --- Phase 3 - 11/9/16    Consolidate so that the user only defines Trigger_Condition_List
         // --------------------------------------------------------------------------------------------------------------------
-        JsonConfigurable::_useDefaults = InterventionFactory::useDefaults; // Why???
         initVectorConfig( "Trigger_Condition_List", m_trigger_conditions, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", NLHTI_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
 
         bool retValue = BaseNodeIntervention::Configure( inputJson );
@@ -125,22 +155,20 @@ namespace Kernel
             demographic_restrictions.CheckConfiguration();
             if( inputJson->Exist( "Actual_IndividualIntervention_Config" ) )
             {
-                InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                             InterventionTypeValidation::INDIVIDUAL,
-                                                             actual_individual_intervention_config._json,
-                                                             inputJson->GetDataLocation() );
-                using_individual_config = true;
+                m_di = InterventionFactory::getInstance()->CreateIntervention( actual_individual_intervention_config._json,
+                                                                               inputJson->GetDataLocation(),
+                                                                               "Actual_IndividualIntervention_Config",
+                                                                               true );
             }
             else if( inputJson->Exist( "Actual_NodeIntervention_Config" ) )
             {
-                InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                             InterventionTypeValidation::NODE,
-                                                             actual_node_intervention_config._json, 
-                                                             inputJson->GetDataLocation() );
-                using_individual_config = false;
+                m_ndi = InterventionFactory::getInstance()->CreateNDIIntervention( actual_node_intervention_config._json,
+                                                                                   inputJson->GetDataLocation(),
+                                                                                   "Actual_NodeIntervention_Config",
+                                                                                   true );
             }
 
-            event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
+            event_occurred_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
             bool blackout_configured = (inputJson->Exist("Blackout_Event_Trigger")) || (inputJson->Exist("Blackout_Period")) || (inputJson->Exist("Blackout_On_First_Occurrence"));
             bool blackout_all_configured = (inputJson->Exist("Blackout_Event_Trigger")) && (inputJson->Exist("Blackout_Period")) && (inputJson->Exist("Blackout_On_First_Occurrence"));
@@ -202,7 +230,6 @@ namespace Kernel
         // ----------------------------------------------------------------------
         if( !node_property_restrictions.Qualifies( parent->GetNodeContext()->GetNodeProperties() ) )
         {
-            LOG_DEBUG_F( "returning false from notifyOnEvent at line %d.\n", __LINE__ );
             return false;
         }
 
@@ -266,23 +293,23 @@ namespace Kernel
 
         if( blackout_event_trigger != EventTrigger::NoTrigger && (blackout_period > 0.0) )
         {
-            if( (event_occured_list[ trigger ].count( pIndiv->GetSuid().data ) > 0) || (!missed_intervention && (blackout_time_remaining > 0.0f)) )
+            if( (event_occurred_list[ trigger ].count( pIndiv->GetSuid().data ) > 0) || (!missed_intervention && (blackout_time_remaining > 0.0f)) )
             {
                 IIndividualEventBroadcaster * broadcaster = parent->GetIndividualEventBroadcaster();
                 broadcaster->TriggerObservers( pIndiv, blackout_event_trigger );
-
                 return false;
             }
         }
 
         LOG_DEBUG_F("Individual %d experienced event %s, check to see if they pass the conditions before distributing actual_intervention \n",
                     pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data,
-                    EventTrigger::pairs::lookup_key( trigger ));
+                    EventTrigger::pairs::lookup_key( trigger )
+                   );
 
         assert( parent );
 
         bool distributed = false;
-        if( _di != nullptr )
+        if( m_di != nullptr )
         {
             //initialize this flag by individual (not by node)
             m_disqualified_by_coverage_only = false;
@@ -305,7 +332,7 @@ namespace Kernel
             }
 
             // Huge performance win by cloning instead of configuring.
-            IDistributableIntervention *di = _di->Clone();
+            IDistributableIntervention *di = m_di->Clone();
             release_assert( di );
             di->AddRef();
 
@@ -316,7 +343,8 @@ namespace Kernel
                 std::string classname = GetInterventionClassName();
                 LOG_DEBUG_F("A Node level health-triggered intervention (%s) was successfully distributed to individual %d\n",
                             classname.c_str(),
-                            pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data);
+                            pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data
+                           );
             }
             else
             {
@@ -326,10 +354,10 @@ namespace Kernel
         }
         else
         {
-            release_assert( _ndi );
+            release_assert( m_ndi );
 
             // Huge performance win by cloning instead of configuring.
-            INodeDistributableIntervention *ndi = _ndi->Clone();
+            INodeDistributableIntervention *ndi = m_ndi->Clone();
             release_assert( ndi );
             ndi->AddRef();
 
@@ -351,10 +379,9 @@ namespace Kernel
             }
             else
             {
-                LOG_DEBUG_F( "Setting notification_occured for node %d.\n", parent->GetExternalId() );
-                notification_occured = true ;
+                notification_occurred = true ;
             }
-            event_occured_list[ trigger ].insert( pIndiv->GetSuid().data ); 
+            event_occurred_list[ trigger ].insert( pIndiv->GetSuid().data ); 
         }
 
         return distributed;
@@ -387,60 +414,22 @@ namespace Kernel
             LOG_DEBUG_F("Node-Level HTI reached max_duration. Time to unregister...\n");
             Unregister();
         }
-        event_occured_list.clear();
-        event_occured_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
+        event_occurred_list.clear();
+        event_occurred_list.resize( EventTrigger::NUM_EVENT_TRIGGERS );
 
         blackout_time_remaining -= dt ;
-        if( notification_occured )
+        if( notification_occurred )
         {
-            notification_occured = false ;
+            notification_occurred = false ;
             blackout_time_remaining = blackout_period ;
             LOG_DEBUG_F( "start blackout period - nodeid=%d\n",parent->GetExternalId() );
         }
     }
 
-    void NodeLevelHealthTriggeredIV::SetContextTo(INodeEventContext *context)
-    {
-        BaseNodeIntervention::SetContextTo( context );
-
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        //const IInterventionFactory* ifobj = dynamic_cast<NodeEventContextHost *>(parent)->GetInterventionFactoryObj();
-        IGlobalContext *pGC = nullptr;
-        const IInterventionFactory* ifobj = nullptr;
-        if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            ifobj = pGC->GetInterventionFactory();
-        }
-        if (!ifobj)
-        {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-        }
-        if( (_di == nullptr) && (_ndi == nullptr) )
-        {
-            Configuration* config = nullptr;
-            if( using_individual_config )
-            {
-                config = Configuration::CopyFromElement( (actual_individual_intervention_config._json), "campaign" );
-            }
-            else
-            {
-                config = Configuration::CopyFromElement( (actual_node_intervention_config._json), "campaign" );
-            }
-
-            _di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention( config );
-
-            if( _di == nullptr )
-            {
-                _ndi = const_cast<IInterventionFactory*>(ifobj)->CreateNDIIntervention( config );
-            }
-            release_assert( (_di !=nullptr) || (_ndi != nullptr) );
-
-            delete config;
-            config = nullptr;
-        }
-    }
-
-    bool NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(const IIndividualHumanEventContext* const pIndividual)
+    bool
+    NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(
+        const IIndividualHumanEventContext* const pIndividual
+    )
     {
         bool retQualifies = demographic_restrictions.IsQualified( pIndividual );
 
@@ -473,7 +462,7 @@ namespace Kernel
     std::string NodeLevelHealthTriggeredIV::GetInterventionClassName() const
     {
         std::string class_name;
-        if( using_individual_config )
+        if( m_di != nullptr )
         {
             class_name = std::string(json::QuickInterpreter( actual_individual_intervention_config._json )[ "class" ].As<json::String>());
         }

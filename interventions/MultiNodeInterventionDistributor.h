@@ -20,6 +20,7 @@ namespace Kernel
 
     public:
         MultiNodeInterventionDistributor();
+        MultiNodeInterventionDistributor( const MultiNodeInterventionDistributor& rMaster );
         virtual ~MultiNodeInterventionDistributor();
 
         virtual bool Configure( const Configuration* config ) override;
@@ -30,6 +31,6 @@ namespace Kernel
         virtual bool Distribute( INodeEventContext *context, IEventCoordinator2* pEC = nullptr ) override;
 
     protected:
-        NodeInterventionConfigList intervention_list;
+        std::vector<INodeDistributableIntervention*> m_Interventions;
     };
 }

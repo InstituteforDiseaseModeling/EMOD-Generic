@@ -89,7 +89,7 @@ class StubNode : public INodeContext
         virtual ISimulationContext* GetParent() override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
         virtual suids::suid GetSuid() const override { Kernel::suids::nil_suid(); return Kernel::suids::nil_suid(); }
         virtual void SetContextTo( ISimulationContext* ) override { std::cout << __FUNCTION__ << std::endl; }
-        virtual void SetParameters(NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool whitelistsomething ) override { std::cout << __FUNCTION__ << std::endl; }
+        virtual void SetParameters(NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void PopulateFromDemographics() override { std::cout << __FUNCTION__ << std::endl; }
         virtual suids::suid GetNextInfectionSuid() override {
             //std::cout << __FUNCTION__ << std::endl;

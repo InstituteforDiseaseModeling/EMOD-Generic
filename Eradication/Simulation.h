@@ -130,16 +130,13 @@ namespace Kernel
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                  suids::suid node_suid,
                                                  NodeDemographicsFactory *nodedemographics_factory, 
-                                                 ClimateFactory *climate_factory, 
-                                                 bool white_list_enabled); // For derived Simulation classes to add correct node type
+                                                 ClimateFactory *climate_factory ); // For derived Simulation classes to add correct node type
         void addNode_internal( INodeContext *node, 
                                NodeDemographicsFactory *nodedemographics_factory, 
-                               ClimateFactory *climate_factory, 
-                               bool white_list_enabled ); // Helper to add Nodes
+                               ClimateFactory *climate_factory ); // Helper to add Nodes
         void initializeNode( INodeContext* node, 
                              NodeDemographicsFactory* nodedemographics_factory, 
-                             ClimateFactory* climate_factory,
-                             bool white_list_enabled );
+                             ClimateFactory* climate_factory );
         int  getInitialRankFromNodeId( ExternalNodeId_t node_id ); // Need in MPI implementation
 
         // Migration
@@ -210,7 +207,6 @@ namespace Kernel
 
         std::string custom_reports_filename;
 
-        bool m_IPWhiteListEnabled;
         NodeDemographicsFactory* demographics_factory;
         RandomNumberGeneratorFactory* m_pRngFactory;
 

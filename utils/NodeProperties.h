@@ -182,7 +182,7 @@ namespace Kernel
         static NPFactory* GetInstance();
 
         // Initializes / reads the Node Property information from the demographics.
-        void Initialize( const JsonObjectDemog& rDemog, bool isWhitelistEnabled );
+        void Initialize( const JsonObjectDemog& rDemog );
 
         // This method returns the list of Node Properties defined in the simulation.
         std::vector<NodeProperty*> GetNPList() const;

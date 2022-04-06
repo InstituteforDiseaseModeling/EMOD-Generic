@@ -427,7 +427,7 @@ pop(PyObject* self, PyObject* args)
             release_assert( node );
             std::cout << "Got node." << std::endl;
             Kernel::JsonConfigurable::_useDefaults = false; 
-            node->SetParameters(demographics_factory, nullptr, false );
+            node->SetParameters(demographics_factory, nullptr );
             std::cout << "Set Parameters." << std::endl;
             node->PopulateFromDemographics();
             std::cout << "Back from PopulateFromDemographics." << std::endl;

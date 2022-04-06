@@ -69,18 +69,12 @@ namespace Kernel
         initConfigTypeMap("Treatment_Fraction", &treatment_fraction, SD_Treatment_Fraction_DESC_TEXT, 0, 1);
 
         bool ret = BaseIntervention::Configure( inputJson );
-        LOG_DEBUG_F( "Base_Sensitivity = %f, Base_Specificity = %f\n", (float) base_sensitivity, (float) base_specificity );
-        LOG_DEBUG_F( "Days_To_Diagnosis = %f\n", (float) days_to_diagnosis );
         use_event_or_config = getEventOrConfig( inputJson );
         
         if( ret && !JsonConfigurable::_dryrun )
         {
             if( use_event_or_config == EventOrConfig::Config )
             {
-                InterventionValidator::ValidateIntervention( GetTypeName(),
-                                                             InterventionTypeValidation::INDIVIDUAL,
-                                                             positive_diagnosis_config._json,
-                                                             inputJson->GetDataLocation() );
             }
             else if( use_event_or_config == EventOrConfig::Event )
             {
@@ -125,8 +119,8 @@ namespace Kernel
     , days_to_diagnosis(0)
     , enable_isSymptomatic(false)
     , use_event_or_config( EventOrConfig::Event )
-    , positive_diagnosis_config()
     , positive_diagnosis_event()
+    , positive_diagnosis_config()
     {
         initConfigTypeMap("Base_Specificity",   &base_specificity, SD_Base_Specificity_DESC_TEXT,     1.0f );
         initConfigTypeMap("Base_Sensitivity",   &base_sensitivity, SD_Base_Sensitivity_DESC_TEXT,     1.0f );
@@ -145,12 +139,16 @@ namespace Kernel
         , base_sensitivity(master.base_sensitivity)
         , treatment_fraction(master.treatment_fraction)
         , days_to_diagnosis(master.days_to_diagnosis)
-        , use_event_or_config(master.use_event_or_config)
-        , positive_diagnosis_config(master.positive_diagnosis_config)
         , enable_isSymptomatic(master.enable_isSymptomatic )
+        , use_event_or_config(master.use_event_or_config)
         , positive_diagnosis_event(master.positive_diagnosis_event)
+        , positive_diagnosis_config(master.positive_diagnosis_config)
     {
         days_to_diagnosis.handle = std::bind( &SimpleDiagnostic::Callback, this, std::placeholders::_1 );
+    }
+
+    SimpleDiagnostic::~SimpleDiagnostic()
+    {
     }
 
     bool SimpleDiagnostic::Distribute(
@@ -191,8 +189,7 @@ namespace Kernel
             }
             //else (regular case) we have to wait for days_to_diagnosis to count down, person does get drugs
         }
-        // Negative test result
-        else
+        else // Negative test result
         {
             LOG_DEBUG_F( "Individual %d tested negative.\n", parent->GetSuid().data );
             onNegativeTestResult();
@@ -203,7 +200,6 @@ namespace Kernel
 
     void SimpleDiagnostic::Update( float dt )
     {
-        //bool wasDistributed = false;
         if ( expired )
         {
             return; // don't give expired intervention.  should be cleaned up elsewhere anyways, though.
@@ -217,6 +213,7 @@ namespace Kernel
 
     bool SimpleDiagnostic::applySensitivityAndSpecificity(bool infected) const
     {
+        // True positive (sensitivity), or False positive (1-specificity)
         bool positiveTestReported = ( ( infected  && parent->GetRng()->SmartDraw( base_sensitivity   ) ) ||
                                       ( !infected && parent->GetRng()->SmartDraw( 1-base_specificity ) )
                                     ) ;
@@ -236,16 +233,14 @@ namespace Kernel
         {
             test_result = parent->GetEventContext()->IsInfected();
         }
-
-        // True positive (sensitivity), or False positive (1-specificity)
         return applySensitivityAndSpecificity( test_result );
     }
 
     void
     SimpleDiagnostic::onPatientDefault()
     {
+        expired = true;
     }
-
 
     void
     SimpleDiagnostic::onNegativeTestResult()
@@ -296,9 +291,8 @@ namespace Kernel
             }
 
             // Distribute the test-positive intervention
-            auto config = Configuration::CopyFromElement( positive_diagnosis_config._json, "campaign" );
-            IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention( config );
-
+            IDistributableIntervention* di = InterventionFactory::getInstance()->CreateIntervention( positive_diagnosis_config._json, "", "campaign");
+            
             ICampaignCostObserver* pICCO;
             // Now make sure cost of the test-positive intervention is reported back to node
             if (s_OK == parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&pICCO) )
@@ -310,14 +304,7 @@ namespace Kernel
             {
                 throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetEventContext()->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext" );
             }
-            delete config;
-            config = nullptr;
         }
-        // this is the right thing to do but we need to deal with HIVRandomChoice
-        //else
-        //{
-        //    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "neither event or config defined" );
-        //}
         expired = true;
     }
 
@@ -332,9 +319,9 @@ namespace Kernel
         ar.labelElement("base_sensitivity"); diagnostic.base_sensitivity.serialize(ar);
         ar.labelElement("treatment_fraction"); diagnostic.treatment_fraction.serialize(ar);
         ar.labelElement("days_to_diagnosis") & diagnostic.days_to_diagnosis;
-        ar.labelElement("use_event_or_config") & (uint32_t&)diagnostic.use_event_or_config;
-        ar.labelElement("positive_diagnosis_config") & diagnostic.positive_diagnosis_config; 
-        ar.labelElement("positive_diagnosis_event") & (uint32_t&) diagnostic.positive_diagnosis_event; 
         ar.labelElement("enable_isSymptomatic") & diagnostic.enable_isSymptomatic;
+        ar.labelElement("use_event_or_config") & (uint32_t&)diagnostic.use_event_or_config;
+        ar.labelElement("positive_diagnosis_event") & (uint32_t&) diagnostic.positive_diagnosis_event;
+        ar.labelElement("positive_diagnosis_config") & diagnostic.positive_diagnosis_config;
     }
 }

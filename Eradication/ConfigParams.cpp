@@ -670,7 +670,7 @@ namespace Kernel
         initConfigTypeMap("Enable_Susceptibility_Scaling",                &node_params.susceptibility_scaling,            Enable_Susceptibility_Scaling_DESC_TEXT,                false,  nullptr,  nullptr,  &dset_polio01);
         initConfigTypeMap("Enable_Vector_Mortality",                      &node_params.vector_mortality,                  Enable_Vector_Mortality_DESC_TEXT,                       true,  nullptr,  nullptr,  &dset_vec01);
 
-        initConfigTypeMap("Base_Individual_Sample_Rate",        &node_params.base_sample_rate,                  Base_Individual_Sample_Rate_DESC_TEXT,          0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp01);
+        initConfigTypeMap("Base_Individual_Sample_Rate",        &node_params.base_sample_rate,                  Base_Individual_Sample_Rate_DESC_TEXT,          1.0e-5f,      1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp01);
         initConfigTypeMap("Environmental_Cutoff_Days",          &node_params.environmental_cutoff_days,         Environmental_Cutoff_Days_DESC_TEXT,            0.0f,  DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
         initConfigTypeMap("Environmental_Peak_Start",           &node_params.environmental_peak_start,          Environmental_Peak_Start_DESC_TEXT,             0.0f,       500.0f,     2.0f,  nullptr,  nullptr,  &dset_env01);
         initConfigTypeMap("Environmental_Ramp_Down_Duration",   &node_params.environmental_ramp_down_duration,  Environmental_Ramp_Down_Duration_DESC_TEXT,  FLT_MIN,  DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);

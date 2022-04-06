@@ -61,7 +61,7 @@ namespace Kernel
 
         IWaningEffect* m_pEffectKilling;
         IWaningEffect* m_pEffectBlocking;
-        IBednetConsumer *m_pConsumer;
+        IBednetConsumer* m_pConsumer;
 
         static void serialize( IArchive& ar, AbstractBednet* obj );
     };

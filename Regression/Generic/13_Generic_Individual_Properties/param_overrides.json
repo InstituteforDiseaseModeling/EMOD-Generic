@@ -7,12 +7,11 @@
             ],
             "Enable_Initial_Prevalence": 1
         },
-        "Disable_IP_Whitelist": 1,
         "PRIMARY": {
             "Config_Name": "13_Generic_Individual_Properties",
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
-	    "Incubation_Period_Constant": 3,
+            "Incubation_Period_Constant": 3,
             "Geography": "Namawala",
             "Run_Number": 1,
             "Simulation_Duration": 180

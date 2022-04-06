@@ -36,8 +36,6 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
-        JsonConfigurable::_useDefaults = InterventionFactory::useDefaults;
-
         bool ret = StandardInterventionDistributionEventCoordinator::Configure(inputJson);
         if( ret )
         {

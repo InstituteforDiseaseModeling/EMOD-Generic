@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #pragma once
+
 #include "MathFunctions.h"
 #include "Interventions.h"
 #include "InterventionFactory.h"
@@ -48,6 +49,7 @@ namespace Kernel
 
         IDistribution* delay_distribution;
 
+        std::vector<IDistributableIntervention*> m_Interventions;
         IndividualInterventionConfig actual_intervention_config;
 
         DECLARE_SERIALIZABLE(DelayedIntervention);

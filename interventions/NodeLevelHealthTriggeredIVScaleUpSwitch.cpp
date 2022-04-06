@@ -22,17 +22,21 @@ namespace Kernel
 {
     IMPLEMENT_FACTORY_REGISTERED(NodeLevelHealthTriggeredIVScaleUpSwitch)
 
-    NodeLevelHealthTriggeredIVScaleUpSwitch::NodeLevelHealthTriggeredIVScaleUpSwitch() : NodeLevelHealthTriggeredIV()
-    , demographic_coverage_time_profile(ScaleUpProfile::Immediate)
-    , initial_demographic_coverage(0)
-    , primary_time_constant(0)
-    , coverage_vs_time_map(0.0f, 999999.0f, 0.0f, 1.0f)
-    { }
+    NodeLevelHealthTriggeredIVScaleUpSwitch::NodeLevelHealthTriggeredIVScaleUpSwitch()
+        : NodeLevelHealthTriggeredIV()
+        , demographic_coverage_time_profile(ScaleUpProfile::Immediate)
+        , initial_demographic_coverage(0)
+        , primary_time_constant(0)
+        , coverage_vs_time_map(0.0f, 999999.0f, 0.0f, 1.0f)
+    {
+    }
 
-    NodeLevelHealthTriggeredIVScaleUpSwitch::~NodeLevelHealthTriggeredIVScaleUpSwitch()
-    { }
+    NodeLevelHealthTriggeredIVScaleUpSwitch::~NodeLevelHealthTriggeredIVScaleUpSwitch() { }
  
-    bool NodeLevelHealthTriggeredIVScaleUpSwitch::Configure( const Configuration * inputJson )
+    bool
+    NodeLevelHealthTriggeredIVScaleUpSwitch::Configure(
+        const Configuration * inputJson
+    )
     {
         initConfig("Demographic_Coverage_Time_Profile",  demographic_coverage_time_profile, inputJson, MetadataDescriptor::Enum("Demographic_Coverage_Time_Profile", NodeHTI_Demographic_Coverage_Time_Profile_DESC_TEXT, MDD_ENUM_ARGS(ScaleUpProfile) ) );
 
@@ -52,21 +56,19 @@ namespace Kernel
     {
         float demographic_coverage = demographic_restrictions.GetDemographicCoverage();  
         float current_demographic_coverage = demographic_coverage;  
+        float dCover_dTime = demographic_coverage - initial_demographic_coverage;
 
         switch (demographic_coverage_time_profile)
         {
         case ScaleUpProfile::Immediate:
-        {
-            current_demographic_coverage = demographic_coverage;
             LOG_DEBUG("ScaleUpProfile is Immediate, don't need to update demographic coverage by time \n");
+            current_demographic_coverage = demographic_coverage;
             break;
-        }
+
         case ScaleUpProfile::Linear:
-        {
-            //the increment amount is ((demographic_coverage - initial_demog_coverage)/primary_time_constant) per day
-            float dCover_dTime = ((demographic_coverage - initial_demographic_coverage)/primary_time_constant);
             if (duration <= primary_time_constant) 
             {
+                dCover_dTime /= primary_time_constant;
                 current_demographic_coverage = initial_demographic_coverage + dCover_dTime*duration;
             }
             else
@@ -75,23 +77,22 @@ namespace Kernel
             }
             LOG_DEBUG_F("ScaleUpProfile is Linear, duration is %f, rate of %f, coverage is %f \n", duration, dCover_dTime, current_demographic_coverage); 
             break;
-        }
+
         case ScaleUpProfile::InterpolationMap:
-        {
             current_demographic_coverage = coverage_vs_time_map.getValueLinearInterpolation(duration, 0.0f);
             LOG_DEBUG_F("ScaleUpProfile is Interpolation Map, duration is %f, coverage is %f \n", duration, current_demographic_coverage);
             break;
-        }
+
         default:
-        {
             throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only Immediate, Linear, and InterpolationMap supported. \n" );
             break;
-        }
         }
         return current_demographic_coverage;
     }
 
-    void NodeLevelHealthTriggeredIVScaleUpSwitch::onDisqualifiedByCoverage( IIndividualHumanEventContext *pIndiv )
+    void NodeLevelHealthTriggeredIVScaleUpSwitch::onDisqualifiedByCoverage(
+                IIndividualHumanEventContext *pIndiv
+    )
     {
         //if qualify by everything except demographic coverage, give the not_covered_individualintervention_config 
         // this intervention is the one phased out as the actual_individualintervention_config is phased in
@@ -106,19 +107,6 @@ namespace Kernel
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "ICampaignCostObserver", "INodeEventContext" );
         }
 
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        //const IInterventionFactory* ifobj = dynamic_cast<NodeEventContextHost *>(parent)->GetInterventionFactoryObj();
-        IGlobalContext *pGC = nullptr;
-        const IInterventionFactory* ifobj = nullptr;
-        if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            ifobj = pGC->GetInterventionFactory();
-        }
-        if (!ifobj)
-        {
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-        }
-
         const json::Array & interventions_array = json::QuickInterpreter(not_covered_intervention_configs._json).As<json::Array>();
         LOG_DEBUG_F("not_covered_intervention_configs array size = %d\n", interventions_array.Size());
        
@@ -130,14 +118,16 @@ namespace Kernel
         {
             for( int idx=0; idx<interventions_array.Size(); idx++ )
             {
-                const json::Object& notcoveredIntervention = json_cast<const json::Object&>(interventions_array[idx]);
-                Configuration * tmpConfig = Configuration::CopyFromElement( notcoveredIntervention, "campaign" );
-                assert( tmpConfig );
                 LOG_DEBUG_F("NodeHTIScaleUpSwitch will distribute notcoveredintervention #%d\n", idx);
 
-                IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention(tmpConfig); 
-                delete tmpConfig;
-                tmpConfig = nullptr;
+                const json::Object& notcoveredIntervention = json_cast<const json::Object&>(interventions_array[idx]);
+
+                std::stringstream param_name;
+                param_name << "Not_Covered_IndividualIntervention_Configs[" << idx << "]";
+
+                IDistributableIntervention *di = InterventionFactory::getInstance()->CreateIntervention( notcoveredIntervention,
+                                                                                                         "campaign",
+                                                                                                         param_name.str().c_str() ); 
 
                 if( di )
                 {

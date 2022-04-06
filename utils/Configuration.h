@@ -105,6 +105,12 @@ inline std::vector< std::vector< float > > GET_CONFIG_VECTOR2D_FLOAT(const json:
     return GET_CONFIG_VECTOR2D_FLOAT(parameter_source, name.c_str());
 }
 
+std::vector< std::vector< std::vector< float > > > GET_CONFIG_VECTOR3D_FLOAT(const json::QuickInterpreter* parameter_source, const char *name);
+inline std::vector< std::vector< std::vector< float > > > GET_CONFIG_VECTOR3D_FLOAT(const json::QuickInterpreter* parameter_source, const std::string& name)
+{
+    return GET_CONFIG_VECTOR3D_FLOAT(parameter_source, name.c_str());
+}
+
 std::vector< std::vector< int > > GET_CONFIG_VECTOR2D_INT(const json::QuickInterpreter* parameter_source, const char *name);
 inline std::vector< std::vector< int > > GET_CONFIG_VECTOR2D_INT(const json::QuickInterpreter* parameter_source, const std::string& name)
 {

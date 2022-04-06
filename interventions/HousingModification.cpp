@@ -22,101 +22,84 @@ SETUP_LOGGING( "SimpleHousingModification" )
 
 namespace Kernel
 {
+    BEGIN_QUERY_INTERFACE_BODY(SimpleHousingModification)
+        HANDLE_INTERFACE(IConfigurable)
+        HANDLE_INTERFACE(IDistributableIntervention)
+        HANDLE_ISUPPORTS_VIA(IDistributableIntervention)
+    END_QUERY_INTERFACE_BODY(SimpleHousingModification)
+
     IMPLEMENT_FACTORY_REGISTERED(SimpleHousingModification)
     IMPLEMENT_FACTORY_REGISTERED(IRSHousingModification)
     IMPLEMENT_FACTORY_REGISTERED(ScreeningHousingModification)
     IMPLEMENT_FACTORY_REGISTERED(SpatialRepellentHousingModification)
-    IMPLEMENT_FACTORY_REGISTERED(ArtificialDietHousingModification)
-    IMPLEMENT_FACTORY_REGISTERED(InsectKillingFenceHousingModification)
 
     REGISTER_SERIALIZABLE(SimpleHousingModification);
     REGISTER_SERIALIZABLE(IRSHousingModification);
     REGISTER_SERIALIZABLE(ScreeningHousingModification);
     REGISTER_SERIALIZABLE(SpatialRepellentHousingModification);
-    REGISTER_SERIALIZABLE(ArtificialDietHousingModification);
-    REGISTER_SERIALIZABLE(InsectKillingFenceHousingModification);
 
-    void SimpleHousingModification::serialize(IArchive& ar, SimpleHousingModification* obj)
-    {
-        SimpleHousingModification& mod = *obj;
-        ar.labelElement("blocking_effect") & mod.blocking_effect;
-        ar.labelElement("killing_effect") & mod.killing_effect;
-    }
-
-    void IRSHousingModification::serialize(IArchive& ar, IRSHousingModification* obj)
-    {
-        SimpleHousingModification::serialize(ar, obj);
-    }
-
-    void ScreeningHousingModification::serialize(IArchive& ar, ScreeningHousingModification* obj)
-    {
-        SimpleHousingModification::serialize(ar, obj);
-    }
-
-    void SpatialRepellentHousingModification::serialize(IArchive& ar, SpatialRepellentHousingModification* obj)
-    {
-        SimpleHousingModification::serialize(ar, obj);
-    }
-
-    void ArtificialDietHousingModification::serialize(IArchive& ar, ArtificialDietHousingModification* obj)
-    {
-        SimpleHousingModification::serialize(ar, obj);
-    }
-
-    void InsectKillingFenceHousingModification::serialize(IArchive& ar, InsectKillingFenceHousingModification* obj)
-    {
-        SimpleHousingModification::serialize(ar, obj);
-    }
-
-    bool
-    SimpleHousingModification::Configure(
-        const Configuration * inputJson
-    )
-    {
-        WaningConfig   killing_config;
-        WaningConfig   blocking_config;
-
-        initConfigComplexType("Killing_Config", &killing_config, HM_Killing_Config_DESC_TEXT );
-        initConfigComplexType("Blocking_Config", &blocking_config, HM_Blocking_Config_DESC_TEXT );
-        bool configured = BaseIntervention::Configure( inputJson );
-        if( !JsonConfigurable::_dryrun && configured )
-        {
-            killing_effect  = WaningEffectFactory::CreateInstance( killing_config  );
-            blocking_effect = WaningEffectFactory::CreateInstance( blocking_config );
-        }
-        return configured;
-    }
+    // ------------------------------------------------------------------------
+    // --- SimpleHousingModification
+    // ------------------------------------------------------------------------
 
     SimpleHousingModification::SimpleHousingModification()
     : BaseIntervention()
-    , killing_effect(nullptr)
     , blocking_effect(nullptr)
-    , ihmc(nullptr)
+    , killing_effect(nullptr)
+    , m_pIHMC(nullptr)
     {
         initSimTypes( 2, "VECTOR_SIM", "MALARIA_SIM" );
         initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, HM_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
     }
 
-    SimpleHousingModification::~SimpleHousingModification()
-    {
-        delete killing_effect;
-        delete blocking_effect;
-    }
-
     SimpleHousingModification::SimpleHousingModification( const SimpleHousingModification& master )
     : BaseIntervention( master )
-    , killing_effect( nullptr )
     , blocking_effect( nullptr )
-    , ihmc( nullptr )
+    , killing_effect( nullptr )
+    , m_pIHMC( nullptr )
     {
-        if( master.killing_effect != nullptr )
-        {
-            killing_effect = master.killing_effect->Clone();
-        }
         if( master.blocking_effect != nullptr )
         {
             blocking_effect = master.blocking_effect->Clone();
         }
+        if( master.killing_effect != nullptr )
+        {
+            killing_effect = master.killing_effect->Clone();
+        }
+    }
+
+    SimpleHousingModification::~SimpleHousingModification()
+    {
+        delete blocking_effect;
+        delete killing_effect;
+    }
+
+    bool SimpleHousingModification::Configure( const Configuration * inputJson )
+    {
+        WaningConfig repelling_config;
+        WaningConfig killing_config;
+
+        initConfigRepelling( &repelling_config );
+        initConfigKilling( &killing_config );
+        bool configured = BaseIntervention::Configure( inputJson );
+        if( !JsonConfigurable::_dryrun && configured )
+        {
+            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance( repelling_config._json, inputJson->GetDataLocation(), "Blocking_Config");
+            killing_effect  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,   inputJson->GetDataLocation(), "Killing_Config");
+        }
+        return configured;
+    }
+
+
+
+    void SimpleHousingModification::initConfigRepelling( WaningConfig* pRepellingConfig )
+    {
+        initConfigComplexType( "Blocking_Config", pRepellingConfig, HM_Blocking_Config_DESC_TEXT );
+    }
+
+    void SimpleHousingModification::initConfigKilling( WaningConfig* pKillingConfig )
+    {
+        initConfigComplexType( "Killing_Config", pKillingConfig, HM_Killing_Config_DESC_TEXT );
     }
 
     bool
@@ -130,7 +113,7 @@ namespace Kernel
             return false;
         }
 
-        if (s_OK != context->QueryInterface(GET_IID(IHousingModificationConsumer), (void**)&ihmc) )
+        if (s_OK != context->QueryInterface(GET_IID(IHousingModificationConsumer), (void**)&m_pIHMC) )
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IHousingModificationConsumer", "IIndividualHumanInterventionsContext" );
         }
@@ -145,17 +128,17 @@ namespace Kernel
     )
     {
         BaseIntervention::SetContextTo( context );
-        if( killing_effect != nullptr )
-        {
-            killing_effect->SetContextTo( context );
-        }
         if( blocking_effect != nullptr )
         {
             blocking_effect->SetContextTo( context );
         }
+        if( killing_effect != nullptr )
+        {
+            killing_effect->SetContextTo( context );
+        }
 
         LOG_DEBUG("SimpleHousingModification::SetContextTo (probably deserializing)\n");
-        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IHousingModificationConsumer), (void**)&ihmc) )
+        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IHousingModificationConsumer), (void**)&m_pIHMC) )
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IHousingModificationConsumer", "IIndividualHumanContext" );
         }
@@ -165,26 +148,73 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        killing_effect->Update(dt);
         blocking_effect->Update(dt);
-        float current_killingrate = killing_effect->Current();
-        float current_blockingrate = blocking_effect->Current();
+        killing_effect->Update(dt);
 
-        if( ihmc )
-        {
-            ihmc->ApplyHouseBlockingProbability( current_blockingrate );
-            ihmc->UpdateProbabilityOfScreenKilling( current_killingrate );
-        }
-        else
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "ihmc", "IHousingModificationConsumer" );
-        }
+        ApplyEffectsRepelling( dt );
+        ApplyEffectsKilling( dt );
     }
 
-    BEGIN_QUERY_INTERFACE_BODY(SimpleHousingModification)
-        HANDLE_INTERFACE(IConfigurable)
-        HANDLE_INTERFACE(IDistributableIntervention)
-        HANDLE_ISUPPORTS_VIA(IDistributableIntervention)
-    END_QUERY_INTERFACE_BODY(SimpleHousingModification)
+    void SimpleHousingModification::ApplyEffectsRepelling( float dt )
+    {
+        float current_repellingrate = blocking_effect->Current();
+
+        release_assert( m_pIHMC != nullptr );
+
+        m_pIHMC->ApplyHouseBlockingProbability( current_repellingrate );
+    }
+
+    void SimpleHousingModification::ApplyEffectsKilling( float dt )
+    {
+        float current_killingrate = killing_effect->Current();
+
+        release_assert( m_pIHMC != nullptr );
+
+        m_pIHMC->UpdateProbabilityOfScreenKilling( current_killingrate );
+    }
+    void SimpleHousingModification::serialize(IArchive& ar, SimpleHousingModification* obj)
+    {
+        BaseIntervention::serialize( ar, obj );
+        SimpleHousingModification& mod = *obj;
+        ar.labelElement("blocking_effect") & mod.blocking_effect;
+        ar.labelElement("killing_effect") & mod.killing_effect;
+    }
+
+    // ------------------------------------------------------------------------
+    // --- IRSHousingModification
+    // ------------------------------------------------------------------------
+
+    void IRSHousingModification::serialize(IArchive& ar, IRSHousingModification* obj)
+    {
+        SimpleHousingModification::serialize(ar, obj);
+    }
+
+    // ------------------------------------------------------------------------
+    // --- ScreeningHousingModification
+    // ------------------------------------------------------------------------
+
+    void ScreeningHousingModification::serialize(IArchive& ar, ScreeningHousingModification* obj)
+    {
+        SimpleHousingModification::serialize(ar, obj);
+    }
+
+    // ------------------------------------------------------------------------
+    // --- SpatialRepellentHousingModification
+    // ------------------------------------------------------------------------
+
+    void SpatialRepellentHousingModification::initConfigKilling( WaningConfig* pKillingConfig )
+    {
+        // do not include killing
+    }
+
+    void SpatialRepellentHousingModification::ApplyEffectsKilling( float dt )
+    {
+        // no killing
+    }
+
+    void SpatialRepellentHousingModification::serialize(IArchive& ar, SpatialRepellentHousingModification* obj)
+    {
+        SimpleHousingModification::serialize(ar, obj);
+    }
 }
 

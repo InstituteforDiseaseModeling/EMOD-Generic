@@ -78,22 +78,31 @@
             "COMMENT": "Kill the vector to ensure even it cannot cause an infection.",
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
-                    "Cost_To_Consumer": 1.0,
-                    "Killing_Config": {
-                        "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                    "Blocking_Config": {
+                        "class": "WaningEffectConstant",
+                        "Initial_Effect": 1.0
                     },
-                    "class": "InsectKillingFence"
+                    "Cost_To_Consumer": 1,
+                    "Killing_Config": {
+                        "class": "WaningEffectConstant",
+                        "Initial_Effect": 1.0
+                    },
+                    "Repelling_Config": {
+                        "class": "WaningEffectConstant",
+                        "Initial_Effect": 0.0
+                    },
+                    "Usage_Config": {
+                        "class": "WaningEffectConstant",
+                        "Initial_Effect": 1.0
+                    },
+                    "class": "SimpleBednet"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Nodeset_Config": {
-                "Node_List": [
-                    1
-                ],
-                "class": "NodeSetNodeList"
+                "class": "NodeSetAll"
             },
-            "Start_Day": 19,
+            "Start_Day": 18,
             "class": "CampaignEvent"
         }
     ],

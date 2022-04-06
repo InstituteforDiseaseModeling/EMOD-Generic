@@ -47,16 +47,15 @@ namespace Kernel
 
     void DelayedIntervention::InterventionValidate( const std::string& rDataLocation )
     {
-        InterventionValidator::ValidateInterventionArray( GetTypeName(),
-                                                          InterventionTypeValidation::INDIVIDUAL,
-                                                          actual_intervention_config._json,
-                                                          rDataLocation );
+        InterventionFactory::getInstance()->CreateInterventionList( actual_intervention_config._json,
+                                                                    rDataLocation,
+                                                                    "Actual_IndividualIntervention_Configs",
+                                                                    m_Interventions );
     }
 
     void DelayedIntervention::DelayValidate()
     {
     }
-
 
     bool DelayedIntervention::Configure( const Configuration * inputJson )
     {
@@ -69,7 +68,7 @@ namespace Kernel
         delay_distribution = DistributionFactory::CreateDistribution( this, delay_function, "Delay_Period", inputJson );
 
         bool retValue = BaseIntervention::Configure( inputJson );
-        if( retValue )
+        if( retValue && !JsonConfigurable::_dryrun )
         { 
             InterventionValidate( inputJson->GetDataLocation() );
             DelayValidate();
@@ -108,11 +107,12 @@ namespace Kernel
     }
 
     DelayedIntervention::DelayedIntervention()
-    : BaseIntervention()
-    , remaining_delay_days(0.0)
-    , coverage(1.0)
-    , delay_distribution( nullptr )
-    , actual_intervention_config()
+        : BaseIntervention()
+        , remaining_delay_days(0.0)
+        , coverage(1.0)
+        , delay_distribution( nullptr )
+        , actual_intervention_config()
+        , m_Interventions()
     {
         remaining_delay_days.handle = std::bind( &DelayedIntervention::Callback, this, std::placeholders::_1 );
     }
@@ -122,10 +122,14 @@ namespace Kernel
         , remaining_delay_days( master.remaining_delay_days )
         , coverage( master.coverage )
         , delay_distribution( master.delay_distribution->Clone() )
-        //, actual_intervention_config( master.actual_intervention_config )
     { 
         actual_intervention_config = master.actual_intervention_config;
         remaining_delay_days.handle = std::bind( &DelayedIntervention::Callback, this, std::placeholders::_1 );
+
+        for( auto p_intervention : master.m_Interventions )
+        {
+            m_Interventions.push_back( p_intervention->Clone() );
+        }
     }
 
     void DelayedIntervention::Update( float dt )
@@ -137,61 +141,37 @@ namespace Kernel
 
     void DelayedIntervention::Callback( float dt )
     {
-        try
+        // don't give expired intervention.  should be cleaned up elsewhere anyways, though.
+        if(expired)
+            return;
+
+        expired = true;
+
+        // Now make sure cost gets reported back to node
+        ICampaignCostObserver* pICCO;
+        if (s_OK != parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), reinterpret_cast<void**>(&pICCO)) )
         {
-            // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-            IGlobalContext *pGC = nullptr;
-            const IInterventionFactory* ifobj = nullptr;
-            if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), reinterpret_cast<void**>(&pGC)))
-            {
-                ifobj = pGC->GetInterventionFactory();
-            }
-            if (!ifobj)
-            {
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-            }
-
-            // don't give expired intervention.  should be cleaned up elsewhere anyways, though.
-            if(expired)
-                return;
-
-            const json::Array & interventions_array = json::QuickInterpreter( actual_intervention_config._json ).As<json::Array>();
-            LOG_DEBUG_F("interventions array size = %d\n", interventions_array.Size());
-            for( int idx=0; idx<interventions_array.Size(); idx++ )
-            {
-                const json::Object& actualIntervention = json_cast<const json::Object&>(interventions_array[idx]);
-                Configuration * tmpConfig = Configuration::CopyFromElement( actualIntervention, "campaign" );
-                release_assert( tmpConfig );
-                LOG_DEBUG_F("DelayedIntervention distributed intervention #%d\n", idx);
-                IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention(tmpConfig);
-                delete tmpConfig;
-                tmpConfig = nullptr;
-                expired = true;
-
-                // Now make sure cost gets reported back to node
-                ICampaignCostObserver* pICCO;
-                if (s_OK == parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), reinterpret_cast<void**>(&pICCO)) )
-                {
-                    di->Distribute( parent->GetInterventionsContext(), pICCO );
-                }
-                else
-                {
-                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetEventContext()->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext");
-                }
-            }
+            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetEventContext()->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext");
         }
-        catch(json::Exception &e)
+        LOG_DEBUG_F("interventions array size = %d\n", m_Interventions.size());
+
+        for( auto p_intervention: m_Interventions )
         {
-            // ERROR: ::cerr << "exception casting actual_intervention_config to array! " << e.what() << std::endl;
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, e.what() ); // ( "DelayedIntervention intervention json problem: actual_intervention_config is valid json but needs to be an array." );
+            IDistributableIntervention *di = p_intervention->Clone();
+            di->AddRef();
+            di->Distribute( parent->GetInterventionsContext(), pICCO );
+            di->Release();
         }
-
     }
 
     DelayedIntervention::~DelayedIntervention()
     { 
         LOG_DEBUG("Destructing DelayedIntervention\n");
         delete delay_distribution;
+        for( auto p_intervention : m_Interventions )
+        {
+            delete p_intervention;
+        }
     }
 
     REGISTER_SERIALIZABLE(DelayedIntervention);
@@ -206,5 +186,6 @@ namespace Kernel
         ar.labelElement("coverage"                  ) & intervention.coverage;
         ar.labelElement("delay_distribution"        ) & intervention.delay_distribution;
         ar.labelElement("actual_intervention_config") & intervention.actual_intervention_config;
+        ar.labelElement("m_Interventions"           ) & intervention.m_Interventions;
     }
 }

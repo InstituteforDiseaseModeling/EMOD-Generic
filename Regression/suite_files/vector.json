@@ -23,14 +23,11 @@
         { "path": "Vector/24_Vector_An_farauti_IRS" },
         { "path": "Vector/25_Vector_An_arabiensis_MultipleHabitats" },
         { "path": "Vector/26_Vector_An_arabiensis_MultipleHabitats_Oviposition" },
-        { "path": "Vector/27_Vector_InsectKillingFence" },
         { "path": "Vector/28_Vector_ScaleLarvalHabitat" },
         { "path": "Vector/29_Vector_IRS_Ivermectin" },
         { "path": "Vector/30_Vector_AnimalFeedKill" },
         { "path": "Vector/31_Vector_ArtificialDiet" },
-        { "path": "Vector/32_Vector_ArtificialDietHousingModification" },
         { "path": "Vector/33_Vector_IRSHousingModification" },
-        { "path": "Vector/34_Vector_InsectKillingFenceHousingModification" },
         { "path": "Vector/35_Vector_Ivermectin" },
         { "path": "Vector/36_Vector_Larvicides" },
         { "path": "Vector/37_Vector_OutdoorRestKill" },
@@ -68,7 +65,6 @@
         { "path": "Scenarios/VectorAndMalaria/06_Namawala_Vector_ITNsPEV" },
         { "path": "Scenarios/VectorAndMalaria/07_Namawala_Vector_SSV" },
         { "path": "Scenarios/VectorAndMalaria/09_Namawala_Vector_SugarBaitedTraps" },
-        { "path": "Scenarios/VectorAndMalaria/10_InsectKillingFence" },
         { "path": "Scenarios/VectorAndMalaria/11_MultipleLarvalHabitats" }
     ],
     "skipped": [
@@ -91,7 +87,6 @@
         { "path": "Multicore_Nosibe/Scenarios/VectorAndMalaria/06_Namawala_Vector_ITNsPEV" },
         { "path": "Multicore_Nosibe/Scenarios/VectorAndMalaria/07_Namawala_Vector_SSV" },
         { "path": "Multicore_Nosibe/Scenarios/VectorAndMalaria/09_Namawala_Vector_SugarBaitedTraps" },
-        { "path": "Multicore_Nosibe/Scenarios/VectorAndMalaria/10_InsectKillingFence" },
         { "path": "Multicore_Nosibe/Scenarios/VectorAndMalaria/11_MultipleLarvalHabitats" }
     ]
 }

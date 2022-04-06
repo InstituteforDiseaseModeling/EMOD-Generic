@@ -75,7 +75,7 @@ BaseChannelReport::Finalize()
     std::map<std::string, std::string> units_map;
     populateSummaryDataUnitsMap(units_map);
 
-    channelDataMap.WriteOutput( report_name, units_map, defaultPrecision );
+    channelDataMap.WriteOutput( GetReportName(), units_map, defaultPrecision );
 }
 
 std::string BaseChannelReport::GetReportName() const
@@ -86,6 +86,11 @@ std::string BaseChannelReport::GetReportName() const
 void BaseChannelReport::Accumulate( const std::string& channel_name, float value )
 {
     channelDataMap.Accumulate( channel_name, value );
+}
+
+void BaseChannelReport::SetLastValue( const std::string& channel_name, float value )
+{
+    channelDataMap.SetLastValue( channel_name, value );
 }
 
 void

@@ -102,6 +102,8 @@ class ConfigKeys:
     Base_Infectivity = 'Base_Infectivity'
     Base_Infectivity_Distribution = 'Base_Infectivity_Distribution'
     Base_Infectivity_Constant = 'Base_Infectivity_Constant'
+    Base_Infectivity_Max = 'Base_Infectivity_Max'
+    Base_Infectivity_Min = 'Base_Infectivity_Min'
     Base_Infectivity_Gaussian_Mean = "Base_Infectivity_Gaussian_Mean"
     Base_Infectivity_Gaussian_Std_Dev = "Base_Infectivity_Gaussian_Std_Dev"
     Base_Land_Temperature = 'Base_Land_Temperature'
@@ -173,6 +175,7 @@ class ConfigKeys:
     Enable_Superinfection = 'Enable_Superinfection'
     Enable_Susceptibility_Scaling = 'Enable_Susceptibility_Scaling'
     Enable_Timestep_Channel_In_Report = 'Enable_Timestep_Channel_In_Report'
+    Enable_Nonuniform_Shedding = 'Enable_Nonuniform_Shedding'
     Enable_Vital_Dynamics = 'Enable_Vital_Dynamics'
     Environmental_Normalization = "Environmental_Normalization"
     Environmental_Cutoff_Days = "Environmental_Cutoff_Days"
@@ -271,6 +274,8 @@ class ConfigKeys:
     Sea_Migration_Filename = 'Sea_Migration_Filename'
     Sea_Migration_Roundtrip_Duration = 'Sea_Migration_Roundtrip_Duration'
     Sea_Migration_Roundtrip_Probability = 'Sea_Migration_Roundtrip_Probability'
+    Shedding_Distribution_Alpha = 'Shedding_Distribution_Alpha'
+    Shedding_Distribution_Beta = 'Shedding_Distribution_Beta'
     Simulation_Duration = 'Simulation_Duration'
     Simulation_Timestep = 'Simulation_Timestep'
     Simulation_Type = 'Simulation_Type'

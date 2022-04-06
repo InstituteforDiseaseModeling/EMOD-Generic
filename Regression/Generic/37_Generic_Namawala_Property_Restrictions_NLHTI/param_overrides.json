@@ -7,7 +7,6 @@
                 "Namawala_regression_property_overlay.json",
                 "demographics_overlay_initial_prevalence.json"
             ],
-            "Disable_IP_Whitelist": 1,
             "Enable_Initial_Prevalence": 1
         },
         "PRIMARY": {

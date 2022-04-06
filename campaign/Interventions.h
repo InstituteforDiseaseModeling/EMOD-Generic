@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISupports.h"
 #include "Configure.h"                 // for JsonConfigurable
 #include "InterventionEnums.h"
-#include "InterventionValidator.h"
 #include "Properties.h"
 #include "NodeProperties.h"
 #include "BroadcasterObserver.h"
@@ -52,7 +51,6 @@ namespace Kernel
         virtual bool Expired() = 0;
         virtual void SetExpired( bool isExpired ) = 0;
         virtual void OnExpiration() = 0;
-        virtual void ValidateSimType( const std::string& simTypeStr ) = 0;
         virtual IDistributableIntervention * Clone()  = 0;
         virtual bool NeedsInfectiousLoopUpdate() const = 0;
         virtual bool NeedsPreInfectivityUpdate() const = 0;
@@ -92,7 +90,6 @@ namespace Kernel
         virtual bool Expired() = 0;
         virtual void SetExpired( bool isExpired ) = 0;
         virtual void OnExpiration() = 0;
-        virtual void ValidateSimType( const std::string& simTypeStr ) = 0;
         virtual INodeDistributableIntervention * Clone()  = 0;
 
         virtual ~INodeDistributableIntervention() { }
@@ -126,7 +123,6 @@ namespace Kernel
         virtual bool Expired() override ;
         virtual void SetExpired( bool isExpired ) override;
         virtual void OnExpiration() override;
-        virtual void ValidateSimType( const std::string& simTypeStr ) override;
         virtual bool NeedsInfectiousLoopUpdate() const { return false; }
         virtual bool NeedsPreInfectivityUpdate() const { return false; }
 
@@ -134,7 +130,6 @@ namespace Kernel
         BaseIntervention();
         BaseIntervention( const BaseIntervention& );
         virtual ~BaseIntervention();
-
         virtual bool Configure(const Configuration* inputJson) override;
         virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO ) override;
 
@@ -162,14 +157,13 @@ namespace Kernel
 
     public:
         virtual bool Configure( const Configuration* inputJson ) override;
-
         virtual const std::string& GetName() const override { return name; };
-        virtual void SetContextTo( INodeEventContext *context ) override;
         virtual float GetCostPerUnit() const override { return cost_per_unit; }
         virtual bool Expired() override;
         virtual void SetExpired( bool isExpired ) override;
         virtual void OnExpiration() override;
-        virtual void ValidateSimType( const std::string& simTypeStr ) override;
+        virtual void SetContextTo( INodeEventContext *context ) override;
+
 
     protected:
         BaseNodeIntervention();

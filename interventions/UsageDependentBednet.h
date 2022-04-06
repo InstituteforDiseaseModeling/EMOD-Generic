@@ -44,12 +44,11 @@ namespace Kernel
 
         virtual void Callback( float dt );
 
-        std::vector<IWaningEffect*> m_UsageEffectList; 
+        std::vector<IWaningEffect*> m_UsageEffectList;
         EventTrigger::Enum m_TriggerReceived;
         EventTrigger::Enum m_TriggerUsing;
         EventTrigger::Enum m_TriggerDiscard;
         IDistribution* m_ExpirationDuration;
-
         CountdownTimer m_ExpirationTimer;
         bool m_TimerHasExpired;
 

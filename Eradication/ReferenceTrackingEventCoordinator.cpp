@@ -25,11 +25,15 @@ namespace Kernel
     ReferenceTrackingEventCoordinator::ReferenceTrackingEventCoordinator()
         : StandardInterventionDistributionEventCoordinator( false )//false=don't use standard demographic coverage
         , year2ValueMap()
-        , end_year(0.0)
+        , m_EndYear(0.0)
         , update_period(DAYSPERYEAR)
-    { }
+    {
+    }
 
-    bool ReferenceTrackingEventCoordinator::Configure(const Configuration* inputJson)
+    bool
+    ReferenceTrackingEventCoordinator::Configure(
+        const Configuration * inputJson
+    )
     {
         if( !JsonConfigurable::_dryrun && !MatchesDependency(inputJson, "Simulation_Type", "STI_SIM,HIV_SIM,TYPHOID_SIM") )
         {
@@ -38,10 +42,9 @@ namespace Kernel
 
         initConfigTypeMap("Time_Value_Map", &year2ValueMap, RTEC_Time_Value_Map_DESC_TEXT );
         initConfigTypeMap("Update_Period",  &update_period, RTEC_Update_Period_DESC_TEXT, 1.0,      10*DAYSPERYEAR, DAYSPERYEAR );
-        initConfigTypeMap("End_Year",       &end_year,      RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
+        initConfigTypeMap("End_Year",       &m_EndYear,     RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
 
         auto ret = StandardInterventionDistributionEventCoordinator::Configure( inputJson );
-
         num_repetitions = -1; // unlimited
 
         tsteps_between_reps = update_period / SimConfig::GetSimParams()->sim_time_delta; // this won't be precise, depending on math
@@ -50,7 +53,7 @@ namespace Kernel
             tsteps_between_reps = 1;
         }
 
-        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator configured with update_period = %f, end_year = %f, and tsteps_between_reps = %d.\n", update_period, end_year, tsteps_between_reps );
+        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator configured with update_period = %f, m_EndYear = %f, and tsteps_between_reps = %d.\n", update_period, m_EndYear, tsteps_between_reps );
 
         return ret;
     }
@@ -58,10 +61,10 @@ namespace Kernel
     void ReferenceTrackingEventCoordinator::CheckStartDay( float campaignStartDay ) const
     {
         float campaign_start_year = campaignStartDay / DAYSPERYEAR + SimConfig::GetSimParams()->sim_time_base_year;
-        if( end_year <= campaign_start_year )
+        if( m_EndYear <= campaign_start_year )
         {
             LOG_WARN_F( "Campaign starts on year %f (day=%f). A ReferenceTrackingEventCoordinator ends on End_Year %f.  It will not distribute any interventions.\n",
-                        campaign_start_year, campaignStartDay, end_year );
+                        campaign_start_year, campaignStartDay, m_EndYear );
         }
 
         if( campaign_start_year != year2ValueMap.begin()->first )
@@ -70,7 +73,6 @@ namespace Kernel
                         campaign_start_year, campaignStartDay, year2ValueMap.begin()->first );
         }
     }
-
 
     void ReferenceTrackingEventCoordinator::InitializeRepetitions( const Configuration* inputJson )
     {
@@ -81,7 +83,7 @@ namespace Kernel
     void ReferenceTrackingEventCoordinator::Update( float dt )
     {
         // Check if it's time for another distribution
-        if( parent->GetSimulationTime().Year() >= end_year )
+        if( parent->GetSimulationTime().Year() >= m_EndYear )
         {
             LOG_INFO_F( "ReferenceTrackingEventCoordinator expired.\n" );
             distribution_complete = true;
@@ -112,7 +114,7 @@ namespace Kernel
 
                 // Check whether this individual has this intervention
                 auto better_ptr = ihec->GetInterventionsContext();
-                std::string intervention_name = _di->GetName();
+                std::string intervention_name = m_pInterventionIndividual->GetName();
                 if( better_ptr->ContainsExistingByName( intervention_name ) )
                 {
                     totalWithIntervention += mcw;

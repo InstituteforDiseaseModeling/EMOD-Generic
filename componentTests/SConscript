@@ -115,21 +115,3 @@ else:
 testsResource = []
 testsLocalInc = ['StdAfx.h']
 
-msvc = GetOption( "MSVC" )
-if msvc is not None and msvc != False and msvc != "":
-
-    bvar = env['BUILD_VARIANT'] + '|x64'
-    print( "componentTests: Generating MSVS" + env['MSVS_VERSION'] + " project files for '%s'" % bvar )
-    
-    env.MSVSProject(target = 'componentTestsScons' + env['MSVSPROJECTSUFFIX'],
-                    srcs = testsSrcFiles,
-                    incs = testsIncFiles,
-                    localincs = testsLocalInc,
-                    resources = testsResource,
-                    buildtarget = testsExe,
-                    auto_build_solution = 0,
-                    variant = bvar)
-
-else:
-    print( "CC is:", env['CC'] )
-    print( "CXX is:", env['CXX'] )

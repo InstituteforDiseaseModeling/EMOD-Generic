@@ -103,6 +103,8 @@ namespace Kernel
 
         virtual int GetNumTargeted() const;
 
+        virtual void ClearQualifyingIndividuals();
+
         virtual void FindQualifyingIndividuals( INodeEventContext* pNEC, 
                                                 const DiseaseQualifications& rDisease,
                                                 PropertyRestrictions<IPKey, IPKeyValue, IPKeyValueContainer>& rPropertyRestrictions );
@@ -260,15 +262,11 @@ namespace Kernel
         virtual IEventCoordinatorEventContext* GetEventContext() override { return nullptr; }
 
     protected:
-
-        virtual void UpdateInterventionToBeDistributed( const IdmDateTime& rDateTime, float dt );
-
         ISimulationEventContext*        m_Parent;
         NChooserObjectFactory*          m_pObjectFactory;
         std::vector<INodeEventContext*> m_CachedNodes;
         std::string                     m_InterventionName;
         IDistributableIntervention*     m_pIntervention;
-        InterventionConfig              m_InterventionConfig;
         TargetedDistributionList        m_TargetedDistributionList;
         uint32_t                        m_DistributionIndex;
         bool                            m_IsFinished;

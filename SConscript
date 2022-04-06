@@ -151,7 +151,6 @@ if env['AllDlls'] or env[ 'DiseaseDll' ] != "":
         SConscript( 'libgeneric/DiagnosticstreatnegSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/HealthSeekingBehaviorUpdateSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/HealthSeekingBehaviorUpdateableSConscript', variant_dir=dll_op_path )
-        SConscript( 'libgeneric/NodeLevelHealthTriggeredIVScaleUpSwitchSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/ResistancediagnosticsSConscript', variant_dir=dll_op_path )
         SConscript( 'libgeneric/SmearDiagnosticsSConscript', variant_dir=dll_op_path )
 
@@ -192,6 +191,7 @@ if env['AllDlls'] or env[ 'DiseaseDll' ] != "":
     SConscript( 'libgeneric/HealthseekingbehaviorSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/MultiinterventiondistributorSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/NodeLevelHealthtriggeredSConscript', variant_dir=dll_op_path )
+    SConscript( 'libgeneric/NodeLevelHealthTriggeredIVScaleUpSwitchSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/OutbreakSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/OutbreakIndividualSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/PropertyvaluechangerSConscript', variant_dir=dll_op_path )

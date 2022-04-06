@@ -73,9 +73,9 @@ namespace Kernel
         Node::Initialize();
     }
 
-    void NodeSTI::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled )
+    void NodeSTI::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory )
     {
-        Node::SetParameters( demographics_factory, climate_factory, white_list_enabled );
+        Node::SetParameters( demographics_factory, climate_factory );
 
         const std::string SOCIETY_KEY( "Society" );
         if( !demographics.Contains( SOCIETY_KEY ) )

@@ -291,7 +291,7 @@ namespace Kernel {
         assert(m_document);
         Document& document = *m_document;
         assert(document[key].IsNumber());
-        return document[key].GetDouble();
+        return static_cast<float>(document[key].GetDouble());
     }
 
     double RapidJsonObj::GetDouble(const char* key) const

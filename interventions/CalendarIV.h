@@ -33,6 +33,7 @@ namespace Kernel
         virtual int32_t Release() override { return BaseIntervention::Release(); }
 
         IVCalendar();
+        IVCalendar( const IVCalendar& rMaster );
         virtual ~IVCalendar();
         bool Configure( const Configuration* config ) override;
 
@@ -43,7 +44,7 @@ namespace Kernel
 
     protected:
         std::map< float, float > age2ProbabilityMap;
-        IndividualInterventionConfig actual_intervention_config;
+        std::vector<IDistributableIntervention*> m_Interventions;
         bool dropout;
 
         DECLARE_SERIALIZABLE(IVCalendar);

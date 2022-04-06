@@ -53,7 +53,7 @@ namespace Kernel
         virtual void SetupIntranodeTransmission() override;
         virtual ITransmissionGroups* CreateTransmissionGroups() override;
         virtual void BuildTransmissionRoutes( float ) override;
-        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled ) override;
+        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) override;
         virtual void updateInfectivity(float dt = 0.0f) override;
         virtual void updatePopulationStatistics(float dt = 1.0f) override;
         void         updateVectorLifecycleProbabilities(float dt);

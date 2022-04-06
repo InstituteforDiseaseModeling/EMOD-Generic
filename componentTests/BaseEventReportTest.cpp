@@ -92,7 +92,6 @@ public:
 
     virtual bool Distribute(INodeEventContext *context, IEventCoordinator2* pEC = nullptr ) override { assert( false ); return false; };
     virtual void SetContextTo(INodeEventContext *context) override {};
-    virtual void ValidateSimType( const std::string& simTypeStr ) override {};
     virtual bool Expired() override { return false; };
     virtual void SetExpired( bool ) override {};
     virtual void OnExpiration() override {};

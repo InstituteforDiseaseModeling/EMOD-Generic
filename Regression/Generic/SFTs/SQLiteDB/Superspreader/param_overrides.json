@@ -7,7 +7,6 @@
                 "../../demographics_5000_overlay.json"
             ],
             "Enable_Heterogeneous_Intranode_Transmission": 1,
-            "Disable_IP_Whitelist": 1,
             "SAMPLING": {
                 "Base_Individual_Sample_Rate": 0.1
             }

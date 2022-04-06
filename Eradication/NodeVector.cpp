@@ -93,9 +93,9 @@ namespace Kernel
         m_vector_lifecycle_probabilities = VectorProbabilities::CreateVectorProbabilities();
     }
 
-    void NodeVector::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled )
+    void NodeVector::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory )
     {
-        Node::SetParameters( demographics_factory, climate_factory, white_list_enabled );
+        Node::SetParameters( demographics_factory, climate_factory );
 
         if (demographics["NodeAttributes"].Contains("LarvalHabitatMultiplier"))
         {

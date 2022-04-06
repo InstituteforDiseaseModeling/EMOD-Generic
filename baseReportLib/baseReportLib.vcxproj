@@ -128,7 +128,6 @@
     <ClInclude Include="..\cajun\include\CajunIncludes.h" />
     <ClInclude Include="..\campaign\InterventionEnums.h" />
     <ClInclude Include="..\campaign\Interventions.h" />
-    <ClInclude Include="..\campaign\InterventionValidator.h" />
     <ClInclude Include="..\Eradication\IContagionPopulation.h" />
     <ClInclude Include="..\Eradication\IIndividualHuman.h" />
     <ClInclude Include="..\Eradication\IInfectable.h" />

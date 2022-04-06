@@ -40,8 +40,7 @@ namespace Kernel
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                  suids::suid node_suid,
                                                  NodeDemographicsFactory *nodedemographics_factory, 
-                                                 ClimateFactory *climate_factory,
-                                                 bool white_list_enabled ) override;
+                                                 ClimateFactory *climate_factory ) override;
 
         virtual void resolveMigration();
 

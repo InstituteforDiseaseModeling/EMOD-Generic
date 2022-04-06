@@ -6,17 +6,9 @@
             "../input/SA_UN_demographics_extrapolated_WithProperties_Smoothed_with_Adherence.json",
             "../input/PFA_overlay.json"
         ],
-        "Disable_IP_Whitelist": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Simulation_Duration": 365,
-        "____________DEMOGRAPHICS___________": "",
-        "____________INTRAHOST___________": "",
-        "____________NETWORK___________": "",
-        "____________RARELY_CHANGED___________": "",
-        "____________REPORTING___________": "",
-        "____________SIMULATION___________": "",
-        "____________TRANSMISSION___________": "",
         "logLevel_AntiHIVPropertyDependentDrug": "DEBUG",
         "x_Base_Population": 0.001
     }

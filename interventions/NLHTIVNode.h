@@ -19,7 +19,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionEnums.h"
 #include "NodeEventContext.h"
 #include "Configure.h"
-#include "DemographicRestrictions.h"
+#include "PropertyRestrictions.h"
 #include "EventTriggerNode.h"
 
 namespace Kernel
@@ -30,6 +30,7 @@ namespace Kernel
 
     public:        
         NLHTIVNode();
+        NLHTIVNode( const NLHTIVNode& rMaster );
         virtual ~NLHTIVNode();
         virtual int AddRef() override;
         virtual int Release() override;
@@ -38,33 +39,25 @@ namespace Kernel
         // INodeDistributableIntervention
         virtual bool Distribute( INodeEventContext *pNodeEventContext, IEventCoordinator2 *pEC ) override;
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) override;
-        virtual void SetContextTo(INodeEventContext *context) override;
         virtual void Update(float dt) override;
 
         // INodeEventObserver
         virtual bool notifyOnEvent( INodeEventContext *context, const EventTriggerNode& trigger ) override;
 
     protected:
+        void Unregister();
+
         std::vector<EventTrigger::Enum>   m_trigger_conditions;
-        int   num_distributed;
         float max_duration;
         float duration;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;
-        DemographicRestrictions demographic_restrictions;
-        bool m_disqualified_by_coverage_only;
         float blackout_period ;
         float blackout_time_remaining ;
         EventTriggerNode blackout_event_trigger ;
         bool blackout_on_first_occurrence;
-        bool notification_occured ;
-        bool distribute_on_return_home;
-        std::vector<std::set<uint32_t>> event_occured_list;
-        std::map<suids::suid,bool> event_occurred_while_resident_away;
-        NodeInterventionConfig actual_node_intervention_config;
+        bool notification_occurred ;
+        std::vector<std::set<uint32_t>> event_occurred_list;
         INodeDistributableIntervention *_ndi;
-        bool using_individual_config;
-
-        std::string GetInterventionClassName() const;
-        void Unregister();
+        std::string m_ClassName;
     };
 }

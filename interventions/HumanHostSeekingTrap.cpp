@@ -77,8 +77,13 @@ namespace Kernel
 
         if( !JsonConfigurable::_dryrun && configured )
         {
-            killing_effect = WaningEffectFactory::CreateInstance( killing_config );
-            attract_effect = WaningEffectFactory::CreateInstance( attract_config );
+            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,
+                                                                                 inputJson->GetDataLocation(),
+                                                                                 "Killing_Config" );
+
+            attract_effect = WaningEffectFactory::getInstance()->CreateInstance( attract_config._json,
+                                                                                 inputJson->GetDataLocation(),
+                                                                                 "Attract_Config" );
         }
         return configured;
     }

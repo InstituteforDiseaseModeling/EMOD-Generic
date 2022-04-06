@@ -407,12 +407,7 @@ namespace Kernel
                          const char* ip_name_key_str,
                          read_function_t read_func,
                          uint32_t node_id,
-                         const JsonObjectDemog& rDemog, 
-                         bool isWhitelistEnabled );
-
-        // If the White List is enabled, this will throw an exception if the given key
-        // is not one of the approved keys/properties.
-        void CheckIpKeyInWhitelist( const char* ip_key, const std::string& rKey, int numValues );
+                         const JsonObjectDemog& rDemog );
 
         // Add this new/unique Key-Value pair to the possible set
         // It throws an exception if the "key:value" already exists.
@@ -443,9 +438,7 @@ namespace Kernel
         void CheckForDuplicateKey( const std::string& rKeyStr );
 
         uint32_t m_ExternalNodeIdOfFirst;
-        bool m_WhiteListEnabled;
         std::vector<BaseProperty*> m_IPList;
         std::map<std::string,KeyValueInternal*> m_KeyValueMap; // should contain all of the KeyValueInternal objects for properties
-        std::set<std::string> m_KeyWhiteList;
     };
 }

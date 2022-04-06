@@ -98,7 +98,7 @@ namespace Kernel
 
         // Initialization
         virtual void SetContextTo(ISimulationContext* context) override;
-        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled ) override;
+        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) override;
         virtual void PopulateFromDemographics() override;
         virtual void InitializeTransmissionGroupPopulations() override;
 

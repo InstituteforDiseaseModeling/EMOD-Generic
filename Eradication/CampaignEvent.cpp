@@ -23,6 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventCoordinator.h"
 #include "FactorySupport.h"
 #include "SimulationEventContext.h"
+#include "ObjectFactoryTemplates.h"
 
 // Note: These includes appear to be necessary for EMODule build to be aware
 // of thse ECs. Need to move away from prior knowledge of specific ECs.
@@ -33,107 +34,59 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeSet.h"
 
 SETUP_LOGGING( "CampaignEvent" )
-json::Object Kernel::CampaignEventFactory::ceSchema;
+
+using namespace std;
 
 namespace Kernel
 {
-    // silly hack to get GCC not to resolve these whole classes away as unused.
-    //IMPLEMENT_FACTORY_REGISTERED(NodeSetAll)
-    //IMPLEMENT_FACTORY_REGISTERED(NodeSetNodeList)
-    //IMPLEMENT_FACTORY_REGISTERED(NodeSetPolygon)
+    CampaignEventFactory* CampaignEventFactory::_instance = nullptr;
 
-    using namespace std;
-    // CampaignEventFactory
-    ICampaignEventFactory * CampaignEventFactory::_instance = nullptr;
+    template CampaignEventFactory* ObjectFactory<CampaignEvent, CampaignEventFactory>::getInstance();
 
-    CampaignEvent* CampaignEventFactory::CreateInstance(const Configuration * config, ISimulationEventContext *isec )
+    CampaignEventFactory::CampaignEventFactory()
+        : ObjectFactory<CampaignEvent, CampaignEventFactory>( false ) // do not queryForReturnInterface
     {
-        CampaignEvent *ce = CreateInstanceFromSpecs<CampaignEvent>(config, getRegisteredClasses(), false);
+    }
+
+    CampaignEvent* CampaignEventFactory::CreateInstance( const json::Element& rJsonElement,
+                                                         const std::string& rDataLocation,
+                                                         const char* parameterName,
+                                                         bool nullOrEmptyOrNoClassNotError )
+    {
+        CampaignEvent *ce = ObjectFactory<CampaignEvent, CampaignEventFactory>::CreateInstance( rJsonElement,
+                                                                                                rDataLocation,
+                                                                                                parameterName,
+                                                                                                nullOrEmptyOrNoClassNotError );
         release_assert(ce);
 
         if (ce && !JsonConfigurable::_dryrun)
         {           
             // now try to instantiate and configure the NodeSet and the EventCoordinator
 
-            auto ns_config = Configuration::CopyFromElement( ce->nodeset_config._json, config->GetDataLocation() );
-            ce->nodeset = NodeSetFactory::CreateInstance( ns_config );
-            delete ns_config;
-            ns_config = nullptr;
-
-            auto ec_config = Configuration::CopyFromElement( (ce->event_coordinator_config._json), config->GetDataLocation() );
-            ce->event_coordinator = EventCoordinatorFactory::CreateInstance( ec_config );
-            delete ec_config;
-            ec_config = nullptr;
+            ce->nodeset = NodeSetFactory::getInstance()->CreateInstance( ce->nodeset_config._json,
+                                                                         rDataLocation,
+                                                                         "Nodeset_Config" );
 
             if (!ce->nodeset)
             {
-                throw FactoryCreateFromJsonException( __FILE__, __LINE__, __FUNCTION__, std::string( json::QuickInterpreter(ce->nodeset_config._json)["class"].As<String>()).c_str() );
-            }
-            if (!ce->event_coordinator)
-            {
-                throw FactoryCreateFromJsonException(__FILE__, __LINE__, __FUNCTION__, string( json::QuickInterpreter(ce->event_coordinator_config._json)["class"].As<String>()).c_str());
+                throw FactoryCreateFromJsonException( __FILE__, __LINE__, __FUNCTION__,
+                                                      std::string( json::QuickInterpreter(ce->nodeset_config._json)["class"].As<String>()).c_str() );
             }
 
-            if (!ce->nodeset || !ce->event_coordinator)
-            {               
-                ce->Release();
-                return nullptr;
+            ce->event_coordinator = EventCoordinatorFactory::getInstance()->CreateInstance( ce->event_coordinator_config._json,
+                                                                                            rDataLocation,
+                                                                                            "Event_Coordinator_Config" );
+
+            if (!ce->event_coordinator)
+            {
+                throw FactoryCreateFromJsonException(__FILE__, __LINE__, __FUNCTION__,
+                                                      string( json::QuickInterpreter(ce->event_coordinator_config._json)["class"].As<String>()).c_str());
             }
 
             // make sure the start day for the coordinator makes sense
             ce->event_coordinator->CheckStartDay( ce->GetStartDay() );
         }
         return ce;
-    }
-
-    void CampaignEventFactory::Register(string classname, instantiator_function_t _if)  {  getRegisteredClasses()[classname] = _if;  }
-
-    support_spec_map_t& CampaignEventFactory::getRegisteredClasses() { static support_spec_map_t registered_classes; return registered_classes; }
-
-    json::QuickBuilder CampaignEventFactory::GetSchema()
-    {
-        // Iterate over all registrants, instantiate using function pointer, call Configure
-        // but in 'don't QI' mode.
-        support_spec_map_t& registrants = getRegisteredClasses();
-
-        JsonConfigurable::_dryrun = true;
-        for (auto& entry : registrants)
-        {
-            const std::string& class_name = entry.first;
-            LOG_DEBUG_F("class_name = %s\n", class_name.c_str());
-            json::Object fakeJson;
-            fakeJson["class"] = json::String(class_name);
-            Configuration * fakeConfig = Configuration::CopyFromElement( fakeJson );
-            try
-            {
-                auto *pCE = CreateInstanceFromSpecs<CampaignEvent>(fakeConfig, getRegisteredClasses(), false);
-                release_assert( pCE );
-                json::QuickBuilder* schema = &dynamic_cast<JsonConfigurable*>(pCE)->GetSchema();
-                (*schema)[std::string("class")] = json::String( class_name );
-                ceSchema[class_name] = *schema;
-            }
-            catch( DetailedException &e )
-            {
-                std::ostringstream msg;
-                msg << "ConfigException creating intervention for GetSchema: " 
-                    << e.what()
-                    << std::endl;
-                LOG_INFO( msg.str().c_str() );
-            }
-            catch( const json::Exception &e )
-            {
-                std::ostringstream msg;
-                msg << "json Exception creating intervention for GetSchema: "
-                    << e.what()
-                    << std::endl;
-                LOG_INFO( msg.str().c_str() );
-            }
-            delete fakeConfig;
-            fakeConfig = nullptr;
-        }
-        LOG_DEBUG( "Returning from GetSchema.\n" );
-        json::QuickBuilder retSchema = json::QuickBuilder(ceSchema);
-        return retSchema;
     }
 
     // CampaignEvent
@@ -149,7 +102,8 @@ namespace Kernel
         , event_coordinator(nullptr)
         , nodeset_config()
         , event_coordinator_config()
-    { }
+    {
+    }
 
     bool CampaignEvent::Configure(const Configuration * inputJson)
     {
@@ -217,17 +171,3 @@ namespace Kernel
     }
 
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, CampaignEvent& event, const unsigned int v)
-    {
-        ar & event.nodeset;
-        ar & event.event_coordinator;
-        ar & event.start_day;
-        ar & event.event_index;
-        ar & event.distribution_duration;
-    }
-}
-#endif

@@ -20,6 +20,7 @@ import types
 import pdb
 import platform
 
+import SCons.Tool.MSCommon.vc  as  scons_vc
 
 #later
 #import libdeps
@@ -36,8 +37,6 @@ msarch = "amd64"
 options = {}
 
 options_topass = {}
-
-#print "THIS BETTER NOT WORK"
 
 
 def add_option( name, help, nargs, contributesToVariantDir,
@@ -128,9 +127,6 @@ def get_build_var():
 
     return bv
 
-# General options
-add_option( "MSVC" , "Generate Microsoft Visual Studio solution and project files" , 0 , False)
-
 # compiling options
 add_option( "Release" , "release build" , 0 , True)
 add_option( "Debug" , "debug build" , 0 , True )
@@ -172,6 +168,18 @@ def printLocalInfo():
 
 printLocalInfo()
 
+
+MSVC_ver = None
+if os.sys.platform == 'win32':
+    msvc_list = scons_vc.get_installed_vcs()
+
+    if('14.3' in msvc_list):
+        MSVC_ver = '14.3'
+    elif('14.0' in msvc_list):
+        MSVC_ver = '14.0'
+    else:
+        raise RuntimeError("Only supports MSVC 14.0 and 14.3")
+
 pa = platform.architecture()
 pi = os.sys.platform
 if pa[0].find("64") != -1:
@@ -183,7 +191,7 @@ env = Environment( BUILD_DIR=buildDir,
                    TARGET_ARCH=msarch ,
                    PYSYSPLATFORM=pi,
                    MSVSPROJECTSUFFIX='.vcxproj' ,
-                   MSVC_VERSION='14.0'
+                   MSVC_VERSION=MSVC_ver
                    )
 
 if not(Dbg) and not(Rel):
@@ -209,6 +217,8 @@ if os.sys.platform == 'win32':
         print( "Please use the IDE for debugging." )
         print( "----------------------------------------------------" )
         Exit(-1)
+
+    print('MSVC Version: ',env['MSVC_VERSION'])
 
     env['OS_FAMILY'] = 'win'
     env.Append( EXTRACPPPATH=[
@@ -245,28 +255,14 @@ else:
                           "#/baseReportLib",
                           "#/utils",
                           "#/libgeneric_static",
-                          "/usr/include/python3.6m",
-                          "/usr/include/python3.7m",
-                          "/opt/python/python3.6.3/include/python3.6m",  # Bamboo requirement
                           "#/cajun/include",
                           "#/rapidjson/include",
                           "#/rapidjson/modp",
                           "#/snappy",
                           "#/lz4/lib"])
 
-#if has_option( "cxx" ):
-#    env["CC"] = get_option( "cxx" )
-#    env["CXX"] = get_option( "cxx" )
-#if has_option( "cc" ):
-#    env["CC"] = get_option( "cc" )
-
 env["LIBPATH"] = []
-#
-#if has_option( "libpath" ):
-#    env["LIBPATH"] = [get_option( "libpath" )]
-
 env['EXTRALIBPATH'] = []
-
 
 # ---- other build setup -----
 
@@ -306,15 +302,30 @@ if os.sys.platform.startswith("linux"):
         env.Append( EXTRALIBPATH=["/usr/lib64" , "/lib64" ] )
 
     if(sys.version_info.major == 2):  # Bamboo linux build still uses python 2
-        env.Append( LIBS=["pthread", "python3.6m", "dl" ] )
+        env.Append( LIBS=["python3.6m"] )
+        env.Append( EXTRACPPPATH=["/opt/python/python3.6.3/include/python3.6m"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.6m"] )
+        env.Append( EXTRALIBPATH=["/opt/python/python3.6.3/lib"] )
     elif(sys.version_info.minor == 6):
-        env.Append( LIBS=["pthread", "python3.6m", "dl" ] )
+        env.Append( LIBS=["python3.6m"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.6m"] )
     elif(sys.version_info.minor == 7):
-        env.Append( LIBS=["pthread", "python3.7m", "dl" ] )
+        env.Append( LIBS=["python3.7m"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.7m"] )
+    elif(sys.version_info.minor == 8):
+        env.Append( LIBS=["python3.8"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.8"] )
+    elif(sys.version_info.minor == 9):
+        env.Append( LIBS=["python3.9"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.9"] )
+    elif(sys.version_info.minor == 10):
+        env.Append( LIBS=["python3.10"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.10"] )
     else:
-        raise RuntimeError("Only supports python 3.6 and 3.7")
+        raise RuntimeError("Only supports python 3.6, 3.7, 3.8, 3.9, and 3.10")
 
-    env.Append( EXTRALIBPATH=[ "/usr/local/lib", "/usr/lib64/mpich/lib", "/opt/python/python3.6.3/lib" ] )
+    env.Append( LIBS=["pthread", "dl" ] )
+    env.Append( EXTRALIBPATH=[ "/usr/local/lib", "/usr/lib64/mpich/lib" ] )
 
     if static:
         #env.Append( LINKFLAGS=" -static " )
@@ -346,21 +357,6 @@ elif "win32" == os.sys.platform:
     env.Append( CPPDEFINES=[ "_UNICODE" ] )
     env.Append( CPPDEFINES=[ "UNICODE" ] )
     env.Append( CPPDEFINES=[ "WIN32" ] )
-
-    # this is for MSVC <= 10.0
-    #winSDKHome = findVersion( [ "C:/Program Files/Microsoft SDKs/Windows/", "C:/Program Files (x86)/Microsoft SDKs/Windows/" ] , [ "v7.0A", "v7.0"] )
-    #env.Append( EXTRACPPPATH=[ winSDKHome + "/Include" ] )
-    #env.Append( EXTRALIBPATH=[ winSDKHome + "/Lib/x64" ] )
-
-    # this is for MSVC >= 11.0
-    winSDKHome = "C:/Program Files (x86)/Windows Kits/8.0/"
-    env.Append( EXTRACPPPATH=[ winSDKHome + "/Include/um" ] )
-    env.Append( EXTRALIBPATH=[ winSDKHome + "Lib/win8/um/x64" ] )
-
-    print( "Windows SDK Root '" + winSDKHome + "'" )
-
-    #print( "Windows MSVC Root '" + winVCHome + "'" )
-    #env.Append( EXTRACPPPATH=[ winVCHome + "/Include" ] )
 
     # some warnings we don't like:
     # c4355
@@ -406,37 +402,13 @@ elif "win32" == os.sys.platform:
     env.Append( CCFLAGS= [ "/W3", "/WX-"] )
     env.Append( CCFLAGS= [ "/Zc:inline", "/Zc:forScope", "/Zc:wchar_t" ] )
 
-    # Disable these two for faster generation of codes
-    #env.Append( CCFLAGS= ["/GL"] ) # /GL whole program optimization
-    #env.Append( LINKFLAGS=" /LTCG " )         # /LTCG link time code generation
-    #env.Append( ARFLAGS=" /LTCG " ) # for the Library Manager
-
     # /Zi    : debug info goes into a PDB file
     # /FS    : force to use MSPDBSRV.EXE (serializes access to .pdb files which is needed for multi-core builds)
     # /DEBUG : linker to create a .pdb file which WinDbg and Visual Studio will use to resolve symbols if you want to debug a release-mode image.
     # NOTE1: This means we can't do parallel links in the build.
     # NOTE2: /DEBUG and Dbghelp.lib go together with changes in Exception.cpp which adds the ability to print a stack trace.
-    #
-    # DMB - 2/21/2017
-    # Commenting out debug options since they don't work when doing scons multithreaded build.
-    # The compiler creates a vc140.pdb file in the root directory but the linker looks for it
-    # in the build\x64\Release\Eradication directory.  However, when you do a single threaded
-    # build, we don't have this issue.
-    #env.Append( CCFLAGS= [ "/Zi" ] )
-    #env.Append( CCFLAGS= [ "/FS" ] )
-    #env.Append( LINKFLAGS=" /DEBUG " )
-
-    # For MSVC <= 10.0
-    #env.Append( LINKFLAGS=[ "/NODEFAULTLIB:LIBCPMT", "/NODEFAULTLIB:LIBCMT", "/MACHINE:X64"] )
-        
-    # For MSVC >= 11.0
-    # /OPT:REF : eliminates functions and data that are never referenced
-    # /OPT:ICF : to perform identical COMDAT folding
-    # /DYNAMICBASE:NO : Don't Use address space layout randomization
-    # /SUBSYSTEM:CONSOLE : Win32 character-mode application.
     env.Append( LINKFLAGS=[ "/MACHINE:X64", "/MANIFEST", "/HEAP:\"100000000\"\",100000000\" ", "/OPT:REF", "/OPT:ICF ", "/DYNAMICBASE:NO", "/SUBSYSTEM:CONSOLE"] )
     env.Append( LINKFLAGS=[ "/ERRORREPORT:NONE", "/NOLOGO", "/TLBID:1" ] )
-    #env.Append( LINKFLAGS=[ "/VERBOSE:Lib" ] )
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! See SConscript file for linker flags that are specific to the EXE and not the DLLS !!!
@@ -460,7 +432,6 @@ env['STATIC_AND_SHARED_OBJECTS_ARE_THE_SAME'] = 1
 env.Append( CPPPATH=['$EXTRACPPPATH'] )
 env.Append( LIBPATH=['$EXTRALIBPATH'] )
 
-#print env['EXTRACPPPATH']
 
 # --- check system ---
 
@@ -559,11 +530,5 @@ setEnvAttrs( env )
 # Export the following symbols for them to be used in subordinate SConscript files.
 Export("env")
 
-
 # pass the build_dir as the variant directory
 env.SConscript( 'SConscript', variant_dir='$BUILD_DIR', duplicate=False )
-
-env.SConscript( 'MSVCSConscript', duplicate=False )
-
-#env.SConscript( 'unittest/SConscript', variant_dir='$BUILD_DIR/unittest', duplicate=False )
-

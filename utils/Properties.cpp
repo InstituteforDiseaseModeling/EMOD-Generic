@@ -1001,8 +1001,6 @@ namespace Kernel
 
         if( !isNotFirstNode )
         {
-            IPFactory::GetInstance()->CheckIpKeyInWhitelist( IP_KEY, m_Key, m_Values.size() );
-
             if( rDemog.Contains( IP_TRANS_KEY ) && (rDemog[ IP_TRANS_KEY ].size() > 0) )
             {
                 std::ostringstream msg;
@@ -1120,7 +1118,7 @@ namespace Kernel
         return p_factory;
     }
 
-    void IPFactory::Initialize( uint32_t externalNodeId, const JsonObjectDemog& rDemog, bool isWhitelistEnabled )
+    void IPFactory::Initialize( uint32_t externalNodeId, const JsonObjectDemog& rDemog )
     {
        read_function_t read_fn =
             []( int idx, uint32_t externalNodeId, const JsonObjectDemog& rDemog, bool isNotFirstNode )
@@ -1130,7 +1128,7 @@ namespace Kernel
            return p_ip;
        };
 
-        BaseFactory::Initialize( IP_KEY, IP_NAME_KEY, read_fn, externalNodeId, rDemog, isWhitelistEnabled );
+        BaseFactory::Initialize( IP_KEY, IP_NAME_KEY, read_fn, externalNodeId, rDemog );
     }
 
     void IPFactory::WriteTransitionsFile()

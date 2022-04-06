@@ -11,7 +11,6 @@
             "PFA_Overlay.json",
             "Risk_Assortivity_Overlay.json"
         ],
-        "Disable_IP_Whitelist": 1,
         "Enable_Maternal_Transmission": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
@@ -21,8 +20,8 @@
             25
         ],
         "Male_To_Female_Relative_Infectivity_Multipliers": [
-            3.1928245367000003,
-            3.1928245367000003,
+            3.1928245367000005,
+            3.1928245367000005,
             2.58187363854
         ],
         "Min_Days_Between_Adding_Relationships": 0,
@@ -41,7 +40,7 @@
         "Sexual_Debut_Age_Male_Weibull_Scale": 16.946729660034,
         "Sexual_Debut_Age_Min": 13,
         "Simulation_Duration": 43106.0,
-        "Simulation_Timestep": 30.416666666666668,
+        "Simulation_Timestep": 30.416666666666669,
         "x_Base_Population": 0.001,
         "x_Birth": 1,
         "x_Other_Mortality": 1

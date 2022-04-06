@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <stdexcept>
 #include <assert.h>
 #include <vector>
+#include <cfloat>
 
 #include "Exceptions.h"
 #include "IArchive.h"

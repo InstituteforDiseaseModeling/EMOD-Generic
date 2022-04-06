@@ -34,7 +34,7 @@ namespace Kernel
         virtual bool TargetedIndividualIsCovered(IIndividualHumanEventContext *ihec) override;
 
         InterpolatedValueMap year2ValueMap;
-        float end_year;
+        float m_EndYear;
         float update_period;
         std::vector< suids::suid_data_t > haves;
     };

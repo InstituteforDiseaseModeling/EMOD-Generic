@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 #include "SimulationSTI.h"
 #include "Sugar.h" // for DECLARE_VIRTUAL_BASE
-//#include "InterventionValidator.h"
 #include "ChannelDataMap.h"
 
 namespace Kernel
@@ -47,8 +46,7 @@ namespace Kernel
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                  suids::suid node_suid,
                                                  NodeDemographicsFactory *nodedemographics_factory,
-                                                 ClimateFactory *climate_factory,
-                                                 bool white_list_enabled ) override;
+                                                 ClimateFactory *climate_factory ) override;
 
         bool report_hiv_by_age_and_gender;
         bool report_hiv_ART;

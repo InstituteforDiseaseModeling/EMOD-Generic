@@ -6,7 +6,6 @@
                 "../../demographics_3000_overlay.json"
             ],
             "Enable_Vital_Dynamics": 1,
-            "Disable_IP_Whitelist": 1,
             "MORTALITY": {
                 "Base_Mortality": 0.02,
                 "Enable_Disease_Mortality": 1

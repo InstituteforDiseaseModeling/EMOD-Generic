@@ -133,7 +133,9 @@ void IDMAPI writeInputSchemas(
     Kernel::JsonConfigurable::_dryrun = true;
     std::ostringstream oss;
 
-    
+    // ---------------------------
+    // --- Create Config Schema
+    // ---------------------------
     json::Object configSchemaAll;
 
     for (auto& sim_type : getSimTypeList())
@@ -160,6 +162,9 @@ void IDMAPI writeInputSchemas(
 
     total_schema[ "config" ] = configSchemaAll;
 
+    // ---------------------------
+    // --- Create Campaign Schema
+    // ---------------------------
     if( !Kernel::InterventionFactory::getInstance() )
     {
         throw Kernel::InitializationException( __FILE__, __LINE__, __FUNCTION__, "Kernel::InterventionFactory::getInstance(" );
@@ -183,14 +188,18 @@ void IDMAPI writeInputSchemas(
 
     camp_schema["Events"][0] = json::String( "idmType:CampaignEvent" );
 
-    camp_schema["idmTypes" ][ "idmType:CampaignEvent" ] = ces_schema.As<json::Object>();
-    camp_schema["idmTypes" ][ "idmType:EventCoordinator" ] = ecs_schema.As<json::Object>();
-    camp_schema["idmTypes" ][ "idmType:Intervention"] = ivs_schema.As<json::Object>();
-    camp_schema["idmTypes" ][ "idmType:NodeSet"] = ns_schema[ "schema" ].As<json::Object>();
-    camp_schema["idmTypes" ][ "idmType:WaningEffect"] = we_schema[ "schema" ].As<json::Object>();
+    camp_schema[ "idmTypes" ][ "idmType:CampaignEvent"          ] = ces_schema.As<json::Object>();
+    camp_schema[ "idmTypes" ][ "idmType:EventCoordinator"       ] = ecs_schema.As<json::Object>();
+    camp_schema[ "idmTypes" ][ "idmType:Intervention"           ] = ivs_schema.As<json::Object>();
+    camp_schema[ "idmTypes" ][ "idmType:NodeSet"                ] = ns_schema.As<json::Object>();
+    camp_schema[ "idmTypes" ][ "idmType:WaningEffect"           ] = we_schema.As<json::Object>();
 
     total_schema[ "interventions" ] = camp_schema.As< json::Object> ();
     schema_ostream << std::setprecision(10);
+
+    // --------------------------
+    // --- Write Schema to output
+    // --------------------------
     json::Writer::Write( total_schema, schema_ostream, "    " );
     schema_ostream_file.close();
 

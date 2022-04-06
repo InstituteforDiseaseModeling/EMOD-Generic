@@ -885,9 +885,10 @@ JsonObjectDemog NodeDemographicsFactory::GetJsonForNode( ExternalNodeId_t extern
 {
     JsonObjectDemog finalnodedata( JsonObjectDemog::JSON_OBJECT_OBJECT );
 
-    bool found_node = false;
+    bool any_layer_has_node = false;
     for( int i = int( demographics_filenames.size() - 1 ); i >= 0; i-- )
     {
+        bool this_layer_has_node = false;
         JsonObjectDemog nodedata;
         if( nodedata_maps[ i ].count( externalNodeId ) > 0 )
         {
@@ -897,7 +898,8 @@ JsonObjectDemog NodeDemographicsFactory::GetJsonForNode( ExternalNodeId_t extern
         if( !nodedata.IsNull() )
         {
             TranslateNodeData(nodedata, i, finalnodedata);
-            found_node = true ;
+            any_layer_has_node  = true;
+            this_layer_has_node = true;
         }
 
         // -----------------------------------------------------------------------------------
@@ -906,7 +908,7 @@ JsonObjectDemog NodeDemographicsFactory::GetJsonForNode( ExternalNodeId_t extern
         // --- If the user DOES define nodes in the overlay, then the Defaults in the overlay only apply to those nodes.
         // -----------------------------------------------------------------------------------
         bool apply_defaults =  !layer_defaults[i].IsNull()
-                            && ((i == 0) || found_node || (nodedata_maps[i].size() == 0));
+                            && ((i == 0) || this_layer_has_node || (nodedata_maps[i].size() == 0));
 
         if( apply_defaults )
         {
@@ -914,7 +916,7 @@ JsonObjectDemog NodeDemographicsFactory::GetJsonForNode( ExternalNodeId_t extern
             TranslateNodeData(layer_defaults[i], i, finalnodedata);
         }
     }
-    if( !found_node )
+    if( !any_layer_has_node )
     {
         std::ostringstream msg;
         msg << "Error: Attempted to create demographics for unknown node: " << externalNodeId << endl;

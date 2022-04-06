@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISupports.h"
 #include "EventTrigger.h"
 
-#if 1
 namespace Kernel
 {
     // This file defines a set of interfaces used to interested objects when things happen to
@@ -30,9 +29,6 @@ namespace Kernel
     struct IIndividualHumanEventContext;
     typedef EventTrigger::Enum EventTriggerNode;
     typedef EventTrigger::Enum EventTriggerCoordinator;
-    //class EventTriggerCoordinator;
-    //class EventTriggerNode;
-    //class EventTrigger;
 
     // Objects that are interested when events are "triggered" on a particular entity.
     // Objects that implement this interface and register with the broadcaster will
@@ -44,7 +40,6 @@ namespace Kernel
     };
 
     // The "broadcaster" has the job of notifying "observers" when a "trigger" happens to an "entity".
-    //template<class IObserver, class IEntity, class Trigger>
     template<class IObserver, class IEntity>
     struct IEventBroadcaster : ISupports
     {
@@ -61,7 +56,6 @@ namespace Kernel
     struct ICoordinatorEventObserver : IEventObserver<IEventCoordinatorEventContext, EventTriggerCoordinator>
     {
     };
-    //struct ICoordinatorEventBroadcaster : IEventBroadcaster<ICoordinatorEventObserver, IEventCoordinatorEventContext, EventTriggerCoordinator>
     struct ICoordinatorEventBroadcaster : IEventBroadcaster<ICoordinatorEventObserver, IEventCoordinatorEventContext>
     {
     };
@@ -69,20 +63,14 @@ namespace Kernel
     struct INodeEventObserver : IEventObserver<INodeEventContext, EventTriggerNode>
     {
     };
-
-    //struct INodeEventBroadcaster : IEventBroadcaster<INodeEventObserver, INodeEventContext, EventTriggerNode>
     struct INodeEventBroadcaster : IEventBroadcaster<INodeEventObserver, INodeEventContext>
     {
     };
 
     struct IIndividualEventObserver : IEventObserver<IIndividualHumanEventContext, EventTrigger::Enum>
-    //struct IIndividualEventObserver : IEventObserver<IIndividualHumanEventContext>
     {
     };
-
-    //struct IIndividualEventBroadcaster : IEventBroadcaster<IIndividualEventObserver, IIndividualHumanEventContext, EventTrigger::Enum>
     struct IIndividualEventBroadcaster : IEventBroadcaster<IIndividualEventObserver, IIndividualHumanEventContext>
     {
     };
 }
-#endif

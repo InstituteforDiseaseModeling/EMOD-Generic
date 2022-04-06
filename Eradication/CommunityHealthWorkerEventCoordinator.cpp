@@ -1,6 +1,6 @@
 /***************************************************************************************************
 
-Copyright (c) 2015 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
+Copyright (c) 2018 Intellectual Ventures Property Holdings, LLC (IVPH) All rights reserved.
 
 EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike 4.0 License.
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
@@ -40,7 +40,6 @@ namespace Kernel
     , m_InterventionName()
     , m_pInterventionIndividual( nullptr )
     , m_pInterventionNode( nullptr )
-    , m_InterventionConfig()
     , m_CoordinatorDaysRemaining(FLT_MAX)
     , m_DemographicRestrictions()
     , m_TriggerConditionList()
@@ -94,10 +93,11 @@ namespace Kernel
         m_DemographicRestrictions.ConfigureRestrictions( this, inputJson );
 
         initVectorConfig("Trigger_Condition_List", m_TriggerConditionList, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", CHW_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
-                
+
         initConfigComplexType( "Node_Property_Restrictions", &m_NodePropertyRestrictions, CHW_Node_Property_Restriction_DESC_TEXT );
 
-        initConfigComplexType( "Intervention_Config", &m_InterventionConfig, CHW_Intervention_Config_DESC_TEXT );
+        InterventionConfig intervention_config;
+        initConfigComplexType( "Intervention_Config", &intervention_config, CHW_Intervention_Config_DESC_TEXT );
 
         bool retValue = JsonConfigurable::Configure( inputJson );
 
@@ -106,22 +106,30 @@ namespace Kernel
             // ------------------------------------------------------
             // --- Check that the intervention exists and initialize
             // ------------------------------------------------------
-            //InterventionValidator::ValidateIntervention( m_InterventionConfig._json, inputJson->GetDataLocation() );
+            m_pInterventionIndividual = InterventionFactory::getInstance()->CreateIntervention( intervention_config._json,
+                                                                                                inputJson->GetDataLocation(),
+                                                                                                "Intervention_Config",
+                                                                                                false ); // don't throw if null
+            if( m_pInterventionIndividual == nullptr )
+            {
+                m_pInterventionNode = InterventionFactory::getInstance()->CreateNDIIntervention( intervention_config._json,
+                                                                                                 inputJson->GetDataLocation(),
+                                                                                                 "Intervention_Config",
+                                                                                                 false ); // don't throw if null
+            }
+            if( (m_pInterventionIndividual == nullptr) && (m_pInterventionNode == nullptr) )
+            {
+                std::string class_name = std::string(json::QuickInterpreter( intervention_config._json )["class"].As<json::String>()) ;
+
+                std::stringstream ss;
+                ss << "Invalid Intervention Type in 'CommunityHealthWorkerEventCoordinator'.\n";
+                ss << "'" << class_name << "' is not a known intervention.";
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+            }
 
             m_DemographicRestrictions.CheckConfiguration();
 
-            Configuration* qi_as_config = Configuration::CopyFromElement( m_InterventionConfig._json );
-
-            m_InterventionName = std::string( json::QuickInterpreter(m_InterventionConfig._json)["class"].As<json::String>() );
-
-            m_pInterventionIndividual = InterventionFactory::getInstance()->CreateIntervention( qi_as_config );
-            if( m_pInterventionIndividual == nullptr )
-            {
-                m_pInterventionNode = InterventionFactory::getInstance()->CreateNDIIntervention( qi_as_config );
-            }
-            
-            delete qi_as_config;
-            qi_as_config = nullptr;
+            m_InterventionName = std::string( json::QuickInterpreter(intervention_config._json)["class"].As<json::String>() );
 
             // ---------------------------------------------------------------------------
             // --- If the user is attempting to define demographic restrictions when they
@@ -136,13 +144,6 @@ namespace Kernel
                 msg << m_InterventionName;
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
             }
-            else if( (m_pInterventionNode == nullptr) && (m_NodePropertyRestrictions.Size() > 0) )
-            {
-                std::ostringstream msg;
-                msg << "In CommunityHealthWorkerEventCoordinator, Node_Property_Restrictions only works when distributing node-level interventions.\n";
-                msg << m_InterventionName << " is a individual-targeted intervention.\n";
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
 
             for( auto& event_name : m_RemoveIndividualEventList )
             {
@@ -152,9 +153,6 @@ namespace Kernel
 
         return retValue;
     }
-
-    void CommunityHealthWorkerEventCoordinator::CheckStartDay( float campaignStartDay ) const
-    { }
 
     void CommunityHealthWorkerEventCoordinator::SetContextTo( ISimulationEventContext *isec )
     {
@@ -349,7 +347,8 @@ namespace Kernel
 
     bool CommunityHealthWorkerEventCoordinator::Qualifies( IIndividualHumanEventContext* pIHEC )
     {
-        bool qualifies = m_DemographicRestrictions.IsQualified( pIHEC );
+        bool qualifies = m_NodePropertyRestrictions.Qualifies( pIHEC->GetNodeEventContext()->GetNodeContext()->GetNodeProperties() );
+        qualifies = qualifies && m_DemographicRestrictions.IsQualified( pIHEC );
         return qualifies;
     }
 
@@ -427,26 +426,31 @@ namespace Kernel
 
     void CommunityHealthWorkerEventCoordinator::RemoveEntity( IIndividualHumanEventContext *context )
     {
+        // --------------------------------------------------------------------------------------
+        // --- An entity could be in the queue multiple times so we need to remove all instances.
+        // --------------------------------------------------------------------------------------
+        release_assert( context != nullptr );
         std::list<QueueEntry<IIndividualHumanEventContext>>::iterator it = m_QueueIndividual.begin();
         bool done = (it == m_QueueIndividual.end());
         while( !done )
         {
+            release_assert( it->p_entity != nullptr );
             if( it->p_entity->GetSuid() == context->GetSuid() )
             {
-                m_QueueIndividual.erase( it );
-                done = true;
+                it = m_QueueIndividual.erase( it );
             }
             else
             {
                 ++it;
-                done = (it == m_QueueIndividual.end());
             }
+            done = (it == m_QueueIndividual.end());
         }
     }
 
     bool CommunityHealthWorkerEventCoordinator::notifyOnEvent( IIndividualHumanEventContext *context, 
                                                               const EventTrigger::Enum& trigger)
     {
+        release_assert( context != nullptr );
         if( IsRemoveIndividualEvent( trigger ) )
         {
             RemoveEntity( context );

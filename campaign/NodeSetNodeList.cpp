@@ -66,7 +66,34 @@ namespace Kernel
     bool NodeSetNodeList::Configure(const Configuration * inputJson)
     {
         initConfigComplexType( "Node_List", &nodelist_config, Node_List_DESC_TEXT );
-        return JsonConfigurable::Configure( inputJson );
+        bool configured = JsonConfigurable::Configure( inputJson );
+        if( configured && !JsonConfigurable::_dryrun )
+        {
+            std::vector<ExternalNodeId_t> nodes( nodelist_config.nodelist.begin(), nodelist_config.nodelist.end() );
+
+            std::set<ExternalNodeId_t> duplicates;
+            for( int i = 0 ; i < nodes.size(); ++i )
+            {
+                for( int j = i + 1; j < nodes.size(); ++j )
+                {
+                    if( nodes[i] == nodes[j] )
+                    {
+                        duplicates.insert( nodes[i] );
+                    }
+                }
+            }
+            if( duplicates.size() > 0 )
+            {
+                std::stringstream ss;
+                ss << "The NodeSetNodeList has the duplicate entries for the following nodes:\n";
+                for( auto dup : duplicates )
+                {
+                    ss << dup << ", ";
+                }
+                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+            }
+        }
+        return configured;
     }
 
     //

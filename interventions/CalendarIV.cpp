@@ -101,17 +101,33 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(IVCalendar)
 
     IVCalendar::IVCalendar()
-    : BaseIntervention()
-    , age2ProbabilityMap()
-    , actual_intervention_config()
-    , dropout(false)
-    , scheduleAges()
+        : BaseIntervention()
+        , age2ProbabilityMap()
+        , m_Interventions()
+        , dropout(false)
+        , scheduleAges()
     {
+    }
+
+    IVCalendar::IVCalendar( const IVCalendar& rMaster )
+        : BaseIntervention( rMaster )
+        , age2ProbabilityMap( rMaster.age2ProbabilityMap )
+        , m_Interventions()
+        , dropout( rMaster.dropout )
+        , scheduleAges( rMaster.scheduleAges )
+    {
+        for( auto p_intervention : rMaster.m_Interventions )
+        {
+            m_Interventions.push_back( p_intervention->Clone() );
+        }
     }
 
     IVCalendar::~IVCalendar()
     {
-        LOG_DEBUG("Calendar was destroyed.\n");
+        for( auto p_intervention : m_Interventions )
+        {
+            delete p_intervention;
+        }
     }
 
     bool
@@ -119,6 +135,7 @@ namespace Kernel
         const Configuration * inputJson
     )
     {
+        IndividualInterventionConfig actual_intervention_config;
         AgeAndProbabilityList age_prob_list;
         initConfigTypeMap("Dropout", &dropout, CAL_Dropout_DESC_TEXT, false);
         initConfigComplexCollectionType("Calendar", &age_prob_list, CAL_Calendar_DESC_TEXT);
@@ -127,10 +144,10 @@ namespace Kernel
         bool ret = BaseIntervention::Configure( inputJson );
         if( ret && !JsonConfigurable::_dryrun )
         {
-            InterventionValidator::ValidateInterventionArray( GetTypeName(), 
-                                                              InterventionTypeValidation::INDIVIDUAL,
-                                                              actual_intervention_config._json,
-                                                              inputJson->GetDataLocation() );
+            InterventionFactory::getInstance()->CreateInterventionList( actual_intervention_config._json,
+                                                                        inputJson->GetDataLocation(),
+                                                                        "Actual_IndividualIntervention_Configs",
+                                                                        m_Interventions );
 
             for( int i = 0; i < age_prob_list.Size(); ++i )
             {
@@ -209,55 +226,23 @@ namespace Kernel
                 expired = true;
             }
             LOG_DEBUG_F("Calendar says it's time to apply an intervention...\n");
-            // Check if actual_intervention_config is an array instead of JObject
-            try
+            LOG_DEBUG_F("Calendar (intervention) distributed actual intervention at age %f\n", parent->GetEventContext()->GetAge());
+
+            ICampaignCostObserver* pICCO;
+            if (s_OK != parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&pICCO) )
             {
-                const json::Array & interventions_array = json::QuickInterpreter( actual_intervention_config._json ).As<json::Array>();
-                LOG_DEBUG_F("interventions array size = %d\n", interventions_array.Size());
-
-                // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-                IGlobalContext *pGC = nullptr;
-                const IInterventionFactory* ifobj = nullptr;
-                if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-                {
-                    ifobj = pGC->GetInterventionFactory();
-                }
-                if (!ifobj)
-                {
-                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "The pointer to IInterventionFactory object is not valid (could be DLL specific)" );
-                }
-                for( int idx=0; idx<interventions_array.Size(); ++idx )
-                {
-                    const json::Object& actualIntervention = json_cast<const json::Object&>(interventions_array[idx]);
-                    Configuration * tmpConfig = Configuration::CopyFromElement( actualIntervention, "campaign" );
-                    assert( tmpConfig );
-                    IDistributableIntervention *di = const_cast<IInterventionFactory*>(ifobj)->CreateIntervention(tmpConfig);
-                    delete tmpConfig;
-                    tmpConfig = nullptr;
-                    if( !di )
-                    {
-                        // Calendar wanted to distribute intervention but factory returned null pointer.
-                        throw FactoryCreateFromJsonException( __FILE__, __LINE__, __FUNCTION__, "Unable to create intervention object from actualIntervention (apparently). Factory should actually throw exception. This exception throw is just paranoid exception handling." );
-                    }
-                    float interventionCost = 0.0f;
-                    LOG_DEBUG_F("Calendar (intervention) distributed actual intervention at age %f\n", parent->GetEventContext()->GetAge());
-
-                    // Now make sure cost gets reported.
-                    ICampaignCostObserver* pICCO;
-                    assert( parent->GetEventContext()->GetNodeEventContext() );
-                    if (s_OK == parent->GetEventContext()->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&pICCO) )
-                    {
-                        di->Distribute( parent->GetInterventionsContext(), pICCO );
-                    }
-                    else
-                    {
-                        throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetEventContext()->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext" );
-                    }
-                }
+                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__,
+                                               "parent->GetEventContext()->GetNodeEventContext()",
+                                               "ICampaignCostObserver",
+                                               "INodeEventContext" );
             }
-            catch( json::Exception )
+
+            for( auto p_intervention : m_Interventions )
             {
-                throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, "N/A", actual_intervention_config._json, "Expected STRING" );
+                IDistributableIntervention* di = p_intervention->Clone();
+                di->AddRef();
+                di->Distribute( parent->GetInterventionsContext(), pICCO );
+                di->Release();
             }
         }
         // TODO: Calendar may be done, should be disposed of somehow. How about parent->Release()??? :)
@@ -282,7 +267,7 @@ namespace Kernel
         BaseIntervention::serialize( ar, obj );
         IVCalendar& cal = *obj;
         ar.labelElement("age2ProbabilityMap") & cal.age2ProbabilityMap;
-        ar.labelElement("actual_intervention_config") & cal.actual_intervention_config;
+        ar.labelElement("m_Interventions") & cal.m_Interventions;
         ar.labelElement("dropout") & cal.dropout;
         ar.labelElement("scheduleAges") & cal.scheduleAges;
     }

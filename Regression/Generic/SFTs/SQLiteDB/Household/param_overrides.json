@@ -7,7 +7,6 @@
                 "../../demographics_1000_overlay.json"
             ],
             "Enable_Demographics_Reporting": 1,
-            "Disable_IP_Whitelist": 1,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 1,
                 "Enable_Immunity": 0,

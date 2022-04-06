@@ -72,6 +72,7 @@ namespace Kernel
 
     // ENUM defs for Habitat_Type in VectorSpeciesParameters
     ENUM_DEFINE(VectorHabitatType, 
+        ENUM_VALUE_SPEC(NONE                                                , 0)
         ENUM_VALUE_SPEC(TEMPORARY_RAINFALL                                  , 1)
         ENUM_VALUE_SPEC(WATER_VEGETATION                                    , 2)
         ENUM_VALUE_SPEC(HUMAN_POPULATION                                    , 3)
@@ -100,20 +101,18 @@ namespace Kernel
 
     // State counters for feeding cycle, reporting, etc.
     ENUM_DEFINE(VectorStateEnum, 
-        ENUM_VALUE_SPEC(STATE_ADULT              , 1)
-        ENUM_VALUE_SPEC(STATE_INFECTED           , 2)
-        ENUM_VALUE_SPEC(STATE_INFECTIOUS         , 3)
-        ENUM_VALUE_SPEC(STATE_MALE               , 4)
-        ENUM_VALUE_SPEC(STATE_EGG                , 5)
-        ENUM_VALUE_SPEC(STATE_LARVA              , 6)
-        ENUM_VALUE_SPEC(STATE_IMMATURE           , 7))
+        ENUM_VALUE_SPEC(STATE_ADULT      , 1)
+        ENUM_VALUE_SPEC(STATE_INFECTED   , 2)
+        ENUM_VALUE_SPEC(STATE_INFECTIOUS , 3)
+        ENUM_VALUE_SPEC(STATE_MALE       , 4)
+        ENUM_VALUE_SPEC(STATE_EGG        , 5)
+        ENUM_VALUE_SPEC(STATE_LARVA      , 6)
+        ENUM_VALUE_SPEC(STATE_IMMATURE   , 7))
 
-    // USE EXTREME CAUTION in changing the values of the following genetic characteristics
-    // They are used in a bit-packing scheme in the VectorMatingStructure
-    // 1-bit for gender, 1-bit for sterility, 2-bits for Wolbachia, etc.
     ENUM_DEFINE(VectorGender,
         ENUM_VALUE_SPEC(VECTOR_FEMALE           , 0)
-        ENUM_VALUE_SPEC(VECTOR_MALE             , 1))
+        ENUM_VALUE_SPEC(VECTOR_MALE             , 1)
+        ENUM_VALUE_SPEC(VECTOR_BOTH_GENDERS     , 2))
 
     ENUM_DEFINE(VectorSterility,
         ENUM_VALUE_SPEC(VECTOR_FERTILE          , 0)

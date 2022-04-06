@@ -30,15 +30,15 @@ namespace Kernel
     {
     }
 
+    ScaleLarvalHabitat::~ScaleLarvalHabitat()
+    {
+    }
+
     void ScaleLarvalHabitat::Update( float dt )
     {
         if( !BaseNodeIntervention::UpdateNodesInterventionStatus() ) return;
 
-        // Do not decay the scaled habitat,
-        // although it can be overriden by another Distribute.
-
-        // Just push its effects to the NodeEventContext
-        ApplyEffects();
+        ApplyEffects( dt );
     }
 
     bool ScaleLarvalHabitat::Configure( const Configuration * inputJson )
@@ -47,20 +47,18 @@ namespace Kernel
 
         initConfigTypeMap("Larval_Habitat_Multiplier", &m_LHM, SLH_Larval_Habitat_Multiplier_DESC_TEXT);
     
-        // Don't call subclass SimpleVectorControlNode::Configure() because it will add cost_per_unit
-        return BaseNodeIntervention::Configure( inputJson );
+        // Don't call subclass SimpleVectorControlNode::Configure() because 
+        // it will add cost_per_unit plus other stuff
+        bool is_configured = BaseNodeIntervention::Configure( inputJson );
+        if( is_configured && !JsonConfigurable::_dryrun )
+        {
+        }
+        return is_configured;
     }
 
-    void ScaleLarvalHabitat::ApplyEffects()
+    void ScaleLarvalHabitat::ApplyEffects( float dt )
     {
-        if( invic )
-        {
-            invic->UpdateLarvalHabitatReduction( m_LHM );
-        }
-        else
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, 
-                                        "invic", "INodeVectorInterventionEffectsApply" );
-        }
+        release_assert( m_pINVIC != nullptr );
+        m_pINVIC->UpdateLarvalHabitatReduction( m_LHM );
     }
 }

@@ -65,18 +65,6 @@ std::string PropertiesToStringCsvFriendly( const tProperties& properties )
 
 namespace Kernel
 {
-    template <typename T, std::size_t N>
-    inline std::size_t sizeof_array( T (&)[N] ) { return N; }
-
-    static const char* KEY_WHITE_LIST_TMP[] = { "Age_Bin", 
-                                                "Accessibility", 
-                                                "Geographic",
-                                                "Place",
-                                                "Risk",
-                                                "QualityOfCare",
-                                                "HasActiveTB",
-                                                "InterventionStatus"  };
-
     // ------------------------------------------------------------------------
     // --- KeyValueInternal
     // ------------------------------------------------------------------------
@@ -418,8 +406,6 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        ip_factory->CheckIpKeyInWhitelist( ip_key_str, m_Key, num_values );
-
         float total_prob = 0.0;
         for( int val_idx = 0; val_idx < num_values; val_idx++ )
         {
@@ -475,12 +461,9 @@ namespace Kernel
 
     BaseFactory::BaseFactory()
         : m_ExternalNodeIdOfFirst( UINT32_MAX )
-        , m_WhiteListEnabled( true )
         , m_IPList()
         , m_KeyValueMap()
-        , m_KeyWhiteList()
     {
-        m_KeyWhiteList = std::set< std::string> ( KEY_WHITE_LIST_TMP, KEY_WHITE_LIST_TMP+sizeof_array(KEY_WHITE_LIST_TMP) );
     }
 
     BaseFactory::~BaseFactory()
@@ -536,11 +519,8 @@ namespace Kernel
                                         const char* ip_name_key_str,
                                         BaseFactory::read_function_t read_func,
                                         uint32_t externalNodeId,
-                                        const JsonObjectDemog& rDemog,
-                                        bool isWhitelistEnabled )
+                                        const JsonObjectDemog& rDemog )
     {
-        m_WhiteListEnabled = isWhitelistEnabled;
-
         if( externalNodeId == UINT32_MAX )
         {
             std::stringstream ss;
@@ -557,17 +537,6 @@ namespace Kernel
         if( !rDemog.Contains( ip_key_str ) )
         {
             return;
-        }
-
-        // Check that we're not using more than 3 axes in whitelist mode
-        if( rDemog[ ip_key_str ].size() > 3 && isWhitelistEnabled )
-        {
-            std::ostringstream msg;
-            msg << "Too many " << ip_key_str << " (" 
-                << rDemog[ ip_key_str ].size()
-                << "). Max is 3."
-                << std::endl;
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
         if( first_time )
@@ -610,33 +579,6 @@ namespace Kernel
                 {
                     p_ip->Read( idx, externalNodeId, rDemog[ ip_key_str ][ idx ], true );
                 }
-            }
-        }
-    }
-
-    void BaseFactory::CheckIpKeyInWhitelist( const char* ip_key_str, const std::string& rKey, int numValues )
-    {
-        if( m_WhiteListEnabled )
-        {
-            if( m_KeyWhiteList.count( rKey ) == 0 )
-            {
-                std::ostringstream msg;
-                msg << "Invalid " << ip_key_str << " key '" << rKey << "' found in demographics file. Use one of: ";
-                for (auto& key : m_KeyWhiteList)
-                {
-                    msg << "'" << key<< "', " ;
-                }
-                std::string msg_str = msg.str();
-                msg_str = msg_str.substr( 0, msg_str.length()-2 );
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
-
-            if (((numValues > 5) && (rKey != "Geographic") && (rKey != "InterventionStatus")) || (numValues > 125))
-            {
-                std::ostringstream msg;
-                msg << "Too many values for Individual Property key " << rKey
-                    << ".  This key has " << numValues << " and the limit is 5, except for Geographic & InterventionStatus, which is 125." << std::endl;
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
             }
         }
     }

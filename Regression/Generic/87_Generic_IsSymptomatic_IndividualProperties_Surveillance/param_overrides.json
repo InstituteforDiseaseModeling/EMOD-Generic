@@ -5,7 +5,6 @@
         "Demographics_Filenames": [
             "demographics.json"
         ],
-        "Disable_IP_Whitelist": 1,
         "Enable_Demographics_Reporting": 0,
         "Enable_Property_Output": 1,
         "Enable_Report_Coordinator_Event_Recorder": 1,

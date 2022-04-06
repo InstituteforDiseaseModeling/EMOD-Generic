@@ -41,19 +41,11 @@ namespace Kernel
         initConfigComplexType("Changing_Effect", &changing_config, TW_CE_DESC_TEXT );
 
         bool configured = BaseIntervention::Configure( inputJson );
-        if( !JsonConfigurable::_dryrun )
+        if( configured && !JsonConfigurable::_dryrun )
         {
-            auto tmp_waning = Configuration::CopyFromElement( changing_config._json, inputJson->GetDataLocation() );
-            // Would really like to find the right way to see if user omitted the Changing_Config instead of using exception handling.
-            try {
-                changing_effect = WaningEffectFactory::CreateInstance( tmp_waning );
-            }
-            catch( JsonTypeConfigurationException e )
-            {
-                LOG_INFO_F( "Looks like we're just going with fixed-value effect and not a variable-over-time effect structure.\n" );
-            }
-            delete tmp_waning;
-            tmp_waning = nullptr;
+            changing_effect = WaningEffectFactory::getInstance()->CreateInstance( changing_config._json,
+                                                                                    inputJson->GetDataLocation(),
+                                                                                    "Changing_Effect" );
         }
         LOG_DEBUG_F( "Vaccine configured with type %d and effect %f.\n", vaccine_mode, effect );
         return configured;

@@ -353,7 +353,7 @@ namespace Kernel
         }
     }
 
-    void Node::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled )
+    void Node::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory )
     {
         // Parameters set from an input filestream
         // TODO: Jeff, this is a bit hack-y that I had to do this. is there a better way?
@@ -376,7 +376,7 @@ namespace Kernel
         LOG_DEBUG( "Looking for Individual_Properties in demographics.json file(s)\n" );
         if( IPFactory::GetInstance() )
         {
-            IPFactory::GetInstance()->Initialize( GetExternalID(), demographics.GetJsonObject(), white_list_enabled );
+            IPFactory::GetInstance()->Initialize( GetExternalID(), demographics.GetJsonObject() );
         }
         //////////////////////////////////////////////////////////////////////////////////////
 
@@ -847,7 +847,8 @@ namespace Kernel
         }
         else if(GetRng()->SmartDraw(delta_infectionrate/MINIMUM_INFECTIVITY_ADD))
         {
-            mInfectivity  += MINIMUM_INFECTIVITY_ADD*statPop;
+            infectivity_addition = MINIMUM_INFECTIVITY_ADD*statPop;
+            mInfectivity  += infectivity_addition;
             infectionrate += MINIMUM_INFECTIVITY_ADD;
         }
 

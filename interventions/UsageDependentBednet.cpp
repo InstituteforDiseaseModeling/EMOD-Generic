@@ -71,6 +71,11 @@ namespace Kernel
             json::Array config_array_json( qi.As<json::Array>() );
             for( int i = 0; i < config_array_json.Size(); i++ )
             {
+                if( (config_array_json[ i ].Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(config_array_json[ i ]).Empty() )
+                {
+                    throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Usage_Config_List' element cannot be empty.");
+                }
+
                 json::QuickInterpreter config_qi( config_array_json[ i ] );
                 WaningConfig* p_config = new WaningConfig( &config_qi );
                 m_ConfigList.push_back( p_config );
@@ -140,10 +145,17 @@ namespace Kernel
 
         if( configured && !JsonConfigurable::_dryrun )
         {
+            int i = 0;
             for( auto p_config : usage_config_list.GetList() )
             {
-                IWaningEffect* p_effect = WaningEffectFactory::CreateInstance( *p_config );
+                std::stringstream param_name;
+                param_name << "Usage_Config_List[" << i << "]";
+
+                IWaningEffect* p_effect = WaningEffectFactory::getInstance()->CreateInstance( p_config->_json,
+                                                                                              inputJson->GetDataLocation(),
+                                                                                              param_name.str().c_str() );
                 m_UsageEffectList.push_back( p_effect );
+                ++i;
             }
         }
 
@@ -152,14 +164,14 @@ namespace Kernel
 
     bool UsageDependentBednet::ConfigureEvents( const Configuration * inputJson )
     {
-        DistributionFunction::Enum expiration_function( DistributionFunction::NOT_INITIALIZED );
+        DistributionFunction::Enum expiration_function( DistributionFunction::CONSTANT_DISTRIBUTION );
         initConfig("Expiration_Period_Distribution", expiration_function, inputJson, MetadataDescriptor::Enum("Expiration_Distribution_Type", UDBednet_Expiration_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)));                 
         m_ExpirationDuration = DistributionFactory::CreateDistribution( this, expiration_function, "Expiration_Period", inputJson );
 
-
         initConfig( "Received_Event", m_TriggerReceived, inputJson, MetadataDescriptor::Enum("Received_Event", UDBednet_Received_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
-        initConfig( "Using_Event", m_TriggerUsing, inputJson, MetadataDescriptor::Enum("Using_Event", UDBednet_Using_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
-        initConfig( "Discard_Event", m_TriggerDiscard, inputJson, MetadataDescriptor::Enum("Discard_Event", UDBednet_Discard_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Using_Event",    m_TriggerUsing,    inputJson, MetadataDescriptor::Enum("Using_Event",    UDBednet_Using_Event_DESC_TEXT,    MDD_ENUM_ARGS( EventTrigger ) ) );
+        initConfig( "Discard_Event",  m_TriggerDiscard,  inputJson, MetadataDescriptor::Enum("Discard_Event",  UDBednet_Discard_Event_DESC_TEXT,  MDD_ENUM_ARGS( EventTrigger ) ) );
+
         return JsonConfigurable::Configure( inputJson ); // AbstractBednet is responsible for calling BaseIntervention::Configure()
     }
 
@@ -171,6 +183,14 @@ namespace Kernel
         {
             m_ExpirationTimer = m_ExpirationDuration->Calculate( context->GetParent()->GetRng() );
             BroadcastEvent( m_TriggerReceived );
+
+            // ----------------------------------------------------------------------------
+            // --- Assuming dt=1.0 and decrementing timer so that a timer of zero expires
+            // --- when it is distributed but is not used.  A timer of one should be used
+            // --- the day it is distributed but expire:
+            // ---    distributed->used->expired on all same day
+            // ----------------------------------------------------------------------------
+            m_ExpirationTimer.Decrement( 1.0 );
         }
         return distributed;
     }
@@ -179,7 +199,8 @@ namespace Kernel
     {
         float usage_effect = GetEffectUsage();
 
-        bool is_using = parent->GetRng()->SmartDraw( usage_effect );
+        // Check expiratin in case it expired when it was distributed
+        bool is_using = !m_TimerHasExpired && parent->GetRng()->SmartDraw( usage_effect );
 
         if( is_using )
         {
