@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "IReport.h"
 #include "Log.h"
-#include "BoostLibWrapper.h"
 #include "ChannelDataMap.h"
 
 class BaseChannelReport : public Kernel::BaseReport

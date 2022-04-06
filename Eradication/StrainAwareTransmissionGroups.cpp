@@ -132,7 +132,7 @@ namespace Kernel
         populationSizeByGroup[membership.group] += delta;
     }
 
-    void StrainAwareTransmissionGroups::Build(float contagionDecayRate, int numberOfClades, int numberOfGenomes)
+    void StrainAwareTransmissionGroups::Build(float contagionDecayRate, uint32_t numberOfClades, uint64_t numberOfGenomes)
     {
         buildScalingMatrix();
         this->contagionDecayRate = contagionDecayRate;
@@ -182,7 +182,7 @@ namespace Kernel
         buildScalingMatrix();
     }
 
-    void StrainAwareTransmissionGroups::allocateAccumulators( NaturalNumber numberOfClades, NaturalNumber numberOfGenomes )
+    void StrainAwareTransmissionGroups::allocateAccumulators( uint32_t numberOfClades, uint64_t numberOfGenomes )
     {
         LOG_VALID( "AllocateAccumulators called.\n" );
         cladeCount  = numberOfClades;
@@ -219,8 +219,8 @@ namespace Kernel
     {
         if ( amount > 0 )
         {
-            int iClade    = strain.GetCladeID();
-            int genomeId  = strain.GetGeneticID();
+            uint32_t iClade    = strain.GetCladeID();
+            uint64_t genomeId  = strain.GetGeneticID();
 
             if ( iClade >= cladeCount )
             {
@@ -248,7 +248,7 @@ namespace Kernel
     void StrainAwareTransmissionGroups::ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t membership, float deltaTee, TransmissionRoute::Enum txRoute) const
     {
         //LOG_DEBUG_F( "ExposeToContagion\n" );
-        for (int iClade = 0; iClade < cladeCount; iClade++)
+        for (uint32_t iClade = 0; iClade < cladeCount; iClade++)
         {
             float forceOfInfection = 0.0f;
             const ContagionAccumulator_t& forceOfInfectionByGroup = forceOfInfectionByCladeAndGroup[iClade];
@@ -270,7 +270,7 @@ namespace Kernel
         std::vector<size_t> indices;
         getGroupIndicesForProperty( property_value, propertyToValuesMap, indices );
         float total = 0.0f;
-        for (size_t iClade = 0; iClade < cladeCount; ++iClade)
+        for (uint32_t iClade = 0; iClade < cladeCount; ++iClade)
         {
             const auto& contagion = forceOfInfectionByCladeAndGroup[iClade];
             total += std::accumulate(indices.begin(), indices.end(), 0.0f, [&](float init, size_t index) { return init + contagion[index]; });
@@ -279,10 +279,27 @@ namespace Kernel
         return total;
     }
 
+    void StrainAwareTransmissionGroups::LoadSparseRepVecs(sparse_contagion_repr& inf_rep)
+    {
+        for(uint32_t iClade = 0; iClade < cladeCount; ++iClade)
+        {
+            for(size_t iGroup = 0; iGroup < getGroupCount(); ++iGroup)
+            {
+                if(newlyDepositedContagionByCladeAndGroup[iClade][iGroup] > 0)
+                {
+                    for(auto gene_inf : newContagionByCladeGroupAndGenome[iClade][iGroup])
+                    {
+                        inf_rep.add(iClade, gene_inf.first, iGroup, gene_inf.second);
+                    }
+                }
+            }
+        }
+    }
+
     void StrainAwareTransmissionGroups::CorrectInfectivityByGroup(float infectivityMultiplier, TransmissionGroupMembership_t membership)
     {
         // By clade (genomes aggregated)
-        for (int iClade = 0; iClade < cladeCount; iClade++)
+        for (uint32_t iClade = 0; iClade < cladeCount; iClade++)
         {
             int iGroup = membership.group;
             LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d] Route:0, Group:%d, ContagionBefore = %f, infectivityMultiplier = %f\n", iClade, iGroup, newlyDepositedContagionByCladeAndGroup[iClade][iGroup], infectivityMultiplier);
@@ -291,13 +308,13 @@ namespace Kernel
         }
 
         // By individual genome
-        for (int iClade = 0; iClade < cladeCount; iClade++)
+        for (uint32_t iClade = 0; iClade < cladeCount; iClade++)
         {
             GroupGenomeMap_t& shedClade = newContagionByCladeGroupAndGenome[iClade];
             int iGroup = membership.group;
             for (auto& entry : shedClade[iGroup])
             {
-                uint32_t genomeId = entry.first;
+                uint64_t genomeId = entry.first;
                 LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d][Route:0][Group:%d][Genome:%d], ContagionBefore = %f, infectivityMultiplier = %f\n", iClade, iGroup, genomeId, shedClade[iGroup][genomeId], infectivityMultiplier);
                 entry.second *= infectivityMultiplier;
                 LOG_DEBUG_F("CorrectInfectivityByGroup: [Clade:%d][Route:0][Group:%d][Genome:%d], ContagionAfter  = %f\n", iClade, iGroup, genomeId, shedClade[iGroup][genomeId]);
@@ -537,7 +554,7 @@ namespace Kernel
 
     StrainAwareTransmissionGroups::GenomePopulationImpl::GenomePopulationImpl(
         RANDOMBASE* prng,
-    int   _cladeId,
+    uint32_t _cladeId,
     float _quantity,
     const GenomeMap_t& _genomeDistribution
     )
@@ -545,33 +562,32 @@ namespace Kernel
         , cladeId(_cladeId)
         , contagionQuantity(_quantity)
         , genomeDistribution(_genomeDistribution)
-    {
-    }
+    { }
 
-    std::string StrainAwareTransmissionGroups::GenomePopulationImpl::GetName( void ) const
+    std::pair<uint32_t, uint64_t> StrainAwareTransmissionGroups::GenomePopulationImpl::GetStrainName( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
     }
 
-    int StrainAwareTransmissionGroups::GenomePopulationImpl::GetCladeID( void ) const
+    uint32_t StrainAwareTransmissionGroups::GenomePopulationImpl::GetCladeID( void ) const
     {
         return cladeId;
     }
 
-    int StrainAwareTransmissionGroups::GenomePopulationImpl::GetGeneticID( void ) const
+    uint64_t StrainAwareTransmissionGroups::GenomePopulationImpl::GetGeneticID( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
     }
 
-    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetCladeID( int cladeID )
+    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetCladeID( uint32_t cladeID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
     }
 
-    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetGeneticID( int geneticID )
+    void StrainAwareTransmissionGroups::GenomePopulationImpl::SetGeneticID( uint64_t geneticID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for GenomePopulationImpl" );
@@ -598,7 +614,7 @@ namespace Kernel
         float rand = pRNG->e();
         float target = totalRawContagion * rand;
         float contagionSeen = 0.0f;
-        int   genomeId = 0;
+        uint64_t genomeId = 0;
 
         strainId->SetCladeID(cladeId);
 

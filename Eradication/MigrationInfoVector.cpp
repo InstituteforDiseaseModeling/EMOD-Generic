@@ -292,12 +292,11 @@ namespace Kernel
         }
     }
 
-    IMigrationInfoVector* MigrationInfoFactoryVector::CreateMigrationInfoVector( INodeContext *pParentNode, 
-                                                                                 const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
+    IMigrationInfoVector* MigrationInfoFactoryVector::CreateMigrationInfoVector( INodeContext *pParentNode )
     {
         bool is_fixed_rate = true ;
 
-        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, rNodeIdSuidMap, m_InfoFileListVector, &is_fixed_rate );
+        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, m_InfoFileListVector, &is_fixed_rate );
 
         IMigrationInfoVector* p_new_migration_info;
 
@@ -332,8 +331,7 @@ namespace Kernel
     MigrationInfoFactoryVectorDefault::~MigrationInfoFactoryVectorDefault()
     { }
 
-    IMigrationInfoVector* MigrationInfoFactoryVectorDefault::CreateMigrationInfoVector( INodeContext *pParentNode, 
-                                                                                        const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
+    IMigrationInfoVector* MigrationInfoFactoryVectorDefault::CreateMigrationInfoVector( INodeContext *pParentNode )
     {
         IMigrationInfoVector* p_new_migration_info_vec;
 
@@ -341,7 +339,7 @@ namespace Kernel
 
         if( mp->enable_mig_vec_local)
         {
-            std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, rNodeIdSuidMap, mp->mig_mult_vec_local );
+            std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, mp->mig_mult_vec_local );
 
             MigrationInfoVector* p_miv = _new_ MigrationInfoVector( pParentNode, ModiferEquationType::LINEAR, 1.0f, 1.0f, 1.0f );
             p_miv->Initialize( rate_data );

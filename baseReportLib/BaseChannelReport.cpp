@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FileSystem.h"
 #include "Exceptions.h"
 #include "ProgVersion.h"
-#include "BoostLibWrapper.h"
 #include "RapidJsonImpl.h"
 #include "Serializer.h"
 

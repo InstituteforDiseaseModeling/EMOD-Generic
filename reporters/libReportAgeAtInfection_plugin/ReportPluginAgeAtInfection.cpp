@@ -13,84 +13,63 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "IIndividualHuman.h"
 #include "FileSystem.h"
+#include "INodeContext.h"
 
 #include "DllInterfaceHelper.h"
 #include "DllDefs.h"
 #include "ProgVersion.h"
 #include "FactorySupport.h" // for DTK_DLLEXPORT
 
+//******************************************************************************
+
 using namespace std;
 using namespace json;
 
-SETUP_LOGGING( "ReportPluginAgeAtInfection" ) // <<< Name of this file
+//******************************************************************************
 
-// You can put 0 or more valid Sim types into _sim_types but has to end with NULL
-// Refer to DllLoader.h for current SIMTYPES_MAXNUM
-// but we don't include DllLoader.h to avoid compiling redefinition errors.
-static const char * _sim_types[] = {"GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "POLIO_SIM", "TBHIV_SIM", NULL};
+SETUP_LOGGING( "ReportPluginAgeAtInfection" )
 
-static const std::string _report_name = "AgeAtInfectionReport.json";
+static const char* _sim_types[] = {"GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "POLIO_SIM", "TBHIV_SIM", NULL};
 
-static const char * _age_at_infection_label = "AgeAtInfection";
-static const char * _time_of_infection_label = "TimeOfInfection";
-static const char * _weight_label = "MCWeight";
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-Kernel::report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportPluginAgeAtInfection()); // <<< Report to create
-};
-
-Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-
-//
-// This is the interface function from the DTK.
-//
-DTK_DLLEXPORT
-char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT
-const char *
-__cdecl
-GetType()
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    std::ostringstream oss;
-    oss << "GetType called for " << _module << std::endl;
-    LOG_INFO( oss.str().c_str() );
-    return _module;
+    return new ReportPluginAgeAtInfection();
 }
-
-DTK_DLLEXPORT void __cdecl
-InitReportEnvironment(
-    const Environment * pEnv
-)
-{
-    Environment::setInstance(const_cast<Environment*>(pEnv));
-}
-
 
 #ifdef __cplusplus
 }
 #endif
+
+//******************************************************************************
 
 /////////////////////////
 // Initialization methods
@@ -98,7 +77,7 @@ InitReportEnvironment(
 
 
 ReportPluginAgeAtInfection::ReportPluginAgeAtInfection()
-: BaseChannelReport( _report_name )
+: BaseChannelReport( "AgeAtInfectionReport.json" )
 , sampling_ratio(1.0f)
 {
     LOG_INFO( "ReportPluginAgeAtInfection ctor\n" );
@@ -131,7 +110,7 @@ ReportPluginAgeAtInfection::LogIndividualData(
     if (individual->GetNewInfectionState() == NewInfectionState::NewAndDetected || individual->GetNewInfectionState() == NewInfectionState::NewInfection)
     {
         LOG_DEBUG_F("Individual's New infection state is %d\n", (int)individual->GetNewInfectionState());
-        if( sampling_ratio == 1.0 || ( DLL_HELPER.GetRandomNumberGenerator() && DLL_HELPER.GetRandomNumberGenerator()->e() < sampling_ratio) )
+        if( sampling_ratio == 1.0 || ( individual->GetParent()->GetRng()->e() < sampling_ratio) )
         {
             ages.push_back(individual->GetAge());
         }
@@ -215,9 +194,9 @@ ReportPluginAgeAtInfection::populateSummaryDataUnitsMap(
 )
 {
     LOG_INFO( "populateSummaryDataUnitsMap\n" );
-    units_map[_age_at_infection_label]                        = "Age at Infection";
-    units_map[_time_of_infection_label]                       = "Time of Infection";
-    units_map[_weight_label]                                  = "MC Weight";
+    units_map["AgeAtInfection"]                        = "Age at Infection";
+    units_map["TimeOfInfection"]                       = "Time of Infection";
+    units_map["MCWeight"]                                  = "MC Weight";
 }
 
 // not sure whether to leave this in custom demo subclass

@@ -28,7 +28,6 @@ using namespace Kernel;
 
 SETUP_LOGGING( "NodeTyphoid" )
 
-//#define ENABLE_PYTHOID 1
 namespace Kernel
 {
     NodeTyphoid::NodeTyphoid() : NodeEnvironmental()
@@ -67,13 +66,6 @@ namespace Kernel
 
     NodeTyphoid::~NodeTyphoid(void)
     {
-    }
-
-    void NodeTyphoid::SetupIntranodeTransmission()
-    {
-        LOG_DEBUG_F("Number of clades: %d\n",   InfectionConfig::number_clades);
-        LOG_DEBUG_F("Number of genomes:  %d\n", InfectionConfig::number_genomes);
-        NodeEnvironmental::SetupIntranodeTransmission();
     }
 
     void NodeTyphoid::resetNodeStateCounters(void)

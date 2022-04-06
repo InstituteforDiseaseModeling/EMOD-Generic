@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 #include <vector>
 
-#include "BoostLibWrapper.h"
 #include "Configure.h"
 #include "Properties.h"
 #include "PropertiesString.h"

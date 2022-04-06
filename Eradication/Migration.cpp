@@ -19,6 +19,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmString.h"
 #include "RANDOM.h"
 #include "INodeContext.h"
+#include "ISimulationContext.h"
 
 
 
@@ -202,6 +203,9 @@ namespace Kernel
             NormalizeRates( m_RateCDF, m_TotalRate );
         }
     }
+
+    void MigrationInfoFixedRate::SaveRawRates(std::vector<float>& r_rate_cdf)
+    { }
 
     void MigrationInfoFixedRate::SetContextTo(INodeContext* _parent)
     { 
@@ -439,10 +443,10 @@ namespace Kernel
         }
     }
 
-    bool MigrationInfoFile::ReadData( ExternalNodeId_t fromNodeID, 
-                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeidSuidMap,
-                                      std::vector<std::vector<MigrationRateData>>& rRateData )
+    bool MigrationInfoFile::ReadData( INodeContext* from_node_ptr, std::vector<std::vector<MigrationRateData>>& rRateData )
     {
+        ExternalNodeId_t fromNodeID   = from_node_ptr->GetExternalID();
+
         bool is_fixed_rate = true;
         if( m_IsEnabled && (m_Offsets.count( fromNodeID ) > 0) )
         {
@@ -508,17 +512,7 @@ namespace Kernel
                         if( array_id[ i ] > 0 )
                         {
                             ExternalNodeId_t to_node_id_external = array_id[ i ];
-                            if( rNodeidSuidMap.left.count( to_node_id_external ) == 0 )
-                            {
-                                // -----------------------------------------------------------------------------------
-                                // --- Is this the right thing to do?  In the future, could there ever be extra links 
-                                // --- in a migration file to nodes not in the suid-map for this simulation?
-                                // -----------------------------------------------------------------------------------
-                                std::stringstream ss;
-                                ss << "NodeId, " << array_id[i] << ", found in " << m_Filename << ", is not a node in the simulation.";
-                                throw GeneralConfigurationException(  __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-                            }
-                            suids::suid to_node_id_suid = rNodeidSuidMap.left.at( to_node_id_external );
+                            suids::suid      to_node_id_suid     = from_node_ptr->GetParent()->GetNodeSuid(to_node_id_external);
                             float rate = array_rt[i] * m_xModifier; // migration tuning knob
 
                             if( rRateData[ ig ].size() <= node_index )
@@ -873,12 +867,11 @@ static const char* NODE_OFFSETS          = "NodeOffsets";            // required
         }
     }
 
-    IMigrationInfo* MigrationInfoFactoryFile::CreateMigrationInfo( INodeContext *pParentNode, 
-                                                                   const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
+    IMigrationInfo* MigrationInfoFactoryFile::CreateMigrationInfo( INodeContext *pParentNode )
     {
         bool is_fixed_rate = true ;
 
-        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, rNodeIdSuidMap, m_InfoFileList, &is_fixed_rate );
+        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, m_InfoFileList, &is_fixed_rate );
 
         // -------------------------------------------------------------------------
         // --- it's possible that all 4 migration-types are empty for a given node,
@@ -913,33 +906,20 @@ static const char* NODE_OFFSETS          = "NodeOffsets";            // required
         return p_new_migration_info;
     }
 
-    std::vector<std::vector<MigrationRateData>> MigrationInfoFactoryFile::GetRateData( INodeContext *pParentNode, 
-                                                                                       const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap,
+    std::vector<std::vector<MigrationRateData>> MigrationInfoFactoryFile::GetRateData( INodeContext *pParentNode,
                                                                                        std::vector<MigrationInfoFile*>& infoFileList,
                                                                                        bool* pIsFixedRate )
     {
-        suids::suid from_node_suid = pParentNode->GetSuid();
-
-        if( rNodeIdSuidMap.right.count( from_node_suid ) == 0)
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "rNodeIdSuidMap.right.count(node_suid)", 0, "node_suid", from_node_suid.data );
-        }
-
-        ExternalNodeId_t from_node_id = rNodeIdSuidMap.right.at( from_node_suid );
-
-        std::vector<bool> demog_enabled = pParentNode->GetMigrationTypeEnabledFromDemographics();
-        release_assert( demog_enabled.size() == infoFileList.size() );
-
         *pIsFixedRate = true;
         std::vector<std::vector<MigrationRateData>> rate_data;
         for( int i = 0; i < infoFileList.size(); i++ )
         {
-            if( demog_enabled[i] && (infoFileList[i] != nullptr) )
+            if(infoFileList[i] != nullptr)
             {
                 MigrationInfoFile* p_mif = dynamic_cast<MigrationInfoFile*>(infoFileList[i]);
                 release_assert( p_mif );
 
-                *pIsFixedRate &= p_mif->ReadData( from_node_id, rNodeIdSuidMap, rate_data );
+                *pIsFixedRate &= p_mif->ReadData( pParentNode, rate_data );
             }
         }
 
@@ -979,15 +959,13 @@ static const char* NODE_OFFSETS          = "NodeOffsets";            // required
     void MigrationInfoFactoryDefault::Initialize( const string& idreference )
     { }
 
-    IMigrationInfo* MigrationInfoFactoryDefault::CreateMigrationInfo( INodeContext *pParentNode, 
-                                                                      const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
+    IMigrationInfo* MigrationInfoFactoryDefault::CreateMigrationInfo( INodeContext *pParentNode )
     {
-        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, rNodeIdSuidMap,
-                                                                             MigrationConfig::GetMigrationParams()->mig_mult_local );
+        std::vector<std::vector<MigrationRateData>> rate_data = GetRateData( pParentNode, GetParams()->mig_mult_local );
 
         IMigrationInfo* p_new_migration_info;
 
-        if( MigrationConfig::GetMigrationParams()->enable_mig_local)
+        if( GetParams()->enable_mig_local)
         {
             MigrationInfoFixedRate* p_mifr = _new_ MigrationInfoFixedRate( pParentNode );
             p_mifr->Initialize( rate_data );
@@ -1001,19 +979,10 @@ static const char* NODE_OFFSETS          = "NodeOffsets";            // required
         return p_new_migration_info;
     }
 
-    std::vector<std::vector<MigrationRateData>> MigrationInfoFactoryDefault::GetRateData( INodeContext *pParentNode, 
-                                                                                          const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap,
-                                                                                          float modifier )
+    std::vector<std::vector<MigrationRateData>> MigrationInfoFactoryDefault::GetRateData( INodeContext *pParentNode, float modifier )
     {
-        suids::suid from_node_suid = pParentNode->GetSuid();
-
-        if(rNodeIdSuidMap.right.count( from_node_suid ) == 0)
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "rNodeIdSuidMap.right.count(from_node_suid)", 0, "from_node_suid", from_node_suid.data );
-        }
-
-        ExternalNodeId_t from_node_id = rNodeIdSuidMap.right.at( from_node_suid );
-
+        suids::suid      from_node_suid = pParentNode->GetSuid();
+        ExternalNodeId_t from_node_id   = pParentNode->GetExternalID();
 
         int offsets[]    = {  -(m_TorusSize+1), -m_TorusSize, -(m_TorusSize-1),
                                         -1,                           1,
@@ -1061,8 +1030,8 @@ static const char* NODE_OFFSETS          = "NodeOffsets";            // required
             release_assert( from_node_id + offsets[i] >= 1 );
             release_assert( from_node_id + offsets[i] <= uint32_t(m_TorusSize * m_TorusSize) );
 
-            ExternalNodeId_t to_node_id = from_node_id + offsets[i];
-            suids::suid to_node_suid = rNodeIdSuidMap.left.at( to_node_id );
+            ExternalNodeId_t to_node_id   = from_node_id + offsets[i];
+            suids::suid      to_node_suid = pParentNode->GetParent()->GetNodeSuid(to_node_id);
 
             MigrationRateData mrd( to_node_suid, MigrationType::LOCAL_MIGRATION, InterpolationType::LINEAR_INTERPOLATION );
             mrd.AddRate( MAX_HUMAN_AGE, basicrate );

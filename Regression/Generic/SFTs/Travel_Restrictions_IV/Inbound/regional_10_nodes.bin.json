@@ -1,0 +1,12 @@
+{
+    "Metadata": {
+        "Author": "yechen",
+        "NodeCount": 10,
+        "IdReference": "Gridded world grump2.5arcmin",
+        "DateCreated": "Thu Jul 29 13:23:13 2021",
+        "Tool": "convert_txt_to_bin.py",
+        "DatavalueCount": 1,
+        "MigrationType": "REGIONAL_MIGRATION"
+    },
+    "NodeOffsets": "0000000100000000000000020000000C000000030000001800000004000000240000000500000030000000060000003C0000000700000048000000080000005400000009000000600000000A0000006C"
+}

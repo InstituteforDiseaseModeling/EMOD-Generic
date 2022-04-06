@@ -63,10 +63,9 @@ namespace Kernel
     }
 
     BaseIntervention::BaseIntervention()
-        : parent( nullptr )
+        : parent(nullptr)
         , name()
         , cost_per_unit(0.0f)
-        , occurs_pre_infectivity(false)
         , expired(false)
         , dont_allow_duplicates(false)
         , enable_iv_replacement(false)
@@ -79,20 +78,19 @@ namespace Kernel
         initSimTypes( 1, "*" );
     }
 
-    BaseIntervention::BaseIntervention( const BaseIntervention& master )
+    BaseIntervention::BaseIntervention( const BaseIntervention& original )
         : JsonConfigurable()
         , parent(nullptr)
-        , name( master.name )
-        , cost_per_unit( master.cost_per_unit )
-        , occurs_pre_infectivity( master.occurs_pre_infectivity )
-        , expired( master.expired )
-        , dont_allow_duplicates( master.dont_allow_duplicates )
-        , enable_iv_replacement( master.enable_iv_replacement )
-        , first_time( master.first_time )
-        , disqualifying_properties( master.disqualifying_properties )
-        , status_property( master.status_property )
-        , event_trigger_distributed( master.event_trigger_distributed )
-        , event_trigger_expired( master.event_trigger_expired )
+        , name(original.name)
+        , cost_per_unit(original.cost_per_unit)
+        , expired(original.expired)
+        , dont_allow_duplicates(original.dont_allow_duplicates)
+        , enable_iv_replacement(original.enable_iv_replacement)
+        , first_time(original.first_time)
+        , disqualifying_properties(original.disqualifying_properties)
+        , status_property(original.status_property)
+        , event_trigger_distributed(original.event_trigger_distributed)
+        , event_trigger_expired(original.event_trigger_expired)
     { }
 
     BaseIntervention::~BaseIntervention()
@@ -207,6 +205,8 @@ namespace Kernel
             assert(ic);
             if( ic->GiveIntervention(this) )
             {
+                wasDistributed = true;
+
                 // Need to get Individual pointer from interventions container pointer. Try parent.
                 IIndividualHumanEventContext * pIndiv = (context->GetParent())->GetEventContext();
 
@@ -219,8 +219,6 @@ namespace Kernel
                 {
                     pIndiv->GetNodeEventContext()->GetIndividualEventBroadcaster()->TriggerObservers(pIndiv, event_trigger_distributed);
                 }
-
-                wasDistributed = true;
             }
         } 
         else
@@ -278,7 +276,6 @@ namespace Kernel
         BaseIntervention& intervention = *obj;
         ar.labelElement( "name" )                       & intervention.name;
         ar.labelElement( "cost_per_unit" )              & intervention.cost_per_unit;
-        ar.labelElement( "occurs_pre_infectivity" )     & intervention.occurs_pre_infectivity;
         ar.labelElement( "expired" )                    & intervention.expired;
         ar.labelElement( "dont_allow_duplicates" )      & intervention.dont_allow_duplicates;
         ar.labelElement( "enable_iv_replacement" )      & intervention.enable_iv_replacement;
@@ -298,12 +295,30 @@ namespace Kernel
         , name()
         , cost_per_unit(0.0f)
         , expired(false)
+        , dont_allow_duplicates(false)
+        , enable_iv_replacement(false)
         , first_time(true)
         , disqualifying_properties()
         , status_property()
     {
         initSimTypes( 1, "*" );
     }
+
+    BaseNodeIntervention::BaseNodeIntervention( const BaseNodeIntervention& original )
+        : JsonConfigurable()
+        , parent(nullptr)
+        , name(original.name)
+        , cost_per_unit(original.cost_per_unit)
+        , expired(original.expired)
+        , dont_allow_duplicates(original.dont_allow_duplicates)
+        , enable_iv_replacement(original.enable_iv_replacement)
+        , first_time(original.first_time)
+        , disqualifying_properties(original.disqualifying_properties)
+        , status_property(original.status_property)
+    { }
+
+    BaseNodeIntervention::~BaseNodeIntervention()
+    { }
 
     bool BaseNodeIntervention::Configure( const Configuration * inputJson )
     {
@@ -322,6 +337,9 @@ namespace Kernel
         std::string default_name = name;
 
         initConfigTypeMap( "Intervention_Name", &name, Intervention_Name_DESC_TEXT, default_name );
+
+        initConfigTypeMap( "Dont_Allow_Duplicates",           &dont_allow_duplicates,   Dont_Allow_Duplicates_DESC_TEXT,           false );
+        initConfigTypeMap( "Enable_Intervention_Replacement", &enable_iv_replacement,   Enable_Intervention_Replacement_DESC_TEXT, false, "Dont_Allow_Duplicates" );
 
         jsonConfigurable::tDynamicStringSet tmp_disqualifying_properties;
         initConfigTypeMap( "Disqualifying_Properties", &tmp_disqualifying_properties, NP_Disqualifying_Properties_DESC_TEXT );
@@ -368,21 +386,27 @@ namespace Kernel
         expired = isExpired;
     }
 
-    void
-    BaseNodeIntervention::ValidateSimType( 
-        const std::string& rSimTypeStr
-    )
+    void BaseNodeIntervention::OnExpiration()
+    { }
+
+    void BaseNodeIntervention::ValidateSimType( const std::string& rSimTypeStr )
     {
         CheckSimType( rSimTypeStr, GetSchemaBase(), typeid(*this).name() );
     }
 
-    bool
-    BaseNodeIntervention::Distribute(
-        INodeEventContext *context, // interventions container usually
-        IEventCoordinator2 * ec
-    )
+    bool BaseNodeIntervention::Distribute( INodeEventContext *context, IEventCoordinator2 * ec )
     {
-        parent = context;
+       if( dont_allow_duplicates && context->ContainsExistingByName(name) )
+        {
+            if( enable_iv_replacement )
+            {
+                context->PurgeExistingByName( name );
+            }
+            else
+            {
+                return false ;
+            }
+        }
 
         if( AbortDueToDisqualifyingInterventionStatus( context ) )
         {
@@ -397,6 +421,7 @@ namespace Kernel
             if( ic->GiveIntervention(this) )
             {
                 wasDistributed = true;
+                context->IncrementCampaignCost(cost_per_unit);
             }
         } 
         else
@@ -406,11 +431,6 @@ namespace Kernel
             throw IllegalOperationException(  __FILE__, __LINE__, __FUNCTION__, oss.str().c_str() );
         }
         return wasDistributed;
-    }
-
-    void BaseNodeIntervention::SetContextTo( INodeEventContext *context )
-    {
-        parent = context;
     }
 
     bool BaseNodeIntervention::AbortDueToDisqualifyingInterventionStatus( INodeEventContext* context )
@@ -424,6 +444,7 @@ namespace Kernel
                 found.ToString().c_str(), name.c_str(), context->GetExternalId() );
 
             IIndividualEventBroadcaster* broadcaster = context->GetIndividualEventBroadcaster();
+
             broadcaster->TriggerObservers( nullptr, EventTrigger::InterventionDisqualified );
             expired = true;
 
@@ -446,5 +467,23 @@ namespace Kernel
             first_time = false;
         }
         return true;
+    }
+
+    void BaseNodeIntervention::SetContextTo( INodeEventContext *context )
+    {
+        parent = context;
+    }
+
+    void BaseNodeIntervention::serialize( IArchive& ar, BaseNodeIntervention* obj )
+    {
+        BaseNodeIntervention& intervention = *obj;
+        ar.labelElement( "name" )                       & intervention.name;
+        ar.labelElement( "cost_per_unit" )              & intervention.cost_per_unit;
+        ar.labelElement( "expired" )                    & intervention.expired;
+        ar.labelElement( "dont_allow_duplicates" )      & intervention.dont_allow_duplicates;
+        ar.labelElement( "enable_iv_replacement" )      & intervention.enable_iv_replacement;
+        ar.labelElement( "first_time" )                 & intervention.first_time;
+        ar.labelElement( "disqualifying_properties" )   & intervention.disqualifying_properties;
+        ar.labelElement( "status_property" )            & intervention.status_property;
     }
 }

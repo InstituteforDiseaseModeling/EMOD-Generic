@@ -147,9 +147,6 @@
     <ClInclude Include="..\utils\ProgVersion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\Profile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\RANDOM.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -172,9 +169,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\Types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\ValidationLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\VectorEnums.h">

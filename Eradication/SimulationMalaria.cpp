@@ -156,12 +156,6 @@ namespace Kernel
         return newsimulation;
     }
 
-    void SimulationMalaria::SetFixedParameters(::Configuration * config)
-    {
-        config->Add("Enable_Immunity", 1);
-        config->Add("Enable_Immune_Decay", 1);
-    }
-
     bool SimulationMalaria::ValidateConfiguration(const ::Configuration *config)
     {
         // TODO: any disease-specific validation goes here.
@@ -174,10 +168,6 @@ namespace Kernel
         // Node deletion handled by ~Kernel::Simulation()
         // no need to delete flags
         //delete m_strain_identity_flags;
-    }
-
-    void SimulationMalaria::InitializeFlags(const ::Configuration *config)
-    {
     }
 
     void SimulationMalaria::addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,

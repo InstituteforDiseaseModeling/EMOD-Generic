@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanSTI.h"
 #include "IIndividualHumanHIV.h"
 #include "IRelationship.h"
-#include "BoostLibWrapper.h"
 #include "InfectionHIV.h"
 #include "SusceptibilityHIV.h"
 

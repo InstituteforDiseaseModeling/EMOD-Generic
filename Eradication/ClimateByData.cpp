@@ -230,20 +230,3 @@ namespace Kernel {
 
     }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, ClimateByData &climate, const unsigned int v)
-    {
-        ar & climate.num_datapoints;
-        ar & climate.num_years
-           & climate.airtemperature_data
-           & climate.landtemperature_data
-           & climate.rainfall_data
-           & climate.humidity_data;
-
-        ar & boost::serialization::base_object<Kernel::Climate>(climate);
-    }
-}
-#endif

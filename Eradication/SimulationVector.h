@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include <map>
-#include "BoostLibWrapper.h"
 #include "Simulation.h"
 #include "VectorContexts.h"
 #include "IVectorCohort.h"
@@ -41,7 +40,7 @@ namespace Kernel
                                                  NodeDemographicsFactory *nodedemographics_factory,
                                                  ClimateFactory *climate_factory,
                                                  bool white_list_enabled ) override;
-        virtual int  populateFromDemographics(const char* campaign_filename, const char* loadbalance_filename) override;
+        virtual int  populateFromDemographics() override;
 
         // Creates reporters.  Specifies vector-species-specific reporting in addition to base reporting
         virtual void Reports_CreateBuiltIn() override;

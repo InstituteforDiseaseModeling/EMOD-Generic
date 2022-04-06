@@ -12,9 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <functional>
 #include <map>
 #include <vector>
-#include "BoostLibWrapper.h"
-// not in boost wrapper???
-#include <boost/math/special_functions/fpclassify.hpp>
 
 #include "SpatialReport.h"
 #include "INodeContext.h"
@@ -149,7 +146,7 @@ bool SpatialReport::Configure(
     tChanInfoMap channel_infos;
     populateChannelInfos(channel_infos);
     spatial_output_channels.possible_values = getKeys( channel_infos );
-    initConfigTypeMap( "Spatial_Output_Channels", &spatial_output_channels, Spatial_Output_Channels_DESC_TEXT);
+    initConfigTypeMap( "Spatial_Output_Channels", &spatial_output_channels, Spatial_Output_Channels_DESC_TEXT, "Enable_Spatial_Output" );
     return JsonConfigurable::Configure( config );
 }
 

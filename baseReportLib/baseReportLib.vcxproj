@@ -162,14 +162,12 @@
     <ClInclude Include="..\utils\ISupports.h" />
     <ClInclude Include="..\utils\JsonObject.h" />
     <ClInclude Include="..\utils\Log.h" />
-    <ClInclude Include="..\utils\Profile.h" />
     <ClInclude Include="..\utils\ProgVersion.h" />
     <ClInclude Include="..\utils\Properties.h" />
     <ClInclude Include="..\utils\RANDOM.h" />
     <ClInclude Include="..\utils\RapidJsonImpl.h" />
     <ClInclude Include="..\utils\Sugar.h" />
     <ClInclude Include="..\utils\Types.h" />
-    <ClInclude Include="..\utils\ValidationLog.h" />
     <ClInclude Include="BaseChannelReport.h" />
     <ClInclude Include="BaseEventReport.h" />
     <ClInclude Include="BaseEventReportIntervalOutput.h" />

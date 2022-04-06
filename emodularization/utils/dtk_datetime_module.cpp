@@ -16,7 +16,6 @@ Kernel::IdmDateTime _instance;
 static PyObject*
 update(PyObject* self, PyObject* args)
 {
-    //const char* name;
     float increment;
 
     if (!PyArg_ParseTuple(args, "f", &increment))
@@ -25,14 +24,6 @@ update(PyObject* self, PyObject* args)
     _instance.Update( increment );
 
     Py_RETURN_NONE;
-}
-
-static PyObject*
-getBaseYear(PyObject* self, PyObject* args)
-{
-    float base_year = _instance.getBaseYear();
-    
-    return Py_BuildValue("f", base_year);;
 }
 
 static PyObject*
@@ -77,7 +68,6 @@ static PyMethodDef DtkDateTimeMethods[] =
 {
      {"update", update, METH_VARARGS, "Update."},
      {"get_time", getTime, METH_VARARGS, "Get the current time."},
-     {"get_base_year", getBaseYear, METH_VARARGS, "Get the base year (if set). Returns 0 if not."},
      {"set_base_year", setBaseYear, METH_VARARGS, "Sets the base year."},
      {"is_less_than", isLessThan, METH_VARARGS, "Compare time."},
      {NULL, NULL, 0, NULL}

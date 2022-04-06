@@ -14,7 +14,8 @@
             "../input/PFA_overlay.json"
         ],
         "Enable_Birth": 0,
-	"Report_Event_Recorder": 1,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "HIVNeedsHIVTest",
             "HIVPositiveHIVTest",
@@ -28,7 +29,6 @@
         "Report_HIV_Infection_Start_Year": 1900,
         "Report_HIV_Infection_Stop_Year": 2100,
         "Simulation_Duration": 30,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Timestep": 1,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",

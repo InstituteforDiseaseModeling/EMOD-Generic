@@ -25,71 +25,60 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeContext.h"
 #include "IMigrate.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportRelationshipMigrationTracking" ) // <<< Name of this file
+//******************************************************************************
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = { "STI_SIM", "HIV_SIM", nullptr };// <<< Types of simulation the report is to be used with
+SETUP_LOGGING( "ReportRelationshipMigrationTracking" )
 
-report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportRelationshipMigrationTracking()); // <<< Report to create
-};
+static const char* _sim_types[] = { "STI_SIM", "HIV_SIM", nullptr };
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::ReportRelationshipMigrationTracking();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ----------------------------------------
 // --- ReportRelationshipMigrationTracking Methods
 // ----------------------------------------
 
+namespace Kernel
+{
     ReportRelationshipMigrationTracking::ReportRelationshipMigrationTracking()
         : BaseTextReportEvents( "ReportRelationshipMigrationTracking.csv" )
         , m_EndTime(0.0)

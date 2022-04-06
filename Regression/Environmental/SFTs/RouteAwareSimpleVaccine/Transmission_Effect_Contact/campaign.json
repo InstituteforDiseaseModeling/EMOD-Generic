@@ -1,0 +1,158 @@
+{
+    "Campaign_Name": "Initial Seeding",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": ["Geographic:Seed_Control"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_0.3"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_0.6"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_1"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "TransmissionBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 0.3,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_0.3"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "TransmissionBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 0.6,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_0.6"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "TransmissionBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 1,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Seed_Vaccine_1"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

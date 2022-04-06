@@ -16,10 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #define DEFAULT_PYTHON_HOME         "c:/Python36"
 #define ENV_VAR_PYTHON              "IDM_PYTHON3_PATH"
-#define PYTHON_DLL_W               L"python36.dll"
-#define PYTHON_DLL_S                "python36.dll"
-
-#define PYTHON_SCRIPT_PATH_NOT_SET ""
+#define PYTHON_SCRIPT_PATH_NOT_SET  ""
 
 SETUP_LOGGING("PythonSupport")
 
@@ -52,8 +49,7 @@ namespace Kernel
                                                              {PythonSupport::SCRIPT_TYPHOID,             std::map<std::string, void*>()}};
 
     PythonSupport::PythonSupport()
-    {
-    }
+    { }
 
     PythonSupport::~PythonSupport()
     {
@@ -80,14 +76,6 @@ namespace Kernel
             LOG_INFO_F( "Python script path: %s\n", m_PythonScriptPath.c_str() );
         }
 #ifdef WIN32
-        HMODULE p_dll = LoadLibrary( PYTHON_DLL_W );
-        if( p_dll == nullptr )
-        {
-            std::stringstream msg;
-            msg << "Cannot run python scripts because " << PYTHON_DLL_S << " cannot be found.";
-            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-
         // Get path to python installation
         char* c_python_path = getenv(ENV_VAR_PYTHON);
         if( c_python_path == nullptr )
@@ -105,8 +93,7 @@ namespace Kernel
         if( !FileSystem::DirectoryExists( python_home ) )
         {
             std::stringstream msg;
-            msg << PYTHON_DLL_S << " was found but IDM_PYTHON3_PATH=" << python_home 
-                << " was not found.  Default is " << DEFAULT_PYTHON_HOME;
+            msg << "IDM_PYTHON3_PATH=" << python_home << ". Directory was not found.";
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
         Py_SetPythonHome( Py_DecodeLocale( python_home.c_str(), nullptr ) );
@@ -297,7 +284,7 @@ namespace Kernel
         while (PyDict_Next(pDict, &dict_pos, &dict_key, &dict_value))
         {
             std::string python_dict_entry;
-            char* retValuePtr = PyUnicode_AsUTF8( dict_key );
+            const char* retValuePtr = PyUnicode_AsUTF8( dict_key );
             release_assert( retValuePtr );
             python_dict_entry.assign( retValuePtr );
             if(PyCallable_Check(dict_value))

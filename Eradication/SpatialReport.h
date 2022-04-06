@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "BaseChannelReport.h"
 #include "Log.h"
-#include "BoostLibWrapper.h"
 #include "Configure.h"
 
 //////////////////////////////////////////////////////////////////////////////

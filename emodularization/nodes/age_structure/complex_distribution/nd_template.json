@@ -11,11 +11,10 @@
     "Demographics_Filenames": [
         "demographics.json"
     ],
+    "Enable_Acquisition_Heterogeneity": 0,
     "Enable_Aging": 1,
     "Enable_Birth": 1,
-    "Enable_Demographics_Birth": 0,
     "Enable_Demographics_Builtin": 0,
-    "Enable_Demographics_Risk": 0,
     "Enable_Disease_Mortality": 0,
     "Enable_Heterogeneous_Intranode_Transmission": 0,
     "Enable_Infection_Rate_Overdispersion": 0,
@@ -33,6 +32,7 @@
     "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
     "Listed_Events": [],
     "Max_Node_Population_Samples": 100,
+    "Min_Node_Population_Samples": 0,
     "Migration_Model": "NO_MIGRATION",
     "Minimum_Adult_Age_Years": 15,
     "Mortality_Blocking_Immunity_Decay_Rate": 0.001,
@@ -46,9 +46,6 @@
     "Simulation_Timestep": 1,
     "Simulation_Type": "GENERIC_SIM",
     "Start_Time": 0,
-    "__FERTILITY_STUFF__": 0,
-    "__MORTALITY_STUFF__": 0,
-    "__NewRequired_Param__": 0,
     "x_Base_Population": 1.0,
     "x_Birth": 1,
     "x_Other_Mortality": 1

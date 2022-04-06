@@ -56,33 +56,6 @@ namespace Kernel
         return IndividualHumanEnvironmental::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    float NodeEnvironmental::getClimateCorrection() const
-    {
-        // Environmental infectivity depends on rainfall.
-        // TODO: make more configurable to accommodate different modalities:
-        //       - high rainfall inducing prolonged flooding
-        //       - high rainfall causing dilution and flushing vs. low rainfall causing concentration
-        //       - etc.
-
-        float correction = 1.0f;
-
-        if ( localWeather == nullptr )
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "localWeather", "Climate");
-        }
-
-        float rainfall = localWeather->accumulated_rainfall();
-
-        // The following is a linear increase in infectivity above a threshold of 10mm of rainfall
-        if ( rainfall > 0.01 )
-        {
-            correction += (rainfall - 0.01) / 0.01;
-        }
-        LOG_DEBUG_F( "Infectivity scale factor = %f at rainfall = %f.\n", correction, rainfall );
-
-        return correction;
-    }
-
     void NodeEnvironmental::updateInfectivity(float dt)
     {
         Node::updateInfectivity(dt);
@@ -105,9 +78,8 @@ namespace Kernel
 
     void NodeEnvironmental::BuildTransmissionRoutes( float contagionDecayRate )
     {
-        LOG_DEBUG_F("Number of clades: %d\n", InfectionConfig::number_clades);
-        transmissionGroups->Build( contagionDecayRate, InfectionConfig::number_clades, InfectionConfig::number_genomes );
-        txEnvironment->Build(NodeConfig::GetNodeParams()->node_contagion_decay_fraction, InfectionConfig::number_clades, InfectionConfig::number_genomes );
+        transmissionGroups->Build(contagionDecayRate,                    GetParams()->number_clades, GetTotalGenomes());
+        txEnvironment->Build(GetParams()->node_contagion_decay_fraction, GetParams()->number_clades, GetTotalGenomes());
     }
 
     bool NodeEnvironmental::IsValidTransmissionRoute( const string& transmissionRoute )
@@ -122,10 +94,10 @@ namespace Kernel
         float amplification = 0.0f;
 
         float peak_amplification = 1.0f;
-        float ramp_down_days = NodeConfig::GetNodeParams()->environmental_ramp_down_duration;
-        float ramp_up_days = NodeConfig::GetNodeParams()->environmental_ramp_up_duration;
-        float cutoff_days = NodeConfig::GetNodeParams()->environmental_cutoff_days;
-        float peak_start_day = floor(NodeConfig::GetNodeParams()->environmental_peak_start);
+        float ramp_down_days = GetParams()->environmental_ramp_down_duration;
+        float ramp_up_days   = GetParams()->environmental_ramp_up_duration;
+        float cutoff_days    = GetParams()->environmental_cutoff_days;
+        float peak_start_day = floor(GetParams()->environmental_peak_start);
         if (peak_start_day > DAYSPERYEAR)
         {
             peak_start_day = peak_start_day - DAYSPERYEAR;
@@ -225,7 +197,7 @@ namespace Kernel
     {
         transmissionGroups = CreateTransmissionGroups();
 
-        if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && NodeConfig::GetNodeParams()->enable_hint )
+        if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && GetParams()->enable_hint )
         {
             ValidateIntranodeTransmissionConfiguration();
 
@@ -337,6 +309,12 @@ namespace Kernel
         LOG_VALID_F( "contact: %f, environmental: %f\n", returnThis[CONTACT], returnThis[ENVIRONMENTAL] );
 
         return returnThis;
+    }
+
+    uint64_t NodeEnvironmental::GetTotalGenomes() const
+    {
+        // Environmental infections use genome to represent transmission route
+        return 3;
     }
 
     REGISTER_SERIALIZABLE(NodeEnvironmental);

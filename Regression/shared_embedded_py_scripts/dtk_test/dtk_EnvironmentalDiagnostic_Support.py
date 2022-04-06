@@ -77,7 +77,7 @@ matches = ["Update(): Time: ",
            "EnvironmentalDiagnostic tested ",
            "sample = ",
            "IP=",
-           "OutbreakIndividual"
+           "'OutbreakIndividual' interventions"
            ]
 
 class ReportColumn:

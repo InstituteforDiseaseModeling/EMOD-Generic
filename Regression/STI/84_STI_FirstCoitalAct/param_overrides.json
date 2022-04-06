@@ -24,9 +24,9 @@
         },
         "PRIMARY": {
             "Config_Name": "84_STI_FirstCoitalAct",
+            "Enable_Report_Event_Recorder": 1,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
-            "Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "FirstCoitalAct",
                 "STIDebut"

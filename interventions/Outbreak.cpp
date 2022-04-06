@@ -48,7 +48,7 @@ namespace Kernel
     bool Outbreak::Configure(const Configuration * inputJson)
     {
         initConfigTypeMap( "Clade",                 &clade,               Clade_DESC_TEXT,                         0,         9,   0 );
-        initConfigTypeMap( "Genome",                &genome,              Genome_DESC_TEXT,                        0,  16777215,   0 );
+        initConfigTypeMap( "Genome",                &genome,              Genome_DESC_TEXT,                        0, MAX_24BIT,   0 );
         initConfigTypeMap( "Number_Cases_Per_Node", &num_cases_per_node,  Num_Import_Cases_Per_Node_DESC_TEXT,     0,   INT_MAX,   1 );
 
         initConfigTypeMap( "Import_Age",              &import_age,        Import_Age_DESC_TEXT,                 0.0f,  MAX_HUMAN_AGE*DAYSPERYEAR, DAYSPERYEAR );

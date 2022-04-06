@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream> // ostringstream
 
@@ -189,6 +190,7 @@ void IDMAPI writeInputSchemas(
     camp_schema["idmTypes" ][ "idmType:WaningEffect"] = we_schema[ "schema" ].As<json::Object>();
 
     total_schema[ "interventions" ] = camp_schema.As< json::Object> ();
+    schema_ostream << std::setprecision(10);
     json::Writer::Write( total_schema, schema_ostream, "    " );
     schema_ostream_file.close();
 

@@ -26,11 +26,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 using namespace std;
 using namespace Kernel;
 
-// maybe these shouldn't be protected in Simulation.h
-typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-
-
 SUITE( IncidenceEventCoordinatorTest )
 {
     static int m_NextId = 1;

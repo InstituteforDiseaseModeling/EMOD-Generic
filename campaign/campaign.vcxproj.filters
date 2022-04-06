@@ -156,9 +156,6 @@
     <ClInclude Include="..\rapidjson\include\rapidjson\prettywriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\Profile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\cajun\include\quick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -214,9 +211,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\TransmissionGroupMembership.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\ValidationLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\VectorSpeciesParameters.h">

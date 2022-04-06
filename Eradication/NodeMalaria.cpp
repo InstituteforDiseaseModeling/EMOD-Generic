@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "NodeMalaria.h"
 #include "IndividualMalaria.h"
@@ -15,6 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Common.h"
 #include "Malaria.h"
 #include "NodeMalariaEventContext.h"
+#include "SimulationConfig.h"
 #include "MalariaParameters.h"
 #include "IGenomeMarkers.h"
 #include "MathFunctions.h"
@@ -138,7 +140,7 @@ namespace Kernel
     {
         float temp_susceptibility = 1.0;
 
-        switch( SusceptibilityConfig::susceptibility_initialization_distribution_type )
+        switch(GetParams()->initial_sus_dist_type)
         {
         case DistributionType::DISTRIBUTION_COMPLEX:
             temp_susceptibility = distribution_susceptibility->Calculate( GetRng() );
@@ -154,11 +156,24 @@ namespace Kernel
         default:
             if( !JsonConfigurable::_dryrun )
             {
-                throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", SusceptibilityConfig::susceptibility_initialization_distribution_type, DistributionType::pairs::lookup_key( SusceptibilityConfig::susceptibility_initialization_distribution_type ) );
+                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "Susceptibility_Initialization_Distribution_Type", GetParams()->initial_sus_dist_type, DistributionType::pairs::lookup_key(GetParams()->initial_sus_dist_type));
             }
         }
 
         return temp_susceptibility;
+    }
+
+    void NodeMalaria::BuildTransmissionRoutes(float contagionDecayRate)
+    {
+        transmissionGroups->Build( 1.0f, GetParams()->number_clades, GetTotalGenomes() );
+        txOutdoor->Build( 1.0f,          GetParams()->number_clades, GetTotalGenomes() );
+    }
+
+    uint64_t NodeMalaria::GetTotalGenomes() const
+    {
+        uint64_t number_genomes = static_cast<uint64_t>(1) << GET_CONFIGURABLE(SimulationConfig)->malaria_params->pGenomeMarkers->Size();
+
+        return number_genomes;
     }
 
     void NodeMalaria::accumulateIndividualPopulationStatistics( float dt, IIndividualHuman* basic_individual)
@@ -286,12 +301,5 @@ namespace Kernel
         ar.labelElement("m_Geometric_Mean_Parasitemia") & node.m_Geometric_Mean_Parasitemia;
         ar.labelElement("m_Fever_Prevalence") & node.m_Fever_Prevalence;
         ar.labelElement("m_Maternal_Antibody_Fraction") & node.m_Maternal_Antibody_Fraction;
-
-        //ar.labelElement( "MSP_mean_antibody_distribution" ) & node.MSP_mean_antibody_distribution;
-        //ar.labelElement( "nonspec_mean_antibody_distribution" ) & node.nonspec_mean_antibody_distribution;
-        //ar.labelElement( "PfEMP1_mean_antibody_distribution" ) & node.PfEMP1_mean_antibody_distribution;
-        //ar.labelElement( "MSP_variance_antibody_distribution" ) & node.MSP_variance_antibody_distribution;
-        //ar.labelElement( "nonspec_variance_antibody_distribution" ) & node.nonspec_variance_antibody_distribution;
-        //ar.labelElement( "PfEMP1_variance_antibody_distribution" ) & node.PfEMP1_variance_antibody_distribution;
     }
 }

@@ -95,15 +95,14 @@ namespace Kernel
         ENUM_VALUE_SPEC(SixMonthsOld, 66)
         ENUM_VALUE_SPEC(OneYearOld, 67)
         ENUM_VALUE_SPEC(MonteCarloDeaths, 68)
-        ENUM_VALUE_SPEC(Recovered, 69)
-        ENUM_VALUE_SPEC(DiedOfDisease, 70)
+        ENUM_VALUE_SPEC(InfectionCleared, 69)
 
-	// This is the end of the regular event section. Below is a 'bank' of 100 'GPIO' style events.
-	// These are used where a suitable event does not exist, usually for campaigns. Your campaign
-	// can specify arbitrary events and the adhoc_event EP4 scripts will map them to GP_EVENTs internally.
-	// You'll only need to think about the GP_EVENT internal representation if you're debugging or using
-	// logging for SFTs.
-	// Or you can explicitly use GP_EVENTs. Don't do a mix of adhoc and explicit GP_EVENTs.
+    // This is the end of the regular event section. Below is a 'bank' of 100 'GPIO' style events.
+    // These are used where a suitable event does not exist, usually for campaigns. Your campaign
+    // can specify arbitrary events and the adhoc_event EP4 scripts will map them to GP_EVENTs internally.
+    // You'll only need to think about the GP_EVENT internal representation if you're debugging or using
+    // logging for SFTs.
+    // Or you can explicitly use GP_EVENTs. Don't do a mix of adhoc and explicit GP_EVENTs.
 
         ENUM_VALUE_SPEC(GP_EVENT_000, 100)
         ENUM_VALUE_SPEC(GP_EVENT_001, 101)

@@ -18,9 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 // 'resource' files with description texts for schema
 #include "config_params.rc"
-#ifdef ENABLE_POLIO
 #include "polio_params.rc"
-#endif
 #include "iv_params.rc"
 
 #include <stdarg.h>
@@ -171,6 +169,7 @@ namespace Kernel
         typedef std::map< std::string, bool * > tBoolConfigTypeMapType;
         typedef std::map< std::string, int * > tIntConfigTypeMapType;
         typedef std::map< std::string, uint32_t * > tUint32ConfigTypeMapType;
+        typedef std::map< std::string, uint64_t * > tUint64ConfigTypeMapType;
         typedef std::map< std::string, float * > tFloatConfigTypeMapType;
         typedef std::map< std::string, double * > tDoubleConfigTypeMapType;
         typedef std::map< std::string, std::string * > tStringConfigTypeMapType;
@@ -180,6 +179,7 @@ namespace Kernel
         typedef std::map< std::string, std::vector< std::vector< std::string > > * > tVector2dStringConfigTypeMapType;
         typedef std::map< std::string, const std::set< std::string > * > tVectorStringConstraintsTypeMapType;
         typedef std::map< std::string, std::vector< float > * > tVectorFloatConfigTypeMapType;
+        typedef std::map< std::string, std::vector< bool > * > tVectorBoolConfigTypeMapType;
         typedef std::map< std::string, std::vector< int > * > tVectorIntConfigTypeMapType;
         typedef std::map< std::string, std::vector< uint32_t > * >tVectorUint32ConfigTypeMapType;
         typedef std::map< std::string, std::vector< std::vector< float > > * > tVector2dFloatConfigTypeMapType;
@@ -220,6 +220,11 @@ namespace Kernel
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
         static jsonConfigurable::tStringSet missing_parameters_set;
 
+        bool MatchesDependency(const json::QuickInterpreter*              pJson,
+                               const char*                                condition_key   = nullptr,
+                               const char*                                condition_value = nullptr,
+                               const std::map<std::string, std::string>*  depends_list    = nullptr);
+
         // TEST ONLY - componentTests needs to clear this so that other tests don't fail
         static void ClearMissingParameters() { missing_parameters_set.clear() ; }
 
@@ -229,6 +234,7 @@ namespace Kernel
             tBoolConfigTypeMapType boolConfigTypeMap;
             tIntConfigTypeMapType intConfigTypeMap;
             tUint32ConfigTypeMapType uint32ConfigTypeMap;
+            tUint64ConfigTypeMapType uint64ConfigTypeMap;
             tFloatConfigTypeMapType floatConfigTypeMap;
             tDoubleConfigTypeMapType doubleConfigTypeMap;
             tEnumConfigTypeMapType enumConfigTypeMap;
@@ -240,6 +246,7 @@ namespace Kernel
             tVectorStringConstraintsTypeMapType vectorStringConstraintsTypeMap;
             tVectorStringConstraintsTypeMapType vector2dStringConstraintsTypeMap;
             tVectorFloatConfigTypeMapType vectorFloatConfigTypeMap;
+            tVectorBoolConfigTypeMapType vectorBoolConfigTypeMap;
             tVectorIntConfigTypeMapType vectorIntConfigTypeMap;
             tVectorUint32ConfigTypeMapType vectorUint32ConfigTypeMap;
             tVector2dFloatConfigTypeMapType vector2dFloatConfigTypeMap;
@@ -319,6 +326,15 @@ namespace Kernel
 
         void initConfigTypeMap(
             const char* paramName,
+            uint64_t * pVariable,
+            const char* description = default_description,
+            uint64_t min = 0, uint64_t max = UINT_MAX, uint64_t defaultvalue = 0,
+            const char* condition_key = nullptr, const char* condition_value = nullptr,
+            const std::map<std::string, std::string>* depends_list = nullptr
+        );
+
+        void initConfigTypeMap(
+            const char* paramName,
             float * pVariable,
             const char* description = default_description,
             float min = -FLT_MAX, float max = FLT_MAX, float defaultvalue = 1.0,
@@ -386,6 +402,14 @@ namespace Kernel
             std::vector< float > * pVariable,
             const char* description = default_description,
             float min = -FLT_MAX, float max = FLT_MAX, bool ascending = false,
+            const char* condition_key = nullptr, const char* condition_value = nullptr,
+            const std::map<std::string, std::string>* depends_list = nullptr
+        );
+
+        void initConfigTypeMap(
+            const char* paramName,
+            std::vector< bool > * pVariable,
+            const char* description = default_description,
             const char* condition_key = nullptr, const char* condition_value = nullptr,
             const std::map<std::string, std::string>* depends_list = nullptr
         );
@@ -547,12 +571,16 @@ namespace Kernel
         void EnforceParameterAscending(const std::string& key, const std::vector<T> & values)
         {
             //Try to find a value to the left of an element with a value that is greater or equal 
-            for (auto it = values.cbegin(); it != values.cend() - 1; ++it) {
-                if (*it >= *(it + 1))
+            if( values.size() > 1 )
+            {
+                for (auto it = values.cbegin(); it != values.cend() - 1; ++it)
                 {
-                    std::stringstream error_string;
-                    error_string << "The values in " << key << " must be unique and in ascending order.";
-                    throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, error_string.str().c_str());
+                    if (*it >= *(it + 1))
+                    {
+                        std::stringstream error_string;
+                        error_string << "The values in " << key << " must be unique and in ascending order.";
+                        throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, error_string.str().c_str());
+                    }
                 }
             }
         }

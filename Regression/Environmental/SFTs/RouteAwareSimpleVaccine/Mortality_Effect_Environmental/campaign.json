@@ -1,0 +1,98 @@
+{
+    "Campaign_Name": "Initial Seeding",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 0,
+                    "Outbreak_Source": "PrevalenceIncrease",
+                    "class": "OutbreakIndividual"
+                },
+                "Number_Repetitions": 1,
+                "Property_Restrictions": ["Geographic:Seed"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "MortalityBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 0.4,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Vaccine_0.4"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "MortalityBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 0.9,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Vaccine_0.9"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "class": "RouteAwareSimpleVaccine",
+                    "Vaccine_Type": "MortalityBlocking",
+                    "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
+                    "Waning_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 1,
+                        "Box_Duration": 300
+                    }
+                },
+                "Property_Restrictions": ["Geographic:Vaccine_1"],
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

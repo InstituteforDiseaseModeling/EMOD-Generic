@@ -26,7 +26,6 @@ namespace Kernel
         static SimulationTyphoid *CreateSimulation();
         static SimulationTyphoid *CreateSimulation(const ::Configuration *config);
         virtual ~SimulationTyphoid(void) { }
-        virtual bool Configure( const ::Configuration *json );
         virtual void Reports_CreateBuiltIn();
 
     protected:
@@ -44,16 +43,10 @@ namespace Kernel
                                                  ClimateFactory *climate_factory,
                                                  bool white_list_enabled ) override;
 
-        virtual void InitializeFlags(const ::Configuration *config);
         virtual void resolveMigration();
 
     private:
 
         friend class Kernel::SimulationFactory; // allow them to create us
-
     };
 }
-
-//#ifndef WIN32
-//DECLARE_VIRTUAL_BASE_OF(Kernel::Simulation, Kernel::SimulationTyphoid)
-//#endif

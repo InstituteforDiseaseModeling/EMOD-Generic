@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "EventCoordinator.h"
 #include "Configure.h"
 #include "NodeEventContext.h"
@@ -40,7 +38,6 @@ namespace Kernel
         // IEventCoordinator
         virtual void SetContextTo(ISimulationEventContext *isec);
         virtual void CheckStartDay( float campaignStartDay ) const override;
-        virtual void InitializeTiming( const IdmDateTime& ) override;
 
         virtual void AddNode( const suids::suid& node_suid);
 
@@ -57,6 +54,7 @@ namespace Kernel
         virtual void ProcessArriving(IIndividualHumanEventContext *dc);
 
         virtual float GetDemographicCoverage() const;
+        virtual int   GetMaxEvents() const;
         virtual TargetDemographicType::Enum GetTargetDemographic() const;
         virtual float GetMinimumAge() const;
         virtual float GetMaximumAge() const;
@@ -64,7 +62,6 @@ namespace Kernel
         virtual bool qualifiesDemographically( const IIndividualHumanEventContext * pIndividual );
 
     protected:
-        virtual float getDemographicCoverageForIndividual( const IIndividualHumanEventContext *pInd ) const;
         virtual void preDistribute(); 
         virtual void ExtractInterventionNameForLogging();
         virtual void InitializeInterventions();

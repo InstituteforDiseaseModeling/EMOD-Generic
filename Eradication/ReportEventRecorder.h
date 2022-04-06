@@ -32,6 +32,7 @@ namespace Kernel
         // ------------
         // --- IReport
         // ------------
+        virtual bool Configure( const Configuration* inputJson ) override;
         virtual void Initialize( unsigned int nrmSize ) override;
         virtual void UpdateEventRegistration( float currentTime,
                                               float dt,
@@ -41,29 +42,8 @@ namespace Kernel
         virtual std::string GetHeader() const override;
 
     protected:
-        virtual void ConfigureOther( const Configuration* inputJson ) override;
         virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
         virtual float GetTime( IIndividualHumanEventContext* pEntity ) const override;
-        //virtual float GetTime( const IdmDateTime& rDateTime ) const;
-
-        // -----------------------------
-        // --- BaseTextReportEvents
-        // -----------------------------
-#if 0
-        virtual bool Configure( const Configuration* inputJson );
-        virtual std::string GetHeader() const ;
-        virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger);
-
-    protected:
-        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger );
-        virtual std::string GetTimeHeader() const;
-        virtual float GetTime( const IdmDateTime& rDateTime ) const;
-#endif
-        //virtual bool Configure( const Configuration* inputJson );
-        //virtual bool notifyOnEvent(IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger);
-
-    protected:
-        //virtual std::string GetTimeHeader() const;
 
         jsonConfigurable::tDynamicStringSet properties_to_report;
     };

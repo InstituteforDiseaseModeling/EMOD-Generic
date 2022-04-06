@@ -11,20 +11,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <stdio.h> // for sscanf
 
-// zlib:
-//#include "zlib.h"
 #include <fstream>
 #include <iostream>
-#include <boost/iostreams/filtering_streambuf.hpp>
-#include <boost/iostreams/copy.hpp>
-
-// Note: For normal build, don't enable this, otherwise, it will
-// depend on libboost_zlibxxxx.lib, which is not part of standard boost lib
-//#define ZIP_ENABLE 
-#ifdef ZIP_ENABLE
-//#include <boost/iostreams/filter/zlib.hpp>
-#include <boost/iostreams/filter/gzip.hpp>
-#endif
 
 // Note: tarball.cpp/h files are moved into reporters directory
 // and future reporter emodules(dlls) specific files should reside in there
@@ -42,95 +30,69 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NoCrtWarnings.h"
 #include "FileSystem.h"
 
-//#define TARBALL 1
-#define KML 1
-//#define COLLECT_POLIO_DATA 1
+//******************************************************************************
 
-#ifdef COLLECT_POLIO_DATA
-#include "PolioContexts.h"
-static const char * _susceptibleinfectedunder5_label = "New Disease Susceptible Infections Under 5";
-static const char * _susceptibleinfectedover5_label  = "New Disease Susceptible Infections Over 5";
-#else
-static const char * _stat_pop_label = "Statistical Population";
-static const char * _infected_label = "Infected";
-#endif
+#define KML 1
 
 #define MASTER_FILE "//bayesianfil01/IDM/home/dbridenbecker/regression_test_files/tajik_master.kml"
-
 
 using namespace std;
 using namespace json;
 
+//******************************************************************************
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+SETUP_LOGGING( "KML_Demo_Reporter" )
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "KML_Demo_Reporter" ) // <<< Name of this file
+static const char* _sim_types[]    = { "*", nullptr };
+static const char* _stat_pop_label = "Statistical Population";
+static const char* _infected_label = "Infected";
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-#ifdef COLLECT_POLIO_DATA
-static const char * _sim_types[] = { "POLIO_SIM", nullptr };// <<< Types of simulation the report is to be used with
-#else
-static const char * _sim_types[] = { "*", nullptr };// <<< Types of simulation the report is to be used with
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
+
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new KML_Demo_Reporter()); // <<< Report to create
-};
-
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
-#endif
-
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::KML_Demo_Reporter();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ----------------------------------------
 // --- KML_Demo_Reporter Methods
 // ----------------------------------------
 
+namespace Kernel
+{
 
 void
 KML_Demo_Reporter::Initialize( unsigned int nrmSize )
@@ -166,15 +128,9 @@ KML_Demo_Reporter::LogNodeData(
 {
     uint32_t nodeId = pNC->GetExternalID();
 
-#ifdef COLLECT_POLIO_DATA
-    const Kernel::INodePolio* pNC_polio = dynamic_cast<const Kernel::INodePolio*>(pNC);
-    nodeChannelMapVec[ _susceptibleinfectedunder5_label ][ nodeId ].push_back( pNC_polio->GetNewDiseaseSusceptibleInfectionsUnder5() );
-    nodeChannelMapVec[ _susceptibleinfectedover5_label  ][ nodeId ].push_back( pNC_polio->GetNewDiseaseSusceptibleInfectionsOver5()  );
-#else
     // The following three channels are not currently being used:
     nodeChannelMapVec[ _stat_pop_label ][ nodeId ].push_back( pNC->GetStatPop() );
     nodeChannelMapVec[ _infected_label ][ nodeId ].push_back( pNC->GetInfected() );
-#endif
 }
 
 void 
@@ -265,10 +221,6 @@ void KML_Demo_Reporter::Finalize()
     }
 
     std::stringstream fake_out("fake_file");        
-#ifdef TARBALL
-    lindenb::io::Tar myTar(fake_out);
-#endif
-    
     // Iterate over nodeChannelMapVec, channel by channel
     for( tChannel2Node2DataMapVec::iterator it = nodeChannelMapVec.begin();
          it != nodeChannelMapVec.end();
@@ -313,26 +265,7 @@ void KML_Demo_Reporter::Finalize()
         }
 
         channelDataFile.close();
-#ifdef TARBALL
-        //myTar.putFile(channelStringStream.str().c_str(), fileName.c_str());
-        myTar.put(fileName.c_str(), channelStringStream.str());
-#endif
     }
-#ifdef TARBALL
-    myTar.finish();
-    std::ofstream out_file( std::string( "output\\ReportByNode_New_Disease_Susceptible_Infections.tar.gz" ).c_str(), std::ofstream::binary);
-#endif
-    boost::iostreams::filtering_streambuf< boost::iostreams::input> in;
-#ifdef ZIP_ENABLE
-    //in.push( boost::iostreams::zlib_compressor());
-    in.push( boost::iostreams::gzip_compressor());
-#endif
-    in.push(fake_out);
-#ifdef TARBALL
-    boost::iostreams::copy(in, out_file);
-    out_file.close();
-#endif
-//    LOG_INFO("done.\n");
 #ifdef KML
     WriteKmlData();
 #endif

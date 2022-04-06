@@ -17,6 +17,7 @@
         "Demographics_Reporting": 0,
         "Enable_Default_Reporting": 1,
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Coordinator_Event_Recorder": 1,
         "PRIMARY": {
             "Config_Name": "79_Generic_DelayEventCoordinator",
             "Enable_Interventions": 1,
@@ -29,7 +30,6 @@
             "Simulation_Duration": 50
         },
         "Population_Scale_Type": "FIXED_SCALING",
-        "Report_Coordinator_Event_Recorder": 1,
         "Report_Coordinator_Event_Recorder_Events": [
             "Completion_Delayed_Coordinator_Event_1",
             "Coordinator_Event_1"

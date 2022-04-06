@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_tbhivindividual_module.cpp',
+            '../../../utils/Configure.cpp',
             '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualAirborne.cpp',

@@ -8,7 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
-
+#include "ConfigParams.h"
 #include <iomanip> // setprecision
 #include <iostream> // defaultfloat
 #include "Debug.h"
@@ -65,27 +65,31 @@ namespace Kernel
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
-        if( ret && !JsonConfigurable::_dryrun )
+        return ret ;
+    }
+
+    bool ReportTyphoidByAgeAndGender::Validate( const ISimulationContext* parent_sim )
+    {
+        if( startYear < parent_sim->GetParams()->sim_time_base_year)
         {
-            if( startYear < Simulation::base_year )
-            {
-                startYear = Simulation::base_year ;
-            }
-            if( startYear >= stopYear )
-            {
-                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                        "Report_Typhoid_ByAgeAndGender_Start_Year", startYear, 
-                        "Report_Typhoid_ByAgeAndGender_Stop_Year", stopYear );
-            }
-            if( IPFactory::GetInstance()->GetIPList().size() > 1 )
-            {
-                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                "Report_Typhoid_ByAgeAndGender", "1",
-                "Individual Property Keys", "2+" );
-            }
+            startYear = parent_sim->GetParams()->sim_time_base_year;
         }
 
-        return ret ;
+        if( startYear >= stopYear )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
+                    "Report_Typhoid_ByAgeAndGender_Start_Year", startYear, 
+                    "Report_Typhoid_ByAgeAndGender_Stop_Year", stopYear );
+        }
+
+        if( IPFactory::GetInstance()->GetIPList().size() > 1 )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
+            "Report_Typhoid_ByAgeAndGender", "1",
+            "Individual Property Keys", "2+" );
+        }
+
+        return true;
     }
 
     void ReportTyphoidByAgeAndGender::Initialize( unsigned int nrmSize )
@@ -116,14 +120,15 @@ namespace Kernel
         // not enforcing simulation to be not null in constructor so one can create schema with it null
         release_assert( _parent );
 
+        float base_year    = _parent->GetParams()->sim_time_base_year;
         float current_year = _parent->GetSimulationTime().Year() ;
         if( !is_collecting_data && (startYear <= current_year) && (current_year < stopYear) )
         {
             BaseTextReportEvents::UpdateEventRegistration( currentTime, dt, rNodeEventContextList, pSimEventContext );
             is_collecting_data = true ;
 
-            release_assert( Simulation::base_year > 0 );
-            next_report_time = DAYSPERYEAR*(startYear - Simulation::base_year) + DAYSPERYEAR - dt; // / 2.0f ;
+            release_assert(base_year > 0.0f);
+            next_report_time = DAYSPERYEAR*(startYear - base_year) + DAYSPERYEAR - dt; // / 2.0f ;
             // e.g., Suppose we started sim in 1940, and want to report from 1943 through 1944. dt=1
             //       nrt = DAYSPERYEAR * ( 1943.0 - 1940.0 ) +DAYSPERYEAR - 1
             //           = DAYSPERYEAR * 4 - 0.5

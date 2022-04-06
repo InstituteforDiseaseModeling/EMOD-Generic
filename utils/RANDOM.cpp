@@ -265,23 +265,68 @@ float RANDOMBASE::eGaussNonNeg(float mu, float sig)
     return retv;
 }
 
+// Beta-distributed random number
+//   Adapted from random_beta in distributions.c in numpy.random
+float RANDOMBASE::rand_beta(float alpha, float beta)
+{
+    if(alpha <= 0.0f || beta <= 0.0f)
+    {
+        // Invalid input; return error (-1.0f)
+        return -1.0f;
+    }
+
+    if(alpha == HUGE_VALF || beta == HUGE_VALF)
+    {
+        // Invalid input; return error (-1.0f)
+        return -1.0f;
+    }
+
+    float retv,X,Y,XpY;
+
+    // Switch approximations based on shape factors
+    if ((alpha <= 1.0f) && (beta <= 1.0f))
+    {
+        for (;;)
+        {
+            X = powf(e(), 1.0f/alpha);
+            Y = powf(e(), 1.0f/beta);
+            XpY = X + Y;
+
+            if ((XpY <= 1.0f) && (XpY > 0.0f))
+            {
+                retv = X/XpY;
+                break;
+            }
+        }
+    }
+    else
+    {
+        X = rand_gamma(alpha, 1.0f);
+        Y = rand_gamma(beta,  1.0f);
+        XpY = X + Y;
+
+        retv = X/XpY;
+    }
+
+    return retv;
+}
+
 // Gamma-distributed random number
 //   Adapted from random_standard_gamma_f in distributions.c in numpy.random
 float RANDOMBASE::rand_gamma(float k, float theta)
 {
-    float retv = 0.0f;
-    float b,c,U,V,X,Y;
-
     if(k <= 0.0f || theta <= 0.0f)
     {
         // Invalid input; return error (-1.0f)
-        retv = -1.0f;
+        return -1.0f;
     }
     else if(k == HUGE_VALF || theta == HUGE_VALF)
     {
         // Invalid input; return error (-1.0f)
-        retv = -1.0f;
+        return -1.0f;
     }
+
+    float retv,b,c,U,V,X,Y;
 
     // Switch approximations based on shape factor
     if (k == 1.0f)

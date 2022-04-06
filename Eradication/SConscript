@@ -14,9 +14,6 @@ if env['AllDlls'] or ( 'DiseaseDll' in env and env[ 'DiseaseDll' ] !="" ):
     eradenv = env.Clone()
     eradenv.Append(LIBS=['libgeneric_static'])
     eradenv.Append(LIBPATH=['$BUILD_DIR/libgeneric_static'])
-    #eradenv.Append(LIBS=['libvector_static'])
-    #eradenv.Append(LIBS=['libmalaria_static'])
-
     eradenv.Append(LIBPATH=['$BUILD_DIR/libgeneric'])
 
     eradicationSrcFiles = [  "Eradication.cpp",
@@ -34,22 +31,18 @@ else:
 
     print( env["Disease"] )
 
-    eradicationSrcFiles = [
-                            "Eradication.cpp",
-    ]
+    eradicationSrcFiles = [  "Eradication.cpp"  ]
 
     eradicationIncFiles = ['SimulationFactory.h',
                            'Contexts.h']
-
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! These linker flags are here so that they are not included with the DLLs.  !!!
     # !!! These are only for the EXE.                                               !!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     erad_env = env.Clone()
-    if os.sys.platform == 'win32':
+    if os.name != "posix":
         erad_env.Append( LINKFLAGS=[ "/STACK:\"100000000,100000000\"" ] )
-        erad_env.Append( LINKFLAGS=[ "/DELAYLOAD:\"python36.dll\""] )
         erad_env.Append( LIBS=["delayimp.lib"] )
         erad_env.Append(LIBPATH = ["$BUILD_DIR/Eradication"])
         erad_env.Append(LIBS=["/WHOLEARCHIVE:coreLib"])
@@ -59,6 +52,9 @@ else:
             erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Debug/Eradication/libcoreLib.a,build/x64/Debug/campaign/libcampaign.a,--no-whole-archive,-lsqlite3"])
         else:
             erad_env.Append(LINKFLAGS=["-Wl,--whole-archive,build/x64/Release/Eradication/libcoreLib.a,build/x64/Release/campaign/libcampaign.a,--no-whole-archive,-lsqlite3"])
+
+        liblist = ["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"]
+        erad_env.Append(LIBS=liblist)
 
     # Monolithic
     eradicationExe = erad_env.Program('Eradication', eradicationSrcFiles)

@@ -327,19 +327,3 @@ namespace Kernel
         ar.labelElement("m_gets_positive_test_intervention") & diagnostic.m_gets_positive_test_intervention;
     }
 }
-
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, DiagnosticTreatNeg& obj, const unsigned int v)
-    {
-        ar & obj.defaulters_config;
-        ar & (std::string) obj.defaulters_event;
-        ar & obj.negative_diagnosis_config;
-        ar & (std::string) obj.negative_diagnosis_event;
-        ar & obj.m_gets_positive_test_intervention;
-        ar & boost::serialization::base_object<Kernel::SimpleDiagnostic>(obj);
-    }
-}
-#endif

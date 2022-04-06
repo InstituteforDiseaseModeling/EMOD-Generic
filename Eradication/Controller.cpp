@@ -20,7 +20,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "Log.h"
 #include "suids.hpp"
-#include "SimulationConfig.h"
+#include "ConfigParams.h"
 #include "SimulationFactory.h"
 #include "Simulation.h"
 #include "IdmMpi.h"
@@ -46,58 +46,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 using namespace Kernel;
 
 SETUP_LOGGING( "Controller" )
-
-// more static polymorphism that is temporary until we determine why
-// boost refuses to register the sim type with the archive
-
-template<class ControllerExecuteFunctorT>
-bool call_templated_functor_with_sim_type_hack(ControllerExecuteFunctorT &cef)
-{
-#ifdef _DLLS_
-    return cef.template call<Simulation>();
-#else
-    //SimType::Enum sim_type = GET_CONFIGURABLE(SimulationConfig)->sim_type;
-    std::string sSimType = GET_CONFIG_STRING(EnvPtr->Config, "Simulation_Type");      
-    SimType::Enum sim_type;
-    if (sSimType == "GENERIC_SIM")
-        sim_type = SimType::GENERIC_SIM;
-    else if (sSimType == "MALARIA_SIM")
-        sim_type = SimType::MALARIA_SIM;
-    else if (sSimType == "VECTOR_SIM")
-        sim_type = SimType::VECTOR_SIM;
-#ifdef ENABLE_POLIO
-    else if (sSimType == "ENVIRONMENTAL_SIM")
-        sim_type = SimType::ENVIRONMENTAL_SIM;
-    else if (sSimType == "POLIO_SIM")
-        sim_type = SimType::POLIO_SIM;
-#endif
-    else if (sSimType == "AIRBORNE_SIM")
-        sim_type = SimType::AIRBORNE_SIM;
-    else if (sSimType == "TBHIV_SIM")
-        sim_type = SimType::TBHIV_SIM;
-    else
-    {
-        std::string note = "The Simulation_Type (='"+sSimType+"') is unknown.  Please select a valid type." ;
-        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, note.c_str() );
-    }
-
-    switch (sim_type)
-    {
-        case SimType::GENERIC_SIM:       return cef.template call<Simulation>();
-        case SimType::VECTOR_SIM:        return cef.template call<SimulationVector>();
-        case SimType::MALARIA_SIM:       return cef.template call<SimulationMalaria>();
-#ifdef ENABLE_POLIO
-        case SimType::ENVIRONMENTAL_SIM: return cef.template call<SimulationEnvironmental>();
-        case SimType::POLIO_SIM:         return cef.template call<SimulationPolio>();
-#endif
-        case SimType::AIRBORNE_SIM:      return cef.template call<SimulationAirborne>();
-        case SimType::TBHIV_SIM:         return cef.template call<SimulationTBHIV>();
-    default: 
-        // ERROR: ("call_templated_functor_with_sim_type_hack(): Error, Sim_Type %d is not implemented.\n", sim_type);
-        throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "sim_type", sim_type, SimType::pairs::lookup_key( sim_type ) );
-    }
-#endif
-}
 
 typedef enum {
     paused,
@@ -131,8 +79,8 @@ void RunSimulation(SimulationT &sim, int steps)
 
     bool use_full_precision = (SerializationParameters::GetInstance()->GetPrecision() == SerializationPrecision::FULL);
 
-    float start_time = sim.GetSimulationTime().GetTimeStart();
-    float step_size  = sim.GetSimulationTime().GetTimeDelta();
+    float start_time = sim.GetParams()->sim_time_start;
+    float step_size  = sim.GetParams()->sim_time_delta;
 
     // Calculate the sorted set of time steps to serialize
     std::deque< int32_t > serialization_time_steps = SerializationParameters::GetInstance()->GetSerializedTimeSteps(steps, start_time, step_size);
@@ -278,7 +226,7 @@ bool DefaultController::execute_internal()
         CheckMissingParameters();
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        int simulation_steps = static_cast<int>( sim->GetSimulationTime().GetSimDuration() / sim->GetSimulationTime().GetTimeDelta() );
+        int simulation_steps = static_cast<int>( sim->GetParams()->sim_time_total / sim->GetParams()->sim_time_delta );
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;
@@ -363,7 +311,7 @@ bool DefaultController::execute_internal()
         CheckMissingParameters();
         // now try to run it
         // divide the simulation into stages according to requesting number of serialization test cycles
-        int simulation_steps = static_cast<int>( sim->GetSimulationTime().GetSimDuration() / sim->GetSimulationTime().GetTimeDelta() );
+        int simulation_steps = static_cast<int>( sim->GetParams()->sim_time_total / sim->GetParams()->sim_time_delta );
 
 #ifndef _DLLS_
         int remaining_steps = simulation_steps;

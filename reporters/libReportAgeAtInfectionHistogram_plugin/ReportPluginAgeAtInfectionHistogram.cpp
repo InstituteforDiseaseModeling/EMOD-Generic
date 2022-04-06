@@ -22,78 +22,56 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FactorySupport.h" // for DTK_DLLEXPORT
 #include <FileSystem.h>
 
+//******************************************************************************
+
 using namespace std;
 using namespace json;
 
-SETUP_LOGGING( "ReportPluginAgeAtInfectionHistogram" ) // <<< Name of this file
+//******************************************************************************
 
-// You can put 0 or more valid Sim types into _sim_types but has to end with NULL
-// Refer to DllLoader.h for current SIMTYPES_MAXNUM
-// but we don't include DllLoader.h to avoid compiling redefinition errors.
-static const char * _sim_types[] = {"GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "POLIO_SIM", "TBHIV_SIM", NULL};
+SETUP_LOGGING( "ReportPluginAgeAtInfectionHistogram" )
 
-static const std::string _report_name = "AgeAtInfectionHistogramReport.json";
+static const char* _sim_types[] = {"GENERIC_SIM", "VECTOR_SIM", "MALARIA_SIM", "POLIO_SIM", "TBHIV_SIM", NULL};
 
-static const char * _infection_count_label    = "BinnedInfectionCounts";
-static const char * _age_bin_label            = "AgeBinUpperEdgesInYears";
-static const char * _reporting_interval_label = "ReportingIntervalInYears";
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-Kernel::report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportPluginAgeAtInfectionHistogram()); 
-};
-
-Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-//
-// This is the interface function from the DTK.
-//
-
-DTK_DLLEXPORT
-char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT
-const char *
-__cdecl
-GetType()
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    std::ostringstream oss;
-    oss << "GetType called for " << _module << std::endl;
-    LOG_INFO( oss.str().c_str() );
-
-    return _module;
-}
-
-DTK_DLLEXPORT void __cdecl
-InitReportEnvironment(
-    const Environment * pEnv
-)
-{
-    Environment::setInstance(const_cast<Environment*>(pEnv));
+    return new ReportPluginAgeAtInfectionHistogram();
 }
 
 #ifdef __cplusplus
 }
 #endif
+
+//******************************************************************************
 
 /////////////////////////
 // Initialization methods
@@ -101,7 +79,7 @@ InitReportEnvironment(
 
 
 ReportPluginAgeAtInfectionHistogram::ReportPluginAgeAtInfectionHistogram()
-: BaseChannelReport( _report_name )
+: BaseChannelReport( "AgeAtInfectionHistogramReport.json" )
 , time_since_last_report( 0 )
 , reporting_interval_in_years( 1 )
 {
@@ -274,9 +252,9 @@ ReportPluginAgeAtInfectionHistogram::populateSummaryDataUnitsMap(
 )
 {
     LOG_INFO( "populateSummaryDataUnitsMap\n" );
-    units_map[_infection_count_label]    = "Accumulated Binned Infection Counts";
-    units_map[_age_bin_label]            = "Age Bin Right Edges (years)";
-    units_map[_reporting_interval_label] = "Reporting Interval (years)";
+    units_map["BinnedInfectionCounts"]    = "Accumulated Binned Infection Counts";
+    units_map["AgeBinUpperEdgesInYears"]  = "Age Bin Right Edges (years)";
+    units_map["ReportingIntervalInYears"] = "Reporting Interval (years)";
 }
 
 // not sure whether to leave this in custom demo subclass

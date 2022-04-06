@@ -34,7 +34,6 @@ class DtkModuleTest(unittest.TestCase):
             human['family_migration_time_at_destination'] = 0
             human['family_migration_time_until_trip'] = 0
             human['family_migration_type'] = 0
-            human['Inf_Sample_Rate'] = 0
             human['infections'] = []
             human['infectiousness'] = 0
             human['is_on_family_trip'] = False
@@ -118,7 +117,7 @@ class DtkModuleTest(unittest.TestCase):
         serialized_properties = [
             'cumulativeInfs', 'family_migration_is_destination_new_home',
             'family_migration_time_at_destination', 'family_migration_time_until_trip',
-            'family_migration_type', 'Inf_Sample_Rate', 'infections', 'infectiousness',
+            'family_migration_type', 'infections', 'infectiousness',
             'is_on_family_trip', 'is_pregnant', 'leave_on_family_trip', 'm_daily_mortality_rate',
             'm_is_infected', 'm_new_infection_state', 'm_newly_symptomatic', 'max_waypoints',
             'migration_is_destination_new_home', 'migration_outbound',

@@ -128,7 +128,7 @@ namespace Kernel
 
             //Assumes HIV progression has same relative effect on children and adults
             float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
-            if (!IndividualHumanConfig::IsAdultAge(age_years))
+            if (age_years < CHILD_AGE_YEARS)
             {
                fast_fraction = SusceptibilityTBConfig::TB_fast_progressor_fraction_child * progression_modifier;
             }
@@ -146,7 +146,7 @@ namespace Kernel
     {
         float smear_positive_fraction = 0;
         float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
-        if (!IndividualHumanConfig::IsAdultAge(age_years))
+        if (age_years < CHILD_AGE_YEARS)
         {
            smear_positive_fraction = SusceptibilityTBConfig::TB_smear_positive_fraction_child;
         }
@@ -161,7 +161,7 @@ namespace Kernel
     {
         float extrapulmonary_fraction = 0;
         float age_years = GetParent()->GetAge() / DAYSPERYEAR ;
-        if (!IndividualHumanConfig::IsAdultAge(age_years))
+        if (age_years < CHILD_AGE_YEARS)
         {
            extrapulmonary_fraction = SusceptibilityTBConfig::TB_extrapulmonary_fraction_child;
         }

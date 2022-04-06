@@ -25,7 +25,6 @@ namespace Kernel
 {
     class StrainIdentity;
     class Susceptibility;
-    class SimulationConfig;
     struct IIndividualHumanContext;
 
     class InfectionConfig : public JsonConfigurable
@@ -34,13 +33,6 @@ namespace Kernel
         virtual bool Configure( const Configuration* config ) override;
 
         static bool enable_disease_mortality;
-
-        static float symptomatic_infectious_offset;
-
-        static bool enable_strain_tracking;
-        static unsigned int log2genomes;
-        static unsigned int number_clades;
-        static unsigned int number_genomes;
 
     protected:
         friend class Infection;

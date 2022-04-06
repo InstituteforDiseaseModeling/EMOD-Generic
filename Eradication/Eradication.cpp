@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Environment.h"
 #include "FileSystem.h"
-#include "BoostLibWrapper.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -40,6 +39,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmString.h"
 #include "Schema.h"
 #include "SimulationConfig.h"
+#include "ConfigParams.h"
 
 #include "Exceptions.h"
 
@@ -82,6 +82,7 @@ void FPE_SignalHandler( int signal )
     std::cout << exp.GetMsg() << "\n\n";
     std::cout << exp.GetStackTrace() << "\n\n";
     fflush( stdout );
+    EnvPtr->MPI.p_idm_mpi->Abort( -1 );
     exit(-1);
 }
 
@@ -156,7 +157,11 @@ int main(int argc, char* argv[])
     }
     sim_types_str.pop_back();
     sim_types_str.pop_back();
-    output << sim_types_str << "." << std::endl << std::endl;
+    output << sim_types_str << "." << std::endl;
+#ifdef ENABLE_LOG_VALID
+    output << "TestSugar Enabled" << std::endl;
+#endif
+    output << std::endl;
     LOG_INFO_F( output.str().c_str() );
     EnvPtr->Log->Flush();
     delete pv;
@@ -236,9 +241,7 @@ int MPIInitWrapper( int argc, char* argv[])
             {
                 EnvPtr->Log->Flush();
             }
-#if defined(_WIN32)
             p_mpi->Abort(-1);
-#endif
         }
 
         p_mpi->Finalize();
@@ -446,8 +449,9 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             return true;
         }
 
-        // check if we can support python scripts based on simulation type
-        std::string sim_type_str = GET_CONFIG_STRING( EnvPtr->Config, "Simulation_Type" );
+        // Process configuration file
+        Kernel::ConfigParams config_obj;
+        config_obj.Configure(EnvPtr->Config);
 
         // UDP-enabled StatusReporter needs host and sim unique id.
         if( po.GetCommandLineValueString( "monitor_host" ) != "none" )

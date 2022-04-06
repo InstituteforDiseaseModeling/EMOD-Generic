@@ -18,7 +18,7 @@ using namespace std;
 namespace Kernel
 {
     class RANDOMBASE;
-    typedef map<uint32_t, float>         GenomeMap_t;
+    typedef map<uint64_t, float>         GenomeMap_t;
     typedef vector<GenomeMap_t>          GroupGenomeMap_t;
     typedef vector<GroupGenomeMap_t>     CladeGroupGenomeMap_t;
 
@@ -40,15 +40,15 @@ namespace Kernel
         // Function names are lower case to differentiate from externally visible methods.
         void addPropertyValueListToPropertyToValueMap( const string& property, const PropertyValueList_t& values );
         void buildScalingMatrix( void );
-        void allocateAccumulators( NaturalNumber numberOfClades, NaturalNumber numberOfGenomes );
+        void allocateAccumulators( uint32_t numberOfClades, uint64_t numberOfGenomes );
 
         inline int getGroupCount() { return scalingMatrix.size(); }
 
-        int cladeCount;
-        int genomeCount;
+        uint32_t cladeCount;
+        uint64_t genomeCount;
         bool normalizeByTotalPopulation;
         vector<bool> cladeWasShed;                // Contagion of this cladeId was shed this cycle.
-        vector<set<unsigned int>> genomeWasShed;  // Contagion of this cladeId/genomeId was shed this cycle.
+        vector<set<uint64_t>> genomeWasShed;  // Contagion of this cladeId/genomeId was shed this cycle.
 
         vector<ContagionAccumulator_t> newlyDepositedContagionByCladeAndGroup;       // All clade (genome summed) shed this timestep
         vector<ContagionAccumulator_t> currentContagionByCladeAndSourceGroup;        // All clade (genome summed) current contagion (by contagion source)
@@ -66,20 +66,20 @@ namespace Kernel
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
         public: 
-            GenomePopulationImpl(RANDOMBASE* prng, int _cladeId, float _quantity, const GenomeMap_t& _genomeDistribution);
+            GenomePopulationImpl(RANDOMBASE* prng, uint32_t _cladeId, float _quantity, const GenomeMap_t& _genomeDistribution);
                 
         private:
             // IContagionPopulation implementation
             RANDOMBASE* pRNG;
-            virtual std::string GetName() const override;
-            virtual int GetCladeID() const override;
-            virtual int GetGeneticID() const override;
-            virtual void SetCladeID(int cladeID) override;
-            virtual void SetGeneticID(int geneticID) override;
+            virtual std::pair<uint32_t, uint64_t> GetStrainName(void) const override;
+            virtual uint32_t GetCladeID() const override;
+            virtual uint64_t GetGeneticID() const override;
+            virtual void SetCladeID(uint32_t cladeID) override;
+            virtual void SetGeneticID(uint64_t geneticID) override;
             virtual float GetTotalContagion() const override;
             virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 
-            int   cladeId;
+            uint32_t   cladeId;
             float contagionQuantity;
             const GenomeMap_t genomeDistribution;
         };
@@ -88,7 +88,7 @@ namespace Kernel
 
         // ITransmissionGroups
         virtual void AddProperty(const string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) override;
-        virtual void Build(float contagionDecayRate, int numberOfClades = 1, int numberOfGenomes = 1) override;
+        virtual void Build(float contagionDecayRate, uint32_t numberOfClades = 1, uint64_t numberOfGenomes = 1) override;
         virtual void ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
         virtual void GetGroupMembershipForProperties(const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) const override;
         virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight) override;
@@ -97,6 +97,7 @@ namespace Kernel
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) override;
         virtual void EndUpdate(float infectivityMultiplier = 1.0f, float InfectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) override;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) override;
+        virtual void LoadSparseRepVecs(sparse_contagion_repr& inf_rep) override;
 
         virtual void UseTotalPopulationForNormalization() override { normalizeByTotalPopulation = true; }
         virtual void UseGroupPopulationForNormalization() override { normalizeByTotalPopulation = false; }

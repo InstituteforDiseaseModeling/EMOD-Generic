@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "StatusReporter.h"
 #include "FileSystem.h"
 #include <sstream>
+#include <ctime>
 
 // Don't force upgrade of gcc just for this. Actual ifdef isn't really win32, it's c++11, but nullptr requires gcc 4.6
 #ifdef WIN32

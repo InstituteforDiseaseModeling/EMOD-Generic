@@ -4,7 +4,8 @@
         "Base_Population_Scale_Factor": 0.0005,
         "Base_Year": 1960,
         "Config_Name": "47_HIV_ProportionalAdjustmentEventCoordinator_HIVNegative_Vaccien",
-        "Report_Event_Recorder": 1,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "Vaccinated",
             "VaccineExpired"
@@ -135,7 +136,6 @@
             "VaccineExpired"
         ],
         "Run_Number": 3,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Duration": 3650
     }
 }

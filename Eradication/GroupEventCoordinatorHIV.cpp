@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "GroupEventCoordinatorHIV.h"
 #include "Configuration.h"
-#include "ConfigurationImpl.h"
 #include "FactorySupport.h"
 #include "InterventionFactory.h"
 #include "IIndividualHuman.h"

@@ -26,9 +26,6 @@ namespace Kernel
         // Factory methods
         virtual IIndividualHuman* createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender) override;
 
-        // Effect of climate on infectivity in airborne disease
-        virtual float getClimateCorrection() const override;
-
         DECLARE_SERIALIZABLE(NodeAirborne);
     };
 }

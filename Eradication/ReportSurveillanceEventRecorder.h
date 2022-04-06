@@ -24,8 +24,6 @@ namespace Kernel
     public:
         static IReport* CreateReport();
 
-        static std::string GetEnableParameterName(); // hides base class implementation
-
     public:
         ReportSurveillanceEventRecorder();
         virtual ~ReportSurveillanceEventRecorder();

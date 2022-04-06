@@ -91,6 +91,7 @@ namespace Kernel
         virtual void Update(float dt) = 0;
         virtual bool Expired() = 0;
         virtual void SetExpired( bool isExpired ) = 0;
+        virtual void OnExpiration() = 0;
         virtual void ValidateSimType( const std::string& simTypeStr ) = 0;
         virtual INodeDistributableIntervention * Clone()  = 0;
 
@@ -127,12 +128,13 @@ namespace Kernel
         virtual void OnExpiration() override;
         virtual void ValidateSimType( const std::string& simTypeStr ) override;
         virtual bool NeedsInfectiousLoopUpdate() const { return false; }
-        virtual bool NeedsPreInfectivityUpdate() const { return occurs_pre_infectivity; }
+        virtual bool NeedsPreInfectivityUpdate() const { return false; }
 
     protected:
         BaseIntervention();
         BaseIntervention( const BaseIntervention& );
         virtual ~BaseIntervention();
+
         virtual bool Configure(const Configuration* inputJson) override;
         virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO ) override;
 
@@ -144,7 +146,6 @@ namespace Kernel
         IIndividualHumanContext *parent;
         std::string name;
         float cost_per_unit;
-        bool occurs_pre_infectivity;
         bool expired;
         bool dont_allow_duplicates;
         bool enable_iv_replacement;
@@ -161,24 +162,33 @@ namespace Kernel
 
     public:
         virtual bool Configure( const Configuration* inputJson ) override;
+
         virtual const std::string& GetName() const override { return name; };
+        virtual void SetContextTo( INodeEventContext *context ) override;
         virtual float GetCostPerUnit() const override { return cost_per_unit; }
         virtual bool Expired() override;
         virtual void SetExpired( bool isExpired ) override;
+        virtual void OnExpiration() override;
         virtual void ValidateSimType( const std::string& simTypeStr ) override;
-        virtual void SetContextTo( INodeEventContext *context ) override;
 
     protected:
         BaseNodeIntervention();
+        BaseNodeIntervention( const BaseNodeIntervention& );
+        virtual ~BaseNodeIntervention();
+
         virtual bool Distribute(INodeEventContext *context, IEventCoordinator2* pEC = nullptr ) override;
 
         virtual bool AbortDueToDisqualifyingInterventionStatus( INodeEventContext* context );
         virtual bool UpdateNodesInterventionStatus();
 
+        static void serialize( IArchive& ar, BaseNodeIntervention* obj );
+
         INodeEventContext *parent;
         std::string name;
         float cost_per_unit;
         bool expired;
+        bool dont_allow_duplicates;
+        bool enable_iv_replacement;
         bool first_time;
         NPKeyValueContainer disqualifying_properties;
         NPKeyValue status_property;

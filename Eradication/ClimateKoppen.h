@@ -14,8 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <math.h>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "Climate.h"
 
 namespace Kernel

@@ -1,4 +1,5 @@
 {
+    "Simulation_Type": "HIV_SIM",
     "Group" : "STI_COINFECTION_STATUS",
     "Start_Year" : 2003,
     "Axes" : [ "FALSE", "TRUE" ],

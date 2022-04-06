@@ -22,7 +22,7 @@
             "Config_Name": "04B_Property_Restriction_at_NodeLevelHealthTriggeredIV"
         },
         "____________REPORTING___________": {
-            "Report_Event_Recorder": 1,
+            "Enable_Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "HIVNeedsMaleCircumcision"
             ]

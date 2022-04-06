@@ -36,8 +36,6 @@ namespace Kernel
                                                  ClimateFactory *climate_factory,
                                                  bool white_list_enabled ) override;
 
-        virtual void InitializeFlags(const ::Configuration *config);
-
     private:
         friend class Kernel::SimulationFactory; // allow them to create us
     };

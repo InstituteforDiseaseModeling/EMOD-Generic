@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configuration.h"
 #include "Configure.h"
 #include "Log.h"
-#include "ValidationLog.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
 #include "EventTriggerNode.h"
@@ -51,8 +50,6 @@ Environment::Environment()
     MPI.NumTasks  = 1;
     MPI.Rank      = 0;
     MPI.p_idm_mpi = nullptr;
-
-    Report.Validation = nullptr;
 
     //event_trigger_factories.resize( Kernel::EventType::pairs::count(), nullptr );
 }
@@ -152,8 +149,6 @@ bool Environment::Initialize(
     if( localEnv->Config->CheckElementByName("Default_Config_Path") || config->CheckElementByName("Default_Config_Path") )
         Kernel::JsonConfigurable::_possibleNonflatConfig = true;
 
-    localEnv->Report.Validation = ValidationLog::CreateNull(); // eliminate some overhead by creating a dummy object that does nothing
-
     localEnv->Status_Reporter = StatusReporter::getInstance();
 
     return true;
@@ -163,9 +158,6 @@ Environment::~Environment()
 {
     if (Config)
         delete Config;
-
-    if (Report.Validation)
-        delete Report.Validation;
 
     delete pIPFactory ;
     pIPFactory = nullptr ;
@@ -208,7 +200,7 @@ std::string Environment::FindFileOnPath( const std::string& rFilename )
         }
         else
         {
-            error += ":";
+            error += " or here ";
         }
     }
         

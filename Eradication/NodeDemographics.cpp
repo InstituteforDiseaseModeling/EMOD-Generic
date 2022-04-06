@@ -37,7 +37,6 @@ BEGIN_QUERY_INTERFACE_BODY(NodeDemographicsFactory)
 END_QUERY_INTERFACE_BODY(NodeDemographicsFactory)
 
 std::vector<std::string> NodeDemographicsFactory::demographics_filenames_list;
-bool DemographicsContext::using_compiled_demog = true;
 
 const std::string NodeDemographicsFactory::default_node_demographics_str = string(
 "{ \n\
@@ -46,9 +45,6 @@ const std::string NodeDemographicsFactory::default_node_demographics_str = strin
         \"Latitude\": -1, \n\
         \"Longitude\": -1, \n\
         \"Altitude\": 0, \n\
-        \"Airport\": 0, \n\
-        \"Region\": 0, \n\
-        \"Seaport\": 0, \n\
         \"BirthRate\": 0.00008715 \n\
     }, \n\
     \"IndividualAttributes\": { \n\
@@ -66,7 +62,7 @@ const std::string NodeDemographicsFactory::default_node_demographics_str = strin
 
 const NodeDemographics NodeDemographics::operator[]( const string& key ) const
 {
-    if(string_table->count(key) != 0 || DemographicsContext::using_compiled_demog == false)
+    if(string_table->count(key) != 0)
     {
         try
         {
@@ -338,9 +334,9 @@ bool NodeDemographics::operator!=( const NodeDemographics& rThat ) const
 }
 
 
-NodeDemographicsFactory * NodeDemographicsFactory::CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const ::Configuration *config )
+NodeDemographicsFactory * NodeDemographicsFactory::CreateNodeDemographicsFactory(const ::Configuration *config)
 {
-    NodeDemographicsFactory* factory = _new_ NodeDemographicsFactory(nodeid_suid_map);
+    NodeDemographicsFactory* factory = _new_ NodeDemographicsFactory();
 
     try
     {
@@ -932,17 +928,7 @@ NodeDemographics* NodeDemographicsFactory::CreateNodeDemographics(INodeContext *
 {
     NodeDemographics * new_demographics = nullptr;
 
-    suids::suid node_suid = parent_node->GetSuid();
-
-    if(nodeid_suid_map->right.count(node_suid) == 0)
-    {
-        //std::cerr << "Couldn't find matching NodeID for suid " << node_suid.data << endl;
-        std::ostringstream msg;
-        msg << "Couldn't find matching NodeID for suid " << node_suid.data << endl;
-        throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-    }
-
-    ExternalNodeId_t nodeid = nodeid_suid_map->right.at(node_suid);
+    ExternalNodeId_t nodeid = parent_node->GetExternalID();
 
     JsonObjectDemog finalnodedata = GetJsonForNode( nodeid );
 
@@ -1559,82 +1545,4 @@ bool NodeDemographicsDistribution::operator!=( const NodeDemographicsDistributio
     return !(*this == rThat);
 }
 
-
-
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive & ar, DemographicsContext& dc, const unsigned int /* file_version */)
-    {
-        ar & dc.stringTable;
-    }
-
-    template<class Archive>
-    void serialize(Archive & ar, Kernel::NodeDemographics &nd, const unsigned int /* file_version */)
-    {
-        std::string s;
-        if (typename Archive::is_loading())
-        {
-            ar & s;
-            json_spirit::read(s, nd.value);
-        }
-        else if(typename Archive::is_saving())
-        {
-            s = json_spirit::write(nd.value);
-            ar & s;
-        }
-    }
-
-    template<class Archive>
-    void serialize(Archive & ar, NodeDemographicsDistribution &ndd, const unsigned int /* file_version */)
-    {
-        std::string s_num_pop_groups;
-        std::string s_pop_groups;
-        std::string s_result_values;
-        std::string s_dist_values;
-        json_spirit::Value v_num_pop_groups;
-        json_spirit::Value v_pop_groups;
-        json_spirit::Value v_result_values;
-
-        // There's got to be a better way :(
-        if (typename Archive::is_loading())
-        {
-            ar & s_num_pop_groups;
-            json_spirit::read(s_num_pop_groups, v_num_pop_groups);
-            ndd.num_pop_groups = v_num_pop_groups.get_array();
-
-            ar & s_pop_groups;
-            json_spirit::read(s_pop_groups, v_pop_groups);
-            ndd.pop_groups = v_pop_groups.get_array();
-
-            ar & s_result_values;
-            json_spirit::read(s_result_values, v_result_values);
-            ndd.result_values = v_result_values.get_array();
-
-            ar & s_dist_values;
-            json_spirit::read(s_dist_values, ndd.dist_values);
-        }
-        else if(typename Archive::is_saving())
-        {
-            s_num_pop_groups = json_spirit::write(json_spirit::Value(ndd.num_pop_groups));
-            ar & s_num_pop_groups;
-
-            s_pop_groups = json_spirit::write(json_spirit::Value(ndd.pop_groups));
-            ar & s_pop_groups;
-
-            s_result_values = json_spirit::write(json_spirit::Value(ndd.result_values));
-            ar & s_result_values;
-
-            s_dist_values = json_spirit::write(ndd.dist_values);
-            ar & s_dist_values;
-        }
-
-        ar & ndd.num_axes;
-
-        // Serialize base class
-        ar & boost::serialization::base_object<NodeDemographics>(ndd);
-    }
-}
-#endif

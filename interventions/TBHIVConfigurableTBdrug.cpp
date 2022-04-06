@@ -8,15 +8,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "TBHIVConfigurableTBdrug.h"
 #include "IndividualEventContext.h"
 #include "IIndividualHumanContext.h"
 #include "TBContexts.h"
 #include "Debug.h"                        // for release-assert
-#include "SimulationConfig.h"
-#include "TBParameters.h"
-#include "TBHIVParameters.h"
 #include "TBDrugTypeParameters.h" //for TBDrugTypes
 #include "TBHIVDrugTypeParameters.h"
 #include "IIndividualHumanHIV.h" //for HIV status
@@ -248,14 +246,9 @@ namespace Kernel
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndvidualHumanTB2", "IndividualHuman" );
         }
 
-        auto tbdtMap = GET_CONFIGURABLE(SimulationConfig)->tbhiv_params->TBHIVDrugMap; 
+        auto tbdtMap = TBHIVConfig::GetTBHIVParams()->drugs_map;
 
         LOG_DEBUG_F("Read in the tbdt map, the drug type is %s \n", drug_name_string.c_str());
-        if (tbdtMap[drug_name_string] == nullptr)
-        {
-            throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "You used a drug which is not in the TBHIV_Drug_Types." );
-        }
-        release_assert( tbdtMap[drug_name_string] );
 
         fast_decay_time_constant = tbdtMap[drug_name_string]->TB_drug_primary_decay_time_constant;
 

@@ -27,9 +27,10 @@ namespace Kernel
 
     struct IOutbreak : public ISupports
     {
-        virtual int GetClade() const = 0;
-        virtual int GetGenome() const = 0;
-        virtual float GetImportAge() const = 0;
+        virtual uint32_t GetClade()     const = 0;
+        virtual uint64_t GetGenome()    const = 0;
+        virtual float    GetImportAge() const = 0;
+
         virtual ~IOutbreak() { }; // needed for cleanup via interface pointer
     };
 
@@ -50,16 +51,16 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreak
-        virtual int    GetClade()     const   { return clade; }
-        virtual int    GetGenome()    const   { return genome; }
-        virtual float  GetImportAge() const   { return import_age; }
+        virtual uint32_t  GetClade()     const   { return clade; }
+        virtual uint64_t  GetGenome()    const   { return genome; }
+        virtual float     GetImportAge() const   { return import_age; }
 
     protected:
-        int    clade;
-        int    genome;
-        int    num_cases_per_node;
-        float  import_age;
-        float  female_prob;
-        float  mc_weight;
+        uint32_t    clade;
+        uint64_t    genome;
+        int         num_cases_per_node;
+        float       import_age;
+        float       female_prob;
+        float       mc_weight;
     };
 }

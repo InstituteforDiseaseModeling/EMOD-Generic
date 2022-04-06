@@ -6,7 +6,6 @@
 import os
 import sys
 import shutil
-import pdb
 
 Import('env')
 
@@ -40,17 +39,11 @@ if dst_path != "":
 # set the common libraries
 env.Append(LIBPATH = ["$BUILD_DIR/baseReportLib", "$BUILD_DIR/cajun", "$BUILD_DIR/campaign", "$BUILD_DIR/libsqlite", "$BUILD_DIR/snappy", "$BUILD_DIR/lz4", "$BUILD_DIR/utils"])
 
-print( "Link executable against cajun, campaign, snappy, and utils lib's." )
-liblist = ["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils"]
-if os.name == "nt":
-    liblist.append( "libsqlite" )
-env.Append(LIBS=liblist)
-
-#print "builddir is " + env["BUILD_DIR"]
+if os.name != "posix":
+    env.Append(LIBS=["baseReportLib", "cajun", "campaign", "snappy", "lz4", "utils", "libsqlite"])
 
 # First static libs
 statlibscriptlist = [
-              'baseReportLib/SConscript',
               'baseReportLib/SConscript',
               'cajun/SConscript',
               'campaign/SConscript',
@@ -59,7 +52,7 @@ statlibscriptlist = [
               'lz4/SConscript',
               'utils/SConscript' ]
 
-if os.name == "nt":
+if os.name != "posix":
     statlibscriptlist.append( "libsqlite/SConscript" )
 
 SConscript( statlibscriptlist )
@@ -192,7 +185,6 @@ if env['AllDlls'] or env[ 'DiseaseDll' ] != "":
 
     # Polio
     # NOT YET SConscript( 'libgeneric/PoliovaccineSConscript' )
-    SConscript( 'libgeneric/BirthtriggeredSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/BroadcasteventSConscript', variant_dir=dll_op_path ) 
     SConscript( 'libgeneric/CalendarSConscript', variant_dir=dll_op_path )
     SConscript( 'libgeneric/DelayedInterventionSConscript', variant_dir=dll_op_path )
@@ -226,8 +218,8 @@ if disease != "Typhoid":
     OptionalScript('reporters/SConscript_Generic_HumanMigrationTracking')
     OptionalScript('reporters/SConscript_Generic_KmlDemo')
     OptionalScript('reporters/SConscript_Generic_NodeDemographics')
+    OptionalScript('reporters/SConscript_Generic_Serosurvey')
     OptionalScript('reporters/SConscript_Generic_StrainTracking')
-    OptionalScript('reporters/SConscript_Generic_LineList')
 
 if( (disease == "ALL") or (disease == "HIV") ):
     pass

@@ -1,4 +1,5 @@
 {
+    "Simulation_Type": "STI_SIM",
     "Distributions": [
         {
             "Age_Ranges_Years": [

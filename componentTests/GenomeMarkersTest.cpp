@@ -42,7 +42,7 @@ SUITE( GenomeMarkersTest )
         CHECK_EQUAL(  8, gm.GetBits( "Marker4" ) );
         CHECK_EQUAL( 16, gm.GetBits( "Marker5" ) );
 
-        uint32_t bits = gm.CreateBits( names );
+        uint64_t bits = gm.CreateBits( names );
         CHECK_EQUAL( 31, bits );
 
         names.pop_back();
@@ -288,31 +288,6 @@ SUITE( GenomeMarkersTest )
         names.push_back( "F" );
         combos = GenomeMarkers::GetCombinations( names );
         CHECK_EQUAL( 63, combos.size() );
-
-#if 0
-        names.push_back( "G" );
-        names.push_back( "H" );
-        names.push_back( "I" );
-        names.push_back( "J" );
-        names.push_back( "K" );
-        names.push_back( "L" );
-        names.push_back( "M" );
-        names.push_back( "N" );
-        names.push_back( "O" );
-        names.push_back( "P" );
-        names.push_back( "Q" );
-        names.push_back( "R" );
-        names.push_back( "S" );
-        names.push_back( "T" );
-        names.push_back( "U" );
-        names.push_back( "V" );
-        names.push_back( "W" );
-        names.push_back( "X" );
-
-        // This is a good test, but it took 42 seconds on my computer
-        combos = GenomeMarkers::GetCombinations( names );
-        CHECK_EQUAL( 16777215, combos.size() ); // (2^24) - 1
-#endif
     }
 
     TEST( TestCreatePossibleCombinations )
@@ -327,7 +302,7 @@ SUITE( GenomeMarkersTest )
         int num_permutation = gm.Initialize( names );
         CHECK_EQUAL( 16, num_permutation );
 
-        std::vector<std::pair<std::string,uint32_t>> combos = gm.CreatePossibleCombinations();
+        std::vector<std::pair<std::string,uint64_t>> combos = gm.CreatePossibleCombinations();
 
         CHECK_EQUAL( 16, combos.size() );
         CHECK_EQUAL( std::string( "NoMarkers"), combos[  0 ].first );

@@ -39,8 +39,6 @@ howlong(
     clock_t after = clock();
     clock_t diff = after - before;
     float thediff = diff/(float)CLOCKS_PER_SEC;
-
-    //std::cout << label << " took " << thediff << " seconds." << std::endl;
 }
 
 namespace Kernel {

@@ -8,7 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
-
+#include "ConfigParams.h"
 #include "SimulationHIV.h"
 
 #include "NodeHIV.h"
@@ -35,12 +35,6 @@ namespace Kernel
     , report_hiv_mortality(false)
     , report_hiv_period(DAYSPERYEAR)
     {
-        initConfigTypeMap( "Report_HIV_ByAgeAndGender",     &report_hiv_by_age_and_gender,   Report_HIV_ByAgeAndGender_DESC_TEXT,  false);
-        initConfigTypeMap( "Report_HIV_ART",                &report_hiv_ART,                 Report_HIV_ART_DESC_TEXT,  false);
-        initConfigTypeMap( "Report_HIV_Infection",          &report_hiv_infection,           Report_HIV_Infection_DESC_TEXT,  false);
-        initConfigTypeMap( "Report_HIV_Mortality",          &report_hiv_mortality,           Report_HIV_Mortality_DESC_TEXT,  false);
-        initConfigTypeMap( "Report_HIV_Period",             &report_hiv_period,              Report_HIV_Period_DESC_TEXT,     30.0, 36500.0, 730.0);
-
         reportClassCreator = ReportHIV::CreateReport;
         eventReportClassCreator = HIVReportEventRecorder::CreateReport;
     }
@@ -77,14 +71,6 @@ namespace Kernel
         return newsimulation;
     }
 
-    void SimulationHIV::SetFixedParameters(::Configuration * config)
-    {
-        config->Add("Enable_Disease_Mortality", 1);
-        config->Add("Enable_Immunity", 1);   //There is no HIV immunity. Switch is used to enable ART.
-        config->Add("Enable_Maternal_Infection_Transmission", 1);
-        config->Add("Enable_Vital_Dynamics", 1);
-    }
-
     void SimulationHIV::Initialize()
     {
         SimulationSTI::Initialize();
@@ -103,12 +89,16 @@ namespace Kernel
         hiv_infection_config_obj.Configure( config );
     }
 
-    bool
-    SimulationHIV::Configure(
-        const Configuration * inputJson
-    )
+    bool SimulationHIV::Configure(const Configuration* inputJson)
     {
+        initConfigTypeMap( "Report_HIV_ByAgeAndGender",     &report_hiv_by_age_and_gender,   Report_HIV_ByAgeAndGender_DESC_TEXT,  false);
+        initConfigTypeMap( "Report_HIV_ART",                &report_hiv_ART,                 Report_HIV_ART_DESC_TEXT,             false);
+        initConfigTypeMap( "Report_HIV_Infection",          &report_hiv_infection,           Report_HIV_Infection_DESC_TEXT,       false);
+        initConfigTypeMap( "Report_HIV_Mortality",          &report_hiv_mortality,           Report_HIV_Mortality_DESC_TEXT,       false);
+        initConfigTypeMap( "Report_HIV_Period",             &report_hiv_period,              Report_HIV_Period_DESC_TEXT,     30.0, 36500.0, 730.0);
+
         bool ret = SimulationSTI::Configure( inputJson );
+
         return ret;
     }
 
@@ -183,6 +173,6 @@ namespace Kernel
 
     void SimulationHIV::AddDataToHeader( IJsonObjectAdapter* pIJsonObj )
     {
-        pIJsonObj->Insert("Base_Year", SimulationSTI::base_year);
+        pIJsonObj->Insert("Base_Year", GetParams()->sim_time_base_year);
     }
 }

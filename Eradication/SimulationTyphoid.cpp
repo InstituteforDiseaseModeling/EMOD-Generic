@@ -99,8 +99,6 @@ GetSchema()
 
 #endif
 
-static const float DEFAULT_BASE_YEAR = 1930.0f;
-
 namespace Kernel
 {
     SimulationTyphoid::SimulationTyphoid() : SimulationEnvironmental()
@@ -173,27 +171,6 @@ namespace Kernel
         NodeTyphoid *node = NodeTyphoid::CreateNode(this, externalNodeId, node_suid);
 
         addNode_internal( node, nodedemographics_factory, climate_factory, white_list_enabled );
-    }
-
-    void SimulationTyphoid::InitializeFlags( const ::Configuration *config )
-    {
-    }
-
-    bool
-    SimulationTyphoid::Configure(
-        const Configuration * inputJson
-    )
-    {
-        // Set base_year
-        base_year = DEFAULT_BASE_YEAR ;
-        initConfigTypeMap( "Base_Year",  &base_year, Base_Year_DESC_TEXT, 1800.0, 2100.0, DEFAULT_BASE_YEAR );
-
-        bool ret = SimulationEnvironmental::Configure( inputJson );
-
-        LOG_INFO_F("Setting Base_Year to %f\n", base_year );
-        Simulation::currentTime._base_year = base_year;
-
-        return ret;
     }
 
     void SimulationTyphoid::resolveMigration()

@@ -1,30 +1,25 @@
 # -*- mode: python; -*-
 # This Python script, SConscript, invoked by the SConscript in the upper directory,
 #
-import os, sys, shutil, pdb
-
+import os, sys, shutil
 
 Import('env')
 report_env = env.Clone()
 report_env[ "REPORT_DIR" ] = 'libReportNodeDemographics'
 
 lib_report_dllSrcFiles = [ "$REPORT_DIR/ReportNodeDemographicsEModule.cpp", "$REPORT_DIR/ReportNodeDemographics.cpp" ]
-if os.name == "nt":
+if os.name != "posix":
     lib_report_dllSrcFiles.extend( [ "$REPORT_DIR/stdafx.cpp" ] )
 lib_report_dllIncFiles = [ "$REPORT_DIR/ReportNodeDemographics.h" ]
-lib_report_dllLocalInc = []
-if os.name == "nt":
-    lib_report_dllLocalInc.append( "$REPORT_DIR/stdafx.h" )
+lib_report_dllLocalInc = [ "$REPORT_DIR/stdafx.h" ]
+
+obj_ru                 = report_env.SharedObject( "grnd_ReportUtilities",         "../baseReportLib/ReportUtilities.cpp" )
 
 
-report_env.Append(LIBS=['baseReportLib'])
-report_env.Append(LIBS=['utils'])
-report_env.Append(LIBS=['cajun'])
 
 report_dir = report_env[ "BUILD_DIR" ] + 'reporter_plugins/' + report_env[ "REPORT_DIR" ]
 
-lib_report_Dll = report_env.SharedLibrary( report_dir, lib_report_dllSrcFiles )
-#print "building lib_report_dll: " + str(lib_report_Dll)
+lib_report_Dll = report_env.SharedLibrary( report_dir, lib_report_dllSrcFiles + obj_ru )
 
 # take lib_report.dll (exclude .lib, .exp) out to be the building target
 # to match the number of building variant

@@ -156,9 +156,6 @@ namespace Kernel
     void CommunityHealthWorkerEventCoordinator::CheckStartDay( float campaignStartDay ) const
     { }
 
-    void CommunityHealthWorkerEventCoordinator::InitializeTiming( const IdmDateTime& currentTime)
-    { }
-
     void CommunityHealthWorkerEventCoordinator::SetContextTo( ISimulationEventContext *isec )
     {
         m_Parent = isec;
@@ -270,13 +267,18 @@ namespace Kernel
         // ----------------
         // --- Update Stock
         // ----------------
-        if( m_DaysToNextShipment <= 0.0 )
+        if( m_DaysToNextShipment <= 0.0f )
         {
             m_DaysToNextShipment = m_DaysBetweenShipments;
-            m_CurrentStock += m_AmountInShipment;
-            if( m_CurrentStock > m_MaxStock )
+
+            // Avoid potential overflow by checking against the difference
+            if(m_MaxStock - m_CurrentStock < m_AmountInShipment)
             {
                 m_CurrentStock = m_MaxStock;
+            }
+            else
+            {
+                m_CurrentStock += m_AmountInShipment;
             }
         }
         else
@@ -336,6 +338,7 @@ namespace Kernel
         std::stringstream ss;
         ss << "UpdateNodes() gave out " << num_distributed << " '" << m_InterventionName.c_str() << "' interventions; " << m_CurrentStock << " remaining in stock\n";
         LOG_INFO( ss.str().c_str() );
+        release_assert(m_CurrentStock >= 0);
     }
 
     bool CommunityHealthWorkerEventCoordinator::Qualifies( INodeEventContext* pNEC )

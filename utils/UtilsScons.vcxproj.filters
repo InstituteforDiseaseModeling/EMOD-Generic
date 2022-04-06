@@ -57,9 +57,6 @@
 		<ClInclude Include="MathFunctions.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
-		<ClInclude Include="Profile.h">
-			<Filter>Header Files</Filter>
-		</ClInclude>
 		<ClInclude Include="ProgVersion.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
@@ -70,9 +67,6 @@
 			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="Sugar.h">
-			<Filter>Header Files</Filter>
-		</ClInclude>
-		<ClInclude Include="ValidationLog.h">
 			<Filter>Header Files</Filter>
 		</ClInclude>
 		<ClInclude Include="version_info.h">
@@ -146,9 +140,6 @@
 			<Filter>Source Files</Filter>
 		</ClCompile>
 		<ClCompile Include="suids.cpp">
-			<Filter>Source Files</Filter>
-		</ClCompile>
-		<ClCompile Include="ValidationLog.cpp">
 			<Filter>Source Files</Filter>
 		</ClCompile>
 	</ItemGroup>

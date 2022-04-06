@@ -13,6 +13,7 @@
             ],
             "Enable_Demographics_Initial": 1
         },
+        "Enable_Percentage_Children": 1,
         "Enable_Vector_Aging": 1,
         "Enable_Vector_Migration": 0,
         "Enable_Vector_Migration_Local": 0,
@@ -56,11 +57,11 @@
         "PRIMARY": {
             "Config_Name": "44_Malaria_Household_5x5_MigrateIndividuals_Moving",
             "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Report_Event_Recorder": 0,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Household_5x5",
             "Node_Grid_Size": 0.005,
-            "Report_Event_Recorder": 0,
             "Run_Number": 33,
             "Simulation_Duration": 730,
             "Simulation_Timestep": 1

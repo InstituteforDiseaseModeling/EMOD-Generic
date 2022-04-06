@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "RateTableImpl.h"
 #include "BehaviorPfa.h"
 #include "Common.h"
-#include "SimulationConfig.h"
 #include "RANDOM.h"
 
 using namespace std; 
@@ -42,10 +41,6 @@ SUITE(FlowControllerImplTest)
 
     TEST_FIXTURE(FlowControllerFixture, TestGetSetRates)
     {
-        SimulationConfig* p_sim_config = new SimulationConfig();
-        p_sim_config->sim_type = SimType::HIV_SIM ;
-        Environment::setSimulationConfig( p_sim_config );
-
         PSEUDO_DES ran ;
 
         unique_ptr<Configuration> p_config( Environment::LoadConfigurationFile( "testdata/FlowControllerImplTest.json" ) );

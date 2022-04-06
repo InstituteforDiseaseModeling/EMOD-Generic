@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 
 #include "IdmApi.h"
-#include "BoostLibWrapper.h"
 
 #include "ISupports.h"
 #include "Types.h"
@@ -44,7 +43,6 @@ namespace Kernel
     struct IDMAPI IOutbreakConsumer : public ISupports
     {
         virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float female_prob, float mc_weight) = 0;
-        //virtual void IncreasePrevalence(StrainIdentity* outbreak_strainID, IEventCoordinator2* pEC) = 0;
     };
 
     struct ITravelLinkedDistributionSource : ISupports
@@ -55,8 +53,8 @@ namespace Kernel
 
     struct IVisitIndividual
     {
-        virtual bool visitIndividualCallback( IIndividualHumanEventContext *ihec, float & incrementalCostOut, ICampaignCostObserver * pICCO ) = 0;
-        virtual ~IVisitIndividual() {}
+        virtual bool visitIndividualCallback(IIndividualHumanEventContext* ihec, float& incrementalCostOut, ICampaignCostObserver* pICCO ) = 0;
+        virtual int  GetMaxEvents() const = 0;
     };
 
     struct IDMAPI INodeEventContext : public ISupports 
@@ -66,7 +64,6 @@ namespace Kernel
         virtual void VisitIndividuals(individual_visit_function_t func) = 0;
         virtual int VisitIndividuals(IVisitIndividual* pIndividualVisitImpl) = 0;
 
-        virtual const NodeDemographics& GetDemographics() = 0;
         virtual const IdmDateTime& GetTime() const = 0;
 
         // to update any node-owned interventions
@@ -79,9 +76,15 @@ namespace Kernel
 
         virtual const suids::suid & GetId() const = 0;
         virtual void SetContextTo(INodeContext* context) = 0;
+
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name) = 0;
+        virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) = 0;
+        virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) = 0;
         virtual void PurgeExisting( const std::string& iv_name ) = 0;
-       
+        virtual void PurgeExistingByName( const std::string& iv_name ) = 0;
+        virtual bool ContainsExisting( const std::string& iv_name ) = 0;
+        virtual bool ContainsExistingByName( const std::string& iv_name ) = 0;
+
         virtual bool IsInPolygon(float* vertex_coords, int numcoords) = 0;
         virtual bool IsInPolygon( const json::Array &poly ) = 0;
         virtual bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist ) = 0;
@@ -92,6 +95,17 @@ namespace Kernel
         virtual ExternalNodeId_t GetExternalId() const = 0;
 
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() = 0;
+
+        virtual void  IncrementCampaignCost(float cost)                          = 0;
+
+        virtual void  UpdateBirthRateMultiplier(float mult_val)                  = 0;
+        virtual void  UpdateConnectionModifiers(float inbound, float outbound)   = 0;
+        virtual void  UpdateInfectivityMultiplier(float mult_val)                = 0;
+
+        virtual float GetBirthRateMultiplier()            const = 0;
+        virtual float GetInboundConnectionModifier()      const = 0;
+        virtual float GetOutboundConnectionModifier()     const = 0;
+        virtual float GetInfectivityMultiplier()          const = 0;
     };
 
     class Simulation;

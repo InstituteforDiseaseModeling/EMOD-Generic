@@ -35,6 +35,7 @@ namespace Kernel
         // ------------
         // --- IReport
         // ------------
+        virtual bool Configure( const Configuration* inputJson ) override;
         virtual void Initialize( unsigned int nrmSize ) override;
         virtual void UpdateEventRegistration( float currentTime,
                                               float dt,
@@ -44,7 +45,6 @@ namespace Kernel
         virtual std::string GetHeader() const override;
 
     protected:
-        virtual void ConfigureOther( const Configuration* inputJson ) override;
         virtual std::string GetOtherData( INodeEventContext *context, const EventTrigger::Enum& trigger ) override;
         virtual float GetTime( INodeEventContext* pEntity ) const override;
 

@@ -19,85 +19,67 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmDateTime.h"
 #include "INodeContext.h"
 
+//******************************************************************************
 
-// -------------------------------------------------------------------
-// !!!! Duplicated in IndividualHumanSTI.cpp !!!
 #define THREE_MONTHS  ( 91) // ~3 months
 #define SIX_MONTHS    (182) // ~6 months
 #define NINE_MONTHS   (274) // ~9 months
 #define TWELVE_MONTHS (365) // ~12 months
+#define DEFAULT_NAME ("ReportRelationshipCensus.csv")
 
-static const float PERIODS[] = { THREE_MONTHS, SIX_MONTHS, NINE_MONTHS, TWELVE_MONTHS };
+//******************************************************************************
+
+SETUP_LOGGING( "ReportRelationshipCensus" )
+
+static const char* _sim_types[]  = { "STI_SIM", "HIV_SIM", nullptr };
+static const float PERIODS[]     = { THREE_MONTHS, SIX_MONTHS, NINE_MONTHS, TWELVE_MONTHS };
 static std::vector<float> UNIQUE_PARTNER_TIME_PERIODS( PERIODS, PERIODS + sizeof( PERIODS ) / sizeof( PERIODS[ 0 ] ) );
-// -------------------------------------------------------------------
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportRelationshipCensus" ) // <<< Name of this file
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = { "STI_SIM", "HIV_SIM", nullptr };// <<< Types of simulation the report is to be used with
-
-report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportRelationshipCensus()); // <<< Report to create
-};
-
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::ReportRelationshipCensus();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
 // ----------------------------------------
 // --- ReportRelationshipCensus Methods
 // ----------------------------------------
 
-#define DEFAULT_NAME ("ReportRelationshipCensus.csv")
-
+namespace Kernel
+{
     ReportRelationshipCensus::ReportRelationshipCensus()
         : BaseTextReportEvents( DEFAULT_NAME )
         , m_ReportName( DEFAULT_NAME )

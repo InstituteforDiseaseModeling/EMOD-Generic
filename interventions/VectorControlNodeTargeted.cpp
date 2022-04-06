@@ -333,14 +333,12 @@ namespace Kernel
     {
         if( !JsonConfigurable::_dryrun )
         {
-            VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_sampling_type;
-            if ( vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER || vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT )
+            if(MatchesDependency(inputJson, "Vector_Sampling_Type", "VECTOR_COMPARTMENTS_NUMBER,VECTOR_COMPARTMENTS_PERCENT"))
             {
-                throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Explicit sugar feeding only implemented in individual-mosquito model, not in cohort model." );
+                throw NotYetImplementedException(__FILE__, __LINE__, __FUNCTION__, "Explicit sugar feeding only implemented in individual-mosquito model, not in cohort model.");
             }
             if ( GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_sugar_feeding == VectorSugarFeeding::VECTOR_SUGAR_FEEDING_NONE )
             {
-                //LOG_WARN("Distributing SugarTrap with vector sugar-feeding frequency set to VECTOR_SUGAR_FEEDING_NONE.\n");
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Intervention in campaign", "SugarTrap", "Vector_Sugar_Feeding_Frequency", "VECTOR_SUGAR_FEEDING_NONE" );
             }
         }
@@ -369,13 +367,9 @@ namespace Kernel
 
     bool OvipositionTrap::Configure( const Configuration * inputJson )
     {
-        if( !JsonConfigurable::_dryrun )
+        if(!JsonConfigurable::_dryrun && MatchesDependency(inputJson, "Vector_Sampling_Type", "VECTOR_COMPARTMENTS_NUMBER,VECTOR_COMPARTMENTS_PERCENT"))
         {
-            VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_sampling_type;
-            if (vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER || vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT)
-            {
-                throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Explicit oviposition only implemented in individual-mosquito model, not in cohort model." );
-            }
+            throw NotYetImplementedException(__FILE__, __LINE__, __FUNCTION__, "Explicit oviposition only implemented in individual-mosquito model, not in cohort model.");
         }
 
         WaningConfig killing_config;

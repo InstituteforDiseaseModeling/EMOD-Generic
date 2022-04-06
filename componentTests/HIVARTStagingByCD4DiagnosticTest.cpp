@@ -25,7 +25,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configuration.h"
 #include "Simulation.h"
 #include "Node.h"
-#include "SimulationConfig.h"
 
 using namespace Kernel;
 
@@ -38,7 +37,6 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
         IndividualHumanInterventionsContextFake m_InterventionsContext ;
         IndividualHumanContextFake              m_Human ;
         HIVARTStagingByCD4Diagnostic            m_Diag ;
-        SimulationConfig*                       m_pSimulationConfig ;
 
         DiagnosticFixture()
             : m_NC()
@@ -46,16 +44,12 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
             , m_InterventionsContext()
             , m_Human( &m_InterventionsContext, &m_NC, &m_NEC, nullptr )
             , m_Diag()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             m_InterventionsContext.SetContextTo( &m_Human );
             m_Diag.SetContextTo( &m_Human );
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             IdmDateTime idm_time ;
             idm_time.time = 2009.0 * 365.0;
@@ -82,20 +76,13 @@ SUITE(HivArtStagingByCD4DiagnosticTest)
 
             m_Human.SetHasHIV( true );
 
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
-
-            //EventTriggerFactoryDeleteInstance();
-
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
         }
 
         ~DiagnosticFixture()
         {
-            delete m_pSimulationConfig;
-            Environment::setSimulationConfig( nullptr );
             IPFactory::DeleteFactory();
             Environment::Finalize();
         }

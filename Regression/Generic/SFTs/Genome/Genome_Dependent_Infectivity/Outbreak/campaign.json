@@ -1,0 +1,125 @@
+{
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 1,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 0,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 5,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 5,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 3,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 15,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 2,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 1,
+                    "Genome": 4,
+                    "Number_Cases_Per_Node": 1,
+                    "class": "Outbreak"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 25,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

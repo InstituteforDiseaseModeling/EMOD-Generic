@@ -83,17 +83,13 @@ namespace Kernel
         }
     }
 
-    std::list<IDistributableIntervention*> InterventionsContainer::GetInterventionsByType(const std::string &type_name)
+    std::list<IDistributableIntervention*> InterventionsContainer::GetInterventionsByType(const std::string& type_name)
     {
         std::list<IDistributableIntervention*> interventions_of_type;
         LOG_DEBUG_F( "Looking for intervention of type %s\n", type_name.c_str() );
         for (auto intervention : interventions)
         {
             std::string cur_iv_type_name = typeid( *intervention ).name();
-#ifndef WIN32
-            cur_iv_type_name = abi::__cxa_demangle(cur_iv_type_name.c_str(), 0, 0, nullptr );
-#endif
-            LOG_DEBUG_F("intervention name = %s\n", cur_iv_type_name.c_str());
             if( cur_iv_type_name == type_name )
             {
                 LOG_DEBUG("Found one...\n");
@@ -104,7 +100,7 @@ namespace Kernel
         return interventions_of_type;
     }
 
-    std::list<IDistributableIntervention*> InterventionsContainer::GetInterventionsByName(const std::string &intervention_name)
+    std::list<IDistributableIntervention*> InterventionsContainer::GetInterventionsByName(const std::string& intervention_name)
     {
         std::list<IDistributableIntervention*> interventions_list;
         LOG_DEBUG_F( "Looking for interventions with name %s\n", intervention_name.c_str() );
@@ -134,7 +130,7 @@ namespace Kernel
         return interface_list;
     }
 
-    void InterventionsContainer::PurgeExisting( const std::string &iv_name )
+    void InterventionsContainer::PurgeExisting( const std::string& iv_name )
     {
         std::list<IDistributableIntervention*> iv_list = GetInterventionsByType(iv_name);
 
@@ -146,7 +142,7 @@ namespace Kernel
         }
     }
 
-    void InterventionsContainer::PurgeExistingByName( const std::string &iv_name )
+    void InterventionsContainer::PurgeExistingByName( const std::string& iv_name )
     {
         std::list<IDistributableIntervention*> iv_list = GetInterventionsByName(iv_name);
 
@@ -158,7 +154,7 @@ namespace Kernel
         }
     }
 
-    bool InterventionsContainer::ContainsExisting( const std::string &iv_name )
+    bool InterventionsContainer::ContainsExisting( const std::string& iv_name )
     {
         for( auto intervention : interventions )
         {
@@ -170,11 +166,11 @@ namespace Kernel
         return false;
     }
 
-    bool InterventionsContainer::ContainsExistingByName( const std::string& name )
+    bool InterventionsContainer::ContainsExistingByName( const std::string& iv_name )
     {
         for( auto intervention : interventions )
         {
-            if( intervention->GetName() == name )
+            if( intervention->GetName() == iv_name )
             {
                 return true;
             }
@@ -272,9 +268,7 @@ namespace Kernel
     {
     }
 
-    bool InterventionsContainer::GiveIntervention(
-        IDistributableIntervention* iv
-    )
+    bool InterventionsContainer::GiveIntervention( IDistributableIntervention* iv )
     {
         interventions.push_back( iv );
         // We need to increase the reference counter here to represent fact that interventions container

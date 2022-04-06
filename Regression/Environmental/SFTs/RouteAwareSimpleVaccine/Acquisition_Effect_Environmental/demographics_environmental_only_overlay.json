@@ -1,0 +1,52 @@
+{
+    "Metadata": {
+        "DateCreated": "Mon Aug 20 13:40:55 2018", 
+        "Tool": "notepad++", 
+        "Author": "yechen", 
+        "IdReference": "Gridded world grump2.5arcmin", 
+        "NodeCount": 1
+    }, 
+	"Defaults":{
+	            "IndividualProperties": [
+                {
+                    "Property": "Geographic",
+                    "Values": [
+                        "Seed",
+                        "Control",
+                        "Vaccine_0.25",
+                        "Vaccine_0.9",
+                        "Vaccine_1"
+                    ],
+                    "Initial_Distribution": [ 0.01, 0.25, 0.25, 0.25, 0.24],
+                    "Transitions": [],
+                    "TransmissionMatrix": {
+					"contact":  {
+						"Matrix":
+						 [
+                         	[0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0]
+						 ]
+					 }
+					 ,
+					 "environmental" : {
+						 "Matrix":
+						 [
+                            [0.0, 1, 1, 1, 1],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0],
+                            [0.0, 0, 0, 0, 0]
+						 ] }
+					}
+                }
+            ]
+	},
+    "Nodes": [
+        {
+            "NodeID": 1
+        }
+    ]
+}

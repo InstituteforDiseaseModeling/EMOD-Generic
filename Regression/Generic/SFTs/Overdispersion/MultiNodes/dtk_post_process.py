@@ -10,7 +10,7 @@ import json
 import numpy as np
 
 import dtk_test.dtk_sft as dtk_sft
-from dtk_test.dtk_sft_class import SFT
+from dtk_test.dtk_sft_class import SFT, arg_parser
 from dtk_test.dtk_General_Support import ConfigKeys
 from dtk_test.dtk_OutputFile import ReportEventRecorder
 
@@ -47,8 +47,8 @@ def get_daily_new_infection(event_df, node_id, simulation_duration):
 
 
 class OverdispersionTest(SFT):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.json_report_name = "PropertyReport.json"
         self.params_keys = [ConfigKeys.Config_Name,
                             ConfigKeys.Base_Infectivity_Constant,
@@ -133,11 +133,17 @@ class OverdispersionTest(SFT):
         pass
 
 
-def application(output_folder="output"):
-    my_sft = OverdispersionTest()
+def application(output_folder="output", my_arg=None):
+    if not my_arg:
+        my_sft = OverdispersionTest()
+    else:
+        my_sft = OverdispersionTest(
+            output=my_arg.output, stdout=my_arg.stdout, json_report=my_arg.json_report, event_csv=my_arg.event_csv,
+            config=my_arg.config, campaign=my_arg.campaign, report_name=my_arg.report_name, debug=my_arg.debug)
     my_sft.run()
 
 
 if __name__ == "__main__":
     # execute only if run as a script
-    application()
+    my_arg = arg_parser()
+    application(my_arg=my_arg)

@@ -8,24 +8,40 @@ import dtk_test.dtk_sft as dtk_sft
 from dtk_test.dtk_General_Support import ConfigKeys
 
 
+def arg_parser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-o', '--output', default="output", help="Folder to load outputs from (output)")
+    parser.add_argument('-c', '--config', default="config.json", help="Config name to load (config.json)")
+    parser.add_argument('-C', '--campaign', default="campaign.json", help="campaign name to load (campaign.json)")
+    parser.add_argument('-s', '--stdout', default="test.txt", help="Name of stdout file to parse (test.txt)")
+    parser.add_argument('-j', '--json_report', default="InsetChart.json",
+                        help="Json report to load (InsetChart.json)")
+    parser.add_argument('-e', '--event_csv', default="ReportEventRecorder.csv",
+                        help="Event report to load (ReportEventRecorder.csv)")
+    parser.add_argument('-r', '--report_name', default=dtk_sft.sft_output_filename, help="Report file to generate")
+    parser.add_argument('-d', '--debug', help="debug flag", action='store_true')
+    return parser.parse_args()
+
+
 class SFT(ABC):
     """
         A base class carrying the lowest level SFT interfaces called by individual test objects
     """
-    def __init__(self):
-        self.args = self.arg_parser()
-        self.output_folder = self.args.output
-        self.stdout_filename = self.args.stdout
+    def __init__(self, output="output", stdout="test.txt", json_report="InsetChart.json",
+                 event_csv="ReportEventRecorder.csv", config="config.json", campaign="campaign.json",
+                 report_name=dtk_sft.sft_output_filename, debug=False):
+        self.output_folder = output
+        self.stdout_filename = stdout
         self.stdout = None
-        self.json_report_name = self.args.json_report
+        self.json_report_name = json_report
         self.json_report = None
-        self.event_report_name = self.args.event_csv
+        self.event_report_name = event_csv
         self.csv = None
-        self.config_filename = self.args.config
+        self.config_filename = config
         self.params = dict()
-        self.campaign_filename = self.args.campaign
-        self.report_name = self.args.report_name
-        self.debug = self.args.debug
+        self.campaign_filename = campaign
+        self.report_name = report_name
+        self.debug = debug
         self.success = True
         self.msg = list()
         if self.debug:
@@ -38,21 +54,6 @@ class SFT(ABC):
             print("debug: " + str(self.debug) + "\n")
         dtk_sft.wait_for_done(filename=self.stdout_filename)
         super().__init__()
-
-    @staticmethod
-    def arg_parser():
-        parser = argparse.ArgumentParser()
-        parser.add_argument('-o', '--output', default="output", help="Folder to load outputs from (output)")
-        parser.add_argument('-c', '--config', default="config.json", help="Config name to load (config.json)")
-        parser.add_argument('-C', '--campaign', default="campaign.json", help="campaign name to load (campaign.json)")
-        parser.add_argument('-s', '--stdout', default="test.txt", help="Name of stdout file to parse (test.txt)")
-        parser.add_argument('-j', '--json_report', default="InsetChart.json",
-                            help="Json report to load (InsetChart.json)")
-        parser.add_argument('-e', '--event_csv', default="ReportEventRecorder.csv",
-                            help="Event report to load (ReportEventRecorder.csv)")
-        parser.add_argument('-r', '--report_name', default=dtk_sft.sft_output_filename, help="Report file to generate")
-        parser.add_argument('-d', '--debug', help="debug flag", action='store_true')
-        return parser.parse_args()
 
     def load_config(self, params_keys: Optional[list] = None):
         """

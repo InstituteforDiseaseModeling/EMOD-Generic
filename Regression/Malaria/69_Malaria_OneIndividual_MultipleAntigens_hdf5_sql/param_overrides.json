@@ -43,7 +43,7 @@
         "Vector_Species_Names": []
     },
     "PRIMARY": {
-        "Config_Name": "27_Malaria_OneIndividual_MultipleAntigens",
+        "Config_Name": "69_Malaria_OneIndividual_MultipleAntigens",
         "Custom_Reports_Filename": "custom_reports.json",
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,

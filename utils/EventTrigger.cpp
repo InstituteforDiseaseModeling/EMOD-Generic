@@ -33,7 +33,8 @@ namespace Kernel
     const EventTrigger& EventTrigger::Births                     = EventTriggerFactory::CreateBuiltInEventTrigger( "Births"                    );
     const EventTrigger& EventTrigger::EveryUpdate                = EventTriggerFactory::CreateBuiltInEventTrigger( "EveryUpdate"               );
     const EventTrigger& EventTrigger::EveryTimeStep              = EventTriggerFactory::CreateBuiltInEventTrigger( "EveryTimeStep"             );
-    const EventTrigger& EventTrigger::NewInfection          = EventTriggerFactory::CreateBuiltInEventTrigger( "NewInfection"         );
+    const EventTrigger& EventTrigger::NewInfection               = EventTriggerFactory::CreateBuiltInEventTrigger( "NewInfection"              );
+    const EventTrigger& EventTrigger::InfectionCleared           = EventTriggerFactory::CreateBuiltInEventTrigger( "InfectionCleared"          );
     const EventTrigger& EventTrigger::TBActivation               = EventTriggerFactory::CreateBuiltInEventTrigger( "TBActivation"              );
     const EventTrigger& EventTrigger::NewClinicalCase            = EventTriggerFactory::CreateBuiltInEventTrigger( "NewClinicalCase"           );
     const EventTrigger& EventTrigger::NewSevereCase              = EventTriggerFactory::CreateBuiltInEventTrigger( "NewSevereCase"             );
@@ -71,8 +72,8 @@ namespace Kernel
     const EventTrigger& EventTrigger::Immigrating                = EventTriggerFactory::CreateBuiltInEventTrigger( "Immigrating"               );
     const EventTrigger& EventTrigger::HIVTestedNegative          = EventTriggerFactory::CreateBuiltInEventTrigger( "HIVTestedNegative"         );
     const EventTrigger& EventTrigger::HIVTestedPositive          = EventTriggerFactory::CreateBuiltInEventTrigger( "HIVTestedPositive"         );
-    const EventTrigger& EventTrigger::NewlySymptomatic           = EventTriggerFactory::CreateBuiltInEventTrigger( "NewlySymptomatic"             );
-    const EventTrigger& EventTrigger::SymptomaticCleared         = EventTriggerFactory::CreateBuiltInEventTrigger( "SymptomaticCleared" );
+    const EventTrigger& EventTrigger::NewlySymptomatic           = EventTriggerFactory::CreateBuiltInEventTrigger( "NewlySymptomatic"          );
+    const EventTrigger& EventTrigger::SymptomaticCleared         = EventTriggerFactory::CreateBuiltInEventTrigger( "SymptomaticCleared"        );
     const EventTrigger& EventTrigger::TwelveWeeksPregnant        = EventTriggerFactory::CreateBuiltInEventTrigger( "TwelveWeeksPregnant"       );
     const EventTrigger& EventTrigger::FourteenWeeksPregnant      = EventTriggerFactory::CreateBuiltInEventTrigger( "FourteenWeeksPregnant"     );
     const EventTrigger& EventTrigger::SixWeeksOld                = EventTriggerFactory::CreateBuiltInEventTrigger( "SixWeeksOld"               );
@@ -88,7 +89,7 @@ namespace Kernel
     const EventTrigger& EventTrigger::EnteredRelationship        = EventTriggerFactory::CreateBuiltInEventTrigger( "EnteredRelationship"       );
     const EventTrigger& EventTrigger::ExitedRelationship         = EventTriggerFactory::CreateBuiltInEventTrigger( "ExitedRelationship"        );
     const EventTrigger& EventTrigger::FirstCoitalAct             = EventTriggerFactory::CreateBuiltInEventTrigger( "FirstCoitalAct"            );
-    const EventTrigger& EventTrigger::ExposureComplete           = EventTriggerFactory::CreateBuiltInEventTrigger( "ExposureComplete"        );
+    const EventTrigger& EventTrigger::ExposureComplete           = EventTriggerFactory::CreateBuiltInEventTrigger( "ExposureComplete"          );
 
     const EventType::Enum EventTriggerFactory::EVENT_TYPE = EventType::INDIVIDUAL;
     const char* EventTriggerFactory::CONSTRAINT_SCHEMA_STRING = "'<configuration>:Custom_Individual_Events.*' or Built-in";

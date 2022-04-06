@@ -23,5 +23,9 @@ namespace Kernel
 
         CampaignEventByYear();
         virtual ~CampaignEventByYear();
+        virtual bool Validate( const ISimulationContext* parent_sim );
+
+    protected:
+        float start_year;
     };
 }

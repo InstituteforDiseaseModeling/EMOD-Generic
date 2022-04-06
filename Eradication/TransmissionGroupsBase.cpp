@@ -180,30 +180,30 @@ namespace Kernel
         LOG_DEBUG_F( "Creating contagion population with clade id %d and quantity %f\n", cladeId, contagionQuantity );
     }
 
-    std::string TransmissionGroupsBase::ContagionPopulationImpl::GetName( void ) const
+    std::pair<uint32_t, uint64_t> TransmissionGroupsBase::ContagionPopulationImpl::GetStrainName( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for ContagionPopulationImpl" );
     }
 
-    int TransmissionGroupsBase::ContagionPopulationImpl::GetCladeID() const
+    uint32_t TransmissionGroupsBase::ContagionPopulationImpl::GetCladeID() const
     {
         return cladeId;
     }
 
-    int TransmissionGroupsBase::ContagionPopulationImpl::GetGeneticID() const
+    uint64_t TransmissionGroupsBase::ContagionPopulationImpl::GetGeneticID() const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for ContagionPopulationImpl" );
     }
 
-    void TransmissionGroupsBase::ContagionPopulationImpl::SetCladeID( int cladeID )
+    void TransmissionGroupsBase::ContagionPopulationImpl::SetCladeID( uint32_t cladeID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for ContagionPopulationImpl" );
     }
 
-    void TransmissionGroupsBase::ContagionPopulationImpl::SetGeneticID( int geneticID )
+    void TransmissionGroupsBase::ContagionPopulationImpl::SetGeneticID( uint64_t geneticID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for ContagionPopulationImpl" );

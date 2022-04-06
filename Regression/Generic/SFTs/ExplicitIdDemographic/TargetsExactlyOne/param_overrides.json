@@ -1,0 +1,28 @@
+{
+    "parameters": {
+        "Default_Config_Path": "defaults/generic_science_default_config.json",
+        "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
+        "Base_Infectivity_Constant": 4,
+        "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
+        "Incubation_Period_Constant": 5,
+        "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+        "Infectious_Period_Constant": 5,
+        "Enable_Demographics_Builtin": 0,
+        "Demographics_Filenames": [
+            "../../demographics.json"
+        ],
+        "Enable_Initial_Prevalence": 0,
+        "Enable_Vital_Dynamics": 0,
+        "Enable_Event_DB": 1,
+        "SQL_Events": [
+            "NewInfection"
+        ],
+        "Geography": "NONE",
+        "Config_Name": "ExplicitID_TargetsExactlyOne",
+        "Build_Campaign_Event_At": 25,
+        "Simulation_Duration": 19,
+        "logLevel_Individual": "INFO",
+        "logLevel_Infection": "INFO",
+        "logLevel_Susceptibility": "INFO"
+    }
+}

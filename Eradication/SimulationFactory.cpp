@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "Configuration.h"
 #include "EventTrigger.h"
+#include "ConfigParams.h"
 
 #include "Simulation.h"
 #include "SimulationFactory.h"
@@ -95,72 +96,11 @@ namespace Kernel
             return newsim;
         }
 
-        std::string sSimType;
+        std::string sSimType = SimType::pairs::lookup_key(SimConfig::GetSimParams()->sim_type);
 
         try
         {
-            sSimType = GET_CONFIG_STRING(EnvPtr->Config, "Simulation_Type");
-
-            SimType::Enum sim_type;
-            if (sSimType == "GENERIC_SIM")
-                sim_type = SimType::GENERIC_SIM;
-#ifndef DISABLE_VECTOR
-            else if (sSimType == "VECTOR_SIM")
-                sim_type = SimType::VECTOR_SIM;
-#endif
-#ifndef DISABLE_MALARIA
-            else if (sSimType == "MALARIA_SIM")
-                sim_type = SimType::MALARIA_SIM;
-#endif
-#ifdef ENABLE_ENVIRONMENTAL
-            else if (sSimType == "ENVIRONMENTAL_SIM")
-                sim_type = SimType::ENVIRONMENTAL_SIM;
-#endif
-#ifdef ENABLE_POLIO
-            else if (sSimType == "POLIO_SIM")
-                sim_type = SimType::POLIO_SIM;
-#endif
-#ifdef ENABLE_ENVIRONMENTAL
-            else if (sSimType == "ENVIRONMENTAL_SIM")
-                sim_type = SimType::ENVIRONMENTAL_SIM;
-#endif
-#ifdef ENABLE_TYPHOID
-            else if (sSimType == "TYPHOID_SIM")
-                sim_type = SimType::TYPHOID_SIM;
-#endif
-#ifndef DISABLE_AIRBORNE
-            else if (sSimType == "AIRBORNE_SIM")
-                sim_type = SimType::AIRBORNE_SIM;
-#endif
-#ifndef DISABLE_TBHIV
-            else if (sSimType == "TBHIV_SIM")
-                sim_type = SimType::TBHIV_SIM;
-#endif // TBHIV
-#ifndef DISABLE_STI
-            else if (sSimType == "STI_SIM")
-                sim_type = SimType::STI_SIM;
-#endif
-#ifndef DISABLE_HIV
-            else if (sSimType == "HIV_SIM")
-                sim_type = SimType::HIV_SIM;
-#endif // HIV
-#ifdef ENABLE_DENGUE
-            else if (sSimType == "DENGUE_SIM")
-                sim_type = SimType::DENGUE_SIM;
-#endif
-#ifdef ENABLE_PYTHON_FEVER
-            else if (sSimType == "PY_SIM")
-                sim_type = SimType::PY_SIM;
-#endif
-            else
-            {
-                std::ostringstream msg;
-                msg << "Simulation_Type " << sSimType << " not recognized." << std::endl;
-                throw Kernel::GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-            }
-
 #ifdef _DLLS_
-
             // Look through disease dll directory, do LoadLibrary on each .dll,
             // do GetProcAddress on GetMimeType() and CreateSimulation
             typedef ISimulation* (*createSim)(const Environment *);
@@ -171,47 +111,39 @@ namespace Kernel
             if (!dllLoader.LoadDiseaseDlls(createSimFuncPtrMap) || !createSimFuncPtrMap[sSimType])
             {
                 std::ostringstream msg;
-                msg << "Failed to load disease emodules for SimType: " << SimType::pairs::lookup_key(sim_type) << " from path: " << dllLoader.GetEModulePath(DISEASE_EMODULES).c_str() << std::endl;
+                msg << "Failed to load disease emodules for SimType: " << sSimType << " from path: " << dllLoader.GetEModulePath(DISEASE_EMODULES).c_str() << std::endl;
                 throw Kernel::DllLoadingException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str());
                 return newsim;
             }
             newsim = createSimFuncPtrMap[sSimType](EnvPtr);
-            release_assert(newsim);
-
 #else // _DLLS_
-            switch (sim_type)
+            switch (SimConfig::GetSimParams()->sim_type)
             {
                 case SimType::GENERIC_SIM:
-                    // No fixed parameters to set
                     newsim = Simulation::CreateSimulation(EnvPtr->Config);
                 break;
 #if defined(ENABLE_ENVIRONMENTAL)
                 case SimType::ENVIRONMENTAL_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationEnvironmental::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #if defined( ENABLE_POLIO)
                 case SimType::POLIO_SIM:
-                    SimulationPolio::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationPolio::CreateSimulation(EnvPtr->Config);
                 break;
 #endif        
 #if defined( ENABLE_TYPHOID)
                 case SimType::TYPHOID_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationTyphoid::CreateSimulation(EnvPtr->Config);
                 break;
 #endif        
 #ifndef DISABLE_VECTOR
                 case SimType::VECTOR_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationVector::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #ifndef DISABLE_MALARIA
                 case SimType::MALARIA_SIM:
-                    SimulationMalaria::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationMalaria::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
@@ -223,37 +155,33 @@ namespace Kernel
 #endif
 #ifndef DISABLE_TBHIV
                 case SimType::TBHIV_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationTBHIV::CreateSimulation(EnvPtr->Config);
                 break;
 #endif // TBHIV
 #ifndef DISABLE_STI
                 case SimType::STI_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationSTI::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
 #ifndef DISABLE_HIV 
                 case SimType::HIV_SIM:
-                    SimulationHIV::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationHIV::CreateSimulation(EnvPtr->Config);
                 break;
 #endif // HIV
 #ifdef ENABLE_DENGUE
                 case SimType::DENGUE_SIM:
-                    SimulationDengue::SetFixedParameters(EnvPtr->Config);
                     newsim = SimulationDengue::CreateSimulation(EnvPtr->Config);
                 break;
 #endif 
 #ifdef ENABLE_PYTHON_FEVER 
                 case SimType::PY_SIM:
-                    // No fixed parameters to set
                     newsim = SimulationPy::CreateSimulation(EnvPtr->Config);
                 break;
 #endif
                 default: 
-                    // Should not be possible to get here
-                    release_assert(false);
+                    std::ostringstream msg;
+                    msg << "Simulation_Type " << sSimType << " not recognized." << std::endl;
+                    throw Kernel::GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
                 break;
             }
 #endif

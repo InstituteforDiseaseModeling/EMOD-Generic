@@ -68,16 +68,4 @@ namespace Kernel {
 
         std::map< std::string, float > new_active_TB_infections;
     };
-
-#if 0
-    template<class Archive>
-    void serialize(Archive &ar, PropertyReport& report, const unsigned int v)
-    {
-        boost::serialization::void_cast_register<PropertyReport,IReport>();
-        //ar & report.timesteps_reduced;
-        //ar & report.channelDataMap;
-        //ar & report._nrmSize;
-    }
-#endif
-
 }

@@ -15,19 +15,19 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel 
 
 {
-    class TBDrugTypeParameters;
     class TBHIVDrugTypeParameters : public TBDrugTypeParameters
     {
-        friend class SimulationConfig;
         friend class AntiTBPropDepDrug;
         friend class TBHIVConfigurableTBdrug;
+
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+
     public:
         static TBHIVDrugTypeParameters* CreateTBHIVDrugTypeParameters( const Configuration * inputJson, const std::string& tb_drug_name );
 
         TBHIVDrugTypeParameters( const std::string& tb_drug_name );
         virtual ~TBHIVDrugTypeParameters();
-       // bool Configure( const ::Configuration *json );
+
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject);
 
     protected:
@@ -47,5 +47,28 @@ namespace Kernel
 
         float TB_reduced_transmit;
         float TB_reduced_acquire;
+    };
+
+
+
+    class TBHIVDrugCollection : public JsonConfigurable, public IComplexJsonConfigurable
+    {
+    public:
+        IMPLEMENT_NO_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+
+        TBHIVDrugCollection();
+        virtual ~TBHIVDrugCollection();
+
+        // IComplexJsonConfigurable methods
+        virtual bool                HasValidDefault() const override { return true; }
+        virtual json::QuickBuilder  GetSchema()             override;
+        virtual void                ConfigureFromJsonAndKey(const Configuration*, const std::string& key) override;
+
+        virtual size_t size()                                   const;
+        TBHIVDrugTypeParameters* operator[](const std::string&) const;
+
+    protected:
+        std::map<std::string, TBHIVDrugTypeParameters*> tbhiv_drug_map;
     };
 }

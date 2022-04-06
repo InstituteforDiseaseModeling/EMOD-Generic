@@ -23,15 +23,16 @@ namespace Kernel
 
     class TBDrugTypeParameters : public JsonConfigurable
     {
-        friend class SimulationConfig;
         friend class AntiTBPropDepDrug;
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-    public:
-        static TBDrugTypeParameters* CreateTBDrugTypeParameters( const Configuration * inputJson, const std::string& tb_drug_name );
 
-        TBDrugTypeParameters( const std::string& tb_drug_name );
+        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+
+    public:
+        TBDrugTypeParameters(const std::string& tb_drug_name);
         virtual ~TBDrugTypeParameters();
+
         bool Configure( const ::Configuration *json );
+
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject);
 
     protected:

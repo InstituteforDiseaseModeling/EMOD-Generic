@@ -15,7 +15,6 @@ class ReportPy;
 
 namespace Kernel
 {
-    class SimulationConfig;
     class SpatialReportPy;
 
     class INodePy : public ISupports
@@ -44,8 +43,6 @@ namespace Kernel
         NodePy();
         NodePy(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual void Initialize() override;
-
-        const SimulationConfig* params();
 
         // Factory methods
         virtual Kernel::IndividualHuman *createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender);

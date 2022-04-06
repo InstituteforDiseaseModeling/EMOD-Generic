@@ -17,7 +17,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "PropertiesString.h"
 #include "IInfectable.h"
-#include "Types.h"      // for act_prob_vec_t
+#include "Types.h"
+#include "SparseContagion.h"
 #include "Properties.h"
 
 namespace Kernel
@@ -36,7 +37,7 @@ namespace Kernel
     struct ITransmissionGroups
     {
         virtual void AddProperty(const std::string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) = 0;
-        virtual void Build(float contagionDecayRate, int numberOfAntigens, int numberOfSubstrains) = 0;
+        virtual void Build(float contagionDecayRate, uint32_t numberOfClades, uint64_t numberOfGenomes) = 0;
         virtual void ChangeMatrix(const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix) = 0;
         virtual void GetGroupMembershipForProperties(const tProperties& properties, TransmissionGroupMembership_t& membershipOut) const = 0;
         virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight) = 0;
@@ -45,6 +46,7 @@ namespace Kernel
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) = 0;
         virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) = 0;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) = 0;
+        virtual void LoadSparseRepVecs(sparse_contagion_repr& inf_rep) = 0;
 
         virtual void UseTotalPopulationForNormalization( void ) = 0;
         virtual void UseGroupPopulationForNormalization( void ) = 0;

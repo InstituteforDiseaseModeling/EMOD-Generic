@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "RANDOM.h"
 #include "IndividualEventContext.h"
 #include "Node.h"
-#include "SimulationConfig.h"
 #include "Simulation.h"
 
 SETUP_LOGGING( "Assortivity" )
@@ -89,12 +88,6 @@ namespace Kernel
 
             ret = JsonConfigurable::Configure( config );
 
-            if (ret && !JsonConfigurable::_dryrun && 
-                UsesStartYear() && m_StartYear < Simulation::base_year)
-                {
-                    LOG_WARN_F("Start_Year (%f) specified before Base_Year (%f), for relationship type %s\n", m_StartYear, Simulation::base_year, RelationshipType::pairs::lookup_key(m_RelType));
-                }
-
             JsonConfigurable::_useDefaults = prev_use_defaults ;
             JsonConfigurable::_track_missing = resetTrackMissing;
         }
@@ -121,14 +114,13 @@ namespace Kernel
         {
             if( m_Group == AssortivityGroup::STI_INFECTION_STATUS )
             {
-                if( GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::STI_SIM )
+                if(!MatchesDependency(config, "Simulation_Type", "STI_SIM"))
                 {
-                    const char* sim_type_str = SimType::pairs::lookup_key( GET_CONFIGURABLE( SimulationConfig )->sim_type );
                     std::stringstream ss ;
                     ss << RelationshipType::pairs::lookup_key( GetRelationshipType() ) << ":Group"; 
                     throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
                                                             ss.str().c_str(), AssortivityGroup::pairs::lookup_key( GetGroup() ), 
-                                                            "Simulation_Type", sim_type_str,
+                                                            "Simulation_Type", "other than STI_SIM",
                                                             "STI_INFECTION_STATUS is only valid with STI_SIM." );
                 }
                 CheckAxesForTrueFalse();
@@ -146,6 +138,18 @@ namespace Kernel
             }
             else if( m_Group != AssortivityGroup::NO_GROUP )
             {
+                if(!MatchesDependency(config, "Simulation_Type", "HIV_SIM") &&
+                    MatchesDependency(config, "Group", "STI_COINFECTION_STATUS,HIV_INFECTION_STATUS,HIV_TESTED_POSITIVE_STATUS,HIV_RECEIVED_RESULTS_STATUS"))
+                {
+                    std::stringstream ss, detail;
+                    ss     << RelationshipType::pairs::lookup_key( GetRelationshipType() ) << ":Group";
+                    detail << AssortivityGroup::pairs::lookup_key( GetGroup() ) << " is only valid with HIV_SIM.";
+
+                    throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
+                                                            ss.str().c_str(), AssortivityGroup::pairs::lookup_key( GetGroup() ),
+                                                            "Simulation_Type", "other than HIV_SIM",
+                                                            detail.str().c_str() );
+                }
                 CheckDerivedValues();
             }
 

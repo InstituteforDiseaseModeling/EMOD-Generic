@@ -4,11 +4,14 @@ import os
 
 def load_config_parameters(config_filename="config.json", keys=[], debug=False):
     """
-    reads config file and populates params_obj
-    :param config_filename:
-    :param keys: config parameter names
-    :param debug:
-    :return: param_obj: dictionary with Config_Name, etc., keys (e.g.)
+    Reads config file and populates params_obj
+    Args:
+        config_filename:
+        keys: Config parameter names
+        debug:
+
+    Returns: param_obj: Dictionary with Config_Name, etc., keys (e.g.)
+
     """
     with open(config_filename) as infile:
         cdj = json.load(infile)[ConfigKeys.Parameters]
@@ -26,11 +29,14 @@ def load_config_parameters(config_filename="config.json", keys=[], debug=False):
 def parse_inset_chart(output_folder="output", insetchart_name="InsetChart.json", insetkey_list=[], debug=False):
     """
     Load data from insetchart json file, creates inset_chart_obj structure with keys
-    :param output_folder:
-    :param insetchart_name:
-    :param insetkey_list:
-    :param debug:
-    :return: inset_chart_obj structure, dictionary with keys in insetkey_list.
+    Args:
+        output_folder:
+        insetchart_name:
+        insetkey_list:
+        debug:
+
+    Returns: inset_chart_obj structure, dictionary with keys in insetkey_list.
+
     """
     insetchart_path = os.path.join(output_folder, insetchart_name)
     with open(insetchart_path) as infile:
@@ -80,6 +86,7 @@ class ConfigKeys:
     Parameters = 'parameters'
     Acquisition_Blocking_Immunity_Decay_Rate = 'Acquisition_Blocking_Immunity_Decay_Rate'
     Acquisition_Blocking_Immunity_Duration_Before_Decay = 'Acquisition_Blocking_Immunity_Duration_Before_Decay'
+    Acquisition_Transmission_Correlation = "Acquisition_Transmission_Correlation"
     Age_Initialization_Distribution_Type = 'Age_Initialization_Distribution_Type'
     Air_Migration_Filename = 'Air_Migration_Filename'
     Air_Migration_Roundtrip_Duration = 'Air_Migration_Roundtrip_Duration'
@@ -95,6 +102,8 @@ class ConfigKeys:
     Base_Infectivity = 'Base_Infectivity'
     Base_Infectivity_Distribution = 'Base_Infectivity_Distribution'
     Base_Infectivity_Constant = 'Base_Infectivity_Constant'
+    Base_Infectivity_Gaussian_Mean = "Base_Infectivity_Gaussian_Mean"
+    Base_Infectivity_Gaussian_Std_Dev = "Base_Infectivity_Gaussian_Std_Dev"
     Base_Land_Temperature = 'Base_Land_Temperature'
     Base_Mortality = 'Base_Mortality'
     Base_Population_Scale_Factor = 'Base_Population_Scale_Factor'
@@ -106,6 +115,7 @@ class ConfigKeys:
     Burnin_Cache_Period = 'Burnin_Cache_Period'
     Burnin_Name = 'Burnin_Name'
     Campaign_Filename = 'Campaign_Filename'
+    Contact_Normalization = "Contact_Normalization"
     Climate_Model = 'Climate_Model'
     Climate_Update_Resolution = 'Climate_Update_Resolution'
     Config_Name = 'Config_Name'
@@ -118,6 +128,7 @@ class ConfigKeys:
     Default_Geography_Torus_Size = 'Default_Geography_Torus_Size'
     Demographics_Filenames = 'Demographics_Filenames'
     Enable_Termination_On_Zero_Total_Infectivity = 'Enable_Termination_On_Zero_Total_Infectivity'
+    Enable_Acquisition_Heterogeneity = "Enable_Acquisition_Heterogeneity"
     Enable_Aging = 'Enable_Aging'
     Enable_Air_Migration = 'Enable_Air_Migration'
     Enable_Birth = 'Enable_Birth'
@@ -133,6 +144,8 @@ class ConfigKeys:
     Enable_Demographics_Risk = 'Enable_Demographics_Risk'
     Enable_Disease_Mortality = 'Enable_Disease_Mortality'
     Enable_Family_Migration = 'Enable_Family_Migration'
+    Enable_Genome_Dependent_Infectivity = 'Enable_Genome_Dependent_Infectivity'
+    Enable_Genome_Mutation = 'Enable_Genome_Mutation'
     Enable_Heterogeneous_Intranode_Transmission = 'Enable_Heterogeneous_Intranode_Transmission'
     Enable_Immune_Decay = 'Enable_Immune_Decay'
     Enable_Immunity = 'Enable_Immunity'
@@ -155,18 +168,24 @@ class ConfigKeys:
     Enable_Sea_Family_Migration = 'Enable_Sea_Family_Migration'
     Enable_Sea_Migration = 'Enable_Sea_Migration'
     Enable_Skipping = 'Enable_Skipping'
+    Enable_Strain_Tracking = 'Enable_Strain_Tracking'
     Enable_Spatial_Output = 'Enable_Spatial_Output'
     Enable_Superinfection = 'Enable_Superinfection'
     Enable_Susceptibility_Scaling = 'Enable_Susceptibility_Scaling'
     Enable_Timestep_Channel_In_Report = 'Enable_Timestep_Channel_In_Report'
     Enable_Vital_Dynamics = 'Enable_Vital_Dynamics'
+    Environmental_Normalization = "Environmental_Normalization"
     Environmental_Cutoff_Days = "Environmental_Cutoff_Days"
     Environmental_Peak_Start = "Environmental_Peak_Start"
     Environmental_Ramp_Down_Duration = "Environmental_Ramp_Down_Duration"
     Environmental_Ramp_Up_Duration = "Environmental_Ramp_Up_Duration"
     Family_Migration_Filename = 'Family_Migration_Filename'
     Family_Migration_Roundtrip_Duration = 'Family_Migration_Roundtrip_Duration'
+    Genome_Infectivity_Multipliers = 'Genome_Infectivity_Multipliers'
+    Genome_Mutation_Rates = 'Genome_Mutation_Rates'
     Geography = 'Geography'
+    Immune_Downsample_Min_Age = 'Immune_Downsample_Min_Age'
+    Immune_Threshold_For_Downsampling = 'Immune_Threshold_For_Downsampling'
     Immunity_Acquisition_Factor = 'Immunity_Acquisition_Factor'
     Immunity_Initialization_Distribution_Type = 'Immunity_Initialization_Distribution_Type'
     Immunity_Mortality_Factor = 'Immunity_Mortality_Factor'
@@ -175,6 +194,7 @@ class ConfigKeys:
     Incubation_Period_Constant = 'Incubation_Period_Constant'
     Individual_Sampling_Type = 'Individual_Sampling_Type'
     Infection_Updates_Per_Timestep = 'Infection_Updates_Per_Timestep'
+    Infectious_Period_Constant = 'Infectious_Period_Constant'
     Infectious_Period_Distribution = 'Infectious_Period_Distribution'
     Infectivity_Boxcar_Forcing_Amplitude = "Infectivity_Boxcar_Forcing_Amplitude"
     Infectivity_Boxcar_Forcing_End_Time = "Infectivity_Boxcar_Forcing_End_Time"
@@ -197,20 +217,21 @@ class ConfigKeys:
     Local_Migration_Roundtrip_Duration = 'Local_Migration_Roundtrip_Duration'
     Local_Migration_Roundtrip_Probability = 'Local_Migration_Roundtrip_Probability'
     Local_Simulation = 'Local_Simulation'
-    Log2_Number_Genomes = 'Log2_Number_of_Genomes_per_Clade'
+    Log2_Number_of_Genomes_per_Clade = 'Log2_Number_of_Genomes_per_Clade'
     Maternal_Transmission_Probability = 'Maternal_Transmission_Probability'
     Max_Individual_Infections = 'Max_Individual_Infections'
     Max_Node_Population_Samples = 'Max_Node_Population_Samples'
     Migration_Model = 'Migration_Model'
     Migration_Pattern = 'Migration_Pattern'
     Minimum_Adult_Age_Years = 'Minimum_Adult_Age_Years'
+    Min_Node_Population_Samples = 'Min_Node_Population_Samples'
     Mortality_Blocking_Immunity_Decay_Rate = 'Mortality_Blocking_Immunity_Decay_Rate'
     Mortality_Blocking_Immunity_Duration_Before_Decay = 'Mortality_Blocking_Immunity_Duration_Before_Decay'
     Mortality_Time_Course = 'Mortality_Time_Course'
     Node_Grid_Size = 'Node_Grid_Size'
     Node_Contagion_Decay_Rate = 'Node_Contagion_Decay_Rate'
     Num_Cores = 'Num_Cores'
-    Number_Clades = 'Number_of_Clades'
+    Number_of_Clades = 'Number_of_Clades'
     PKPD_Model = 'PKPD_Model'
     Population_Density_C50 = 'Population_Density_C50'
     Population_Density_Infectivity_Correction = 'Population_Density_Infectivity_Correction'
@@ -228,6 +249,7 @@ class ConfigKeys:
     Relative_Humidity_Filename = 'Relative_Humidity_Filename'
     Relative_Humidity_Scale_Factor = 'Relative_Humidity_Scale_Factor'
     Relative_Humidity_Variance = 'Relative_Humidity_Variance'
+    Relative_Sample_Rate_Immune = 'Relative_Sample_Rate_Immune'
     Report_Event_Recorder = 'Report_Event_Recorder'
     Report_Node_Event_Recorder = 'Report_Node_Event_Recorder'
     Report_Coordinator_Event_Recorder = 'Report_Coordinator_Event_Recorder'
@@ -254,12 +276,14 @@ class ConfigKeys:
     Simulation_Type = 'Simulation_Type'
     Start_Time = 'Start_Time'
     Susceptibility_Scale_Type = 'Susceptibility_Scale_Type'
+    Symptomatic_Infectious_Offset = 'Symptomatic_Infectious_Offset'
     Transmission_Blocking_Immunity_Decay_Rate = 'Transmission_Blocking_Immunity_Decay_Rate'
     Transmission_Blocking_Immunity_Duration_Before_Decay = 'Transmission_Blocking_Immunity_Duration_Before_Decay'
     Valid_Intervention_States = 'Valid_Intervention_States'
     Vector_Migration_Base_Rate = 'Vector_Migration_Base_Rate'
     logLevel_Individual = 'logLevel_Individual'
     x_Air_Migration = 'x_Air_Migration'
+    x_Base_Population = 'x_Base_Population'
     x_Birth = 'x_Birth'
     x_Family_Migration = 'x_Family_Migration'
     x_Local_Migration = 'x_Local_Migration'

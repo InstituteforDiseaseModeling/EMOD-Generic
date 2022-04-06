@@ -22,7 +22,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventTrigger.h"
 
 #ifndef DISABLE_TBHIV
-#include "TBHIVParameters.h"
 #include "IndividualCoInfection.h"
 #endif
 

@@ -18,6 +18,39 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 using namespace Kernel;
 
+struct ISimulationContextFake : ISimulationContext
+{
+public:
+    ISimulationContextFake()
+    { }
+
+    virtual suids::suid GetNodeSuid( ExternalNodeId_t external_node_id ) override
+    {
+        suids::suid fake_suid;
+        fake_suid.data = external_node_id;
+        return fake_suid;
+    }
+
+    virtual const                        DemographicsContext* GetDemographicsContext() const override                                                   { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual const                        SimParams* GetParams() const override                                                                          { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual const IdmDateTime&           GetSimulationTime() const override                                                                             { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual suids::suid                  GetNextInfectionSuid() override                                                                                { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual ExternalNodeId_t             GetNodeExternalID( const suids::suid& rNodeSuid ) override                                                     { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float                        GetNodeInboundMultiplier( const suids::suid& rNodeSuid ) override                                              { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual uint32_t                     GetNodeRank( const suids::suid& rNodeSuid ) override                                                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void                         PostMigratingIndividualHuman( IIndividualHuman *i )override                                                    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual bool                         CanSupportFamilyTrips() const override                                                                         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void                         DistributeEventToOtherNodes( const EventTrigger::Enum& rEventTrigger, INodeQualifier* pQualifier ) override    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void                         UpdateNodeEvents() override                                                                                    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual ISimulationEventContext*     GetSimulationEventContext() override                                                                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual std::vector<IReport*>&       GetReports() override                                                                                          { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual std::vector<IReport*>&       GetReportsNeedingIndividualData() override                                                                     { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual const IInterventionFactory*  GetInterventionFactory() const override                                                                        { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual QueryResult                  QueryInterface( iid_t iid, void** pinstance ) override                                                         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual int32_t                      AddRef() override                                                                                              { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual int32_t                      Release() override                                                                                             { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+};
+
 struct INodeContextFake : INodeContext
 {
 private:
@@ -25,6 +58,7 @@ private:
     INodeEventContext* m_pNEC;
     NPKeyValueContainer m_NodeProperties;
     IdmDateTime m_Time;
+    ISimulationContextFake m_FakeSim;
 
 public:
     INodeContextFake( int id = 1 )
@@ -32,6 +66,7 @@ public:
     , m_pNEC(nullptr)
     , m_NodeProperties()
     , m_Time()
+    , m_FakeSim()
     {
         m_suid.data = id ;
     }
@@ -41,6 +76,7 @@ public:
     , m_pNEC(pNEC)
     , m_NodeProperties()
     , m_Time()
+    , m_FakeSim()
     {
         if( m_pNEC != nullptr )
         {
@@ -60,7 +96,7 @@ public:
 
     virtual ISimulationContext* GetParent() override
     {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
+        return &m_FakeSim;
     }
 
     virtual suids::suid GetSuid() const override
@@ -133,22 +169,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." );
     }
 
-    virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase) const override
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
-
-    virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time) const override
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
-
     virtual IMigrationInfo* GetMigrationInfo() override
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
-
-    virtual const NodeDemographics* GetDemographics() const override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
@@ -271,25 +292,18 @@ public:
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
+
+    virtual uint64_t GetTotalGenomes() const override
+    {
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
+    }
+
     virtual const NodeDemographicsDistribution* GetImmunityDistribution()        const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual const NodeDemographicsDistribution* GetFertilityDistribution()       const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual const NodeDemographicsDistribution* GetMortalityDistribution()       const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual const NodeDemographicsDistribution* GetMortalityDistributionMale()   const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual const NodeDemographicsDistribution* GetMortalityDistributionFemale() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual const NodeDemographicsDistribution* GetAgeDistribution()             const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-
-    virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const override
-    {
-        std::vector<bool> enabled_list;
-
-        enabled_list.push_back( true );
-        enabled_list.push_back( true );
-        enabled_list.push_back( true );
-        enabled_list.push_back( true );
-        enabled_list.push_back( true );
-
-        return enabled_list;
-    }
 
     virtual ExternalNodeId_t GetExternalID() const override
     {
@@ -306,8 +320,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
-    virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                 const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override
+    virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override
     { 
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented.");
     }
@@ -324,10 +337,13 @@ public:
     virtual void Update(float)                                                                                 override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual IIndividualHuman* processImmigratingIndividual(IIndividualHuman*)                                  override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
     virtual void SortHumans()                                                                                  override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
-    virtual const std::vector<IIndividualHuman*>& GetHumans()                                            const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
-    virtual std::map<std::string, int>& GetStrainClades()                                                const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
-    virtual const std::map<std::string, int>& GetStrainGenomes()                                         const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
-    virtual std::map<std::string, std::vector<float>>& GetStrainData()                                   const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+
+    virtual const std::vector<IIndividualHuman*>&             GetHumans()                                const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual       std::map<std::pair<uint32_t,uint64_t>, std::vector<float>>&  GetStrainData()                 override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual const float                                       GetNetInfectFrac()                         const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual       void                                        SetNetInfectFrac(float)                          override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual const sparse_contagion_repr&                      GetNetInfRep()                             const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
+    virtual       void                                        DepositNetInf(sparse_contagion_id, float)        override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method is not implemented."); }
 
     virtual ProbabilityNumber GetProbMaternalTransmission() const
     {

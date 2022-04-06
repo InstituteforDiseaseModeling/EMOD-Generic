@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "componentTests.h"
 #include "IMigrationInfo.h"
 #include "IMigrationInfoVector.h"
-#include "SimulationConfig.h"
 #include "INodeContextFake.h"
 #include "IndividualHumanContextFake.h"
 #include "RandomFake.h"
@@ -22,13 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 using namespace Kernel; 
 
-
-
-// maybe these shouldn't be protected in Simulation.h
-typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-
-
 SUITE(MigrationTest)
 {
     static int m_NextId = 1 ;
@@ -36,11 +28,9 @@ SUITE(MigrationTest)
     struct MigrationFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig ;
         RandomFake m_RandomFake ;
 
         MigrationFixture()
-            : m_pSimulationConfig( new SimulationConfig() )
         {
             JsonConfigurable::ClearMissingParameters();
 
@@ -56,10 +46,6 @@ SUITE(MigrationTest)
             string dllPath("testdata/MigrationTest");
 
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, dllPath, false );
-
-            m_pSimulationConfig->sim_type = SimType::VECTOR_SIM ;
-            Environment::setSimulationConfig( m_pSimulationConfig );
-
         }
 
         ~MigrationFixture()
@@ -84,15 +70,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= 4 ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
-
             std::string idreference = "ABC" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::GENERIC_SIM,
@@ -104,8 +81,8 @@ SUITE(MigrationTest)
             // ---------------
             // --- Test Node 2
             // ---------------
-            INodeContextFake nc_2( nodeid_suid_map.left.at(2) ) ;
-            unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo( &nc_2, nodeid_suid_map ) );
+            INodeContextFake nc_2(2) ;
+            unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo(&nc_2) );
 
             const std::vector<suids::suid>& reachable_nodes_2 = p_mi_2->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_2.size() );
@@ -232,15 +209,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= 4 ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
-
             std::string idreference = "ABC" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::GENERIC_SIM,
@@ -252,8 +220,8 @@ SUITE(MigrationTest)
             // ---------------
             // --- Test Node 1
             // ---------------
-            INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
-            unique_ptr<IMigrationInfo> p_mi_1( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
+            INodeContextFake nc_1(1) ;
+            unique_ptr<IMigrationInfo> p_mi_1( p_mf->CreateMigrationInfo(&nc_1) );
 
             const std::vector<suids::suid>& reachable_nodes_1 = p_mi_1->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_1.size() );
@@ -270,8 +238,8 @@ SUITE(MigrationTest)
             // ---------------
             // --- Test Node 2
             // ---------------
-            INodeContextFake nc_2( nodeid_suid_map.left.at(2) ) ;
-            unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo( &nc_2, nodeid_suid_map ) );
+            INodeContextFake nc_2(2) ;
+            unique_ptr<IMigrationInfo> p_mi_2( p_mf->CreateMigrationInfo(&nc_2) );
 
             const std::vector<suids::suid>& reachable_nodes_2 = p_mi_2->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_2.size() );
@@ -288,8 +256,8 @@ SUITE(MigrationTest)
             // ---------------
             // --- Test Node 3
             // ---------------
-            INodeContextFake nc_3( nodeid_suid_map.left.at(3) ) ;
-            unique_ptr<IMigrationInfo> p_mi_3( p_mf->CreateMigrationInfo( &nc_3, nodeid_suid_map ) );
+            INodeContextFake nc_3(3) ;
+            unique_ptr<IMigrationInfo> p_mi_3( p_mf->CreateMigrationInfo(&nc_3) );
 
             const std::vector<suids::suid>& reachable_nodes_3 = p_mi_3->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_3.size() );
@@ -306,8 +274,8 @@ SUITE(MigrationTest)
             // ---------------
             // --- Test Node 4
             // ---------------
-            INodeContextFake nc_4( nodeid_suid_map.left.at(4) ) ;
-            unique_ptr<IMigrationInfo> p_mi_4( p_mf->CreateMigrationInfo( &nc_4, nodeid_suid_map ) );
+            INodeContextFake nc_4(4) ;
+            unique_ptr<IMigrationInfo> p_mi_4( p_mf->CreateMigrationInfo(&nc_4) );
 
             const std::vector<suids::suid>& reachable_nodes_4 = p_mi_4->GetReachableNodes();
             CHECK_EQUAL( 3, reachable_nodes_4.size() );
@@ -514,15 +482,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= 26 ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
-
             std::string idreference = "Household-Scenario-Small" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::GENERIC_SIM,
@@ -531,8 +490,8 @@ SUITE(MigrationTest)
 
             CHECK( p_mf->IsAtLeastOneTypeConfiguredForIndividuals() );
 
-            INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
-            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
+            INodeContextFake nc_1(1) ;
+            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo(&nc_1) );
 
             const std::vector<suids::suid>& reachable_nodes = p_mi->GetReachableNodes();
             CHECK_EQUAL( 20, reachable_nodes.size() );
@@ -639,14 +598,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= 100 ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
             std::string idreference = "Default" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::GENERIC_SIM,
@@ -658,8 +609,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 1 - Upper Left
             // ----------
-            INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
-            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
+            INodeContextFake nc_1(1) ;
+            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo(&nc_1) );
 
             const std::vector<suids::suid>& reachable_nodes = p_mi->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes.size() );
@@ -686,8 +637,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 10 - Upper Right
             // ----------
-            INodeContextFake nc_10( nodeid_suid_map.left.at(10) ) ;
-            unique_ptr<IMigrationInfo> p_mi_10( p_mf->CreateMigrationInfo( &nc_10, nodeid_suid_map ) );
+            INodeContextFake nc_10(10) ;
+            unique_ptr<IMigrationInfo> p_mi_10( p_mf->CreateMigrationInfo(&nc_10) );
 
             const std::vector<suids::suid>& reachable_nodes_10 = p_mi_10->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_10.size() );
@@ -703,8 +654,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 91 - Lower Left
             // ----------
-            INodeContextFake nc_91( nodeid_suid_map.left.at(91) ) ;
-            unique_ptr<IMigrationInfo> p_mi_91( p_mf->CreateMigrationInfo( &nc_91, nodeid_suid_map ) );
+            INodeContextFake nc_91(91) ;
+            unique_ptr<IMigrationInfo> p_mi_91( p_mf->CreateMigrationInfo(&nc_91) );
 
             const std::vector<suids::suid>& reachable_nodes_91 = p_mi_91->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_91.size() );
@@ -720,8 +671,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 100 - Lower Right
             // ----------
-            INodeContextFake nc_100( nodeid_suid_map.left.at(100) ) ;
-            unique_ptr<IMigrationInfo> p_mi_100( p_mf->CreateMigrationInfo( &nc_100, nodeid_suid_map ) );
+            INodeContextFake nc_100(100) ;
+            unique_ptr<IMigrationInfo> p_mi_100( p_mf->CreateMigrationInfo(&nc_100) );
 
             const std::vector<suids::suid>& reachable_nodes_100 = p_mi_100->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_100.size() );
@@ -751,14 +702,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= num_nodes ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
             std::string idreference = "Default" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::GENERIC_SIM,
@@ -770,8 +713,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 1 - Upper Left
             // ----------
-            INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
-            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc_1, nodeid_suid_map ) );
+            INodeContextFake nc_1(1) ;
+            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo(&nc_1) );
 
             const std::vector<suids::suid>& reachable_nodes_1 = p_mi->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_1.size() );
@@ -787,8 +730,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 3 - Upper Right
             // ----------
-            INodeContextFake nc_3( nodeid_suid_map.left.at(3) ) ;
-            unique_ptr<IMigrationInfo> p_mi_3( p_mf->CreateMigrationInfo( &nc_3, nodeid_suid_map ) );
+            INodeContextFake nc_3(3) ;
+            unique_ptr<IMigrationInfo> p_mi_3( p_mf->CreateMigrationInfo(&nc_3) );
 
             const std::vector<suids::suid>& reachable_nodes_3 = p_mi_3->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_3.size() );
@@ -804,8 +747,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 7 - Lower Left
             // ----------
-            INodeContextFake nc_7( nodeid_suid_map.left.at(7) ) ;
-            unique_ptr<IMigrationInfo> p_mi_7( p_mf->CreateMigrationInfo( &nc_7, nodeid_suid_map ) );
+            INodeContextFake nc_7(7) ;
+            unique_ptr<IMigrationInfo> p_mi_7( p_mf->CreateMigrationInfo(&nc_7) );
 
             const std::vector<suids::suid>& reachable_nodes_7 = p_mi_7->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_7.size() );
@@ -821,8 +764,8 @@ SUITE(MigrationTest)
             // ----------
             // --- Node 9 - Lower right
             // ----------
-            INodeContextFake nc_9( nodeid_suid_map.left.at(9) ) ;
-            unique_ptr<IMigrationInfo> p_mi_9( p_mf->CreateMigrationInfo( &nc_9, nodeid_suid_map ) );
+            INodeContextFake nc_9(9) ;
+            unique_ptr<IMigrationInfo> p_mi_9( p_mf->CreateMigrationInfo(&nc_9) );
 
             const std::vector<suids::suid>& reachable_nodes_9 = p_mi_9->GetReachableNodes();
             CHECK_EQUAL( 8, reachable_nodes_9.size() );
@@ -852,14 +795,6 @@ SUITE(MigrationTest)
             // --------------------
             // --- Initialize test
             // --------------------
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= 26 ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
             std::string idreference = "Household-Scenario-Small" ;
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( idreference,
                                                                                    SimType::VECTOR_SIM,
@@ -871,8 +806,8 @@ SUITE(MigrationTest)
             IMigrationInfoFactoryVector* p_mfv = dynamic_cast<IMigrationInfoFactoryVector*>(p_mf.get());
             CHECK( p_mfv != nullptr );
 
-            INodeContextFake nc_1( nodeid_suid_map.left.at(1) ) ;
-            unique_ptr<IMigrationInfoVector> p_mi( p_mfv->CreateMigrationInfoVector( &nc_1, nodeid_suid_map ) );
+            INodeContextFake nc_1(1) ;
+            unique_ptr<IMigrationInfoVector> p_mi( p_mfv->CreateMigrationInfoVector(&nc_1) );
 
             const std::vector<suids::suid>& reachable_nodes = p_mi->GetReachableNodes();
             CHECK_EQUAL( 24, reachable_nodes.size() );
@@ -928,8 +863,8 @@ SUITE(MigrationTest)
             CHECK_EQUAL( MigrationType::REGIONAL_MIGRATION, mig_type_list[22] );
             CHECK_EQUAL( MigrationType::REGIONAL_MIGRATION, mig_type_list[23] );
 
-            INodeContextFake nc_9( nodeid_suid_map.left.at(9) ) ;
-            unique_ptr<IMigrationInfo> p_mi_9( p_mfv->CreateMigrationInfoVector( &nc_9, nodeid_suid_map ) );
+            INodeContextFake nc_9(9) ;
+            unique_ptr<IMigrationInfo> p_mi_9( p_mfv->CreateMigrationInfoVector(&nc_9) );
 
             const std::vector<suids::suid>& reachable_nodes_9 = p_mi_9->GetReachableNodes();
             CHECK_EQUAL( 24, reachable_nodes_9.size() );
@@ -985,8 +920,8 @@ SUITE(MigrationTest)
             CHECK_EQUAL( MigrationType::REGIONAL_MIGRATION, mig_type_list_9[22] );
             CHECK_EQUAL( MigrationType::REGIONAL_MIGRATION, mig_type_list_9[23] );
 
-            INodeContextFake nc_26( nodeid_suid_map.left.at(26) ) ;
-            unique_ptr<IMigrationInfo> p_mi_26( p_mfv->CreateMigrationInfoVector( &nc_26, nodeid_suid_map ) );
+            INodeContextFake nc_26(26) ;
+            unique_ptr<IMigrationInfo> p_mi_26( p_mfv->CreateMigrationInfoVector(&nc_26) );
             CHECK( p_mi_26->GetReachableNodes().size() == 0 );
         }
         catch( DetailedException& re )
@@ -1012,14 +947,6 @@ SUITE(MigrationTest)
             ConfigParams gen_config_obj;
             gen_config_obj.Configure( p_config.get() );
 
-            nodeid_suid_map_t nodeid_suid_map;
-            for( uint32_t node_id = 1 ; node_id <= numNodes ; node_id++ )
-            {
-                suids::suid node_suid ;
-                node_suid.data = node_id ;
-                nodeid_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
-
             unique_ptr<IMigrationInfoFactory> p_mf( ConstructMigrationInfoFactory( rIdReference,
                                                                                    SimType::GENERIC_SIM,
                                                                                    false,
@@ -1028,7 +955,7 @@ SUITE(MigrationTest)
             suids::suid node_suid;
             node_suid.data = nodeId;
             INodeContextFake nc( node_suid ) ;
-            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo( &nc, nodeid_suid_map ) );
+            unique_ptr<IMigrationInfo> p_mi( p_mf->CreateMigrationInfo(&nc) );
 
             CHECK_LN( false, lineNumber ); // should not get here
         }
@@ -1097,7 +1024,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Could not find file testdata/MigrationTest/5x5_Households_Local_MigrationXXX.bin.json" );
+            "Could not find file at any of 1 or more paths:\ntestdata/MigrationTest/5x5_Households_Local_MigrationXXX.bin.json" );
     }
 
     TEST_FIXTURE(MigrationFixture, TestBadIdReference)
@@ -1273,7 +1200,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Could not find file testdata/MigrationTest/TestLocalMigrationFileNotFound.bin" );
+            "Could not find file at any of 1 or more paths:\ntestdata/MigrationTest/TestLocalMigrationFileNotFound.bin" );
     }
 
     TEST_FIXTURE(MigrationFixture, TestWrongSize)
@@ -1285,28 +1212,6 @@ SUITE(MigrationTest)
             26,
             1,
             "I/O error while reading/writing. File name =  testdata/MigrationTest/TestWrongSize.bin.  Detected wrong size for migration data file.  Expected 2400 bytes, read 2496 bytes" );
-    }
-
-    TEST_FIXTURE(MigrationFixture, TestNodeNotFound)
-    {
-        TestHelper_FactoryConfigureException( 
-            __LINE__, 
-            "testdata/MigrationTest/config.json", 
-            "Household-Scenario-Small", 
-            26,
-            999,
-            "Variable or parameter 'rNodeIdSuidMap.right.count(node_suid)' with value 0 is incompatible with variable or parameter 'node_suid' with value 999.");
-    }
-
-    TEST_FIXTURE(MigrationFixture, TestNodesInFileNotInScenario)
-    {
-        TestHelper_FactoryConfigureException( 
-            __LINE__, 
-            "testdata/MigrationTest/config.json", 
-            "Household-Scenario-Small", 
-            5,
-            1,
-            "NodeId, 6, found in 5x5_Households_Local_Migration.bin, is not a node in the simulation." );
     }
 
     TEST_FIXTURE(MigrationFixture, TestInvalidAgeDataSection)

@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SimulationEnums.h"
 #include "Properties.h"
 #include "Configuration.h"
-#include "ConfigurationImpl.h"
 
 
 namespace Kernel

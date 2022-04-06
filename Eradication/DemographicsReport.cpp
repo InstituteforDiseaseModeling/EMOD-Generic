@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include <map>
-#include "BoostLibWrapper.h"
 #include "Debug.h"
 #include "DemographicsReport.h"
 #include "INodeContext.h"

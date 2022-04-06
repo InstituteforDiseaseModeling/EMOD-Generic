@@ -9,13 +9,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
-#include "BoostLibWrapper.h"
 #include "Sugar.h"
 #include "Debug.h"
 #include "Environment.h"
 #include "EventCoordinator.h"
 #include "Configuration.h"
-#include "ConfigurationImpl.h"
 #include "FactorySupport.h"
 #include "InterventionFactory.h"
 

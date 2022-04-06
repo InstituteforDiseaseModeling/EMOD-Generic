@@ -8,7 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
-
+#include "ConfigParams.h"
 #include "Debug.h"
 #include "FileSystem.h"
 #include "ReportHIVByAgeAndGender.h"
@@ -162,57 +162,55 @@ namespace Kernel
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
-        if( ret )
+        return ret;
+    }
+
+    bool ReportHIVByAgeAndGender::Validate( const ISimulationContext* parent_sim )
+    {
+        if( start_year < parent_sim->GetParams()->sim_time_base_year )
         {
-            if( start_year < Simulation::base_year )
-            {
-                start_year = Simulation::base_year;
-            }
-            if( start_year >= stop_year )
-            {
-                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                         "Report_HIV_ByAgeAndGender_Start_Year", start_year,
-                                                         "Report_HIV_ByAgeAndGender_Stop_Year", stop_year );
-            }
-
-            // -------------------------------------------------------
-            // --- Check at the age bin entries are in ascending order
-            // -------------------------------------------------------
-            if( dim_age_bins.size() > 0 )
-            {
-                if( dim_age_bins.size() > MAX_VALUES_PER_BIN )
-                {
-                    std::stringstream ss;
-                    ss << "Report_HIV_ByAgeAndGender_Collect_Age_Bins_Data has " << dim_age_bins.size() << " values and cannot have more than " << MAX_VALUES_PER_BIN << ".";
-                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,  ss.str().c_str() );
-                }
-
-                float prev_age = dim_age_bins[0];
-                for( int i = 1; i < dim_age_bins.size(); ++i )
-                {
-                    if( prev_age >= dim_age_bins[i] )
-                    {
-                        std::stringstream ss;
-                        ss << "The " << i << "-th value(" << dim_age_bins[i] << ") in Report_HIV_ByAgeAndGender_Collect_Age_Bins_Data is >= the " << i-1 << "-th value(" << prev_age << ".\n";
-                        ss << "The values cannot be equal and must be in ascending order.";
-                        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,  ss.str().c_str() );
-                    }
-                    prev_age = dim_age_bins[i];
-                }
-            }
-
-            for( auto ev : data_event_list )
-            {
-                eventTriggerList.push_back( ev );
-            }
-
-            // ----------------------------------------------------------------------------------------------------------------------------
-            // --- dim_ip_key_list - entries cannot be validated until Initialize() because we have not read the demographics at this point
-            // --- dim_intervention_name_list - currently, we don't have a way to validate these
-            // ----------------------------------------------------------------------------------------------------------------------------
+            start_year = parent_sim->GetParams()->sim_time_base_year;
         }
 
-        return ret;
+        if( start_year >= stop_year )
+        {
+             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
+                                                     "Report_HIV_ByAgeAndGender_Start_Year", start_year,
+                                                     "Report_HIV_ByAgeAndGender_Stop_Year", stop_year );
+        }
+
+        // -------------------------------------------------------
+        // --- Check at the age bin entries are in ascending order
+        // -------------------------------------------------------
+        if( dim_age_bins.size() > 0 )
+        {
+            if( dim_age_bins.size() > MAX_VALUES_PER_BIN )
+            {
+                std::stringstream ss;
+                ss << "Report_HIV_ByAgeAndGender_Collect_Age_Bins_Data has " << dim_age_bins.size() << " values and cannot have more than " << MAX_VALUES_PER_BIN << ".";
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,  ss.str().c_str() );
+            }
+
+            float prev_age = dim_age_bins[0];
+            for( int i = 1; i < dim_age_bins.size(); ++i )
+            {
+                if( prev_age >= dim_age_bins[i] )
+                {
+                    std::stringstream ss;
+                    ss << "The " << i << "-th value(" << dim_age_bins[i] << ") in Report_HIV_ByAgeAndGender_Collect_Age_Bins_Data is >= the " << i-1 << "-th value(" << prev_age << ".\n";
+                    ss << "The values cannot be equal and must be in ascending order.";
+                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,  ss.str().c_str() );
+                }
+                prev_age = dim_age_bins[i];
+            }
+        }
+
+        for( auto ev : data_event_list )
+        {
+            eventTriggerList.push_back( ev );
+        }
+
+        return true;
     }
 
     void ReportHIVByAgeAndGender::UpdateEventRegistration( float currentTime,
@@ -223,6 +221,7 @@ namespace Kernel
         // not enforcing simulation to be not null in constructor so one can create schema with it null
         release_assert( _parent );
 
+        float base_year    = _parent->GetParams()->sim_time_base_year;
         float current_year = _parent->GetSimulationTime().Year();
         if( !is_collecting_data && (start_year <= current_year) && (current_year < stop_year) )
         {
@@ -240,7 +239,7 @@ namespace Kernel
             // --- data would be collected at 180.  However, for the next update
             // --- next_report_time would be 350 and the update would occur at 360.
             // ------------------------------------------------------------------------
-            next_report_time = DAYSPERYEAR*(start_year - Simulation::base_year) + report_hiv_half_period - dt / 2.0f;
+            next_report_time = DAYSPERYEAR*(start_year - base_year) + report_hiv_half_period - dt / 2.0f;
 
         }
         else if( is_collecting_data && (_parent->GetSimulationTime().Year() >= stop_year) )

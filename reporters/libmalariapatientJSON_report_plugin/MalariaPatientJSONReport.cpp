@@ -26,69 +26,56 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FactorySupport.h"
 #include "Serializer.h"
 
-using namespace Kernel ;
+//******************************************************************************
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "MalariaPatientJSONReport" ) // <<< Name of this file
+SETUP_LOGGING( "MalariaPatientJSONReport" )
 
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = {"MALARIA_SIM", nullptr}; // <<< Types of simulation the report is to be used with
+static const char*       _sim_types[] = {"MALARIA_SIM", nullptr};
+static const std::string _report_name = "MalariaPatientReport.json";
 
-// Output file name
-static const std::string _report_name = "MalariaPatientReport.json"; // <<< Filename to put data into
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-report_instantiator_function_t rif = []()
-{
-    return (IReport*)(new MalariaPatientJSONReport()); // <<< Report to create
-};
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new MalariaPatientJSONReport();
 }
 
 #ifdef __cplusplus
 }
 #endif
+
+//******************************************************************************
+
+using namespace Kernel ;
 
 // ---------------------------
 // --- MalariaPatent Methods
@@ -244,7 +231,7 @@ void MalariaPatientJSONReport::LogIndividualData( IIndividualHuman* individual )
     // Positive fields of view (out of 200 views in Garki-like setup)
     int pos_fields = 0;
     int gam_pos_fields = 0;
-    individual_malaria->CountPositiveSlideFields( DLL_HELPER.GetRandomNumberGenerator(), 200, 1.0f/400, pos_fields, gam_pos_fields);
+    individual_malaria->CountPositiveSlideFields(individual->GetParent()->GetRng(), 200, 1.0f/400, pos_fields, gam_pos_fields);
     patient->pos_fields_of_view.push_back(float(pos_fields));
     patient->gametocyte_pos_fields_of_view.push_back(float(gam_pos_fields));
 

@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "StandardEventCoordinator.h"
 #include "Configuration.h"
-#include "ConfigurationImpl.h"
 #include "FactorySupport.h"
 #include "InterventionFactory.h"
 #include "IIndividualHuman.h"
@@ -128,9 +127,6 @@ namespace Kernel
     }
 
     void StandardInterventionDistributionEventCoordinator::CheckStartDay( float campaignStartDay ) const
-    { }
-
-    void StandardInterventionDistributionEventCoordinator::InitializeTiming( const IdmDateTime& currentTime)
     { }
 
     void StandardInterventionDistributionEventCoordinator::SetContextTo( ISimulationEventContext *isec )
@@ -365,13 +361,9 @@ namespace Kernel
         return demographic_restrictions.GetDemographicCoverage();
     }
 
-    float
-    StandardInterventionDistributionEventCoordinator::getDemographicCoverageForIndividual(
-        const IIndividualHumanEventContext *pInd
-    )
-    const
+    int StandardInterventionDistributionEventCoordinator::GetMaxEvents() const
     {
-        return GetDemographicCoverage();
+        return demographic_restrictions.GetMaxEvents();
     }
 
     TargetDemographicType::Enum StandardInterventionDistributionEventCoordinator::GetTargetDemographic() const

@@ -17,7 +17,10 @@
                     "Demographic_Coverage": 1,
                     "Target_Demographic": "ExplicitGender",
                     "Target_Gender": "Male",
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
@@ -49,7 +52,10 @@
                         "Delay_Period_Constant": 6570
                     },
                     "Demographic_Coverage": 0.1,
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "Target_Demographic": "Everyone",
                 "class": "StandardInterventionDistributionEventCoordinator"

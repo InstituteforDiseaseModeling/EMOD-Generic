@@ -35,18 +35,27 @@ namespace Kernel
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const override;
         virtual void EndTimestep( float currentTime, float dt ) override;
         virtual void Reduce() override;
+
     private:
         struct MigrationData
         {
-            MigrationData() : age_years(-1.0), gender(-1), home_node_id(-1), node_id(-1), migration_type_str() {}
+            MigrationData()
+                : age_years(0.0f)
+                , gender(0)
+                , is_adult(false)
+                , home_node_id(0)
+                , node_id(0)
+                , migration_type_str()
+            { }
 
-            float age_years ;
-            int gender ;
-            bool is_adult ;
-            uint32_t home_node_id ;
-            uint32_t node_id ;
-            std::string migration_type_str ;
+            float         age_years;
+            int           gender;
+            bool          is_adult;
+            uint32_t      home_node_id;
+            uint32_t      node_id;
+            std::string   migration_type_str;
         };
+
         float m_EndTime ;
         std::map<long,MigrationData> m_MigrationDataMap ;
     };

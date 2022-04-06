@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 #include <map>
-#include "BoostLibWrapper.h"
+#include <vector>
 #include "suids.hpp"
 #include "ExternalNodeId.h"
 
@@ -19,7 +19,6 @@ namespace Kernel
     struct INodeInfo;
     struct INodeInfoFactory;
     struct IInitialLoadBalanceScheme;
-    struct IdmDateTime;
 
     /*
     TODO: 
@@ -50,7 +49,7 @@ namespace Kernel
         // merge maps on multiple processors
         bool MergeMaps();
 
-        void Sync( IdmDateTime& currentTime );
+        void Sync(float current_time);
 
         // this function encapsulates the initial mapping from node id on disk to rank.
         // although node ids should be simulation-unique we still track nodes by our own suid 

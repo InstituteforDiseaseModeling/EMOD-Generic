@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "BoostLibWrapper.h"
-
 #include "MalariaContexts.h"
 #include "SimulationVector.h"
 
@@ -24,7 +22,6 @@ namespace Kernel
     public:
         static SimulationMalaria *CreateSimulation();
         static SimulationMalaria *CreateSimulation(const ::Configuration *config);
-        static void SetFixedParameters(::Configuration *config);
         virtual ~SimulationMalaria();
 
         // Allows correct type of community to be added by derived class Simulations
@@ -41,8 +38,6 @@ namespace Kernel
         virtual void Initialize(const ::Configuration *config) override;
 
         virtual bool ValidateConfiguration(const ::Configuration *config) override;
-
-        virtual void InitializeFlags(const ::Configuration *config);  // override in derived classes to instantiate correct flag classes
 
         DECLARE_SERIALIZABLE(SimulationMalaria);
 

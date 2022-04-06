@@ -194,6 +194,7 @@ namespace Kernel
                 CampaignEvent *ce = CampaignEventFactory::CreateInstance(event_config, this);
                 if (ce)
                 {
+                    ce->Validate(sim);
                     ce->CheckForValidNodeIDs(nodeIds_demographics);
                     if( ce->GetStartDay() < sim->GetSimulationTime().time )
                     {
@@ -316,33 +317,4 @@ namespace Kernel
         return ( (_Left->GetStartDay() > _Right->GetStartDay()) || 
                  (_Left->GetStartDay() == _Right->GetStartDay() && _Left->GetEventIndex() > _Right->GetEventIndex()) );
     }
-}
-
-namespace Kernel {
-    struct campaign_event_comparison //: public binary_function<CampaignEvent *, CampaignEvent*, bool>
-    {
-        bool operator()(const CampaignEvent* _Left, const CampaignEvent* _Right) const;
-    };
-
-    bool campaign_event_comparison::operator()(const CampaignEvent* _Left, const CampaignEvent* _Right) const
-    {    // Apply operator< to operands:
-        // - order the priority_queue by start day
-        // - order events on same start day by their order in the campaign JSON file
-        return ( (_Left->GetStartDay() > _Right->GetStartDay()) || 
-                 (_Left->GetStartDay() == _Right->GetStartDay() && _Left->GetEventIndex() > _Right->GetEventIndex()) );
-    }
-
-#if 0
-    template<class Archive>
-    void serialize(Archive &ar, SimulationEventContextHost& sech, const unsigned int v)
-    {
-        ar & sech.sim; // hope this works!
-        ar & sech.event_coordinators;
-        ar & sech.campaign_filename;
-        if (typename Archive::is_loading())
-        {
-            sech.LoadCampaignFromFile(sech.campaign_filename);
-        }
-    }
-#endif
 }

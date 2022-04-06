@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHumanHIV.h"
 #include "IHIVInterventionsContainer.h"
 #include "IndividualEventContext.h"
-#include "SimulationConfig.h"
 
 SETUP_LOGGING( "AssortivityHIV" )
 
@@ -42,21 +41,6 @@ namespace Kernel
             (GetGroup() == AssortivityGroup::HIV_TESTED_POSITIVE_STATUS ) ||
             (GetGroup() == AssortivityGroup::HIV_RECEIVED_RESULTS_STATUS) )
         {
-            if( GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::HIV_SIM )
-            {
-                std::stringstream detail ;
-                detail << AssortivityGroup::pairs::lookup_key( GetGroup() ) << " is only valid with HIV_SIM." ;
-
-                const char* sim_type_str = SimType::pairs::lookup_key( GET_CONFIGURABLE( SimulationConfig )->sim_type );
-
-                std::stringstream ss ;
-                ss << RelationshipType::pairs::lookup_key( GetRelationshipType() ) << ":Group"; 
-
-                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                                                        ss.str().c_str(), AssortivityGroup::pairs::lookup_key( GetGroup() ), 
-                                                        "Simulation_Type", sim_type_str,
-                                                        detail.str().c_str() );
-            }
             if (GetGroup() == AssortivityGroup::HIV_RECEIVED_RESULTS_STATUS)
             {
                 CheckAxesForReceivedResults();

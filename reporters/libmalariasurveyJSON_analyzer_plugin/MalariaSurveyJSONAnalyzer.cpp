@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SusceptibilityMalaria.h"
 #include "NodeEventContext.h"
 #include "Serializer.h"
+#include "INodeContext.h"
 
 #include "DllInterfaceHelper.h"
 #include "DllDefs.h"
@@ -27,71 +28,59 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "math.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "MalariaSurveyJSONAnalyzer" ) // <<< Name of this file
+//******************************************************************************
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = {"MALARIA_SIM", nullptr}; // <<< Types of simulation the report is to be used with
+SETUP_LOGGING( "MalariaSurveyJSONAnalyzer" )
 
-Kernel::report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new MalariaSurveyJSONAnalyzer()); // <<< Report to create
-};
+static const char* _sim_types[] = {"MALARIA_SIM", nullptr};
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::MalariaSurveyJSONAnalyzer();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ---------------------------
 // --- MalariaPatent Methods
 // ---------------------------
-
+namespace Kernel
+{
     MalariaPatient::MalariaPatient(int id_, float age_, float local_birthday_)
         : id(id_)
         , node_id(-1)
@@ -148,16 +137,16 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         root.EndObject();
     }
 
-    std::vector< std::pair<int,int> > DeserializeStrainIds( IJsonObjectAdapter& root )
+    std::vector< std::pair<uint32_t,uint64_t> > DeserializeStrainIds( IJsonObjectAdapter& root )
     {
-        std::vector< std::pair<int,int> > value_list;
+        std::vector< std::pair<uint32_t,uint64_t> > value_list;
 
         IJsonObjectAdapter* p_json_array = root.GetJsonArray( "strain_ids" );
         for( unsigned int i = 0 ; i < p_json_array->GetSize(); ++i )
         {
             IJsonObjectAdapter* p_inner_array = (*p_json_array)[IndexType(i)];
-            int first  = (*p_inner_array)[IndexType(0)]->AsInt();
-            int second = (*p_inner_array)[IndexType(1)]->AsInt();
+            uint32_t first  = (*p_inner_array)[IndexType(0)]->AsInt();
+            uint64_t second = (*p_inner_array)[IndexType(1)]->AsInt();
             value_list.push_back( std::make_pair( first, second ) );
         }
         return value_list;
@@ -407,7 +396,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
         // GetInfectiousness is an inline function of IndividualHuman (not belonging to any queriable interface presently)
         float infectiousness = static_cast<IndividualHuman*>(context)->GetInfectiousness();
-        float infectiousness_smeared = ReportUtilitiesMalaria::BinomialInfectiousness( DLL_HELPER.GetRandomNumberGenerator(), infectiousness );
+        float infectiousness_smeared = ReportUtilitiesMalaria::BinomialInfectiousness( iindividual->GetParent()->GetRng(), infectiousness );
         float infectiousness_age_scaled = infectiousness * SusceptibilityVector::SurfaceAreaBitingFunction( age );
         patient->infectiousness.push_back( infectiousness );
         patient->infectiousness_smeared.push_back( infectiousness_smeared );
@@ -418,8 +407,8 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         patient->true_gametocyte_density.push_back( individual_malaria->GetGametocyteDensity() );
 
         // Smeared true values in model
-        patient->smeared_true_asexual_density.push_back( ReportUtilitiesMalaria::NASBADensityWithUncertainty( DLL_HELPER.GetRandomNumberGenerator(), susceptibility_malaria->get_parasite_density()));
-        patient->smeared_true_gametocyte_density.push_back( ReportUtilitiesMalaria::NASBADensityWithUncertainty( DLL_HELPER.GetRandomNumberGenerator(), individual_malaria->GetGametocyteDensity()));
+        patient->smeared_true_asexual_density.push_back( ReportUtilitiesMalaria::NASBADensityWithUncertainty( iindividual->GetParent()->GetRng(), susceptibility_malaria->get_parasite_density()));
+        patient->smeared_true_gametocyte_density.push_back( ReportUtilitiesMalaria::NASBADensityWithUncertainty( iindividual->GetParent()->GetRng(), individual_malaria->GetGametocyteDensity()));
 
         // Values incorporating variability and sensitivity of blood test
         patient->asexual_parasite_density.push_back( individual_malaria->CheckParasiteCountWithTest( MALARIA_TEST_BLOOD_SMEAR ) );
@@ -429,7 +418,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         // Positive fields of view (out of 200 views in Garki-like setup)
         int positive_asexual_fields = 0;
         int positive_gametocyte_fields = 0;
-        individual_malaria->CountPositiveSlideFields( DLL_HELPER.GetRandomNumberGenerator(), 200, (float)(1.0/400.0), positive_asexual_fields, positive_gametocyte_fields);
+        individual_malaria->CountPositiveSlideFields( iindividual->GetParent()->GetRng(), 200, (float)(1.0/400.0), positive_asexual_fields, positive_gametocyte_fields);
         patient->pos_asexual_fields.push_back( (float)positive_asexual_fields );
         patient->pos_gametocyte_fields.push_back( (float)positive_gametocyte_fields );
         LOG_DEBUG_F("(a,g) = (%d,%d)\n", (int)positive_asexual_fields, (int)positive_gametocyte_fields);

@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualSTI.h"
 #include "RelationshipManagerFactory.h"
 #include "RelationshipGroups.h"
-#include "SimulationConfig.h"
 
 #include "SocietyFactory.h"
 #include "IIdGeneratorSTI.h"

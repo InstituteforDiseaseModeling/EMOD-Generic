@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "BoostLibWrapper.h"
-
 #include "Sugar.h"
 #include "Configure.h"
 #include "SimulationEnums.h"
@@ -27,9 +25,6 @@ namespace Kernel
 
     public:
         virtual bool Configure( const Configuration* config ) override;
-
-        static bool                     enable_initial_susceptibility_distribution;
-        static DistributionType::Enum   susceptibility_initialization_distribution_type;
 
     protected:
         friend class Susceptibility;

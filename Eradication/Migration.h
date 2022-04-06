@@ -151,7 +151,7 @@ namespace Kernel
         virtual void Initialize( const std::vector<std::vector<MigrationRateData>>& rRateData );
         virtual void CalculateRates( Gender::Enum gender, float ageYears );
         virtual void NormalizeRates( std::vector<float>& r_rate_cdf, float& r_total_rate );
-        virtual void SaveRawRates( std::vector<float>& r_rate_cdf ) {}
+        virtual void SaveRawRates( std::vector<float>& r_rate_cdf );
 
         virtual const std::vector<suids::suid>& GetReachableNodes( Gender::Enum gender ) const;
         virtual const std::vector<MigrationType::Enum>& GetMigrationTypes( Gender::Enum gender ) const;
@@ -222,8 +222,7 @@ namespace Kernel
 
         virtual void Initialize( const std::string& idreference );
 
-        virtual bool ReadData( ExternalNodeId_t fromNodeID, 
-                               const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeidSuidMap,
+        virtual bool ReadData( INodeContext* from_node_ptr,
                                std::vector<std::vector<MigrationRateData>>& rRateData );
 
         MigrationType::Enum GetMigrationType() const { return m_MigrationType; }
@@ -272,14 +271,11 @@ namespace Kernel
         virtual const MigrationParams* GetParams() const;
 
         virtual void Initialize( const std::string& idreference ) override;
+        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node ) override;
         virtual bool IsAtLeastOneTypeConfiguredForIndividuals() const override;
         virtual bool IsEnabled( MigrationType::Enum mt ) const override;
-
-        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node, 
-                                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
     protected:
         static std::vector<std::vector<MigrationRateData>> GetRateData( INodeContext *parent_node, 
-                                                                        const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap,
                                                                         std::vector<MigrationInfoFile*>& infoFileList,
                                                                         bool* pIsFixedRate );
 
@@ -307,14 +303,11 @@ namespace Kernel
         virtual const MigrationParams* GetParams() const;
 
         virtual void Initialize( const std::string& idreference ) override;
-        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node, 
-                                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
+        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node ) override;
         virtual bool IsAtLeastOneTypeConfiguredForIndividuals() const override;
         virtual bool IsEnabled( MigrationType::Enum mt ) const override;
     protected:
-        std::vector<std::vector<MigrationRateData>> GetRateData( INodeContext *parent_node, 
-                                                                 const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap,
-                                                                 float modifier );
+        std::vector<std::vector<MigrationRateData>> GetRateData( INodeContext *parent_node, float modifier );
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details

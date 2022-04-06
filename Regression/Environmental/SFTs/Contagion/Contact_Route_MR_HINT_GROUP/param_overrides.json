@@ -1,0 +1,22 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json",
+                "../../Demographics/demographics_mr_2groups_contact_only_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Infectious_Period_Constant": 60,
+                "Environmental_Normalization": "GROUP",
+                "Contact_Normalization": "GROUP"
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "Contact_Route_Contagion_with_MR_HINT_GROUP"
+        }
+    },
+    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+}

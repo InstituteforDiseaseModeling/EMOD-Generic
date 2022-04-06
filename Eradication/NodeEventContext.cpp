@@ -33,26 +33,28 @@ namespace Kernel
     : node(nullptr)
     , arrival_distribution_sources()
     , departure_distribution_sources()
-    , interventions()
     , node_interventions()
     , broadcaster_impl()
+    , birthrate_multiplier(1.0f)
+    , connection_multiplier_inbound(1.0f)
+    , connection_multiplier_outbound(1.0f)
+    , infectivity_multiplier(1.0f)
     {
         arrival_distribution_sources.clear();
-        //individual_event_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
-        //disposed_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     NodeEventContextHost::NodeEventContextHost(Node* _node)
     : node(_node)
     , arrival_distribution_sources()
     , departure_distribution_sources()
-    , interventions()
     , node_interventions()
     , broadcaster_impl()
+    , birthrate_multiplier(1.0f)
+    , connection_multiplier_inbound(1.0f)
+    , connection_multiplier_outbound(1.0f)
+    , infectivity_multiplier(1.0f)
     {
         arrival_distribution_sources.clear();
-        //individual_event_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
-        //disposed_observers.resize( EventTrigger::NUM_EVENT_TRIGGERS );
     }
 
     // This was done with macros, but prefer actual code.
@@ -95,12 +97,8 @@ namespace Kernel
         return status;
     }
 
-    void
-    NodeEventContextHost::SetContextTo(
-        INodeContext* context
-    )
+    void NodeEventContextHost::SetContextTo( INodeContext* context )
     {
-        
         PropagateContextToDependents();
     }
 
@@ -116,32 +114,53 @@ namespace Kernel
     }
 
     // method 2 for VisitIndividuals uses an interface
-    int
-    NodeEventContextHost::VisitIndividuals(
-        IVisitIndividual * pEventCoordinator
-    )
+    int NodeEventContextHost::VisitIndividuals(IVisitIndividual* pEventCoordinator)
     {
-        int retTotal = 0;
-        float nodeCostThisInterventionThisTimestep = 0.0f;
-        for( auto individual : node->individualHumans)
+        int   retTotal    = 0;
+        int   retMax      = pEventCoordinator->GetMaxEvents();
+        float unusedVal = 0.0f;
+        
+        std::vector<IIndividualHuman*>::iterator iter01, iterBegin, iterMid, iterEnd;
+        iterBegin = node->individualHumans.begin();
+        iterMid   = iterBegin;
+        iterEnd   = node->individualHumans.end();
+
+        // If using max distributions less than number of agents; start at random position in vector
+        if(retMax < node->individualHumans.size())
         {
-            float costForThisIntervention = 0.0f;
-            if( pEventCoordinator->visitIndividualCallback(individual->GetEventContext(), costForThisIntervention, this))
+            iterMid += node->GetRng()->uniformZeroToN32(node->individualHumans.size());
+        }
+
+        // First pass; start somewhere in vector
+        for(iter01 = iterMid; iter01 < iterEnd; iter01++)
+        {
+            if(retTotal >= retMax)
+            {
+                break;
+            }
+            if(pEventCoordinator->visitIndividualCallback((*iter01)->GetEventContext(), unusedVal, this))
             {
                 retTotal++;
-                //nodeCostThisInterventionThisTimestep += (float)( costForThisIntervention * ih->GetMonteCarloWeight() );
             }
         }
 
-        IncrementCampaignCost( nodeCostThisInterventionThisTimestep );
-        LOG_DEBUG_F("Node CampaignCost = %f\n", nodeCostThisInterventionThisTimestep);
+        // Second pass; start at begining, only check through previous start
+        for(iter01 = iterBegin; iter01 < iterMid; iter01++)
+        {
+            if(retTotal >= retMax)
+            {
+                break;
+            }
+            if(pEventCoordinator->visitIndividualCallback((*iter01)->GetEventContext(), unusedVal, this))
+            {
+                retTotal++;
+            }
+        }
+
         return retTotal;
     }
 
-    void NodeEventContextHost::notifyCampaignExpenseIncurred(
-        float expenseIncurred,
-        const IIndividualHumanEventContext * pIndiv
-    )
+    void NodeEventContextHost::notifyCampaignExpenseIncurred(float expenseIncurred, const IIndividualHumanEventContext * pIndiv)
     {
         release_assert( node );
         if( expenseIncurred > 0 )
@@ -176,11 +195,6 @@ namespace Kernel
                 << std::endl;
             Environment::getInstance()->Log->Log(Logger::DEBUG, "EEL","%s\n", msg.str().c_str() );
         }
-    }
-
-    const NodeDemographics& NodeEventContextHost::GetDemographics()
-    {
-        return node->demographics;
     }
 
     const suids::suid &
@@ -281,8 +295,29 @@ namespace Kernel
         node->Campaign_Cost += cost;
     }
 
+    void NodeEventContextHost::UpdateBirthRateMultiplier(float mult_val)
+    {
+        birthrate_multiplier           *= mult_val;
+    }
+
+    void NodeEventContextHost::UpdateConnectionModifiers(float inbound, float outbound)
+    {
+        connection_multiplier_inbound  *= inbound;
+        connection_multiplier_outbound *= outbound;
+    }
+
+    void NodeEventContextHost::UpdateInfectivityMultiplier(float mult_val)
+    {
+        infectivity_multiplier         *= mult_val;
+    }
+
     void NodeEventContextHost::UpdateInterventions(float dt)
     {
+        birthrate_multiplier            = 1.0f;
+        connection_multiplier_inbound   = 1.0f;
+        connection_multiplier_outbound  = 1.0f;
+        infectivity_multiplier          = 1.0f;
+        
         std::vector<INodeDistributableIntervention*> expired_list;
         for( auto intervention : node_interventions )
         {
@@ -305,18 +340,10 @@ namespace Kernel
     bool NodeEventContextHost::GiveIntervention( INodeDistributableIntervention* iv )
     {
         node_interventions.push_back( iv );
+        // We need to increase the reference counter here to represent fact that interventions container
+        // is keeping a pointer to the intervention. (Otherwise when event coordinator calls Release,
+        // and ref counter is decremented, the intervention object will delete itself.)
         iv->AddRef();
-
-        IBaseIntervention * pBaseIV = nullptr;
-        if( iv->QueryInterface( GET_IID(IBaseIntervention), (void**)&pBaseIV ) == s_OK ) 
-        {
-            IncrementCampaignCost( pBaseIV->GetCostPerUnit() );
-            pBaseIV->Release();
-        }
-        else
-        {
-            LOG_WARN_F("Unsuccessful in querying for IBaseIntervention from INodeDistributableIntervention (%s) for passing Campaign_Cost back to Node.\n", typeid(*iv).name());
-        }
         iv->SetContextTo( this );
         return true;
     }
@@ -324,13 +351,13 @@ namespace Kernel
     std::list<INodeDistributableIntervention*> NodeEventContextHost::GetInterventionsByType(const std::string& type_name)
     {
         std::list<INodeDistributableIntervention*> interventions_of_type;
-        LOG_INFO_F("Looking for intervention of type %s", type_name.c_str());
+        LOG_DEBUG_F( "Looking for intervention of type %s\n", type_name.c_str() );
         for (auto intervention : node_interventions)
         {
             std::string cur_iv_type_name = typeid( *intervention ).name();
             if( cur_iv_type_name == type_name )
             {
-                LOG_INFO( "Found one..." );
+                LOG_DEBUG("Found one...\n");
                 interventions_of_type.push_back( intervention );
             }
         }
@@ -338,16 +365,82 @@ namespace Kernel
         return interventions_of_type;
     }
 
+    std::list<INodeDistributableIntervention*> NodeEventContextHost::GetInterventionsByName(const std::string& intervention_name)
+    {
+        std::list<INodeDistributableIntervention*> interventions_list;
+        LOG_DEBUG_F( "Looking for interventions with name %s\n", intervention_name.c_str() );
+        for (auto intervention : node_interventions)
+        {
+            if( intervention->GetName() == intervention_name )
+            {
+                interventions_list.push_back( intervention );
+            }
+        }
+
+        return interventions_list;
+    }
+
+    std::list<void*> NodeEventContextHost::GetInterventionsByInterface( iid_t iid )
+    {
+        std::list<void*> interface_list;
+        for (auto intervention : node_interventions)
+        {
+            void* p_interface = nullptr;
+            if ( s_OK == intervention->QueryInterface( iid, (void**)&p_interface) )
+            {
+                interface_list.push_back( p_interface );
+            }
+        }
+
+        return interface_list;
+    }
+
     void NodeEventContextHost::PurgeExisting( const std::string& iv_name )
     {
         std::list<INodeDistributableIntervention*> iv_list = GetInterventionsByType(iv_name);
 
-        for (auto iv_ptr : iv_list)
+        for( auto iv_ptr : iv_list )
         {
-            LOG_INFO_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
+            LOG_DEBUG_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
             node_interventions.remove( iv_ptr );
             delete iv_ptr;
         }
+    }
+
+    void NodeEventContextHost::PurgeExistingByName( const std::string& iv_name )
+    {
+        std::list<INodeDistributableIntervention*> iv_list = GetInterventionsByName(iv_name);
+
+        for( auto iv_ptr : iv_list )
+        {
+            LOG_DEBUG_F("Found an existing intervention by that name (%s) which we are purging\n", iv_name.c_str());
+            node_interventions.remove( iv_ptr );
+            delete iv_ptr;
+        }
+    }
+
+    bool NodeEventContextHost::ContainsExisting( const std::string& iv_name )
+    {
+        for( auto intervention : node_interventions )
+        {
+            if( typeid(*intervention).name() == iv_name )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool NodeEventContextHost::ContainsExistingByName( const std::string& iv_name )
+    {
+        for( auto intervention : node_interventions )
+        {
+            if( intervention->GetName() == iv_name )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     NodeEventContextHost::~NodeEventContextHost()
@@ -388,8 +481,8 @@ namespace Kernel
     {
         for (int i = 0; i < num_cases_per_node; i++)
         {
-            // Add individual (init_prev = 0.0f; init_mod_acquire = 1.0f)
-            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(mc_weight, import_age, 0.0f, female_prob, 1.0f);
+            // Add individual (init_prev = 0.0f; init_mod_acquire = 1.0f; risk_mod = 1.0f)
+            IIndividualHuman* new_individual = node->configureAndAddNewIndividual(mc_weight, import_age, 0.0f, female_prob, 1.0f, 1.0f);
 
             // Start as infectious (incubation_period = 0)
             new_individual->AcquireNewInfection( outbreak_strainID, 0.0f );
@@ -442,5 +535,25 @@ namespace Kernel
     IIndividualEventBroadcaster* NodeEventContextHost::GetIndividualEventBroadcaster()
     {
         return this;
+    }
+
+    float NodeEventContextHost::GetBirthRateMultiplier() const
+    {
+        return birthrate_multiplier;
+    }
+
+    float NodeEventContextHost::GetInboundConnectionModifier() const
+    {
+        return connection_multiplier_inbound;
+    }
+
+    float NodeEventContextHost::GetOutboundConnectionModifier() const
+    {
+        return connection_multiplier_outbound;
+    }
+
+    float NodeEventContextHost::GetInfectivityMultiplier() const
+    {
+        return infectivity_multiplier;
     }
 }

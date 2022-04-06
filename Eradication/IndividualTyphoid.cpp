@@ -113,7 +113,6 @@ namespace Kernel
                 gettimeofday( &stop_tv, nullptr );
                 float timespentinms = ( stop_tv.tv_sec - start_tv.tv_sec ) + 1e-06* ( stop_tv.tv_usec - start_tv.tv_usec );
 #endif
-                //std::cout << "[" << _label << "] duration = " << timespentinms << std::endl;
             }
 #ifndef WIN32
             struct timeval start_tv;
@@ -562,7 +561,7 @@ namespace Kernel
                     if (tmp_infectiousnessOral > 0.0f)
                     {
                         LOG_VALID_F("Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s. Intervention factor %f.\n",
-                                    GetSuid().data, tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep), state_to_report.c_str(), cda
+                                    GetSuid().data, tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time), state_to_report.c_str(), cda
                                    );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
                     } 
@@ -576,7 +575,7 @@ namespace Kernel
                         auto eda = typhoid_node_event->GetEnviroDepositAttenuation( GetProperties() ); 
                         tmp_infectiousnessFecal *= eda;
                         LOG_VALID_F( "Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s..\n",
-                                     GetSuid().data, tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().timestep)
+                                     GetSuid().data, tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time)
                                    );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL );
                         ///LOG_DEBUG_F("contagion= %f\n", cp->GetTotalContagion());

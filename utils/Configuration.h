@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <vector>
 #include <map>
 
-#include "BoostLibWrapper.h"
 #include "ISupports.h"
 #include "CajunIncludes.h"
 
@@ -86,6 +85,12 @@ std::vector< float > GET_CONFIG_VECTOR_FLOAT(const json::QuickInterpreter* param
 inline std::vector< float > GET_CONFIG_VECTOR_FLOAT(const json::QuickInterpreter* parameter_source, const std::string& name)
 {
     return GET_CONFIG_VECTOR_FLOAT(parameter_source, name.c_str());
+}
+
+std::vector< bool > GET_CONFIG_VECTOR_BOOL(const json::QuickInterpreter* parameter_source, const char *name);
+inline std::vector< bool > GET_CONFIG_VECTOR_BOOL(const json::QuickInterpreter* parameter_source, const std::string& name)
+{
+    return GET_CONFIG_VECTOR_BOOL(parameter_source, name.c_str());
 }
 
 std::vector< int > GET_CONFIG_VECTOR_INT(const json::QuickInterpreter* parameter_source, const char *name);

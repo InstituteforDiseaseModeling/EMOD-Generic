@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
@@ -50,6 +48,7 @@ namespace Kernel
         std::vector<EventTrigger::Enum>   m_trigger_conditions;
         float max_duration;
         float duration;
+        int   num_distributed;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;
         DemographicRestrictions demographic_restrictions;
         bool m_disqualified_by_coverage_only;

@@ -178,11 +178,6 @@ namespace Kernel
         addNode_internal( node, nodedemographics_factory, climate_factory, white_list_enabled );
     }
 
-    void SimulationPy::InitializeFlags( const ::Configuration *config )
-    {
-    }
-
-
     void SimulationPy::resolveMigration()
     {
         //resolveMigrationInternal( typed_migration_queue_storage, migratingIndividualQueues );

@@ -14,10 +14,9 @@
     "Demographics_Filenames": [
         "demographics.json"
     ],
+    "Enable_Acquisition_Heterogeneity": 0,
     "Enable_Aging": 1,
     "Enable_Birth": 0,
-    "Enable_Demographics_Birth": 0,
-    "Enable_Demographics_Risk": 0,
     "Enable_Disease_Mortality": 0,
     "Enable_Heterogeneous_Intranode_Transmission": 0,
     "Enable_Immunity": 0,
@@ -41,6 +40,7 @@
     "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
     "Listed_Events": [],
     "Migration_Model": "NO_MIGRATION",
+    "Min_Node_Population_Samples": 0,
     "Node_Grid_Size": 0.005,
     "Population_Density_Infectivity_Correction": "CONSTANT_INFECTIVITY",
     "Population_Scale_Type": "FIXED_SCALING",

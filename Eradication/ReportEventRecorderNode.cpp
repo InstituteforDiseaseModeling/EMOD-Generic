@@ -28,21 +28,9 @@ SETUP_LOGGING( "ReportEventRecorderNode" )
 
 namespace Kernel
 {
-    template std::string BaseReportEventRecorder< INodeEventBroadcaster,
-                                                  INodeEventObserver,
-                                                  INodeEventContext >::GetEnableParameterName();
-
     template void BaseTextReportEventsTemplate< INodeEventBroadcaster,
                                                 INodeEventObserver,
                                                 INodeEventContext>::Reduce();
-
-    const std::string ReportEventRecorderNode::ENABLE_PARAMETER_NAME   = "Report_Node_Event_Recorder";
-    const std::string ReportEventRecorderNode::EVENTS_LIST_NAME        = "Report_Node_Event_Recorder_Events";
-    const std::string ReportEventRecorderNode::EVENTS_LIST_DESC        =  ""; // ???
-    const std::string ReportEventRecorderNode::IGNORE_EVENTS_LIST_NAME = "Report_Node_Event_Recorder_Ignore_Events_In_List";
-    const std::string ReportEventRecorderNode::IGNORE_EVENTS_LIST_DESC =  "";  // ???
-
-    const std::string STATS_BY_IP_PARAMETER_NAME = "Report_Node_Event_Recorder_Stats_By_IPs";
 
     GET_SCHEMA_STATIC_WRAPPER_IMPL( ReportEventRecorderNode, ReportEventRecorderNode )
 
@@ -56,20 +44,23 @@ namespace Kernel
         , m_NodePropertiesToReport()
         , m_StatsByIpKeyNames()
         , m_ReportStatsByIP()
-    {
-    }
+    { }
 
     ReportEventRecorderNode::~ReportEventRecorderNode()
-    {
-    }
+    { }
 
-    void ReportEventRecorderNode::ConfigureOther( const Configuration * inputJson )
+    bool ReportEventRecorderNode::Configure( const Configuration * inputJson )
     {
-        m_NodePropertiesToReport.value_source = NPKey::GetConstrainedStringConstraintKey();
-        initConfigTypeMap( "Report_Node_Event_Recorder_Node_Properties", &m_NodePropertiesToReport, Report_Node_Event_Recorder_Node_Properties_DESC_TEXT, ENABLE_PARAMETER_NAME.c_str() );
+        m_StatsByIpKeyNames.value_source       = IPKey::GetConstrainedStringConstraintKey();
+        m_NodePropertiesToReport.value_source  = NPKey::GetConstrainedStringConstraintKey();
 
-        m_StatsByIpKeyNames.value_source = IPKey::GetConstrainedStringConstraintKey();
-        initConfigTypeMap( STATS_BY_IP_PARAMETER_NAME.c_str(), &m_StatsByIpKeyNames, Report_Node_Event_Recorder_Stats_By_IPs_DESC_TEXT, ENABLE_PARAMETER_NAME.c_str() );
+        initVectorConfig("Report_Node_Event_Recorder_Events",  event_trigger_list,  inputJson,  MetadataDescriptor::VectorOfEnum("Report_Node_Event_Recorder_Events", "TBD", MDD_ENUM_ARGS(EventTrigger)),  "Enable_Report_Node_Event_Recorder");
+
+        initConfigTypeMap("Report_Node_Event_Recorder_Ignore_Events_In_List",  &ignore_events_in_list,     "TBD",                                                 false,  "Enable_Report_Node_Event_Recorder");
+        initConfigTypeMap("Report_Node_Event_Recorder_Node_Properties",        &m_NodePropertiesToReport,  Report_Node_Event_Recorder_Node_Properties_DESC_TEXT,          "Enable_Report_Node_Event_Recorder");
+        initConfigTypeMap("Report_Node_Event_Recorder_Stats_By_IPs",           &m_StatsByIpKeyNames,       Report_Node_Event_Recorder_Stats_By_IPs_DESC_TEXT,             "Enable_Report_Node_Event_Recorder");
+
+        return BaseReportEventRecorder::Configure(inputJson);
     }
 
     void ReportEventRecorderNode::Initialize( unsigned int nrmSize )
@@ -85,7 +76,7 @@ namespace Kernel
                 throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
             }
         }
-        m_ReportStatsByIP.SetIPKeyNames( STATS_BY_IP_PARAMETER_NAME, m_StatsByIpKeyNames );
+        m_ReportStatsByIP.SetIPKeyNames( "Report_Node_Event_Recorder_Stats_By_IPs", m_StatsByIpKeyNames );
         BaseReportEventRecorder::Initialize( nrmSize );
     }
 

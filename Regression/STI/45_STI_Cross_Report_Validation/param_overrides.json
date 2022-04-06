@@ -26,8 +26,8 @@
         },
         "STI": {
             ".Python_Script_Path": "/home/jbloedow/python",
+            "Enable_Report_Event_Recorder": 1,
             "Report_Coital_Acts": 1,
-            "Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "EveryUpdate",
                 "HappyBirthday",

@@ -10,12 +10,12 @@
         ],
         "Enable_Demographics_Reporting": 0,
         "Enable_Immune_Decay": 1,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "SamplesInput",
         "Infectious_Period_Exponential": 10,
         "Python_Script_Path": "LOCAL",
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "GP_EVENT_001",
             "GP_EVENT_002",

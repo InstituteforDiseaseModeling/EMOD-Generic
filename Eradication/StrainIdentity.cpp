@@ -19,31 +19,12 @@ namespace Kernel {
     StrainIdentity::StrainIdentity(void)
         : cladeID(0)
         , geneticID(0)
-    {
-    }
+    { }
 
-    StrainIdentity::StrainIdentity(int initial_clade, int initial_genome)
+    StrainIdentity::StrainIdentity(uint32_t initial_clade, uint64_t initial_genome)
         : cladeID(initial_clade)
         , geneticID(initial_genome)
-    {
-        if( initial_clade < 0 )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_clade", initial_clade, 0 );
-        }
-        else if( initial_clade >= static_cast<int>(InfectionConfig::number_clades) )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_clade", initial_clade, InfectionConfig::number_clades-1 );
-        }
-
-        if( initial_genome < 0 )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_genome", initial_genome, 0 );
-        }
-        else if( initial_genome >= static_cast<int>(InfectionConfig::number_genomes) )
-        {
-            throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "initial_genome", initial_genome, InfectionConfig::number_genomes-1 );
-        }
-    }
+    { }
 
     StrainIdentity::StrainIdentity( const IStrainIdentity *copy )
         : cladeID( copy->GetCladeID() )
@@ -53,31 +34,30 @@ namespace Kernel {
     }
 
     StrainIdentity::~StrainIdentity(void)
+    { }
+
+    std::pair<uint32_t, uint64_t> StrainIdentity::GetStrainName(void) const
     {
+        // Provides a unique and hashable indentifier
+        return std::make_pair(cladeID,geneticID);
     }
 
-    std::string StrainIdentity::GetName(void) const
-    {
-        // Strain name determined by clade and genome
-        return (std::to_string(cladeID) + "_" + std::to_string(geneticID));
-    }
-
-    int StrainIdentity::GetCladeID(void) const
+    uint32_t StrainIdentity::GetCladeID(void) const
     {
         return cladeID;
     }
 
-    int StrainIdentity::GetGeneticID(void) const
+    uint64_t StrainIdentity::GetGeneticID(void) const
     {
         return geneticID;
     }
 
-    void StrainIdentity::SetCladeID(int in_cladeID)
+    void StrainIdentity::SetCladeID(uint32_t in_cladeID)
     {
         cladeID = in_cladeID;
     }
 
-    void StrainIdentity::SetGeneticID(int in_geneticID)
+    void StrainIdentity::SetGeneticID(uint64_t in_geneticID)
     {
         geneticID = in_geneticID;
     }

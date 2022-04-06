@@ -14,8 +14,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include <boost/lexical_cast.hpp> // no!!!
 #include "Exceptions.h"
+#include "IdmString.h"
 #include "Types.h" // temp, for backtrace
 #ifdef __GNUC__
 #include <execinfo.h>
@@ -194,16 +194,6 @@ static const char* nullptr_str = "nullptr";
 #define GET_STR(s)      ( (s) ? (s) : nullptr_str )
 
 namespace Kernel {
-#if 0
-    DetailedException::DetailedException( const char * msg, const char * file_name, int line_num )
-    : std::runtime_error( msg )
-    , _fileName( file_name )
-    , _lineNum( line_num )
-    , _msg( msg )
-    {
-        //std::cout << "DetailedException ctor: msg = " << msg << ", file = " << file_name << ", line_num = " << line_num << std::endl;
-    }
-#endif
 
     DetailedException::DetailedException( const char * file_name, int line_num, const char * func_name )
     : std::runtime_error( std::string( "\nException in " ) + GET_STR(file_name) + " at " + boost::lexical_cast<std::string>(line_num) + " in " + GET_STR(func_name) + ".\n" )
@@ -213,7 +203,6 @@ namespace Kernel {
     , _funcName( func_name )
     , _lineNum( line_num )
     {
-        //std::cout << "DetailedException ctor: msg = " << msg << ", file = " << file_name << ", line_num = " << line_num << std::endl;
         _stackTrace = dump_backtrace();
     }
 
@@ -360,8 +349,15 @@ namespace Kernel {
         std::ostringstream _tmp_msg;
         _tmp_msg << "FileNotFoundException: "
             << what()
-            << "Could not find file "
-            << GET_STR(missing_file_name);
+            << "Could not find file at any of 1 or more paths:" << std::endl;
+        auto elements = IdmString( missing_file_name ).split(); // should be array/vector of IdmStrings
+        for( std::string elem: elements  )
+        {
+            if( elem.size() > 0 )
+            {
+                _tmp_msg << elem << std::endl;
+            }
+        }
         _msg = _tmp_msg.str();
     }
 

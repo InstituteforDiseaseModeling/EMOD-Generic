@@ -15,11 +15,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "EventTrigger.h"
 #include "Configuration.h"
-#include "ConfigurationImpl.h"
 #include "ConfigParams.h"
 #include "IndividualCoInfection.h"
 #include "IContagionPopulation.h"
 #include "IMigrationInfo.h"
+#include "ISimulationContext.h"
 #include "IndividualEventContext.h"
 #include "InfectionTB.h"
 #include "SusceptibilityTB.h"
@@ -28,7 +28,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InfectionHIV.h"
 #include "SusceptibilityHIV.h"
 #include "HIVInterventionsContainer.h"
-#include "TBHIVParameters.h"
 
 #include "MasterInterventionsContainer.h"
 #include "IIndividualHumanHIV.h"
@@ -531,7 +530,7 @@ namespace Kernel
                 HasLatentInfection() &&
                 !(GetTBInfection()->IsFastProgressor() || GetTBInfection()->IsPendingRelapse()) )
             {
-                float dt_true = parent->GetTime().GetTimeDelta();
+                float dt_true = parent->GetParent()->GetParams()->sim_time_delta;
                 float prob = EXPCDF( -cp->GetTotalContagion()*dt_true*suscept_mod*interventions->GetInterventionReducedAcquire() );
                 if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
                 {

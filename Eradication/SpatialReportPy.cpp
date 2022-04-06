@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <functional>
 #include <numeric>
 #include <map>
-#include "BoostLibWrapper.h"
 
 #include "SpatialReportPy.h"
 #include "Sugar.h"

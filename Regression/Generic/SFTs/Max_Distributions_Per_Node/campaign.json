@@ -1,0 +1,102 @@
+{
+    "Campaign_Name": "Initial Seeding, 1 just person though.",
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Max_Distributions_Per_Node": 0,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "ExplicitAgeRanges",
+                "Target_Age_Min": 20,
+                "Target_Age_Max": 21,
+                "Max_Distributions_Per_Node": 3,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetNodeList",
+                "Node_List": [1, 3]
+            },
+            "Start_Day": 5,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Male",
+                "_Max_Distributions_Per_Node": "should use default value which is unlimited",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetNodeList",
+                "Node_List": [2, 4]
+            },
+            "Start_Day": 10,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "Max_Distributions_Per_Node": 100,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 15,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1,
+                "Intervention_Config": {
+                    "Incubation_Period_Override": 1,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "ExplicitGender",
+                "Target_Gender": "Female",
+                "Max_Distributions_Per_Node": 10000,
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 20,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

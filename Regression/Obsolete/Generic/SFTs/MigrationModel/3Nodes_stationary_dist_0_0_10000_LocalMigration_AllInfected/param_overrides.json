@@ -1,0 +1,52 @@
+{
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
+            "Demographics_Filenames": [
+                "../MigrationDemographics/1x3_demographics_migration_heterogeneity.json",
+                "0_0_X_region_overlay.json"
+            ],
+            "Enable_Initial_Prevalence": 0,
+            "IMMUNITY": {
+                "Enable_Initial_Susceptibility_Distribution": 0
+            }
+        },
+        "DISEASE": {
+            "INCUBATION": {
+                "Incubation_Period_Constant": 3
+            },
+            "INFECTIOUSNESS": {
+                "Infectious_Period_Constant": 10000,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Symptomatic_Infectious_Offset": 0
+            }
+        },
+        "MIGRATION": {
+            "Enable_Local_Migration": 1,
+            "Local_Migration_Filename": "LocalMigration_3_Nodes.bin",
+            "Migration_Model": "FIXED_RATE_MIGRATION"
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "custom_reports.json",
+            "Enable_Report_Event_Recorder": 1,
+            "Enable_Spatial_Output": 1,
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        },
+        "PRIMARY": {
+            "Config_Name": "3Nodes_stationary_dist_Migration_Heterogeneity",
+            "Geography": "MigrationSFTs",
+            "Python_Script_Path": "LOCAL",
+            "Simulation_Duration": 1000
+        },
+        "Temporary_MigrationModel": {
+            "Local_Migration_Roundtrip_Duration": 0,
+            "Local_Migration_Roundtrip_Probability": 0,
+            "Spatial_Output_Channels": [
+                "Population",
+                "Prevalence"
+            ]
+        }
+    }
+}

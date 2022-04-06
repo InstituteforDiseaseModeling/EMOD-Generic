@@ -107,6 +107,7 @@ namespace Kernel
 
         // IVisitIndividual methods
         virtual bool visitIndividualCallback( IIndividualHumanEventContext *ihec, float & incrementalCostOut, ICampaignCostObserver * pICCO );
+        virtual int GetMaxEvents() const;
 
         // Other methods
         virtual bool Distribute( const std::vector<INodeEventContext*>& nodes, uint32_t numIncidences, uint32_t qualifyingPopulation );
@@ -195,7 +196,6 @@ namespace Kernel
         // IEventCoordinator methods
         virtual void SetContextTo( ISimulationEventContext *isec ) override;
         virtual void CheckStartDay( float campaignStartDay ) const override;
-        virtual void InitializeTiming( const IdmDateTime& ) override;
         virtual void AddNode( const suids::suid& suid ) override;
         virtual void Update( float dt ) override;
         virtual void ConsiderResponding();

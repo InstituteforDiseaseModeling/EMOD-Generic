@@ -117,9 +117,7 @@ namespace Kernel
         virtual void Initialize( const std::string& idreference ) override;
 
         // IMigrationInfoFactoryVector
-        virtual IMigrationInfoVector* CreateMigrationInfoVector( 
-            INodeContext *parent_node, 
-            const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
+        virtual IMigrationInfoVector* CreateMigrationInfoVector( INodeContext *parent_node ) override;
 
     private:
 #pragma warning( push )
@@ -140,9 +138,7 @@ namespace Kernel
         virtual ~MigrationInfoFactoryVectorDefault();
 
         // IMigrationInfoFactoryVector
-        virtual IMigrationInfoVector* CreateMigrationInfoVector( 
-            INodeContext *parent_node, 
-            const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
+        virtual IMigrationInfoVector* CreateMigrationInfoVector( INodeContext *parent_node ) override;
 
     private:
     };

@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
+#include "ConfigParams.h"
 #include "IIndividualHuman.h"
 #include "Node.h"
 #include "PropertyReportTyphoid.h"
@@ -52,23 +53,26 @@ bool PropertyReportTyphoid::Configure( const Configuration* inputJson )
 
     bool ret = JsonConfigurable::Configure( inputJson );
 
-    if( ret && !JsonConfigurable::_dryrun )
+    return ret;
+}
+
+bool PropertyReportTyphoid::Validate( const ISimulationContext* parent_sim )
+{
+    if( start_year < parent_sim->GetParams()->sim_time_base_year )
     {
-        if( start_year < SimulationTyphoid::base_year )
-        {
-            start_year = SimulationTyphoid::base_year;
-        }
-        if( start_year >= stop_year )
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                    "Property_Report_Start_Year", start_year,
-                                                    "Property_Report_Stop_Year", stop_year,
-                                                    "'Property_Report_Start_Year' must be less than 'Property_Report_Stop_Year'");
-        }
-        channelDataMap.SetStartStopYears( start_year, stop_year );
+        start_year = parent_sim->GetParams()->sim_time_base_year;
+    }
+    if( start_year >= stop_year )
+    {
+        throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
+                                                "Property_Report_Start_Year", start_year,
+                                                "Property_Report_Stop_Year", stop_year,
+                                                "'Property_Report_Start_Year' must be less than 'Property_Report_Stop_Year'");
     }
 
-    return ret;
+    channelDataMap.SetStartStopYears( start_year, stop_year );
+
+    return true;
 }
 
 void PropertyReportTyphoid::UpdateEventRegistration( float currentTime,

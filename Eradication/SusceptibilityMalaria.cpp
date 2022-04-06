@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "SusceptibilityMalaria.h"
 #include "Exceptions.h"
@@ -250,7 +251,7 @@ namespace Kernel
         // New births during the simulation can stop here.
         if (GetParent()->GetAge() == 0) return;
 
-        if(SusceptibilityConfig::susceptibility_initialization_distribution_type == DistributionType::DISTRIBUTION_COMPLEX )
+        if(GetParent()->GetParent()->GetParams()->initial_sus_dist_type == DistributionType::DISTRIBUTION_COMPLEX )
         {
             INodeMalaria* p_node_malaria = nullptr;
             if (parent->GetEventContext()->GetNodeEventContext()->GetNodeContext()->QueryInterface( GET_IID( INodeMalaria ), (void**)&p_node_malaria ) != s_OK)

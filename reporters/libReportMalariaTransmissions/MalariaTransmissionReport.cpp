@@ -33,67 +33,56 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IMigrate.h"
 #include "RANDOM.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Module name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING("MalariaTransmissionReport") // <<< Name of this file
+//******************************************************************************
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = {"MALARIA_SIM", nullptr}; // <<< Types of simulation the report is to be used with
+SETUP_LOGGING("MalariaTransmissionReport")
 
-report_instantiator_function_t rif = []()
-{
-    return (IReport*)(new MalariaTransmissionReport()); // <<< Report to create
-};
+static const char* _sim_types[] = {"MALARIA_SIM", nullptr};
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::MalariaTransmissionReport();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
+namespace Kernel
+{
     MigratingVector::MigratingVector(uint64_t id, ExternalNodeId_t from_node_id, ExternalNodeId_t to_node_id)
         : id(id)
         , from_node_id(from_node_id)
@@ -224,7 +213,7 @@ GetReportInstantiator( report_instantiator_function_t* pif )
             }
             LOG_DEBUG_F("%d infectious mosquitos in buffer at t=%d, node_id=%d.\n",
                 infectious_mosquitos.size(), location.second, location.first);
-            uint64_t mosq_id = infectious_mosquitos.at(DLL_HELPER.GetRandomNumberGenerator()->uniformZeroToN16(infectious_mosquitos.size())); // TODO: SuidGenerator + Reduce() for multicore
+            uint64_t mosq_id = infectious_mosquitos.at(context->GetNodeEventContext()->GetRng()->uniformZeroToN16(infectious_mosquitos.size())); // TODO: SuidGenerator + Reduce() for multicore
             LOG_DEBUG_F("Sampled infectious mosquito (id=%d) at t=%d, node_id=%d.\n",
                 mosq_id, location.second, location.first);
 
@@ -265,7 +254,7 @@ GetReportInstantiator( report_instantiator_function_t* pif )
             LOG_DEBUG_F("Total infectiousness = %0.2f.  Normalizing weights...\n", total);
             std::for_each(cum_weights.begin(), cum_weights.end(), [total](float &w){w /= total;});
 
-            auto up = std::upper_bound(cum_weights.begin(), cum_weights.end(), DLL_HELPER.GetRandomNumberGenerator()->e());
+            auto up = std::upper_bound(cum_weights.begin(), cum_weights.end(), context->GetNodeEventContext()->GetRng()->e());
             int idx = std::distance(cum_weights.begin(), up);
             const MalariaIndividualInfo& txHuman = *(inf_humans.at(idx));
             txId_ = txHuman.id;

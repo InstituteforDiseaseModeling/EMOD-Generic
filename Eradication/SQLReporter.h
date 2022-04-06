@@ -14,22 +14,21 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class IndividualForSQL {
-        public:
-        IndividualForSQL ();
-        ~IndividualForSQL ();
+    class IndividualForSQL
+    {
+    public:
+        IndividualForSQL();
+        virtual ~IndividualForSQL();
+
         unsigned int time;
         unsigned int node_id;
         unsigned int individual_id;
         std::string  event;
-        float        age;
-        char         gender;
         float        mcw;
-        unsigned int infector_id;
+        uint64_t     label;
         std::string  IPs;
-        std::string route_of_infection;
-        static void serialize(IArchive& ar, IndividualForSQL& obj);
     };
+
 
     class SQLReporter : public ReportEventRecorder
     {
@@ -40,15 +39,19 @@ namespace Kernel
     protected:
         SQLReporter();
         virtual ~SQLReporter();
-        virtual bool Configure( const Configuration * inputJson ) override;
+
+        virtual bool Configure( const Configuration* inputJson ) override;
+        virtual void Initialize( unsigned int nrmSize )          override;
+        virtual void EndTimestep( float currentTime, float dt )  override;
+        virtual void Finalize()                                  override;
 
     protected:
-        virtual void WriteData( const std::string& rStringData ) override; // This needs to be virtual so it gets called properly
-        virtual std::string GetOtherData( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger ) override;
-        virtual void GetDataFromOtherCores() override;
-        sqlite3 *db; 
-        std::string time_as_str;
+        virtual bool notifyOnEvent( IIndividualHumanEventContext* context, const EventTrigger::Enum& trigger )  override;
+
+        sqlite3* db;
+
+        std::vector<IndividualForSQL> event_list;
+
         jsonConfigurable::tDynamicStringSet sql_properties_to_report;
-        std::list< IndividualForSQL > event_list;
     };
 }

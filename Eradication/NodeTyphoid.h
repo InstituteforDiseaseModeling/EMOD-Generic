@@ -19,12 +19,9 @@ class ReportTyphoid;
 
 namespace Kernel
 {
-    class SimulationConfig;
     class SpatialReportTyphoid;
 
-    class NodeTyphoid :
-        public NodeEnvironmental
-        //,public INodeTyphoid
+    class NodeTyphoid : public NodeEnvironmental
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         //DECLARE_QUERY_INTERFACE()
@@ -37,7 +34,6 @@ namespace Kernel
         static NodeTyphoid *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual ~NodeTyphoid(void);
 
-        virtual void SetupIntranodeTransmission() override;
         virtual void resetNodeStateCounters(void);
         virtual void updateNodeStateCounters(IndividualHuman *ih);
         virtual void finalizeNodeStateCounters(void);
@@ -49,8 +45,6 @@ namespace Kernel
         NodeTyphoid(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual void Initialize() override;
         virtual void setupEventContextHost() override;
-
-        const SimulationConfig* params();
 
         // Factory methods
         virtual Kernel::IndividualHuman *createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender);

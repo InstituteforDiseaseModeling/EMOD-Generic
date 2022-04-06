@@ -28,6 +28,7 @@
             "Enable_Demographics_Risk": 0,
             "Enable_Initial_Susceptibility_Distribution": 0,
             "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Total_Wall_Time": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Enable_Vital_Dynamics": 1,
             "IMMUNITY": {
@@ -130,11 +131,11 @@
             "Enable_Default_Reporting": 1,
             "Enable_Event_DB": 0,
             "Enable_Property_Output": 0,
-            "Enable_Spatial_Output": 0,
-            "Report_Coordinator_Event_Recorder": 0,
-            "Report_Event_Recorder": 0,
-            "Report_Node_Event_Recorder": 0,
-            "Report_Surveillance_Event_Recorder": 0
+            "Enable_Report_Coordinator_Event_Recorder": 0,
+            "Enable_Report_Event_Recorder": 0,
+            "Enable_Report_Node_Event_Recorder": 0,
+            "Enable_Report_Surveillance_Event_Recorder": 0,
+            "Enable_Spatial_Output": 0
         },
         "POLIO": {},
         "PRIMARY": {
@@ -150,8 +151,8 @@
             "Start_Time": 0
         },
         "SERIALIZATION": {
-            "Serialized_Population_Writing_Type": "NONE",
-            "Serialized_Population_Reading_Type": "NONE"
+            "Serialized_Population_Reading_Type": "NONE",
+            "Serialized_Population_Writing_Type": "NONE"
         },
         "STRAIN_TRACKING": {},
         "Simulation_Type": "TBHIV_SIM",

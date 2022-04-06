@@ -82,6 +82,7 @@
         "Enable_Property_Output": 0,
         "Enable_Rainfall_Stochasticity": 1,
         "Enable_Regional_Migration": 0,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Sea_Demographics_Modifiers": 0,
         "Enable_Sea_Family_Migration": 0,
         "Enable_Sea_Migration": 1,
@@ -372,7 +373,6 @@
         "Relative_Humidity_Filename": "",
         "Relative_Humidity_Scale_Factor": 1,
         "Relative_Humidity_Variance": 0.05,
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "NewClinicalCase",
             "Received_Campaign_Drugs",

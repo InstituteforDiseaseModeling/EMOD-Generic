@@ -27,7 +27,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Node.h"
 #include "NodeDemographics.h"
 #include "RANDOM.h"
-#include "SimulationConfig.h"
 #include "SimulationEventContext.h"
 #include "NodeInfo.h"
 #include "ReportEventRecorder.h"
@@ -80,8 +79,6 @@ namespace Kernel
         HANDLE_ISUPPORTS_VIA(ISimulationContext)
     END_QUERY_INTERFACE_BODY(Simulation)
 
-    float Simulation::base_year = 0.0f;
-
     //------------------------------------------------------------------
     //   Initialization methods
     //------------------------------------------------------------------
@@ -94,15 +91,11 @@ namespace Kernel
         , node_events_added()
         , node_events_to_be_processed()
         , node_event_context_list()
-        , nodeid_suid_map()
         , migratingIndividualQueues()
-        , m_simConfigObj((const SimulationConfig*)Environment::getSimulationConfig())
         , m_interventionFactoryObj(nullptr)
         , demographicsContext(nullptr)
         , infectionSuidGenerator(EnvPtr->MPI.Rank, EnvPtr->MPI.NumTasks)
         , nodeSuidGenerator(EnvPtr->MPI.Rank, EnvPtr->MPI.NumTasks)
-        , campaignFilename()
-        , loadBalanceFilename()
         , rng(nullptr)
         , reports()
         , individual_data_reports()
@@ -120,26 +113,16 @@ namespace Kernel
         , campaign_events()
         , event_context_host(nullptr)
         , currentTime()
-        , sim_type(SimType::GENERIC_SIM)
-        , demographic_tracking(false)
-        , enable_spatial_output(false)
-        , enable_property_output(false)
-        , enable_default_report(false)
-        , enable_event_report( false )
-        , enable_node_event_report( false )
-        , enable_coordinator_event_report( false )
-        , enable_surveillance_event_report( false )
-        , enable_event_db( false )
-        , enable_termination_on_zero_total_infectivity(false)
-        , campaign_filename()
         , custom_reports_filename( RUN_ALL_CUSTOM_REPORTS )
-        , loadbalance_filename()
-        , can_support_family_trips( false )
         , m_IPWhiteListEnabled(true)
         , demographics_factory(nullptr)
         , m_pRngFactory( new RandomNumberGeneratorFactory() )
-        , min_sim_endtime(0.0f)
         , new_node_observers()
+        , node_ctxt_ptr_vec()
+        , node_info_ptr_vec()
+        , node_ctxt_info_dex()
+        , node_pop_vec()
+        , node_dist_mat()
     {
         LOG_DEBUG( "CTOR\n" );
 
@@ -167,9 +150,7 @@ namespace Kernel
         // Initialize node demographics from file
         if( !JsonConfigurable::_dryrun )
         {
-            release_assert( m_simConfigObj );
-
-            demographics_factory = NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config );
+            demographics_factory = NodeDemographicsFactory::CreateNodeDemographicsFactory(EnvPtr->Config);
             if( demographics_factory == nullptr )
             {
                 throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create NodeDemographicsFactory" );
@@ -215,33 +196,6 @@ namespace Kernel
     {
         LOG_DEBUG("Configure\n");
 
-        // Temporary configuration values
-        float sim_start_time = 0.0f;
-        float sim_delta_time = 0.0f;
-        float sim_total_time = 0.0f;
-
-        initConfig( "Simulation_Type", sim_type, inputJson, MetadataDescriptor::Enum("sim_type", Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
-
-        initConfigTypeMap( "Start_Time",          &sim_start_time,  Start_Time_DESC_TEXT,          0.0f, FLT_MAX, 1.0f );
-        initConfigTypeMap( "Simulation_Timestep", &sim_delta_time,  Simulation_Timestep_DESC_TEXT, 0.0f, FLT_MAX, 1.0f );
-        initConfigTypeMap( "Simulation_Duration", &sim_total_time,  Simulation_Duration_DESC_TEXT, 0.0f, FLT_MAX, 1.0f );
-
-        initConfigTypeMap( "Enable_Termination_On_Zero_Total_Infectivity",  &enable_termination_on_zero_total_infectivity,  Enable_Termination_On_Zero_Total_Infectivity_DESC_TEXT,  false );
-        initConfigTypeMap( "Enable_Default_Reporting",       &enable_default_report,          Enable_Default_Reporting_DESC_TEXT,       true  );
-        initConfigTypeMap( "Enable_Demographics_Reporting",  &demographic_tracking,           Enable_Demographics_Reporting_DESC_TEXT,  true  );
-        initConfigTypeMap( "Enable_Property_Output",         &enable_property_output,         Enable_Property_Output_DESC_TEXT,         false );
-        initConfigTypeMap( "Enable_Spatial_Output",          &enable_spatial_output,          Enable_Spatial_Output_DESC_TEXT,          false );
-        initConfigTypeMap( "Enable_Event_DB",                &enable_event_db,                Enable_Event_DB_DESC_TEXT,                true  );
-
-        initConfigTypeMap( ReportEventRecorder::GetEnableParameterName().c_str(),             &enable_event_report,              Report_Event_Recorder_DESC_TEXT,             false );
-        initConfigTypeMap( ReportEventRecorderNode::GetEnableParameterName().c_str(),         &enable_node_event_report,         Report_Node_Event_Recorder_DESC_TEXT,        false );
-        initConfigTypeMap( ReportEventRecorderCoordinator::GetEnableParameterName().c_str(),  &enable_coordinator_event_report,  Report_Coordinator_Event_Recorder_DESC_TEXT, false );
-        initConfigTypeMap( ReportSurveillanceEventRecorder::GetEnableParameterName().c_str(), &enable_surveillance_event_report, Report_Coordinator_Event_Recorder_DESC_TEXT, false );        
-        
-        initConfigTypeMap( "Campaign_Filename",       &campaign_filename,      Campaign_Filename_DESC_TEXT, "", "Enable_Interventions" );
-        initConfigTypeMap( "Load_Balance_Filename",   &loadbalance_filename,   Load_Balance_Filename_DESC_TEXT, "" ); 
-        initConfigTypeMap( "Minimum_End_Time",        &min_sim_endtime,        Minimum_End_Time_DESC_TEXT, 0.0f, 1000000.0f, 0.0f, "Enable_Termination_On_Zero_Total_Infectivity" );
-
         if( JsonConfigurable::_dryrun || EnvPtr->Config->Exist( "Custom_Reports_Filename" ) )
         {
             initConfigTypeMap( "Custom_Reports_Filename", &custom_reports_filename, Custom_Reports_Filename_DESC_TEXT, RUN_ALL_CUSTOM_REPORTS );
@@ -258,17 +212,7 @@ namespace Kernel
             }
         }
 
-        // Set configuration from temporary values
-        currentTime.SetTimeStart(sim_start_time);
-        currentTime.SetTimeDelta(sim_delta_time);
-        currentTime.SetSimDuration(sim_total_time);
-
         return ret;
-    }
-
-    const SimParams* Simulation::GetParams() const
-    {
-        return SimConfig::GetSimParams();
     }
 
     // Check simulation abort conditions
@@ -276,7 +220,7 @@ namespace Kernel
     {
         bool abortSim = false;
 
-        if(enable_termination_on_zero_total_infectivity && currentTime.time > min_sim_endtime)
+        if(GetParams()->enable_termination_on_zero_total_infectivity && currentTime.time > GetParams()->sim_time_end_min)
         {
             // Accumulate node infectivity
             float totInfVal         = 0.0f;
@@ -295,6 +239,19 @@ namespace Kernel
             if(totInfVal_unified == 0.0f)
             {
                 LOG_INFO("Zero infectivity at current time-step; simulation aborting.\n");
+                abortSim = true;
+            }
+        }
+
+        if(GetParams()->enable_termination_on_total_wall_time && EnvPtr->Log)
+        {
+            LogTimeInfo tInfo;
+            EnvPtr->Log->GetLogInfo(tInfo);
+            float wall_time_minutes = tInfo.hours*60.0f + tInfo.mins + tInfo.secs/60.0f;
+
+            if(wall_time_minutes > GetParams()->wall_time_max_minutes)
+            {
+                LOG_INFO("Total wall time duration at current time-step exceeds maximum; simulation aborting.\n");
                 abortSim = true;
             }
         }
@@ -340,13 +297,7 @@ namespace Kernel
         }
 
         const MigrationParams* mp = MigrationConfig::GetMigrationParams();
-        can_support_family_trips = ( mp->migration_pattern == MigrationPattern::SINGLE_ROUND_TRIPS)   &&
-                                   (!mp->enable_mig_local     || (mp->local_roundtrip_prob  == 1.0f)) &&
-                                   (!mp->enable_mig_air       || (mp->air_roundtrip_prob    == 1.0f)) &&
-                                   (!mp->enable_mig_regional  || (mp->region_roundtrip_prob == 1.0f)) &&
-                                   (!mp->enable_mig_sea       || (mp->sea_roundtrip_prob    == 1.0f));
-
-        if( mp->enable_mig_family && !can_support_family_trips )
+        if( mp->enable_mig_family && !CanSupportFamilyTrips() )
         {
             std::stringstream msg;
             msg << "Invalid Configuration for Family Trips." << std::endl;
@@ -372,12 +323,13 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        if( (sim_type == SimType::STI_SIM || sim_type == SimType::HIV_SIM) && (np->ind_sampling_type != IndSamplingType::TRACK_ALL) 
-                                                                           && (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
+        if( (GetParams()->sim_type == SimType::STI_SIM || GetParams()->sim_type == SimType::HIV_SIM) && 
+            (np->ind_sampling_type != IndSamplingType::TRACK_ALL)      &&
+            (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                     "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(np->ind_sampling_type),
-                                                    "Simulation_Type", SimType::pairs::lookup_key(sim_type),
+                                                    "Simulation_Type", SimType::pairs::lookup_key(GetParams()->sim_type),
                                                     "Relationship-based transmission network only works with 100% sampling.");
         }
 
@@ -387,20 +339,34 @@ namespace Kernel
                                                                                      "Enable_Superinfection", IndividualHumanConfig::superinfection);
         }
 
-        if( currentTime.GetTimeEnd() < min_sim_endtime )
-        {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Minimum_End_Time", min_sim_endtime, "maximum simulation time step",
-                                                    currentTime.GetTimeEnd(), "Start_Time + Simulation_Duration must be greater than Minimum_End_Time." );
-        }
-
         if( IndividualHumanConfig::enable_skipping && np->enable_hint )
         {
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Skipping", 1, "Enable_Heterogeneous_Intranode_Transmission", 1);
         }
 
-        if( SimConfig::GetSimParams()->enable_interventions && campaign_filename.empty() )
+        if(AgentConfig::GetAgentParams()->enable_genome_mutation && AgentConfig::GetAgentParams()->genome_mutation_rates.size() == 0)
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Genome_Mutation", "1", "Genome_Mutation_Rates", "<empty>");
+        }
+
+        if(AgentConfig::GetAgentParams()->enable_genome_dependent_infectivity && AgentConfig::GetAgentParams()->genome_infectivity_multipliers.size() == 0)
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Genome_Dependent_Infectivity", "1", "Genome_Infectivity_Multipliers", "<empty>");
+        }
+
+        if(AgentConfig::GetAgentParams()->enable_label_mutator && AgentConfig::GetAgentParams()->genome_mutations_labeled.size() == 0)
+        {
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Label_By_Mutator", "1", "Genome_Mutations_Labeled", "<empty>");
+        }
+
+        if( GetParams()->enable_interventions && GetParams()->campaign_filename.empty() )
         {
             throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Campaign_Filename' is empty.  You must have a file." );
+        }
+
+        if( SimConfig::GetSimParams()->enable_property_output && !IPFactory::GetInstance()->HasIPs() )
+        {
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "<Number of Individual Properties>", "0", "Enable_Property_Output", "1" );
         }
 
         for (auto report : reports)
@@ -422,13 +388,11 @@ namespace Kernel
 
         Configure( config );
 
-        ConfigParams            gen_config_obj;
         IndividualHumanConfig   gen_individual_config_obj;
         SusceptibilityConfig    gen_susceptibility_config_obj;
         InfectionConfig         gen_infection_config_obj;
         MemoryGauge             mem_gauge_obj;
 
-        gen_config_obj.Configure( config );
         gen_individual_config_obj.Configure( config );
         gen_susceptibility_config_obj.Configure( config );
         gen_infection_config_obj.Configure( config );
@@ -440,7 +404,6 @@ namespace Kernel
         setupEventContextHost();
         setupRng();
         setParams(config);
-        initSimulationState();
         Reports_CreateBuiltIn();
         Reports_ConfigureBuiltIn();
         Reports_CreateCustom();
@@ -481,18 +444,8 @@ namespace Kernel
 
     void Simulation::setParams(const ::Configuration *config)
     {
-        campaignFilename     = campaign_filename;
-        loadBalanceFilename  = Environment::FindFileOnPath( loadbalance_filename  );
-        currentTime.time     = currentTime.GetTimeStart();
-    }
-
-    void Simulation::initSimulationState()
-    {
-        // right now this function absorbs whatever was left from the original constructor semantics
-        // the intent is that this sets any member variables not set up already that are part of the 
-        // initial simulation state
-
-        currentTime.timestep = 0;
+        currentTime.time = GetParams()->sim_time_start;
+        currentTime.setBaseYear(GetParams()->sim_time_base_year);
     }
 
     //------------------------------------------------------------------
@@ -505,7 +458,7 @@ namespace Kernel
 
         LOG_DEBUG( "Reports_CreateBuiltIn()\n" );
 
-        if( enable_default_report )
+        if(GetParams()->enable_default_report)
         {
             // Default report
             IReport * report = (*reportClassCreator)();
@@ -513,56 +466,56 @@ namespace Kernel
             reports.push_back(report);
         }
 
-        if(enable_property_output)
+        if(GetParams()->enable_property_output)
         {
             IReport * prop_report = (*propertiesReportClassCreator)();
             release_assert(prop_report);
             reports.push_back(prop_report);
         }
 
-        if(enable_spatial_output)
+        if(GetParams()->enable_spatial_output)
         {
             IReport * spatial_report = (*spatialReportClassCreator)();
             release_assert(spatial_report);
             reports.push_back(spatial_report);
         }
 
-        if( enable_event_report )
+        if(GetParams()->enable_event_report)
         {
             IReport * event_report = (*eventReportClassCreator)();
             release_assert(event_report);
             reports.push_back(event_report);
         }
 
-        if( enable_node_event_report )
+        if(GetParams()->enable_node_event_report)
         {
             IReport * node_event_report = (*nodeEventReportClassCreator)();
             release_assert( node_event_report );
             reports.push_back( node_event_report );
         }
 
-        if( enable_coordinator_event_report )
+        if(GetParams()->enable_coordinator_event_report)
         {
             IReport * coordinator_event_report = (*coordinatorEventReportClassCreator)();
             release_assert( coordinator_event_report );
             reports.push_back( coordinator_event_report );
         }
 
-        if( enable_surveillance_event_report )
+        if(GetParams()->enable_surveillance_event_report)
         {
             IReport * surveillance_event_report = (*surveillanceEventReportClassCreator)();
             release_assert( surveillance_event_report );
             reports.push_back( surveillance_event_report );
         }
 
-        if( enable_event_db )
+        if(GetParams()->enable_event_db)
         {
             IReport * report = (*sqlReportCreator)();
             release_assert( report );
             reports.push_back( report );
         }
 
-        if(demographic_tracking)
+        if(GetParams()->enable_demographic_tracking)
         {
             IReport * binned_report = (*binnedReportClassCreator)();
             release_assert(binned_report);
@@ -636,7 +589,7 @@ namespace Kernel
         };
 
         MpiDataExchanger exchanger( "EventsForOtherNodes", to_self_func, to_others_func, from_others_func, clear_data_func );
-        exchanger.ExchangeData( this->currentTime );
+        exchanger.ExchangeData(currentTime.time);
 
         // ---------------------------------------------------
         // --- Update the events to be processed during the 
@@ -681,10 +634,10 @@ namespace Kernel
         }
 
         ReportInstantiatorMap report_instantiator_map ;
-        DllLoader dllLoader(SimType::pairs::lookup_key(sim_type));
+        DllLoader dllLoader(SimType::pairs::lookup_key(GetParams()->sim_type));
         if( !dllLoader.LoadReportDlls( report_instantiator_map ) )
         {
-            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(sim_type), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
+            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(GetParams()->sim_type), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
         }
         Reports_Instantiate( report_instantiator_map );
     }
@@ -699,7 +652,7 @@ namespace Kernel
         individual_data_reports.clear();
         for( auto report : reports )
         {
-            if( report->IsCollectingIndividualData( currentTime.time, currentTime.GetTimeDelta() ) )
+            if( report->IsCollectingIndividualData( currentTime.time, GetParams()->sim_time_delta ) )
             {
                 individual_data_reports.push_back( report );
             }
@@ -827,7 +780,7 @@ namespace Kernel
     {
         for (auto report : reports)
         {
-            report->UpdateEventRegistration( currentTime.time, currentTime.GetTimeDelta(), node_event_context_list, event_context_host );
+            report->UpdateEventRegistration( currentTime.time,GetParams()->sim_time_delta, node_event_context_list, event_context_host );
         }
     }
 
@@ -845,7 +798,7 @@ namespace Kernel
         for (auto report : reports)
         {
             release_assert(report);
-            report->EndTimestep( currentTime.time, currentTime.GetTimeDelta() );
+            report->EndTimestep( currentTime.time, GetParams()->sim_time_delta );
         }
     }
 
@@ -870,7 +823,7 @@ namespace Kernel
 
         std::ostringstream oss;
         oss << std::fixed << std::setprecision(1) << "Update(): Time: " << float(currentTime.time);
-        if( currentTime.getBaseYear() > 0 )
+        if( GetParams()->sim_time_base_year > 0.0f )
         {
             oss << std::fixed << " Year: " << currentTime.Year();
         }
@@ -880,7 +833,6 @@ namespace Kernel
 
     void Simulation::WriteReportsData()
     {
-        //std::cout << "There are " << reports.size() << " reports to finalize." << std::endl;
         for (auto report : reports)
         {
             report->Reduce();
@@ -908,9 +860,60 @@ namespace Kernel
         // --- Update Events
         // -----------------
         release_assert(event_context_host);
-        event_context_host->Update(currentTime.GetTimeDelta());
+        event_context_host->Update(GetParams()->sim_time_delta);
 
         Reports_BeginTimestep();
+
+        // -----------------------------------
+        // --- Network Infectivity - Calculate
+        // -----------------------------------
+        float total_sim_pop = FLT_MIN;
+        float max_exp_frac  = GetParams()->net_infect_max_frac;
+        float min_inf_val   = 1.0e-8f;
+
+        if(GetParams()->enable_net_infect)
+        {
+            int   k1, k2;
+            float inf_mult, inf_cum;
+
+            // Get current populations for nodes on this rank
+            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            {
+                node_pop_vec[k1] = node_ctxt_ptr_vec[k1]->GetStatPop();
+            }
+
+            // Get current total population for nodes on all ranks
+            for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+            {
+                total_sim_pop += node_info_ptr_vec[k2]->GetPopulation();
+            }
+
+            // Calculate network infectivity (push fraction) for nodes on this rank
+            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            {
+                inf_cum = 0.0f;
+
+                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                {
+                    if(k2 == node_ctxt_info_dex[k1])
+                    {
+                        continue;
+                    }
+
+                    inf_mult = node_dist_mat[node_ctxt_info_dex[k1]][k2] * node_info_ptr_vec[k2]->GetPopulation() / total_sim_pop;
+
+                    if(inf_mult < min_inf_val)
+                    {
+                        continue;
+                    }
+
+                    inf_cum += inf_mult;
+                }
+
+                // Update push fraction within node
+                node_ctxt_ptr_vec[k1]->SetNetInfectFrac(inf_cum);
+            }
+        }
 
         // -----------------
         // --- Update Nodes
@@ -920,7 +923,7 @@ namespace Kernel
             INodeContext* n = iterator->second;
             release_assert(n);
             n->AddEventsFromOtherNodes(node_events_to_be_processed[n->GetSuid()]);
-            n->Update(currentTime.GetTimeDelta());
+            n->Update(GetParams()->sim_time_delta);
 
             Reports_LogNodeData(n);
         }
@@ -935,17 +938,74 @@ namespace Kernel
             INodeContext* n = iterator->second;
             nodeRankMap.Update(n);
         }
-        nodeRankMap.Sync( currentTime );
+        nodeRankMap.Sync(currentTime.time);
 
         UpdateNodeEvents();
+
+        // ---------------------------------
+        // --- Network Infectivity - Deposit
+        // ---------------------------------
+        if(GetParams()->enable_net_infect)
+        {
+            int   k1, k2, k3;
+            float cur_inf_val, inf_mult, n_exp_frac, node_exp_mult;
+
+            // Calculate network infectivity (pull fraction)
+            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            {
+                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                {
+                    if(k2 == node_ctxt_info_dex[k1])
+                    {
+                        continue;
+                    }
+
+                    if(node_info_ptr_vec[k2]->GetNetInfRep()->size() == 0)
+                    {
+                        continue;
+                    }
+
+                    n_exp_frac    = node_info_ptr_vec[k2]->GetNetInfectFrac();
+                    node_exp_mult = (n_exp_frac < max_exp_frac) ? 1.0f : (max_exp_frac/n_exp_frac);
+
+                    inf_mult = node_dist_mat[node_ctxt_info_dex[k1]][k2] * node_exp_mult * node_pop_vec[k1] / total_sim_pop;
+
+                    if(inf_mult < min_inf_val)
+                    {
+                        continue;
+                    }
+
+                    for(k3 = 0; k3 < node_info_ptr_vec[k2]->GetNetInfRep()->size(); k3++)
+                    {
+                        cur_inf_val = node_info_ptr_vec[k2]->GetNetInfRep()->GetInf(k3) * inf_mult;
+                        node_ctxt_ptr_vec[k1]->DepositNetInf(node_info_ptr_vec[k2]->GetNetInfRep()->GetId(k3), cur_inf_val);
+                    }
+                }
+            }
+        }
+
+        // -------------------
+        // --- Increment Time
+        // -------------------
+        float time_for_python = currentTime.time;
+        currentTime.Update(GetParams()->sim_time_delta);
+
+        // ----------------------------------------------------------
+        // --- Output Information for the end of the update/timestep
+        // ----------------------------------------------------------
+        PrintTimeAndPopulation();
+
+        Reports_EndTimestep();
+
+        // Everyone waits until report writing (if any) is done
+        EnvPtr->MPI.p_idm_mpi->Barrier();
 
         // ---------------------
         // --- Python In-Process
         // ---------------------
-
         // Call out to embedded python in-processing script
         std::string py_input_string, new_campaign_filename; 
-        py_input_string       = std::to_string( currentTime.time );
+        py_input_string       = std::to_string(time_for_python);
         new_campaign_filename = Kernel::PythonSupport::RunPyFunction( py_input_string, Kernel::PythonSupport::SCRIPT_IN_PROCESS );
 
         // Ensure all processes have the same new_campaign_filename
@@ -964,20 +1024,13 @@ namespace Kernel
             loadCampaignFromFile(new_campaign_filename, nodeIDs);
         }
 
-        // -------------------
-        // --- Increment Time
-        // -------------------
-        currentTime.Update();
-
-        // ----------------------------------------------------------
-        // --- Output Information for the end of the update/timestep
-        // ----------------------------------------------------------
-        PrintTimeAndPopulation();
-
-        Reports_EndTimestep();
-
-        // Unconditionally checking against potential memory blowup with minimum cost
+        // ----------------
+        // --- Memory Check
+        // ----------------
         MemoryGauge::CheckMemoryFailure( false );
+
+
+        return;
     }
 
     //------------------------------------------------------------------
@@ -989,8 +1042,8 @@ namespace Kernel
         LOG_DEBUG("Calling populateFromDemographics()\n");
 
         // Populate nodes
-        LOG_INFO_F("Campaign file name identified as: %s\n", campaignFilename.c_str());
-        int node_count = populateFromDemographics(campaignFilename.c_str(), loadBalanceFilename.c_str());
+        LOG_INFO_F("Campaign file name identified as: %s\n", (GetParams()->campaign_filename).c_str());
+        int node_count = populateFromDemographics();
         LOG_INFO_F("populateFromDemographics() generated %d nodes.\n", node_count);
 
         LOG_INFO_F("Rank %d contributes %d nodes...\n", EnvPtr->MPI.Rank, nodeRankMap.Size());
@@ -999,11 +1052,88 @@ namespace Kernel
         nodeRankMap.MergeMaps(); // merge rank maps across all processors
         LOG_INFO_F("Merged rank %d map now has %d nodes.\n", EnvPtr->MPI.Rank, nodeRankMap.Size());
 
+        // Initialize migration structure from file
+        IMigrationInfoFactory* migration_factory = ConstructMigrationInfoFactory( demographics_factory->GetIdReference(),
+                                                                                  GetParams()->sim_type,
+                                                                                  demographics_factory->GetEnableDemographicsBuiltin(),
+                                                                                  demographics_factory->GetTorusSize() );
+        release_assert(migration_factory);
+
+        for (auto& entry : nodes)
+        {
+            release_assert(entry.second);
+            (entry.second)->SetupMigration( migration_factory );
+        } 
+
+        delete migration_factory;
+        migration_factory = nullptr;
+
 //        if (nodeRankMap.Size() < 500)
 //            LOG_INFO_F("Rank %d map contents:\n%s\n", EnvPtr->MPI.Rank, nodeRankMap.ToString().c_str());
 //        else 
 //            LOG_INFO("(Rank map contents not displayed due to large (> 500) number of entries.)\n");
         LOG_INFO("Rank map contents not displayed until NodeRankMap::ToString() (re)implemented.\n");
+
+        // Inter-node distance factors for network infectivity
+        if(GetParams()->enable_net_infect)
+        {
+            if(GetParams()->net_infect_grav_coeff.size() != GetParams()->net_infect_grav_dpow.size())
+            {
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Different number of net infect coefficeints and exponents." );
+            }
+
+            LOG_INFO("Initializing values for network infectivity calculations\n");
+            // Cache copy of node/nodeinfo pointers to avoid repeated map indexing
+            int k1, k2, k3;
+            float dist_fac = 0.0f;
+            float dist_min = GetParams()->net_infect_min_dist;
+            node_info_ptr_vec.resize(nodeRankMap.Size(), nullptr);
+            node_ctxt_ptr_vec.resize(nodes.size(),       nullptr);
+            node_ctxt_info_dex.resize(nodes.size(),           -1);
+
+            k2 = 0;
+            for(auto node_info_obj : nodeRankMap.GetRankMap())
+            {
+                node_info_ptr_vec[k2] = node_info_obj.second;
+                k2++;
+            }
+
+            k1 = 0;
+            for(auto node_obj : nodes)
+            {
+                node_ctxt_ptr_vec[k1] = node_obj.second;
+                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                {
+                    if(node_obj.first == node_info_ptr_vec[k2]->GetSuid())
+                    {
+                        node_ctxt_info_dex[k1] = k2;
+                        break;
+                    }
+                }
+                release_assert(node_ctxt_info_dex[k1] >= 0);
+                k1++;
+            }
+
+            node_pop_vec.resize(node_ctxt_ptr_vec.size());
+            node_dist_mat.resize(node_info_ptr_vec.size());
+            for(k1 = 0; k1 < node_info_ptr_vec.size(); k1++)
+            {
+                node_dist_mat[k1].resize(node_info_ptr_vec.size(),0.0f);
+                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                {
+                    dist_fac  = CalculateDistanceKm(node_info_ptr_vec[k1]->GetLongitudeDegrees(),
+                                                    node_info_ptr_vec[k1]->GetLatitudeDegrees(),
+                                                    node_info_ptr_vec[k2]->GetLongitudeDegrees(),
+                                                    node_info_ptr_vec[k2]->GetLatitudeDegrees());
+                    dist_fac  = (dist_fac > dist_min ? dist_fac : dist_min);
+                    for(k3 = 0; k3 < GetParams()->net_infect_grav_coeff.size(); k3++)
+                    {
+                        node_dist_mat[k1][k2] += GetParams()->net_infect_grav_coeff[k3] / 
+                                                 std::pow(dist_fac,GetParams()->net_infect_grav_dpow[k3]);
+                    }
+                }
+            }
+        }
 
         // We'd like to be able to run even if a processor has no nodes, but there are other issues.
         // So for now just bail...
@@ -1024,79 +1154,16 @@ namespace Kernel
         return true;
     }
 
-    void Simulation::MergeNodeIdSuidBimaps(nodeid_suid_map_t& local_map, nodeid_suid_map_t& merged_map)
-    {
-        merged_map = local_map;
-
-        if (EnvPtr->MPI.NumTasks > 1)
-        {
-            auto json_writer = new JsonRawWriter();
-            IArchive& writer_archive = *static_cast<IArchive*>(json_writer);
-            size_t count = local_map.size();
-            writer_archive.startArray( count );
-            LOG_VALID_F( "Serializing %d id-suid bimap entries.\n", count );
-            for (auto& entry : local_map)
-            {
-                writer_archive.startObject();
-                    writer_archive.labelElement( "id" ) & (uint32_t&)entry.left;
-                    // entry.right is const which doesn't play well with IArchive operator '&'
-                    suids::suid suid(entry.right);
-                    writer_archive.labelElement( "suid" ) & suid;
-                writer_archive.endObject();
-            }
-            writer_archive.endArray();
-
-            for (int rank = 0; rank < EnvPtr->MPI.NumTasks; ++rank)
-            {
-                if (rank == EnvPtr->MPI.Rank)
-                {
-                    const char* buffer = writer_archive.GetBuffer();
-                    size_t byte_count = writer_archive.GetBufferSize();
-                    LOG_VALID_F( "Broadcasting serialized bimap (%d bytes)\n", byte_count );
-                    EnvPtr->MPI.p_idm_mpi->PostChars( const_cast<char*>(buffer), byte_count, rank );
-                }
-                else
-                {
-                    std::vector<char> received;
-                    EnvPtr->MPI.p_idm_mpi->GetChars( received, rank );
-                    auto json_reader = new JsonRawReader( received.data() );
-                    IArchive& reader_archive = *static_cast<IArchive*>(json_reader);
-                    size_t entry_count;
-                    reader_archive.startArray( entry_count );
-                        LOG_VALID_F( "Merging %d id-suid bimap entries from rank %d\n", entry_count, rank );
-                        for (size_t i = 0; i < entry_count; ++i)
-                        {
-                            uint32_t id;
-                            suids::suid suid;
-                            reader_archive.startObject();
-                                reader_archive.labelElement( "id" ) & id;
-                                reader_archive.labelElement( "suid" ) & suid;
-                            reader_archive.endObject();
-                            merged_map.insert(nodeid_suid_pair(id, suid));
-                        }
-                    reader_archive.endArray();
-                    delete json_reader;
-                    //delete [] buffer;
-                }
-            }
-
-            delete json_writer;
-        }
-    }
-
-    void Simulation::LoadInterventions(const char* campaignfilename, const std::vector<ExternalNodeId_t>& demographic_node_ids)
+    void Simulation::LoadInterventions(const std::vector<ExternalNodeId_t>& demographic_node_ids)
     {
         // Set up campaign interventions from file
-        release_assert( event_context_host );
-        event_context_host->campaign_filename = campaignfilename;
-
-        if( SimConfig::GetSimParams()->enable_interventions )
+        if( GetParams()->enable_interventions )
         {
-            LOG_INFO_F( "Looking for campaign file %s\n", campaignfilename );
+            LOG_INFO_F( "Looking for campaign file %s\n", (GetParams()->campaign_filename).c_str() );
 
-            if ( !FileSystem::FileExists( campaignfilename ) )
+            if ( !FileSystem::FileExists( GetParams()->campaign_filename ) )
             {
-                throw FileNotFoundException( __FILE__, __LINE__, __FUNCTION__, campaignfilename );
+                throw FileNotFoundException( __FILE__, __LINE__, __FUNCTION__, (GetParams()->campaign_filename).c_str() );
             }
             else 
             {
@@ -1107,13 +1174,13 @@ namespace Kernel
             DllLoader dllLoader;
             if (!dllLoader.LoadInterventionDlls())
             {
-                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(sim_type), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
+                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(GetParams()->sim_type), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
             }
 #endif
 
             JsonConfigurable::_track_missing = false;
 
-            loadCampaignFromFile( campaignfilename, demographic_node_ids);
+            loadCampaignFromFile(GetParams()->campaign_filename, demographic_node_ids);
 
             JsonConfigurable::_track_missing = true;
 
@@ -1152,14 +1219,14 @@ namespace Kernel
         }
     }
 
-    int Simulation::populateFromDemographics(const char* campaignfilename, const char* loadbalancefilename)
+    int Simulation::populateFromDemographics()
     {
         string idreference  = demographics_factory->GetIdReference();
         const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
         ClimateFactory * climate_factory = nullptr;
 #ifndef DISABLE_CLIMATE
         // Initialize climate from file
-        climate_factory = ClimateFactory::CreateClimateFactory(&nodeid_suid_map, idreference, this);
+        climate_factory = ClimateFactory::CreateClimateFactory(idreference, this);
         if (climate_factory == nullptr)
         {
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create ClimateFactory" );
@@ -1169,7 +1236,7 @@ namespace Kernel
         m_pRngFactory->SetNodeIds( nodeIDs );
 
         // Initialize load-balancing scheme from file
-        IInitialLoadBalanceScheme* p_lbs = LoadBalanceSchemeFactory::Create( loadbalancefilename, nodeIDs.size(), EnvPtr->MPI.NumTasks );
+        IInitialLoadBalanceScheme* p_lbs = LoadBalanceSchemeFactory::Create(Environment::FindFileOnPath(GetParams()->loadbalance_filename).c_str(), nodeIDs.size(), EnvPtr->MPI.NumTasks );
         nodeRankMap.SetInitialLoadBalanceScheme( p_lbs );
 
         // Delete any existing transitions.json file
@@ -1192,10 +1259,7 @@ namespace Kernel
                 {
                     suids::suid node_suid;
                     node_suid.data = node_index + 1;
-
                     LOG_DEBUG_F( "Creating/adding new node: external_node_id = %lu, node_suid = %lu\n", external_node_id, node_suid.data );
-                    nodeid_suid_map.insert( nodeid_suid_pair( external_node_id, node_suid ) );
-
                     addNewNodeFromDemographics( external_node_id, node_suid, demographics_factory, climate_factory, m_IPWhiteListEnabled );
                 }
                 ++node_index;
@@ -1205,57 +1269,24 @@ namespace Kernel
         {
             for (auto& entry : nodes)
             {
-                auto& suid = entry.first;
                 auto node = entry.second;
-                nodeid_suid_map.insert( nodeid_suid_pair( node->GetExternalID(), suid ) );
                 node->SetContextTo(this);
                 initializeNode( node, demographics_factory, climate_factory, m_IPWhiteListEnabled );
             }
         }
 
-        if( enable_property_output && !IPFactory::GetInstance()->HasIPs() )
+        if( GetParams()->enable_property_output && !IPFactory::GetInstance()->HasIPs() )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "<Number of Individual Properties>", "0", "Enable_Property_Output", "1" );
         }
 
-        // Merge nodeid<->suid bimaps
-        nodeid_suid_map_t merged_map;
-        MergeNodeIdSuidBimaps( nodeid_suid_map, merged_map );
-
-        // Initialize migration structure from file
-        IMigrationInfoFactory * migration_factory = ConstructMigrationInfoFactory( idreference,
-                                                                                   sim_type,
-                                                                                   demographics_factory->GetEnableDemographicsBuiltin(),
-                                                                                   demographics_factory->GetTorusSize() );
-
-        if (migration_factory == nullptr)
-        {
-            throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "IMigrationInfoFactory" );
-        }
-
-        if( (migration_factory->GetParams()->migration_structure != MigrationStructure::NO_MIGRATION) &&
-            !demographics_factory->GetEnableDemographicsBuiltin() &&
-            !migration_factory->IsAtLeastOneTypeConfiguredForIndividuals() )
-        {
-            LOG_WARN("Enable_Demographics_Builtin is set to false,  Migration_Model != NO_MIGRATION, and no migration file names have been defined and enabled.  No file-based migration will occur.\n");
-        }
-
-        for (auto& entry : nodes)
-        {
-            release_assert(entry.second);
-            (entry.second)->SetupMigration( migration_factory, merged_map );
-        } 
-
-        LoadInterventions(campaignfilename, nodeIDs);
+        LoadInterventions(nodeIDs);
 
 #ifndef DISABLE_CLIMATE
         // Clean up
         delete climate_factory; 
         climate_factory = nullptr;
 #endif
-
-        delete migration_factory;
-        migration_factory = nullptr;
 
         LOG_INFO_F( "populateFromDemographics() created %d nodes\n", nodes.size() );
         return int(nodes.size());
@@ -1413,7 +1444,7 @@ namespace Kernel
         };
 
         MpiDataExchanger exchanger( "HumanMigration", to_self_func, to_others_func, from_others_func, clear_data_func );
-        exchanger.ExchangeData( this->currentTime );
+        exchanger.ExchangeData(currentTime.time);
 
         // -----------------------------------------------------------
         // --- We sort the humans so that they are in a known order.
@@ -1436,12 +1467,22 @@ namespace Kernel
 
     bool Simulation::CanSupportFamilyTrips() const
     {
-        return can_support_family_trips;
+        const MigrationParams* mp = MigrationConfig::GetMigrationParams();
+        return ( ( mp->migration_pattern == MigrationPattern::SINGLE_ROUND_TRIPS)   &&
+                 (!mp->enable_mig_local     || (mp->local_roundtrip_prob  == 1.0f)) &&
+                 (!mp->enable_mig_air       || (mp->air_roundtrip_prob    == 1.0f)) &&
+                 (!mp->enable_mig_regional  || (mp->region_roundtrip_prob == 1.0f)) &&
+                 (!mp->enable_mig_sea       || (mp->sea_roundtrip_prob    == 1.0f)) );
     }
 
     //------------------------------------------------------------------
     //   Assorted getters and setters
     //-----------------------------------------------------------------
+
+    const SimParams* Simulation::GetParams() const
+    {
+        return SimConfig::GetSimParams();
+    }
 
     const DemographicsContext* Simulation::GetDemographicsContext() const
     {
@@ -1455,7 +1496,7 @@ namespace Kernel
 
     int Simulation::GetSimulationTimestep() const
     {
-        return currentTime.timestep;
+        return currentTime.TimeAsSimpleTimestep();
     }
 
     suids::suid Simulation::GetNextInfectionSuid()
@@ -1471,6 +1512,11 @@ namespace Kernel
     ExternalNodeId_t Simulation::GetNodeExternalID( const suids::suid& rNodeSuid )
     {
         return nodeRankMap.GetNodeInfo( rNodeSuid ).GetExternalID();
+    }
+
+    float Simulation::GetNodeInboundMultiplier( const suids::suid& rNodeSuid )
+    {
+        return nodeRankMap.GetNodeInfo( rNodeSuid ).GetInboundMult();
     }
 
     uint32_t Simulation::GetNodeRank( const suids::suid& rNodeSuid )
@@ -1551,27 +1597,11 @@ namespace Kernel
 
         if (sim.serializationFlags.test(SerializationFlags::Parameters))
         {
-            ar.labelElement( "campaignFilename" ) & sim.campaignFilename;
-            ar.labelElement( "custom_reports_filename" ) & sim.custom_reports_filename;
-
-            ar.labelElement("sim_type") & (uint32_t&)sim.sim_type;
-            ar.labelElement("demographic_tracking") & sim.demographic_tracking;
-            ar.labelElement("enable_spatial_output") & sim.enable_spatial_output;
-            ar.labelElement("enable_property_output") & sim.enable_property_output;
-            ar.labelElement("enable_default_report") & sim.enable_default_report;
-            ar.labelElement( "enable_event_report" ) & sim.enable_event_report;
-            ar.labelElement( "enable_node_event_report" ) & sim.enable_event_report;
-            ar.labelElement( "enable_coordinator_event_report" ) & sim.enable_coordinator_event_report;
-            ar.labelElement( "enable_surveillance_event_report" ) & sim.enable_surveillance_event_report;
-
-            ar.labelElement("loadbalance_filename") & sim.loadbalance_filename;
+            ar.labelElement( "custom_reports_filename" )          & sim.custom_reports_filename;
         }
 
         if (sim.serializationFlags.test(SerializationFlags::Properties))
-        {
-            ar.labelElement("loadBalanceFilename") & sim.loadBalanceFilename;
-            ar.labelElement("campaign_filename") & sim.campaign_filename;
-        }
+        { }
     }
 
     void Simulation::serialize(IArchive& ar, NodeMap_t& node_map)

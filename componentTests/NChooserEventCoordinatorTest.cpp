@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "componentTests.h"
 #include "NChooserEventCoordinatorHIV.h"
 #include "Node.h"
-#include "SimulationConfig.h"
 
 #include "INodeContextFake.h"
 #include "INodeEventContextFake.h"
@@ -34,12 +33,10 @@ SUITE(NChooserEventCoordinatorTest)
     struct NChooserEventCoordinatorFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig ;
         float m_oldBaseYear;
         RANDOMBASE* m_pRNG;
 
         NChooserEventCoordinatorFixture()
-            : m_pSimulationConfig( new SimulationConfig() )
         {
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
@@ -60,9 +57,6 @@ SUITE(NChooserEventCoordinatorTest)
 
             m_pRNG = new PSEUDO_DES(0);
 
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM;
-
-            Environment::setSimulationConfig( m_pSimulationConfig );
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
 
@@ -77,17 +71,12 @@ SUITE(NChooserEventCoordinatorTest)
             income_ip_values.insert( std::make_pair( "HIGH", 0.1f ) );
 
            IPFactory::GetInstance()->AddIP( 1, "Income", income_ip_values );
-
-            //EventTriggerFactoryDeleteInstance();
-            //EventTriggerFactoryGetInstance()->Configure( EnvPtr->Config );
         }
 
         ~NChooserEventCoordinatorFixture()
         {
-            //EventTriggerFactoryDeleteInstance();
             IPFactory::DeleteFactory();
             Environment::Finalize();
-            Simulation::base_year = m_oldBaseYear; // Restore base_year
             delete m_pRNG;
         }
     };
@@ -260,8 +249,6 @@ SUITE(NChooserEventCoordinatorTest)
         // -----------------------------------------------------------------
         // --- Test that generic version works with non-STI & HIV sim types
         // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::TBHIV_SIM;
-
         try
         {
             NChooserEventCoordinator generic_nchooser;
@@ -285,8 +272,6 @@ SUITE(NChooserEventCoordinatorTest)
         // -----------------------------------------------------------------
         // --- Test that STI version works with STI sim
         // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::STI_SIM;
-
         try
         {
             NChooserEventCoordinatorSTI sti_nchooser;
@@ -297,55 +282,6 @@ SUITE(NChooserEventCoordinatorTest)
         {
             PrintDebug( de.GetMsg() );
             CHECK( false );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that STI version works with HIV sim
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::HIV_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorSTI sti_nchooser;
-            bool ret = sti_nchooser.Configure( p_config.get() );
-            CHECK( ret );
-        }
-        catch( DetailedException& de )
-        {
-            PrintDebug( de.GetMsg() );
-            CHECK( false );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that STI version does not work with GENERIC
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::GENERIC_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorSTI sti_nchooser;
-            bool ret = sti_nchooser.Configure( p_config.get() );
-            CHECK( false );
-        }
-        catch( DetailedException&  )
-        {
-            CHECK( true );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that STI version does not work with other sim type
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::TBHIV_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorSTI sti_nchooser;
-            bool ret = sti_nchooser.Configure( p_config.get() );
-            CHECK( false );
-        }
-        catch( DetailedException& )
-        {
-            CHECK( true );
         }
     }
 
@@ -359,8 +295,6 @@ SUITE(NChooserEventCoordinatorTest)
         // -----------------------------------------------------------------
         // --- Test that HIV version works with HIV sim
         // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::HIV_SIM;
-
         try
         {
             NChooserEventCoordinatorHIV hiv_nchooser;
@@ -371,54 +305,6 @@ SUITE(NChooserEventCoordinatorTest)
         {
             PrintDebug( de.GetMsg() );
             CHECK( false );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that HIV version does not work with STI sim
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::STI_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorHIV hiv_nchooser;
-            bool ret = hiv_nchooser.Configure( p_config.get() );
-            CHECK( false );
-        }
-        catch( DetailedException& )
-        {
-            CHECK( true );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that HIV version does not work with GENERIC
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::GENERIC_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorHIV hiv_nchooser;
-            bool ret = hiv_nchooser.Configure( p_config.get() );
-            CHECK( false );
-        }
-        catch( DetailedException& )
-        {
-            CHECK( true );
-        }
-
-        // -----------------------------------------------------------------
-        // --- Test that HIV version does not work with other sim type
-        // -----------------------------------------------------------------
-        m_pSimulationConfig->sim_type = SimType::TBHIV_SIM;
-
-        try
-        {
-            NChooserEventCoordinatorHIV hiv_nchooser;
-            bool ret = hiv_nchooser.Configure( p_config.get() );
-            CHECK( false );
-        }
-        catch( DetailedException& )
-        {
-            CHECK( true );
         }
     }
 
@@ -540,34 +426,5 @@ SUITE(NChooserEventCoordinatorTest)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/NChooserEventCoordinatorTest/Test_GH830.json",
                                        "The number of elements in 'Num_Targeted_Males' is 0.\nThe number of elements in 'Num_Targeted_Females' is 1.\nThe number of elements in 'Age_Range_Years' is 1.\n'Num_Targeted_Males', 'Num_Targeted_Females', and 'Age_Range_Years' must have the same number of elements, but not zero.  There must be one age range for each number targeted." );
-    }
-
-    TEST_FIXTURE(NChooserEventCoordinatorFixture, TestWarningBaseYearStartYear)
-    {
-        // --------------------
-        // --- Initialize test
-        // --------------------
-        unique_ptr<Configuration> p_config(Environment::LoadConfigurationFile("testdata/NChooserEventCoordinatorTest/TestSample.json"));
-        FakeLogger fakeLogger(Logger::tLevel::WARNING);
-        Environment::setLogger(&fakeLogger);
-        
-        Simulation::base_year = 2050;
-
-        try
-        {
-            NChooserEventCoordinatorHIV hiv_nchooser;
-            bool ret = hiv_nchooser.Configure(p_config.get());
-            CHECK(ret);
-        }
-        catch (DetailedException& de)
-        {
-            PrintDebug(de.GetMsg());
-            CHECK(false);
-        }
-
-        CHECK(!fakeLogger.Empty());
-        LogEntry entry = fakeLogger.Back();
-        CHECK(entry.log_level == Logger::tLevel::WARNING);
-        CHECK(entry.msg.find("Start_Year (2003.000000) specified before Base_Year (2050.000000)\n") != string::npos);
     }
 }

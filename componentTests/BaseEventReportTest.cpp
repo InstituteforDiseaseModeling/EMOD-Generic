@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BaseEventReport.h"
 #include "NodeEventContext.h"
 #include "NodeEventContextHost.h"
-#include "SimulationConfig.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
 
@@ -96,6 +95,7 @@ public:
     virtual void ValidateSimType( const std::string& simTypeStr ) override {};
     virtual bool Expired() override { return false; };
     virtual void SetExpired( bool ) override {};
+    virtual void OnExpiration() override {};
     virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override { return Kernel::e_NOINTERFACE; };
     virtual int32_t AddRef() override { return 0 ;};
     virtual int32_t Release() override { return 0 ;};
@@ -111,13 +111,10 @@ SUITE(BaseEventReportTest)
     struct ReportFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig ;
 
         ReportFixture()
         {
             JsonConfigurable::ClearMissingParameters();
-            m_pSimulationConfig = new SimulationConfig();
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
 
             m_pMpi = IdmMpi::MessageInterface::CreateNull();
 
@@ -132,19 +129,11 @@ SUITE(BaseEventReportTest)
             string statePath("testdata/BaseEventReportTest");
             string dllPath("");
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, /*statePath, */dllPath, false);
-
-            Environment::setSimulationConfig( m_pSimulationConfig ); 
-
-            //json::Object fakeConfigJson;
-            //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
         }
 
         ~ReportFixture()
         {
             delete m_pMpi;
-            delete m_pSimulationConfig;
-            Environment::setSimulationConfig( nullptr );
             Environment::Finalize();
         }
     };

@@ -19,7 +19,6 @@
         "Enable_Coinfection_Mortality": 0,
         "Enable_Demographics_Birth": 0,
         "Enable_Heterogeneous_Intranode_Transmission": 0,
-        "Enable_Initial_Susceptibility_Distribution": 1,
         "Enable_Natural_Mortality": 0,
         "Enable_Regional_Migration": 1,
         "HIV_Adult_Survival_Scale_Parameter_Intercept": 30,

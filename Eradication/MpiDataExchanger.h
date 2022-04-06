@@ -50,7 +50,7 @@ namespace Kernel
                           ClearDataFunc clearFunc );
         ~MpiDataExchanger();
 
-        void ExchangeData( IdmDateTime& currentTime );
+        void ExchangeData(float current_time);
 
     private:
         void SaveData( uint32_t time_step, 

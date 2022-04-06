@@ -29,10 +29,6 @@ SETUP_LOGGING( "ReportEventRecorder" )
 
 namespace Kernel
 {
-    template std::string BaseReportEventRecorder< IIndividualEventBroadcaster,
-                                                  IIndividualEventObserver,
-                                                  IIndividualHumanEventContext >::GetEnableParameterName();
-
     template void BaseTextReportEventsTemplate< IIndividualEventBroadcaster,
                                                 IIndividualEventObserver,
                                                 IIndividualHumanEventContext
@@ -41,12 +37,6 @@ namespace Kernel
     template void BaseTextReportEventsTemplate< IIndividualEventBroadcaster,
                                                 IIndividualEventObserver,
                                                 IIndividualHumanEventContext >::UnregisterAllBroadcasters();
-
-    const std::string ReportEventRecorder::ENABLE_PARAMETER_NAME   = "Report_Event_Recorder";
-    const std::string ReportEventRecorder::EVENTS_LIST_NAME        = "Report_Event_Recorder_Events";
-    const std::string ReportEventRecorder::EVENTS_LIST_DESC        =  Report_Event_Recorder_Events_DESC_TEXT;
-    const std::string ReportEventRecorder::IGNORE_EVENTS_LIST_NAME = "Report_Event_Recorder_Ignore_Events_In_List";
-    const std::string ReportEventRecorder::IGNORE_EVENTS_LIST_DESC =  Report_Event_Recorder_Ignore_Events_In_List_DESC_TEXT;
 
     GET_SCHEMA_STATIC_WRAPPER_IMPL(ReportEventRecorder,ReportEventRecorder)
 
@@ -58,17 +48,21 @@ namespace Kernel
     ReportEventRecorder::ReportEventRecorder()
         : BaseReportEventRecorder("ReportEventRecorder.csv")
         , properties_to_report()
-    {
-    }
+    { }
 
     ReportEventRecorder::~ReportEventRecorder()
-    {
-    }
+    { }
 
-    void ReportEventRecorder::ConfigureOther( const Configuration * inputJson )
-    { 
+    bool ReportEventRecorder::Configure( const Configuration * inputJson )
+    {
         properties_to_report.value_source = IPKey::GetConstrainedStringConstraintKey(); 
-        initConfigTypeMap("Report_Event_Recorder_Individual_Properties", &properties_to_report, Property_Restriction_DESC_TEXT, ENABLE_PARAMETER_NAME.c_str() );
+
+        initVectorConfig("Report_Event_Recorder_Events",  event_trigger_list,  inputJson,  MetadataDescriptor::VectorOfEnum("Report_Event_Recorder_Events", Report_Event_Recorder_Events_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)),  "Enable_Report_Event_Recorder");
+
+        initConfigTypeMap("Report_Event_Recorder_Ignore_Events_In_List",  &ignore_events_in_list,  Report_Event_Recorder_Ignore_Events_In_List_DESC_TEXT, false,  "Enable_Report_Event_Recorder");
+        initConfigTypeMap("Report_Event_Recorder_Individual_Properties",  &properties_to_report,   Property_Restriction_DESC_TEXT,                                "Enable_Report_Event_Recorder");
+
+        return BaseReportEventRecorder::Configure(inputJson);
     }
 
     void ReportEventRecorder::Initialize( unsigned int nrmSize )

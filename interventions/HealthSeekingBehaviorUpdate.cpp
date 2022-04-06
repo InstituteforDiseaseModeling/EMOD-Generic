@@ -82,14 +82,3 @@ namespace Kernel
         }
     }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, HealthSeekingBehaviorUpdate& bn, const unsigned int v)
-    {
-        ar & bn.new_probability_of_seeking;
-        ar & boost::serialization::base_object<Kernel::BaseIntervention>(bn);
-    }
-}
-#endif

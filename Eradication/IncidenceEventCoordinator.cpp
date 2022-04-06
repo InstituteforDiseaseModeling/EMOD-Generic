@@ -196,6 +196,12 @@ namespace Kernel
         }
     }
 
+    int Responder::GetMaxEvents() const
+    {
+        // Responder has no demographic restrictions; no limit applied
+        return INT_MAX;
+    }
+
     bool Responder::visitIndividualCallback( IIndividualHumanEventContext *ihec, float & incrementalCostOut, ICampaignCostObserver * pICCO )
     {
         release_assert( m_pCurrentAction != nullptr );
@@ -342,23 +348,25 @@ namespace Kernel
         //overwritten by child classes
     }
 
-    bool IncidenceCounter::notifyOnEvent( IIndividualHumanEventContext *context,
-                                          const EventTrigger::Enum& trigger )
+    bool IncidenceCounter::notifyOnEvent( IIndividualHumanEventContext* context, const EventTrigger::Enum& trigger )
     {
         if( m_NodePropertyRestrictions.Qualifies( context->GetNodeEventContext()->GetNodeContext()->GetNodeProperties() ) &&
             m_DemographicRestrictions.IsQualified( context ) &&
             !IsDoneCounting() )
         {
             float demographic_coverage = m_DemographicRestrictions.GetDemographicCoverage();
+
             if( (demographic_coverage > 0.0) )
             {
-                bool count_event = true;
+                bool count_event = (static_cast<int>(m_Count) < m_DemographicRestrictions.GetMaxEvents());
+
                 // don't draw random number if coverage equals 1.
-                if( demographic_coverage < 1.0 )
+                if(count_event && demographic_coverage < 1.0)
                 {
                     RANDOMBASE* p_rng = context->GetInterventionsContext()->GetParent()->GetRng();
                     count_event = p_rng->SmartDraw( demographic_coverage );
                 }
+
                 if( count_event )
                 {
                     ++m_Count;
@@ -556,9 +564,6 @@ namespace Kernel
     }
 
     void IncidenceEventCoordinator::CheckStartDay( float campaignStartDay ) const
-    { }
-
-    void IncidenceEventCoordinator::InitializeTiming( const IdmDateTime& currentTime)
     { }
 
     void IncidenceEventCoordinator::SetContextTo( ISimulationEventContext *isec )

@@ -335,33 +335,37 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
                 }
                 else
                 {
-
                     LOG_INFO("Calling GetProcAddr for GetEModuleVersion\n");
                     char emodVersion[64];
                     if (!CheckEModuleVersion(repDll, emodVersion))
                     {
                         LOG_WARN_F("The version of EModule %S is lower than current application!\n", ffd.cFileName);
-
-                        // For now, load report dll anyway
-                        //continue;
                     }
-
+                    LOG_INFO_F( "Checked EModule version.\n" );
                     bool success = GetSimTypes( ffd.cFileName, repDll );
+
+                    LOG_DEBUG_F( "success = %d.\n", success );
                     if( !success ) continue ;
 
-                    Kernel::report_instantiator_function_t rif = nullptr ;
-                    success = GetReportInstantiator( ffd.cFileName, repDll, &rif );
-                    if( !success ) continue ;
-
-                    if( rif != nullptr )
+                    Kernel::report_instantiator_function_t rif = nullptr;
+                    typedef Kernel::IReport* (*gri)();
+                    rif = (gri)GetProcAddress( repDll, "GetReportInstantiator" );
+                    if( rif == nullptr )
                     {
-                        std::string class_name ;
-                        success = GetType( ffd.cFileName, repDll, class_name );
-                        if( !success ) continue ;
-
-                        reportInstantiators[ class_name ] = rif ;
-                        bRet = true ;
+                        LOG_WARN_F( "Failed to get Report Instantiator on %S.\n", ffd.cFileName );
+                        success = false;
                     }
+
+                    LOG_DEBUG_F( "success = %d.\n", success );
+                    if( !success ) continue ;
+
+                    std::string class_name ;
+                    success = GetType( ffd.cFileName, repDll, class_name );
+
+                    if( !success ) continue ;
+
+                    reportInstantiators[ class_name ] = rif ;
+                    bRet = true ;
                 }
             }
             else
@@ -379,7 +383,6 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
     struct dirent *dirp = nullptr;
     for (auto& dllDirStar : report_dll_dirs)
     {
-        //std::cout << "Processing " << dllDirStar << std::endl;
         auto report_dir = dllDirStar.c_str();
         LOG_INFO_F( "Considering report 'directory' (may be a file): %s.\n", report_dir );
         std::string filename_str = "";
@@ -398,19 +401,19 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
             if( dirp != nullptr )
             {
                 filename = dirp->d_name;
-                std::cout << "filename = " << filename << " (line " << __LINE__ << ")" << std::endl;
+                LOG_DEBUG_F("Filename = %s.\n", filename);
             }
             else
             {
                 filename = filename_str.c_str();
-                std::cout << "filename = " << filename << " (line " << __LINE__ << ")" << std::endl;
+                LOG_DEBUG_F("Filename = %s.\n", filename);
             }
             if( std::string( filename ) == "." || std::string( filename ) == ".." )
             {
                 continue;
             }
-            LOG_INFO_F( "Still considering %s\n", filename );
-            // filename seems to works for emodules_map.json, concat for dllpath
+            LOG_INFO_F( "Considering %s\n", filename );
+
             std::string fullDllPath = filename;
             if( !FileSystem::FileExists( fullDllPath  ) )
             {
@@ -424,12 +427,10 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
                 if (!CheckEModuleVersion(newSimDlHandle, emodVersion))
                 {
                     LOG_WARN_F("The version of EModule %S is lower than current application!\n", filename);
-
-                    // For now, load report dll anyway
-                    //continue;
                 } 
                 LOG_INFO_F( "Checked EModule version.\n" );
                 bool success = GetSimTypes( filename, newSimDlHandle );
+
                 LOG_DEBUG_F( "success = %d.\n", success );
                 if( !success )
                 {
@@ -438,7 +439,14 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
                 }
 
                 Kernel::report_instantiator_function_t rif = nullptr;
-                success = GetReportInstantiator( filename, newSimDlHandle, &rif );
+                typedef Kernel::IReport* (*gri)();
+                rif = (gri)dlsym( newSimDlHandle, "GetReportInstantiator" );
+                if( rif == nullptr )
+                {
+                    LOG_WARN_F( "Failed to get Report Instantiator on %S.\n", filename );
+                    success = false;
+                }
+
                 LOG_DEBUG_F( "success = %d.\n", success );
                 if( !success )
                 {
@@ -468,7 +476,7 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
             if( dp == 0x0 || dp == nullptr )
             {
                 // This should NOT be necessary but I'm not getting while while condition is executing readdir on nullptr.
-                std::cout << "dp is null." << std::endl; // apparently this line is critical???!!!
+                LOG_DEBUG("dp is null.\n");
                 break;
             }
         } while( dp != nullptr && ( dirp = readdir( dp ) ) != nullptr ); // first condition is for emodules_map, second is for dll-path; but 1st cond being true was still causing second to be checked
@@ -479,12 +487,11 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
     return bRet;
 }
 
-
 #if defined(WIN32)
 bool DllLoader::GetSimTypes( const TCHAR* pFilename, HMODULE repDll )
 {
     bool success = true ;
-    LOG_INFO_F( "Calling GetProcAddress for GetSupportedSimTypes on %S\n", pFilename );
+
     typedef void (*gst)(char* simType[]);
     gst _gst = (gst)GetProcAddress( repDll, "GetSupportedSimTypes" );
     if( _gst != nullptr )
@@ -499,42 +506,13 @@ bool DllLoader::GetSimTypes( const TCHAR* pFilename, HMODULE repDll )
     }
     else
     {
-        LOG_INFO_F ("GetProcAddress failed for GetSupportedSimTypes: %d.\n", GetLastError() );
         success = false;
     }
+
     return success ;
 }
 
-bool DllLoader::GetReportInstantiator( const TCHAR* pFilename, 
-                                       HMODULE repDll, 
-                                       Kernel::report_instantiator_function_t* pRIF )
-{
-    bool success = false ;
-    LOG_DEBUG_F("Calling GetProcAddress for GetReportInstantiator on %S\n", pFilename);
-    typedef void (*gri)(Kernel::report_instantiator_function_t* pif);
-    gri gri_func = (gri)GetProcAddress( repDll, "GetReportInstantiator" );
-    if( gri_func != nullptr )
-    {
-        gri_func( pRIF );
-        if( *pRIF != nullptr )
-        {
-            success = true ;
-        }
-        else
-        {
-            LOG_WARN_F( "Failed to get Report Instantiator on %S.\n", pFilename );
-        }
-    }
-    else
-    {
-        LOG_WARN_F( "GetReportInstantiator not supported in %S.\n", pFilename );
-    }
-    return success ;
-}
-
-bool DllLoader::GetType( const TCHAR* pFilename, 
-                         HMODULE repDll, 
-                         std::string& rClassName )
+bool DllLoader::GetType( const TCHAR* pFilename, HMODULE repDll, std::string& rClassName )
 {
     bool success = true ;
 
@@ -546,7 +524,6 @@ bool DllLoader::GetType( const TCHAR* pFilename,
         if( p_class_name != nullptr )
         {
             rClassName = std::string( p_class_name );
-            LOG_INFO_F( "Found Report DLL = %s\n", p_class_name );
         }
         else
         {
@@ -559,17 +536,16 @@ bool DllLoader::GetType( const TCHAR* pFilename,
         LOG_WARN_F( "GetType not supported in %S.\n", pFilename );
         success = false ;
     }
+
     return success ;
 }
 #else
 bool DllLoader::GetSimTypes( const char* pFilename, void* repDll )
 {
     bool success = true ;
-    //LOG_INFO_F( "Calling dlsym for GetSupportedSimTypes on %s\n", pFilename );
+
     typedef void (*gst)(char* simType[]);
-    auto extern_fc = dlsym( repDll, "GetSupportedSimTypes" );
-    gst _gst = (gst)extern_fc;
-    release_assert( _gst );
+    gst _gst = (gst)dlsym( repDll, "GetSupportedSimTypes" );
     if( _gst != nullptr )
     {
         (*_gst)(m_sSimTypeAll);
@@ -582,42 +558,13 @@ bool DllLoader::GetSimTypes( const char* pFilename, void* repDll )
     }
     else
     {
-        //LOG_INFO_F ("dlsym failed for GetSupportedSimTypes.\n" );
         success = false;
     }
+
     return success ;
 }
 
-bool DllLoader::GetReportInstantiator( const char* pFilename, 
-                                       void* repDll, 
-                                       Kernel::report_instantiator_function_t* pRIF )
-{
-    bool success = false ;
-    //LOG_DEBUG_F("Calling dlsym for GetReportInstantiator on %S\n", pFilename);
-    typedef void (*gri)(Kernel::report_instantiator_function_t*);
-    auto gri_func = (gri)dlsym( repDll, "GetReportInstantiator" );
-    if( gri_func != nullptr )
-    {
-        (*gri_func)( pRIF );
-        if( *pRIF != nullptr )
-        {
-            success = true;
-        }
-        else
-        {
-            LOG_WARN_F( "Failed to get Report Instantiator on %S.\n", pFilename );
-        }
-    }
-    else
-    {
-        LOG_WARN_F( "GetReportInstantiator not supported in %S.\n", pFilename );
-    }
-    return success ;
-}
-
-bool DllLoader::GetType( const char* pFilename, 
-                         void* repDll, 
-                         std::string& rClassName )
+bool DllLoader::GetType( const char* pFilename, void* repDll, std::string& rClassName )
 {
     bool success = true ;
 
@@ -629,7 +576,6 @@ bool DllLoader::GetType( const char* pFilename,
         if( p_class_name != nullptr )
         {
             rClassName = std::string( p_class_name );
-            //LOG_INFO_F( "Found Report DLL = %s\n", p_class_name );
         }
         else
         {
@@ -642,9 +588,9 @@ bool DllLoader::GetType( const char* pFilename,
         LOG_WARN_F( "GetType not supported in %S.\n", pFilename );
         success = false;
     }
+
     return success;
 }
-
 #endif
 
 bool DllLoader::LoadInterventionDlls(const char* dllName)

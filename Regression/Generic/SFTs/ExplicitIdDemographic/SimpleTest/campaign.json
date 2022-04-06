@@ -1,0 +1,25 @@
+{
+	"Use_Defaults": 1,
+	"Events": [{
+			"Event_Coordinator_Config": {
+				"Demographic_Coverage": 1,
+				"Max_Cases_Per_Node": -1,
+				"Intervention_Config": {
+					"Antigen": 0,
+					"Genome": 0,
+					"class": "OutbreakIndividual",
+					"Ignore_Immunity": 0
+				},
+				"Target_Demographic": "ExplicitIDs",
+                "ID_List": [1000, 10],
+				"class": "StandardInterventionDistributionEventCoordinator"
+			},
+			"Event_Name": "Outbreak",
+			"Nodeset_Config": {
+				"class": "NodeSetAll"
+			},
+			"Start_Day": 4,
+			"class": "CampaignEvent"
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+    "tests": [
+        { "path" : "Airborne/1_Airborne_Namawala" }
+    ],
+    "skipped": [
+    ],
+    "skipped:num_cores_too_large": [
+        { "path" : "Multicore_Nosibe/1_Airborne_Namawala" }
+    ]
+}

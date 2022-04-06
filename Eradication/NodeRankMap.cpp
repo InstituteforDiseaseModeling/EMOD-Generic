@@ -166,7 +166,7 @@ namespace Kernel
         return true;
     }
 
-    void NodeRankMap::Sync( IdmDateTime& currentTime )
+    void NodeRankMap::Sync(float current_time)
     {
         // ------------------------------------------------------------------------
         // --- The data to be sent is the same for all processes, hence, we want to
@@ -270,7 +270,7 @@ namespace Kernel
         };
 
         MpiDataExchanger exchanger( "NodeRankMap", to_self_func, to_others_func, from_others_func, clear_data_func );
-        exchanger.ExchangeData( currentTime );
+        exchanger.ExchangeData(current_time);
 
         delete binary_writer;
     }

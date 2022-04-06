@@ -4,7 +4,8 @@
         "Base_Population_Scale_Factor": 0.001,
         "Config_Name": "5_HIV_Distributions",
         "Enable_Birth": 0,
-        "Report_Event_Recorder": 1,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "EveryUpdate",
             "HappyBirthday",
@@ -24,7 +25,6 @@
         "Report_HIV_Infection_Start_Year": 1900,
         "Report_HIV_Infection_Stop_Year": 2100,
         "Run_Number": 3,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Duration": 5,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",

@@ -1,0 +1,40 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "demographics_multinode.json"
+            ],
+            "Enable_Demographics_Reporting": 1,
+            "Enable_Initial_Prevalence": 0,
+            "IMMUNITY": {
+                "Enable_Initial_Susceptibility_Distribution": 0
+            },
+            "MORTALITY": {
+                "Enable_Natural_Mortality": 1
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 1e-07,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Infectious_Period_Exponential": 4,
+                "Symptomatic_Infectious_Offset": 0
+            }
+        },
+        "OUTPUT": {
+            "Report_Event_Recorder": 1,
+            "Report_Event_Recorder_Events": [
+                "NewInfection",
+                "EveryUpdate"
+            ]
+        },
+        "PRIMARY": {
+            "Config_Name": "Max_Cases_Per_Node",
+            "Geography": "",
+            "Simulation_Duration": 45,
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

@@ -38,8 +38,9 @@ namespace Kernel
     NodeLevelHealthTriggeredIV::NodeLevelHealthTriggeredIV()
     : BaseNodeIntervention()
     , m_trigger_conditions()
-    , max_duration(0)
-    , duration(0)
+    , max_duration(0.0f)
+    , duration(0.0f)
+    , num_distributed(0)
     , node_property_restrictions()
     , demographic_restrictions()
     , m_disqualified_by_coverage_only(false)
@@ -73,10 +74,7 @@ namespace Kernel
         return BaseNodeIntervention::Release();
     }
 
-    bool
-    NodeLevelHealthTriggeredIV::Configure(
-        const Configuration * inputJson
-    )
+    bool NodeLevelHealthTriggeredIV::Configure(const Configuration* inputJson)
     {
         JsonConfigurable::_useDefaults = InterventionFactory::useDefaults;
 
@@ -272,21 +270,14 @@ namespace Kernel
             {
                 IIndividualEventBroadcaster * broadcaster = parent->GetIndividualEventBroadcaster();
                 broadcaster->TriggerObservers( pIndiv, blackout_event_trigger );
-                /*INodeTriggeredInterventionConsumer * pNTIC = NULL;
-                if (s_OK != parent->QueryInterface(GET_IID(INodeTriggeredInterventionConsumer), (void**)&pNTIC) )
-                {
-                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "INodeTriggeredInterventionConsumer", "INodeEventContext" );
-                }
-                pNTIC->TriggerNodeEventObservers( pIndiv, blackout_event_trigger ); 
-                LOG_DEBUG_F( "Returning false from notifyOnEvent at line %d.\n", __LINE__ ); */
+
                 return false;
             }
         }
 
         LOG_DEBUG_F("Individual %d experienced event %s, check to see if they pass the conditions before distributing actual_intervention \n",
                     pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data,
-                    EventTrigger::pairs::lookup_key( trigger )
-                   );
+                    EventTrigger::pairs::lookup_key( trigger ));
 
         assert( parent );
 
@@ -321,11 +312,11 @@ namespace Kernel
             distributed = di->Distribute( pIndiv->GetInterventionsContext(), iCCO );
             if( distributed )
             {
+                num_distributed++;
                 std::string classname = GetInterventionClassName();
                 LOG_DEBUG_F("A Node level health-triggered intervention (%s) was successfully distributed to individual %d\n",
                             classname.c_str(),
-                            pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data
-                           );
+                            pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data);
             }
             else
             {
@@ -449,16 +440,12 @@ namespace Kernel
         }
     }
 
-    // private/protected
-    bool
-    NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(
-        const IIndividualHumanEventContext * const pIndividual
-    )
+    bool NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(const IIndividualHumanEventContext* const pIndividual)
     {
         bool retQualifies = demographic_restrictions.IsQualified( pIndividual );
 
         //OK they passed the property and age test, now check if they are part of the demographic coverage
-        if (retQualifies)
+        if (retQualifies && num_distributed < demographic_restrictions.GetMaxEvents())
         {
             LOG_DEBUG_F("demographic_coverage = %f\n", getDemographicCoverage());
             if( !pIndividual->GetInterventionsContext()->GetParent()->GetRng()->SmartDraw( getDemographicCoverage() ) )
@@ -475,7 +462,7 @@ namespace Kernel
 
     float NodeLevelHealthTriggeredIV::getDemographicCoverage() const
     {
-        return demographic_restrictions.GetDemographicCoverage();    
+        return demographic_restrictions.GetDemographicCoverage();
     }
 
     void NodeLevelHealthTriggeredIV::onDisqualifiedByCoverage( IIndividualHumanEventContext *pIndiv )

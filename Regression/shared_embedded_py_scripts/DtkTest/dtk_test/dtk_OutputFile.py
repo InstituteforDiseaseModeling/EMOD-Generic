@@ -90,6 +90,7 @@ class ReportEventRecorder(CsvOutput):
         EveryUpdate = auto()
         EveryTimeStep = auto()
         NewInfection = auto()
+        InfectionCleared = auto()
         TBActivation = auto()
         NewClinicalCase = auto()
         NewSevereCase = auto()

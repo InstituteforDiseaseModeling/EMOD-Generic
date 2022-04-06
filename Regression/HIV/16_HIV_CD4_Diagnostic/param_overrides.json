@@ -6,7 +6,8 @@
         "Config_Name": "16_HIV_CD4_Diagnostic",
         "Enable_Birth": 0,
         "Enable_Demographics_Reporting": 0,
-        "Report_Event_Recorder": 1,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "NewInfection",
             "DiseaseDeaths",
@@ -29,7 +30,6 @@
         "Report_HIV_Infection_Start_Year": 1900,
         "Report_HIV_Infection_Stop_Year": 2100,
         "Simulation_Duration": 365,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Timestep": 1,
         "____________DEMOGRAPHICS___________": "",
         "____________INTRAHOST___________": "",

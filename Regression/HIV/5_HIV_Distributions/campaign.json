@@ -82,7 +82,10 @@
                     "Demographic_Coverage": 1,
                     "Target_Demographic": "ExplicitGender",
                     "Target_Gender": "Male",
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "Property_Restrictions": [],
                 "Target_Demographic": "Everyone",

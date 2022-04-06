@@ -4,7 +4,8 @@
         "Base_Population_Scale_Factor": 0.001,
         "Base_Year": 1960,
         "Config_Name": "48_HIV_NChooser",
-        "Report_Event_Recorder": 1,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "Vaccinated",
             "VaccineExpired"
@@ -134,7 +135,6 @@
             "VaccineExpired"
         ],
         "Run_Number": 1,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Duration": 2555
     }
 }

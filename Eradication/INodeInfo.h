@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "suids.hpp"
 #include "ExternalNodeId.h"
+#include "SparseContagion.h"
 
 namespace Kernel
 {
@@ -35,6 +36,10 @@ namespace Kernel
         virtual float GetPopulation()       const = 0;
         virtual float GetLongitudeDegrees() const = 0;
         virtual float GetLatitudeDegrees()  const = 0;
+        virtual float GetInboundMult()      const = 0;
+        virtual float GetNetInfectFrac()    const = 0;
+
+        virtual const sparse_contagion_repr* GetNetInfRep() const = 0;
 
         virtual void serialize( IArchive& ar, bool firstTime ) = 0;
     };

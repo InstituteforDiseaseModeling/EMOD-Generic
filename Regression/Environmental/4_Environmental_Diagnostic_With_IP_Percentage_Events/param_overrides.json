@@ -18,11 +18,12 @@
         "Enable_Initial_Prevalence": 1,
         "PRIMARY": {
             "Config_Name": "4_Environmental_Diagnostic_With_IP_Percentage_Events",
+            "Enable_Report_Node_Event_Recorder": 1,
+            "Enable_Report_Surveillance_Event_Recorder": 1,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
             "Node_Grid_Size": 0.009,
-            "Report_Node_Event_Recorder": 1,
             "Report_Node_Event_Recorder_Events": [
                 "PositiveResult",
                 "NegativeResult"
@@ -32,7 +33,6 @@
             "Report_Node_Event_Recorder_Stats_By_IPs": [
                 "Geographic"
             ],
-            "Report_Surveillance_Event_Recorder": 1,
             "Report_Surveillance_Event_Recorder_Events": [
                 "GP_EVENT_000"
             ],

@@ -58,8 +58,7 @@ namespace Kernel
         virtual const MigrationParams* GetParams() const = 0;
 
         virtual void Initialize( const std::string& idreference ) = 0;
-        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node, 
-                                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
+        virtual IMigrationInfo* CreateMigrationInfo( INodeContext *parent_node ) = 0;
 
         virtual bool IsAtLeastOneTypeConfiguredForIndividuals() const = 0;
         virtual bool IsEnabled( MigrationType::Enum mt ) const = 0;

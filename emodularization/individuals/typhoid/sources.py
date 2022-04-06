@@ -2,6 +2,7 @@
 
 sources =  [
             'dtk_typhoidindividual_module.cpp',
+            '../../../utils/Configure.cpp',
             '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualEnvironmental.cpp',
@@ -15,7 +16,9 @@ sources =  [
             '../../../Eradication/InfectionTyphoid.cpp',
             '../../../Eradication/InterventionsContainer.cpp',
             '../../../Eradication/TyphoidInterventionsContainer.cpp',
-            '../../../Eradication/StrainIdentity.cpp'
+            '../../../Eradication/StrainIdentity.cpp',
+            '../../../Eradication/TBHIVDrugTypeParameters.cpp',
+            '../../../Eradication/TBDrugTypeParameters.cpp'
         ]
 
 

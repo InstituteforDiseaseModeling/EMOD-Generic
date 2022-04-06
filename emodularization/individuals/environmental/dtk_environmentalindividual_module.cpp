@@ -181,7 +181,6 @@ static void setConfigJson()
     }
 #endif
     EnvPtr->Config = configStubJson;
-    Environment::setSimulationConfig( configStubJson );
 }
 
 // Json-configure & Initialize a (single) individual
@@ -218,7 +217,7 @@ static Kernel::IndividualHumanEnvironmental* initInd( int sex, float age, float 
         std::cout << "Initialized Statics from gi.json." << std::endl;
     }
     Kernel::JsonConfigurable::_useDefaults = false; 
-    person->SetParameters( &node, 0.0f, 1.0f, 0.0f );
+    person->SetParameters( &node, 1.0f, 1.0f );
     return person;
 }
 

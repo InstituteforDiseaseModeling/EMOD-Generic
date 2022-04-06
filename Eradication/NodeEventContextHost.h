@@ -43,7 +43,6 @@ namespace Kernel
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
         virtual void VisitIndividuals(individual_visit_function_t func) override;
         virtual int VisitIndividuals(IVisitIndividual* ) override;
-        virtual const NodeDemographics& GetDemographics() override;
         virtual const IdmDateTime& GetTime() const override;
         virtual bool IsInPolygon(float* vertex_coords, int numcoords) override; // might want to create a real polygon object at some point
         virtual bool IsInPolygon( const json::Array &poly ) override;
@@ -53,8 +52,18 @@ namespace Kernel
         virtual int GetIndividualHumanCount() const override;
         virtual ExternalNodeId_t GetExternalId() const override;
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() override;
+        virtual void IncrementCampaignCost(float cost) override;
 
-        virtual void UpdateInterventions(float = 0.0f) override;
+        virtual void  UpdateInterventions(float = 0.0f) override;
+
+        virtual void  UpdateBirthRateMultiplier(float mult_val) override;
+        virtual void  UpdateConnectionModifiers(float inbound, float outbound) override;
+        virtual void  UpdateInfectivityMultiplier(float mult_val) override;
+
+        virtual float GetBirthRateMultiplier() const override;
+        virtual float GetInboundConnectionModifier() const override;
+        virtual float GetOutboundConnectionModifier() const override;
+        virtual float GetInfectivityMultiplier() const override;
 
         // TODO: methods to install hooks for birth and other things...can follow similar pattern presumably
 
@@ -62,9 +71,16 @@ namespace Kernel
         virtual void UnregisterTravelDistributionSource(ITravelLinkedDistributionSource *tles, TravelEventType type) override;
 
         virtual const suids::suid & GetId() const override;
+
         virtual void SetContextTo(INodeContext* context) override;
+
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name) override;
+        virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) override;
+        virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) override;
         virtual void PurgeExisting( const std::string& iv_name ) override;
+        virtual void PurgeExistingByName( const std::string& iv_name ) override;
+        virtual bool ContainsExisting( const std::string& iv_name ) override;
+        virtual bool ContainsExistingByName( const std::string& iv_name ) override;
 
         // INodeInterventionConsumer
         virtual bool GiveIntervention( INodeDistributableIntervention * pIV ) override;
@@ -90,14 +106,17 @@ namespace Kernel
     protected:
         Node* node;
 
+        float birthrate_multiplier;
+        float connection_multiplier_inbound;
+        float connection_multiplier_outbound;
+        float infectivity_multiplier;
+
         typedef std::map<ITravelLinkedDistributionSource*,int> travel_distribution_source_map_t;
         travel_distribution_source_map_t arrival_distribution_sources;
         travel_distribution_source_map_t departure_distribution_sources;
 
         void cleanupDistributionSourceMap( travel_distribution_source_map_t &map );
         travel_distribution_source_map_t* sourcesMapForType( TravelEventType type );
-        typedef std::list< INodeDistributableIntervention * > interventions_list_t;
-        interventions_list_t interventions;
 
         typedef std::list<INodeDistributableIntervention*> ndi_list_t;
         ndi_list_t node_interventions;
@@ -105,6 +124,5 @@ namespace Kernel
         IndividualEventBroadcaster broadcaster_impl;
 
         virtual void PropagateContextToDependents(); // pass context to interventions if they need it
-        void IncrementCampaignCost(float cost);
     };
 }

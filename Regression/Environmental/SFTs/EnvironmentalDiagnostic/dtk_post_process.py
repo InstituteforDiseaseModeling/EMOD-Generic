@@ -64,7 +64,7 @@ Unlike the tests in the subfolder, in this test we turn on all features in Envir
 
 Test data is loaded from StdOut.txt, PropertyReportEnvironmental.json and ReportEventRecorder.csv.
 
-Suggested sweep parameters: Base_Infectivity, Sample_Threshold, Base_Sensitivity, Base_Specificity
+Suggested sweep parameters: Base_Infectivity_Constant, Sample_Threshold, Base_Sensitivity, Base_Specificity
 
 """
 
@@ -107,7 +107,7 @@ def create_report_file(param_obj, campaign_obj, property_obj, property_df, stdou
                     "".format(CampaignKeys.EnvironmentalDiagnosticKeys.Environment_IP_Key_Value, ip_key_value))
 
             duration = param_obj[ConfigKeys.Simulation_Duration]
-            base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+            base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
 
             positive_list = []
             negative_list = []

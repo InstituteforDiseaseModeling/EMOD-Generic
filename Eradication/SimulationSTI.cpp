@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
+#include "ConfigParams.h"
 #include "SimulationSTI.h"
 
 #include "InfectionSTI.h"
@@ -21,8 +22,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeInfoSTI.h"
 
 SETUP_LOGGING( "SimulationSTI" )
-
-static const float DEFAULT_BASE_YEAR = 2015.0f ;
 
 namespace Kernel
 {
@@ -40,11 +39,6 @@ namespace Kernel
         , report_relationship_consummated(false)
         , report_transmission(false)
     {
-        initConfigTypeMap( "Report_Relationship_Start",     &report_relationship_start,      Report_Relationship_Start_DESC_TEXT, false);
-        initConfigTypeMap( "Report_Relationship_End",       &report_relationship_end,        Report_Relationship_End_DESC_TEXT,   false);
-        initConfigTypeMap( "Report_Transmission",           &report_transmission,            Report_Transmission_DESC_TEXT,      false);
-        initConfigTypeMap( "Report_Coital_Acts",            &report_relationship_consummated,Report_Coital_Acts_DESC_TEXT,         false);
-
         reportClassCreator = ReportSTI::CreateReport;
         eventReportClassCreator = STIReportEventRecorder::CreateReport;
         binnedReportClassCreator = BinnedReportSTI::CreateReport;
@@ -97,19 +91,14 @@ namespace Kernel
         sti_infection_config_obj.Configure( config );
     }
 
-    bool
-    SimulationSTI::Configure(
-        const Configuration * inputJson
-    )
+    bool SimulationSTI::Configure(const Configuration* inputJson)
     {
-        initConfigTypeMap( "Base_Year",  &base_year, Base_Year_DESC_TEXT, MIN_YEAR, MAX_YEAR, DEFAULT_BASE_YEAR );
+        initConfigTypeMap( "Report_Relationship_Start",     &report_relationship_start,       Report_Relationship_Start_DESC_TEXT,  false);
+        initConfigTypeMap( "Report_Relationship_End",       &report_relationship_end,         Report_Relationship_End_DESC_TEXT,    false);
+        initConfigTypeMap( "Report_Transmission",           &report_transmission,             Report_Transmission_DESC_TEXT,        false);
+        initConfigTypeMap( "Report_Coital_Acts",            &report_relationship_consummated, Report_Coital_Acts_DESC_TEXT,         false);
 
         bool ret = Simulation::Configure( inputJson );
-        if( ret )
-        {
-            LOG_INFO_F("Setting Base_Year to %f\n", base_year );
-            currentTime.setBaseYear( base_year );
-        }
 
         return ret;
     }
@@ -124,7 +113,7 @@ namespace Kernel
         // --- from a subclass like SimulationHIV.  SimulationHIV will only be calling
         // --- this if the simulation type is HIV_SIM
         // ---------------------------------------------------------------------------
-        if (report_relationship_start && (sim_type == SimType::STI_SIM))
+        if (report_relationship_start && (GetParams()->sim_type == SimType::STI_SIM))
         {
             LOG_INFO( "Using STI RelationshipStartReporter.\n" );
             reports.push_back(StiObjectFactory::CreateRelationshipStartReporter(this));
@@ -142,7 +131,7 @@ namespace Kernel
             reports.push_back(StiObjectFactory::CreateRelationshipConsummatedReporter(this));
         }
 
-        if (report_transmission && (sim_type == SimType::STI_SIM))
+        if (report_transmission && (GetParams()->sim_type == SimType::STI_SIM))
         {
             LOG_INFO( "Using STI TransmissionReporter.\n" );
             reports.push_back(StiObjectFactory::CreateTransmissionReporter(this));

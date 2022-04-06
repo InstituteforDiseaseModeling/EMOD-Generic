@@ -25,7 +25,7 @@ namespace Kernel
         uint32_t node_id;
         float initial_age;
         float local_birthday;
-        std::vector< std::pair<int,int> > strain_ids;
+        std::vector< std::pair<uint32_t,uint64_t> > strain_ids;
         std::vector<std::string> ip_data;
         std::vector<double> true_asexual_density;
         std::vector<double> true_gametocyte_density;

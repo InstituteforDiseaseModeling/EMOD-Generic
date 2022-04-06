@@ -70,6 +70,7 @@ namespace Kernel
         double eGauss();    // Returns a normal deviate.
 
         float eGaussNonNeg(float mu, float sig);
+        float rand_beta(float alpha, float beta);
         float rand_gamma(float k, float theta);
 
         float erfinv_idm(float x);

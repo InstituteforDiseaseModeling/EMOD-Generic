@@ -322,17 +322,3 @@ namespace Kernel {
         }
     }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive & ar, ClimateKoppen & climate, const unsigned int file_version)
-    {
-        ar & climate.koppen_type;
-        ar & climate.t_average;
-        ar & climate.t_range;
-        ar & climate.in_southern_hemisphere;
-        ar & boost::serialization::base_object<Kernel::Climate>(climate);
-    }
-}
-#endif

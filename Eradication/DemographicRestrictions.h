@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 #include <vector>
 
-#include "BoostLibWrapper.h"
 #include "Configure.h"
 #include "InterventionEnums.h"
 #include "PropertyRestrictions.h"
@@ -37,6 +36,7 @@ namespace Kernel
 
         void SetDemographicCoverage( float coverage );
         float GetDemographicCoverage() const;
+        int   GetMaxEvents() const;
         TargetDemographicType::Enum GetTargetDemographic() const;
         TargetGender::Enum GetTargetGender() const;
         float GetMinimumAge() const;
@@ -48,6 +48,7 @@ namespace Kernel
         bool allow_age_restrictions;
         bool use_demographic_coverage;
         float demographic_coverage;
+        int   max_events;
         TargetDemographicType::Enum default_target_demographic;
         TargetDemographicType::Enum target_demographic;
         float target_age_min_years;
@@ -58,5 +59,6 @@ namespace Kernel
         jsonConfigurable::tDynamicStringSet property_restrictions_set;
         PropertyRestrictions<IPKey,IPKeyValue,IPKeyValueContainer> property_restrictions;
         bool target_residents_only;
+        std::vector<int> id_list;
     };
 }

@@ -17,15 +17,15 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #define MIN_YEAR            (1900)
 #define MAX_YEAR            (2200)
 
-// Array of cumulative days for each month; assumes DAYSPERYEAR = 365
-const int cumMoDay[MONTHSPERYEAR] = { 31,  59,  90, 120, 151, 181,
-                                     212, 243, 273, 304, 334, 365};
-
 #define ARCMINUTES_PER_DEGREE   (60)
 #define KM_PER_ARCMINUTE        (1.86)
 #define EARTH_RADIUS_KM         (6371.2213)
 
 #define LOG_2                   (0.6931472f)
+
+#define SHIFT_BIT                    (24)
+#define MAX_24BIT               (1677215)
+#define SHEDDING_HASH_SIZE         (1000)
 
 #define EXPCDF(x)   (1 - exp(x))
 
@@ -147,166 +147,4 @@ struct SpatialCoverageType {
 
 #ifndef INIT_ARRAY
 #define INIT_ARRAY(_array) assert(sizeof(_array) == sizeof(init_##_array)); memcpy(_array, init_##_array, sizeof(_array))
-#endif
-
-#include "Environment.h"
-
-#ifdef VALIDATION
-#define LOG(_val)    EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % _name % (_t)(_val))
-#error boost::format is no longer supported. If you want validation, fix this #define.
-#else
-#define LOG(_val)
-#endif
-
-template<class _t>
-class Property
-{
-protected:
-    _t data;
-#ifdef VALIDATION
-    char *_name;
-    Property<_t>() {}
-    Property<_t>(_t init) : data(init) {}
-#endif
-
-public:
-    operator _t() { return data; }
-    template <class _v>
-    _t& operator =(_v value)
-    {
-        LOG(value);
-        data = value;
-        return data;
-    }
-    template <class _v>
-    _t& operator +=(_v value)
-    {
-        LOG(_t(data + value));
-        data += value;
-        return data;
-    }
-    template <class _v>
-    _t& operator -=(_v value)
-    {
-        LOG(_t(data - value));
-        data -= value;
-        return data;
-    }
-    template <class _v>
-    _t& operator *=(_v value)
-    {
-        LOG(_t(data * value));
-        data *= value;
-        return data;
-    }
-    // prefix operator
-    _t& operator ++()
-    {
-        ++data;
-        LOG(data);
-        return data;
-    }
-    // postfix operator
-    _t& operator ++(int)
-    {
-        _t temp = data++;
-        LOG(data);
-        return temp;
-    }
-    // prefix operator
-    _t& operator --()
-    {
-        --data;
-        LOG(data);
-        return data;
-    }
-    // postfix operator
-    _t& operator --(int)
-    {
-        _t temp = data--;
-        LOG(data);
-        return temp;
-    }
-};
-
-#ifdef VALIDATION
-
-#error boost::format is no longer supported. If you want validation, fix this #define.
-#define PROPERTY(_t, _v) \
-class _##_v \
-{ \
-protected: \
-    _t data; \
-    char *name; \
-    boost::format fmt; \
-public: \
-    _##_v() : fmt("%1% <= %2%") { name = #_v; } \
-    _##_v(_t init) : fmt("%1% <= %2%") \
-    { \
-        name = #_v; \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % init); \
-        data = init; \
-    } \
-public: \
-    operator _t () { return data; } \
-    template <class V> \
-    _t & operator =(const V value) \
-    { \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % (_t)(value)); \
-        data = value; \
-        return data; \
-    } \
-    template <class V> \
-    _t & operator +=(V value) \
-    { \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % (_t)(data + value)); \
-        data += value; \
-        return data; \
-    } \
-    template <class V> \
-    _t & operator -=(V value) \
-    { \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % (_t)(data - value)); \
-        data -= value; \
-        return data; \
-    } \
-    template <class V> \
-    _t & operator *=(V value) \
-    { \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % (_t)(data * value)); \
-        data *= value; \
-        return data; \
-    } \
-    _t & operator ++() \
-    { \
-        ++data; \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % data); \
-        return data; \
-    } \
-    _t operator ++(int) \
-    { \
-        _t temp = data++; \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % data); \
-        return temp; \
-    } \
-    _t & operator --() \
-    { \
-        --data; \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % data); \
-        return data; \
-    } \
-    _t operator --(int) \
-    { \
-        _t temp = data--; \
-        EnvPtr->Report.Validation->Log(boost::format("%1% <= %2%") % name % data); \
-        return temp; \
-    } \
-    template <class Archive> \
-    void serialize(Archive &ar, const unsigned int version) { ar & data; } \
-} _v
-
-#else
-
-#define PROPERTY(_t, _v) _t _v
-
 #endif

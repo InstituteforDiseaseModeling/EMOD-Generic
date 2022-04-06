@@ -1,0 +1,76 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "demographics_mr_2groups_overlay.json",
+                "../../demographics_1000_overlay.json"
+            ],
+            "Enable_Demographics_Reporting": 1,
+            "Enable_Initial_Prevalence": 1,
+            "Enable_Vital_Dynamics": 0,
+            "IMMUNITY": {
+                "Enable_Immunity": 0,
+                "Post_Infection_Acquisition_Multiplier": 1,
+                "Post_Infection_Transmission_Multiplier": 1
+            },
+            "MORTALITY": {
+                "Post_Infection_Mortality_Multiplier": 1
+            },
+            "SAMPLING": {
+                "Base_Individual_Sample_Rate": 0.1,
+                "Sample_Rate_Birth": 1
+            }
+        },
+        "DISEASE": {
+            "INCUBATION": {
+                "Incubation_Period_Constant": 0
+            },
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 2,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
+            }
+        },
+        "FUDGE_FACTORS": {
+            "x_Other_Mortality": 0
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 1
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "NoCustomReports",
+            "Enable_Event_DB": 1,
+            "Enable_Property_Output": 1,
+            "SQL_Events": [
+                "NewInfection",
+                "NewlySymptomatic",
+                "InfectionCleared"
+            ]
+        },
+        "PRIMARY": {
+            "Config_Name": "SQLiteDB_Serialization",
+            "ENUMS": {
+                "Simulation_Type": "GENERIC_SIM"
+            },
+            "Geography": "SamplesInput",
+            "Python_Script_Path": "SHARED",
+            "Run_Number": 1,
+            "Simulation_Duration": 55,
+            "Start_Time": 5
+        },
+        "SERIALIZATION": {
+            "Serialized_Population_Filenames": [
+                "state-00005.dtk"
+            ],
+            "Reference_SQL_Files": [
+                "dtk_simulation_events.db"
+            ],
+            "Serialized_Population_Path": "./",
+            "Serialized_Population_Reading_Type": "READ",
+            "Enable_Random_Generator_From_Serialized_Population": 1,
+            "Serialization_Mask_Node_Read": 0
+        }
+    },
+    "Default_Config_Path": "../../../../defaults/generic_serialization_default_config.json"
+}

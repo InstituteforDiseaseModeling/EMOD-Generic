@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "ProgVersion.h"
 #include "Configuration.h"
-#include "BoostLibWrapper.h"
 #include "IdmMpi.h"
 #include "Debug.h"
 

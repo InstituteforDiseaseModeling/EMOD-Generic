@@ -415,12 +415,16 @@ namespace Kernel
             JsonObjectDemog birth_intervention_config( JsonObjectDemog::JSON_OBJECT_OBJECT );
             birth_intervention_config.Parse( intervention_config.ToString().c_str() );
 
+            JsonObjectDemog trig_array( JsonObjectDemog::JSON_OBJECT_ARRAY );
+            trig_array.PushBack("Births");
+
             // Add BirthTriggeredIV.
             JsonObjectDemog birth_iv( JsonObjectDemog::JSON_OBJECT_OBJECT );
-            birth_iv.Add( "class",                "BirthTriggeredIV" );
+            birth_iv.Add( "class",                "NodeLevelHealthTriggeredIV" );
             birth_iv.Add( "Dont_Allow_Duplicates", 0.0 );
             birth_iv.Add( "Demographic_Coverage",  1.0 );
             birth_iv.Add( "Duration",             -1.0 );
+            birth_iv.Add( "Trigger_Condition_List", trig_array );
             birth_iv.Add( "Actual_IndividualIntervention_Config", birth_intervention_config );
 
             JsonObjectDemog campaign_event_birth( JsonObjectDemog::JSON_OBJECT_OBJECT );
@@ -683,7 +687,7 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        std::cout << "Parsing the matrix (rows & cols) itself." << std::endl;
+        LOG_DEBUG("Parsing the matrix (rows & cols) itself.\n");
         for( int i = 0 ; i < rDemog.size() ; i++ )
         {
             if( rDemog[i].size() != numValues )
@@ -717,10 +721,10 @@ namespace Kernel
     {
         if( rDemog.Contains( IP_TM_KEY ) )
         {
-            std::cout << "Found 'Transmission_Matrix' key." << std::endl;
+            LOG_DEBUG("Found 'Transmission_Matrix' key.\n");
             if( !rDemog[ IP_TM_KEY ].Contains( IP_TM_MATRIX_KEY ) )
             {
-                std::cout << "Did NOT find 'Matrix' key." << std::endl;
+                LOG_DEBUG("Did NOT find 'Matrix' key.\n");
                 // Going to assume we have "version 2" format (multiroute), which is a map of routes to Matrices. Possible values are: "contact" and "environmental".
                 std::set< std::string > routeNames { "contact", "environmental" };
 
@@ -747,7 +751,7 @@ namespace Kernel
                         // Use the user route name to index into the JSON.
                         if( rDemog[ IP_TM_KEY ][ userRouteName.c_str() ].Contains( IP_TM_MATRIX_KEY ) )
                         {
-                            std::cout << "Found 'Matrix' key under route." << std::endl;
+                            LOG_DEBUG("Found 'Matrix' key under route.\n");
                             // Use the user route name to index into the JSON.
                             ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ userRouteName.c_str() ][ IP_TM_MATRIX_KEY ], numValues );
                             // Store the result, for internal use, using the lowercase version of the route name.
@@ -761,7 +765,7 @@ namespace Kernel
             {
                 if( rDemog[ IP_TM_KEY ].Contains( IP_TM_ROUTE_KEY ) )
                 {
-                    std::cout << "Found 'Route' key." << std::endl;
+                    LOG_DEBUG("Found 'Route' key.\n");
                     m_RouteName =  rDemog[ IP_TM_KEY ][ IP_TM_ROUTE_KEY ].AsString();
                     std::transform(m_RouteName.begin(), m_RouteName.end(), m_RouteName.begin(), ::tolower);
                 }

@@ -20,75 +20,64 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IMigrate.h"
 #include "INodeContext.h"
 #include "ISimulationContext.h"
-#include "IdmDateTime.h"
+#include "ConfigParams.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportMalariaFiltered" ) // <<< Name of this file
+#define DEFAULT_NAME ("ReportMalariaFiltered.json")
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = { "MALARIA_SIM", nullptr };// <<< Types of simulation the report is to be used with
+//******************************************************************************
 
-report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportMalariaFiltered()); // <<< Report to create
-};
+SETUP_LOGGING( "ReportMalariaFiltered" )
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+static const char* _sim_types[] = { "MALARIA_SIM", nullptr };
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::ReportMalariaFiltered();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ----------------------------------------
 // --- ReportMalariaFiltered Methods
 // ----------------------------------------
 
-#define DEFAULT_NAME ("ReportMalariaFiltered.json")
-
+namespace Kernel
+{
     ReportMalariaFiltered::ReportMalariaFiltered()
         : ReportMalaria()
         , m_NodesToInclude()
@@ -130,9 +119,10 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "End_Day", m_EndDay );
         }
 
-        if (m_StartDay > parent_sim->GetSimulationTime().GetTimeEnd())
+        float sim_time_end = parent_sim->GetParams()->sim_time_start + parent_sim->GetParams()->sim_time_total;
+        if (m_StartDay > sim_time_end)
         {
-            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "Start_Time + Simulation_Duration", parent_sim->GetSimulationTime().GetTimeEnd());
+            throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Start_Day", m_StartDay, "Start_Time + Simulation_Duration", sim_time_end);
         }
 
         return true;

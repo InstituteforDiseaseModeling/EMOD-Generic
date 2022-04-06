@@ -1,22 +1,22 @@
 #define HIV_Random_Choices_DESC_TEXT "TBD"
 
-#define Distribution_Gamma_Shape_DESC_TEXT "The shape parameter for the gamma distribution."
-#define Distribution_Gamma_Scale_DESC_TEXT "The scale parameter for the gamma distribution."
-
-#define CIPM_Property_Name_DESC_TEXT   "Individual property to target for matrix replacement."
-#define CIPM_New_Matrix_DESC_TEXT      "New transmission matrix for specified individual property."
-
-#define Import_Female_Prob_DESC_TEXT       "The probability each imported case will be female."
-#define Import_Agent_MC_Weight_DESC_TEXT   "The sampling weight of imported cases."
-
 #define CBNEC_NodeId_DESC_TEXT "TBD"
 #define CBNEC_Coverage_DESC_TEXT "TBD"
 // Coverage_By_Node_DESC_TEXT needs updating
 
-#define Event_Trigger_Distributed_DESC_TEXT   "Event to be broadcast when intervention is distributed. See list of available events for possible values."
-#define Event_Trigger_Expired_DESC_TEXT       "Event to be broadcast when intervention expires. See list of available events for possible values."
+#define Distribution_Gamma_Shape_DESC_TEXT                            "The shape parameter for the gamma distribution."
+#define Distribution_Gamma_Scale_DESC_TEXT                            "The scale parameter for the gamma distribution."
 
-#define Enable_Intervention_Replacement_DESC_TEXT      "When enabled, distributing intervention will remove all other interventions of the same name on targeted individual."
+#define CIPM_Property_Name_DESC_TEXT                                  "Individual property to target for matrix replacement."
+#define CIPM_New_Matrix_DESC_TEXT                                     "New transmission matrix for specified individual property."
+
+#define Import_Female_Prob_DESC_TEXT                                  "The probability each imported case will be female."
+#define Import_Agent_MC_Weight_DESC_TEXT                              "The sampling weight of imported cases."
+
+#define Event_Trigger_Distributed_DESC_TEXT                           "Event to be broadcast when intervention is distributed. See list of available events for possible values."
+#define Event_Trigger_Expired_DESC_TEXT                               "Event to be broadcast when intervention expires. See list of available events for possible values."
+
+#define Enable_Intervention_Replacement_DESC_TEXT                     "When enabled, distributing intervention will remove all other interventions of the same name on targeted individual."
 
 #define VAC_Cost_To_Consumer_DESC_TEXT                                "Unit cost per vaccine (unamortized)."
 #define VAC_Efficacy_Is_Multiplicative_DESC_TEXT                      "Net vaccine effect when individuals receive multiple interventions. If true, effects are multiplied; otherwise, effects are additive."
@@ -25,7 +25,21 @@
 #define VAC_Mortality_Config_DESC_TEXT                                "Waning effect configuration for vaccine mortality."
 #define VAC_Transmit_Config_DESC_TEXT                                 "Waning effect configuration for vaccine transmission."
 #define VAC_Take_Reduced_By_Acquire_Immunity_DESC_TEXT                "Fraction of current acquision immunity applied to vaccine take reduction."
-#define VAC_Take_By_Age_Multiplier_DESC_TEXT                          "Multiplier for take probability based on indvidual age in days; use interpolated value map"
-#define VAC_Initial_Acquire_By_Current_Effect_Multiplier_DESC_TEXT    "Multiplier for initial acquire effect based on current total acquire effect; use interpolated value map"
-#define VAC_Initial_Transmit_By_Current_Effect_Multiplier_DESC_TEXT   "Multiplier for initial transmit effect based on current total transmit effect; use interpolated value map"
-#define VAC_Initial_Mortality_By_Current_Effect_Multiplier_DESC_TEXT  "Multiplier for initial mortality effect based on current total mortality effect; use interpolated value map"
+#define VAC_Take_By_Age_Multiplier_DESC_TEXT                          "Multiplier for take probability based on indvidual age in days; use interpolated value map."
+#define VAC_Initial_Acquire_By_Current_Effect_Multiplier_DESC_TEXT    "Multiplier for initial acquire effect based on current total acquire effect; use interpolated value map."
+#define VAC_Initial_Transmit_By_Current_Effect_Multiplier_DESC_TEXT   "Multiplier for initial transmit effect based on current total transmit effect; use interpolated value map."
+#define VAC_Initial_Mortality_By_Current_Effect_Multiplier_DESC_TEXT  "Multiplier for initial mortality effect based on current total mortality effect; use interpolated value map."
+
+#define DR_ID_List_DESC_TEXT                                          "List of individual IDs for intervention. Usually used in conjunction with event DB and embedded Python in-processing."
+
+#define TRIV_Multiplier_Inbound_DESC_TEXT                             "Multiplier on rate of all connections inbound to targeted node."
+#define TRIV_Multiplier_Outbound_DESC_TEXT                            "Multiplier on rate of all connections outbound from targeted node."
+#define TRIV_Duration_DESC_TEXT                                       "Time until the travel restrictions intervention expires." 
+
+#define Max_Distributions_Per_Node_DESC_TEXT                          "Maximum number of individuals in the target demographic that will receive this intervention."
+
+#define NIMIV_Multiplier_By_Duration_DESC_TEXT                        "Value of infectivity multiplier based on the duration of the intervention; uses interpolated value map."
+
+#define NBRMIV_Multiplier_By_Duration_DESC_TEXT                       "Value of birth rate multiplier based on the duration of the intervention; uses interpolated value map."
+
+#define IV_Cost_To_Consumer_DESC_TEXT                                 "Cost per individual receiving the intervention."

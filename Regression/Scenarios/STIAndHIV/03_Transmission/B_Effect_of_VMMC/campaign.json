@@ -18,8 +18,7 @@
                     "Outbreak_Source": "PrevalenceIncrease"
                 }
             }
-        }
-,
+        },
 
         {
             "class": "CampaignEventByYear",
@@ -56,7 +55,10 @@
 
                 "Intervention_Config":
                 {
-                    "class": "BirthTriggeredIV",
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV",
                     "Demographic_Coverage": 1,
                     "Target_Demographic": "ExplicitGender",
                     "Target_Gender": "Male",

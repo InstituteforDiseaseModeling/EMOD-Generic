@@ -236,13 +236,13 @@
     <ClInclude Include="..\interventions\ARTBasic.h" />
     <ClInclude Include="..\interventions\ARTDropout.h" />
     <ClInclude Include="..\interventions\Bednet.h" />
-    <ClInclude Include="..\interventions\BirthTriggeredIV.h" />
     <ClInclude Include="..\interventions\BitingRisk.h" />
     <ClInclude Include="..\interventions\BroadcastEvent.h" />
     <ClInclude Include="..\interventions\BroadcastNodeEvent.h" />
     <ClInclude Include="..\interventions\BroadcastEventToOtherNodes.h" />
     <ClInclude Include="..\interventions\CalendarIV.h" />
     <ClInclude Include="..\interventions\CD4Diagnostic.h" />
+    <ClInclude Include="..\interventions\ChangeIPMatrix.h" />
     <ClInclude Include="..\interventions\DelayedIntervention.h" />
     <ClInclude Include="..\interventions\Diagnostics.h" />
     <ClInclude Include="..\interventions\DiagnosticsTreatNeg.h" />
@@ -283,6 +283,8 @@
     <ClInclude Include="..\interventions\MosquitoRelease.h" />
     <ClInclude Include="..\interventions\MultiInterventionDistributor.h" />
     <ClInclude Include="..\interventions\MultiNodeInterventionDistributor.h" />
+    <ClInclude Include="..\interventions\NodeBirthRateMult.h" />
+    <ClInclude Include="..\interventions\NodeInfectivityMult.h" />
     <ClInclude Include="..\interventions\NodeLevelHealthTriggeredIV.h" />
     <ClInclude Include="..\interventions\NodeLevelHealthTriggeredIVScaleUpSwitch.h" />
     <ClInclude Include="..\interventions\NodePropertyValueChanger.h" />
@@ -300,6 +302,7 @@
     <ClInclude Include="..\interventions\StiCoInfectionDiagnostic.h" />
     <ClInclude Include="..\interventions\STIIsPostDebut.h" />
     <ClInclude Include="..\interventions\TBHIVConfigurableTBdrug.h" />
+    <ClInclude Include="..\interventions\TravelRestriction.h" />
     <ClInclude Include="..\interventions\TyphoidWASH.h" />
     <ClInclude Include="..\interventions\UsageDependentBednet.h" />
     <ClInclude Include="..\interventions\Vaccine.h" />
@@ -556,9 +559,7 @@
     <ClInclude Include="TBContexts.h" />
     <ClInclude Include="TBDrugTypeParameters.h" />
     <ClInclude Include="TBHIVDrugTypeParameters.h" />
-    <ClInclude Include="TBHIVParameters.h" />
     <ClInclude Include="TBInterventionsContainer.h" />
-    <ClInclude Include="TBParameters.h" />
     <ClInclude Include="TransmissionGroupMembership.h" />
     <ClInclude Include="TransmissionGroupsBase.h" />
     <ClInclude Include="TransmissionGroupsFactory.h" />
@@ -591,13 +592,13 @@
     <ClCompile Include="..\interventions\ARTBasic.cpp" />
     <ClCompile Include="..\interventions\ARTDropout.cpp" />
     <ClCompile Include="..\interventions\Bednet.cpp" />
-    <ClCompile Include="..\interventions\BirthTriggeredIV.cpp" />
     <ClCompile Include="..\interventions\BitingRisk.cpp" />
     <ClCompile Include="..\interventions\BroadcastEvent.cpp" />
     <ClCompile Include="..\interventions\BroadcastNodeEvent.cpp" />
     <ClCompile Include="..\interventions\BroadcastEventToOtherNodes.cpp" />
     <ClCompile Include="..\interventions\CalendarIV.cpp" />
     <ClCompile Include="..\interventions\CD4Diagnostic.cpp" />
+    <ClCompile Include="..\interventions\ChangeIPMatrix.cpp" />
     <ClCompile Include="..\interventions\DelayedIntervention.cpp" />
     <ClCompile Include="..\interventions\Diagnostics.cpp" />
     <ClCompile Include="..\interventions\DiagnosticsTreatNeg.cpp" />
@@ -635,6 +636,8 @@
     <ClCompile Include="..\interventions\MosquitoRelease.cpp" />
     <ClCompile Include="..\interventions\MultiInterventionDistributor.cpp" />
     <ClCompile Include="..\interventions\MultiNodeInterventionDistributor.cpp" />
+    <ClCompile Include="..\interventions\NodeBirthRateMult.cpp" />
+    <ClCompile Include="..\interventions\NodeInfectivityMult.cpp" />
     <ClCompile Include="..\interventions\NodeLevelHealthTriggeredIV.cpp" />
     <ClCompile Include="..\interventions\NodeLevelHealthTriggeredIVScaleUpSwitch.cpp" />
     <ClCompile Include="..\interventions\NodePropertyValueChanger.cpp" />
@@ -652,6 +655,7 @@
     <ClCompile Include="..\interventions\StiCoInfectionDiagnostic.cpp" />
     <ClCompile Include="..\interventions\STIIsPostDebut.cpp" />
     <ClCompile Include="..\interventions\TBHIVConfigurableTBdrug.cpp" />
+    <ClCompile Include="..\interventions\TravelRestriction.cpp" />
     <ClCompile Include="..\interventions\TyphoidVaccine.cpp" />
     <ClCompile Include="..\interventions\TyphoidWASH.cpp" />
     <ClCompile Include="..\interventions\TyphoidCarrierDiagnostic.cpp" />

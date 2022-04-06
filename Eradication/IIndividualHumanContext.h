@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class RANDOMBASE;
+    struct AgentParams;
     struct IIndividualHumanInterventionsContext;
     struct IIndividualHumanEventContext;
     struct ISusceptibilityContext;
@@ -28,6 +29,8 @@ namespace Kernel
 
     struct IIndividualHumanContext : ISupports
     {
+        virtual const AgentParams* GetParams() const = 0;
+
         virtual suids::suid GetSuid() const = 0;
         virtual float GetAge() const = 0;
 
@@ -43,8 +46,6 @@ namespace Kernel
 
         virtual INodeContext* GetParent() const = 0;
         virtual IVaccineConsumer* GetVaccineContext() const = 0;
-
-        virtual const NodeDemographics* GetDemographics() const = 0;
 
         virtual void UpdateGroupMembership() = 0;
         virtual void UpdateGroupPopulation( float size_changes ) = 0;

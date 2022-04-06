@@ -10,7 +10,6 @@
             "../../../demographics/HIVMaleOverlay.json"
         ],
         "Enable_Coinfection_Mortality": 0,
-        "Enable_Initial_Susceptibility_Distribution": 1,
         "Enable_Natural_Mortality": 0,
         "Enable_Regional_Migration": 1,
         "Simulation_Duration": 730,

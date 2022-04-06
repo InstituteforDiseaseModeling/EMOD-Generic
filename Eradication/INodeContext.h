@@ -19,6 +19,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #define INDEX_RST_TOT_INF         (0)
 #define INDEX_RST_CON_INF         (1)
 #define INDEX_RST_CONTAGION       (2)
+#define INDEX_RST_NEW_INF         (3)
 
 namespace Kernel
 {
@@ -61,8 +62,7 @@ namespace Kernel
         //individual can get an id of their parent to compare against, for instance, their home node id
         virtual suids::suid GetSuid() const = 0;
 
-        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
+        virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) = 0;
 
         virtual void SetContextTo( ISimulationContext* ) = 0;
         virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory, bool white_list_enabled ) = 0;
@@ -91,37 +91,38 @@ namespace Kernel
 
         virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) = 0;
 
-        virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase) const = 0;
-        virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time) const = 0;
-
         // Discrete HINT contagion
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) = 0;
 
         virtual IMigrationInfo* GetMigrationInfo() = 0;
-        virtual const NodeDemographics* GetDemographics() const = 0;
-        virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const = 0 ;
         virtual NPKeyValueContainer& GetNodeProperties() = 0;
 
         // reporting interfaces
-        virtual const IdmDateTime& GetTime()   const = 0;
-        virtual float       GetInfected()      const = 0;
-        virtual float       GetSymptomatic()   const = 0;
-        virtual float       GetNewlySymptomatic()     const = 0;
-        virtual float       GetStatPop()       const = 0;
-        virtual float       GetBirths()        const = 0;
-        virtual float       GetCampaignCost()  const = 0;
-        virtual float       GetInfectivity()   const = 0;
-        virtual float       GetInfectionRate() const = 0;
-        virtual float       GetSusceptDynamicScaling() const = 0;
-        virtual const Climate* GetLocalWeather() const = 0;
-        virtual long int GetPossibleMothers()  const = 0;
-        virtual float GetMeanAgeInfection()    const = 0;
+        virtual const IdmDateTime&  GetTime()                   const = 0;
+        virtual const Climate*      GetLocalWeather()           const = 0;
+        virtual float               GetInfected()               const = 0;
+        virtual float               GetSymptomatic()            const = 0;
+        virtual float               GetNewlySymptomatic()       const = 0;
+        virtual float               GetStatPop()                const = 0;
+        virtual float               GetBirths()                 const = 0;
+        virtual float               GetCampaignCost()           const = 0;
+        virtual float               GetInfectivity()            const = 0;
+        virtual float               GetInfectionRate()          const = 0;
+        virtual float               GetSusceptDynamicScaling()  const = 0;
+        virtual long int            GetPossibleMothers()        const = 0;
+        virtual float               GetMeanAgeInfection()       const = 0;
+        virtual uint64_t            GetTotalGenomes()           const = 0;
+
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const = 0;
 
-        // Reporting interfaces for strain tracking
-        virtual const std::map<std::string, int>&                 GetStrainClades()   const = 0;
-        virtual const std::map<std::string, int>&                 GetStrainGenomes()  const = 0;
-        virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const = 0;
+        // Interface for strain tracking reporter data
+        virtual std::map<std::pair<uint32_t,uint64_t>, std::vector<float>>& GetStrainData()   = 0;
+
+        // Interfaces for network infectivity
+        virtual const float                   GetNetInfectFrac()                        const = 0;
+        virtual       void                    SetNetInfectFrac(float)                         = 0;
+        virtual const sparse_contagion_repr&  GetNetInfRep()                            const = 0;
+        virtual       void                    DepositNetInf(sparse_contagion_id,float)        = 0;
 
         // These methods are not const because they will extract the value from the demographics
         // if it has not been done yet.

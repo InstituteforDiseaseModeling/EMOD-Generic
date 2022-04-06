@@ -11,8 +11,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeInfo.h"
 #include "JsonObject.h"
 #include "Serializer.h"
-#include "Profile.h"
 #include "INodeContext.h"
+#include "NodeEventContext.h"
 
 namespace Kernel
 {
@@ -20,11 +20,13 @@ namespace Kernel
         : m_Suid( suids::nil_suid() )
         , m_ExternalId(0)
         , m_Rank(0)
-        , m_Population( 0 )
-        , m_LongitudeDegrees( 0.0 )
-        , m_LatitudeDegrees( 0.0 )
-    {
-    }
+        , m_Population(0.0f)
+        , m_LongitudeDegrees(0.0f)
+        , m_LatitudeDegrees(0.0f)
+        , m_net_mult_in(0.0f)
+        , m_net_inf_frac(0.0f)
+        , m_net_inf_rep()
+    { }
 
     NodeInfo::NodeInfo( int rank, INodeContext* pNC )
         : m_Suid( pNC->GetSuid() )
@@ -33,16 +35,19 @@ namespace Kernel
         , m_Population( pNC->GetStatPop() )
         , m_LongitudeDegrees( pNC->GetLongitudeDegrees() )
         , m_LatitudeDegrees( pNC->GetLatitudeDegrees() )
-    {
-    }
+        , m_net_mult_in( pNC->GetEventContext()->GetInboundConnectionModifier() )
+        , m_net_inf_frac( pNC->GetNetInfectFrac() )
+        , m_net_inf_rep( pNC->GetNetInfRep() )
+    { }
 
     NodeInfo::~NodeInfo()
-    {
-    }
+    { }
 
     void NodeInfo::Update( INodeContext* pNC )
     {
-        m_Population = pNC->GetStatPop() ;
+        m_Population    = pNC->GetStatPop();
+        m_net_mult_in   = pNC->GetEventContext()->GetInboundConnectionModifier();
+        m_net_inf_rep   = pNC->GetNetInfRep();
     }
 
     // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,6 +64,14 @@ namespace Kernel
             ar.labelElement("m_LongitudeDegrees" ) & m_LongitudeDegrees;
             ar.labelElement("m_LatitudeDegrees"  ) & m_LatitudeDegrees;
         }
-        ar.labelElement("m_Population" ) & m_Population;
+
+        ar.labelElement("m_Population")    & m_Population;
+        ar.labelElement("m_net_mult_in")   & m_net_mult_in;
+        ar.labelElement("m_net_inf_frac" ) & m_net_inf_frac;
+
+        ar.labelElement("inf_clade" )        & m_net_inf_rep.inf_clade;
+        ar.labelElement("inf_genome" )       & m_net_inf_rep.inf_genome;
+        ar.labelElement("inf_group" )        & m_net_inf_rep.inf_group;
+        ar.labelElement("inf_vals" )         & m_net_inf_rep.inf_vals;
     }
 }

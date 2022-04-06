@@ -116,14 +116,3 @@ namespace Kernel
         expired = true;
     }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, MultiInterventionDistributor& obj, const unsigned int v)
-    {
-        ar & obj.intervention_list;
-        ar & boost::serialization::base_object<Kernel::BaseIntervention>(obj);
-    }
-}
-#endif

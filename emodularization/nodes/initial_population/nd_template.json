@@ -1,11 +1,4 @@
 {
-    ".Sample_Rate_0_18mo": 1,
-    ".Sample_Rate_10_14": 1,
-    ".Sample_Rate_15_19": 1,
-    ".Sample_Rate_18mo_4yr": 1,
-    ".Sample_Rate_20_Plus": 1,
-    ".Sample_Rate_5_9": 1,
-    ".Sample_Rate_Birth": 1,
     "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
     "Base_Individual_Sample_Rate": 1.0,
     "Base_Mortality": 0,
@@ -18,9 +11,9 @@
     "Demographics_Filenames": [
         "demographics.json"
     ],
+    "Enable_Acquisition_Heterogeneity": 0,
     "Enable_Aging": 1,
     "Enable_Birth": 1,
-    "Enable_Demographics_Birth": 0,
     "Enable_Demographics_Builtin": 0,
     "Enable_Disease_Mortality": 0,
     "Enable_Infection_Rate_Overdispersion": 0,
@@ -31,13 +24,12 @@
     "Individual_Sampling_Type": "FIXED_SAMPLING",
     "Listed_Events": [],
     "Max_Node_Population_Samples": 100,
+    "Min_Node_Population_Samples": 0,
     "Minimum_Adult_Age_Years": 15,
     "Mortality_Blocking_Immunity_Decay_Rate": 0.001,
     "Mortality_Blocking_Immunity_Duration_Before_Decay": 60,
     "Mortality_Time_Course": "DAILY_MORTALITY",
     "Population_Scale_Type": "FIXED_SCALING",
-    "__FERTILITY_STUFF__": 0,
-    "__MORTALITY_STUFF__": 0,
     "x_Birth": 1,
     "x_Other_Mortality": 1
 }

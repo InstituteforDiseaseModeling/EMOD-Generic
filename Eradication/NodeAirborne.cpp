@@ -45,28 +45,6 @@ namespace Kernel
         return IndividualHumanAirborne::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    float NodeAirborne::getClimateCorrection() const
-    {
-        // Airborne infectivity depends on relative humidity.
-        // TODO: make more configurable to accommodate different modalities:
-        //       - primarily indoor transmission with controlled temperatures
-        //       - relative importance of settling, ventilation, inactivation
-        //       - temperature/humidity effects on contagion viability
-
-        if ( localWeather == nullptr )
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "localWeather", "Climate");
-        }
-
-        float humidity = localWeather->humidity();
-
-        // The following is a sigmoidal form that drops from 1 to 0.5 mostly in the range from 30% to 70% relative humidity
-        float correction = 0.75 - 0.2 * atan( 6 * humidity - 3 ); // linux build breaker?
-        LOG_DEBUG_F( "Infectivity scale factor = %f at relative humidity = %f.\n", correction, humidity );
-
-        return correction;
-    }
-
     REGISTER_SERIALIZABLE(NodeAirborne);
 
     void NodeAirborne::serialize(IArchive& ar, NodeAirborne* obj)

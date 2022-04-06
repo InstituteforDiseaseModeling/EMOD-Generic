@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "WaningEffect.h"
 #include "CajunIncludes.h"
-#include "ConfigurationImpl.h"
 #include "IArchive.h"
 #include "IIndividualHumanContext.h"
 #include "RANDOM.h"

@@ -138,12 +138,16 @@ public:
         }
     }
 
+    virtual const AgentParams* GetParams() const override
+    {
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
+    }
+
     virtual suids::suid   GetNextInfectionSuid()                    override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void          UpdateGroupMembership()                   override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void          UpdateGroupPopulation(float size_changes) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual ISusceptibilityContext* GetSusceptibilityContext() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual const NodeDemographics* GetDemographics()          const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual IVaccineConsumer* GetVaccineContext()              const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection)       override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
@@ -169,15 +173,10 @@ public:
         return m_pNodeContext ;
     }
 
-    virtual bool IsAdult() const
-    {
-        return m_Age/DAYSPERYEAR > 15.0 ;
-    }
-
     virtual void setupMaternalAntibodies(Kernel::IIndividualHumanContext *,Kernel::INodeContext *) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void AcquireNewInfection(const Kernel::IStrainIdentity *, float incubation_period_override) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual void SetParameters(Kernel::INodeContext *,float,float,float)                           override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void SetParameters(Kernel::INodeContext*,float,float)                                  override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void InitializeHuman(void)                                                             override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void UpdateInfectiousness(float)                                                       override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual float GetImmuneFailAgeAcquire(void) const                                              override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
@@ -428,7 +427,7 @@ public:
     virtual void  AddClinicalSymptom( ClinicalSymptomsEnum::Enum symptom )       { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." ); }
     virtual bool  HasClinicalSymptom( ClinicalSymptomsEnum::Enum symptom ) const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." ); }
     virtual IMalariaSusceptibility* GetMalariaSusceptibilityContext()      const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." ); }
-    virtual std::vector< std::pair<int, int> > GetInfectingStrainIds()     const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." ); }
+    virtual std::vector<std::pair<uint32_t,uint64_t>> GetInfectingStrainIds()     const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." ); }
 
 
 

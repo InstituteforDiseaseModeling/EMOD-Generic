@@ -30,7 +30,10 @@
                     },
                     "Demographic_Coverage": 1,
                     "Target_Demographic": "Everyone",
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },

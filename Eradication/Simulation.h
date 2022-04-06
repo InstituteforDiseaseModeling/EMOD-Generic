@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <unordered_map>
 #include "suids.hpp"
 
-#include "BoostLibWrapper.h"
 #include "Climate.h"
 #include "IdmDateTime.h"
 #include "IIndividualHuman.h"
@@ -40,7 +39,6 @@ namespace Kernel
     class  CampaignEvent;
     struct INodeContext;
     struct IEventCoordinator;
-    class  SimulationConfig;
     struct SimulationEventContext;
     class  SimulationEventContextHost;
     struct IMigrationInfoFactory;
@@ -61,8 +59,6 @@ namespace Kernel
         static Simulation *CreateSimulation();  // for serialization
         static Simulation *CreateSimulation(const ::Configuration *config);
         virtual ~Simulation();
-
-        static float base_year;
 
         virtual bool Configure( const ::Configuration *json ) override;
         virtual bool TimeToStop() override;
@@ -95,6 +91,7 @@ namespace Kernel
         virtual suids::suid GetNextInfectionSuid() override;
         virtual suids::suid GetNodeSuid( ExternalNodeId_t external_node_id ) override;
         virtual ExternalNodeId_t GetNodeExternalID( const suids::suid& rNodeSuid ) override;
+        virtual float GetNodeInboundMultiplier( const suids::suid& rNodeSuid ) override;
         virtual uint32_t    GetNodeRank( const suids::suid& rNodeSuid ) override;
 
         virtual RANDOMBASE* GetRng() override; //should only be accessed by Node
@@ -126,11 +123,10 @@ namespace Kernel
         virtual void setupMigrationQueues();
         void setupRng();
         void setParams( const ::Configuration *config );
-        void initSimulationState();
 
         // Node initialization
-        virtual void LoadInterventions(const char * campaignfilename, const std::vector<ExternalNodeId_t>& demographic_node_ids);
-        virtual int  populateFromDemographics(const char* campaign_filename, const char* loadbalance_filename); // creates nodes from demographics input file data
+        virtual void LoadInterventions(const std::vector<ExternalNodeId_t>& demographic_node_ids);
+        virtual int  populateFromDemographics(); // creates nodes from demographics input file data
         virtual void addNewNodeFromDemographics( ExternalNodeId_t externalNodeId,
                                                  suids::suid node_suid,
                                                  NodeDemographicsFactory *nodedemographics_factory, 
@@ -171,26 +167,16 @@ namespace Kernel
 
         std::vector<INodeEventContext*> node_event_context_list ;
 
-        typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-        typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-        nodeid_suid_map_t nodeid_suid_map;
-
         // Migration
         std::vector<std::vector<IIndividualHuman*>> migratingIndividualQueues;
 
         // Master copies of contained-class flags are maintained here so that they only get serialized once
-        // TODO: deprecate and use SimulationConfig everywhere
-        const SimulationConfig*     m_simConfigObj;
         const IInterventionFactory* m_interventionFactoryObj;
         const DemographicsContext *demographicsContext;
 
         // Simulation-unique ID generators for each type of child object that might exist in our system
         suids::distributed_generator infectionSuidGenerator;
         suids::distributed_generator nodeSuidGenerator;
-
-        // Input files
-        std::string campaignFilename;
-        std::string loadBalanceFilename;
 
         // RNG services
         RANDOMBASE* rng;
@@ -221,34 +207,21 @@ namespace Kernel
 
         // Counters
         IdmDateTime currentTime;
-        // JsonConfigurable variables
-        SimType::Enum sim_type;
 
-        bool demographic_tracking;
-        bool enable_spatial_output;
-        bool enable_property_output;
-        bool enable_default_report;
-        bool enable_event_report;
-        bool enable_node_event_report;
-        bool enable_coordinator_event_report;
-        bool enable_surveillance_event_report;
-        bool enable_event_db;
-        bool enable_termination_on_zero_total_infectivity;
-        std::string campaign_filename;
         std::string custom_reports_filename;
-        std::string loadbalance_filename;
-        bool can_support_family_trips;
 
         bool m_IPWhiteListEnabled;
         NodeDemographicsFactory* demographics_factory;
         RandomNumberGeneratorFactory* m_pRngFactory;
 
-        float min_sim_endtime; 
+        std::vector<INodeContext*>          node_ctxt_ptr_vec;
+        std::vector<INodeInfo*>             node_info_ptr_vec;
+        std::vector<int>                    node_ctxt_info_dex;
+        std::vector<float>                  node_pop_vec;
+        std::vector<std::vector<float>>     node_dist_mat;
 
 #pragma warning( pop )
     protected:
-
-        void MergeNodeIdSuidBimaps( nodeid_suid_map_t&, nodeid_suid_map_t& );
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details

@@ -31,9 +31,6 @@ namespace Kernel
 {
     struct VectorParameters;
     struct MalariaParameters;
-    struct TBParameters;
-    struct PolioParameters;
-    struct TBHIVParameters;
 
     class SimulationConfig;
 
@@ -88,14 +85,8 @@ namespace Kernel
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
 
-        // Enum type name                                    Enum variable name                                name in config.json
-        SimType::Enum                                        sim_type;                                         // Sim_Type
-
         VectorParameters*  vector_params;
         MalariaParameters* malaria_params;
-        TBParameters*      tb_params;
-        PolioParameters*   polio_params;
-        TBHIVParameters*   tbhiv_params;
 
         ///////////////////////////////////////////
         SimulationConfig();
@@ -105,10 +96,7 @@ namespace Kernel
 
         const Configuration* GetJsonConfigObj() const { return m_jsonConfig; }
 
-    protected:
-
     private: // for serialization to work
-
         const Configuration* m_jsonConfig;
 
         void VectorInitConfig( const Configuration* inputJson );
@@ -118,19 +106,6 @@ namespace Kernel
         void MalariaInitConfig( const Configuration* inputJson );
         void MalariaCheckConfig( const Configuration* inputJson );
         void MalariaAddSchema( json::QuickBuilder& retJson );
-
-        jsonConfigurable::tDynamicStringSet tb_drug_names_for_this_sim;
-
-        void PolioInitConfig( const Configuration* inputJson );
-        void PolioCheckConfig( const Configuration* inputJson );
-        void PolioAddSchema( json::QuickBuilder& retJson );
-        std::string tmpGenomeInfectivityString[3];
-        std::string tmpSiteRatesStrings[3];
-
-        void TBHIVInitConfig( const Configuration* inputJson );
-        void TBHIVCheckConfig( const Configuration* inputJson );
-        void TBHIVAddSchema( json::QuickBuilder& retJson );
-
     };
 #pragma warning( pop )
 }

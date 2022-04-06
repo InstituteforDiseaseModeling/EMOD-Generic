@@ -25,9 +25,6 @@ using namespace Kernel;
 
 SUITE(PropertiesTest)
 {
-    typedef boost::bimap<uint32_t, suids::suid> nodeid_suid_map_t;
-    typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-
     struct PropertiesTestFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
@@ -77,15 +74,7 @@ SUITE(PropertiesTest)
             // --------------------
             NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet( rDemogFilename ) ) ;
 
-            nodeid_suid_map_t node_id_suid_map;
-            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-            vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-            for (uint32_t node_id : nodeIDs)
-            {
-                suids::suid node_suid = GetNextNodeSuid();
-                node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-            }
+            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
             INodeContext* nodeContext_1 = new INodeContextFake( 1 );
             unique_ptr<NodeDemographics> demographics_1( factory->CreateNodeDemographics( nodeContext_1 ) );
@@ -121,15 +110,7 @@ SUITE(PropertiesTest)
         // --------------------
         // --- Initialize test
         // --------------------
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         try
         {
@@ -199,15 +180,7 @@ SUITE(PropertiesTest)
         // --------------------
         NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet("demographics_age_bins.json") ) ;
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         try
         {
@@ -313,19 +286,11 @@ SUITE(PropertiesTest)
         // --------------------
         NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet("demographics_transitions.json") ) ;
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         try
         {
-            INodeContext* nodeContext = new INodeContextFake();
+            INodeContext* nodeContext = new INodeContextFake(340461476);
             unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics(nodeContext) );
 
             IPFactory::GetInstance()->Initialize( 1, demographics->GetJsonObject(), true );
@@ -389,19 +354,11 @@ SUITE(PropertiesTest)
         // --------------------
         NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet("demographics_transitions_school.json") ) ;
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         try
         {
-            INodeContext* nodeContext = new INodeContextFake();
+            INodeContext* nodeContext = new INodeContextFake(340461476);
             unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics(nodeContext) );
 
             IPFactory::GetInstance()->Initialize( 1, demographics->GetJsonObject(), true );
@@ -467,15 +424,7 @@ SUITE(PropertiesTest)
         // --------------------
         NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet( "testdata/PropertiesTest/demographics_TestTwoNodes.json" ) ) ;
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory( &node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for( uint32_t node_id : nodeIDs )
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert( nodeid_suid_pair( node_id, node_suid ) );
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         INodeContext* nodeContext_1 = new INodeContextFake( 1 );
         unique_ptr<NodeDemographics> demographics_1( factory->CreateNodeDemographics( nodeContext_1 ) );
@@ -616,17 +565,9 @@ SUITE(PropertiesTest)
         unique_ptr<Configuration> p_config( Environment::LoadConfigurationFile( "testdata/PropertiesTest/transitions_config.json" ) );
         unique_ptr<Configuration> p_parameters( Environment::CopyFromElement( (*p_config)[ "parameters" ] ) );
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, p_parameters.get() ) );
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(p_parameters.get()) );
 
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
-
-        INodeContext* nodeContext = new INodeContextFake();
+        INodeContext* nodeContext = new INodeContextFake(340461476);
         unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics(nodeContext) );
 
         IPFactory::GetInstance()->Initialize( 1, demographics->GetJsonObject(), true );
@@ -681,17 +622,9 @@ SUITE(PropertiesTest)
         unique_ptr<Configuration> p_config( Environment::LoadConfigurationFile( "testdata/PropertiesTest/transitions_config.json" ) );
         unique_ptr<Configuration> p_parameters( Environment::CopyFromElement( (*p_config)[ "parameters" ] ) );
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, p_parameters.get() ) );
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(p_parameters.get()) );
 
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
-
-        INodeContext* nodeContext = new INodeContextFake();
+        INodeContext* nodeContext = new INodeContextFake(340461476);
         unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics(nodeContext) );
 
         IPFactory::GetInstance()->Initialize( 1, demographics->GetJsonObject(), true );
@@ -949,15 +882,7 @@ SUITE(PropertiesTest)
         // --------------------
         NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet( "testdata/PropertiesTest/demog_TestTooManyProperties.json" ) ) ;
 
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         INodeContext* nodeContext = new INodeContextFake();
         unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics(nodeContext) );

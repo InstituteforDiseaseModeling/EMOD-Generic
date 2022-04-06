@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
 #include "Susceptibility.h"
 #include "Interventions.h"
 #include "Configuration.h"

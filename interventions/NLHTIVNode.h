@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
@@ -48,6 +46,7 @@ namespace Kernel
 
     protected:
         std::vector<EventTrigger::Enum>   m_trigger_conditions;
+        int   num_distributed;
         float max_duration;
         float duration;
         PropertyRestrictions<NPKey, NPKeyValue, NPKeyValueContainer> node_property_restrictions;
@@ -65,9 +64,6 @@ namespace Kernel
         INodeDistributableIntervention *_ndi;
         bool using_individual_config;
 
-        //virtual bool qualifiesToGetIntervention( const IIndividualHumanEventContext * pIndividual );
-        //virtual float getDemographicCoverage() const;
-        //virtual void onDisqualifiedByCoverage( IIndividualHumanEventContext *pIndiv );
         std::string GetInterventionClassName() const;
         void Unregister();
     };

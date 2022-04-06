@@ -247,7 +247,7 @@ else:
                           "#/libgeneric_static",
                           "/usr/include/python3.6m",
                           "/usr/include/python3.7m",
-                          "/opt/python/python3.6.3/include/python3.6m",
+                          "/opt/python/python3.6.3/include/python3.6m",  # Bamboo requirement
                           "#/cajun/include",
                           "#/rapidjson/include",
                           "#/rapidjson/modp",
@@ -305,8 +305,15 @@ if os.sys.platform.startswith("linux"):
         nixLibPrefix = "lib64"
         env.Append( EXTRALIBPATH=["/usr/lib64" , "/lib64" ] )
 
-    env.Append( LIBS=["pthread", "python3.6m", "dl" ] ) 
-    #env.Append( LIBS=["pthread", "python3.7m", "dl" ] ) 
+    if(sys.version_info.major == 2):  # Bamboo linux build still uses python 2
+        env.Append( LIBS=["pthread", "python3.6m", "dl" ] )
+    elif(sys.version_info.minor == 6):
+        env.Append( LIBS=["pthread", "python3.6m", "dl" ] )
+    elif(sys.version_info.minor == 7):
+        env.Append( LIBS=["pthread", "python3.7m", "dl" ] )
+    else:
+        raise RuntimeError("Only supports python 3.6 and 3.7")
+
     env.Append( EXTRALIBPATH=[ "/usr/local/lib", "/usr/lib64/mpich/lib", "/opt/python/python3.6.3/lib" ] )
 
     if static:
@@ -317,7 +324,7 @@ if os.sys.platform.startswith("linux"):
         env.Append( CPPDEFINES=["_DEBUG"] )
     else:
         env.Append( CCFLAGS=["-O3", "-fPIC"] )
-        
+
     # enable AES support or get [wmmintrin.h:34:3: error: #error "AES/PCLMUL instructions not enabled"]
     env.Append( CCFLAGS=["-maes"] )
 
@@ -439,10 +446,8 @@ elif "win32" == os.sys.platform:
     winLibString += ""
     env.Append( LIBS=Split(winLibString) )
 
-    env.Append( EXTRALIBPATH=[ os.environ['IDM_PYTHON3_PATH']+"/libs" ] )   # Go with user specified path first
-    env.Append( EXTRALIBPATH=[ "C:/Python36/libs" ] )                       # Fall back to c:\python36
-    env.Append( EXTRALIBPATH=[ "C:/ProgramData/Anaconda3/libs" ] )          # Maybe they used Anaconda 3
-    env.Append( LIBS=["python36.lib"] )
+    env.Append( EXTRALIBPATH=[ os.environ['IDM_PYTHON3_PATH']+"/libs" ] )
+    env.Append( LIBS=["python3.lib"] )
 
     env.Append( EXTRALIBPATH=[ "#/Dependencies/ComputeClusterPack/Lib/amd64" ] )
     env.Append( LIBS=["msmpi.lib"] )

@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmApi.h"
 #include <set>
 #include <map>
-#include "BoostLibWrapper.h"
 
 #include "suids.hpp"
 #include "Configure.h"
@@ -29,7 +28,6 @@ namespace Kernel
 
     struct IDMAPI DemographicsContext
     {
-        static bool using_compiled_demog;
     private:
         std::map<std::string, std::string> * stringTable;
 
@@ -133,7 +131,7 @@ namespace Kernel
         DECLARE_QUERY_INTERFACE()
 
     public:
-        static NodeDemographicsFactory* CreateNodeDemographicsFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const ::Configuration *config );
+        static NodeDemographicsFactory* CreateNodeDemographicsFactory(const ::Configuration *config);
 
         ~NodeDemographicsFactory();
 
@@ -180,7 +178,6 @@ namespace Kernel
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
         static const std::string default_node_demographics_str;
 
-        boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map;
         std::vector<ExternalNodeId_t> nodeIDs; // sucks to have to keep an extra copy of these; I guess we could expose through an iterator, but for now, I prefer this...
         std::string idreference;
 
@@ -209,25 +206,7 @@ namespace Kernel
 #pragma warning( pop )
 
         NodeDemographicsFactory()
-            : nodeid_suid_map()
-            , nodeIDs()
-            , idreference()
-            , full_string_table( nullptr )
-            , demographics_filenames()
-            , node_properties()
-            , layer_defaults()
-            , layer_string_sub_tables()
-            , layer_string_value2key_tables()
-            , nodedata_maps()
-            , demographics_builtin(true)
-            , torus_size(10)
-            , default_population(1000)
-            , allow_nodeid_zero(false)
-        { };
-
-        NodeDemographicsFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map)
-            : nodeid_suid_map( nodeid_suid_map )
-            , nodeIDs()
+            : nodeIDs()
             , idreference()
             , full_string_table( nullptr )
             , demographics_filenames()

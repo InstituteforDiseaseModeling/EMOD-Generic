@@ -34,6 +34,7 @@ namespace Kernel
         // --- BaseTextReportEvents
         // -----------------------------
         virtual bool Configure( const Configuration* inputJson ) override;
+        virtual bool Validate( const ISimulationContext* parent_sim ) override;
         virtual void UpdateEventRegistration( float currentTime,
                                               float dt, 
                                               std::vector<INodeEventContext*>& rNodeEventContextList,

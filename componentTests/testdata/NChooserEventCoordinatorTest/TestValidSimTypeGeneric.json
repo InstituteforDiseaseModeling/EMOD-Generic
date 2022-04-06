@@ -1,4 +1,5 @@
 {
+    "Simulation_Type": "GENERIC_SIM",
     "Distributions": [
         {
             "Age_Ranges_Years": [

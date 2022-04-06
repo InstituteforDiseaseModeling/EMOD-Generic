@@ -179,7 +179,6 @@ static void setConfigJson()
     }
 #endif
     EnvPtr->Config = configStubJson;
-    Environment::setSimulationConfig( configStubJson );
 }
 
 // Json-configure & Initialize a (single) individual
@@ -208,7 +207,7 @@ static Kernel::IndividualHuman* initInd( int sex, float age, float mcw )
         std::cout << "Initialized Statics from gi.json." << std::endl;
     }
     Kernel::JsonConfigurable::_useDefaults = false; 
-    person->SetParameters( &node, 0.0f, 1.0f, 0.0f );
+    person->SetParameters( &node, 1.0f, 1.0f );
     return person;
 }
 
@@ -571,6 +570,11 @@ static PyObject*
 reset(PyObject* self, PyObject* args)
 {
     configStubJson = nullptr;
+    for( auto key_value : population )
+    {
+        delete key_value.second;
+        key_value.second = nullptr;
+    }
     population.clear();
     if( individualHumanSuidGenerator != nullptr )
     {

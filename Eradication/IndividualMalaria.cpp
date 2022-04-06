@@ -409,7 +409,7 @@ namespace Kernel
                 LOG_DEBUG_F("Crossing two strains with weight %0.2f and %0.2f\n", gc1->second/float(m_female_gametocytes), gc2->second/(float)m_female_gametocytes);
 
                 // Genetic ID from first component
-                int geneticID = gc1->first.GetGeneticID();
+                uint64_t geneticID = gc1->first.GetGeneticID();
                 if ( geneticID != gc2->first.GetGeneticID() ) 
                 {
                     // One outcrossing realization if genetic IDs are different
@@ -434,7 +434,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, float cladeID, float geneticID)
+    void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, uint32_t cladeID, uint64_t geneticID)
     {
         StrainIdentity id = StrainIdentity(cladeID, geneticID);
         parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
@@ -477,9 +477,9 @@ namespace Kernel
         return malaria_susceptibility;
     }
 
-    std::vector< std::pair<int,int> > IndividualHumanMalaria::GetInfectingStrainIds() const
+    std::vector< std::pair<uint32_t,uint64_t> > IndividualHumanMalaria::GetInfectingStrainIds() const
     {
-        std::vector< std::pair<int,int> > strainIds;
+        std::vector< std::pair<uint32_t,uint64_t> > strainIds;
         StrainIdentity strain;
         for (auto inf : infections)
         {

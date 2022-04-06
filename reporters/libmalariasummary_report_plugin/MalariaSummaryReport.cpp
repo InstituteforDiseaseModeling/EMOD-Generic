@@ -32,71 +32,60 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "math.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "MalariaSummaryReport" ) // <<< Name of this file
+//******************************************************************************
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = {"MALARIA_SIM", "DENGUE_SIM", nullptr}; // <<< Types of simulation the report is to be used with
+SETUP_LOGGING( "MalariaSummaryReport" )
 
-Kernel::report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new MalariaSummaryReport()); // <<< Report to create
-};
+static const char* _sim_types[] = {"MALARIA_SIM", "DENGUE_SIM", nullptr};
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::MalariaSummaryReport();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ----------------------------------------
 // --- ReportIntervalData Methods
 // ----------------------------------------
 
+namespace Kernel
+{
     ReportIntervalData::ReportIntervalData()
     : IIntervalData()
     , sum_EIR(0.0)
@@ -569,12 +558,12 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
             // Log-normal smearing from True density
             float true_asexual_density = susceptibility_malaria->get_parasite_density();
-            float true_asexual_density_smeared = ReportUtilitiesMalaria::NASBADensityWithUncertainty( DLL_HELPER.GetRandomNumberGenerator(), true_asexual_density );
+            float true_asexual_density_smeared = ReportUtilitiesMalaria::NASBADensityWithUncertainty( iindividual->GetParent()->GetRng(), true_asexual_density );
             int PfPRbin_true_smeared = ReportUtilities::GetBinIndex( true_asexual_density_smeared, PfPRbins );
             m_pReportData->sum_binned_PfPR_by_agebin_true_smeared.at(PfPRbin_true_smeared).at(agebin) += mc_weight;
 
             float true_gametocyte_density = individual_malaria->GetGametocyteDensity();
-            float true_gametocyte_density_smeared = ReportUtilitiesMalaria::NASBADensityWithUncertainty( DLL_HELPER.GetRandomNumberGenerator(), true_gametocyte_density );
+            float true_gametocyte_density_smeared = ReportUtilitiesMalaria::NASBADensityWithUncertainty( iindividual->GetParent()->GetRng(), true_gametocyte_density );
             int PfgamPRbin_true_smeared = ReportUtilities::GetBinIndex( true_gametocyte_density_smeared, PfPRbins );
             m_pReportData->sum_binned_PfgamPR_by_agebin_true_smeared.at(PfgamPRbin_true_smeared).at(agebin) += mc_weight;
 
@@ -582,7 +571,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
             // Smearing from fields of view
             int positive_asexual_fields = 0;
             int positive_gametocyte_fields = 0;
-            individual_malaria->CountPositiveSlideFields(DLL_HELPER.GetRandomNumberGenerator(), 200, (float)(1.0 / 400.0), positive_asexual_fields, positive_gametocyte_fields);
+            individual_malaria->CountPositiveSlideFields(iindividual->GetParent()->GetRng(), 200, (float)(1.0 / 400.0), positive_asexual_fields, positive_gametocyte_fields);
             float uL_per_field = float(0.5) / float(200.0);
 
             float PfPR_smeared = 0.0;
@@ -612,13 +601,13 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
             float infectiousness = static_cast<IndividualHuman*>(context)->GetInfectiousness();
             int Infectionbin = ReportUtilities::GetBinIndex( infectiousness * 100.0, Infectionbins );
-            float infectiousness_smeared = ReportUtilitiesMalaria::BinomialInfectiousness(DLL_HELPER.GetRandomNumberGenerator(), infectiousness);
+            float infectiousness_smeared = ReportUtilitiesMalaria::BinomialInfectiousness(iindividual->GetParent()->GetRng(), infectiousness);
             int Infectionbin_smeared = ReportUtilities::GetBinIndex( infectiousness_smeared * 100.0, Infectionbins );
 
             //Age scaled
             float infectiousness_age_scaled = infectiousness*SusceptibilityVector::SurfaceAreaBitingFunction( age );
             int Infectionbin_age_scaled = ReportUtilities::GetBinIndex( infectiousness_age_scaled * 100.0, Infectionbins );
-            float infectiousness_age_scaled_smeared = ReportUtilitiesMalaria::BinomialInfectiousness(DLL_HELPER.GetRandomNumberGenerator(), infectiousness_age_scaled);
+            float infectiousness_age_scaled_smeared = ReportUtilitiesMalaria::BinomialInfectiousness(iindividual->GetParent()->GetRng(), infectiousness_age_scaled);
             int Infectionbin_age_scaled_smeared = ReportUtilities::GetBinIndex( infectiousness_age_scaled_smeared * 100.0, Infectionbins );
 
             m_pReportData->sum_binned_infection_by_pfprbin_and_agebin.at(Infectionbin).at(PfgamPRbin).at(agebin) += mc_weight;

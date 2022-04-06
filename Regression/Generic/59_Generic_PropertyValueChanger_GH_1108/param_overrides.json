@@ -37,7 +37,7 @@
         "OUTPUT": {
             "Enable_Demographics_Reporting": 0,
             "Enable_Property_Output": 1,
-            "Report_Event_Recorder": 1,
+            "Enable_Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "PropertyChange",
                 "Change_Low_To_High"

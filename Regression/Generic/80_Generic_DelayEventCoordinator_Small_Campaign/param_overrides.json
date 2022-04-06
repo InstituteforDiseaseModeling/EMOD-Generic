@@ -13,6 +13,7 @@
         "Demographics_Reporting": 0,
         "Enable_Default_Reporting": 1,
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Coordinator_Event_Recorder": 1,
         "PRIMARY": {
             "Config_Name": "80_Generic_DelayEventCoordinator_Small_Campaign",
             "Enable_Interventions": 1,
@@ -25,7 +26,6 @@
             "Simulation_Duration": 70
         },
         "Population_Scale_Type": "FIXED_SCALING",
-        "Report_Coordinator_Event_Recorder": 1,
         "Report_Coordinator_Event_Recorder_Events": [
             "Start_Surveillance",
             "Start_SIA_2",

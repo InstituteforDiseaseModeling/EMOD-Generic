@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeEventContextFake.h"
 #include "RandomFake.h"
 #include "Node.h"
-#include "SimulationConfig.h"
 #include "HIVEnums.h"
 #include "Properties.h"
 #include "Simulation.h"
@@ -26,11 +25,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 using namespace std; 
 using namespace Kernel; 
-
-// maybe these shouldn't be protected in Simulation.h
-typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-
 
 SUITE(AssortivityTest)
 {
@@ -42,7 +36,6 @@ SUITE(AssortivityTest)
         INodeEventContextFake   m_NEC ;
         vector< IndividualHumanInterventionsContextFake* > m_hic_list ;
         vector< IndividualHumanContextFake*              > m_human_list ;
-        SimulationConfig* m_pSimulationConfig ;
         float m_oldBaseYear ;
 
         AssortivityFixture()
@@ -50,12 +43,9 @@ SUITE(AssortivityTest)
             , m_NEC()
             , m_hic_list()
             , m_human_list()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
-            Environment::setSimulationConfig( m_pSimulationConfig );
             IPFactory::DeleteFactory();
             IPFactory::CreateFactory();
 
@@ -67,8 +57,6 @@ SUITE(AssortivityTest)
             ip_values.insert( std::make_pair( "ROMULAN",  0.2f ) );
 
             IPFactory::GetInstance()->AddIP( 1, "Race", ip_values );
-
-            m_oldBaseYear = Simulation::base_year; // Need to save old base_year for restoration
         }
 
         ~AssortivityFixture()
@@ -86,7 +74,6 @@ SUITE(AssortivityTest)
             m_human_list.clear();
             IPFactory::DeleteFactory();
             Environment::Finalize();
-            Simulation::base_year = m_oldBaseYear; // Restore base_year
         }
 
         IIndividualHumanSTI* CreateHuman( int gender, 
@@ -370,8 +357,6 @@ SUITE(AssortivityTest)
         // --------------------
         // --- Initialize test
         // --------------------
-        m_pSimulationConfig->sim_type = SimType::STI_SIM ;
-
         unique_ptr<Configuration> p_config( Environment::LoadConfigurationFile( "testdata/AssortivityTest/StiInfectionStatus.json" ) );
 
         RandomFake fake_ran ;
@@ -576,28 +561,6 @@ SUITE(AssortivityTest)
         CHECK( p_f_r == p_female_match_e );
     }
 
-    TEST_FIXTURE(AssortivityFixture, TestStartYearBeforeBaseYearWarning)
-    {
-        // --------------------
-        // --- Initialize test
-        // --------------------
-        unique_ptr<Configuration> p_config(Environment::LoadConfigurationFile("testdata/AssortivityTest/TestStartYearBeforeBaseYear.json"));
-        FakeLogger fakeLogger(Logger::tLevel::WARNING);
-        Environment::setLogger(&fakeLogger);
-        
-        Simulation::base_year = 2050;
-
-        RandomFake fake_ran;
-        unique_ptr<IAssortivity> p_assort(AssortivityFactory::CreateAssortivity(RelationshipType::TRANSITORY, &fake_ran));
-
-        CHECK(p_assort->Configure(p_config.get()));
-
-        CHECK(!fakeLogger.Empty());
-        LogEntry entry = fakeLogger.Back();
-        CHECK(entry.log_level == Logger::tLevel::WARNING);
-        CHECK(entry.msg.find("Start_Year (2003.000000) specified before Base_Year (2050.000000), for relationship type TRANSITORY\n") != string::npos);
-    }
-
     void TestHelper_ConfigureException( int lineNumber, const std::string& rFilename, const std::string& rExpMsg )
     {
         try
@@ -624,8 +587,6 @@ SUITE(AssortivityTest)
 
     TEST_FIXTURE(AssortivityFixture, TestBadAxesNameSti)
     {
-        m_pSimulationConfig->sim_type = SimType::STI_SIM ;
-
         TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/TestBadAxesNameSti.json",
             "The TRANSITORY:Group (STI_INFECTION_STATUS) requires that the Axes names(='FALSE' 'XXX' ) are 'TRUE' and 'FALSE'.  Order is up to the user." );
     }
@@ -718,21 +679,5 @@ SUITE(AssortivityTest)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/TestBadAxesNamesReceivedResultsB.json",
             "The TRANSITORY:Group (HIV_RECEIVED_RESULTS_STATUS) requires that the Axes names(='UNKNOWN' 'POSITIVE' 'XXX' ) are 'UNKNOWN' 'POSITIVE' 'NEGATIVE' .  Order is up to the user." );
-    }
-
-    TEST_FIXTURE(AssortivityFixture, TestInvalidGroupForSimType)
-    {
-        m_pSimulationConfig->sim_type = SimType::STI_SIM ;
-
-        TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/HivInfectionStatus.json",
-            "Variable or parameter 'TRANSITORY:Group' with value HIV_INFECTION_STATUS is incompatible with variable or parameter 'Simulation_Type' with value STI_SIM. HIV_INFECTION_STATUS is only valid with HIV_SIM." );
-    }
-
-    TEST_FIXTURE(AssortivityFixture, TestInvalidGroupForSimType2)
-    {
-        m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
-
-        TestHelper_ConfigureException( __LINE__, "testdata/AssortivityTest/StiInfectionStatus.json",
-            "Variable or parameter 'TRANSITORY:Group' with value STI_INFECTION_STATUS is incompatible with variable or parameter 'Simulation_Type' with value HIV_SIM. STI_INFECTION_STATUS is only valid with STI_SIM." );
     }
 }

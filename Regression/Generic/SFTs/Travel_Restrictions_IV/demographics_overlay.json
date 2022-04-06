@@ -1,0 +1,71 @@
+{
+   "Metadata": {
+      "Author": "yechen",
+      "DateCreated": "2021-07-28 11:20:51.381482",
+      "IdReference": "Gridded world grump2.5arcmin",
+      "NodeCount": 10,
+      "Resolution": 150,
+      "Tool": "idm-tools"
+   },
+   "Nodes": [
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 1
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 2
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 3
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 4
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 5
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 6
+      },{
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 7
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 8
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 9
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 5000
+         },
+         "NodeID": 10
+      }
+   ]
+}

@@ -24,7 +24,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configuration.h"
 #include "Simulation.h"
 #include "Node.h"
-#include "SimulationConfig.h"
 
 using namespace Kernel;
 
@@ -37,7 +36,6 @@ SUITE(HivArtStagingCD4AgnosticDiagnosticTest)
         IndividualHumanInterventionsContextFake m_InterventionsContext ;
         IndividualHumanContextFake              m_Human ;
         HIVARTStagingCD4AgnosticDiagnostic      m_Diag ;
-        SimulationConfig*                       m_pSimulationConfig ;
 
         DiagnosticFixture()
             : m_NC()
@@ -45,22 +43,15 @@ SUITE(HivArtStagingCD4AgnosticDiagnosticTest)
             , m_InterventionsContext()
             , m_Human( &m_InterventionsContext, &m_NC, &m_NEC, nullptr )
             , m_Diag()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             m_InterventionsContext.SetContextTo( &m_Human );
             m_Diag.SetContextTo( &m_Human );
 
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
-
-            //EventTriggerFactoryDeleteInstance();
-
             json::Object fakeConfigJson;
             Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            //EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
             m_NEC.Initialize();
 
             IdmDateTime idm_time ;
@@ -89,8 +80,6 @@ SUITE(HivArtStagingCD4AgnosticDiagnosticTest)
 
         ~DiagnosticFixture()
         {
-            delete m_pSimulationConfig;
-            Environment::setSimulationConfig( nullptr );
             IPFactory::DeleteFactory();
             Environment::Finalize();
         }

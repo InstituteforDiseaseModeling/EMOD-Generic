@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <vector>
 #include <queue>
 #include <functional>
-#include "BoostLibWrapper.h"
 #include "ISupports.h"
 #include "Configuration.h"
 #include "suids.hpp"
@@ -101,7 +100,6 @@ namespace Kernel
         // host implementation
         virtual void Update(float dt);
         void LoadCampaignFromFile(const std::string & campaignfile, const std::vector<ExternalNodeId_t>& nodeIds_demographics);
-        std::string campaign_filename;
 
     protected:
         void propagateContextToDependents();

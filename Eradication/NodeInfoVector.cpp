@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeInfoVector.h"
 #include "JsonObject.h"
 #include "Serializer.h"
-#include "Profile.h"
 #include "Debug.h"
 #include "VectorContexts.h"
 #include "VectorHabitat.h"

@@ -216,7 +216,10 @@
                     "Property_Restrictions": [
                         "Accessibility:VaccineTake"
                     ],
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },

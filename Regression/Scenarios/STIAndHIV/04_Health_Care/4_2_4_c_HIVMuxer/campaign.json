@@ -24,7 +24,10 @@
                         "Broadcast_Event": "Loop_Entry_Birth",
                         "class": "BroadcastEvent"
                     },
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 },
                 "class": "StandardInterventionDistributionEventCoordinator"
             },

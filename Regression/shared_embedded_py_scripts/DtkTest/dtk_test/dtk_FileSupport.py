@@ -19,7 +19,8 @@ class EllZeeFour(object):
 
     @classmethod
     def compress(cls, data):
-        return lz4.block.compress(data.encode())
+        #return lz4.block.compress(data.encode())
+        return lz4.block.compress(data if type(data) is bytes else data.encode())
 
     @classmethod
     def uncompress(cls, data):

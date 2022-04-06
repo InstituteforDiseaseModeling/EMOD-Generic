@@ -8,7 +8,7 @@
     }, 
     "Nodes": [
         {
-            "NodeID": 340461476, 
+            "NodeID": 1, 
             "NodeAttributes": {
                 "Longitude": 36.5, 
                 "Altitude": 0, 
@@ -54,7 +54,7 @@
             }
         },
         {
-            "NodeID": 340461477, 
+            "NodeID": 2, 
             "NodeAttributes": {
                 "Latitude": -8.5, 
                 "Longitude": 36.5, 

@@ -55,7 +55,10 @@
                         "class": "SimpleBednet"
                     }, 
                     "Demographic_Coverage": 0.8, 
-                    "class": "BirthTriggeredIV"
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
+                    "class": "NodeLevelHealthTriggeredIV"
                 }, 
                 "Number_Repetitions": 1, 
                 "class": "StandardInterventionDistributionEventCoordinator"

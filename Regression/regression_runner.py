@@ -12,8 +12,6 @@ import regression_utils as ru
 import sys
 import shutil
 import pdb
-from ctypes import *
-
 
 class MyRegressionRunner(object):
 
@@ -68,11 +66,12 @@ class MyRegressionRunner(object):
 
     def copy_serialized_population_files(self, config_json, simulation_directory, scenario_directory):
         input_files = config_json['parameters'].get('Serialized_Population_Filenames', [])
+        ref_files   = config_json['parameters'].get('Reference_SQL_Files', [])
+        all_files   = input_files+ref_files
 
         serialized_pop_filenames = []
-        #config_json["parameters"]["Serialized_Population_Filenames"] = []
 
-        for filename in input_files:
+        for filename in all_files:
             if not filename or len(filename.strip(' ')) == 0:
                 continue
 
@@ -80,11 +79,11 @@ class MyRegressionRunner(object):
 
             # Copy directly to remote simulation working directory
             if os.path.isfile(scenario_file):
-                #print('Copying %s to remote working directory'%filename)
                 simulation_path = os.path.join(self.params.sim_root, simulation_directory)
                 simulation_file = os.path.join(simulation_path, os.path.basename(filename))
                 self.update_file(scenario_file, simulation_file)
-                serialized_pop_filenames.append(os.path.basename(filename))
+                if(filename in input_files):
+                    serialized_pop_filenames.append(os.path.basename(filename))
 
         if( len(serialized_pop_filenames) > 0 ):
             config_json["parameters"]["Serialized_Population_Filenames"] = serialized_pop_filenames
@@ -245,6 +244,23 @@ class MyRegressionRunner(object):
 
         return
 
+    def crunch_name(self, arg_string):
+        # Provides name mapping for the custom reporters; the report name
+        # and the file name will be the same after the mapping below.
+
+        arg_string = arg_string.upper()
+
+        arg_string = arg_string.replace('STIRELATIONSHIP', 'RELATIONSHIP')
+        arg_string = arg_string.replace('TRANSMISSIONS',   'TRANSMISSION')
+
+        arg_string = arg_string.replace('_',             '')
+        arg_string = arg_string.replace('LIB',           '')
+        arg_string = arg_string.replace('CUSTOMREPORT',  '')
+        arg_string = arg_string.replace('REPORT',        '')
+        arg_string = arg_string.replace('PLUGIN',        '')
+
+        return arg_string
+
     def transform_path( self, win_path ):
         return win_path.replace( "\\", "/" ).replace( "bayesianfil01", "mnt" ).replace( "IDM", "idm" ).replace( "//", "/" )
 
@@ -315,10 +331,7 @@ class MyRegressionRunner(object):
                     self.emodules_map[dll_subdir].append(dll_path)
 
                     try:
-                        dll_handle = cdll.LoadLibrary(dll)
-                        gettype = dll_handle.GetType
-                        gettype.restype = c_char_p
-                        name = dll_handle.GetType().decode("utf-8")
+                        name = self.crunch_name(os.path.basename(dll_path).split('.')[0])
                         self.dll_name_to_path[name] = dll_path
                     except Exception as ex:
                         print( str( ex ) )
@@ -360,7 +373,7 @@ class MyRegressionRunner(object):
         # Re-build the list of reporter DLL paths in the emodules map based on the reporters appearing above
         for reporter in reporters_set:
             try:
-                final_reporters.append(self.dll_name_to_path[reporter])
+                final_reporters.append(self.dll_name_to_path[self.crunch_name(reporter)])
             except KeyError:
                 print("Warning: when building reporter_plugins emodule list, no path found for '{0}'. "
                       "Continuing.".format(reporter))

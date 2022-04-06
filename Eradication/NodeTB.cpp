@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "NodeTB.h"
 #include "TransmissionGroupsFactory.h" //for SetupIntranodeTransmission
@@ -58,10 +59,13 @@ namespace Kernel
 
     void NodeTB::BuildTransmissionRoutes( float contagionDecayRate )
     {
-        int max_clades  = InfectionConfig::number_clades;
-        int max_genomes = InfectionConfig::number_genomes;
-        LOG_DEBUG_F("max_clades %f, max_genomes %f", max_clades, max_genomes);
-        transmissionGroups->Build( contagionDecayRate, max_clades, max_genomes ); 
+        transmissionGroups->Build( contagionDecayRate, GetParams()->number_clades, GetTotalGenomes());
+    }
+
+    uint64_t NodeTB::GetTotalGenomes() const
+    {
+        // TB infections use genome for drug resistance with the TBInfectionDrugResistance ENUM type.
+        return 2;
     }
 
     void NodeTB::resetNodeStateCounters(void)

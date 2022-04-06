@@ -28,8 +28,6 @@ namespace Kernel
 
     struct IDMAPI IMigrationInfoFactoryVector : virtual IMigrationInfoFactory
     {
-        virtual IMigrationInfoVector* CreateMigrationInfoVector(
-            INodeContext *parent_node, 
-            const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) = 0;
+        virtual IMigrationInfoVector* CreateMigrationInfoVector( INodeContext *parent_node ) = 0;
     };
 }

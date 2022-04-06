@@ -32,11 +32,11 @@ namespace Kernel {
         virtual ~DiscreteContagionPopulation() {}
 
         // IContagionPopulation
-        virtual std::string GetName( void ) const override;
-        virtual int GetCladeID( void ) const override;
-        virtual int GetGeneticID( void ) const override;
-        virtual void SetCladeID(int in_cladeID) override;
-        virtual void SetGeneticID(int in_geneticID) override;
+        virtual std::pair<uint32_t, uint64_t> GetStrainName(void) const override;
+        virtual uint32_t GetCladeID( void ) const override;
+        virtual uint64_t GetGeneticID( void ) const override;
+        virtual void SetCladeID(uint32_t in_cladeID) override;
+        virtual void SetGeneticID(uint64_t in_geneticID) override;
         virtual float GetTotalContagion( void ) const override;
         virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 
@@ -50,7 +50,7 @@ namespace Kernel {
 
     protected:
         act_prob_vec_t probs;
-        int _clade;
+        uint32_t _clade;
         NaturalNumber _infector;
     };
 
@@ -66,7 +66,7 @@ namespace Kernel {
             virtual void GetGroupMembershipForProperties( const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) const override;
 
             // ITransmissionGroups - implemented methods
-            virtual void Build(float contagionDecayRate, int numberOfClades, int numberOfGenomes = 1);
+            virtual void Build(float contagionDecayRate, uint32_t numberOfClades, uint64_t numberOfGenomes = 1);
             virtual void ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
             virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight);
             virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t poolMembership);
@@ -77,6 +77,7 @@ namespace Kernel {
             virtual float GetTotalContagion( void ) override { return nanf("NAN"); }
             virtual act_prob_vec_t DiscreteGetTotalContagion( void ) { return infectionRate[0]; }
             virtual float GetContagionByProperty( const IPKeyValue& property_value ) override;
+            virtual void LoadSparseRepVecs(sparse_contagion_repr& inf_rep) override;
 
             // Special RelationGroups methods so we can use RelationshipID instead of strings with the ID in them
             virtual void SetParent( INodeSTI* parent );

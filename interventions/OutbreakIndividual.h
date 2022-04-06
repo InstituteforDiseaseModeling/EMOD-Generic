@@ -27,8 +27,8 @@ namespace Kernel
 
     struct IOutbreakIndividual : public ISupports
     {
-        virtual int GetClade() const = 0;
-        virtual int GetGenome() const = 0;
+        virtual uint32_t GetClade()   const = 0;
+        virtual uint64_t GetGenome()  const = 0;
 
         virtual ~IOutbreakIndividual() { }; // needed for cleanup via interface pointer
     };
@@ -50,13 +50,13 @@ namespace Kernel
         virtual void Update(float dt);
 
         // IOutbreakIndividual
-        virtual int GetClade()  const  { return clade; }
-        virtual int GetGenome() const  { return genome; }
+        virtual uint32_t GetClade()  const  { return clade; }
+        virtual uint64_t GetGenome() const  { return genome; }
 
 
     protected:
-        int clade;
-        int genome;
+        uint32_t clade;
+        uint64_t genome;
 
         bool   ignoreImmunity;
         float  incubation_period_override;

@@ -125,14 +125,8 @@ namespace Kernel
         ENUM_VALUE_SPEC(INDIVIDUAL_PREGNANCIES                              , 3)
         ENUM_VALUE_SPEC(INDIVIDUAL_PREGNANCIES_BY_AGE_AND_YEAR              , 4))
 
-    ENUM_DEFINE(VitalBirthTimeDependence,
-        ENUM_VALUE_SPEC(NONE                                                , 0)
-        ENUM_VALUE_SPEC(SINUSOIDAL_FUNCTION_OF_TIME                         , 1)
-        ENUM_VALUE_SPEC(ANNUAL_BOXCAR_FUNCTION                              , 2))
-
     // ENUM defs for VITAL_DEATH_DEPENDENCE
     ENUM_DEFINE(VitalDeathDependence,                                               // TODO: FIXED_DEATH_RATE (Makeham), Gompertz–Makeham, Lifetable, Heligman-Pollard, Siler (5-Component Competing Hazard), 
-        ENUM_VALUE_SPEC(NOT_INITIALIZED                                     , -1)
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_AGE_AND_GENDER              , 0)
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_YEAR_AND_AGE_FOR_EACH_GENDER, 1))
 
@@ -168,4 +162,20 @@ namespace Kernel
         ENUM_VALUE_SPEC(POVERTY                                             , 1)
         ENUM_VALUE_SPEC(POVERTY_SUSCEPTIBILITY_TO_INFECTION                 , 2)
         ENUM_VALUE_SPEC(POVERTY_AND_SUSCEPTIBILITY                          , 3))
+
+    // ENUM defs for evolution_polio_clock_type
+    ENUM_DEFINE(EvolutionPolioClockType, 
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_NONE                                 , 0)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_LINEAR                               , 1)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_IMMUNITY                             , 2)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION_AND_IMMUNITY               , 3)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION                            , 4)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_POISSONSITES                         , 5))
+
+    // ENUM defs for VDPV_virulence_model_type
+    ENUM_DEFINE(VDPVVirulenceModelType, 
+        ENUM_VALUE_SPEC(POLIO_VDPV_NONVIRULENT                              , 0)
+        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS                                , 1)
+        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS_AND_LOG_INFECTIVITY            , 2)
+        ENUM_VALUE_SPEC(POLIO_VDPV_LOG_PARALYSIS_AND_LOG_INFECTIVITY        , 3))
 }

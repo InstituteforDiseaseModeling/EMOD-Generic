@@ -24,7 +24,6 @@ namespace Kernel
         EggHatchDelayDist::Enum                 egg_hatch_delay_dist;                // eggHatchDelayDist
         EggSaturation::Enum                     egg_saturation;                      // eggSaturation
         LarvalDensityDependence::Enum           larval_density_dependence;           // larvalDensityDependence
-        VectorSamplingType::Enum                vector_sampling_type;                // Vector_Sampling_Type
         VectorSugarFeeding::Enum                vector_sugar_feeding;                // vectorSugarFeeding
         VectorRainfallMortality::Enum           vector_larval_rainfall_mortality;    // vectorLarvalRainfallMortality
         HEGModel::Enum                          heg_model;                           // HEGModel
@@ -66,7 +65,6 @@ namespace Kernel
         : egg_hatch_delay_dist(EggHatchDelayDist::NO_DELAY)
         , egg_saturation(EggSaturation::NO_SATURATION)
         , larval_density_dependence(LarvalDensityDependence::NO_DENSITY_DEPENDENCE)
-        , vector_sampling_type(VectorSamplingType::TRACK_ALL_VECTORS)
         , vector_sugar_feeding(VectorSugarFeeding::VECTOR_SUGAR_FEEDING_NONE)
         , vector_larval_rainfall_mortality(VectorRainfallMortality::NONE)
         , heg_model(HEGModel::OFF)
@@ -95,7 +93,6 @@ namespace Kernel
         , x_LarvalHabitats(1.0f)
         , vector_species_names()
         , vspMap()
-        {
-        }
+        { }
     };
 }

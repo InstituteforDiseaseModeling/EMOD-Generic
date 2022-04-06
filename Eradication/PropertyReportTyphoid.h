@@ -22,6 +22,7 @@ namespace Kernel {
         virtual ~PropertyReportTyphoid() { }
 
         virtual bool Configure( const Configuration* inputJson ) override;
+        virtual bool Validate( const ISimulationContext* parent_sim ) override;
         virtual void UpdateEventRegistration( float currentTime,
                                               float dt,
                                               std::vector<INodeEventContext*>& rNodeEventContextList,
@@ -37,16 +38,4 @@ namespace Kernel {
         float stop_year;  // Year to stop  collecting data 
         bool is_collecting_data;
     };
-
-#if 0
-    template<class Archive>
-    void serialize(Archive &ar, PropertyReport& report, const unsigned int v)
-    {
-        boost::serialization::void_cast_register<PropertyReport,IReport>();
-        //ar & report.timesteps_reduced;
-        //ar & report.channelDataMap;
-        //ar & report._nrmSize;
-    }
-#endif
-
 }

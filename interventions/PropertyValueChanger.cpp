@@ -42,12 +42,7 @@ namespace Kernel
         , action_timer(0.0f)
         , reversion_timer(0.0f)
         , distribution( DistributionFactory::CreateDistribution( DistributionFunction::EXPONENTIAL_DISTRIBUTION) )
-    {
-        //std::cout << __FUNCTION__ << ":" << __LINE__ << std::endl;
-        // done in base class ctor, not needed here.
-        // primary_decay_time_constant...
-        // cost_per_unit...
-    }
+    { }
 
     PropertyValueChanger::PropertyValueChanger( const PropertyValueChanger& rThat )
         : BaseIntervention( rThat )
@@ -75,9 +70,6 @@ namespace Kernel
     {
         target_property_key.constraints   = IPKey::GetConstrainedStringConstraintKey();
         target_property_value.constraints = IPKey::GetConstrainedStringConstraintValue();
-
-        // Group membership updates need to happen before accumulating infectivity
-        BaseIntervention::occurs_pre_infectivity = true;
 
         initConfigTypeMap("Target_Property_Key", &target_property_key, PC_Target_Property_Key_DESC_TEXT );
         initConfigTypeMap("Target_Property_Value", &target_property_value, PC_Target_Property_Value_DESC_TEXT );

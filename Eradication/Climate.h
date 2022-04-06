@@ -14,8 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <math.h>
 #include <unordered_map>
 
-#include "BoostLibWrapper.h"
-
 #include "Sugar.h"
 #include "CajunIncludes.h"
 #include "SimulationEnums.h"
@@ -84,7 +82,7 @@ namespace Kernel
     {
     public:
 
-        static ClimateFactory* CreateClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const std::string idreference, ISimulationContext* parent_sim);
+        static ClimateFactory* CreateClimateFactory(const std::string idreference, ISimulationContext* parent_sim);
         ~ClimateFactory();
 
         const ClimateParams* GetParams();
@@ -92,12 +90,10 @@ namespace Kernel
         Climate* CreateClimate( INodeContext *parent_node, float altitude, float latitude, RANDOMBASE* pRNG );
 
     private:
-        ClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, ISimulationContext* parent_sim);
+        ClimateFactory(ISimulationContext* parent_sim);
         bool Initialize(const std::string idreference);
         bool ParseMetadataForFile(std::string data_filepath, std::string idreference, int * const num_datavalues, int * const num_nodes, std::unordered_map<uint32_t, uint32_t> &node_offsets);
         bool OpenClimateFile(std::string filepath, uint32_t expected_size, std::ifstream &file);
-
-        boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map;
 
         ISimulationContext* parent;
 
@@ -124,8 +120,5 @@ namespace Kernel
         int num_nodes;
 
         int num_badnodes;
-        float start_time;
     };
 }
-
-

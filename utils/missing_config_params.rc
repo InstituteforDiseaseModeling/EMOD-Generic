@@ -1,28 +1,53 @@
-#define CHW_Node_Property_Restriction_DESC_TEXT "TBD"
+#define CHW_Node_Property_Restriction_DESC_TEXT                   "TBD"
 
-#define Enable_Infectivity_Scaling_DESC_TEXT "Controls if total node infectivity should multiplied by a scaling factor."
-#define Enable_Infectivity_Scaling_Boxcar_DESC_TEXT "Controls if annual pulse wave forcing is applied to total node infectivity."
-#define Enable_Infectivity_Scaling_Climate_DESC_TEXT "Controls if climate is used to alter total node infectivity."
-#define Enable_Infectivity_Scaling_Density_DESC_TEXT "Controls if total node infectivity should be decreased based on population density."
-#define Enable_Infectivity_Scaling_Exponential_DESC_TEXT "Controls if total node infectivity in all nodes is decreased at initilization and increased toward its unmodified value as the simulation progresses."
-#define Enable_Infectivity_Scaling_Sinusoid_DESC_TEXT "Controls if a zero-bias annual sinusoidal oscillation is applied to total node infectivity."
-#define Infectivity_Population_Density_HalfMax_DESC_TEXT "Population density at which at which total node infectivity is decreased to half of its unmodified value."
+#define Enable_Infectivity_Scaling_DESC_TEXT                      "Indicates if total node infectivity should multiplied by a scaling factor."
 
-#define Base_Infectivity_Distribution_DESC_TEXT "The distribution type to use when assigning a quantity of infectivity to an infection."
+#define Base_Infectivity_Distribution_DESC_TEXT                   "The distribution type to use when assigning a quantity of infectivity to an infection."
 
-#define Immune_Downsample_Min_Age_DESC_TEXT "Minimum agent age required for immunity dependent downsampling."
+#define Immune_Downsample_Min_Age_DESC_TEXT                       "Minimum agent age required for immunity dependent downsampling."
 
-#define Enable_Infection_Rate_Overdispersion_DESC_TEXT "Controls overdispersion of the infection process. Implemented as gamma-Poisson mixture; zero value for overdispersion implies Poisson statistics."
+#define Enable_Infection_Rate_Overdispersion_DESC_TEXT            "Controls overdispersion of the infection process. Implemented as gamma-Poisson mixture; zero value for overdispersion implies Poisson statistics."
 
-#define Serialization_Precision_DESC_TEXT "TBD-Default is REDUCED to reduce the size of the serialized file.  FULL gives more floating point precision but creates larger files."
-#define SerializationMask_Node_Read_DESC_TEXT   "A bit mask to control from where data is read. If the mask is set the configuration file is used. Currently the only supported mask is 16 (Larval_Habitats)."
-#define SerializationMask_Node_Write_DESC_TEXT  "A bit mask to control writing of data, e.g. to reduce file size. If the mask is set the data of the masked module is not written to file. Currently the only supported mask is 16 (Larval_Habitats)."
-#define Serialized_Population_Reading_Type_DESC_TEXT "Set to READ to enable reading from a serialized population file, set to NONE otherwise."
-#define Serialized_Population_Writing_Type_DESC_TEXT "The type of serialization to perform. NONE for no serialization, TIME to use definition from Serialization_Times, and TIMESTEP to use definition from Serialization_Time_Steps."
+#define Serialization_Precision_DESC_TEXT                         "TBD-Default is REDUCED to reduce the size of the serialized file.  FULL gives more floating point precision but creates larger files."
+#define SerializationMask_Node_Read_DESC_TEXT                     "A bit mask to control from where data is read. If the mask is set the configuration file is used. Currently the only supported mask is 16 (Larval_Habitats)."
+#define SerializationMask_Node_Write_DESC_TEXT                    "A bit mask to control writing of data, e.g. to reduce file size. If the mask is set the data of the masked module is not written to file. Currently the only supported mask is 16 (Larval_Habitats)."
+#define Serialized_Population_Reading_Type_DESC_TEXT              "Set to READ to enable reading from a serialized population file, set to NONE otherwise."
+#define Serialized_Population_Writing_Type_DESC_TEXT              "The type of serialization to perform. NONE for no serialization, TIME to use definition from Serialization_Times, and TIMESTEP to use definition from Serialization_Time_Steps."
 
-#define Enable_Event_DB_DESC_TEXT    "Write out SQLite database of events."
+#define Enable_Event_DB_DESC_TEXT                                 "Write out SQLite database of events."
 
-#define Enable_Initial_Prevalence_DESC_TEXT    "Indicates that the InitialPrevalance value from demographics is the fraction of individuals to be infected at simulation initialization; zero initial prevalence otherwise."
+#define Enable_Initial_Prevalence_DESC_TEXT                       "Indicates that the InitialPrevalance value from demographics is the fraction of individuals to be infected at simulation initialization; zero initial prevalence otherwise."
 
-// *** Delete  ***
-// #define Serialized_Population_Writing_Type_DESC_TEXT "The type of serialization to perform. NONE for no serialization, TIME to use definition from Serialization_Times, and TIMESTEP to use definition from Serialization_Time_Steps."
+#define Enable_Acquisition_Heterogeneity_DESC_TEXT                "Indicates that each agent is assigned an acquisition probability multiplier drawn from a log normal distribution with mean value of 1. Note that mean != mu for a log normal distribution."
+#define Acquisition_Transmission_Correlation_DESC_TEXT            "Correlation between an agent's acquisition probability multiplier and the infectivity of infections acquired by that agent."
+
+#define Enable_Percentage_Children_DESC_TEXT                      "Indicates that the age initialization distribution is resampled to ensure a node populated with the exact fraction of children specified. Typically relevant only when nodes have small numbers of agents."
+
+#define Min_Node_Population_Samples_DESC_TEXT                     "Minimum number of agents to track in a node. The sampling rate will be modified to avoid down-sampling populations below this number."
+
+#define Enable_Termination_On_Zero_Total_Infectivity_DESC_TEXT    "Indicates if the simulation should be ended when total infectivity falls to zero."
+
+#define Enable_Termination_On_Total_Wall_Time_DESC_TEXT           "Indicates if the simulation should be ended when total wall time exceeds specified maximum."
+#define Wall_Time_Maximum_In_Minutes_DESC_TEXT                    "Maximum wall time in minutes to run the simulation."
+
+#define Enable_Genome_Dependent_Infectivity_DESC_TEXT             "Indicates if infectivity should be adjusted based on infection genome value."
+#define Enable_Genome_Mutation_DESC_TEXT                          "Indicates if infection genome value should vary with simulation time."
+#define Genome_Infectivity_Multipliers_DESC_TEXT                  "List of multipliers used to adjust infectivity based on infection genome value."
+#define Genome_Mutation_Rates_DESC_TEXT                           "List of per-day rates for incrementing an infection's genome value. Maximum one increment per timestep."
+
+#define Enable_Network_Infectivity_DESC_TEXT                      "Indicates if simulation should transfer infectivity between nodes."
+#define Network_Infectivity_Max_Export_Frac_DESC_TEXT             "Maximum fraction of a node's infectivity that is exported when using network infectivity."
+#define Network_Infectivity_Min_Distance_DESC_TEXT                "Minimum distance between nodes to use in gravity model expression for network infectivity."
+#define Network_Infectivity_Coefficient_DESC_TEXT                 "List of coefficients to use in gravity model expression for network infectivity."
+#define Network_Infectivity_Exponent_DESC_TEXT                    "List of distance exponents to use in gravity model expression for network infectivity."
+
+#define SQL_Events_DESC_TEXT                                      "List of events to include in the SQLite event database."
+
+#define Enable_Label_By_Infector_DESC_TEXT                        "Indicates if an infection should be labeled with the unique identifer of the agent that transmits the infection."
+#define Enable_Label_By_Mutator_DESC_TEXT                         "Indicates if an infection should be labeled with the unique identifer of the agent infected at time of mutation."
+
+#define Genome_Mutations_Labeled_DESC_TEXT                        "List of enable values indicating if the corresponding genome value is labeled after mutation. Indicators are with respect to post-mutation genome value."
+
+#define Enable_Nonuniform_Shedding_DESC_TEXT                      "Indicates if the time course of infectivity shedding for an infected individual should follow the probability density function of a beta distribution; uniform shedding otherwise."
+#define Shedding_Distribution_Alpha_DESC_TEXT                     "Alpha parameter for the beta distribution probability density function describing the time course of infectivity shedding by an infected individual."
+#define Shedding_Distribution_Beta_DESC_TEXT                      "Beta parameter for the beta distribution probability density function describing the time course of infectivity shedding by an infected individual."

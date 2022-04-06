@@ -244,14 +244,3 @@ void Report::NormalizeSEIRWChannels()
     normalizeChannel(_recovered_pop_label,   _stat_pop_label);
     normalizeChannel(_waning_pop_label,      _stat_pop_label);
 }
-
-#if 0
-template<class Archive>
-void serialize(Archive &ar, Report& report, const unsigned int v)
-{
-    boost::serialization::void_cast_register<Report,IReport>();
-    ar & report.timesteps_reduced;
-    ar & report.channelDataMap;
-    ar & report._nrmSize;
-}
-#endif

@@ -32,6 +32,7 @@
     "Individual_Sampling_Type": "FIXED_SAMPLING",
     "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
     "Max_Node_Population_Samples": 100,
+    "Min_Node_Population_Samples": 0,
     "Minimum_Adult_Age_Years": 15,
     "Mortality_Blocking_Immunity_Decay_Rate": 0.001,
     "Mortality_Blocking_Immunity_Duration_Before_Decay": 60,

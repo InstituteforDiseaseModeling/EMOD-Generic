@@ -8,9 +8,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 
 #include "ReferenceTrackingEventCoordinator.h"
-#include "SimulationConfig.h"
 #include "Simulation.h"
 #include "SimulationEventContext.h"
 #include <algorithm> // for std:find
@@ -27,20 +27,11 @@ namespace Kernel
         , year2ValueMap()
         , end_year(0.0)
         , update_period(DAYSPERYEAR)
-    {
-    }
+    { }
 
-    bool
-    ReferenceTrackingEventCoordinator::Configure(
-        const Configuration * inputJson
-    )
+    bool ReferenceTrackingEventCoordinator::Configure(const Configuration* inputJson)
     {
-        if( !JsonConfigurable::_dryrun &&
-#ifdef ENABLE_TYPHOID
-            (GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::TYPHOID_SIM) &&
-#endif
-            (GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::STI_SIM) &&
-            (GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::HIV_SIM) )
+        if( !JsonConfigurable::_dryrun && !MatchesDependency(inputJson, "Simulation_Type", "STI_SIM,HIV_SIM,TYPHOID_SIM") )
         {
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ReferenceTrackingEventCoordinator can only be used in STI, HIV, and TYPHOID simulations." );
         }
@@ -50,15 +41,23 @@ namespace Kernel
         initConfigTypeMap("End_Year",       &end_year,      RTEC_End_Year_DESC_TEXT,      MIN_YEAR, MAX_YEAR,       MAX_YEAR );
 
         auto ret = StandardInterventionDistributionEventCoordinator::Configure( inputJson );
+
         num_repetitions = -1; // unlimited
 
+        tsteps_between_reps = update_period / SimConfig::GetSimParams()->sim_time_delta; // this won't be precise, depending on math
+        if( tsteps_between_reps <= 0 ) // don't allow zero or it will only update once
+        {
+            tsteps_between_reps = 1;
+        }
+
         LOG_DEBUG_F( "ReferenceTrackingEventCoordinator configured with update_period = %f, end_year = %f, and tsteps_between_reps = %d.\n", update_period, end_year, tsteps_between_reps );
+
         return ret;
     }
 
     void ReferenceTrackingEventCoordinator::CheckStartDay( float campaignStartDay ) const
     {
-        float campaign_start_year = campaignStartDay / DAYSPERYEAR + Simulation::base_year;
+        float campaign_start_year = campaignStartDay / DAYSPERYEAR + SimConfig::GetSimParams()->sim_time_base_year;
         if( end_year <= campaign_start_year )
         {
             LOG_WARN_F( "Campaign starts on year %f (day=%f). A ReferenceTrackingEventCoordinator ends on End_Year %f.  It will not distribute any interventions.\n",
@@ -72,19 +71,6 @@ namespace Kernel
         }
     }
 
-    void ReferenceTrackingEventCoordinator::InitializeTiming( const IdmDateTime& currentTime )
-    {
-        // this won't be precise, depending on math.
-        tsteps_between_reps = update_period / currentTime.GetTimeDelta(); 
-        if( tsteps_between_reps <= 0 )
-        {
-            // don't let this be zero or it will only update one time
-            tsteps_between_reps = 1;
-        }
-        LOG_DEBUG_F( "ReferenceTrackingEventCoordinator initialized tsteps_between_reps (derived) = %d.\n", tsteps_between_reps );
-
-        return;
-    }
 
     void ReferenceTrackingEventCoordinator::InitializeRepetitions( const Configuration* inputJson )
     {

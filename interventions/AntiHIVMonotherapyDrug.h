@@ -55,13 +55,5 @@ namespace Kernel
         ReverseTranscriptaseNucleosideAnalog::Enum nucleoside_analog;   // Used only for NRTI drugs to identify target
 
         ICampaignCostObserver * m_pCCO;
-
-    private:
-#if USE_BOOST_SERIALIZATION || USE_BOOST_MPI
-        // Serialization
-        friend class ::boost::serialization::access;
-        template<class Archive>
-        friend void serialize(Archive &ar, AntiHIVMonotherapyDrug& drug, const unsigned int v);
-#endif
     };
 }

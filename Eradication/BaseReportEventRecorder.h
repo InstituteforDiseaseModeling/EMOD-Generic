@@ -22,15 +22,8 @@ namespace Kernel
     class BaseReportEventRecorder : public BaseTextReportEventsTemplate<Broadcaster, Observer, Entity>
     {
     public:
-        static std::string GetEnableParameterName();
 
     protected:
-        static const std::string ENABLE_PARAMETER_NAME;
-        static const std::string EVENTS_LIST_NAME;
-        static const std::string EVENTS_LIST_DESC;
-        static const std::string IGNORE_EVENTS_LIST_NAME;
-        static const std::string IGNORE_EVENTS_LIST_DESC;
-
         BaseReportEventRecorder( const std::string& rReportName );
         virtual ~BaseReportEventRecorder();
 
@@ -44,18 +37,12 @@ namespace Kernel
         bool notifyOnEvent( Entity *pEntity, const EventTrigger::Enum& trigger );
 
     protected:
-        virtual void ConfigureOther( const Configuration* inputJson );
         virtual std::string GetOtherData( Entity *pEntity, const EventTrigger::Enum& trigger );
         virtual std::string GetTimeHeader() const;
 
         virtual float GetTime( Entity* pEntity ) const = 0;
 
         bool ignore_events_in_list;
-
-        std::string m_EnableParameterName;
-        std::string m_EventsListName;
-        std::string m_EventsListDesc;
-        std::string m_IgnoreEventsListName;
-        std::string m_IgnoreEventsListDesc;
+        std::vector<EventTrigger::Enum> event_trigger_list;
     };
 }

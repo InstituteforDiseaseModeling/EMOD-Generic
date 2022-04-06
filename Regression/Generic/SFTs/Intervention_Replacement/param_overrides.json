@@ -1,0 +1,39 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Age_Initialization_Distribution_Type": "DISTRIBUTION_OFF",
+            "Enable_Demographics_Builtin": 1,
+            "IMMUNITY": {
+                "Post_Infection_Acquisition_Multiplier": 1,
+                "Post_Infection_Transmission_Multiplier": 1
+            },
+            "MORTALITY": {
+                "Post_Infection_Mortality_Multiplier": 1
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 0,
+                "Infectious_Period_Constant": 5.0,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                "Symptomatic_Infectious_Offset": 0
+            }
+        },
+        "OUTPUT": {
+            "Custom_Reports_Filename": "",
+            "logLevel_Individual": "INFO",
+            "logLevel_Infection": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        },
+        "PRIMARY": {
+            "Memory_Usage_Halting_Threshold_Working_Set_MB": 8000,
+            "Memory_Usage_Warning_Threshold_Working_Set_MB": 7000,
+            "Run_Number": 3,
+            "Simulation_Duration": 160.0,
+            "Start_Time": 1,
+            "Config_Name": "Intervention_Replacement",
+            "Python_Script_Path": "SHARED"
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

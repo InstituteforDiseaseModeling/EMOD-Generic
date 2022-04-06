@@ -108,9 +108,9 @@ namespace Kernel {
             m_humidity += float( pRNG->eGauss() * cp->humidity_variance ); // varies as a Gaussian with stdev as specified in %
     }
 
-    ClimateFactory* ClimateFactory::CreateClimateFactory(boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, const string idreference, ISimulationContext* parent_sim)
+    ClimateFactory* ClimateFactory::CreateClimateFactory(const string idreference, ISimulationContext* parent_sim)
     {
-        ClimateFactory* factory = _new_ ClimateFactory(nodeid_suid_map, parent_sim);
+        ClimateFactory* factory = _new_ ClimateFactory(parent_sim);
         if(!factory->Initialize(idreference))
         {
             delete factory;
@@ -120,15 +120,12 @@ namespace Kernel {
         return factory;
     }
 
-    ClimateFactory::ClimateFactory( boost::bimap<ExternalNodeId_t, suids::suid> * nodeid_suid_map, ISimulationContext* parent_sim )
+    ClimateFactory::ClimateFactory(ISimulationContext* parent_sim)
         : num_datavalues(0)
         , num_nodes(0)
         , num_badnodes(0)
-        , start_time(-1.0f)
         , parent(parent_sim)
-    {
-        this->nodeid_suid_map = nodeid_suid_map;
-    }
+    { }
 
     const ClimateParams* ClimateFactory::GetParams()
     {
@@ -139,15 +136,12 @@ namespace Kernel {
     {
         LOG_INFO( "Initialize\n" );
 
-        const ClimateParams* cp = ClimateConfig::GetClimateParams();
+        const ClimateParams* cp = GetParams();
 
         try
         {
             if(cp->climate_structure == ClimateStructure::CLIMATE_OFF)
                 return true;
-
-            // store start_time so we can initialize Climates when they're created
-            start_time = parent->GetSimulationTime().GetTimeStart();
 
             // prepare any input files, etc
 
@@ -333,15 +327,15 @@ namespace Kernel {
             throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        if(ClimateConfig::GetClimateParams()->climate_structure != ClimateStructure::CLIMATE_KOPPEN)
+        if(GetParams()->climate_structure != ClimateStructure::CLIMATE_KOPPEN)
         {
             string str_clim_res( ReadStringFromConfig( metadata, UPDATE_RESOLUTION, metadata_filepath ));
             int md_updateres = ClimateUpdateResolution::pairs::lookup_value(str_clim_res.c_str());
 
-            if(md_updateres == -1 || (ClimateConfig::GetClimateParams()->climate_update_resolution != ClimateUpdateResolution::Enum(md_updateres)))
+            if(md_updateres == -1 || (GetParams()->climate_update_resolution != ClimateUpdateResolution::Enum(md_updateres)))
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Update_Resolution", 
-                                                        ClimateUpdateResolution::pairs::lookup_key(ClimateConfig::GetClimateParams()->climate_update_resolution),
+                                                        ClimateUpdateResolution::pairs::lookup_key(GetParams()->climate_update_resolution),
                                                         (std::string("metadata from ") + metadata_filepath).c_str(), str_clim_res.c_str() );
             }
         }
@@ -456,19 +450,13 @@ namespace Kernel {
         Climate* new_climate = nullptr;
 
         release_assert(parent_node);
-        suids::suid node_suid = parent_node->GetSuid();
 
-        release_assert(nodeid_suid_map);
-        if(nodeid_suid_map->right.count(node_suid) == 0)
-        {
-            // ERROR: "Error: Couldn't find matching NodeID for suid " << node_suid.data << endl;
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "(nodeid_suid_map->right.count(node_suid)", 0, "node_suid", node_suid.data );
-        }
+        float start_time = parent->GetParams()->sim_time_start;
+        uint32_t nodeid  = parent_node->GetExternalID();
 
-        uint32_t nodeid = nodeid_suid_map->right.at(node_suid);
         LOG_DEBUG_F( "Processing nodeid %d\n", nodeid );
 
-        switch( ClimateConfig::GetClimateParams()->climate_structure )
+        switch(GetParams()->climate_structure )
         {
             case ClimateStructure::CLIMATE_CONSTANT:
                 new_climate = ClimateConstant::CreateClimate( ClimateUpdateResolution::CLIMATE_UPDATE_DAY, parent_node, start_time, pRNG );
@@ -478,8 +466,7 @@ namespace Kernel {
             {
                 if(koppentype_offsets.count(nodeid) == 0)
                 {
-                    //std::cerr << "Error: Couldn't find offset for NodeID " << nodeid << " in ClimateKoppen file" << endl;
-                    throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "(koppentype_offsets.count(node_suid)", 0, "node_suid", node_suid.data );
+                    throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "(koppentype_offsets.count(nodeid)", 0, "nodeid", nodeid );
                 }
 
                 // seek to where we expect the data for that node
@@ -529,7 +516,7 @@ namespace Kernel {
                 climate_rainfall_file.seekg(rainfall_offsets[nodeid], std::ios::beg);
                 climate_humidity_file.seekg(humidity_offsets[nodeid], std::ios::beg);
 
-                new_climate = ClimateByData::CreateClimate( ClimateConfig::GetClimateParams()->climate_update_resolution,
+                new_climate = ClimateByData::CreateClimate( GetParams()->climate_update_resolution,
                                                             parent_node,
                                                             num_datavalues,
                                                             climate_airtemperature_file,
@@ -575,17 +562,3 @@ namespace Kernel {
     void
     Climate::SetContextTo(INodeContext* _parent) { parent = _parent; }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive & ar, Climate& climate, const unsigned int file_version)
-    {
-        ar & climate.m_airtemperature;
-        ar & climate.m_landtemperature;
-        ar & climate.m_accumulated_rainfall;
-        ar & climate.m_humidity; 
-        ar & climate.resolution_correction;
-    }
-}
-#endif

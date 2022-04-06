@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "VectorEnums.h"
-#include "BoostLibWrapper.h"
 #include "IArchive.h"
 
 namespace Kernel

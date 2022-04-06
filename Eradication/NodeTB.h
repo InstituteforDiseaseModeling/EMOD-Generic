@@ -56,6 +56,8 @@ namespace Kernel
         virtual float GetMDREvolvedIncidentCounter() const override;
         virtual float GetMDRFastIncidentCounter() const override;
 
+        virtual uint64_t GetTotalGenomes() const override;
+
     protected:
         NodeTB();
         NodeTB(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);

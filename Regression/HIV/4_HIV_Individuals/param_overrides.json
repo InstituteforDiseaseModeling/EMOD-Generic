@@ -4,9 +4,9 @@
         "Config_Name": "4_HIV_Individuals",
         "Enable_Birth": 0,
         "Enable_Natural_Mortality": 0,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "NewlySymptomatic",
             "NewInfection"

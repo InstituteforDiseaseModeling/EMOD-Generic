@@ -41,10 +41,13 @@
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
                 "Intervention_Config": {
-                    "class": "BirthTriggeredIV",
+                    "class": "NodeLevelHealthTriggeredIV",
                     "Dont_Allow_Duplicates": 0,
                     "Demographic_Coverage": 1,
                     "Duration": -1,
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
                     "Actual_IndividualIntervention_Config": {
                         "class": "PropertyValueChanger",
                         "Dont_Allow_Duplicates": 0,
@@ -144,10 +147,13 @@
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
                 "Intervention_Config": {
-                    "class": "BirthTriggeredIV",
+                    "class": "NodeLevelHealthTriggeredIV",
                     "Dont_Allow_Duplicates": 0,
                     "Demographic_Coverage": 1,
                     "Duration": -1,
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
                     "Actual_IndividualIntervention_Config": {
                         "class": "IVCalendar",
                         "Dont_Allow_Duplicates": 0,
@@ -260,10 +266,13 @@
                 "Number_Distributions": -1,
                 "Number_Repetitions": 1,
                 "Intervention_Config": {
-                    "class": "BirthTriggeredIV",
+                    "class": "NodeLevelHealthTriggeredIV",
                     "Dont_Allow_Duplicates": 0,
                     "Demographic_Coverage": 1,
                     "Duration": -1,
+                    "Trigger_Condition_List": [
+                        "Births"
+                    ],
                     "Actual_IndividualIntervention_Config": {
                         "class": "IVCalendar",
                         "Dont_Allow_Duplicates": 0,

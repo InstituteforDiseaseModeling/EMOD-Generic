@@ -28,7 +28,6 @@ namespace Kernel
         virtual ~SimulationHIV(void);
         static SimulationHIV *CreateSimulation();
         static SimulationHIV *CreateSimulation(const ::Configuration *config);
-        static void SetFixedParameters(::Configuration *config);
         SimulationHIV();
 
         virtual bool Configure( const ::Configuration *json );

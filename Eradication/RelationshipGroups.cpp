@@ -141,7 +141,7 @@ namespace Kernel {
         }
     }
 
-    void RelationshipGroups::Build( float contagionDecayRate, int numberOfClades, int numberOfGenomes )
+    void RelationshipGroups::Build( float contagionDecayRate, uint32_t numberOfClades, uint64_t numberOfGenomes )
     {
         infectors.clear();
         LOG_DEBUG( "Clearing propertyValueToIndexMap: should be done once each timestep, but NO more.\n" );
@@ -165,6 +165,11 @@ namespace Kernel {
     }
 
     void RelationshipGroups::ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix)
+    {
+        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Not implemented for RelationshipGroups." );
+    }
+
+    void RelationshipGroups::LoadSparseRepVecs(sparse_contagion_repr& inf_rep)
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Not implemented for RelationshipGroups." );
     }
@@ -269,17 +274,6 @@ namespace Kernel {
             LOG_INFO_F( "act_prob_vec.size() = %d for index %d\n", act_prob_vec.size(), poolIndex );
             if (candidate != nullptr)
             {
-#if 0
-                std::cout << "I am "
-                    << dynamic_cast<IIndividualHumanSTI*>(candidate)->GetSuid().data
-                    << " and I'm exposing partner in relationship "
-                    << poolIndexToRelationshipReverseMap[ poolIndex ]
-                    << " with id "
-                    << pRel->GetPartner( dynamic_cast<IIndividualHumanSTI*>(candidate) )->GetSuid().data
-                    << " to contagion qty "
-                    << infectionRate[poolIndex]
-                    << std::endl;
-#endif
                 IIndividualHumanSTI* sti_human = nullptr;
                 unsigned int receiver = ~0;
                 if (candidate->QueryInterface(GET_IID(IIndividualHumanSTI), (void**)&sti_human) == s_OK) {
@@ -435,30 +429,30 @@ namespace Kernel {
         return _infector;
     }
 
-    std::string DiscreteContagionPopulation::GetName( void ) const
+    std::pair<uint32_t, uint64_t> DiscreteContagionPopulation::GetStrainName( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
     }
 
-    int DiscreteContagionPopulation::GetCladeID( void ) const
+    uint32_t DiscreteContagionPopulation::GetCladeID( void ) const
     {
         return _clade;
     }
 
-    int DiscreteContagionPopulation::GetGeneticID( void ) const
+    uint64_t DiscreteContagionPopulation::GetGeneticID( void ) const
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
     }
 
-    void DiscreteContagionPopulation::SetCladeID( int in_cladeID )
+    void DiscreteContagionPopulation::SetCladeID( uint32_t in_cladeID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );
     }
 
-    void DiscreteContagionPopulation::SetGeneticID( int in_geneticID )
+    void DiscreteContagionPopulation::SetGeneticID( uint64_t in_geneticID )
     {
         // Never valid code path, have to implement this method due to interface.
         throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Not valid for DiscreteContagionPopulation" );

@@ -15,7 +15,7 @@
             "Config_Name": "01E_Concurrency_Independent_RateRatio1"
         },
         "____________REPORTING___________": {
-            "Report_Event_Recorder": 1,
+            "Enable_Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "PreDebut",
                 "PostDebut"
@@ -33,7 +33,7 @@
             ],
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
-	    "Python_Script_Path": "LOCAL", 
+            "Python_Script_Path": "LOCAL",
             "Simulation_Duration": 14600,
             "Simulation_Timestep": 30.4166666667
         }

@@ -48,17 +48,10 @@ namespace Kernel
     int   IndividualHumanConfig::infection_updates_per_tstep =  0;
     int   IndividualHumanConfig::max_ind_inf                 =  1;
 
-    float IndividualHumanConfig::min_adult_age_years         = 15.0f;
-
     // QI stuff in case we want to use it more extensively outside of campaigns
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Individual,IndividualHumanConfig)
     BEGIN_QUERY_INTERFACE_BODY(IndividualHumanConfig)
     END_QUERY_INTERFACE_BODY(IndividualHumanConfig)
-
-    bool IndividualHumanConfig::IsAdultAge( float years )
-    {
-        return (min_adult_age_years <= years);
-    }
 
     //------------------------------------------------------------------
     //   Initialization methods
@@ -76,8 +69,6 @@ namespace Kernel
 
         initConfigTypeMap( "Infection_Updates_Per_Timestep",  &infection_updates_per_tstep,  Infection_Updates_Per_Timestep_DESC_TEXT,   0,     144,  1 );
         initConfigTypeMap( "Max_Individual_Infections",       &max_ind_inf,                  Max_Individual_Infections_DESC_TEXT,        0,    1000,  1,    "Enable_Superinfection" );
-
-        initConfigTypeMap( "Minimum_Adult_Age_Years",         &min_adult_age_years,          Minimum_Adult_Age_Years_DESC_TEXT,       0.0f, FLT_MAX, 15.0f, "Individual_Sampling_Type", "ADAPTED_SAMPLING_BY_AGE_GROUP" );
 
         bool bRet = JsonConfigurable::Configure( config );
 
@@ -98,7 +89,6 @@ namespace Kernel
         , transmissionGroupMembership()
         , m_is_infected(false)
         , infectiousness(0.0f)
-        , Inf_Sample_Rate(0)
         , cumulativeInfs(0)
         , m_new_infection_state(NewInfectionState::Invalid)
         , StateChange(HumanStateChange::None)
@@ -143,7 +133,6 @@ namespace Kernel
         , transmissionGroupMembership()
         , m_is_infected(false)
         , infectiousness(0.0f)
-        , Inf_Sample_Rate(0)
         , cumulativeInfs(0)
         , m_new_infection_state(NewInfectionState::Invalid)
         , StateChange(HumanStateChange::None)
@@ -243,12 +232,6 @@ namespace Kernel
         home_node_id = parent->GetSuid() ;
     }
 
-    bool IndividualHuman::IsAdult() const
-    {
-        float age_years = GetAge() / DAYSPERYEAR ;
-        return age_years >= IndividualHumanConfig::min_adult_age_years ;
-    }
-
     bool IndividualHuman::IsDead() const
     {
         bool is_dead = (StateChange == HumanStateChange::DiedFromNaturalCauses) ||
@@ -327,12 +310,13 @@ namespace Kernel
         interventions = _new_ InterventionsContainer();
     }
 
-    void IndividualHuman::CreateSusceptibility(float susceptibility_modifier, float risk_modifier)
+    void IndividualHuman::CreateSusceptibility(float init_mod_acq, float init_mod_risk)
     {
-        susceptibility = Susceptibility::CreateSusceptibility(this, susceptibility_modifier, risk_modifier);
+        LOG_DEBUG_F( "%s: Creating susceptibility; individual %d; init_mod_acq %f; init_mod_risk %f\n", __FUNCTION__, suid.data, init_mod_acq, init_mod_risk );
+        susceptibility = Susceptibility::CreateSusceptibility(this, init_mod_acq, init_mod_risk);
     }
 
-    void IndividualHuman::SetParameters( INodeContext* pParent, float infsample, float susceptibility_modifier, float risk_modifier)
+    void IndividualHuman::SetParameters( INodeContext* pParent, float susceptibility_modifier, float risk_modifier)
     {
         StateChange       = HumanStateChange::None;
 
@@ -353,8 +337,6 @@ namespace Kernel
         // making it harder to originally find
         IIndividualHumanContext *indcontext = GetContextPointer();
         interventions->SetContextTo(indcontext); //TODO: fix this when init pattern standardized <ERAD-291>  PE: See comment above
-
-        Inf_Sample_Rate = infsample; // EAW: currently set to 1 by Node::addNewIndividual
 
         CreateSusceptibility(susceptibility_modifier, risk_modifier);
 
@@ -454,10 +436,16 @@ namespace Kernel
                         if ( inf_state_change == InfectionStateChange::Cleared )
                         {
                             LOG_DEBUG_F( "Individual %d's infection cleared.\n", GetSuid().data );
+
+                            if( broadcaster )
+                            {
+                                broadcaster->TriggerObservers( GetEventContext(), EventTrigger::InfectionCleared );
+                            }
+
                             if ( IndividualHumanConfig::enable_immunity )
                             {
                                 susceptibility->UpdateInfectionCleared();
-                            } //Immunity update: survived infection
+                            }
 
                             delete *it;
                             it = infections.erase(it);
@@ -466,7 +454,7 @@ namespace Kernel
 
                         // Set human state change and stop updating infections if the person has died
                         if ( inf_state_change == InfectionStateChange::Fatal )
-                        {                            
+                        {
                             Die( HumanStateChange::KilledByInfection );
                             break;
                         }
@@ -520,7 +508,8 @@ namespace Kernel
         //  Is there an active infection for statistical purposes?
         m_is_infected = (infections.size() > 0);
 
-        if( StateChange == HumanStateChange::None )
+        // Check if died of natural causes
+        if( parent->GetParams()->enable_natural_mortality && StateChange == HumanStateChange::None )
         {
             CheckVitalDynamics(currenttime, dt);
         }
@@ -704,7 +693,7 @@ namespace Kernel
 
             if( !migration_destination.is_nil() )
             {
-                migration_time_until_trip -= dt;
+                migration_time_until_trip -= dt*(parent->GetEventContext()->GetOutboundConnectionModifier());
 
                 // --------------------------------------------------------------------
                 // --- This check should really be zero, but epsilon makes the test for
@@ -713,8 +702,19 @@ namespace Kernel
                 // --------------------------------------------------------------------
                 if( migration_time_until_trip <= 0.0000001f )
                 {
-                    LOG_DEBUG_F( "%s: individual %d is migrating.\n", __FUNCTION__, suid.data );
-                    StateChange = HumanStateChange::Migrating;
+                    float dest_modifier = parent->GetParent()->GetNodeInboundMultiplier(migration_destination);
+
+                    if(GetRng()->SmartDraw(dest_modifier))
+                    {
+                        LOG_DEBUG_F( "%s: individual %d is migrating.\n", __FUNCTION__, suid.data );
+                        StateChange = HumanStateChange::Migrating;
+                    }
+                    else
+                    {
+                        LOG_DEBUG_F( "%s: individual %d not migrating due to destination restriction.\n", __FUNCTION__, suid.data );
+                        SetNextMigration();
+                    }
+                    
                 }
             }
             break;
@@ -1025,7 +1025,11 @@ namespace Kernel
             float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousness() * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
             StrainIdentity tmp_strainIDs;
             infection->GetInfectiousStrainID(&tmp_strainIDs);
-            // tmp_strainIDs.SetGeneticID( GetSuid().data ); // this little gem can't go in master but I want to leave it here commented out -- useful on some branches
+            if(GetParams()->enable_label_infector)
+            {
+                uint64_t new_genome = (static_cast<uint64_t>(GetSuid().data) << SHIFT_BIT) + (tmp_strainIDs.GetGeneticID() & MAX_24BIT);
+                tmp_strainIDs.SetGeneticID(new_genome);
+            }
             if( tmp_infectiousness )
             {
                 LOG_DEBUG_F( "Individual %d depositing contagion into transmission group.\n", GetSuid().data );
@@ -1077,14 +1081,14 @@ namespace Kernel
     //------------------------------------------------------------------
 
     // IIndividualHumanContext methods
+    const AgentParams* IndividualHuman::GetParams() const
+    {
+        return AgentConfig::GetAgentParams();
+    }
+
     suids::suid IndividualHuman::GetSuid() const         { return suid; }
     suids::suid IndividualHuman::GetNextInfectionSuid()  { return parent->GetNextInfectionSuid(); }
     RANDOMBASE* IndividualHuman::GetRng()              { return parent->GetRng(); }
-
-    const NodeDemographics* IndividualHuman::GetDemographics() const
-    {
-        return parent->GetDemographics();
-    }
 
     IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContext() const
     {
@@ -1267,7 +1271,6 @@ namespace Kernel
         // don't serialize transmissionGroupMembershipByRoute, it will be reconstituted on deserialization
         ar.labelElement("m_is_infected") & individual.m_is_infected;
         ar.labelElement("infectiousness") & individual.infectiousness;
-        ar.labelElement("Inf_Sample_Rate") & individual.Inf_Sample_Rate;
         ar.labelElement("cumulativeInfs") & individual.cumulativeInfs;
         ar.labelElement("m_new_infection_state") & (uint32_t&)individual.m_new_infection_state;
         ar.labelElement("StateChange") & (uint32_t&)individual.StateChange;

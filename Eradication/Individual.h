@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 #include <string>
 
-#include "BoostLibWrapper.h"
 #include "Common.h"
 #include "Configure.h"
 #include "IIndividualHumanContext.h"
@@ -57,7 +56,6 @@ namespace Kernel
         GET_SCHEMA_STATIC_WRAPPER( IndividualHumanConfig )
 
     public:
-        static bool IsAdultAge( float years );
         virtual bool Configure( const Configuration* config ) override;
 
     protected:
@@ -68,8 +66,6 @@ namespace Kernel
 
         static int infection_updates_per_tstep;
         static int max_ind_inf;
-
-        static float min_adult_age_years ;
     };
 
     class IndividualHuman : public IIndividualHuman,
@@ -90,6 +86,8 @@ namespace Kernel
         static IndividualHuman *CreateHuman(INodeContext *context, suids::suid id, float MCweight = 1.0f, float init_age = 0.0f, int gender = 0);
         virtual ~IndividualHuman();
 
+        virtual const AgentParams* GetParams() const;
+
         virtual void InitializeHuman() override;
 
         virtual void Update(float currenttime, float dt) override;
@@ -106,8 +104,6 @@ namespace Kernel
         virtual IVaccineConsumer*                     GetVaccineContext() const;
         virtual IIndividualHumanEventContext*         GetEventContext() override;
         virtual ISusceptibilityContext*               GetSusceptibilityContext() const override;
-
-        virtual const Kernel::NodeDemographics*     GetDemographics() const override;
 
         // IIndividualHumanEventContext methods
         virtual bool              IsPregnant()                     const override { return is_pregnant; };
@@ -130,7 +126,6 @@ namespace Kernel
         virtual void SetPropertyReportString( const std::string& str ) override { m_PropertyReportString = str; }
         virtual bool AtHome() const override;
 
-        virtual bool IsAdult() const override;
         virtual bool IsDead() const override;
 
         // IMigrate
@@ -155,7 +150,7 @@ namespace Kernel
         virtual void UpdateGroupPopulation(float size_changes) override;
 
         // Initialization
-        virtual void SetParameters( INodeContext* pParent, float infsample, float imm_mod, float risk_mod) override; // specify each parameter, default version of SetParams()
+        virtual void SetParameters( INodeContext* pParent, float imm_mod, float risk_mod) override; // specify each parameter, default version of SetParams()
         virtual void CreateSusceptibility(float susceptibility_mod=1.0, float risk_mod=1.0);
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) override;
 
@@ -214,7 +209,6 @@ namespace Kernel
         // Infections
         bool  m_is_infected;    // TODO: replace with more sophisticated strain-tracking capability
         float infectiousness;   // infectiousness calculated over all Infections and passed back to Node
-        float Inf_Sample_Rate;  // EAW: unused currently
         int   cumulativeInfs;   // counter of total infections over individual's history
 
         NewInfectionState::_enum  m_new_infection_state; // to flag various types of infection state changes

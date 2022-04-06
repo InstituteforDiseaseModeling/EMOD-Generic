@@ -107,7 +107,7 @@ namespace Kernel
     {
         if ( ClimateConfig::GetClimateParams()->climate_structure == ClimateStructure::CLIMATE_OFF )
         {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", SimType::pairs::lookup_key(sim_type) );
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", SimType::pairs::lookup_key(GetParams()->sim_type) );
         }
 
         return Simulation::ValidateConfiguration(config);
@@ -217,12 +217,12 @@ namespace Kernel
         };
 
         MpiDataExchanger exchanger( "VectorMigration", to_self_func, to_others_func, from_others_func, clear_data_func );
-        exchanger.ExchangeData( this->currentTime );
+        exchanger.ExchangeData(currentTime.time);
     }
 
-    int SimulationVector::populateFromDemographics( const char* campaign_filename, const char* loadbalance_filename )
+    int SimulationVector::populateFromDemographics()
     {
-        int num_nodes = Simulation::populateFromDemographics( campaign_filename, loadbalance_filename );
+        int num_nodes = Simulation::populateFromDemographics();
 
         uint64_t total_vector_population = 0;
         for( auto node_entry : nodes )

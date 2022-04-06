@@ -21,20 +21,7 @@ SETUP_LOGGING( "ReportSurveillanceEventRecorder" )
 
 namespace Kernel
 {
-    const std::string SURV_ENABLE_PARAMETER_NAME   = "Report_Surveillance_Event_Recorder";
-    const std::string SURV_EVENTS_LIST_NAME        = "Report_Surveillance_Event_Recorder_Events";
-    const std::string SURV_EVENTS_LIST_DESC        =  Report_Surveillance_Event_Recorder_Events_DESC_TEXT;
-    const std::string SURV_IGNORE_EVENTS_LIST_NAME = "Report_Surveillance_Event_Recorder_Ignore_Events_In_List";
-    const std::string SURV_IGNORE_EVENTS_LIST_DESC =  Report_Surveillance_Event_Recorder_Ignore_Events_In_List_DESC_TEXT;
-
-    const std::string STATS_BY_IP_PARAMETER_NAME = "Report_Surveillance_Event_Recorder_Stats_By_IPs";
-
     GET_SCHEMA_STATIC_WRAPPER_IMPL( ReportSurveillanceEventRecorder, ReportSurveillanceEventRecorder )
-
-    std::string ReportSurveillanceEventRecorder::GetEnableParameterName()
-    {
-        return SURV_ENABLE_PARAMETER_NAME;
-    }
 
     IReport* ReportSurveillanceEventRecorder::CreateReport()
     {
@@ -45,29 +32,26 @@ namespace Kernel
         : ReportEventRecorderCoordinator( "ReportSurveillanceEventRecorder.csv" )
         , m_StatsByIpKeyNames()
         , m_ReportStatsByIP()
-    {
-        m_EnableParameterName  = SURV_ENABLE_PARAMETER_NAME;
-        m_EventsListName       = SURV_EVENTS_LIST_NAME;
-        m_EventsListDesc       = SURV_EVENTS_LIST_DESC;
-        m_IgnoreEventsListName = SURV_IGNORE_EVENTS_LIST_NAME;
-        m_IgnoreEventsListDesc = SURV_IGNORE_EVENTS_LIST_DESC;
-    }
+    { }
 
     ReportSurveillanceEventRecorder::~ReportSurveillanceEventRecorder()
-    {
-    }
+    { }
 
     bool ReportSurveillanceEventRecorder::Configure( const Configuration* inputJson )
     {
         m_StatsByIpKeyNames.value_source = IPKey::GetConstrainedStringConstraintKey();
-        initConfigTypeMap( STATS_BY_IP_PARAMETER_NAME.c_str(), &m_StatsByIpKeyNames, Report_Surveillance_Event_Recorder_Stats_By_IPs_DESC_TEXT, GetEnableParameterName().c_str() );
 
-        return ReportEventRecorderCoordinator::Configure( inputJson );
+        initVectorConfig("Report_Surveillance_Event_Recorder_Events",  event_trigger_list,  inputJson,  MetadataDescriptor::VectorOfEnum("Report_Surveillance_Event_Recorder_Events", Report_Surveillance_Event_Recorder_Events_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)),  "Enable_Report_Surveillance_Event_Recorder");
+
+        initConfigTypeMap("Report_Surveillance_Event_Recorder_Ignore_Events_In_List",  &ignore_events_in_list,  Report_Surveillance_Event_Recorder_Ignore_Events_In_List_DESC_TEXT,  false,  "Enable_Report_Surveillance_Event_Recorder");
+        initConfigTypeMap("Report_Surveillance_Event_Recorder_Stats_By_IPs",           &m_StatsByIpKeyNames,    Report_Surveillance_Event_Recorder_Stats_By_IPs_DESC_TEXT,                   "Enable_Report_Surveillance_Event_Recorder");
+
+        return BaseReportEventRecorder::Configure(inputJson);
     }
 
     void ReportSurveillanceEventRecorder::Initialize( unsigned int nrmSize )
     {
-        m_ReportStatsByIP.SetIPKeyNames( STATS_BY_IP_PARAMETER_NAME, m_StatsByIpKeyNames );
+        m_ReportStatsByIP.SetIPKeyNames( "Report_Surveillance_Event_Recorder_Stats_By_IPs", m_StatsByIpKeyNames );
 
         ReportEventRecorderCoordinator::Initialize( nrmSize );
     }

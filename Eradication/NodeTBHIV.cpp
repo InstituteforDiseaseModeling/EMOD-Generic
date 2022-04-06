@@ -9,10 +9,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
+#include "ConfigParams.h"
 #include "NodeTBHIV.h"
 #include "NodeEventContextHost.h" //for node level trigger
 #include "IndividualCoInfection.h"
-#include "TBHIVParameters.h"
 #include "EventTrigger.h"
 
 SETUP_LOGGING( "NodeTBHIV" )
@@ -134,7 +134,7 @@ namespace Kernel
             RegisterObservers();
         }
 
-        if( enable_demographics_risk && IndividualHumanCoInfectionConfig::enable_coinfection )
+        if(GetParams()->enable_demographics_risk && IndividualHumanCoInfectionConfig::enable_coinfection)
         {
             HIVCoinfectionDistribution = NodeDemographicsDistribution::CreateDistribution( demographics["IndividualAttributes"]["HIVCoinfectionDistribution"], "gender", "time", "age" );
             HIVMortalityDistribution   = NodeDemographicsDistribution::CreateDistribution( demographics["IndividualAttributes"]["HIVTBCoinfMortalityDistribution"], "age", "year" );

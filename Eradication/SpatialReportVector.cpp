@@ -11,9 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <functional>
 #include <map>
-#include "BoostLibWrapper.h"
-// not in boost wrapper???
-#include <boost/math/special_functions/fpclassify.hpp>
 
 #include "SpatialReportVector.h"
 #include "VectorContexts.h"

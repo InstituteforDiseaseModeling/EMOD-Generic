@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include <set>
-#include "BoostLibWrapper.h"
 #include "NodeHIV.h"
 #include "IndividualSTI.h"
 #include "IIndividualHumanHIV.h"

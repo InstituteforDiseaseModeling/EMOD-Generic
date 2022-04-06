@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
@@ -47,6 +45,9 @@ namespace Kernel
 
         virtual int AddRef() override;
         virtual int Release() override;
+
+        // Group membership updates need to happen before accumulating infectivity
+        virtual bool NeedsPreInfectivityUpdate() const { return true; }
 
     protected:
         jsonConfigurable::ConstrainedString target_property_key;

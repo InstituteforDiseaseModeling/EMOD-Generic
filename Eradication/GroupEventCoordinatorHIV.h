@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "EventCoordinator.h"
 #include "Configure.h"
 #include "StandardEventCoordinator.h"

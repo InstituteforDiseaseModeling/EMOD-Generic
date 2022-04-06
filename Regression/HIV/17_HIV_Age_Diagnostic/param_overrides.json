@@ -5,9 +5,9 @@
         "Config_Name": "17_HIV_Age_Diagnostic",
         "Enable_Birth": 0,
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "NewInfection",
             "NewlySymptomatic",

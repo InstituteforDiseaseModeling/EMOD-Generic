@@ -36,7 +36,7 @@ namespace Kernel
 
     int GenomeMarkers::Initialize( const std::vector<std::string>& rAllGenomeMarkerNames )
     {
-        if( rAllGenomeMarkerNames.size() > 32 ) // 32 because 32 bits in uint32_t
+        if( rAllGenomeMarkerNames.size() > 32 ) // Restrict to first 32 bits in uint64_t
         {
             std::stringstream ss;
             ss << rAllGenomeMarkerNames.size() << " genome markers have been defined.  The maximum is 32.\n.";
@@ -48,7 +48,7 @@ namespace Kernel
         // --- with no markers.  If the user inputs an empty list of markers, everything
         // --- will still work.
         // -------------------------------------------------------------------------------
-        uint32_t bit_mask = 1;
+        uint64_t bit_mask = 1;
         for( auto& r_name : rAllGenomeMarkerNames )
         {
             if( Get( r_name ) != nullptr )
@@ -67,12 +67,12 @@ namespace Kernel
         return pow( 2, rAllGenomeMarkerNames.size() ); // two options (on/off) for each marker
     }
 
-    uint32_t GenomeMarkers::CreateBits( const std::vector<std::string>& rGenomeMarkerNames ) const
+    uint64_t GenomeMarkers::CreateBits( const std::vector<std::string>& rGenomeMarkerNames ) const
     {
-        uint32_t bit_mask = 0;
+        uint64_t bit_mask = 0;
         for( auto& r_name : rGenomeMarkerNames )
         {
-            uint32_t bits = GetBits( r_name );
+            uint64_t bits = GetBits( r_name );
             bit_mask |= bits;
         }
         return bit_mask;
@@ -83,14 +83,14 @@ namespace Kernel
         return m_NameSet;
     }
 
-    uint32_t GenomeMarkers::Size() const
+    uint64_t GenomeMarkers::Size() const
     {
         return m_MarkerMap.size();
     }
 
-    uint32_t GenomeMarkers::GetBits( const std::string& rName ) const
+    uint64_t GenomeMarkers::GetBits( const std::string& rName ) const
     {
-        const std::pair<std::string, uint32_t>* p_marker = Get( rName );
+        const std::pair<std::string, uint64_t>* p_marker = Get( rName );
         if( p_marker == nullptr )
         {
             std::stringstream ss;
@@ -104,7 +104,7 @@ namespace Kernel
         return p_marker->second;
     }
 
-    const std::pair<std::string, uint32_t>* GenomeMarkers::Get( const std::string& rName ) const
+    const std::pair<std::string, uint64_t>* GenomeMarkers::Get( const std::string& rName ) const
     {
         std::string lower_name = rName;
         std::transform( lower_name.begin(), lower_name.end(), lower_name.begin(), ::tolower );
@@ -157,9 +157,9 @@ namespace Kernel
         return possible_list;
     }
 
-    std::vector<std::pair<std::string, uint32_t>> GenomeMarkers::CreatePossibleCombinations() const
+    std::vector<std::pair<std::string, uint64_t>> GenomeMarkers::CreatePossibleCombinations() const
     {
-        std::vector<std::pair<std::string, uint32_t>> all_combos;
+        std::vector<std::pair<std::string, uint64_t>> all_combos;
         if( m_MarkerMap.size() > 0 )
         {
             std::vector<std::string> names_vector;
@@ -173,7 +173,7 @@ namespace Kernel
             all_combos.push_back( std::make_pair( std::string("NoMarkers"), 0 ) );
             for( auto& combo_names : all_combo_names )
             {
-                uint32_t bit_mask = CreateBits( combo_names );
+                uint64_t bit_mask = CreateBits( combo_names );
                 std::string name = combo_names[ 0 ];
                 for( int i = 1 ; i < combo_names.size(); ++i )
                 {
@@ -185,15 +185,15 @@ namespace Kernel
         return all_combos;
     }
 
-    uint32_t GenomeMarkers::FromOutcrossing( RANDOMBASE* pRNG, uint32_t id1, uint32_t id2 )
+    uint64_t GenomeMarkers::FromOutcrossing( RANDOMBASE* pRNG, uint64_t id1, uint64_t id2 )
     {
-        uint32_t mask = pRNG->ul();
+        uint64_t mask = pRNG->ul();
         
         //TODO: we could consider using the number of markers defined in GenomeMarkers
         // to mask out bits we don't care about.
         //mask = mask & ((1 << GenomeMarkers.Size()) - 1);
 
-        uint32_t child_strain = (id1 & mask) | (id2 & ~mask);
+        uint64_t child_strain = (id1 & mask) | (id2 & ~mask);
         LOG_DEBUG_F( "%d + %d with mask=%d --> %d\n", id1, id2, mask, child_strain );
         return child_strain;
     }

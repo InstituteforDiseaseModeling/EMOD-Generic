@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <string>
 
 #include "IdmApi.h"
-#include "BoostLibWrapper.h"
 #include "Configuration.h"
 #include "ExternalNodeId.h"
 #include "FactorySupport.h"

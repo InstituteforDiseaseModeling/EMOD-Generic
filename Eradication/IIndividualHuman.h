@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
+    struct AgentParams;
     struct INodeContext;
     struct IIndividualHumanContext;
     struct IIndividualHumanEventContext;
@@ -29,11 +30,13 @@ namespace Kernel
     // Interface for controlling objects (e.g. Node)
     struct IIndividualHuman : ISerializable
     {
+        virtual const AgentParams* GetParams() const = 0;
+
         // Setup
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) = 0;
         virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) = 0;
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
-        virtual void SetParameters( INodeContext* pParent, float infsample, float imm_mod, float risk_mod) = 0;
+        virtual void SetParameters( INodeContext* pParent, float imm_mod, float risk_mod) = 0;
         virtual void InitializeHuman() = 0;
 
         // Control
@@ -48,7 +51,6 @@ namespace Kernel
         virtual suids::suid GetSuid() const = 0;
         virtual float GetAge() const = 0;
         virtual float GetImmuneFailAgeAcquire() const = 0;
-        virtual bool IsAdult() const = 0;
         virtual int GetGender() const = 0;
         virtual float GetMonteCarloWeight() const = 0;
         virtual bool IsInfected() const = 0;

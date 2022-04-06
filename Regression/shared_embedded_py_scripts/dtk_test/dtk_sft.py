@@ -17,7 +17,6 @@ if platform == "linux" or platform == "linux2":
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import seaborn as sns # necessary for three_plots() method below
 import warnings
 from scipy.stats import gaussian_kde
 from io import TextIOWrapper
@@ -930,19 +929,24 @@ def test_poisson(trials, rate, report_file=None, route=None, normal_approximatio
 
 
 def test_lognorm(timers, mu, sigma, report_file=None, category=None, round=False, plot=False,
-                 plot_name="plot_data_lognorm"):
+                 plot_name="plot_data_lognorm", msg=None):
     """
-    -----------------------------------------------------
-        kstest for lognormal distribution
-            :param timers: the distribution to test
-            :param mu: mean, which is equal to sqrt(scale)
-            :param sigma: the standard deviation
-            :param report_file: for error reporting
-            :param category: for error reporting
-            :return: True, False
-    -----------------------------------------------------
+    Kstest for lognormal distribution with mean and standard deviation from the underlying normal distribution.
+    Args:
+        timers: The distribution to test
+        mu: Mean of the log-normal distribution's natural logarithm, which is equal to math.log(scale)
+        sigma: The standard deviation of the log-normal distribution's natural logarithm
+        report_file: For error reporting
+        category: For error reporting
+        round: Whether or not to round scipy data with 7 significant digits
+        plot: Whether or not to plot the test data vs. scipy data or cdf function
+        plot_name:
+        msg: a list to append the details result message
+
+    Returns: True, False
+
     """
-    scale = math.exp(mu) # median
+    scale = math.exp(mu)  # median
     size = len(timers)
 
     if round:
@@ -966,37 +970,51 @@ def test_lognorm(timers, mu, sigma, report_file=None, category=None, round=False
     critical_value_s = calc_ks_critical_value(size)
 
     if p >= 5e-2 or s <= critical_value_s:
+        message = f"GOOD: log normal kstest result for {category} is: statistic={s}, pvalue={p}, expected s less than" \
+                  f" {critical_value_s} and p larger than 0.05.\n"
         if report_file is not None:
-            report_file.write(
-                "GOOD: log normal kstest result for {0} is: statistic={1}, pvalue={2}, expected s less than {3} and p larger than 0.05.\n".format(
-                    category, s, p, critical_value_s))
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
         return True
     else:
+        message = f"BAD: log normal kstest result for {category} is: statistic={s}, pvalue={p}, expected s less than " \
+                  f"{critical_value_s} and p larger than 0.05.\n"
         if report_file is not None:
-            report_file.write(
-                "BAD: log normal kstest result for {0} is: statistic={1}, pvalue={2}, expected s less than {3} and p larger than 0.05.\n".format(
-                    category, s, p, critical_value_s))
-        # print("BAD: log normal kstest result for {0} is: statistic={1}, pvalue={2}, expected s less than {3} and p larger than 0.05.\n".format(category, s, p, critical_value_s))
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
         return False
 
 
 def test_uniform(dist, p1=None, p2=None, report_file=None, round=False, significant_digits=7,
-                 plot=False, plot_name="plot_data_uniform"):
+                 plot=False, plot_name="plot_data_uniform", msg=None):
     """
-     -----------------------------------------------------
-        kstest for uniform distribution
-            :param p1: loc
-            :param p2: loc + scale
-            :param dist: The distribution to be tested
-            :return: True, False
-    -----------------------------------------------------
+    Kstest or Chisquare(if p1 and p2 are not provided) for uniform distribution .If p1 and p2 are not provided, this
+    only test if a given distribution is equally distributed.
+    Args:
+        dist: The distribution to be tested
+        p1: Loc, min value
+        p2: Loc + scale, max value
+        report_file: For error reporting
+        round: Whether or not to round scipy data with n significant digits
+        significant_digits: N, number of significant digits
+        plot: Whether or not to plot the test data vs. scipy data
+        plot_name:
+        msg: a list to append the details result message
+
+    Returns: True, False
+
     """
     if not p1 and not p2:
         s, p = stats.chisquare(dist)
         critical_value_s = None
-        m_template = "Chisquare test passed with statistic={0}, pvalue={1}, expected  and p larger than 0.05.\n"
+        m_template = "This distribution is equally distributed. Chisquare test passed with statistic={0}, pvalue={1}" \
+                     ", expected  and p larger than 0.05.\n"
         suffix = m_template.format(s, p)
     else:
+        if p1 > p2:  # swap p1 an p2 to make sure p1 is min and p2 is max
+            p1, p2 = p2, p1
         loc = p1
         scale = p2 - p1
         size = len(dist)
@@ -1007,17 +1025,17 @@ def test_uniform(dist, p1=None, p2=None, report_file=None, round=False, signific
             for s in dist_uniform_scipy:
                 dist_uniform_scipy_r.append(round_to_n_digit(s, significant_digits))
             dist_uniform_scipy = dist_uniform_scipy_r
-        
-        result = stats.ks_2samp(dist_uniform_scipy,dist)
+
+        result = stats.ks_2samp(dist_uniform_scipy, dist)
         p = get_p_s_from_ksresult(result)['p']
         s = get_p_s_from_ksresult(result)['s']
         critical_value_s = calc_ks_critical_value(size)
-        m_template="({0},{1})passed with statistic={2}, pvalue={3}, expected s less than {4} and p larger than 0.05.\n"
+        m_template = "({0},{1})passed with statistic={2}, pvalue={3}, expected s less than {4} and p larger than 0.05.\n"
         suffix = m_template.format(p1, p2, s, p, critical_value_s)
-        
+
         if plot:
             plot_data(dist, dist2=dist_uniform_scipy, label1="test data", label2="scipy_uniform",
-                      title="Test data vs. scipy uniform", category=plot_name, sort=True)
+                              title="Test data vs. scipy uniform", category=plot_name, sort=True)
 
     # return p >= 5e-2 or s <= critical_value_s
     success = (p >= 5e-2)
@@ -1026,6 +1044,8 @@ def test_uniform(dist, p1=None, p2=None, report_file=None, round=False, signific
     message = f"GOOD: {suffix}" if success else f"BAD: {suffix}"
     if report_file is not None:
         report_file.write(message)
+    if isinstance(msg, list):
+        msg.append(message)
 
     return success
 
@@ -1090,16 +1110,22 @@ def round_up(num, precision):
 
 
 def test_exponential(dist, p1, report_file=None, integers=False, roundup=False, round_nearest=False,
-                     plot=False, plot_name="plot_data_exponential"):
+                     plot=False, plot_name="plot_data_exponential", msg=None):
     """
-     -----------------------------------------------------
-        kstest for exponential distribution
-            :param p1: decay rate = 1 / decay length , lambda, >0,
-            :param dist: The distribution to be tested
-            :param report_file: report file to which write the error if such exists
-            :param integers: Indicates whether the distribution is rounded up or down to integers or not
-            :return: True, False
-    -----------------------------------------------------
+    Kstest for exponential distribution
+    Args:
+        dist: The distribution to be tested
+        p1: Decay rate = 1 / decay length , lambda, >0
+        report_file: Report file to which write the error if such exists
+        integers: Indicates whether the distribution is rounded up or round nearest to integers or not
+        roundup: Use with integers = True
+        round_nearest: Use with integers = True
+        plot: True to plot the test data vs. scipy data or cdf function
+        plot_name:
+        msg: a list to append the details result message
+
+    Returns: True, False
+
     """
     size = max(len(dist), 10000)
     scale = 1.0 / p1
@@ -1115,25 +1141,31 @@ def test_exponential(dist, p1, report_file=None, integers=False, roundup=False, 
         result = stats.anderson_ksamp([dist, dist_exponential_np])
         p = result.significance_level
         s = result.statistic
+        if plot:
+            plot_data(dist, dist2=dist_exponential_np, label1="test data", label2="numpy_exponential",
+                              title="Test data vs. numpy exponential", category=plot_name, sort=True)
     else:
         result = stats.kstest(dist, "expon", args=(0, scale))
         p = get_p_s_from_ksresult(result)['p']
         s = get_p_s_from_ksresult(result)['s']
-
-    if plot:
-        plot_data(dist, dist2=dist_exponential_np, label1="test data", label2="numpy_exponential",
-                  title="Test data vs. numpy exponential", category=plot_name, sort=True)
+        if plot:
+            plot_cdf_w_fun(dist, name=plot_name, cdf_function=stats.expon.cdf, args=(0, scale), show=True)
 
     if p >= 5e-2:
+        message = "GOOD: ({0})succeed with statistic={1}, pvalue={2}, expected p larger " \
+                  "than 0.05.\n".format(p1, s, p)
         if report_file is not None:
-            report_file.write(
-                "GOOD: ({0})succeed with statistic={1}, pvalue={2}, expected p larger "
-                "than 0.05.\n".format(p1, s, p))
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
         return True
     else:
+        message = "BAD: ({0})failed with statistic={1}, pvalue={2}, expected p larger " \
+                  "than 0.05.\n".format(p1, s, p)
         if report_file is not None:
-            report_file.write("BAD: ({0})failed with statistic={1}, pvalue={2}, expected p larger "
-                              "than 0.05.\n".format(p1, s, p))
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
         return False
 
 
@@ -1359,22 +1391,21 @@ def get_val(key, line):
 
 
 def wait_for_done(filename=sft_test_filename):
-    with open(filename, "r") as test_file:
-        while 1:
-            where = test_file.tell()
-            line = test_file.readline()
-            if not line:
-                time.sleep(1)
-                test_file.seek(where)
-            else:
-                if SFT_EOF in line:
-                    output_file_md5 = md5_hash_of_file(filename)
-                    with open("touchfile", "w") as touchfile:
-                        touchfile.write("{} file completely written. Move on to read.\n".format(filename))
-                        touchfile.write(line)
-                        touchfile.write(str(output_file_md5))
-                        # print( "Last line read = " + line )
-                    return
+
+    done_writing = False
+    while(not done_writing):
+        with open(filename) as test_file:
+            for line_val in test_file:
+                if SFT_EOF in line_val:
+                    done_writing = True
+                    break
+
+    with open("touchfile", "w") as touchfile:
+        touchfile.write("{} file completely written. Move on to read.\n".format(filename))
+        touchfile.write("Output size = {}\n".format(os.path.getsize(filename)))
+        touchfile.write(str(md5_hash_of_file(filename)))
+
+    return
 
 
 def md5_hash(handle):
@@ -1485,16 +1516,20 @@ def cal_tolerance_binomial(expected_value, binomial_p, prob=0.05):
         return tolerance
 
 
-def test_eGaussNonNeg(dist, p1, p2, round=False, report_file=None, plot=False, plot_name='plot_data_gaussian'):
+def test_eGaussNonNeg(dist, p1, p2, round=False, report_file=None, plot=False, plot_name='plot_data_gaussian',
+                      msg=None):
     """
-    kstest for truncated normal distribution(with the lower bound is hard-coded to zero and upper bound is max float
+    Kstest for truncated normal distribution(with the lower bound is hard-coded to zero and upper bound is max float
     number.)
     Args:
         dist: The distribution to be tested
-        p1: mean, loc
-        p2: width(standard deviation), scale, sig
+        p1: Mean, loc
+        p2: Width(standard deviation), scale, sig
         round: True to round the theoretical distribution to 7 significant digits.
-        report_file: report file to write the kstest result detail.
+        report_file: Report file to write the kstest result detail.
+        plot: True to plot the test data vs. scipy data or cdf function
+        plot_name:
+        msg: a list to append the test message
     Returns: True, False
     """
     size = len(dist)
@@ -1519,10 +1554,12 @@ def test_eGaussNonNeg(dist, p1, p2, round=False, report_file=None, plot=False, p
     if p >= 5e-2 or s <= critical_value_s:
         return True
     else:
+        message = f"BAD: (mean = {p1}, sigma = {p2})failed with statistic={s}, p_value={p}, " \
+                  f"expected s less than {critical_value_s} and p larger than 0.05.\n"
         if report_file is not None:
-            report_file.write(
-                f"BAD: (mean = {p1}, sigma = {p2})failed with statistic={s}, p_value={p}, "
-                f"expected s less than {critical_value_s} and p larger than 0.05.\n")
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
         return False
 
 
@@ -1740,9 +1777,9 @@ def three_plots(dist1, cdf_function=None, args=(), dist2=None,
         axarr[0].set_ylabel(ylabel)
 
     # 2nd plot: density plot
-    sns.distplot(dist1, ax=axarr[1], color=color1, vertical=True, label=label1)
+    axarr[1].hist(dist1, color=color1, density=True, orientation='horizontal', label=label1)
     if dist2 is not None:  # "if dist2:" will not work with numpy.ndarray
-        sns.distplot(dist2, ax=axarr[1], color=color2, vertical=True, label=label2)
+        axarr[1].hist(dist2, color=color2, density=True, orientation='horizontal', label=label2)
     axarr[1].set_xlabel("Probability")
     axarr[1].set_title("distplot")
     axarr[1].set_ylim(axarr[0].get_ylim())

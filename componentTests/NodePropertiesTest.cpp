@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeProperties.h"
 #include "Environment.h"
 #include "Log.h"
-#include "SimulationConfig.h"
 #include "NodeDemographics.h"
 #include "FileSystem.h"
 #include "IdmMpi.h"
@@ -27,9 +26,6 @@ using namespace Kernel;
 
 SUITE(NodePropertiesTest)
 {
-    typedef boost::bimap<uint32_t, suids::suid> nodeid_suid_map_t;
-    typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-
     struct NodePropertiesTestFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
@@ -79,8 +75,7 @@ SUITE(NodePropertiesTest)
             // --------------------
             NodeDemographicsFactory::SetDemographicsFileList( NodeDemographicsFactory::ConvertLegacyStringToSet( rDemogFilename ) ) ;
 
-            nodeid_suid_map_t node_id_suid_map;
-            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
+            unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
             try
             {
@@ -100,13 +95,6 @@ SUITE(NodePropertiesTest)
 
             if( !isNodePropertiesError )
             {
-                vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-                for( uint32_t node_id : nodeIDs )
-                {
-                    suids::suid node_suid = GetNextNodeSuid();
-                    node_id_suid_map.insert( nodeid_suid_pair( node_id, node_suid ) );
-                }
-
                 INodeContext* nodeContext = new INodeContextFake();
                 unique_ptr<NodeDemographics> demographics( factory->CreateNodeDemographics( nodeContext ) );
 
@@ -137,17 +125,9 @@ SUITE(NodePropertiesTest)
         // --------------------
         // --- Initialize test
         // --------------------
-        nodeid_suid_map_t node_id_suid_map;
-        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(&node_id_suid_map, Environment::getInstance()->Config ) );
+        unique_ptr<NodeDemographicsFactory> factory( NodeDemographicsFactory::CreateNodeDemographicsFactory(Environment::getInstance()->Config) );
 
         NPFactory::GetInstance()->Initialize( factory->GetNodePropertiesJson(), true );
-
-        vector<uint32_t> nodeIDs = factory->GetNodeIDs();
-        for (uint32_t node_id : nodeIDs)
-        {
-            suids::suid node_suid = GetNextNodeSuid();
-            node_id_suid_map.insert(nodeid_suid_pair(node_id, node_suid));
-        }
 
         try
         {

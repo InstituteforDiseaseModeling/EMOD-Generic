@@ -9,6 +9,7 @@
                 "complex_immunity_overlay.json"
             ],
             "IMMUNITY": {
+                "Enable_Initial_Susceptibility_Distribution": 1,
                 "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_COMPLEX"
             }
         },

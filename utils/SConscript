@@ -114,7 +114,6 @@ utilsSrcFiles = [
     "suids.cpp",
     "Types.cpp",
     "Timers.cpp",
-    "ValidationLog.cpp"
 ]
 
 utilsIncFiles = [
@@ -132,13 +131,11 @@ utilsIncFiles = [
     'Log.h',
     'MathFunctions.h',
     'Memory.h',
-    'Profile.h',
     'ProgVersion.h',
     'Properties.h',
     'SimpleTypemapRegistration.h',
     "StatusReporter.h",
     'Sugar.h',
-    'ValidationLog.h',
     'version_info.h'
 ]
 

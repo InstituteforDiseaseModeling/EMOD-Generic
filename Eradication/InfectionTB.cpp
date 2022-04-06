@@ -26,7 +26,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "config_params.rc"
 #include "IndividualCoInfection.h"
-#include "TBHIVParameters.h"
 #include "StrainIdentity.h"
 #include "INodeContext.h"
 #include "DistributionFactory.h"
@@ -81,9 +80,6 @@ namespace Kernel
             msg << "Base_Infectivity_Distribution other than CONSTANT_DISTRIBUTION not currently supported for TB infections.";
             throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
-
-        // TB infections use Genome to represent drug resistance with the TBInfectionDrugResistance ENUM type.
-        InfectionConfig::number_genomes  = 2;
 
         initConfigTypeMap("TB_Latent_Cure_Rate", &TB_latent_cure_rate, TB_Latent_Cure_Rate_DESC_TEXT, 0.0f, 1.0f, 0.0005479f); // tb
         initConfigTypeMap("TB_Fast_Progressor_Rate", &TB_fast_progressor_rate, TB_Fast_Progressor_Rate_DESC_TEXT, 0.0f, 1.0f, 0.000041096f); // tb

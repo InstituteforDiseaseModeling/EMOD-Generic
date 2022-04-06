@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "BoostLibWrapper.h"
-
 #include "Common.h"
 #include "MalariaContexts.h"
 #include "NodeVector.h"
@@ -43,6 +41,10 @@ namespace Kernel
         virtual const NodeDemographicsDistribution* GetMSP_variance_antibody_distribution()     const override { return MSP_variance_antibody_distribution; };
         virtual const NodeDemographicsDistribution* GetNonspec_variance_antibody_distribution() const override { return nonspec_variance_antibody_distribution; };
         virtual const NodeDemographicsDistribution* GetPfEMP1_variance_antibody_distribution()  const override { return PfEMP1_variance_antibody_distribution; };
+
+        virtual void  BuildTransmissionRoutes(float) override;
+
+        virtual uint64_t GetTotalGenomes() const override;
 
         virtual IIndividualHuman* addNewIndividual( float = 1.0f, float = 0.0f, int = 0, int = 0, float = 1.0f, float = 1.0f) override;
 

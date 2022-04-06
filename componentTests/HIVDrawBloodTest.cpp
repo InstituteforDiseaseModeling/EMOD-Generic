@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISusceptibilityHIVFake.h"
 #include "Configuration.h"
 #include "Simulation.h"
-#include "SimulationConfig.h"
 
 using namespace Kernel;
 
@@ -35,7 +34,6 @@ SUITE(HivDrawBloodTest)
         ISusceptibilityHIVFake                  m_ISusceptibilityHIVFake ;
         IndividualHumanContextFake              m_Human ;
         HIVDrawBlood                            m_Diag ;
-        SimulationConfig* m_pSimulationConfig ;
 
         DiagnosticFixture()
             : m_NC()
@@ -44,16 +42,13 @@ SUITE(HivDrawBloodTest)
             , m_ISusceptibilityHIVFake()
             , m_Human( &m_InterventionsContext, &m_NC, &m_NEC, &m_ISusceptibilityHIVFake )
             , m_Diag()
-            , m_pSimulationConfig( new SimulationConfig() )
         {
             Environment::Finalize();
             Environment::setLogger( new SimpleLogger( Logger::tLevel::WARNING ) );
-            Environment::setSimulationConfig( m_pSimulationConfig );
 
             m_InterventionsContext.SetContextTo( &m_Human );
             m_Diag.SetContextTo( &m_Human );
             m_ISusceptibilityHIVFake.SetCD4Count( 777.0 );
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM ;
 
             std::map<std::string, float> ip_values_state ;
             ip_values_state.insert( std::make_pair( "abort_state_1", 0.0f ) );
@@ -68,8 +63,6 @@ SUITE(HivDrawBloodTest)
 
             m_Human.GetProperties()->Add( IPKeyValue( "InterventionStatus:no_state" ) );
 
-            ////EventTriggerFactoryDeleteInstance();
-
             //json::Object fakeConfigJson;
             //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
             ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
@@ -78,8 +71,6 @@ SUITE(HivDrawBloodTest)
 
         ~DiagnosticFixture()
         {
-            delete m_pSimulationConfig;
-            Environment::setSimulationConfig( nullptr );
             Environment::Finalize();
         }
     };

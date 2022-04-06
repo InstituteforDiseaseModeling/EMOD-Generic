@@ -26,19 +26,9 @@ SETUP_LOGGING( "ReportEventRecorderCoordinator" )
 
 namespace Kernel
 {
-    template std::string BaseReportEventRecorder< ICoordinatorEventBroadcaster,
-                                                  ICoordinatorEventObserver,
-                                                  IEventCoordinatorEventContext >::GetEnableParameterName();
-
     template void BaseTextReportEventsTemplate< ICoordinatorEventBroadcaster,
                                                 ICoordinatorEventObserver,
                                                 IEventCoordinatorEventContext>::Reduce();
-
-    const std::string ReportEventRecorderCoordinator::ENABLE_PARAMETER_NAME   = "Report_Coordinator_Event_Recorder";
-    const std::string ReportEventRecorderCoordinator::EVENTS_LIST_NAME        = "Report_Coordinator_Event_Recorder_Events";
-    const std::string ReportEventRecorderCoordinator::EVENTS_LIST_DESC        =  Report_Coordinator_Event_Recorder_Events_DESC_TEXT;
-    const std::string ReportEventRecorderCoordinator::IGNORE_EVENTS_LIST_NAME = "Report_Coordinator_Event_Recorder_Ignore_Events_In_List";
-    const std::string ReportEventRecorderCoordinator::IGNORE_EVENTS_LIST_DESC =  Report_Coordinator_Event_Recorder_Ignore_Events_In_List_DESC_TEXT;
 
     GET_SCHEMA_STATIC_WRAPPER_IMPL( ReportEventRecorderCoordinator, ReportEventRecorderCoordinator )
 
@@ -49,16 +39,22 @@ namespace Kernel
 
     ReportEventRecorderCoordinator::ReportEventRecorderCoordinator()
         : BaseReportEventRecorder( "ReportCoordinatorEventRecorder.csv" )
-    {
-    }
+    { }
 
     ReportEventRecorderCoordinator::ReportEventRecorderCoordinator( const std::string& rReportName )
         : BaseReportEventRecorder( rReportName )
-    {
-    }
+    { }
 
     ReportEventRecorderCoordinator::~ReportEventRecorderCoordinator()
+    { }
+
+    bool ReportEventRecorderCoordinator::Configure( const Configuration* inputJson )
     {
+        initVectorConfig("Report_Coordinator_Event_Recorder_Events",  event_trigger_list,  inputJson,  MetadataDescriptor::VectorOfEnum("Report_Coordinator_Event_Recorder_Events", Report_Coordinator_Event_Recorder_Events_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)),  "Enable_Report_Coordinator_Event_Recorder");
+
+        initConfigTypeMap("Report_Coordinator_Event_Recorder_Ignore_Events_In_List",  &ignore_events_in_list,  Report_Coordinator_Event_Recorder_Ignore_Events_In_List_DESC_TEXT,  false,  "Enable_Report_Coordinator_Event_Recorder");
+
+        return BaseReportEventRecorder::Configure(inputJson);
     }
 
     void ReportEventRecorderCoordinator::UpdateEventRegistration( float currentTime,

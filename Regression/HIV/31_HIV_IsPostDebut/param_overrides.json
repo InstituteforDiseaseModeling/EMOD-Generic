@@ -4,8 +4,9 @@
         "Base_Population_Scale_Factor": 0.0001,
         "Base_Year": 1990,
         "Config_Name": "31_HIV_IsPostDebut",
-        "Enable_Birth": 0, 
-        "Report_Event_Recorder": 1,
+        "Enable_Birth": 0,
+        "Enable_Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "Yikes_Toddler_Is_Post_Debut",
             "Phew_Toddler_Is_Not_Post_Debut",
@@ -25,7 +26,6 @@
             "STIDebut"
         ],
         "Run_Number": 9,
-        "Python_Script_Path": "LOCAL",
         "Simulation_Duration": 180
     }
 }

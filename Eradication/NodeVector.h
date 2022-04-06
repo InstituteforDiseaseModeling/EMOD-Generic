@@ -61,8 +61,7 @@ namespace Kernel
         void SetVectorPopulations(void);    //default--1 population as before
         virtual void AddVectors( const std::string& releasedSpecies, const VectorMatingStructure& _vector_genetics, uint32_t releasedNumber) override;
 
-        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
+        virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override;
         virtual void processImmigratingVector( IVectorCohort* immigrant ) override;
         void processEmigratingVectors( float dt );
 

@@ -12,6 +12,7 @@
         "Demographics_Reporting": 0,
         "Enable_Default_Reporting": 1,
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Event_Recorder": 1,
         "PRIMARY": {
             "Config_Name": "74_Generic_ImmunityBloodTest",
             "Enable_Interventions": 1,
@@ -24,7 +25,6 @@
             "Run_Number": 1,
             "Simulation_Duration": 80
         },
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "TestedPositive_IamImmune",
             "TestedNegative_IamSusceptible"

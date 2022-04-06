@@ -44,10 +44,6 @@ namespace Kernel
 
     SusceptibilityType::Enum SusceptibilityConfig::susceptibility_type = SusceptibilityType::FRACTIONAL;
 
-    // Initialization of susceptibility at simulation start
-    bool                   SusceptibilityConfig::enable_initial_susceptibility_distribution      = false;
-    DistributionType::Enum SusceptibilityConfig::susceptibility_initialization_distribution_type = DistributionType::DISTRIBUTION_OFF;
-
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Susceptibility,SusceptibilityConfig)
     BEGIN_QUERY_INTERFACE_BODY(SusceptibilityConfig)
     END_QUERY_INTERFACE_BODY(SusceptibilityConfig)
@@ -106,9 +102,6 @@ namespace Kernel
         LOG_DEBUG_F( "basemortupdate = %f\n", basemortupdate );
 
         LOG_DEBUG_F( "susceptibility_type = %d\n", susceptibility_type );
-
-        LOG_DEBUG_F( "enable_initial_susceptibility_distribution = %d\n",      enable_initial_susceptibility_distribution );
-        LOG_DEBUG_F( "susceptibility_initialization_distribution_type = %d\n", susceptibility_initialization_distribution_type );
     }
 
     bool SusceptibilityConfig::Configure(const Configuration* config)
@@ -152,13 +145,6 @@ namespace Kernel
         // Implementation of an individual's susceptibility
         // Currently (May2018) implemented for maternal protection only, but other functionality is expected to follow.
         initConfig( "Susceptibility_Type", susceptibility_type, config, MetadataDescriptor::Enum("Susceptibility_Type", Susceptibility_Type_DESC_TEXT, MDD_ENUM_ARGS(SusceptibilityType)), nullptr, nullptr, &dset_mprotect02);
-
-        // Initialization values for acquisition modifier
-        const std::map<std::string, std::string> dset_initsuscept01  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM,STI_SIM,AIRBORNE_SIM,TBHIV_SIM,VECTOR_SIM,MALARIA_SIM,DENGUE_SIM,PY_SIM"}, {"Enable_Immunity", "1"}};
-        const std::map<std::string, std::string> dset_initsuscept02  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM,STI_SIM,AIRBORNE_SIM,TBHIV_SIM,VECTOR_SIM,MALARIA_SIM,DENGUE_SIM,PY_SIM"}, {"Enable_Immunity", "1"}, {"Enable_Initial_Susceptibility_Distribution", "1"}};
-
-        initConfigTypeMap( "Enable_Initial_Susceptibility_Distribution",   &enable_initial_susceptibility_distribution,     Enable_Initial_Susceptibility_Distribution_DESC_TEXT, false, nullptr, nullptr, &dset_initsuscept01 );
-        initConfig( "Susceptibility_Initialization_Distribution_Type",     susceptibility_initialization_distribution_type, config, MetadataDescriptor::Enum("Susceptibility_Initialization_Distribution_Type", Susceptibility_Initialization_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionType)), nullptr, nullptr, &dset_initsuscept02);
 
         bool bRet = JsonConfigurable::Configure( config );
 

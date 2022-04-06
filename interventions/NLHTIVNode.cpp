@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "ISimulationContext.h"
 #include "NodeEventContext.h"  // for INodeEventContext (ICampaignCostObserver)
-//#include "IIndividualHuman.h"
 #include "SimulationEventContext.h"
 
 SETUP_LOGGING( "NLHTIVNode" )
@@ -35,8 +34,9 @@ namespace Kernel
     NLHTIVNode::NLHTIVNode()
     : BaseNodeIntervention()
     , m_trigger_conditions()
-    , max_duration(0)
-    , duration(0)
+    , max_duration(0.0f)
+    , duration(0.0f)
+    , num_distributed(0)
     , node_property_restrictions()
     , demographic_restrictions()
     , m_disqualified_by_coverage_only(false)
@@ -49,8 +49,7 @@ namespace Kernel
     , actual_node_intervention_config()
     , _ndi(nullptr)
     , using_individual_config(false)
-    {
-    }
+    { }
 
     NLHTIVNode::~NLHTIVNode()
     { 
@@ -65,10 +64,7 @@ namespace Kernel
         return BaseNodeIntervention::Release();
     }
 
-    bool
-    NLHTIVNode::Configure(
-        const Configuration * inputJson
-    )
+    bool NLHTIVNode::Configure(const Configuration* inputJson)
     {
         JsonConfigurable::_useDefaults = InterventionFactory::useDefaults;
 
@@ -86,7 +82,7 @@ namespace Kernel
         initConfigTypeMap("Duration", &max_duration, BT_Duration_DESC_TEXT, -1.0f, FLT_MAX, -1.0f ); // -1 is a convention for indefinite duration
 
         initConfigTypeMap( "Blackout_Period", &blackout_period, Blackout_Period_DESC_TEXT, 0.0f, FLT_MAX, 0.0f );
-        //initConfigTypeMap( "Blackout_Event_Trigger", &blackout_event_trigger, Blackout_Event_Trigger_DESC_TEXT );
+
         initConfig( "Blackout_Event_Trigger", blackout_event_trigger, inputJson, MetadataDescriptor::Enum("Blackout_Event_Trigger", Blackout_Event_Trigger_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) );
         initConfigTypeMap( "Blackout_On_First_Occurrence", &blackout_on_first_occurrence, Blackout_On_First_Occurrence_DESC_TEXT, false );
 
@@ -104,7 +100,7 @@ namespace Kernel
         // --- Phase 3 - 11/9/16    Consolidate so that the user only defines Trigger_Condition_List
         // --------------------------------------------------------------------------------------------------------------------
         JsonConfigurable::_useDefaults = InterventionFactory::useDefaults; // Why???
-        //initConfigTypeMap( "Trigger_Condition_List", &m_trigger_conditions, NLHTI_Trigger_Condition_List_DESC_TEXT );
+
         initVectorConfig( "Trigger_Condition_List", m_trigger_conditions, inputJson, MetadataDescriptor::VectorOfEnum("Trigger_Condition_List", NLHTI_Trigger_Condition_List_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)) );
 
         bool retValue = BaseNodeIntervention::Configure( inputJson );
@@ -137,14 +133,11 @@ namespace Kernel
             } 
         }
         JsonConfigurable::_useDefaults = false;
-        return retValue;    
+
+        return retValue;
     }
 
-    bool
-    NLHTIVNode::Distribute(
-        INodeEventContext *pNodeEventContext,
-        IEventCoordinator2 *pEC
-    )
+    bool NLHTIVNode::Distribute(INodeEventContext *pNodeEventContext, IEventCoordinator2 *pEC)
     {
         bool was_distributed = BaseNodeIntervention::Distribute(pNodeEventContext, pEC);
         if (was_distributed)
@@ -168,10 +161,7 @@ namespace Kernel
     }
 
     //returns false if didn't get the intervention
-    bool NLHTIVNode::notifyOnEvent(
-        INodeEventContext *pNode,
-        const EventTriggerNode& trigger
-    )
+    bool NLHTIVNode::notifyOnEvent(INodeEventContext* pNode, const EventTriggerNode& trigger)
     {
         // ----------------------------------------------------------------------
         // --- Ignore events for nodes that don't qualify due to their properties
@@ -185,11 +175,9 @@ namespace Kernel
         // the trigger event
         LOG_DEBUG_F("Node %d experienced event %s, check to see if it passes the conditions before distributing actual_intervention \n",
                     pNode->GetNodeContext()->GetSuid().data,
-                    EventTrigger::pairs::lookup_key( trigger )
-                   );
+                    EventTrigger::pairs::lookup_key( trigger ) );
 
         assert( parent );
-        //assert( parent->GetRng() );
 
         release_assert( _ndi );
 
@@ -206,9 +194,9 @@ namespace Kernel
         }
         ndi->Release();
 
-
         if( distributed )
         {
+            num_distributed++;
             if( blackout_on_first_occurrence )
             {
                 blackout_time_remaining = blackout_period ;
@@ -222,7 +210,6 @@ namespace Kernel
 
         return distributed;
     }
-
 
     void NLHTIVNode::Unregister()
     {
@@ -292,42 +279,6 @@ namespace Kernel
             config = nullptr;
         }
     }
-
-#if 0
-    // private/protected
-    bool
-    NLHTIVNode::qualifiesToGetIntervention(
-        const IIndividualHumanEventContext * const pIndividual
-    )
-    {
-        bool retQualifies = demographic_restrictions.IsQualified( pIndividual );
-
-        //OK they passed the property and age test, now check if they are part of the demographic coverage
-        if (retQualifies)
-        {
-            LOG_DEBUG_F("demographic_coverage = %f\n", getDemographicCoverage());
-            if( !SMART_DRAW( getDemographicCoverage() ) )
-            {
-                m_disqualified_by_coverage_only = true;
-                LOG_DEBUG_F("Demographic coverage ruled this out, m_disqualified_by_coverage_only is %d \n", m_disqualified_by_coverage_only);
-                retQualifies = false;
-            }
-        }
-
-        LOG_DEBUG_F( "Returning %d from %s\n", retQualifies, __FUNCTION__ );
-        return retQualifies;
-    }
-
-    float NLHTIVNode::getDemographicCoverage() const
-    {
-        return demographic_restrictions.GetDemographicCoverage();    
-    }
-
-    void NLHTIVNode::onDisqualifiedByCoverage( IIndividualHumanEventContext *pIndiv )
-    {
-        //do nothing, this is for the scale up switch
-    }
-#endif
 
     std::string NLHTIVNode::GetInterventionClassName() const
     {

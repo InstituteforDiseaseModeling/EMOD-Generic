@@ -50,7 +50,7 @@ namespace Kernel
         IMPLEMENT_NO_REFERENCE_COUNTING()
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) { return e_NOINTERFACE; }
 
-        GenomeMarkerModifiers( const std::string& rMarkerName = "", uint32_t genomeBitMask = 0 );
+        GenomeMarkerModifiers( const std::string& rMarkerName = "", uint64_t genomeBitMask = 0 );
         virtual ~GenomeMarkerModifiers();
 
         // JsonConfigurable methods
@@ -61,7 +61,7 @@ namespace Kernel
         inline float              GetC50()        const { return m_C50; }
         inline float              GetMaxKilling() const { return m_MaxKilling; }
 
-        inline bool HasGenomeBit( uint32_t genomeBits ) const
+        inline bool HasGenomeBit( uint64_t genomeBits ) const
         { 
             return ((genomeBits & m_GenomeBitMask) != 0);
         }
@@ -70,7 +70,7 @@ namespace Kernel
         std::string m_MarkerName;
         float m_C50;
         float m_MaxKilling;
-        uint32_t m_GenomeBitMask;
+        uint64_t m_GenomeBitMask;
     };
 
     class DrugResistantModifiers : public JsonConfigurable, public IComplexJsonConfigurable

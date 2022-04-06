@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <vector>
 
 #include "IdmApi.h"
-#include "BoostLibWrapper.h"
 #include "Climate.h"
 #include "Common.h"
 #include "Environment.h"
@@ -28,6 +27,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeContext.h"
 #include "StrainIdentity.h"
 
+#define ADULT_AGE_YRS                 (15.0f)
 #define BIRTHRATE_SANITY_VALUE        (0.005f)
 #define CONTACT                       "contact"
 
@@ -78,22 +78,23 @@ namespace Kernel
         virtual const NodeParams* GetParams() const;
 
         virtual IMigrationInfo*   GetMigrationInfo() override;
-        virtual const NodeDemographics* GetDemographics()  const override;
-        virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const override;
         virtual NPKeyValueContainer& GetNodeProperties() override;
 
 
         // Migration
-        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, 
-                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override;
+        virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override;
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) override;
         virtual void SortHumans() override;
         virtual const std::vector<IIndividualHuman*>& GetHumans() const override;
 
-        // Strain tracking
-        virtual const std::map<std::string, int>&                 GetStrainClades()   const override { return strain_map_clade;   }
-        virtual const std::map<std::string, int>&                 GetStrainGenomes()  const override { return strain_map_genome;  }
-        virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const override { return strain_map_data;    }
+        // Strain tracking reporter data
+        virtual std::map<std::pair<uint32_t,uint64_t>, std::vector<float>>& GetStrainData() override { return strain_map_data; }
+
+        // Network infectivity
+        virtual const float                   GetNetInfectFrac()                        const override;
+        virtual       void                    SetNetInfectFrac(float)                         override;
+        virtual const sparse_contagion_repr&  GetNetInfRep()                            const override;
+        virtual       void                    DepositNetInf(sparse_contagion_id,float)        override;
 
         // Initialization
         virtual void SetContextTo(ISimulationContext* context) override;
@@ -110,20 +111,21 @@ namespace Kernel
         // Possible TODO: refactor into common interfaces if there is demand
         virtual       INodeEventContext*  GetEventContext()                     override;
         virtual       ExternalNodeId_t    GetExternalID() const override;
-        virtual const IdmDateTime& GetTime()     const override;
-        virtual float GetInfected()              const override;
-        virtual float GetSymptomatic()           const override;
-        virtual float GetNewlySymptomatic()      const override;
-        virtual float GetStatPop()               const override;
-        virtual float GetBirths()                const override;
-        virtual float GetCampaignCost()          const override;
-        virtual float GetInfectivity()           const override;
-        virtual float GetInfectionRate()         const override;
-        virtual float GetSusceptDynamicScaling() const override;
-        virtual const Climate* GetLocalWeather() const override;
-        virtual long int GetPossibleMothers()    const override;
 
-        virtual float GetMeanAgeInfection()      const override;
+        virtual const IdmDateTime&  GetTime()                   const override;
+        virtual const Climate*      GetLocalWeather()           const override;
+        virtual float               GetInfected()               const override;
+        virtual float               GetSymptomatic()            const override;
+        virtual float               GetNewlySymptomatic()       const override;
+        virtual float               GetStatPop()                const override;
+        virtual float               GetBirths()                 const override;
+        virtual float               GetCampaignCost()           const override;
+        virtual float               GetInfectivity()            const override;
+        virtual float               GetInfectionRate()          const override;
+        virtual float               GetSusceptDynamicScaling()  const override;
+        virtual long int            GetPossibleMothers()        const override;
+        virtual float               GetMeanAgeInfection()       const override;
+        virtual uint64_t            GetTotalGenomes()           const override;
 
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override;
 
@@ -150,15 +152,7 @@ namespace Kernel
         virtual std::map< std::string, float > GetContagionByRoute() const;
         virtual const RouteList_t& GetTransmissionRoutes() const override;
 
-        //Methods for implementing time dependence in various quantities; infectivity, birth rate, migration rate
-        virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time)  const;
-        virtual float getClimateCorrection()                                                                       const;
-        virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase)                  const;
-
         virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override;
-
-        // These methods are not const because they will extract the value from the demographics
-        // if it has not been done yet.
         virtual float GetLatitudeDegrees()override;
         virtual float GetLongitudeDegrees() override;
 
@@ -180,9 +174,14 @@ namespace Kernel
 
         virtual void ManageFamilyTrip( float currentTime, float dt );
 
-    protected:
-        float area;
+                void  updateVitalDynamics(float dt = 1.0f);             // handles births and non-disease mortality
+        virtual void  considerPregnancyForIndividual( bool bPossibleMother, bool bIsPregnant, float age, int individual_id, float dt, IIndividualHuman* pIndividual = nullptr ); 
+        virtual float initiatePregnancyForIndividual( int individual_id, float dt ) override;
+        virtual bool  updatePregnancyForIndividual( int individual_id, float duration ) override;
+        virtual void  accumulateIndividualPopStatsByValue(float mcw, float infectiousness, bool poss_mom, bool is_infected, bool is_symptomatic, bool is_newly_symptomatic);
+        virtual void  resetNodeStateCounters(void);
 
+    protected:
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
 
@@ -213,7 +212,10 @@ namespace Kernel
 
         // Node properties
         suids::suid suid;
+        float base_samp_rate_node;
         float birthrate;
+
+        uint32_t  initial_population;
 
         // ----------------------------------------------------------------------------------------
         // --- DMB 9-16-2014 Through comparison, it was determined that using a vector (and moving
@@ -244,27 +246,12 @@ namespace Kernel
 
         // Infectivity modifications
         bool  enable_infectivity_reservoir;
-        bool  enable_infectivity_scaling;
-        bool  enable_infectivity_scaling_boxcar;
-        bool  enable_infectivity_scaling_climate;
-        bool  enable_infectivity_scaling_density;
-        bool  enable_infectivity_scaling_exponential;
-        bool  enable_infectivity_scaling_sinusoid;
         bool  enable_infectivity_overdispersion;
 
-        float infectivity_boxcar_amplitude;
-        float infectivity_boxcar_start_time;
-        float infectivity_boxcar_end_time;
-        float infectivity_exponential_baseline;
-        float infectivity_exponential_rate;
-        float infectivity_exponential_delay;
         float infectivity_multiplier;
-        float infectivity_population_density_halfmax;
         float infectivity_reservoir_end_time;
         float infectivity_reservoir_size;
         float infectivity_reservoir_start_time;
-        float infectivity_sinusoidal_amplitude;
-        float infectivity_sinusoidal_phase;
         float infectivity_overdispersion;
 
         // Event handling
@@ -296,24 +283,29 @@ namespace Kernel
         float infectionrate; // TODO: this looks like its only a reporting counter now and possibly not accurately updated in all cases
         float mInfectivity;
 
-        // Reporting container for strain tracking
-        std::map<std::string, int>                  strain_map_clade;
-        std::map<std::string, int>                  strain_map_genome;
-        std::map<std::string, std::vector<float>>   strain_map_data;
+        // Containers for network infectivity
+        float                                         net_inf_frac;
+        sparse_contagion_repr                         net_inf_rep;
+        std::map<sparse_contagion_id, float>          net_inf_dep;
+
+        // Container for strain tracking reporter data
+        std::map<std::pair<uint32_t,uint64_t>, std::vector<float>> strain_map_data;
 
         ISimulationContext *parent;     // Access back to simulation methods
         ISimulation* parent_sim; //reduce access to RNG
 
-        bool demographics_birth;
-        bool enable_demographics_risk;
-
+        float acquisition_heterogeneity_variance;
         float prob_maternal_infection_transmission;
 
+        bool bSkipping; // for skip exposure
+
+        int  gap;
+
         bool vital_dynamics;
-        bool enable_natural_mortality;
         bool enable_maternal_infection_transmission;
 
         float initial_prevalence;
+        float initial_percentage_children;
 
         std::vector<float> init_prev_fraction;
         std::vector<int>   init_prev_clade;
@@ -321,9 +313,8 @@ namespace Kernel
 
         bool vital_birth;
         VitalBirthDependence::Enum                           vital_birth_dependence;                           // Vital_Birth_Dependence
-        VitalBirthTimeDependence::Enum                       vital_birth_time_dependence;                      //Time dependence in Birth Rate
+
         float x_birth;
-        float x_othermortality;
 
         RouteList_t routes;
 
@@ -339,17 +330,7 @@ namespace Kernel
         virtual void updatePopulationStatistics(float=1.0);     // called by updateinfectivity to gather population statistics
         virtual void accumulateIndividualPopulationStatistics(float dt, IIndividualHuman* individual);
 
-    public: 
-        void  updateVitalDynamics(float dt = 1.0f);             // handles births and non-disease mortality
-        virtual void considerPregnancyForIndividual( bool bPossibleMother, bool bIsPregnant, float age, int individual_id, float dt, IIndividualHuman* pIndividual = nullptr ); 
-        virtual float initiatePregnancyForIndividual( int individual_id, float dt ) override;
-        virtual bool updatePregnancyForIndividual( int individual_id, float duration ) override;
-        virtual void accumulateIndividualPopStatsByValue(float mcw, float infectiousness, bool poss_mom, bool is_infected, bool is_symptomatic, bool is_newly_symptomatic);
-        virtual void resetNodeStateCounters(void);
-    protected:
-
         // Population Initialization
-        virtual void populateNewIndividualsFromDemographics(int count_new_individuals = 100);
         virtual void populateNewIndividualsByBirth(int count_new_individuals = 100) override;
         virtual void populateNewIndividualFromMotherId( unsigned int temp_mother_id );
         virtual void populateNewIndividualFromMotherPointer( IIndividualHuman* mother );
@@ -359,14 +340,8 @@ namespace Kernel
         virtual float drawInitialSusceptibility(float ind_init_age);
 
         virtual IIndividualHuman *createHuman( suids::suid id, float MCweight, float init_age, int gender);
-        IIndividualHuman* configureAndAddNewIndividual(float ind_MCweight=1.0f, float ind_init_age=(20*DAYSPERYEAR), float comm_init_prev=0.0f, float comm_female_ratio=0.5f, float init_mod_acquire=1.0f);
-        virtual IIndividualHuman* addNewIndividual(
-            float monte_carlo_weight = 1.0,
-            float initial_age = 0,
-            int gender = 0,
-            int initial_infections = 0,
-            float susceptibility_parameter = 1.0,
-            float risk_parameter = 1.0);
+        IIndividualHuman* configureAndAddNewIndividual(float ind_MCweight=1.0f, float ind_init_age=(20*DAYSPERYEAR), float comm_init_prev=0.0f, float comm_female_ratio=0.5f, float init_mod_acquire=1.0f, float risk_parameter = 1.0);
+        virtual IIndividualHuman* addNewIndividual(float monte_carlo_weight = 1.0, float initial_age = 0, int gender = 0, int initial_infections = 0, float susceptibility_parameter = 1.0, float risk_parameter = 1.0);
 
         virtual void RemoveHuman( int index );
 
@@ -390,25 +365,18 @@ namespace Kernel
         virtual INodeContext *getContextPointer();
         virtual void propagateContextToDependents();
 
-        float birth_rate_sinusoidal_forcing_amplitude;  // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME
-        float birth_rate_sinusoidal_forcing_phase;      // Only for Birth_Rate_Time_Dependence = SINUSOIDAL_FUNCTION_OF_TIME
-        float birth_rate_boxcar_forcing_amplitude;      // Only for Birth_Rate_Time_Dependence = ANNUAL_BOXCAR_FUNCTION
-        float birth_rate_boxcar_start_time;             // Only for Birth_Rate_Time_Dependence = ANNUAL_BOXCAR_FUNCTION
-        float birth_rate_boxcar_end_time;               // Only for Birth_Rate_Time_Dependence = ANNUAL_BOXCAR_FUNCTION
-
         // Skipping functions & variables
         virtual int calcGap();
-        bool bSkipping; // for skip exposure
+
         std::map< TransmissionRoute::Enum, float > maxInfectionProb; // set to 1.0 if not defined
-        int gap;
+
         virtual void computeMaxInfectionProb( float dt );
-        // TBD: Put below in cpp
+
         virtual float GetMaxInfectionProb( TransmissionRoute::Enum route ) const
         {
             // Note that in GENERIC there's on ly one route. Can get tricky b/w CONTACT and ALL.
             return maxInfectionProb.at( route );
         }
-        VitalDeathDependence::Enum                           vital_death_dependence;                           // Vital_Death_Dependence
 
         RANDOMBASE* m_pRng;
         suids::distributed_generator m_IndividualHumanSuidGenerator;

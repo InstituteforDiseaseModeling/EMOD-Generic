@@ -1,0 +1,38 @@
+"""
+Event targets only one person each
+0. Config enables event db, sets 5 day incubation period, 5 day infectious period
+1. Campaign gives OutbreakIndividual with Incubation period enabled day 2
+2. dtk_in_process starts day 5 giving 1.0 Transmission blocking vaccines
+Expected:
+1. Number of New Infections after the Outbreak is exactly equal to campaign cost
+2. After 10 days of simulation, zero new infections (Each person who could have been infectious got vaccinateD)
+
+
+"""
+
+"""
+ExplicitIdDemographic
+0. Config enables event db
+1. Start with an outbreak day 5
+2. After day 10, start finding people with New Infections, and add a txn blocking vax for each one
+3. At end of simulation:
+3.1 VERIFY campaign cost == infections
+3.2 MAYBE VERIFY rate of new infections declines dramatically
+"""
+
+"""
+Enhanced: Only give as many as 20 vax a day.
+If more than 20, rest get written into a "vax queue" file
+So at each timestep, see if "vax queue" file exists and fill from there first
+Maybe have a log file about "What we know and what we've tried to do?"
+"""
+
+"""
+What could go wrong with Explicit ID?
+- Migration: ID may change if in different node
+- Birth / Death: How would I test targeting a dead person
+- Invalid ID: What does model do if ID doesn't exist?
+
+What features do I want:
+- Interrogate population: Is person still around?
+"""

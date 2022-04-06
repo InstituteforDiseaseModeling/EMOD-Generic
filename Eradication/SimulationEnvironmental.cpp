@@ -99,10 +99,6 @@ namespace Kernel
 
         addNode_internal( node, nodedemographics_factory, climate_factory, white_list_enabled );
     }
-
-    void SimulationEnvironmental::InitializeFlags( const ::Configuration *config )
-    {
-    }
 }
 
-#endif // ENABLE_POLIO
+#endif // ENABLE_ENVIRONMENTAL

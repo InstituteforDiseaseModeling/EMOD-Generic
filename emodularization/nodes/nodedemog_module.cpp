@@ -124,10 +124,6 @@ namespace Test {
                 //std::cout << schema_ostream.str() << std::endl;
                 //result = schema_ostream.str();
                 Kernel::JsonConfigurable::_dryrun = false;
-
-                // TBD: Parse dt
-                float dt = 1.0;
-                time.SetTimeDelta(dt);
             }
 
             QueryResult QueryInterface( iid_t iid, void** ppinstance )
@@ -166,6 +162,11 @@ namespace Test {
             virtual int32_t AddRef() override { return 0; }
             virtual int32_t Release() override { return 0; }
 
+            virtual float GetNodeInboundMultiplier( const suids::suid& rNodeSuid ) override
+            {
+                throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
+            }
+
             virtual const IInterventionFactory* GetInterventionFactory() const override { return nullptr; }
             virtual const DemographicsContext* GetDemographicsContext() const override { return demographics_factory->CreateDemographicsContext(); }
             virtual const SimParams* GetParams() const override { return nullptr; }
@@ -181,15 +182,13 @@ namespace Test {
                 time.setBaseYear( baseYear ); // hmm, GENERIC_SIM doesn't use base year
 
                 time = IdmDateTime(); // easiest way to set time back to 0 without adding nasty test-only API method
-
-                // TBD: Parse dt
-                float dt = 1.0;
-                time.SetTimeDelta(dt);
             }
 
             virtual void Update()
             {
-                time.Update();
+                // TBD: Parse dt
+                float dt = 1.0;
+                time.Update(dt);
             }
 
             // id services
@@ -410,10 +409,7 @@ pop(PyObject* self, PyObject* args)
         // Initialize node demographics from file
         initSim( config_filename );
         pyNodeDemogInit();
-        typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-        typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-        nodeid_suid_map_t nodeid_suid_map;
-        demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config);
+        demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory(EnvPtr->Config);
         if (demographics_factory == nullptr)
         {
             throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "Failed to create NodeDemographicsFactory" );
@@ -426,9 +422,7 @@ pop(PyObject* self, PyObject* args)
         for (auto node_id : nodeIDs)
         {
             suids::suid node_suid = suid_gen();
-            nodeid_suid_map.insert( nodeid_suid_pair( node_id, node_suid ) ); 
             std::cout << "Creating node." << std::endl;
-            //auto *node = Kernel::Node::CreateNode(p_testParentSim, node_id, node_suid);
             auto *node = new Test::TestNode(p_testParentSim, node_id, node_suid);
             release_assert( node );
             std::cout << "Got node." << std::endl;
@@ -466,15 +460,11 @@ getSchema(PyObject* self, PyObject* args)
     pyNodeDemogInit();
     
     // This is copy-pasted just to get everything initialized just so we can call GetSchema
-    typedef boost::bimap<ExternalNodeId_t, suids::suid> nodeid_suid_map_t;
-    typedef nodeid_suid_map_t::value_type nodeid_suid_pair;
-    nodeid_suid_map_t nodeid_suid_map;
-    demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory( &nodeid_suid_map, EnvPtr->Config ); 
+    demographics_factory = Kernel::NodeDemographicsFactory::CreateNodeDemographicsFactory(EnvPtr->Config);
     vector<uint32_t> nodeIDs = demographics_factory->GetNodeIDs(); 
     auto suid_gen = suids::distributed_generator(0,0);
     Test::TestSimulation testParentSim_tmp;
     suids::suid node_suid = suid_gen();
-    nodeid_suid_map.insert( nodeid_suid_pair( 1, node_suid ) ); 
     auto *node = new Test::TestNode(&testParentSim_tmp, 1, node_suid);
     node->getSchema();
     

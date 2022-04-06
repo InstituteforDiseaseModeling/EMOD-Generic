@@ -8,19 +8,20 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include "ConfigParams.h"
 #include "Environment.h"
 #include "Debug.h"
 #include "Infection.h"
 #include "InterventionsContainer.h"
 #include "ISusceptibilityContext.h"
 #include "RANDOM.h"
-#include "SimulationConfig.h"
 #include "MathFunctions.h"
 #include "StrainIdentity.h"
 #include "IIndividualHumanContext.h"
 #include "IDistribution.h"
 #include "DistributionFactory.h"
 #include "IndividualEventContext.h"
+#include "INodeContext.h"
 #include "NodeEventContext.h"
 
 SETUP_LOGGING( "Infection" )
@@ -34,13 +35,6 @@ namespace Kernel
     IDistribution* InfectionConfig::infectivity_distribution = nullptr;
     float InfectionConfig::base_mortality = 1.0f;
     bool  InfectionConfig::enable_disease_mortality = false;
-    bool  InfectionConfig::enable_strain_tracking   = false;
-    unsigned int InfectionConfig::log2genomes     = 0;
-    unsigned int InfectionConfig::number_clades   = 1;
-    unsigned int InfectionConfig::number_genomes  = 1;
-    
-    // symptomatic
-    float InfectionConfig::symptomatic_infectious_offset = FLT_MAX; //disabled
 
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Infection,InfectionConfig)
     BEGIN_QUERY_INTERFACE_BODY(InfectionConfig)
@@ -79,22 +73,8 @@ namespace Kernel
             infectivity_distribution = DistributionFactory::CreateDistribution( this, infectivity_distribution_function, "Base_Infectivity", config );
         }
 
-        // Symptomatic; 0.0 = Symptomatic when infectious, FLT_MAX = Individual never symptomatic
-        initConfigTypeMap( "Symptomatic_Infectious_Offset", &symptomatic_infectious_offset, Symptomatic_Infectious_Offset_DESC_TEXT, -FLT_MAX, FLT_MAX, 0.0f, "Simulation_Type", "GENERIC_SIM" );
-
-        // Strain tracking
-        initConfigTypeMap("Enable_Strain_Tracking",            &enable_strain_tracking,  Enable_Strain_Tracking_DESC_TEXT, false);
-
-        const std::map<std::string, std::string> depends_set_number_clades  {{"Enable_Strain_Tracking", "1"}, {"Simulation_Type", "GENERIC_SIM,VECTOR_SIM,MALARIA_SIM,ENVIRONMENTAL_SIM,TYPHOID_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,PY_SIM"}};
-        const std::map<std::string, std::string> depends_set_log2genomes    {{"Enable_Strain_Tracking", "1"}, {"Simulation_Type", "GENERIC_SIM,VECTOR_SIM,DENGUE_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,PY_SIM"}};
-        initConfigTypeMap("Number_of_Clades",                  &number_clades,  Number_of_Clades_DESC_TEXT,                   1,  10,   1, nullptr, nullptr, &depends_set_number_clades);
-        initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,    Log2_Number_of_Genomes_per_Clade_DESC_TEXT,   0,  24,   0, nullptr, nullptr, &depends_set_log2genomes );
-
         // Evaluate configuration
         bool bRet = JsonConfigurable::Configure( config );
-
-        // Post-process values
-        number_genomes = number_genomes << log2genomes;
 
         return bRet;
     }
@@ -197,6 +177,10 @@ namespace Kernel
         if(InfectionConfig::infectivity_distribution)
         {
             infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() );
+
+            // Apply correlation modifier
+            infectiousness *= 1 + (parent->GetParams()->correlation_acq_trans)*
+                                  (parent->GetSusceptibilityContext()->getModRisk()-1.0f);
         }
         else
         {
@@ -272,8 +256,42 @@ namespace Kernel
 
     void Infection::EvolveStrain(ISusceptibilityContext* immunity, float dt)
     {
-        // genetic evolution happens here.
-        // infection_strain
+        if(parent->GetParams()->enable_genome_mutation)
+        {
+            // Only use first 24 bits of genome val for mutation
+            uint64_t rate_mult_idx = (infection_strain->GetGeneticID() & MAX_24BIT);
+
+            if(rate_mult_idx+1 < parent->GetParent()->GetTotalGenomes())
+            {
+                float rate_mult = -1.0f*dt;
+
+                if(rate_mult_idx >= parent->GetParams()->genome_mutation_rates.size())
+                {
+                    rate_mult_idx = parent->GetParams()->genome_mutation_rates.size()-1;
+                }
+                rate_mult *= parent->GetParams()->genome_mutation_rates.at(rate_mult_idx);
+ 
+                if (parent->GetRng()->SmartDraw(EXPCDF(rate_mult)))
+                {
+                    uint64_t new_genome = (infection_strain->GetGeneticID() & MAX_24BIT) + 1;
+                    if(parent->GetParams()->enable_label_mutator)
+                    {
+                        uint64_t new_genome_idx = new_genome;
+                        if(new_genome_idx >= parent->GetParams()->genome_mutations_labeled.size())
+                        {
+                            new_genome_idx = parent->GetParams()->genome_mutations_labeled.size()-1;
+                        }
+                        if(parent->GetParams()->genome_mutations_labeled.at(new_genome_idx))
+                        {
+                            new_genome += static_cast<uint64_t>(GetSuid().data) << SHIFT_BIT;
+                        }
+                    }
+                    infection_strain->SetGeneticID(new_genome);
+                }
+            }
+        }
+
+        return;
     }
 
     void Infection::GetInfectiousStrainID( IStrainIdentity* infstrain ) 
@@ -315,7 +333,33 @@ namespace Kernel
 
     float Infection::GetInfectiousness() const
     {
-        return duration > incubation_timer ? infectiousness : 0.0f;
+        float inf_val = infectiousness;
+
+        if(parent->GetParams()->enable_nonuniform_shedding && duration > incubation_timer)
+        {
+            // Calculate index into hashed lookup of beta pdf values for shedding multiplier
+            int shed_hash_idx = static_cast<int>(std::round((SHEDDING_HASH_SIZE-1)*(duration-incubation_timer)/infectious_timer));
+
+            if(shed_hash_idx > SHEDDING_HASH_SIZE-1)
+            {
+                shed_hash_idx = SHEDDING_HASH_SIZE-1;
+            }
+            inf_val *= parent->GetParams()->shedding_beta_pdf_hash.at(shed_hash_idx);
+        }
+
+        if(parent->GetParams()->enable_genome_dependent_infectivity)
+        {
+            // Only use first 24 bits of genome val for variable infectivity
+            uint64_t strain_mult_idx = (infection_strain->GetGeneticID() & MAX_24BIT);
+
+            if(strain_mult_idx >= parent->GetParams()->genome_infectivity_multipliers.size())
+            {
+                strain_mult_idx = parent->GetParams()->genome_infectivity_multipliers.size()-1;
+            }
+            inf_val *= parent->GetParams()->genome_infectivity_multipliers.at(strain_mult_idx);
+        }
+
+        return duration > incubation_timer ? inf_val : 0.0f;
     }
 
     float Infection::GetInfectiousnessByRoute( const string& route ) const
@@ -357,7 +401,7 @@ namespace Kernel
 
     bool Infection::DetermineSymptomatology( float const duration, float const incubation_timer )
     {
-        return ( ( duration - incubation_timer ) > InfectionConfig::symptomatic_infectious_offset );
+        return ( ( duration - incubation_timer ) > parent->GetParams()->symptomatic_infectious_offset );
     }
 
     REGISTER_SERIALIZABLE(Infection);

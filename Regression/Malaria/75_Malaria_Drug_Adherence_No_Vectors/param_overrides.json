@@ -33,10 +33,10 @@
         "Config_Name": "75_Malaria_Drug_Adherence_No_Vectors",
         "Custom_Reports_Filename": "custom_reports.json",
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Geography": "SamplesInput",
-        "Report_Event_Recorder": 1,
         "Report_Event_Recorder_Events": [
             "TBActivation"
         ],

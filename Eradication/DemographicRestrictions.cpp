@@ -25,6 +25,7 @@ namespace Kernel
     : allow_age_restrictions(age_restrictions)
     , use_demographic_coverage( use_coverage )
     , demographic_coverage(DEFAULT_DEMOGRAPHIC_COVERAGE)
+    , max_events(INT_MAX)
     , default_target_demographic(defaultTargetDemographic)
     , target_demographic(default_target_demographic)
     , target_age_min_years(0)
@@ -42,14 +43,8 @@ namespace Kernel
     {
         if( use_demographic_coverage )
         {
-            pParent->initConfigTypeMap( "Demographic_Coverage", 
-                                        &demographic_coverage,
-                                        Demographic_Coverage_DESC_TEXT,
-                                        0.0, 
-                                        1.0, 
-                                        DEFAULT_DEMOGRAPHIC_COVERAGE/*, 
-                                        "Intervention_Config.*.iv_type", 
-                                        "IndividualTargeted"*/ );
+            pParent->initConfigTypeMap( "Demographic_Coverage",        &demographic_coverage, Demographic_Coverage_DESC_TEXT,        0.0f,    1.0f,  DEFAULT_DEMOGRAPHIC_COVERAGE );
+            pParent->initConfigTypeMap( "Max_Distributions_Per_Node",  &max_events,           Max_Distributions_Per_Node_DESC_TEXT,     0, INT_MAX,  INT_MAX );
         }
 
         release_assert( default_target_demographic == TargetDemographicType::Everyone );
@@ -99,6 +94,8 @@ namespace Kernel
         pParent->initConfigComplexType("Property_Restrictions_Within_Node", &property_restrictions, Property_Restriction_DESC_TEXT /*, "Intervention_Config.*.iv_type", "IndividualTargeted"*/ );
 
         pParent->initConfigTypeMap( "Target_Residents_Only", &target_residents_only, Target_Residents_Only_DESC_TEXT, false );
+
+        pParent->initConfigTypeMap( "ID_List", &id_list, DR_ID_List_DESC_TEXT, 0, INT_MAX, false, "Target_Demographic", "ExplicitIDs" );
     }
 
     void DemographicRestrictions::CheckConfiguration()
@@ -144,6 +141,7 @@ namespace Kernel
     bool DemographicRestrictions::HasDefaultRestrictions() const
     {
         if( demographic_coverage         != DEFAULT_DEMOGRAPHIC_COVERAGE    ) return false;
+        if( max_events                   != INT_MAX                         ) return false;
         if( target_demographic           != TargetDemographicType::Everyone ) return false;
         if( target_residents_only        != false                           ) return false;
         if( property_restrictions.Size() >  0                               ) return false;
@@ -154,6 +152,18 @@ namespace Kernel
     bool DemographicRestrictions::IsQualified( const IIndividualHumanEventContext* pIndividual )
     {
         bool retQualifies = true;
+
+        if( target_demographic == TargetDemographicType::ExplicitIDs )
+        {
+            if( std::find( id_list.begin(), id_list.end(), pIndividual->GetSuid().data ) != id_list.end() )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         if( target_residents_only )
         {
@@ -242,6 +252,11 @@ namespace Kernel
     float DemographicRestrictions::GetDemographicCoverage() const
     {
         return demographic_coverage;
+    }
+
+    int DemographicRestrictions::GetMaxEvents() const
+    {
+        return max_events;
     }
 
     TargetDemographicType::Enum DemographicRestrictions::GetTargetDemographic() const

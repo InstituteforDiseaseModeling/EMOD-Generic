@@ -47,12 +47,10 @@
 		<ClInclude Include="ISupports.h" />
 		<ClInclude Include="Log.h" />
 		<ClInclude Include="MathFunctions.h" />
-		<ClInclude Include="Profile.h" />
 		<ClInclude Include="ProgVersion.h" />
 		<ClInclude Include="SimpleTypemapRegistration.h" />
 		<ClInclude Include="StatusReporter.h" />
 		<ClInclude Include="Sugar.h" />
-		<ClInclude Include="ValidationLog.h" />
 		<ClInclude Include="version_info.h" />
 	</ItemGroup>
 	<ItemGroup>
@@ -80,7 +78,6 @@
 		<ClCompile Include="StatusReporter.cpp" />
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="suids.cpp" />
-		<ClCompile Include="ValidationLog.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="SConstruct" />

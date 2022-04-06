@@ -33,9 +33,6 @@
     <ClInclude Include="ISupports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ValidationLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigurationImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -49,9 +46,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BoostLibWrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Profile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ProgVersion.h">
@@ -258,15 +252,12 @@
     <ClInclude Include="IDistribution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SparseContagion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ValidationLog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Environment.cpp">
@@ -390,6 +381,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DistributionsConfigurable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Configuration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

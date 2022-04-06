@@ -24,8 +24,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 // (i.e. asserts are used for the developer).  However, the ParseCommandLine() method
 // will return an error message if the user enters something incorrectly.
 // The object should not throw an exception.
-// 
-// This class was designed a semi-replacement for boost::program_options.
 class IDMAPI ProgramOptions
 {
 public:

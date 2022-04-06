@@ -44,7 +44,7 @@ enum SerializationFlags : uint32_t
 
 class SerializationParameters : public JsonConfigurable
 {
-IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
+IMPLEMENT_NO_REFERENCE_COUNTING()
 DECLARE_QUERY_INTERFACE()
 GET_SCHEMA_STATIC_WRAPPER( SerializationParameters )
 public:

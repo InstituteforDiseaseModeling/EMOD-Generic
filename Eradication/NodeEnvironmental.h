@@ -42,9 +42,6 @@ namespace Kernel
 
         virtual void updateInfectivity( float dt ) override;
 
-        // Effect of climate on infectivity in Environmental disease
-        virtual float getClimateCorrection() const override;
-
         virtual void SetupIntranodeTransmission() override;
         virtual ITransmissionGroups* CreateTransmissionGroups() override;
         virtual void AddDefaultRoute( void ) override;
@@ -59,6 +56,7 @@ namespace Kernel
         virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override;
         virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
         virtual std::map<std::string, float> GetContagionByRoute() const override;
+        virtual uint64_t GetTotalGenomes() const override;
 
         DECLARE_SERIALIZABLE(NodeEnvironmental);
 

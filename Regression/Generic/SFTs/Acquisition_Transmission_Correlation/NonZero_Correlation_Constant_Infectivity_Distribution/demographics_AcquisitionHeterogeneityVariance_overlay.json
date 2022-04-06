@@ -1,0 +1,39 @@
+{
+   "Metadata": {
+      "Author": "yechen",
+      "DateCreated": "2018-07-27 11:20:51.381482",
+      "IdReference": "Gridded world grump2.5arcmin",
+      "NodeCount": 3,
+      "Resolution": 150,
+      "Tool": "dtk-tools"
+   },
+   "Nodes": [
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 20000
+         },
+         "IndividualAttributes": {
+             "AcquisitionHeterogeneityVariance": 0.4
+         },
+         "NodeID": 1
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 10000
+         },
+         "IndividualAttributes": {
+             "AcquisitionHeterogeneityVariance": 0.2
+         },
+         "NodeID": 2
+      },
+      {
+         "NodeAttributes": {
+            "InitialPopulation": 1000
+         },
+         "IndividualAttributes": {
+             "AcquisitionHeterogeneityVariance": 0
+         },
+         "NodeID": 3
+      }
+   ]
+}

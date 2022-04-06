@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <fstream>
 #include <map>
 
-#include "BoostLibWrapper.h"
 #include "CajunIncludes.h"
 
 // common environment information
@@ -24,7 +23,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 class SimpleLogger;
 class Configuration;
-class ValidationLog;
 class StatusReporter;
 
 namespace IdmMpi
@@ -59,11 +57,6 @@ public:
     std::string StatePath;
     std::string DllPath;
 #pragma warning( pop )
-
-    struct _Report
-    {
-        ValidationLog mutable *Validation;
-    } Report;
 
     // Sets up the environment for this process. Returns false if something went wrong
     static bool Initialize(

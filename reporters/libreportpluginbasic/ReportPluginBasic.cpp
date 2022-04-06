@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ReportPluginBasic.h"
 #include <functional>
 #include <map>
-#include "BoostLibWrapper.h"
 #include "Report.h"
 #include "Sugar.h"
 #include "Environment.h"
@@ -26,75 +25,64 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ProgVersion.h"
 #include "FactorySupport.h" // for DTK_DLLEXPORT
 
+//******************************************************************************
+
 using namespace std;
 using namespace json;
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//******************************************************************************
+
 // !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+// !!! If you are creating a new report by copying this one, you will need to
+// !!! modify the values below indicated by "<<<"
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportPluginBasic" ) // <<< Name of this file
+SETUP_LOGGING( "ReportPluginBasic" )                      // <<< Name used to identify reporter
 
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = { "*", nullptr }; // <<< Types of simulation the report is to be used with
+static const char* _sim_types[] = { "*", nullptr };       // <<< Types of simulation the report is to be used with
+                                                          // You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
+                                                          // "*" can be used if it applies to all simulation types.
 
-// Output file name
-static const std::string _report_name = "CustomReport.json"; // <<< Filename to put data into
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-Kernel::report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new CustomReport()); // <<< Report to create
-};
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
-
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
-
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new CustomReport();                            // <<< Actual name of report class
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
 
-// ----------------------------------------
-// --- CustomReport Methods
-// ----------------------------------------
+static const std::string _report_name = "CustomReport.json"; // <<< Filename to put data into
 
 static const char * _stat_pop_label = "Statistical Population";
 static const char * _births_label = "Births";
@@ -115,6 +103,11 @@ static const char * _camp_cost_label = "Campaign Cost";
 static const char * _inf_rate_label = "Daily (Human) Infection Rate";
 static const char * _log_prev_label = "Log Prevalence";
 
+//******************************************************************************
+
+// ----------------------------------------
+// --- CustomReport Methods
+// ----------------------------------------
 
 /////////////////////////
 // Initialization methods

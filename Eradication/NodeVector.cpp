@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ConfigParams.h"
 
 #include <sstream> // for std::ostringstream
-#include <boost/lexical_cast.hpp> // for std::ostringstream
 #include "Debug.h"
 #include "Exceptions.h"
 #include "NodeVector.h"
@@ -166,15 +165,14 @@ namespace Kernel
         return Node::addNewIndividual(MCweight, init_age, gender, init_infs, immparam, riskparam);
     }
 
-    void NodeVector::SetupMigration( IMigrationInfoFactory * migration_factory,
-                                     const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap )
+    void NodeVector::SetupMigration( IMigrationInfoFactory * migration_factory )
     {
-        Node::SetupMigration( migration_factory, rNodeIdSuidMap );
+        Node::SetupMigration( migration_factory );
 
         IMigrationInfoFactoryVector* p_mf_vector = dynamic_cast<IMigrationInfoFactoryVector*>(migration_factory);
         release_assert( p_mf_vector );
 
-        vector_migration_info = p_mf_vector->CreateMigrationInfoVector( this, rNodeIdSuidMap );
+        vector_migration_info = p_mf_vector->CreateMigrationInfoVector(this);
     }
 
     void NodeVector::SetupIntranodeTransmission()
@@ -191,24 +189,23 @@ namespace Kernel
 
         LOG_DEBUG("groups added.\n");
 
-        VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE(SimulationConfig)->vector_params->vector_sampling_type;
+        VectorSamplingType::Enum vector_sampling_type = GetParams()->vector_sampling_type;
         if ( (vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER || vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT) &&
-              InfectionConfig::number_clades > 1 &&
-              InfectionConfig::number_genomes  > 1 )
+              GetParams()->number_clades > 1 && GetTotalGenomes() > 1 )
         {
             // Ideally error messages would all be in Exceptions.cpp
             std::ostringstream msg;
             msg << "Strain tracking is only fully supported for the individual (not cohort) vector model."
                 << " Simulations will run for cohort models, but all vector-to-human transmission defaults to strain=(0,0)." 
-                << " Specified values for InfectionConfig::number_clades = " << InfectionConfig::number_clades << " and number_genomes = " << InfectionConfig::number_genomes
+                << " Specified values for InfectionConfig::number_clades = " << GetParams()->number_clades << " and number_genomes = " << GetTotalGenomes()
                 << " are not allowed. They may only be set to 1 for the cohort model.  To use the individual vector model, switch vector sampling type to TRACK_ALL_VECTORS or SAMPLE_IND_VECTORS."
                 << std::endl;
             LOG_ERR( msg.str().c_str() );
             std::ostringstream err_msg;
-            err_msg << InfectionConfig::number_clades << " and " << InfectionConfig::number_genomes;
+            err_msg << GetParams()->number_clades << " and " << GetTotalGenomes();
             throw IncoherentConfigurationException(
                 __FILE__, __LINE__, __FUNCTION__,
-                "InfectionConfig::number_clades > 1 and number_genomes > 1",
+                "number_clades > 1 and number_genomes > 1",
                 err_msg.str().c_str(),
                 "vector_sampling_type",
                 VectorSamplingType::pairs::lookup_key( vector_sampling_type )
@@ -236,11 +233,11 @@ namespace Kernel
         transmissionGroups->GetGroupMembershipForProperties( vectorProperties, IndividualHumanVector::vector_indoor );
         txOutdoor->GetGroupMembershipForProperties( vectorProperties, IndividualHumanVector::vector_outdoor );
 
-// Workaround (AKA hack) for deserialization
-for (auto pop : m_vectorpopulations)
-{
-    pop->SetupIntranodeTransmission(transmissionGroups, txOutdoor);
-}
+        // Workaround (AKA hack) for deserialization
+        for (auto pop : m_vectorpopulations)
+        {
+            pop->SetupIntranodeTransmission(transmissionGroups, txOutdoor);
+        }
     }
 
     void NodeVector::updateInfectivity(float dt)
@@ -382,7 +379,7 @@ for (auto pop : m_vectorpopulations)
             LOG_WARN_F("Node suid value is %d\n", _id); // EAW: throw exception?
             return;
         }
-        VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_sampling_type;
+        VectorSamplingType::Enum vector_sampling_type = GetParams()->vector_sampling_type;
 
         for( auto& vector_species_name : GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_species_names )
         {
@@ -411,7 +408,7 @@ for (auto pop : m_vectorpopulations)
                 int32_t mosq_weight = 1;
                 if(vector_sampling_type == VectorSamplingType::SAMPLE_IND_VECTORS)
                 {
-                    mosq_weight = NodeConfig::GetNodeParams()->mosquito_weight;
+                    mosq_weight = GetParams()->mosquito_weight;
                 }
 
                 // Individual mosquito model
@@ -590,7 +587,7 @@ for (auto pop : m_vectorpopulations)
         // and keep a list of pointers so the node can update it with new rainfall, etc.
         vp->SetupLarvalHabitat(getContextPointer());
 
-        vp->SetVectorMortality( NodeConfig::GetNodeParams()->vector_mortality );
+        vp->SetVectorMortality( GetParams()->vector_mortality );
 
         // Add this new vector population to the list
         m_vectorpopulations.push_front(vp);
@@ -625,8 +622,8 @@ for (auto pop : m_vectorpopulations)
 
     void NodeVector::BuildTransmissionRoutes( float /* contagionDecayRate */ )
     {
-        transmissionGroups->Build( 1.0f, InfectionConfig::number_clades, InfectionConfig::number_genomes );
-        txOutdoor->Build( 1.0f, InfectionConfig::number_clades, InfectionConfig::number_genomes );
+        transmissionGroups->Build( 1.0f, GetParams()->number_clades, GetTotalGenomes() );
+        txOutdoor->Build( 1.0f,          GetParams()->number_clades, GetTotalGenomes() );
     }
 
     void NodeVector::DepositFromIndividual(

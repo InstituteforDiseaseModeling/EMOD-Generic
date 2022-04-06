@@ -12,14 +12,14 @@
             "generic_scenarios_demographics.json"
         ],
         "Enable_Birth": 0,
+        "Enable_Report_Event_Recorder": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Enable_Vital_Dynamics": 0,
         "Geography": "SamplesInput",
-	"Incubation_Period_Constant": 3,
+        "Incubation_Period_Constant": 3,
         "Population_Scale_Type": "FIXED_SCALING",
-	"Python_Script_Path": "LOCAL",
-        "Report_Event_Recorder": 1,
+        "Python_Script_Path": "LOCAL",
         "Report_Event_Recorder_Events": [
             "VaccinatedA",
             "VaccineExpiredA",

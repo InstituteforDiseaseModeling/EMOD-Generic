@@ -42,7 +42,6 @@ class IDMAPI RangedFloat
         : _min_value( min_in )
         , _max_value( max_in )
         {
-            //std::cout << "RangedFloat initialized with value " << 0 << ", min = " << _min_value << ", and max = " << _max_value << std::endl;
             _value = 0.0f;
         }
 
@@ -50,7 +49,6 @@ class IDMAPI RangedFloat
         : _min_value( min_in ) // need some defaults
         , _max_value( max_in )
         {
-            //std::cout << "RangedFloat initialized with value " << initValue << ", min = " << _min_value << ", and max = " << _max_value << std::endl;
             if( initValue < _min_value )
             {
                 throw Kernel::OutOfRangeException( __FILE__, __LINE__, __FUNCTION__, "value", initValue, _min_value );

@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <fstream>
 
 #include "SpatialReportVector.h"
-#include "BoostLibWrapper.h"
 
 namespace Kernel {
 

@@ -65,11 +65,9 @@ public:
 protected:
 #if defined(WIN32)
     bool GetSimTypes( const TCHAR* pFilename, HMODULE repDll );
-    bool GetReportInstantiator( const TCHAR* pFilename, HMODULE repDll, Kernel::report_instantiator_function_t* pRIF );
     bool GetType( const TCHAR* pFilename, HMODULE repDll, std::string& rClassName );
 #else
     bool GetSimTypes( const char* pFilename, void* repDll );
-    bool GetReportInstantiator( const char* pFilename, void* repDll, Kernel::report_instantiator_function_t* pRIF );
     bool GetType( const char* pFilename, void* repDll, std::string& rClassName );
 #endif
     

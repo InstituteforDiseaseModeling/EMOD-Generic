@@ -1,0 +1,24 @@
+{
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 0.01,
+                "Intervention_Config": {
+                    "IgnoreImmunity": 1,
+                    "Clade": 0,
+                    "Genome": 5,
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "OutbreakIndividual",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        }
+    ],
+    "Use_Defaults": 1
+}

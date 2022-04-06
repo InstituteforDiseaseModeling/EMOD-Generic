@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include "NChooserEventCoordinatorSTI.h"
-#include "SimulationConfig.h"
 #include "Simulation.h"
 #include "IdmDateTime.h"
 
@@ -58,11 +57,6 @@ namespace Kernel
                 "Start_Year", m_StartYear,
                 "End_Year", m_EndYear,
                 "Start_Year must be < End_Year" );
-        }
-    
-        if( m_StartYear < Simulation::base_year )
-        {
-            LOG_WARN_F("Start_Year (%f) specified before Base_Year (%f)\n", m_StartYear, Simulation::base_year);
         }
     }
 
@@ -145,9 +139,7 @@ namespace Kernel
 
     bool NChooserEventCoordinatorSTI::Configure( const Configuration * inputJson )
     {
-        if( !JsonConfigurable::_dryrun &&
-            (GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::STI_SIM) &&
-            (GET_CONFIGURABLE( SimulationConfig )->sim_type != SimType::HIV_SIM) )
+        if( !JsonConfigurable::_dryrun && !MatchesDependency(inputJson, "Simulation_Type", "STI_SIM,HIV_SIM") )
         {
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "NChooserEventCoordinatorSTI can only be used in STI and HIV simulations." );
         }

@@ -9,9 +9,9 @@
             "PFA_overlay_rates.json"
         ],
         "Enable_Demographics_Reporting": 0,
+        "Enable_Report_Event_Recorder": 0,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,
-        "Report_Event_Recorder": 0,
         "Report_Event_Recorder_Events": [
             "NewInfection",
             "NewlySymptomatic",

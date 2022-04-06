@@ -19,70 +19,62 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmDateTime.h"
 #include "INodeContext.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
+//******************************************************************************
 
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportHumanMigrationTracking" ) // <<< Name of this file
+#define ADULT_AGE_YRS (15.0f)
 
-namespace Kernel
-{
-// You can put 0 or more valid Sim types into _sim_types but has to end with nullptr.
-// "*" can be used if it applies to all simulation types.
-static const char * _sim_types[] = { "*", nullptr };// <<< Types of simulation the report is to be used with
+//******************************************************************************
 
-report_instantiator_function_t rif = []()
-{
-    return (Kernel::IReport*)(new ReportHumanMigrationTracking()); // <<< Report to create
-};
+SETUP_LOGGING( "ReportHumanMigrationTracking" )
 
-DllInterfaceHelper DLL_HELPER( _module, _sim_types, rif );
+static const char* _sim_types[] = { "*", nullptr };
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+Kernel::DllInterfaceHelper DLL_HELPER( _module, _sim_types );
 
-// ------------------------------
-// --- DLL Interface Methods
-// ---
-// --- The DTK will use these methods to establish communication with the DLL.
-// ------------------------------
+//******************************************************************************
+// DLL Methods
+//******************************************************************************
 
-#ifdef __cplusplus    // If used by C++ code, 
-extern "C" {          // we need to export the C interface
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-DTK_DLLEXPORT char* __cdecl
-GetEModuleVersion(char* sVer, const Environment * pEnv)
+DTK_DLLEXPORT char*
+__cdecl GetEModuleVersion(char* sVer, const Environment* pEnv)
 {
     return DLL_HELPER.GetEModuleVersion( sVer, pEnv );
 }
 
-DTK_DLLEXPORT void __cdecl
-GetSupportedSimTypes(char* simTypes[])
+DTK_DLLEXPORT void
+__cdecl GetSupportedSimTypes(char* simTypes[])
 {
     DLL_HELPER.GetSupportedSimTypes( simTypes );
 }
 
-DTK_DLLEXPORT const char * __cdecl
-GetType()
+DTK_DLLEXPORT const char*
+__cdecl GetType()
 {
     return DLL_HELPER.GetType();
 }
 
-DTK_DLLEXPORT void __cdecl
-GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
+DTK_DLLEXPORT Kernel::IReport*
+__cdecl GetReportInstantiator()
 {
-    DLL_HELPER.GetReportInstantiator( pif );
+    return new Kernel::ReportHumanMigrationTracking();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
+//******************************************************************************
+
 // ----------------------------------------
 // --- ReportHumanMigrationTracking Methods
 // ----------------------------------------
+
+namespace Kernel
+{
 
     ReportHumanMigrationTracking::ReportHumanMigrationTracking()
         : BaseTextReportEvents( "ReportHumanMigrationTracking.csv" )
@@ -136,14 +128,12 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
                << "From_NodeID"   << ", "
                << "To_NodeID"     << ", "
                << "MigrationType" << ", "
-               << "Event"
-               ;
+               << "Event";
 
         return header.str();
     }
 
-    bool ReportHumanMigrationTracking::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                                      const EventTrigger::Enum& trigger )
+    bool ReportHumanMigrationTracking::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
         IIndividualHuman* p_ih = nullptr;
         if (s_OK != context->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_ih) )
@@ -158,19 +148,20 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
 
         ISimulationContext* p_sim = context->GetNodeEventContext()->GetNodeContext()->GetParent();
 
-        float time = context->GetNodeEventContext()->GetTime().time ;
-        long individual_id = context->GetSuid().data ;
-        float age_years = p_ih->GetAge() / DAYSPERYEAR ;
-        char is_adult = p_ih->IsAdult() ? 'T' : 'F';
-        char gender = (p_ih->GetGender() == 0) ? 'M' : 'F' ;
-        uint32_t home_node_id = p_sim->GetNodeExternalID( p_ih->GetHomeNodeId() ) ;
-        uint32_t from_node_id = p_sim->GetNodeExternalID( context->GetNodeEventContext()->GetId() ) ;
-        uint32_t to_node_id = from_node_id ;
-        std::string mig_type_str = "local" ;
-        bool is_emigrating  = (trigger == EventTrigger::Emigrating);
-        bool is_immigrating = (trigger == EventTrigger::Immigrating);
+        float        time           = context->GetNodeEventContext()->GetTime().time;
+        long         individual_id  = context->GetSuid().data;
+        float        age_years      = p_ih->GetAge() / DAYSPERYEAR;
+        char         is_adult       = (age_years >= ADULT_AGE_YRS) ? 'T' : 'F';
+        char         gender         = (p_ih->GetGender() == 0) ? 'M' : 'F';
+        uint32_t     home_node_id   = p_sim->GetNodeExternalID( p_ih->GetHomeNodeId() );
+        uint32_t     from_node_id   = p_sim->GetNodeExternalID( context->GetNodeEventContext()->GetId() );
+        uint32_t     to_node_id     = from_node_id;
+        std::string  mig_type_str   = "local";
+        bool         is_emigrating  = (trigger == EventTrigger::Emigrating);
+        bool         is_immigrating = (trigger == EventTrigger::Immigrating);
+        bool         is_dead        = p_ih->IsDead();
 
-        if( is_immigrating )
+        if( is_immigrating && !is_dead)
         {
             if( p_ih->AtHome() )
             {
@@ -183,7 +174,7 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
                 m_MigrationDataMap[ individual_id ].node_id = to_node_id ;
             }
         }
-        else if( is_emigrating )
+        else if( is_emigrating  && !is_dead)
         {
             to_node_id =  p_sim->GetNodeExternalID( im->GetMigrationDestination() ) ;
 
@@ -213,17 +204,21 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
                     throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str());
                 }
                 m_MigrationDataMap[ individual_id ].age_years          = age_years ;
-                m_MigrationDataMap[ individual_id ].is_adult           = p_ih->IsAdult() ;
+                m_MigrationDataMap[ individual_id ].is_adult           = (age_years >= ADULT_AGE_YRS) ;
                 m_MigrationDataMap[ individual_id ].node_id            = to_node_id ;
                 m_MigrationDataMap[ individual_id ].migration_type_str = mig_type_str ;
             }
         }
-        else  // NonDiseaseDeaths || DiseaseDeaths
+        else if(is_dead)
         {
             m_MigrationDataMap.erase( individual_id );
         }
+        else
+        {
+            release_assert( false );
+        }
 
-        if( !is_immigrating )
+        if( is_emigrating && !is_dead )
         {
             GetOutputStream() << time
                        << "," << individual_id 
@@ -249,17 +244,9 @@ GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
         MigrationData md ;
         md.age_years          = individual->GetAge() / DAYSPERYEAR ;
         md.gender             = individual->GetGender();
-        md.is_adult           = individual->IsAdult();
+        md.is_adult           = (md.age_years >= ADULT_AGE_YRS);
         md.home_node_id       = p_sim->GetNodeExternalID( individual->GetHomeNodeId() ) ;
         md.node_id            = p_sim->GetNodeExternalID( individual->GetEventContext()->GetNodeEventContext()->GetId() ) ;
-        if( md.home_node_id == md.node_id )
-        {
-            md.migration_type_str = "home" ;
-        }
-        else
-        {
-            md.migration_type_str = "away" ;
-        }
 
         if( m_MigrationDataMap.count( individual_id ) == 0 )
         {

@@ -54,16 +54,16 @@ namespace Kernel
 
         private:
             // IContagionPopulation implementation
-            virtual std::string GetName( void ) const override;
-            virtual int  GetCladeID( void ) const override;
-            virtual int  GetGeneticID( void ) const override;
-            virtual void SetCladeID(int in_cladeID) override;
-            virtual void SetGeneticID(int in_geneticID) override;
+            virtual std::pair<uint32_t, uint64_t> GetStrainName(void) const override;
+            virtual uint32_t GetCladeID( void ) const override;
+            virtual uint64_t GetGeneticID( void ) const override;
+            virtual void SetCladeID(uint32_t in_cladeID) override;
+            virtual void SetGeneticID(uint64_t in_geneticID) override;
             virtual float GetTotalContagion( void ) const override;
             virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const override;
 
             float contagionQuantity;
-            int cladeId;
+            uint64_t cladeId;
         };
 
     protected:
@@ -135,7 +135,7 @@ namespace Kernel
 
         // ITransmissionGroups implementation
         virtual void AddProperty(const string& property, const PropertyValueList_t& values, const ScalingMatrix_t& scalingMatrix) {}
-        virtual void Build(float contagionDecayRate, int numberOfClades = 1, int numberOfGenomes = 1) {}
+        virtual void Build(float contagionDecayRate, uint32_t numberOfClades = 1, uint64_t numberOfGenomes = 1) {}
         virtual void GetGroupMembershipForProperties(const tProperties& properties) const { }
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) {}
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const {}

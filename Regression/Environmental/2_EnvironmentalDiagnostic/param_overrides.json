@@ -15,6 +15,7 @@
             ]
         },
         "Enable_Initial_Prevalence": 0,
+        "Enable_Report_Node_Event_Recorder": 1,
         "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
         "Node_Contagion_Decay_Rate": 0.3,
         "PRIMARY": {
@@ -30,7 +31,6 @@
             "Simulation_Duration": 730
         },
         "Population_Scale_Type": "FIXED_SCALING",
-        "Report_Node_Event_Recorder": 1,
         "Report_Node_Event_Recorder_Events": [
             "Positive_Event_Node",
             "Negative_Event_Node"

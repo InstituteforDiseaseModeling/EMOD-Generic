@@ -167,9 +167,6 @@ public:
         return count;
     }
 
-    virtual const NodeDemographics& GetDemographics() { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    //virtual float GetYear() const = 0;
-
     // to update any node-owned interventions
     virtual void UpdateInterventions(float = 0.0f) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
         
@@ -177,15 +174,28 @@ public:
     virtual void RegisterTravelDistributionSource(  ITravelLinkedDistributionSource *tles, TravelEventType type) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void UnregisterTravelDistributionSource(ITravelLinkedDistributionSource *tles, TravelEventType type) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
-    virtual void PurgeExisting( const std::string& iv_name )
-    {
-    }
+    virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name)           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name)   { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid )                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void PurgeExisting( const std::string& iv_name )                                                          { /* Gets called by component tests; must do nothing and not throw an exception to work correctly */                          }
+    virtual void PurgeExistingByName( const std::string& iv_name )                                                    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual bool ContainsExisting( const std::string& iv_name )                                                       { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual bool ContainsExistingByName( const std::string& iv_name )                                                 { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
-    virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name)         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-       
     virtual bool IsInPolygon(float* vertex_coords, int numcoords) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool IsInPolygon( const json::Array &poly )           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist ) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
+    virtual void  IncrementCampaignCost(float cost)               { /* Gets called by component tests; must do nothing and not throw an exception to work correctly */                          }
+
+    virtual void  UpdateBirthRateMultiplier(float val)            { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  UpdateConnectionModifiers(float in, float out)  { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  UpdateInfectivityMultiplier(float val)          { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
+    virtual float GetBirthRateMultiplier()                  const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetInboundConnectionModifier()            const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetOutboundConnectionModifier()           const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetInfectivityMultiplier()                const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual RANDOMBASE* GetRng()
     {

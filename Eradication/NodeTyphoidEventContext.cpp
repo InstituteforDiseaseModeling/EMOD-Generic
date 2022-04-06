@@ -163,15 +163,3 @@ namespace Kernel
         return 1.0f; // valid if user has a property but intervention only distributed to another prop
     }
 }
-
-#if 0
-namespace Kernel
-{
-    template<class Archive>
-    void serialize(Archive &ar, NodeTyphoidEventContextHost &context, const unsigned int v)
-    {
-        // Serialize base class
-        ar & boost::serialization::base_object<Kernel::NodeEventContextHost>(context);
-    }
-}
-#endif

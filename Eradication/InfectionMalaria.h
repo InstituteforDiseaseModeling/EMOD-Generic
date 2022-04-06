@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <utility>
 #include "InfectionVector.h"
 
-#include "BoostLibWrapper.h"
 #include "MalariaContexts.h"
 #include "MalariaEnums.h"
 #include "IMalariaAntibody.h"

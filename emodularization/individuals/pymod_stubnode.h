@@ -56,7 +56,11 @@ class StubNode : public INodeContext
             return status;
         }
 
-        
+        virtual const NodeParams* GetParams() const
+        {
+            return NodeConfig::GetNodeParams();
+        } 
+
         virtual void SetRng(Kernel::RANDOMBASE *) override { std::cout << __FUNCTION__ << std::endl; }
         virtual RANDOMBASE* GetRng()
         {
@@ -67,8 +71,6 @@ class StubNode : public INodeContext
         virtual void SortHumans(void) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void VisitIndividuals( INodeEventContext::individual_visit_function_t func) { std::cout << __FUNCTION__ << std::endl; }
         virtual int VisitIndividuals(IVisitIndividual* pIndividualVisitImpl ) { std::cout << __FUNCTION__ << std::endl; return 0; } 
-        //virtual const NodeDemographics& GetDemographics() { std::cout << __FUNCTION__ << std::endl; return &demographics; }
-        virtual const NodeParams* GetParams() const { std::cout << __FUNCTION__ << std::endl; return nullptr; } 
         virtual bool GetUrban() const { std::cout << __FUNCTION__ << std::endl; return false; }
         virtual const IdmDateTime& GetTime() const { std::cout << __FUNCTION__ << std::endl; static IdmDateTime time(0); return time; }
         virtual void UpdateInterventions(float = 0.0f) { std::cout << __FUNCTION__ << std::endl; } 
@@ -106,12 +108,8 @@ class StubNode : public INodeContext
 
 
         virtual const RouteList_t& GetTransmissionRoutes( ) const override { std::cout << __FUNCTION__ << std::endl; return m_RouteList; }
-        virtual float getSinusoidalCorrection(float sinusoidal_amplitude, float sinusoidal_phase) const override { std::cout << __FUNCTION__ << std::endl; return 0; }
-        virtual float getBoxcarCorrection(float boxcar_amplitude, float boxcar_start_time, float boxcar_end_time) const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override { std::cout << __FUNCTION__ << std::endl; return act_prob_vec_t(); }
-        virtual IMigrationInfo* GetMigrationInfo() override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
-        virtual const NodeDemographics* GetDemographics() const override { return nullptr; }
-        //virtual const NodeDemographicsDistribution* GetDemographicsDistribution(std::string) const override { return nullptr; }
+        virtual IMigrationInfo* GetMigrationInfo() override { /*std::cout << __FUNCTION__ << std::endl; CALLED ALL THE TIME; PROHIBITIVE TO LOG */ return nullptr; }
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override
         {
             int sexAsInt = int(sex==Gender::FEMALE);
@@ -150,6 +148,7 @@ class StubNode : public INodeContext
         virtual float       GetInfectivity()   const override { std::cout << __FUNCTION__ << std::endl; return 0.0f; }
         virtual float       GetInfectionRate() const override { std::cout << __FUNCTION__ << std::endl; return 0.0f; }
         virtual float       GetSusceptDynamicScaling() const override { std::cout << __FUNCTION__ << std::endl; return 0.0f; }
+        virtual uint64_t    GetTotalGenomes()  const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual const Climate* GetLocalWeather() const override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
         virtual long int GetPossibleMothers()  const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual float GetMeanAgeInfection()    const override { std::cout << __FUNCTION__ << std::endl; return 0; }
@@ -160,8 +159,7 @@ class StubNode : public INodeContext
         virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual bool IsEveryoneHome() const override { std::cout << __FUNCTION__ << std::endl; return false; }
         virtual ProbabilityNumber GetProbMaternalTransmission() const override { std::cout << __FUNCTION__ << std::endl; return 0; }
-        virtual void SetupMigration( IMigrationInfoFactory * migration_factory, const boost::bimap<ExternalNodeId_t, suids::suid>& rNodeIdSuidMap ) override { std::cout << __FUNCTION__ << std::endl; }
-        virtual std::vector<bool> GetMigrationTypeEnabledFromDemographics() const override { std::cout << __FUNCTION__ << std::endl; return std::vector<bool>(); }
+        virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void SetWaitingForFamilyTrip( suids::suid migrationDestination, MigrationType::Enum migrationType, float timeUntilTrip, float timeAtDestination, bool isDestinationNewHome ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void InitializeTransmissionGroupPopulations() {}
         virtual const NodeDemographicsDistribution* GetImmunityDistribution()        const { return nullptr; }
@@ -172,14 +170,14 @@ class StubNode : public INodeContext
         virtual const NodeDemographicsDistribution* GetAgeDistribution()             const { return nullptr; }
         virtual NPKeyValueContainer& GetNodeProperties() { return node_properties; }
         virtual float GetMaxInfectionProb( TransmissionRoute::Enum tx_route )        const { return 0.0f; } 
-        //virtual const std::vector<IIndividualHuman*>& GetHumans() const override { return std::vector<IIndividualHuman*>(); }
-        virtual const std::vector<IIndividualHuman*>& GetHumans() const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
-        //virtual const std::map<std::string, int>&                 GetStrainClades()   const override { return std::map<std::string, int>(); }
-        virtual const std::map<std::string, int>&                 GetStrainClades()   const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
-        //virtual const std::map<std::string, int>&                 GetStrainGenomes()  const override { return std::map<std::string, int>(); }
-        virtual const std::map<std::string, int>&                 GetStrainGenomes()  const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
-        //virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const override { return std::map<std::string, std::vector<float>>(); }
-        virtual const std::map<std::string, std::vector<float>>&  GetStrainData()     const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+
+        virtual const std::vector<IIndividualHuman*>&             GetHumans()         const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+        virtual       std::map<std::pair<uint32_t,uint64_t>, std::vector<float>>& GetStrainData() override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+
+        virtual const float                   GetNetInfectFrac()                      const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+        virtual       void                    SetNetInfectFrac(float)                       override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+        virtual const sparse_contagion_repr&  GetNetInfRep()                          const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
+        virtual       void                    DepositNetInf(sparse_contagion_id,float)      override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
 
         // We want to be able to infect someone but not with existing Tx groups. Call into py layer here and get a bool back
         // True to infect, False to leave alone.

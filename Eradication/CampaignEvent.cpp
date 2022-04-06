@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "Configuration.h"
 #include "Configure.h"
-#include "ConfigurationImpl.h"
 #include "CampaignEvent.h"
 #include "EventCoordinator.h"
 #include "FactorySupport.h"
@@ -83,9 +82,6 @@ namespace Kernel
 
             // make sure the start day for the coordinator makes sense
             ce->event_coordinator->CheckStartDay( ce->GetStartDay() );
-
-            // InitializeTiming was added to give the event coordinator access to the simulation date-time object during campaign event creation.
-            ce->event_coordinator->InitializeTiming( isec->GetSimulationTime() );
         }
         return ce;
     }
@@ -153,8 +149,7 @@ namespace Kernel
         , event_coordinator(nullptr)
         , nodeset_config()
         , event_coordinator_config()
-    {
-    }
+    { }
 
     bool CampaignEvent::Configure(const Configuration * inputJson)
     {
@@ -162,6 +157,11 @@ namespace Kernel
         initConfigComplexType( "Nodeset_Config", &nodeset_config, Nodeset_Config_DESC_TEXT );
         initConfigComplexType( "Event_Coordinator_Config", &event_coordinator_config, Event_Coordinator_Config_DESC_TEXT );
         return JsonConfigurable::Configure( inputJson );
+    }
+
+    bool CampaignEvent::Validate( const ISimulationContext* parent_sim )
+    {
+        return true;
     }
 
     void CampaignEvent::Dispatch( ISimulationEventContext *isec )

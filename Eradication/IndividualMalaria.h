@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "BoostLibWrapper.h"
-
 #include "IndividualVector.h"
 #include "IMalariaAntibody.h"
 #include "MalariaContexts.h"
@@ -63,7 +61,7 @@ namespace Kernel
         virtual void  AddClinicalSymptom(ClinicalSymptomsEnum::Enum symptom) override;
         virtual bool  HasClinicalSymptom(ClinicalSymptomsEnum::Enum symptom) const override;
         virtual IMalariaSusceptibility* GetMalariaSusceptibilityContext() const override; // TBD: Get rid of this and use QueryInterface instead
-        virtual std::vector< std::pair<int,int> > GetInfectingStrainIds() const override;
+        virtual std::vector< std::pair<uint32_t,uint64_t> > GetInfectingStrainIds() const override;
 
         // IMalariaHumanInfectable methods
         virtual bool ChallengeWithBites( int n_infectious_bites ) override;
@@ -121,6 +119,6 @@ namespace Kernel
         void ResetClinicalSymptoms();
         void UpdateGametocyteCounts(float dt);
         void DepositInfectiousnessFromGametocytes();
-        void DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, float cladeID, float geneticID);
+        void DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, uint32_t cladeID, uint64_t geneticID);
     };
 }

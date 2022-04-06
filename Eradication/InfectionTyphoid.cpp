@@ -154,8 +154,6 @@ namespace Kernel
         //prepatent_timer.handle = std::bind( &InfectionTyphoid::handlePrepatentExpiry, this );
         state_to_report=PREPAT_STATE_LABEL;
         state_changed=true;
-
-        //std::cout << "Initialized prepatent_timer to " << prepatent_timer << " using doseTracking value of " << doseTracking << std::endl;
     }
 
     void InfectionTyphoid::Initialize(suids::suid _suid)

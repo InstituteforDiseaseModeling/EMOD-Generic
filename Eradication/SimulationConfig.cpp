@@ -39,22 +39,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Infection.h"
 
-#ifdef ENABLE_POLIO
-#include "PolioParameters.h"
-#endif
-
-#ifndef DISABLE_TBHIV
-#include "TBHIVDrugTypeParameters.h"
-#include "TBHIVParameters.h"
-#endif
-
 SETUP_LOGGING( "SimulationConfig" )
 
 namespace Kernel
 {
 
 ISimulationConfigFactory * SimulationConfigFactory::_instance = nullptr;
-static const char* tb_drug_placeholder_string = "<tb_drug_name_goes_here>";
 static const char* malaria_drug_placeholder_string = "<malaria_drug_name_goes_here>";
 
 ISimulationConfigFactory * SimulationConfigFactory::getInstance()
@@ -114,28 +104,14 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
 
     m_jsonConfig = inputJson;
 
-    // ------
-    // Generic Parameters
-    // ------
-    initConfig( "Simulation_Type", sim_type,  inputJson, MetadataDescriptor::Enum(Simulation_Type_DESC_TEXT, Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)) ); // simulation only (???move)
-
     //vector enums
-    if (sim_type == SimType::VECTOR_SIM || sim_type == SimType::MALARIA_SIM || sim_type == SimType::DENGUE_SIM )
+    if (MatchesDependency(inputJson, "Simulation_Type", "VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"))
     {
         VectorInitConfig( inputJson );
-
-        if (sim_type == SimType::MALARIA_SIM)
-        {
-            MalariaInitConfig( inputJson );
-        }
     }
-    else if (sim_type == SimType::POLIO_SIM)
+    if (MatchesDependency(inputJson, "Simulation_Type", "MALARIA_SIM"))
     {
-        PolioInitConfig( inputJson );
-    }
-    else if( sim_type == SimType::TBHIV_SIM)
-    {
-        TBHIVInitConfig( inputJson );
+        MalariaInitConfig( inputJson );
     }
 
     // --------------------------------------
@@ -156,21 +132,13 @@ bool SimulationConfig::Configure(const Configuration * inputJson)
     // ------------------------------------------------------------------
     // --- Update, check, and read other parameters given the input data
     // ------------------------------------------------------------------
-    if (sim_type == SimType::VECTOR_SIM || sim_type == SimType::MALARIA_SIM || sim_type == SimType::DENGUE_SIM )
+    if (MatchesDependency(inputJson, "Simulation_Type", "VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"))
     {
         VectorCheckConfig( inputJson );
-        if ( sim_type == SimType::MALARIA_SIM )
+        if (MatchesDependency(inputJson, "Simulation_Type", "MALARIA_SIM"))
         {
             MalariaCheckConfig( inputJson );
         }
-    }
-    else if( sim_type == SimType::POLIO_SIM )
-    {
-        PolioCheckConfig( inputJson );
-    }
-    else if( sim_type == SimType::TBHIV_SIM )
-    {
-        TBHIVCheckConfig( inputJson );
     }
 
     return ret;
@@ -185,22 +153,15 @@ QuickBuilder SimulationConfig::GetSchema()
 #if !defined(_DLLS_)
     VectorAddSchema( retJson );
     MalariaAddSchema( retJson );
-    PolioAddSchema( retJson );
-    TBHIVAddSchema( retJson );
 #endif
 
     return retJson;
 }
 
 SimulationConfig::SimulationConfig()
-    : sim_type(SimType::GENERIC_SIM) 
-    , m_jsonConfig(nullptr)
+    : m_jsonConfig(nullptr)
     , vector_params(nullptr)
     , malaria_params(nullptr)
-    , tb_params(nullptr)
-    , polio_params(nullptr)
-    , tbhiv_params(nullptr)
-    , tb_drug_names_for_this_sim()
 {
 #ifndef DISABLE_VECTOR
     vector_params = new VectorParameters();
@@ -208,12 +169,6 @@ SimulationConfig::SimulationConfig()
 #ifndef DISABLE_MALARIA
     malaria_params = new MalariaParameters();
     malaria_params->pGenomeMarkers = new GenomeMarkers();
-#endif
-#ifdef ENABLE_POLIO
-    polio_params = new PolioParameters();
-#endif
-#ifndef DISABLE_TBHIV
-    tbhiv_params = new TBHIVParameters();
 #endif
 }
 
@@ -224,7 +179,6 @@ SimulationConfig::SimulationConfig()
 void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
 {
 #ifndef DISABLE_VECTOR
-    initConfig( "Vector_Sampling_Type",             vector_params->vector_sampling_type,             inputJson, MetadataDescriptor::Enum(Vector_Sampling_Type_DESC_TEXT,             Vector_Sampling_Type_DESC_TEXT,             MDD_ENUM_ARGS(VectorSamplingType))      ); // node (vector) only
     initConfig( "Egg_Hatch_Delay_Distribution",     vector_params->egg_hatch_delay_dist,             inputJson, MetadataDescriptor::Enum(Egg_Hatch_Delay_Distribution_DESC_TEXT,     Egg_Hatch_Delay_Distribution_DESC_TEXT,     MDD_ENUM_ARGS(EggHatchDelayDist))       ); // vector pop only
     initConfig( "Egg_Saturation_At_Oviposition",    vector_params->egg_saturation,                   inputJson, MetadataDescriptor::Enum(Egg_Saturation_At_Oviposition_DESC_TEXT,    Egg_Saturation_At_Oviposition_DESC_TEXT,    MDD_ENUM_ARGS(EggSaturation))           ); // vector pop only
     initConfig( "Larval_Density_Dependence",        vector_params->larval_density_dependence,        inputJson, MetadataDescriptor::Enum(Larval_Density_Dependence_DESC_TEXT,        Larval_Density_Dependence_DESC_TEXT,        MDD_ENUM_ARGS(LarvalDensityDependence)) ); // vector pop only
@@ -355,19 +309,15 @@ void SimulationConfig::MalariaCheckConfig( const Configuration* inputJson )
     // for each key in Malaria_Drug_Params, create/configure MalariaDrugTypeParameters object and add to static map
     try
     {
-        if( (malaria_params->genome_marker_names.size() > 0) &&
-            ((vector_params->vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER) ||
-             (vector_params->vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT)) )
+        if( (malaria_params->genome_marker_names.size() > 0) && MatchesDependency(inputJson, "Vector_Sampling_Type", "VECTOR_COMPARTMENTS_NUMBER,VECTOR_COMPARTMENTS_PERCENT") )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                    "Vector_Sampling_Type", VectorSamplingType::pairs::lookup_key( vector_params->vector_sampling_type ),
+                                                    "Vector_Sampling_Type", "VECTOR_COMPARTMENTS_NUMBER or VECTOR_COMPARTMENTS_PERCENT",
                                                     "Genome_Markers", "<not empty>",
                                                     "Genome_Markers can only be used with individual vectors (i.e. TRACK_ALL_VECTORS or SAMPLE_IND_VECTORS)." );
         }
 
-        // number_genomes is not configured from the JSON like the other diseases
-        // TBD: Would really like to not do it this way, setting node variable from here. TBD revisit.
-        InfectionConfig::number_genomes = malaria_params->pGenomeMarkers->Initialize( malaria_params->genome_marker_names );
+        malaria_params->pGenomeMarkers->Initialize( malaria_params->genome_marker_names );
 
         json::Object mdp = (*EnvPtr->Config)["Malaria_Drug_Params"].As<Object>();
         json::Object::const_iterator itMdp;
@@ -397,267 +347,4 @@ void SimulationConfig::MalariaAddSchema( json::QuickBuilder& retJson )
 #endif // DISABLE_MALARIA
 }
 
-
-// ----------------------------------------------------------------------------
-// --- PolioParameters
-// ----------------------------------------------------------------------------
-
-void SimulationConfig::PolioInitConfig( const Configuration* inputJson )
-{
-#ifdef ENABLE_POLIO
-    initConfig( "Evolution_Polio_Clock_Type", polio_params->evolution_polio_clock_type, inputJson, MetadataDescriptor::Enum(Evolution_Polio_Clock_Type_DESC_TEXT, Evolution_Polio_Clock_Type_DESC_TEXT, MDD_ENUM_ARGS(EvolutionPolioClockType)) ); // infection (polio) only
-    initConfig( "VDPV_Virulence_Model_Type",  polio_params->VDPV_virulence_model_type,  inputJson, MetadataDescriptor::Enum(VDPV_Virulence_Model_Type_DESC_TEXT,  VDPV_Virulence_Model_Type_DESC_TEXT,  MDD_ENUM_ARGS(VDPVVirulenceModelType))  ); // susceptibility polio only
-    initConfigTypeMap( "Max_Rand_Standard_Deviations", &(polio_params->MaxRandStdDev), Max_Rand_Standard_Deviations_DESC_TEXT, 0.0f, 10.0f, 2.0f);
-
-    initConfigTypeMap( "Specific_Infectivity_WPV1",   &(polio_params->PVinf0[0]), Specific_Infectivity_WPV1_DESC_TEXT,   0.0f, 1.0e+3f, 0.004f );
-    initConfigTypeMap( "Specific_Infectivity_WPV2",   &(polio_params->PVinf0[1]), Specific_Infectivity_WPV2_DESC_TEXT,   0.0f, 1.0e+3f, 0.004f );
-    initConfigTypeMap( "Specific_Infectivity_WPV3",   &(polio_params->PVinf0[2]), Specific_Infectivity_WPV3_DESC_TEXT,   0.0f, 1.0e+3f, 0.004f );
-    initConfigTypeMap( "Specific_Infectivity_Sabin1", &(polio_params->PVinf0[3]), Specific_Infectivity_Sabin1_DESC_TEXT, 0.0f, 1.0e+3f, 3.02e-005f );
-    initConfigTypeMap( "Specific_Infectivity_Sabin2", &(polio_params->PVinf0[4]), Specific_Infectivity_Sabin2_DESC_TEXT, 0.0f, 1.0e+3f, 0.00135f );
-    initConfigTypeMap( "Specific_Infectivity_Sabin3", &(polio_params->PVinf0[5]), Specific_Infectivity_Sabin3_DESC_TEXT, 0.0f, 1.0e+3f, 0.000115f );
-
-    initConfigTypeMap( "Viral_Interference_WPV1",     &(polio_params->viral_interference[0]), Viral_Interference_WPV1_DESC_TEXT,   0.0f, 1.0f, 0.0653f );
-    initConfigTypeMap( "Viral_Interference_WPV2",     &(polio_params->viral_interference[1]), Viral_Interference_WPV2_DESC_TEXT,   0.0f, 1.0f, 0.278f );
-    initConfigTypeMap( "Viral_Interference_WPV3",     &(polio_params->viral_interference[2]), Viral_Interference_WPV3_DESC_TEXT,   0.0f, 1.0f, 0.263f );
-    initConfigTypeMap( "Viral_Interference_Sabin1",   &(polio_params->viral_interference[3]), Viral_Interference_Sabin1_DESC_TEXT, 0.0f, 1.0f, 0.0653f );
-    initConfigTypeMap( "Viral_Interference_Sabin2",   &(polio_params->viral_interference[4]), Viral_Interference_Sabin2_DESC_TEXT, 0.0f, 1.0f, 0.278f );
-    initConfigTypeMap( "Viral_Interference_Sabin3",   &(polio_params->viral_interference[5]), Viral_Interference_Sabin3_DESC_TEXT, 0.0f, 1.0f, 0.263f );
-
-
-    //this scaling factor is for vaccines, so set the scaling of wild virus to 1.
-    polio_params->vaccine_take_multiplier[0] = 1.0f;
-    polio_params->vaccine_take_multiplier[1] = 1.0f;
-    polio_params->vaccine_take_multiplier[2] = 1.0f;
-    initConfigTypeMap("Vaccine_Take_Scaling_Sabin1", &(polio_params->vaccine_take_multiplier[3]), Vaccine_Take_Multiplier_Sabin1_DESC_TEXT, 0.0f, 1.0f, 1.0f);
-    initConfigTypeMap("Vaccine_Take_Scaling_Sabin2", &(polio_params->vaccine_take_multiplier[4]), Vaccine_Take_Multiplier_Sabin2_DESC_TEXT, 0.0f, 1.0f, 0.278f);
-    initConfigTypeMap("Vaccine_Take_Scaling_Sabin3", &(polio_params->vaccine_take_multiplier[5]), Vaccine_Take_Multiplier_Sabin3_DESC_TEXT, 0.0f, 1.0f, 0.263f);
-
-    initConfigTypeMap( "Mucosal_Immunogenicity_IPV",            &(polio_params->mucosalImmIPV),           Mucosal_Immunogenicity_IPV_DESC_TEXT, 0.0f, 100.0f, 3.0f );
-    initConfigTypeMap( "Mucosal_Immunogenicity_IPV_OPVExposed", &(polio_params->mucosalImmIPVOPVExposed), Mucosal_Immunogenicity_IPV_OPVEXPOSED_DESC_TEXT, 0.0f, 100.0f, 3.0f);
-    initConfigTypeMap( "Neutralization_Time_Tau",               &(polio_params->TauNAb),                  Neutralization_Time_Tau_DESC_TEXT, 0.0f, 1.0f, 0.04f );
-
-    initConfigTypeMap( "Paralysis_Base_Rate_WPV1",   &(polio_params->paralysis_base_rate[0]), Paralysis_Base_Rate_WPV1_DESC_TEXT,   0.0f, 1.0f, 0.05f );
-    initConfigTypeMap( "Paralysis_Base_Rate_WPV2",   &(polio_params->paralysis_base_rate[1]), Paralysis_Base_Rate_WPV2_DESC_TEXT,   0.0f, 1.0f, 0.00033f );
-    initConfigTypeMap( "Paralysis_Base_Rate_WPV3",   &(polio_params->paralysis_base_rate[2]), Paralysis_Base_Rate_WPV3_DESC_TEXT,   0.0f, 1.0f, 0.001f );
-    initConfigTypeMap( "Paralysis_Base_Rate_Sabin1", &(polio_params->paralysis_base_rate[3]), Paralysis_Base_Rate_Sabin1_DESC_TEXT, 0.0f, 1.0f, 0.005f );
-    initConfigTypeMap( "Paralysis_Base_Rate_Sabin2", &(polio_params->paralysis_base_rate[4]), Paralysis_Base_Rate_Sabin2_DESC_TEXT, 0.0f, 1.0f, 0.00033f );
-    initConfigTypeMap( "Paralysis_Base_Rate_Sabin3", &(polio_params->paralysis_base_rate[5]), Paralysis_Base_Rate_Sabin3_DESC_TEXT, 0.0f, 1.0f, 0.001f );
-
-    initConfigTypeMap( "Incubation_Disease_Mu",      &(polio_params->Incubation_Disease_Mu),    Incubation_Disease_Mu_DESC_TEXT,    0.0f, 100.0f, 2.3893f );
-    initConfigTypeMap( "Incubation_Disease_Sigma",   &(polio_params->Incubation_Disease_Sigma), Incubation_Disease_Sigma_DESC_TEXT, 0.0f, 100.0f, 0.4558f );
-        
-    initConfigTypeMap( "Boost_Log2_NAb_OPV1", &(polio_params->boostLog2NAb_OPV[0]), Boost_Log2_NAb_OPV1_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_OPV2", &(polio_params->boostLog2NAb_OPV[1]), Boost_Log2_NAb_OPV2_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_OPV3", &(polio_params->boostLog2NAb_OPV[2]), Boost_Log2_NAb_OPV3_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_IPV1", &(polio_params->boostLog2NAb_IPV[0]), Boost_Log2_NAb_IPV1_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_IPV2", &(polio_params->boostLog2NAb_IPV[1]), Boost_Log2_NAb_IPV2_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_IPV3", &(polio_params->boostLog2NAb_IPV[2]), Boost_Log2_NAb_IPV3_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-
-    initConfigTypeMap( "Max_Log2_NAb_OPV1", &(polio_params->maxLog2NAb_OPV[0]), Max_Log2_NAb_OPV1_DESC_TEXT, 0.0f, FLT_MAX, 2.0f );
-    initConfigTypeMap( "Max_Log2_NAb_OPV2", &(polio_params->maxLog2NAb_OPV[1]), Max_Log2_NAb_OPV2_DESC_TEXT, 0.0f, FLT_MAX, 2.0f );
-    initConfigTypeMap( "Max_Log2_NAb_OPV3", &(polio_params->maxLog2NAb_OPV[2]), Max_Log2_NAb_OPV3_DESC_TEXT, 0.0f, FLT_MAX, 2.0f );
-    initConfigTypeMap( "Max_Log2_NAb_IPV1", &(polio_params->maxLog2NAb_IPV[0]), Max_Log2_NAb_IPV1_DESC_TEXT, 0.0f, FLT_MAX, 4.0f );
-    initConfigTypeMap( "Max_Log2_NAb_IPV2", &(polio_params->maxLog2NAb_IPV[1]), Max_Log2_NAb_IPV2_DESC_TEXT, 0.0f, FLT_MAX, 4.0f );
-    initConfigTypeMap( "Max_Log2_NAb_IPV3", &(polio_params->maxLog2NAb_IPV[2]), Max_Log2_NAb_IPV3_DESC_TEXT, 0.0f, FLT_MAX, 4.0f );
-
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_OPV1", &(polio_params->boostLog2NAb_stddev_OPV[0]), Boost_Log2_NAb_Stddev_OPV1_DESC_TEXT, 0.0f, 10.0f, 1.5f );
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_OPV2", &(polio_params->boostLog2NAb_stddev_OPV[1]), Boost_Log2_NAb_Stddev_OPV2_DESC_TEXT, 0.0f, 10.0f, 1.5f );
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_OPV3", &(polio_params->boostLog2NAb_stddev_OPV[2]), Boost_Log2_NAb_Stddev_OPV3_DESC_TEXT, 0.0f, 10.0f, 1.5f );
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_IPV1", &(polio_params->boostLog2NAb_stddev_IPV[0]), Boost_Log2_NAb_Stddev_IPV1_DESC_TEXT, 0.0f, 1.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_IPV2", &(polio_params->boostLog2NAb_stddev_IPV[1]), Boost_Log2_NAb_Stddev_IPV2_DESC_TEXT, 0.0f, 1.0f, 1.0f );
-    initConfigTypeMap( "Boost_Log2_NAb_Stddev_IPV3", &(polio_params->boostLog2NAb_stddev_IPV[2]), Boost_Log2_NAb_Stddev_IPV3_DESC_TEXT, 0.0f, 1.0f, 1.0f );
-
-    initConfigTypeMap( "Prime_Log2_NAb_OPV1", &(polio_params->primeLog2NAb_OPV[0]), Prime_Log2_NAb_OPV1_DESC_TEXT, 0.0f, 10.0f, 2.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_OPV2", &(polio_params->primeLog2NAb_OPV[1]), Prime_Log2_NAb_OPV2_DESC_TEXT, 0.0f, 10.0f, 2.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_OPV3", &(polio_params->primeLog2NAb_OPV[2]), Prime_Log2_NAb_OPV3_DESC_TEXT, 0.0f, 10.0f, 2.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_IPV1", &(polio_params->primeLog2NAb_IPV[0]), Prime_Log2_NAb_IPV1_DESC_TEXT, 0.0f, 10.0f, 4.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_IPV2", &(polio_params->primeLog2NAb_IPV[1]), Prime_Log2_NAb_IPV2_DESC_TEXT, 0.0f, 10.0f, 4.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_IPV3", &(polio_params->primeLog2NAb_IPV[2]), Prime_Log2_NAb_IPV3_DESC_TEXT, 0.0f, 10.0f, 4.0f );
-
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_OPV1", &(polio_params->primeLog2NAb_stddev_OPV[0]), Prime_Log2_NAb_Stddev_OPV1_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_OPV2", &(polio_params->primeLog2NAb_stddev_OPV[1]), Prime_Log2_NAb_Stddev_OPV2_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_OPV3", &(polio_params->primeLog2NAb_stddev_OPV[2]), Prime_Log2_NAb_Stddev_OPV3_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_IPV1", &(polio_params->primeLog2NAb_stddev_IPV[0]), Prime_Log2_NAb_Stddev_IPV1_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_IPV2", &(polio_params->primeLog2NAb_stddev_IPV[1]), Prime_Log2_NAb_Stddev_IPV2_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Prime_Log2_NAb_Stddev_IPV3", &(polio_params->primeLog2NAb_stddev_IPV[2]), Prime_Log2_NAb_Stddev_IPV3_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-
-    initConfigTypeMap( "Shed_Fecal_MaxLog10_Peak_Titer",         &(polio_params->shedFecalMaxLog10PeakTiter),        Shed_Fecal_MaxLog10_Peak_Titer_DESC_TEXT,        0.0f, 10.0f, 5.0f );
-    initConfigTypeMap( "Shed_Fecal_MaxLog10_Peak_Titer_Stddev",  &(polio_params->shedFecalMaxLog10PeakTiter_Stddev), Shed_Fecal_MaxLog10_Peak_Titer_Stddev_DESC_TEXT, 0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Fecal_Titer_Block_Log2NAb",         &(polio_params->shedFecalTiterBlockLog2NAb),        Shed_Fecal_Titer_Block_Log2NAb_DESC_TEXT,        1.0f, 100.0f, 15.0f );
-    initConfigTypeMap( "Shed_Fecal_Titer_Profile_Mu",            &(polio_params->shedFecalTiterProfile_mu),          Shed_Fecal_Titer_Profile_Mu_DESC_TEXT,           0.0f, 10.0f, 3.0f );
-    initConfigTypeMap( "Shed_Fecal_Titer_Profile_Sigma",         &(polio_params->shedFecalTiterProfile_sigma),       Shed_Fecal_Titer_Profile_Sigma_DESC_TEXT,        0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Fecal_MaxLn_Duration",              &(polio_params->shedFecalMaxLnDuration),            Shed_Fecal_MaxLn_Duration_DESC_TEXT,             0.0f, 100.0f, 4.0f );
-    initConfigTypeMap( "Shed_Fecal_MaxLn_Duration_Stddev",       &(polio_params->shedFecalMaxLnDuration_Stddev),     Shed_Fecal_MaxLn_Duration_Stddev_DESC_TEXT,      0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Fecal_Duration_Block_Log2NAb",      &(polio_params->shedFecalDurationBlockLog2NAb),     Shed_Fecal_Duration_Block_Log2NAb_DESC_TEXT,     1.0f, 100.0f, 15.0f );
-    initConfigTypeMap( "Shed_Oral_MaxLog10_Peak_Titer",          &(polio_params->shedOralMaxLog10PeakTiter),         Shed_Oral_MaxLog10_Peak_Titer_DESC_TEXT,         0.0f, 10.0f, 5.0f );
-    initConfigTypeMap( "Shed_Oral_MaxLog10_Peak_Titer_Stddev",   &(polio_params->shedOralMaxLog10PeakTiter_Stddev),  Shed_Oral_MaxLog10_Peak_Titer_Stddev_DESC_TEXT,  0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Oral_Titer_Block_Log2NAb",          &(polio_params->shedOralTiterBlockLog2NAb),         Shed_Oral_Titer_Block_Log2NAb_DESC_TEXT,         1.0f, 100.0f, 15.0f );
-    initConfigTypeMap( "Shed_Oral_Titer_Profile_Mu",             &(polio_params->shedOralTiterProfile_mu),           Shed_Oral_Titer_Profile_Mu_DESC_TEXT,            0.0f, 10.0f, 3.0f );
-    initConfigTypeMap( "Shed_Oral_Titer_Profile_Sigma",          &(polio_params->shedOralTiterProfile_sigma),        Shed_Oral_Titer_Profile_Sigma_DESC_TEXT,         0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Oral_MaxLn_Duration",               &(polio_params->shedOralMaxLnDuration),             Shed_Oral_MaxLn_Duration_DESC_TEXT,              0.0f, 10.0f, 4.0f );
-    initConfigTypeMap( "Shed_Oral_MaxLn_Duration_Stddev",        &(polio_params->shedOralMaxLnDuration_Stddev),      Shed_Oral_MaxLn_Duration_Stddev_DESC_TEXT,       0.0f, 10.0f, 1.0f );
-    initConfigTypeMap( "Shed_Oral_Duration_Block_Log2NAb",       &(polio_params->shedOralDurationBlockLog2NAb),      Shed_Oral_Duration_Block_Log2NAb_DESC_TEXT,      1.0f, 100.0f, 15.0f );
-
-    initConfigTypeMap( "Maternal_log2NAb_mean", &(polio_params->maternal_log2NAb_mean), Maternal_log2NAb_mean_DESC_TEXT,  0.0f, 18.0f, 6.0f );
-    initConfigTypeMap( "Maternal_log2NAb_std",  &(polio_params->maternal_log2NAb_std),  Maternal_log2NAb_std_DESC_TEXT,   0.0f, 18.0f, 3.0f );
-    initConfigTypeMap( "Maternal_Ab_Halflife",  &(polio_params->maternalAbHalfLife),    Maternal_Ab_Halflife_DESC_TEXT,   0.0f, 1000.0f, 22.0f );
-
-    initConfigTypeMap( "Vaccine_Titer_tOPV1", &(polio_params->vaccine_titer_tOPV[0]), Vaccine_Titer_tOPV1_DESC_TEXT, 0.0f, 100000000.0f, 1000000.0f );
-    initConfigTypeMap( "Vaccine_Titer_tOPV2", &(polio_params->vaccine_titer_tOPV[1]), Vaccine_Titer_tOPV2_DESC_TEXT, 0.0f, 100000000.0f, 100000.0f );
-    initConfigTypeMap( "Vaccine_Titer_tOPV3", &(polio_params->vaccine_titer_tOPV[2]), Vaccine_Titer_tOPV3_DESC_TEXT, 0.0f, 100000000.0f, 630000.0f );
-    initConfigTypeMap( "Vaccine_Titer_bOPV1", &(polio_params->vaccine_titer_bOPV[0]), Vaccine_Titer_bOPV1_DESC_TEXT, 0.0f, 100000000.0f, 1000000.0f );
-    initConfigTypeMap( "Vaccine_Titer_bOPV3", &(polio_params->vaccine_titer_bOPV[1]), Vaccine_Titer_bOPV3_DESC_TEXT, 0.0f, 100000000.0f, 630000.0f );
-    initConfigTypeMap( "Vaccine_Titer_mOPV1", &(polio_params->vaccine_titer_mOPV[0]), Vaccine_Titer_mOPV1_DESC_TEXT, 0.0f, 100000000.0f, 1000000.0f );
-    initConfigTypeMap( "Vaccine_Titer_mOPV2", &(polio_params->vaccine_titer_mOPV[1]), Vaccine_Titer_mOPV2_DESC_TEXT, 0.0f, 100000000.0f, 100000.0f );
-    initConfigTypeMap( "Vaccine_Titer_mOPV3", &(polio_params->vaccine_titer_mOPV[2]), Vaccine_Titer_mOPV3_DESC_TEXT, 0.0f, 100000000.0f, 1000000.0f );
-
-    initConfigTypeMap( "Vaccine_Dantigen_IPV1", &(polio_params->vaccine_Dantigen_IPV[0]), Vaccine_Dantigen_IPV1_DESC_TEXT, 0.0f, 1000.0f, 40.0f );
-    initConfigTypeMap( "Vaccine_Dantigen_IPV2", &(polio_params->vaccine_Dantigen_IPV[1]), Vaccine_Dantigen_IPV2_DESC_TEXT, 0.0f, 1000.0f, 8.0f );
-    initConfigTypeMap( "Vaccine_Dantigen_IPV3", &(polio_params->vaccine_Dantigen_IPV[2]), Vaccine_Dantigen_IPV3_DESC_TEXT, 0.0f, 1000.0f, 32.0f );
-         
-    initConfigTypeMap( "Reversion_Steps_Sabin1", &(polio_params->reversionSteps_cVDPV[0]), Reversion_Steps_Sabin1_DESC_TEXT, 0, 8, 6 );
-    initConfigTypeMap( "Reversion_Steps_Sabin2", &(polio_params->reversionSteps_cVDPV[1]), Reversion_Steps_Sabin2_DESC_TEXT, 0, 8, 2 );
-    initConfigTypeMap( "Reversion_Steps_Sabin3", &(polio_params->reversionSteps_cVDPV[2]), Reversion_Steps_Sabin3_DESC_TEXT, 0, 8, 3 );
-
-    initConfigTypeMap( "Excrement_Load", &(polio_params->excrement_load), Excrement_Load_DESC_TEXT, 0.0f, 1000.0f, 300.0f );
-
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV1", &tmpGenomeInfectivityString[0], Substrain_Relative_Infectivity_String_VDPV1_DESC_TEXT );
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV2", &tmpGenomeInfectivityString[1], Substrain_Relative_Infectivity_String_VDPV2_DESC_TEXT );
-    initConfigTypeMap( "Substrain_Relative_Infectivity_String_VDPV3", &tmpGenomeInfectivityString[2], Substrain_Relative_Infectivity_String_VDPV3_DESC_TEXT );
-
-    initConfigTypeMap( "Sabin1_Site_Reversion_Rates", &tmpSiteRatesStrings[0], Sabin1_Site_Reversion_Rates_DESC_TEXT );
-    initConfigTypeMap( "Sabin2_Site_Reversion_Rates", &tmpSiteRatesStrings[1], Sabin2_Site_Reversion_Rates_DESC_TEXT );
-    initConfigTypeMap( "Sabin3_Site_Reversion_Rates", &tmpSiteRatesStrings[2], Sabin3_Site_Reversion_Rates_DESC_TEXT );
-
-    initConfigTypeMap( "Vaccine_Genome_OPV1", &(polio_params->vaccine_genome_OPV1), Vaccine_Genome_OPV1_DESC_TEXT, 0, 1023, 1 );
-    initConfigTypeMap( "Vaccine_Genome_OPV2", &(polio_params->vaccine_genome_OPV2), Vaccine_Genome_OPV2_DESC_TEXT, 0, 1023, 1 );
-    initConfigTypeMap( "Vaccine_Genome_OPV3", &(polio_params->vaccine_genome_OPV3), Vaccine_Genome_OPV3_DESC_TEXT, 0, 1023, 1 );
-#endif // ENABLE_POLIO
-}
-
-void SimulationConfig::PolioCheckConfig( const Configuration* inputJson )
-{
-#ifdef ENABLE_POLIO
-    std::vector<float> dummyvect(N_MAX_POLIO_GENOMES , 1.0f);
-    polio_params->genomeRelativeInfectivity.resize(N_MAX_POLIO_GENOMES, dummyvect);
-
-    // reversion rates for Sabin attenuating sites
-    for(int i=0; i<3; ++i)
-    {
-        int nDataRead = 0;
-        int ptrPosition;
-        const char * readStr = tmpSiteRatesStrings[i].c_str();
-        float data;
-        size_t maximum_index = 1 + int(log(float(N_MAX_POLIO_GENOMES)) / log(2.0f));
-        vector<float> tmp_sabin_rates;
-        tmp_sabin_rates.resize(maximum_index);
-
-        while (sscanf_s(readStr, "%g%n", &data,  &ptrPosition) == 1)
-        {
-            if (nDataRead < maximum_index)
-                tmp_sabin_rates[nDataRead] = data;
-            readStr += ptrPosition;
-            ++nDataRead;
-        }
-
-        if (nDataRead > maximum_index)
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead(reversion rates for Sabin attenuating sites)", nDataRead, "maximum_index", int(maximum_index) );
-        }
-
-        tmp_sabin_rates.resize(nDataRead);
-
-        switch (i)
-        {
-        case 0: polio_params->Sabin1_Site_Rates = tmp_sabin_rates; break;
-        case 1: polio_params->Sabin2_Site_Rates = tmp_sabin_rates; break;
-        case 2: polio_params->Sabin3_Site_Rates = tmp_sabin_rates; break;
-        }
-    }
-
-    // vaccine infectivity by genotype
-    for(int i=0; i<3; ++i)
-    {
-        int nDataRead = 0;
-        int ptrPosition;
-        const char * readStr = tmpGenomeInfectivityString[i].c_str();
-        float data;
-        size_t maximum_index = polio_params->genomeRelativeInfectivity[i].size();
-        while (sscanf_s(readStr, "%g%n", &data,  &ptrPosition) == 1)
-        {
-            if (nDataRead < maximum_index)
-            {
-                polio_params->genomeRelativeInfectivity[i][nDataRead] = data;
-            }
-            readStr += ptrPosition;
-            ++nDataRead;
-        }
-
-        if (nDataRead != N_MAX_POLIO_GENOMES)
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "nDataRead", nDataRead, "number_genomes", N_MAX_POLIO_GENOMES );
-        }
-    }
-    polio_params->decayRatePassiveImmunity = log(2.0f) / polio_params->maternalAbHalfLife; // (days) decayrate=log(2.0)/halflife; Ogra 1968, Warren 1964, Dexiang1956, Plotkin 1959
-
-#endif // ENABLE_POLIO
-}
-
-void SimulationConfig::PolioAddSchema( json::QuickBuilder& retJson )
-{
-}
-
-// ----------------------------------------------------------------------------
-// --- TBHIVParameters
-// ----------------------------------------------------------------------------
-
-void SimulationConfig::TBHIVInitConfig( const Configuration* inputJson )
-{
-#ifndef DISABLE_TBHIV
-	//TBHIV
-    initConfigTypeMap( "TBHIV_Drug_Types", &tb_drug_names_for_this_sim, TBHIV_Drug_Types_DESC_TEXT );   
-    
-    tb_drug_names_for_this_sim.value_source = "TBHIV_Drug_Params.*";
-
-    if (JsonConfigurable::_dryrun)
-    {
-#if !defined(_DLLS_)
-        // for the schema
-        std::string tb_drug_names_array_str(tb_drug_placeholder_string);
-        TBHIVDrugTypeParameters * tbdtp = TBHIVDrugTypeParameters::CreateTBHIVDrugTypeParameters(inputJson, tb_drug_names_array_str);
-        tbdtp->Configure(inputJson);
-        tbhiv_params->TBHIVDrugMap[tb_drug_names_array_str] = tbdtp;
-#endif
-    }
-#endif // DISABLE_TBHIV
-}
-
-void SimulationConfig::TBHIVCheckConfig( const Configuration* inputJson )
-{
-#ifndef DISABLE_TBHIV
-    if (tb_drug_names_for_this_sim.empty())
-    {
-        LOG_INFO("No custom drugs in config file!\n");
-    }
-
-    LOG_DEBUG_F("Reading in drugs \n");
-    for (const auto& tb_drug_name : tb_drug_names_for_this_sim)
-    {
-        LOG_DEBUG_F("Reading in drug %s \n", tb_drug_name.c_str());
-        auto * tbdtp = TBHIVDrugTypeParameters::CreateTBHIVDrugTypeParameters(inputJson, tb_drug_name);
-        release_assert(tbdtp);
-        tbhiv_params->TBHIVDrugMap[tb_drug_name] = tbdtp;
-    }
-#endif //DISABLE_TBHIV
-}
-
-void SimulationConfig::TBHIVAddSchema( json::QuickBuilder& retJson )
-{
-#ifndef DISABLE_TBHIV
-    if (tbhiv_params->TBHIVDrugMap.count(tb_drug_placeholder_string) > 0)
-    {
-        retJson["TBHIV_Drug_Params"][tb_drug_placeholder_string] = tbhiv_params->TBHIVDrugMap[tb_drug_placeholder_string]->GetSchema().As<Object>();
-    }
-#endif //DISABLE_TBHIV
-}
 }

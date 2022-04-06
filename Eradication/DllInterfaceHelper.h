@@ -24,22 +24,16 @@ namespace Kernel
     class DllInterfaceHelper
     {
     public:
-        DllInterfaceHelper( const char* rTypeName, 
-                            const char** simTypes,
-                            report_instantiator_function_t rif = nullptr )
-            : m_RNG( nullptr )
-            , m_TypeName( rTypeName )
-            , m_SupportedSimTypes( simTypes )
-            , m_ReportInstantiatorFunc( rif )
-        {
-        };
+        DllInterfaceHelper(const char* rTypeName, const char** simTypes)
+            : m_TypeName(rTypeName)
+            , m_SupportedSimTypes(simTypes)
+        { };
 
         char* GetEModuleVersion( char* sVer, const Environment* pEnv )
         {            
             // The sharedlib needs to set its copy of the Environment to the one from the exe passed in to the first function called.
             // But it really seems like this should be in the instantiator, not these Getter functions.
             Environment::setInstance(const_cast<Environment*>(pEnv));
-            CreateRandomNumberGenerator( pEnv );
             ProgDllVersion pv;
             DLL_LOG( INFO, "%s: Version=%s  Branch=%s  SccsDate=%s  BuilderName=%s  BuildDate=%s\n",
                      m_TypeName, 
@@ -74,35 +68,13 @@ namespace Kernel
 
         const char* GetType()
         {
-            //DLL_LOG( INFO, "GetType called for %s\n", m_TypeName );
+            DLL_LOG( INFO, "GetType called for %s\n", m_TypeName );
             return m_TypeName;
         };
 
-        void GetReportInstantiator( Kernel::report_instantiator_function_t* pif )
-        {
-            //DLL_LOG( INFO, "GetReportInstantiator called for %s\n", m_TypeName );
-            *pif = m_ReportInstantiatorFunc ;
-        };
-
-        RANDOMBASE* GetRandomNumberGenerator() { return m_RNG; };
-
     private: 
-        void CreateRandomNumberGenerator( const Environment* pEnv ) 
-        { 
-            if( pEnv != nullptr && pEnv->Config != nullptr )
-            {
-                uint16_t run_number = GET_CONFIG_INTEGER( pEnv->Config, "Run_Number" );
-                uint16_t randomseed[2];
-                randomseed[0] = (uint16_t) run_number;
-                randomseed[1] = (uint16_t) pEnv->MPI.Rank;
-                m_RNG = new PSEUDO_DES(*((uint32_t*) randomseed));
-            }
-        }
-
-        RANDOMBASE * m_RNG;
-        const char* m_TypeName ;
-        const char** m_SupportedSimTypes ;
-        report_instantiator_function_t m_ReportInstantiatorFunc ;
+        const char*   m_TypeName;
+        const char**  m_SupportedSimTypes;
     };
 
 }

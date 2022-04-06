@@ -28,18 +28,29 @@ namespace Kernel
         virtual const suids::suid& GetSuid()       const override { return m_Suid; }
         virtual ExternalNodeId_t   GetExternalID() const override { return m_ExternalId; }
 
-        virtual int   GetRank()             const override { return m_Rank;       }
+        virtual int   GetRank()             const override { return m_Rank; }
         virtual float GetPopulation()       const override { return m_Population; }
-        virtual float GetLongitudeDegrees() const override { return m_LongitudeDegrees;  }
-        virtual float GetLatitudeDegrees()  const override { return m_LatitudeDegrees;   }
+        virtual float GetLongitudeDegrees() const override { return m_LongitudeDegrees; }
+        virtual float GetLatitudeDegrees()  const override { return m_LatitudeDegrees; }
+        virtual float GetInboundMult()      const override { return m_net_mult_in; }
+        virtual float GetNetInfectFrac()    const override { return m_net_inf_frac; }
+
+        virtual const sparse_contagion_repr* GetNetInfRep() const override { return &m_net_inf_rep; }
 
         virtual void serialize( IArchive& ar, bool firstTime ) override;
     private:
         suids::suid m_Suid ;
         ExternalNodeId_t m_ExternalId ;
-        int   m_Rank ;
-        float m_Population ;
-        float m_LongitudeDegrees ;
-        float m_LatitudeDegrees ;
+
+        int   m_Rank;
+
+        float m_Population;
+        float m_LongitudeDegrees;
+        float m_LatitudeDegrees;
+
+        float m_net_mult_in;
+
+        float m_net_inf_frac;
+        sparse_contagion_repr   m_net_inf_rep;
     };
 }

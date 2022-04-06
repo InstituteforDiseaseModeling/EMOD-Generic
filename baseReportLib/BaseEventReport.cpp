@@ -23,8 +23,6 @@ namespace Kernel
         , startDay(0.0f)
         , durationDays(0.0f)
         , reportDescription()
-        , pNodeSet(nullptr)
-        , nodesetConfig()
         , eventTriggerList()
         , events_registered(false)
         , events_unregistered(false)
@@ -34,8 +32,6 @@ namespace Kernel
 
     BaseEventReport::~BaseEventReport()
     {
-        delete pNodeSet ;
-        pNodeSet = nullptr ;
     }
 
     // ---------------------
@@ -49,14 +45,6 @@ namespace Kernel
         if( inputJson->Exist("Report_Description") )
         {
             initConfigTypeMap( "Report_Description", &reportDescription, Report_Description_DESC_TEXT );
-        }
-        if( inputJson->Exist("Nodeset_Config") )
-        {
-            initConfigComplexType( "Nodeset_Config", &nodesetConfig, Nodeset_Config_DESC_TEXT );
-        }
-        else
-        {
-            pNodeSet = new NodeSetAll();
         }
 
         if( inputJson->Exist( "Event_Trigger_List" ) )
@@ -73,13 +61,6 @@ namespace Kernel
         }
 
         bool retValue = JsonConfigurable::Configure( inputJson );
-
-        if( retValue && (pNodeSet == nullptr) )
-        {
-            auto tmp = Configuration::CopyFromElement( nodesetConfig._json, inputJson->GetDataLocation() );
-            pNodeSet = NodeSetFactory::CreateInstance( tmp );
-            delete tmp;
-        }
 
         return retValue ;
     }
@@ -99,22 +80,6 @@ namespace Kernel
 
     void BaseEventReport::CheckForValidNodeIDs(const std::vector<ExternalNodeId_t>& nodeIds_demographics)
     {
-        if( pNodeSet == nullptr )
-        {
-            // Actual case encountered but hard to reproduce under normal operation. Should throw exception???
-            return;
-        }
-        std::vector<ExternalNodeId_t> nodes_missing_in_demographics = pNodeSet->IsSubset(nodeIds_demographics);
-        if (!nodes_missing_in_demographics.empty())
-        {
-            std::stringstream nodes_missing_in_demographics_str;
-            std::copy(nodes_missing_in_demographics.begin(), nodes_missing_in_demographics.end(), ostream_iterator<int>(nodes_missing_in_demographics_str, " "));  // list of missing nodes
-
-            std::stringstream error_msg;
-            error_msg <<"Found NodeIDs in " << GetReportName().c_str() << " that are missing in demographics: ";
-            error_msg << nodes_missing_in_demographics_str.str() << ". Only nodes configured in demographics can be used in a report.";
-            throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, error_msg.str().c_str());
-        }
     }
 
     void BaseEventReport::UpdateEventRegistration( float currentTime,
@@ -142,16 +107,13 @@ namespace Kernel
         {
             for( auto p_nec : rNodeEventContextList )
             {
-                if( pNodeSet && pNodeSet->Contains( p_nec ) )
+                if( register_now )
                 {
-                    if( register_now )
-                    {
-                        RegisterEvents( p_nec );
-                    }
-                    else if( unregister_now )
-                    {
-                        UnregisterEvents( p_nec );
-                    }
+                    RegisterEvents( p_nec );
+                }
+                else if( unregister_now )
+                {
+                    UnregisterEvents( p_nec );
                 }
             }
         }

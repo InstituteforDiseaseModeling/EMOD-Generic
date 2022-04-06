@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <set>
 #include <list>
-#include "BoostLibWrapper.h"
 #include "Individual.h"
 #include "IIndividualHumanSTI.h"
 

@@ -111,7 +111,7 @@ namespace Kernel
     NodePyTest::NodePyTest(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     {
         parent = _parent_sim;
-        auto newPerson = configureAndAddNewIndividual(1.0f /*mc*/, 0 /*age*/, 0.0f /*prev*/, 0.5f /*gender*/, 1.0f /*mod_acquire*/); // N.B. temp_prevalence=0 without maternal_transmission flag
+        auto newPerson = configureAndAddNewIndividual(1.0f /*mc*/, 0 /*age*/, 0.0f /*prev*/, 0.5f /*gender*/, 1.0f /*mod_acquire*/, 1.0f /*risk_mod*/); // N.B. temp_prevalence=0 without maternal_transmission flag
 
         for (auto pIndividual : individualHumans)
         {

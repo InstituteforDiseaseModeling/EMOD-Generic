@@ -13,11 +13,11 @@ namespace Kernel
 {
     struct IStrainIdentity
     {
-        virtual std::string GetName(void) const = 0;
-        virtual int  GetCladeID(void) const = 0;
-        virtual int  GetGeneticID(void) const = 0;
-        virtual void SetCladeID(int in_cladeID) = 0;
-        virtual void SetGeneticID(int in_geneticID) = 0;
+        virtual std::pair<uint32_t, uint64_t> GetStrainName(void) const = 0;
+        virtual uint32_t GetCladeID(void) const = 0;
+        virtual uint64_t GetGeneticID(void) const = 0;
+        virtual void SetCladeID(uint32_t in_cladeID) = 0;
+        virtual void SetGeneticID(uint64_t in_geneticID) = 0;
         virtual void ResolveInfectingStrain( IStrainIdentity* strainId ) const = 0;
 
         // Order first by cladeID, then by geneticID

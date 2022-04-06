@@ -9,7 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include "UnitTest++.h"
-#include "SimulationConfig.h"
 #include "CampaignEventByYear.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
@@ -28,11 +27,9 @@ SUITE(CampaignEventByYearTest)
     struct CampaignEventByYearFixture
     {
         IdmMpi::MessageInterface* m_pMpi;
-        SimulationConfig* m_pSimulationConfig ;
         float m_oldBaseYear;
 
         CampaignEventByYearFixture()
-            : m_pSimulationConfig( new SimulationConfig() )
         {
             JsonConfigurable::ClearMissingParameters();
             Environment::Finalize();
@@ -50,50 +47,11 @@ SUITE(CampaignEventByYearTest)
             string dllPath("testdata/CampaignEventByYearTest");
 
             Environment::Initialize( m_pMpi, configFilename, inputPath, outputPath, /*statePath, */dllPath, false);
-
-            m_pSimulationConfig->sim_type = SimType::HIV_SIM;
-
-            Environment::setSimulationConfig( m_pSimulationConfig );
-
-            m_oldBaseYear = Simulation::base_year; // Need to save old base_year for restoration
         }
 
         ~CampaignEventByYearFixture()
         {
             Environment::Finalize();
-            Simulation::base_year = m_oldBaseYear; // Restore base_year
         }
     };
-
-    TEST_FIXTURE(CampaignEventByYearFixture, TestWarningBaseYearStartYear)
-    {
-        // --------------------
-        // --- Initialize test
-        // --------------------
-        unique_ptr<Configuration> p_config(Environment::LoadConfigurationFile("testdata/CampaignEventByYearTest/TestSample.json"));
-        FakeLogger fakeLogger(Logger::tLevel::WARNING);
-        Environment::setLogger(&fakeLogger);
-
-        Simulation::base_year = 2050;
-
-        Array events = (*p_config)["Events"].As<Array>();
-        unique_ptr<Configuration> event_config(Configuration::CopyFromElement(events[0], p_config->GetDataLocation()));
-
-        try
-        {
-            CampaignEventByYear campaign_event_year;
-            bool ret = campaign_event_year.Configure(event_config.get());
-            CHECK(ret);
-        }
-        catch (DetailedException& de)
-        {
-            PrintDebug(de.GetMsg());
-            CHECK(false);
-        }
-
-        CHECK(!fakeLogger.Empty());
-        LogEntry entry = fakeLogger.Back();
-        CHECK(entry.log_level == Logger::tLevel::WARNING);
-        CHECK(entry.msg.find("Start_Year (2003.000000) specified before Base_Year (2050.000000)\n") != string::npos);
-    }
 }

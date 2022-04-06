@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <vector>
 
-#include "BoostLibWrapper.h"
-
 #include "ISupports.h"
 #include "FactorySupport.h"
 #include "Configure.h"
@@ -23,6 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct INodeEventContext;
+    struct ISimulationContext;
     struct ISimulationEventContext;
 
     class ICampaignEventFactory
@@ -67,6 +66,7 @@ namespace Kernel
 
         CampaignEvent();
         virtual ~CampaignEvent();
+        virtual bool Validate( const ISimulationContext* parent_sim );
         float GetStartDay() const;
         int   GetEventIndex() const;
         void  SetEventIndex(int index);

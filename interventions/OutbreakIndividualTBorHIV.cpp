@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "OutbreakIndividual.h"
 #include "IIndividualHuman.h"
 #include "InterventionFactory.h"
-#include "ConfigurationImpl.h"
 #include "NodeEventContext.h"
 #include "Exceptions.h"
 #include "IdmString.h"

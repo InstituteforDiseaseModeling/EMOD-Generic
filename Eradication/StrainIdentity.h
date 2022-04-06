@@ -19,23 +19,23 @@ namespace Kernel
     {
     public:
         StrainIdentity(void);
-        StrainIdentity(int initial_clade, int initial_genome);
+        StrainIdentity(uint32_t initial_clade, uint64_t initial_genome);
         StrainIdentity(const IStrainIdentity *copy);
         virtual ~StrainIdentity(void);
 
         // IStrainIdentity methods
-        std::string  GetName(void) const override;
-        virtual int  GetCladeID(void) const override;
-        virtual int  GetGeneticID(void) const override;
-        virtual void SetCladeID(int in_cladeID) override;
-        virtual void SetGeneticID(int in_geneticID) override;
+        std::pair<uint32_t, uint64_t> GetStrainName(void) const override;
+        virtual uint32_t GetCladeID(void) const override;
+        virtual uint64_t GetGeneticID(void) const override;
+        virtual void SetCladeID(uint32_t in_cladeID) override;
+        virtual void SetGeneticID(uint64_t in_geneticID) override;
         virtual void ResolveInfectingStrain(IStrainIdentity* strainId) const;
 
         static IArchive& serialize(IArchive&, StrainIdentity*&);
         static IArchive& serialize(IArchive&, StrainIdentity&);
 
     protected:
-        int cladeID;
-        int geneticID;
+        uint32_t cladeID;
+        uint64_t geneticID;
     };
 }

@@ -39,7 +39,7 @@ namespace Kernel
     {
     }
 
-    void MpiDataExchanger::ExchangeData( IdmDateTime& currentTime )
+    void MpiDataExchanger::ExchangeData(float current_time)
     {
         std::vector< uint32_t > message_size_by_rank( EnvPtr->MPI.NumTasks );   // "buffers" for size of buffer messages
         IdmMpi::RequestList outbound_requests;     // requests for each outbound message
@@ -60,7 +60,7 @@ namespace Kernel
 
                 if( EnvPtr->Log->CheckLogLevel(Logger::VALIDATION, _module) )
                 {
-                    SaveData( int(currentTime.time), EnvPtr->MPI.Rank, destination_rank, "send", writer->GetBuffer(), writer->GetBufferSize() );
+                    SaveData( static_cast<int>(current_time), EnvPtr->MPI.Rank, destination_rank, "send", writer->GetBuffer(), writer->GetBufferSize() );
                 }
 
                 size_t buffer_size = message_size_by_rank[destination_rank] = writer->GetBufferSize();
@@ -97,7 +97,7 @@ namespace Kernel
 
                 if( EnvPtr->Log->CheckLogLevel(Logger::VALIDATION, _module) ) 
                 {
-                    SaveData( int(currentTime.time), source_rank, EnvPtr->MPI.Rank, "recv", buffer.get(), size );
+                    SaveData( static_cast<int>(current_time), source_rank, EnvPtr->MPI.Rank, "recv", buffer.get(), size );
                 }
 
                 auto binary_reader = std::make_shared<BinaryArchiveReader>(buffer.get(), size);
@@ -105,7 +105,7 @@ namespace Kernel
 
                 if( reader->HasError() )
                 {
-                    SaveData( int(currentTime.time), source_rank, EnvPtr->MPI.Rank, "recv", buffer.get(), size );
+                    SaveData( static_cast<int>(current_time), source_rank, EnvPtr->MPI.Rank, "recv", buffer.get(), size );
                 }
 
                 m_FromOthersFunc( reader, source_rank );

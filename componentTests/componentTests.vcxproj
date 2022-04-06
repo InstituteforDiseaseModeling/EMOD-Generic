@@ -107,10 +107,11 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <TargetMachine>MachineX64</TargetMachine>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>Dbghelp.lib;python36.lib;msmpi.lib;psapi.lib;ws2_32.lib;snappy.lib;lz4.lib;libsqlite.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Dbghelp.lib;python3.lib;msmpi.lib;psapi.lib;ws2_32.lib;snappy.lib;lz4.lib;libsqlite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\Dependencies\ComputeClusterPack\Lib\amd64;..\x64\Release\;$(IDM_PYTHON3_PATH)\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>UnitTestLib.lib /WHOLEARCHIVE:coreLib.lib  /WHOLEARCHIVE:baseReportLib.lib campaign.lib cajun.lib utils.lib %(AdditionalOptions)</AdditionalOptions>
-      <DelayLoadDLLs>python36.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>copy /y $(SolutionDir)Eradication\$(Platform)\$(Configuration)\Eradication.exe  $(SolutionDir)$(Platform)\$(Configuration)</Command>

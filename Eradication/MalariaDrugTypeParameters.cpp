@@ -114,7 +114,7 @@ namespace Kernel
 #define GMM_PKPD_C50_Modifier_DESC_TEXT "TBD"
 #define GMM_Max_IRBC_Kill_Modifier_DESC_TEXT "TBD"
 
-    GenomeMarkerModifiers::GenomeMarkerModifiers( const std::string& rMarkerName, uint32_t genomeBitMask )
+    GenomeMarkerModifiers::GenomeMarkerModifiers( const std::string& rMarkerName, uint64_t genomeBitMask )
         : JsonConfigurable()
         , m_MarkerName( rMarkerName )
         , m_C50(1.0f)
@@ -146,7 +146,7 @@ namespace Kernel
         const std::set<std::string>& r_marker_names = rGenomeMarkers.GetNameSet();
         for( auto& r_name : r_marker_names )
         {
-            uint32_t bits = rGenomeMarkers.GetBits( r_name );
+            uint64_t bits = rGenomeMarkers.GetBits( r_name );
             m_ModifierCollection.push_back( GenomeMarkerModifiers( r_name,  bits ) );
         }
     }

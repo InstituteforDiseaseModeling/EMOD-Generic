@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISupports.h"
 #include "IdmApi.h"
 #include "ExternalNodeId.h"
-#include "ISusceptibilityContext.h"
 #include "EventTrigger.h"
 
 //class RANDOMBASE;
@@ -62,6 +61,7 @@ namespace Kernel
         virtual suids::suid GetNextInfectionSuid() = 0;
         virtual suids::suid GetNodeSuid( ExternalNodeId_t external_node_id ) = 0;
         virtual ExternalNodeId_t GetNodeExternalID( const suids::suid& rNodeSuid ) = 0;
+        virtual float GetNodeInboundMultiplier( const suids::suid& rNodeSuid ) = 0;
         virtual uint32_t    GetNodeRank( const suids::suid& rNodeSuid ) = 0;
 
         // migration

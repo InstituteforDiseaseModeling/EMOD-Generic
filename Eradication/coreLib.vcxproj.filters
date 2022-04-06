@@ -243,9 +243,6 @@
     <ClInclude Include="TBContexts.h">
       <Filter>Source Files\Airborne\TB</Filter>
     </ClInclude>
-    <ClInclude Include="TBParameters.h">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClInclude>
     <ClInclude Include="Climate.h">
       <Filter>Source Files\Climate</Filter>
     </ClInclude>
@@ -649,9 +646,6 @@
       <Filter>Source Files\TBHIV</Filter>
     </ClInclude>
     <ClInclude Include="SimulationTBHIV.h">
-      <Filter>Source Files\TBHIV</Filter>
-    </ClInclude>
-    <ClInclude Include="TBHIVParameters.h">
       <Filter>Source Files\TBHIV</Filter>
     </ClInclude>
     <ClInclude Include="IMigrationInfoVector.h">
@@ -1089,9 +1083,6 @@
     <ClInclude Include="..\interventions\PMTCT.h">
       <Filter>Source Files\Campaign\IndividualTargeted\STI\HIV</Filter>
     </ClInclude>
-    <ClInclude Include="..\interventions\BirthTriggeredIV.h">
-      <Filter>Source Files\Campaign\NodeTargeted</Filter>
-    </ClInclude>
     <ClInclude Include="..\interventions\ImportPressure.h">
       <Filter>Source Files\Campaign\NodeTargeted</Filter>
     </ClInclude>
@@ -1304,6 +1295,18 @@
     </ClInclude>
     <ClInclude Include="SQLReporter.h">
       <Filter>Source Files\Reporting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interventions\ChangeIPMatrix.h">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interventions\TravelRestriction.h">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interventions\NodeInfectivityMult.h">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClInclude>
+    <ClInclude Include="..\interventions\NodeBirthRateMult.h">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2003,9 +2006,6 @@
     <ClCompile Include="..\interventions\TyphoidVaccine.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted\Typhoid</Filter>
     </ClCompile>
-    <ClCompile Include="..\interventions\BirthTriggeredIV.cpp">
-      <Filter>Source Files\Campaign\NodeTargeted</Filter>
-    </ClCompile>
     <ClCompile Include="..\interventions\ImportPressure.cpp">
       <Filter>Source Files\Campaign\NodeTargeted</Filter>
     </ClCompile>
@@ -2212,6 +2212,18 @@
     </ClCompile>
     <ClCompile Include="SQLReporter.cpp">
       <Filter>Source Files\Reporting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\ChangeIPMatrix.cpp">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\TravelRestriction.cpp">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\NodeInfectivityMult.cpp">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\NodeBirthRateMult.cpp">
+      <Filter>Source Files\Campaign\NodeTargeted</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
