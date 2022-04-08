@@ -23,7 +23,7 @@ import dtk_test.dtk_EnvironmentalDiagnostic_Support as Diagnostic_Support
 
 This SFT is testing environmental feature 2.6 Interventions EnvironmentalDiagnostic: Sample_Threshold
 
-In this test we have Base_Infectivity < Sample_Threshold
+In this test we have Base_Infectivity_Constant < Sample_Threshold
 
 "If the sample is greater than (NOT equal to) this threshold, then a positive finding will have been found. This does 
 not include values equal to the threshold so that the threshold can be set at zero. If the value is zero, the user is 
@@ -35,7 +35,7 @@ In this test we turn off other features in EnvironmentalDiagnostic and only look
 
 Test data is loaded from StdOut.txt. 
 
-Suggested sweep parameters: Sample_Threshold and Base_Infectivity
+Suggested sweep parameters: Sample_Threshold and Base_Infectivity_Constant
 
 """
 
@@ -69,11 +69,11 @@ def create_report_file(param_obj, campaign_obj, stdout_df, report_name, debug):
                           "".format(CampaignKeys.EnvironmentalDiagnosticKeys.Environment_IP_Key_Value, ip_key_value))
 
         duration = param_obj[ConfigKeys.Simulation_Duration]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
 
         if base_infectivity >= sample_threshold:
             outfile.write("WARNING: {0}({1}) is not less than {2}({3}), please check the test.\n".format(
-                ConfigKeys.Base_Infectivity, base_infectivity,
+                ConfigKeys.Base_Infectivity_Constant, base_infectivity,
                 CampaignKeys.EnvironmentalDiagnosticKeys.Sample_Threshold, sample_threshold
             ))
 

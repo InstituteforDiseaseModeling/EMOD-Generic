@@ -4,7 +4,7 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.1,
                 "Intervention_Config": {
-					"Incubation_Period_Override": 0,
+                    "Incubation_Period_Override": 0.001,
                     "Outbreak_Source": "PrevalenceIncrease",
                     "class": "OutbreakIndividual"
                 },

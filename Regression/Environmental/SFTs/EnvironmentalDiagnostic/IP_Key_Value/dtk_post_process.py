@@ -33,8 +33,6 @@ In this test we turn off other features in EnvironmentalDiagnostic and only look
 
 Test data is loaded from StdOut.txt and PropertyReportEnvironmental.json.
 
-Suggested sweep parameters: Base_Infectivity
-
 """
 
 
@@ -68,7 +66,7 @@ def create_report_file(param_obj, campaign_obj, property_obj, property_df, stdou
                 CampaignKeys.EnvironmentalDiagnosticKeys.Base_Sensitivity, base_sensitivity))
 
         duration = param_obj[ConfigKeys.Simulation_Duration]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
 
         positive_list = []
         negative_list = []

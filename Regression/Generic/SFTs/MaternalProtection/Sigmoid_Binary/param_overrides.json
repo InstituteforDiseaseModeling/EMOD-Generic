@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -19,15 +20,17 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.25,
+                "Base_Infectivity_Constant": 0.25,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 6
             }
         },
         "PRIMARY": {
+            "Campaign_Filename": "campaign.json",
             "Config_Name": "Generic_SFT_MaternalProtection_SigmoidBinary",
-            "Campaign_Filename": "campaign.w5ml",
             "Geography": "",
-            "Simulation_Duration": 5
+            "Simulation_Duration": 5,
+            "Python_Script_Path": "SHARED"
         },
         "Temporary_Maternal": {
             "Maternal_Protection_Type": "SIGMOID"
@@ -35,6 +38,5 @@
         "Temporary_MaternalProtection": {
             "logLevel_Susceptibility": "VALID"
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

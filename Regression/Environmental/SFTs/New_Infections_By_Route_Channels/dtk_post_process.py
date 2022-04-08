@@ -40,7 +40,7 @@ and "New Infections By Route (ENVIRONMENT)" based in data in "Contact Contagion 
     Test 3 checks if "New Infections =  "New Infections By Route (CONTACT)" + "New Infections By Route (ENVIRONMENT)"
            for every time step.
 
-Suggested sweep parameters: Base_Infectivity, Node_Contagion_Decay_Rate
+Suggested sweep parameters: Base_Infectivity_Constant, Node_Contagion_Decay_Rate
 
 
 """
@@ -56,7 +56,7 @@ channels = [InsetKeys.ChannelsKeys.Contact_Contagion_Population,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission]
 
@@ -69,8 +69,6 @@ def create_report_file(param_obj, inset_chart_obj, report_name, insetchart_name,
     with open(report_name, "w") as outfile:
         for param in param_obj:
             outfile.write("{0} = {1}\n".format(param, param_obj[param]))
-
-        # base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
 
         if param_obj[ConfigKeys.Enable_Heterogeneous_Intranode_Transmission] == 1:
             outfile.write("WARNING: {0} = {1}, expected this feature is disabled".format(

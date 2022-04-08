@@ -1,0 +1,31 @@
+{
+    "tests": [
+        { "path": "Typhoid/Typhoid_1" },
+        { "path": "Typhoid/Typhoid_2" },
+        { "path": "Typhoid/Typhoid_3" },
+        { "path": "Typhoid/Typhoid_4" },
+        { "path": "Typhoid/Typhoid_5" },
+        { "path": "Typhoid/Typhoid_6" },
+        { "path": "Typhoid/Typhoid_7" },
+        { "path": "Typhoid/Typhoid_8" },
+        { "path": "Typhoid/Typhoid_9" },
+        { "path": "Typhoid/Typhoid_10" },
+        { "path": "Typhoid/Typhoid_11" },
+        { "path": "Typhoid/Typhoid_12" },
+        { "path": "Typhoid/Typhoid_13" },
+        { "path": "Typhoid/Typhoid_14" },
+        { "path": "Typhoid/Typhoid_15" },
+        { "path": "Typhoid/Typhoid_16" },
+        { "path": "Typhoid/Typhoid_17" },
+        { "path": "Typhoid/Typhoid_18" },
+        { "path": "Typhoid/Typhoid_19_NodeInterventionDeposit" },
+        { "path": "Typhoid/Typhoid_20_NodeInterventionDose" },
+        { "path": "Typhoid/Typhoid_21_NodeInterventionExposures" },
+        { "path": "Typhoid/Typhoid_22_NodeInterventionDepositProps" },
+        { "path": "Typhoid/Typhoid_23_TriggeredEventCoordinator" }
+    ],
+    "skipped": [
+        { "path": "Typhoid/FeatureTests/SingleIndividualIntrahost" },
+        { "path": "Typhoid/FeatureTests/SingleIndividualOutbreakSeries" }
+    ]
+}

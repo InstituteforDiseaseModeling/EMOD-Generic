@@ -36,7 +36,8 @@
         "PRIMARY": {
             "Config_Name": "Local_Migration_2Nodes_Waypoints_Home",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 100
+            "Simulation_Duration": 100,
+            "Python_Script_Path": "LOCAL"
         },
         "Temporary_MigrationModel": {
             "Local_Migration_Roundtrip_Duration": 5

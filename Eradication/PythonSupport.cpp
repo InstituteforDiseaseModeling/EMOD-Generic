@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "Log.h"
 
-#define DEFAULT_PYTHON_HOME         "c:/Python36"
 #define ENV_VAR_PYTHON              "IDM_PYTHON3_PATH"
 #define PYTHON_SCRIPT_PATH_NOT_SET  ""
 
@@ -81,10 +80,8 @@ namespace Kernel
         if( c_python_path == nullptr )
         {
             std::stringstream msg;
-            msg << "Cannot find environmental variable " << ENV_VAR_PYTHON << ".\n"
-                << "Assuming default path for python installation.";
-            LOG_INFO( msg.str().c_str() );
-            c_python_path = DEFAULT_PYTHON_HOME;
+            msg << "Cannot find environmental variable " << ENV_VAR_PYTHON << ".\n";
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
         std::string python_home = c_python_path;
         python_home = FileSystem::RemoveTrailingChars( python_home );

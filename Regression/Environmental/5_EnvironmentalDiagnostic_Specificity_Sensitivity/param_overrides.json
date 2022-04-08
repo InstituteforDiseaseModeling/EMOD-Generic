@@ -2,7 +2,8 @@
     "Default_Config_Path": "../../defaults/generic_default_config.json",
     "parameters": {
         "Base_Infectious_Period": 7,
-        "Base_Infectivity": 1,
+        "Base_Infectivity_Constant": 1,
+        "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
         "CLIMATE": {
             "AIR": {
                 "Air_Temperature_Filename": "Namawala_single_node_air_temperature_daily.bin",

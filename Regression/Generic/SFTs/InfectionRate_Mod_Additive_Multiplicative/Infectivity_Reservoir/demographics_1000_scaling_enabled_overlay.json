@@ -10,7 +10,7 @@
    "Nodes": [
       {
          "NodeAttributes": {
-            "InfectivityReservoirSize": 9.0,
+            "InfectivityReservoirSize": 19.0,
             "InitialPopulation": 1000
          },
          "NodeID": 1

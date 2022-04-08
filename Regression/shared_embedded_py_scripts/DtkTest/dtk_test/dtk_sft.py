@@ -563,7 +563,7 @@ def plot_scatter_fit_line(dist1, dist2=None, label1="test data 1", label2=None, 
     x, y, z = x[idx], y[idx], z[idx]
 
     # scatter = ax.scatter(x, y, c=z, s=20000 * z, edgecolor='', label=label1, cmap="rainbow", alpha=0.5)
-    scatter = ax.scatter(x, y, c=z, s=100, edgecolor='', label=label1, cmap="rainbow", alpha=0.5)
+    scatter = ax.scatter(x, y, c=z, s=100, edgecolor=None, label=label1, cmap="rainbow", alpha=0.5)
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='5%', pad=0.05)
     cax.set_ylabel("spatial density of nearby points")
@@ -1256,13 +1256,11 @@ def test_multinomial(dist, proportions, report_file=None, prob_flag=True):
     :param report_file: flag that indicates whether p are proportions or the expected values
     :return: True or False for test result
     """
-    if prob_flag:
-        n = sum(dist)
-        prob = sum(proportions)
-        total = int(n/prob)
-        result = stats.chisquare(dist, np.array(proportions) * total, ddof=0 ) #returns chi-square statistic and p value
-    else:
-        result = stats.chisquare(dist, proportions, ddof=0)
+    n = sum(dist)
+    prob = sum(proportions)
+    total = n/prob
+    result = stats.chisquare(dist, np.array(proportions) * total, ddof=0 ) #returns chi-square statistic and p value
+
     p = get_p_s_from_ksresult(result)['p']
     s = get_p_s_from_ksresult(result)['s']
     if p >= 5e-2:

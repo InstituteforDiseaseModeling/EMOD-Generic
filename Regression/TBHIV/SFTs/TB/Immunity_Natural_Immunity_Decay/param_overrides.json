@@ -42,6 +42,7 @@
         "HIV_Child_Survival_Slow_Progressor_Shape": 2.7,
         "Mortality_Blocking_Immunity_Decay_Rate": 0,
         "Post_Infection_Acquisition_Multiplier": 0.1,
+        "Python_Script_Path": "SHARED",
         "Simulation_Duration": 741,
         "TBHIV_Drug_Params": {
             "ACFDOTS": {

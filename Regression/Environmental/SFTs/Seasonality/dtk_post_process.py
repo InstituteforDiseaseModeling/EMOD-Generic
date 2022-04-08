@@ -67,7 +67,8 @@ Suggested sweep parameters: Environmental_Peak_Start, Environmental_Ramp_Down_Du
 """
 
 config_keys = [ConfigKeys.Config_Name, ConfigKeys.Simulation_Timestep,
-               ConfigKeys.Simulation_Duration, ConfigKeys.Base_Infectivity,
+               ConfigKeys.Simulation_Duration,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Environmental_Cutoff_Days,
                ConfigKeys.Environmental_Peak_Start,

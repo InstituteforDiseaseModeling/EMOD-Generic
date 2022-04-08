@@ -59,7 +59,7 @@ This test is testing the above statement with Multi Routes HINT feature.
 
 Test data is loaded from InsetChart.json and PropertyReportEnvironmental.json. 
 
-Suggested sweep parameters: Node_Contagion_Decay_Rate, Base_Infectivity
+Suggested sweep parameters: Node_Contagion_Decay_Rate, Base_Infectivity_Constant
 
 """
 
@@ -75,9 +75,12 @@ inset_channels = [InsetKeys.ChannelsKeys.Contact_Contagion_Population,
                   InsetKeys.ChannelsKeys.Infected,
                   InsetKeys.ChannelsKeys.Statistical_Population]
 
-config_keys = [ConfigKeys.Config_Name, ConfigKeys.Simulation_Timestep,
-               ConfigKeys.Simulation_Duration, ConfigKeys.Base_Infectivity,
-               ConfigKeys.Run_Number, ConfigKeys.Demographics_Filenames,
+config_keys = [ConfigKeys.Config_Name, 
+               ConfigKeys.Simulation_Timestep,
+               ConfigKeys.Simulation_Duration,
+               ConfigKeys.Base_Infectivity_Constant,
+               ConfigKeys.Run_Number,
+               ConfigKeys.Demographics_Filenames,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission,
                ConfigKeys.Node_Contagion_Decay_Rate]
 
@@ -101,7 +104,7 @@ def create_report_file(param_obj, property_df, property_obj, inset_chart_obj, in
         outfile.write("Testing: Testing contagion and decay in each groups for every time step:\n")
         duration = param_obj[ConfigKeys.Simulation_Duration]
         transmission_matrix_e = property_obj[DemographicsKeys.PropertyKeys.TransmissionMatrix][routes[0]]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         groups = property_obj[DemographicsKeys.PropertyKeys.Values]
         contagion = []
         for group in groups:

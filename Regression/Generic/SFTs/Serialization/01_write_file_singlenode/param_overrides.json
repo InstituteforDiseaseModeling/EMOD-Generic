@@ -22,13 +22,14 @@
                 "Base_Incubation_Period": 0
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.7
+                "Base_Infectivity_Constant": 0.7,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "PRIMARY": {
             "Config_Name": "Generic serialization 01 writes files",
             "Geography": "SamplesInput",
-            "Python_Script_Path": "LOCAL",
+            "Python_Script_Path": "SHARED",
             "Run_Number": 1,
             "Serialization_Time_Steps": [
                 10,

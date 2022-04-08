@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/environmental_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -8,7 +9,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.01,
+                "Base_Infectivity_Constant": 0.01,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 5
             }
         },
@@ -18,6 +20,9 @@
         },
         "INTRANODE_TRANSMISSION": {
             "Enable_Heterogeneous_Intranode_Transmission": 0
+        },
+        "LOGLEVEL": {
+            "logLevel_EnvironmentalDiagnostic": "DEBUG"
         },
         "OUTPUT": {
             "Enable_Property_Output": 0,
@@ -30,10 +35,6 @@
         "PRIMARY": {
             "Config_Name": "EnvironmentalDiagnostic_Events",
             "Simulation_Duration": 180
-        },
-        "LOGLEVEL": {
-            "logLevel_EnvironmentalDiagnostic": "DEBUG"
         }
-    },
-    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+    }
 }

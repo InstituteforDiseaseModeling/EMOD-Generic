@@ -12,6 +12,7 @@
         "Enable_Natural_Mortality": 0,
         "Enable_Regional_Migration": 1,
         "Enable_Vital_Dynamics": 0,
+        "Python_Script_Path": "SHARED",
         "Simulation_Duration": 180,
         "TBHIV_Drug_Params": {
             "ACFDOTS": {

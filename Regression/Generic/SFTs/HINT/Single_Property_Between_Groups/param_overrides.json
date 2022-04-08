@@ -38,7 +38,8 @@
         "PRIMARY": {
             "Config_Name": "HINT_Single_Route_Single_Property_Between_Groups",
             "Geography": "SamplesInput",
-            "Simulation_Duration": 60
+            "Simulation_Duration": 60,
+            "Python_Script_Path": "SHARED"
         },
         "logLevel_Individual": "DEBUG",
         "Temporary_MigrationModel": {

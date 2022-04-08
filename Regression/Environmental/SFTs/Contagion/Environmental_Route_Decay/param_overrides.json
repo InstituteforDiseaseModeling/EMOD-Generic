@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/environmental_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -8,7 +9,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.2
+                "Base_Infectivity_Constant": 0.2,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "ENVIRONMENTAL": {
@@ -23,6 +25,5 @@
         "PRIMARY": {
             "Config_Name": "Environmental_Route_Contagion_Dacay"
         }
-    },
-    "Default_Config_Path": "defaults/environmental_science_default_config.json"
+    }
 }

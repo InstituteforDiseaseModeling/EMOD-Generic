@@ -149,7 +149,6 @@ class ChrTransitionProbabilitySupport(object):
         success = True
 
         with open(report_name, "w") as report_file:
-            # if len(output_df) == output_df.ix[len(output_df)-1, ConfigParameters.KEY_SIMULATION_TIMESTEP]:
             if len(output_df) == 0:
                 success = False
                 report_file.write(sft.sft_no_test_data)

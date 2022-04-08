@@ -1,6 +1,6 @@
 {
     "parameters": {
-        "Campaign_Filename": "campaign.w5ml",
+        "Campaign_Filename": "campaign.json",
         "Config_Name": "SFT:Typhoid:Acute_And_Subclinical_Duration",
         "Demographics_Filenames": [
             "../../Santiago_Demographics.json"

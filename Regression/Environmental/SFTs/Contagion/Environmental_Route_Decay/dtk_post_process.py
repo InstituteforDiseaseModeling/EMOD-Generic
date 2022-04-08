@@ -51,7 +51,7 @@ is disabled(HINT multipliers are all 0). We only look at environmental route con
 Test data is loaded from InsetChart.json. (Infected, Environmental_Contagion_Population and 
 Statistical_Population channels)
 
-Suggested sweep parameters: Node_Contagion_Decay_Rate, Base_Infectivity
+Suggested sweep parameters: Node_Contagion_Decay_Rate, Base_Infectivity_Constant
 
 
 """
@@ -64,7 +64,7 @@ channels = [InsetKeys.ChannelsKeys.Contact_Contagion_Population,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Node_Contagion_Decay_Rate,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission]
@@ -78,11 +78,11 @@ def create_report_file(param_obj, inset_chart_obj, report_name, insetchart_name,
     with open(report_name, "w") as outfile:
         config_name = param_obj[ConfigKeys.Config_Name]
         decay = param_obj[ConfigKeys.Node_Contagion_Decay_Rate]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         outfile.write("Config_name = {}\n".format(config_name))
         outfile.write("{0} = {1}\n".format(ConfigKeys.Node_Contagion_Decay_Rate, decay))
         outfile.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         if decay == 1:

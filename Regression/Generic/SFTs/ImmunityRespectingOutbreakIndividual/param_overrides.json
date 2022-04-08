@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -10,7 +11,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 1e-10,
+                "Base_Infectivity_Constant": 1e-10,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 4
             }
         },
@@ -20,8 +22,8 @@
         "PRIMARY": {
             "Config_Name": "ImmunityRespectingOutbreakIndividual",
             "Geography": "",
-            "Simulation_Duration": 10
+            "Simulation_Duration": 10,
+            "Python_Script_Path": "LOCAL"
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

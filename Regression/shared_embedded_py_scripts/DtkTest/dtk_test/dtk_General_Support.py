@@ -102,6 +102,8 @@ class ConfigKeys:
     Base_Infectivity = 'Base_Infectivity'
     Base_Infectivity_Distribution = 'Base_Infectivity_Distribution'
     Base_Infectivity_Constant = 'Base_Infectivity_Constant'
+    Base_Infectivity_Max = 'Base_Infectivity_Max'
+    Base_Infectivity_Min = 'Base_Infectivity_Min'
     Base_Infectivity_Gaussian_Mean = "Base_Infectivity_Gaussian_Mean"
     Base_Infectivity_Gaussian_Std_Dev = "Base_Infectivity_Gaussian_Std_Dev"
     Base_Land_Temperature = 'Base_Land_Temperature'

@@ -36,7 +36,7 @@ In this test we turn off other features in EnvironmentalDiagnostic and only look
 
 Test data is loaded from StdOut.txt. 
 
-Suggested sweep parameters: Sample_Threshold and Base_Infectivity
+Suggested sweep parameters: Sample_Threshold and Base_Infectivity_Constant
 
 """
 
@@ -70,7 +70,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, report_name, debug):
                           "".format(CampaignKeys.EnvironmentalDiagnosticKeys.Environment_IP_Key_Value, ip_key_value))
 
         duration = param_obj[ConfigKeys.Simulation_Duration]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
 
         if sample_threshold:
             outfile.write("WARNING: {0}({1}) should equal to zero, please check the test.\n".format(

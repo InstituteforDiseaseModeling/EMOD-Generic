@@ -11,7 +11,8 @@
             "Sample_Rate_Birth": 1
         },
         "DISEASE": {
-            "Base_Infectivity": 3.5,
+            "Base_Infectivity_Constant": 3.5,
+            "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
             "Enable_Immune_Decay": 0,
             "Incubation_Period_Constant": 0,
             "Infectious_Period_Exponential": 4

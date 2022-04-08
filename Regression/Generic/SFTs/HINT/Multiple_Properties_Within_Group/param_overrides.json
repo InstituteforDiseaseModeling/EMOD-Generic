@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -20,7 +21,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.5,
+                "Base_Infectivity_Constant": 0.5,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 60,
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
                 "Symptomatic_Infectious_Offset": 0
@@ -39,12 +41,12 @@
         "PRIMARY": {
             "Config_Name": "HINT_Single_Route_Multiple_Properties_Within_Group",
             "Geography": "SamplesInput",
-            "Simulation_Duration": 60
+            "Simulation_Duration": 60,
+            "Python_Script_Path": "SHARED"
         },
-        "logLevel_Individual": "DEBUG",
         "Temporary_MigrationModel": {
             "Roundtrip_Waypoints": 5
-        }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+        },
+        "logLevel_Individual": "DEBUG"
+    }
 }

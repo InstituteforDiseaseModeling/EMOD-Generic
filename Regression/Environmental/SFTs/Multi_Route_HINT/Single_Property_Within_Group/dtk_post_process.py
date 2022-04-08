@@ -72,7 +72,7 @@ inset_channels = [InsetKeys.ChannelsKeys.New_Infections_By_Route_ENVIRONMENT,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Demographics_Filenames,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission,
@@ -133,10 +133,10 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                        insetchart_name, property_report_name, report_name, debug):
     with open(report_name, "w") as sft_report_file :
         config_name = param_obj[ConfigKeys.Config_Name]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         sft_report_file.write("Config_name = {}\n".format(config_name))
         sft_report_file.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         success = True
@@ -303,13 +303,13 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                 for contagion_list, new_infection, expected_new_infection_list, route in \
                         [(contagion_list_e, new_infection_e, expected_new_infection_list_e, routes[0]),
                          (contagion_list_c, new_infection_c, expected_new_infection_list_c, routes[1])]:
-                    if math.fabs(new_infection.ix[1:, 0].sum() - sum(expected_new_infection_list)) > \
+                    if math.fabs(new_infection.iloc[1:, 0].sum() - sum(expected_new_infection_list)) > \
                             5e-2 * sum(expected_new_infection_list):
                         result_4 = success = False
-                        sft_report_file.write(message.format("BAD", route, group, new_infection.ix[1:, 0].sum(),
+                        sft_report_file.write(message.format("BAD", route, group, new_infection.iloc[1:, 0].sum(),
                                                      sum(expected_new_infection_list)))
                     else:
-                        sft_report_file.write(message.format("GOOD", route, group, new_infection.ix[1:, 0].sum(),
+                        sft_report_file.write(message.format("GOOD", route, group, new_infection.iloc[1:, 0].sum(),
                                                      sum(expected_new_infection_list)))
 
                     sft.plot_data(np.array(contagion_list)[:, 0], np.array(contagion_list)[:, 1],
@@ -320,7 +320,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                                       line=True, alpha=0.5, overlap=True)
 
                     # skip the first time step(outbreak start day) for new infection channel
-                    sft.plot_data(new_infection.ix[1:, 0].tolist(), expected_new_infection_list,
+                    sft.plot_data(new_infection.iloc[1:, 0].tolist(), expected_new_infection_list,
                                       label1=property_report_name,
                                       label2="expected new infection",
                                       title="new infections\nroute {0}, group {1}".format(route, group),

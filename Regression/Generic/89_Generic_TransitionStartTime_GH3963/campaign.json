@@ -1,0 +1,134 @@
+{
+   "Campaign_Name": "Nation Level Campaign",
+   "Events": [
+      {
+         "Event_Coordinator_Config": {
+            "Intervention_Config": {
+               "Daily_Import_Pressures": [
+                  0.1
+               ],
+               "Durations": [
+                  100000
+               ],
+               "Import_Age": 14600,
+               "class": "ImportPressure"
+            },
+            "class": "StandardInterventionDistributionEventCoordinator"
+         },
+         "Event_Name": "Import 1 cases per 10 days somewhere on the network",
+         "Nodeset_Config": {
+            "class": "NodeSetAll"
+         },
+         "Start_Day": 10,
+         "class": "CampaignEvent"
+      },
+      {
+         "Event_Coordinator_Config": {
+            "Intervention_Config": {
+               "Actual_IndividualIntervention_Config": {
+                  "Actual_IndividualIntervention_Configs": [
+                     {
+                        "Acquire_Config": {
+                           "Initial_Effect": 0.9999,
+                           "class": "WaningEffectConstant"
+                        },
+                        "class": "Vaccine"
+                     }
+                  ],
+                  "Delay_Period_Constant": 270,
+                  "Delay_Period_Distribution": "CONSTANT_DISTRIBUTION",
+                  "class": "DelayedIntervention"
+               },
+               "Demographic_Coverage": 0.7319492116186602,
+               "Trigger_Condition_List": [
+                  "Births"
+               ],
+               "class": "NodeLevelHealthTriggeredIV"
+            },
+            "class": "StandardInterventionDistributionEventCoordinator"
+         },
+         "Event_Name": "MCV1",
+         "Nodeset_Config": {
+            "class": "NodeSetAll"
+         },
+         "Start_Day": 10,
+         "class": "CampaignEvent"
+      },
+      {
+         "Event_Coordinator_Config": {
+            "Coverage_By_Node": [
+                {
+                    "Node_Id": 1482567602,
+                    "Coverage": 0.2185619936590341
+                }
+            ],
+            "Demographic_Coverage": 1.0,
+            "Intervention_Config": {
+               "Actual_IndividualIntervention_Configs": [
+                  {
+                     "Acquire_Config": {
+                        "Initial_Effect": 0.999999,
+                        "class": "WaningEffectConstant"
+                     },
+                     "Cost_To_Consumer": 1,
+                     "Take_Reduced_By_Acquire_Immunity": 0.6,
+                     "Take_By_Age_Multiplier": {
+                        "Times": [
+                           0,
+                           90,
+                           120,
+                           150,
+                           180,
+                           210,
+                           240,
+                           270,
+                           300,
+                           330,
+                           365,
+                           99999
+                        ],
+                        "Values": [
+                           0,
+                           0,
+                           0.53,
+                           0.66,
+                           0.77,
+                           0.82,
+                           0.89,
+                           0.95,
+                           0.95,
+                           0.95,
+                           0.95,
+                           0.95
+                        ]
+                     },
+                     "class": "Vaccine"
+                  }
+               ],
+               "Delay_Period_Distribution": "UNIFORM_DISTRIBUTION",
+               "Delay_Period_Max": 60,
+               "Delay_Period_Min": 1,
+               "Intervention_Name": "Delayed SIA Intervention",
+               "class": "DelayedIntervention"
+            },
+            "Number_Repetitions": 30.0,
+            "Property_Restrictions": [
+                "Age_Bin:Age_Bin_Property_From_0_To_1"
+            ],
+            "Target_Age_Max": 5.0,
+            "Target_Age_Min": 0.75,
+            "Target_Demographic": "ExplicitAgeRanges",
+            "Timesteps_Between_Repetitions": 730,
+            "class": "CoverageByNodeEventCoordinator"
+         },
+         "Event_Name": "SIA",
+         "META_TargetCoverage": 1.0,
+         "Nodeset_Config": {
+            "class": "NodeSetAll"
+         },
+         "Start_Day": 60,
+         "class": "CampaignEvent"
+      }
+   ],
+   "Use_Defaults": 1
+}

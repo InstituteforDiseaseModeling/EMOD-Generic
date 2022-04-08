@@ -4,7 +4,8 @@
         "DEMOGRAPHICS": {
             "Acquisition_Blocking_Immunity_Decay_Rate": 0.0,
             "Acquisition_Blocking_Immunity_Duration_Before_Decay": 0,
-            "Base_Infectivity": 0.5,
+            "Base_Infectivity_Constant": 0.5,
+            "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
             "Base_Mortality": 0,
             "Demographics_Filenames": [
                 "demographics.json"

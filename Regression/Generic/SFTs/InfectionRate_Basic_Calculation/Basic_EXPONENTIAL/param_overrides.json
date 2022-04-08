@@ -1,0 +1,31 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../demographics.json",
+                "../../demographics_10000_overlay.json"
+            ],
+            "Population_Scale_Type": "FIXED_SCALING",
+            "x_Base_Population": 1
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                "Base_Infectivity_Exponential": 0.1,
+				"Infectious_Period_Constant": 50,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "test_infection_rate_basic-EXPONENTIAL_DISTRIBUTION",
+            "Simulation_Duration": 50,
+            "Python_Script_Path": "SHARED"
+       },
+        "LOGLEVEL": {
+            "logLevel_Individual": "DEBUG",
+            "logLevel_Infection": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

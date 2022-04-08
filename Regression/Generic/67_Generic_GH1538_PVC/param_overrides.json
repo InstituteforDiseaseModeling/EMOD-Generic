@@ -11,7 +11,8 @@
             "Sample_Rate_Birth": 1
         },
         "DISEASE": {
-            "Base_Infectivity": 2,
+            "Base_Infectivity_Constant": 2,
+            "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
             "Base_Mortality": 0.1,
             "Enable_Disease_Mortality": 1,
             "Enable_Heterogeneous_Intranode_Transmission": 0,

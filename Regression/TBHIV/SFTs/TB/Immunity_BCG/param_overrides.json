@@ -43,6 +43,7 @@
         "Mortality_Blocking_Immunity_Decay_Rate": 0,
         "Post_Infection_Acquisition_Multiplier": 0,
         "Post_Infection_Mortality_Multiplier": 0,
+        "Python_Script_Path": "SHARED",
         "Run_Number": 2,
         "Simulation_Duration": 730,
         "TBHIV_Drug_Params": {

@@ -1,9 +1,11 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "Acquisition_Blocking_Immunity_Decay_Rate": 0.1,
         "Acquisition_Blocking_Immunity_Duration_Before_Decay": 60,
         "Age_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
-        "Base_Infectivity": 1e-06,
+        "Base_Infectivity_Constant": 1e-06,
+        "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
         "Base_Mortality": 0,
         "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
         "Campaign_Filename": "campaign.json",
@@ -19,6 +21,7 @@
         "Enable_Initial_Susceptibility_Distribution": 0,
         "Enable_Interventions": 1,
         "Enable_Natural_Mortality": 1,
+        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "Incubation_Period_Distribution": "CONSTANT_DISTRIBUTION",
         "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
         "Load_Balance_Filename": "",
@@ -27,7 +30,6 @@
         "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,
         "Mortality_Blocking_Immunity_Duration_Before_Decay": 60,
         "Node_Grid_Size": 0.042,
-        "Python_Script_Path": "LOCAL",
         "Population_Scale_Type": "FIXED_SCALING",
         "Post_Infection_Acquisition_Multiplier": 0.9,
         "Post_Infection_Mortality_Multiplier": 0.7,
@@ -39,8 +41,6 @@
         "Susceptibility_Initialization_Distribution_Type": "DISTRIBUTION_SIMPLE",
         "Transmission_Blocking_Immunity_Decay_Rate": 0.1,
         "Transmission_Blocking_Immunity_Duration_Before_Decay": 60,
-        "Enable_Termination_On_Zero_Total_Infectivity": 0,
         "logLevel_default": "VALID"
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

@@ -65,7 +65,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, report_name, debug):
                           "".format(CampaignKeys.EnvironmentalDiagnosticKeys.Environment_IP_Key_Value, ip_key_value))
 
         duration = param_obj[ConfigKeys.Simulation_Duration]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         expected_positive_count = expected_negative_count = 0
         contagion_list = []
         contagion = 0

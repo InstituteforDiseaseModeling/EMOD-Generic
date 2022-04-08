@@ -1,0 +1,13 @@
+{
+    "tests": [ 
+    ],
+    "skipped": [
+    ],
+    "skipped:num_cores_too_large": [
+        { "path":  "TBHIV/30_MadagascarTBHIV"}
+    ]
+}
+
+
+
+

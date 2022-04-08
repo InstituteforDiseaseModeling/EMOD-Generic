@@ -158,11 +158,8 @@ def parse_insetchart_json(insetchart_name="InsetChart.json", output_folder="outp
     with open(insetchart_path) as infile:
         icj = json.load(infile)["Channels"]
 
-    # insetchart_df = pd.DataFrame(index=range(len(icj[insetchart.new_infections])))
-    # insetchart_df[insetchart.new_infections] = icj[insetchart.new_infections]
-    # insetchart_df[insetchart.stat_pop] = icj[insetchart.stat_pop]
-    insetchart_df = pd.DataFrame.from_items([(InsetChart.new_infections, icj[InsetChart.new_infections]['Data']),
-                                             (InsetChart.stat_pop, icj[InsetChart.stat_pop]['Data'])])
+    insetchart_df = pd.DataFrame.from_dict({InsetChart.new_infections: icj[InsetChart.new_infections]['Data'],
+                                            InsetChart.stat_pop:       icj[InsetChart.stat_pop]['Data']      })
 
     if debug:
         insetchart_df.to_csv("DEBUG_data_InsetChart.csv")

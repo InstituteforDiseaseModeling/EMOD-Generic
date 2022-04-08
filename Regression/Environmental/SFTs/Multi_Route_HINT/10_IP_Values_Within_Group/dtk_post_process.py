@@ -32,9 +32,9 @@ This test validates 6 things:
 
 1. Simulation configuration preconditions for the test are met.
 2. For each group (for example, Geographic:AA):
-    2.1 Total contagion for contact route should be Base_Infectivity * number of infected in each group * multiplier in 
+    2.1 Total contagion for contact route should be Base_Infectivity_Constant * number of infected in each group * multiplier in 
         HINT matrix / total population
-    2.2 Total contagion for environmental route should be Base_Infectivity * number of infected in each group * 
+    2.2 Total contagion for environmental route should be Base_Infectivity_Constant * number of infected in each group * 
         multiplier in HINT matrix / group population
 3. New infections should be within 5% of (susceptibles * new infection probability) for 95% of timesteps
 4. Total new infections for both routes should be within 5% of tolerance compared to expected value.
@@ -58,7 +58,7 @@ inset_channels = [InsetKeys.ChannelsKeys.New_Infections_By_Route_ENVIRONMENT,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Demographics_Filenames,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission,
@@ -131,10 +131,10 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                        insetchart_name, property_report_name, report_name, debug):
     with open(report_name, "w") as sft_report_file :
         config_name = param_obj[ConfigKeys.Config_Name]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         sft_report_file.write("Config_name = {}\n".format(config_name))
         sft_report_file.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         success = True
@@ -288,7 +288,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                          (contagion_list_c, new_infection_c, expected_new_infection_list_c, routes[1])]:
                     tolerance = 0
                     total_expected_new_infections = sum(expected_new_infection_list)
-                    total_new_infections = new_infection_sus.ix[1:, 0].sum()
+                    total_new_infections = new_infection_sus.iloc[1:, 0].sum()
                     if total_expected_new_infections > 1000:
                         tolerance = 5e-2
                     elif total_expected_new_infections > 500:
@@ -319,7 +319,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                                       xlabel='day', ylabel='contagion', category="contagion_{0}_{1}"
                                                                                  "".format(group, route),
                                       line=True, alpha=0.5, overlap=True, sort=False)
-                    sft.plot_data(new_infection_sus.ix[1:, 0].tolist(), expected_new_infection_list,
+                    sft.plot_data(new_infection_sus.iloc[1:, 0].tolist(), expected_new_infection_list,
                                       label1=property_report_name,
                                       label2="expected new infection",
                                       title="new infections\nroute {0}, group {1}".format(route, group),

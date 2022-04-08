@@ -32,9 +32,9 @@ This test validates 7 things:
 
 1. Simulation configuration preconditions for the test are met.
 2. For group QualityOfCare:Susceptible:
-    2.1 Total contagion for contact route should be Base_Infectivity * number of infected in group QualityOfCare:Seed * 
+    2.1 Total contagion for contact route should be Base_Infectivity_Constant * number of infected in group QualityOfCare:Seed * 
         multiplier in HINT matrix / total population
-    2.2 Total contagion for environmental route should be Base_Infectivity * number of infected in group QualityOfCare:Seed * 
+    2.2 Total contagion for environmental route should be Base_Infectivity_Constant * number of infected in group QualityOfCare:Seed * 
         multiplier in HINT matrix / population of group QualityOfCare:Susceptible
 3. New infections should be within 5% of (susceptibles * new infection probability) for 95% of timesteps
 4. Total new infections for both routes should be within 5% of tolerance compared to expected value.
@@ -59,7 +59,7 @@ inset_channels = [InsetKeys.ChannelsKeys.New_Infections_By_Route_ENVIRONMENT,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Demographics_Filenames,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission,
@@ -136,10 +136,10 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                        insetchart_name, property_report_name, report_name, debug):
     with open(report_name, "w") as sft_report_file :
         config_name = param_obj[ConfigKeys.Config_Name]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         sft_report_file.write("Config_name = {}\n".format(config_name))
         sft_report_file.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         success = True
@@ -238,8 +238,8 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                             property_values.index(susceptible_group)] / stat_pop[t]
 
                         # get contagion of susceptible group from property report
-                        actual_contagion_e = contagion_sus_e.iloc[t + 1][0]
-                        actual_contagion_c = contagion_sus_c.iloc[t + 1][0]
+                        actual_contagion_e = contagion_sus_e.iloc[t][0]
+                        actual_contagion_c = contagion_sus_c.iloc[t][0]
 
                         contagion_list_e.append([actual_contagion_e, calculated_contagion_e])
                         contagion_list_c.append([actual_contagion_c, calculated_contagion_c])
@@ -247,14 +247,14 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                         if math.fabs(calculated_contagion_e - actual_contagion_e) > 5e-2 * calculated_contagion_e:
                             result_2 = success = False
                             sft_report_file.write("    BAD: at time step {0}, for group {1} route {2}, the contagion is {3}, "
-                                          "expected {4}.\n".format(t + 1, susceptible_group, routes[0], actual_contagion_e,
+                                          "expected {4}.\n".format(t, susceptible_group, routes[0], actual_contagion_e,
                                                                    calculated_contagion_e
                             ))
 
                         if math.fabs(calculated_contagion_c - actual_contagion_c) > 5e-2 * calculated_contagion_c:
                             result_2 = success = False
                             sft_report_file.write("    BAD: at time step {0}, for group {1} route {2}, the contagion is {3}, "
-                                          "expected {4}.\n".format(t + 1, susceptible_group, routes[1], actual_contagion_c,
+                                          "expected {4}.\n".format(t, susceptible_group, routes[1], actual_contagion_c,
                                                                    calculated_contagion_c
                             ))
 
@@ -269,23 +269,23 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                         expected_new_infection_c = susceptible_population_c * calculated_prob_c
 
                         # Superinfection is not supported, so individuals may not be infected from both the environmental and the contact route.
-                        susceptible_population_e = susceptible_population_c - new_infection_sus_c.iloc[t + 1][0]
+                        susceptible_population_e = susceptible_population_c - new_infection_sus_c.iloc[t][0]
                         expected_new_infection_e = susceptible_population_e * calculated_prob_e
 
                         expected_new_infection_list_e.append(expected_new_infection_e)
                         expected_new_infection_list_c.append(expected_new_infection_c)
 
-                        actual_new_infection_e = new_infection_sus_e.iloc[t + 1][0]
-                        actual_new_infection_c = new_infection_sus_c.iloc[t + 1][0]
+                        actual_new_infection_e = new_infection_sus_e.iloc[t][0]
+                        actual_new_infection_c = new_infection_sus_c.iloc[t][0]
 
                         # run the same test for both routes
                         failed_count_e = hint_support.test_new_infections(
                             expected_new_infection_e, actual_new_infection_e, calculated_prob_e, failed_count_e,
-                            routes[0], t + 1, susceptible_group, sft_report_file , susceptible_population_e, group_file)
+                            routes[0], t, susceptible_group, sft_report_file , susceptible_population_e, group_file)
 
                         failed_count_c = hint_support.test_new_infections(
                             expected_new_infection_c, actual_new_infection_c, calculated_prob_c, failed_count_c,
-                            routes[1], t + 1, susceptible_group, sft_report_file , susceptible_population_c, group_file)
+                            routes[1], t, susceptible_group, sft_report_file , susceptible_population_c, group_file)
 
                 # make sure the seed group has no contagion to itself
                 message_template = "{0}: (route {1}) contagion pool for seed group is {2}, expected 0 contagion, " \
@@ -320,15 +320,15 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                 for contagion_list, new_infection_sus, expected_new_infection_list, route in \
                         [(contagion_list_e, new_infection_sus_e, expected_new_infection_list_e, routes[0]),
                          (contagion_list_c, new_infection_sus_c, expected_new_infection_list_c, routes[1])]:
-                    if math.fabs(new_infection_sus.ix[1:, 0].sum() - sum(expected_new_infection_list)) > \
-                            5e-2 * sum(expected_new_infection_list):
+                    if math.fabs(new_infection_sus.iloc[1:, 0].sum() - sum(expected_new_infection_list)) > \
+                            1e-1 * sum(expected_new_infection_list):
                         result_4 = success = False
                         sft_report_file.write(message.format("BAD", route, susceptible_group,
-                                                             new_infection_sus.ix[1:, 0].sum(),
+                                                             new_infection_sus.iloc[1:, 0].sum(),
                                                             sum(expected_new_infection_list)))
                     else:
                         sft_report_file.write(message.format("GOOD", route, susceptible_group,
-                                                             new_infection_sus.ix[1:, 0].sum(),
+                                                             new_infection_sus.iloc[1:, 0].sum(),
                                                              sum(expected_new_infection_list)))
 
                     sft.plot_data(np.array(contagion_list)[:, 0], np.array(contagion_list)[:, 1],
@@ -338,7 +338,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                                       category="contagion_{0}_{1}".format(susceptible_group, route),
                                       line=True, alpha=0.5, overlap=True, sort=False)
 
-                    sft.plot_data(new_infection_sus.ix[1:, 0].tolist(), expected_new_infection_list,
+                    sft.plot_data(new_infection_sus.iloc[1:, 0].tolist(), expected_new_infection_list,
                                       label1=property_report_name,
                                       label2="expected new infection",
                                       title="new infections\nroute {0}, group {1}".format(route, susceptible_group),

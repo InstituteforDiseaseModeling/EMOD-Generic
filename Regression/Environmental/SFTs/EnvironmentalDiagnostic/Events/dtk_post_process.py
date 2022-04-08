@@ -35,8 +35,6 @@ Negative_Diagnostic_Event.
 
 Test data is loaded from StdOut.txt and ReportEventRecorder.csv.
 
-Suggested sweep parameters: Base_Infectivity
-
 """
 
 

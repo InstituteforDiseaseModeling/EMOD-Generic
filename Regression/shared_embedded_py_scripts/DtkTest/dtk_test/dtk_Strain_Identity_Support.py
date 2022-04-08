@@ -98,9 +98,8 @@ def load_demographic_overlay(overlay_filename, debug=False):
 def create_dataframe_from_report(output_folder, report_filename, debug=False):
     reporter_path = path.join(output_folder, report_filename)
     with open(reporter_path) as infile:
-        report_data = json.load(infile)
+        strain_data = pd.read_csv(infile)
 
-    strain_data = pd.DataFrame(report_data['data'])
     if debug:
         strain_data.to_csv("DEBUG_reporter_df.csv")
     return strain_data

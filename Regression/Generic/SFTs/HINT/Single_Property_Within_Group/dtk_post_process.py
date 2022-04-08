@@ -37,9 +37,12 @@ channels = [InsetKeys.ChannelsKeys.Infected,
             InsetKeys.ChannelsKeys.Statistical_Population]
 
 
-config_keys = [ConfigKeys.Config_Name, ConfigKeys.Simulation_Timestep,
-               ConfigKeys.Simulation_Duration, ConfigKeys.Base_Infectivity,
-               ConfigKeys.Run_Number, ConfigKeys.Demographics_Filenames,
+config_keys = [ConfigKeys.Config_Name,
+               ConfigKeys.Simulation_Timestep,
+               ConfigKeys.Simulation_Duration,
+               ConfigKeys.Base_Infectivity_Constant,
+               ConfigKeys.Run_Number,
+               ConfigKeys.Demographics_Filenames,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission]
 
 
@@ -60,10 +63,10 @@ class Stdout:
 def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property_obj, report_name, debug):
     with open(report_name, "w") as outfile:
         config_name = param_obj[ConfigKeys.Config_Name]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         outfile.write("Config_name = {}\n".format(config_name))
         outfile.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         success = True
@@ -194,7 +197,7 @@ def create_report_file(param_obj, campaign_obj, stdout_df, property_df, property
                                   line=True, alpha=0.5, overlap=True)
 
                 # skip the first time step(outbreak start day) for new infection channel
-                sft.plot_data(new_infection.ix[1:, 0].tolist(), expected_new_infection_list,
+                sft.plot_data(new_infection.iloc[1:, 0].tolist(), expected_new_infection_list,
                                   label1='from property report',
                                   label2="calculated data",
                                   title="new infections for {}".format(group),

@@ -3,8 +3,9 @@
     "parameters": {
         "Acquisition_Blocking_Immunity_Decay_Rate": 0.01,
         "Acquisition_Blocking_Immunity_Duration_Before_Decay": 10,
-        "Base_Infectivity": 1,
-        "Config_Name": "85_Generic_IncidenceEventCoordinator", 
+        "Base_Infectivity_Constant": 1,
+        "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
+        "Config_Name": "85_Generic_IncidenceEventCoordinator",
         "Demographics_Filenames": [
             "demographics.json"
         ],

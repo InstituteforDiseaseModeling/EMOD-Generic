@@ -36,7 +36,8 @@
         "PRIMARY": {
             "Config_Name": "Local_Migration_2Nodes_Single_Round_Trips",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 100
+            "Simulation_Duration": 100,
+            "Python_Script_Path": "LOCAL"
         }
     },
     "Default_Config_Path": "defaults/generic_science_default_config.json"

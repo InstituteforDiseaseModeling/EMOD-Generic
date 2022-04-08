@@ -38,7 +38,7 @@ route contagion in this SFT.
 
 Test data is loaded from InsetChart.json. (Infected, Contact_Contagion_Population and Statistical_Population channels)
 
-Suggested sweep parameter: Base_Infectivity
+Suggested sweep parameter: Base_Infectivity_Constant
 
 """
 
@@ -50,7 +50,7 @@ channels = [InsetKeys.ChannelsKeys.Contact_Contagion_Population,
 config_keys = [ConfigKeys.Config_Name,
                ConfigKeys.Simulation_Timestep,
                ConfigKeys.Simulation_Duration,
-               ConfigKeys.Base_Infectivity,
+               ConfigKeys.Base_Infectivity_Constant,
                ConfigKeys.Run_Number,
                ConfigKeys.Enable_Heterogeneous_Intranode_Transmission]
 
@@ -63,10 +63,10 @@ routes = [
 def create_report_file(param_obj, inset_chart_obj, report_name, insetchart_name, debug):
     with open(report_name, "w") as outfile:
         config_name = param_obj[ConfigKeys.Config_Name]
-        base_infectivity = param_obj[ConfigKeys.Base_Infectivity]
+        base_infectivity = param_obj[ConfigKeys.Base_Infectivity_Constant]
         outfile.write("Config_name = {}\n".format(config_name))
         outfile.write("{0} = {1} {2} = {3}\n".format(
-            ConfigKeys.Base_Infectivity, base_infectivity,
+            ConfigKeys.Base_Infectivity_Constant, base_infectivity,
             ConfigKeys.Run_Number, param_obj[ConfigKeys.Run_Number]))
 
         if param_obj[ConfigKeys.Enable_Heterogeneous_Intranode_Transmission] == 1:
