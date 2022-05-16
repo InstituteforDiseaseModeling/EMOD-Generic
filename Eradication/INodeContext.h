@@ -143,8 +143,6 @@ namespace Kernel
                                               float timeAtDestination,
                                               bool isDestinationNewHome ) = 0;
 
-        virtual ProbabilityNumber GetProbMaternalTransmission() const = 0;
-
         virtual float GetMaxInfectionProb( TransmissionRoute::Enum tx_route )        const = 0;
 
         virtual float initiatePregnancyForIndividual( int individual_id, float dt ) = 0;

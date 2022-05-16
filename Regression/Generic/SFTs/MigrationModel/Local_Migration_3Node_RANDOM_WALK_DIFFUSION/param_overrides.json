@@ -31,15 +31,14 @@
             "Migration_Model": "FIXED_RATE_MIGRATION"
         },
         "OUTPUT": {
-	    "logLevel_Individual": "INFO",
-	    "logLevel_Susceptibility": "INFO",
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json"
         },
         "PRIMARY": {
             "Config_Name": "3Nodes_stationary_dist_Migration_Heterogeneity",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 100,
-            "Python_Script_Path": "LOCAL"
+            "Simulation_Duration": 100
         },
         "Temporary_MigrationModel": {
             "Local_Migration_Roundtrip_Duration": 5

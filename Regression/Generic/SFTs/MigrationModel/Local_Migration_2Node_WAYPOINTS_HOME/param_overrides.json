@@ -29,15 +29,14 @@
             "Migration_Pattern": "WAYPOINTS_HOME"
         },
         "OUTPUT": {
-	    "logLevel_Individual": "INFO",
-	    "logLevel_Susceptibility": "INFO",
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json"
         },
         "PRIMARY": {
             "Config_Name": "Local_Migration_2Nodes_Waypoints_Home",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 100,
-            "Python_Script_Path": "LOCAL"
+            "Simulation_Duration": 100
         },
         "Temporary_MigrationModel": {
             "Local_Migration_Roundtrip_Duration": 5

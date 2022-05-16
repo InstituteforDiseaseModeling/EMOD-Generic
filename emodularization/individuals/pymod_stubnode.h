@@ -158,7 +158,6 @@ class StubNode : public INodeContext
         virtual INodeEventContext* GetEventContext() override { return nullptr; }
         virtual void AddEventsFromOtherNodes( const std::vector<EventTrigger::Enum>& rTriggerList ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual bool IsEveryoneHome() const override { std::cout << __FUNCTION__ << std::endl; return false; }
-        virtual ProbabilityNumber GetProbMaternalTransmission() const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void SetWaitingForFamilyTrip( suids::suid migrationDestination, MigrationType::Enum migrationType, float timeUntilTrip, float timeAtDestination, bool isDestinationNewHome ) override { std::cout << __FUNCTION__ << std::endl; }
         virtual void InitializeTransmissionGroupPopulations() {}

@@ -26,8 +26,6 @@ SETUP_LOGGING( "NodeEnvironmental" )
 
 namespace Kernel
 {
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(NodeEnvironmental,NodeEnvironmental)
-
     NodeEnvironmental::NodeEnvironmental()
     : Node()
     , contagion(0)

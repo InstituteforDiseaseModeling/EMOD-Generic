@@ -46,9 +46,8 @@ namespace Kernel
     struct IMigrationInfoFactory;
     struct IDistribution;
 
-    class IDMAPI Node : public INodeContext, public JsonConfigurable
+    class IDMAPI Node : public INodeContext
     {
-        GET_SCHEMA_STATIC_WRAPPER(Node)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
 
@@ -163,8 +162,6 @@ namespace Kernel
                                               float timeAtDestination,
                                               bool isDestinationNewHome ) override;
 
-        virtual ProbabilityNumber GetProbMaternalTransmission() const override;
-
         virtual const NodeDemographicsDistribution* GetImmunityDistribution()        const override { return SusceptibilityDistribution; }
         virtual const NodeDemographicsDistribution* GetFertilityDistribution()       const override { return FertilityDistribution; }
         virtual const NodeDemographicsDistribution* GetMortalityDistribution()       const override { return MortalityDistribution; }
@@ -205,9 +202,6 @@ namespace Kernel
         IDistribution* distribution_demographic_risk;
         IDistribution* distribution_susceptibility;
 
-        // Enum type name                            Enum variable name                         Name in config.json
-        IndSamplingType::Enum                        ind_sampling_type;                         // Individual_Sampling_Type
-        DistributionType::Enum                       age_initialization_distribution_type;      // Age_Initialization_Distribution_Type
         float susceptibility_dynamic_scaling;
 
         // Node properties
@@ -245,9 +239,6 @@ namespace Kernel
         NPKeyValueContainer node_properties;
 
         // Infectivity modifications
-        bool  enable_infectivity_reservoir;
-        bool  enable_infectivity_overdispersion;
-
         float infectivity_multiplier;
         float infectivity_reservoir_end_time;
         float infectivity_reservoir_size;
@@ -295,14 +286,10 @@ namespace Kernel
         ISimulation* parent_sim; //reduce access to RNG
 
         float acquisition_heterogeneity_variance;
-        float prob_maternal_infection_transmission;
 
         bool bSkipping; // for skip exposure
 
         int  gap;
-
-        bool vital_dynamics;
-        bool enable_maternal_infection_transmission;
 
         float initial_prevalence;
         float initial_percentage_children;
@@ -311,16 +298,10 @@ namespace Kernel
         std::vector<int>   init_prev_clade;
         std::vector<int>   init_prev_genome;
 
-        bool vital_birth;
-        VitalBirthDependence::Enum                           vital_birth_dependence;                           // Vital_Birth_Dependence
-
-        float x_birth;
-
         RouteList_t routes;
 
         virtual void Initialize();
         virtual void setupEventContextHost();
-        virtual bool Configure( const Configuration* config ) override;
         void ExtractDataFromDemographics();
         virtual void LoadImmunityDemographicsDistribution();
         virtual void LoadOtherDiseaseSpecificDistributions() {};

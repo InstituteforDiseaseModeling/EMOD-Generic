@@ -144,19 +144,26 @@ namespace Kernel
     public:
         NodeParams();
 
+        DistributionType::Enum       age_init_dist_type;
         IndSamplingType::Enum        ind_sampling_type;
         DistributionType::Enum       initial_sus_dist_type;
         VectorSamplingType::Enum     vector_sampling_type;
+        VitalBirthDependence::Enum   vital_birth_dependence;
         VitalDeathDependence::Enum   vital_death_dependence;
 
         bool enable_acquisition_heterogeneity;
+        bool enable_birth;
         bool enable_demographics_risk;
         bool enable_hint;
+        bool enable_infectivity_overdispersion;
+        bool enable_infectivity_reservoir;
         bool enable_infectivity_scaling;
         bool enable_initial_prevalence;
         bool enable_initial_sus_dist;
+        bool enable_maternal_infect_trans;
         bool enable_natural_mortality;
         bool enable_percentage_children;
+        bool enable_vital_dynamics;
         bool susceptibility_scaling;
         bool vector_mortality;
 
@@ -171,6 +178,7 @@ namespace Kernel
         float min_sampling_cell_pop;
         float node_contagion_decay_fraction;
         float population_scaling_factor;
+        float prob_maternal_infection_trans;
         float rel_sample_rate_immune;
         float sample_rate_0_18mo;
         float sample_rate_10_14;
@@ -180,6 +188,7 @@ namespace Kernel
         float sample_rate_5_9;
         float sample_rate_birth;
         float susceptibility_scaling_rate;
+        float x_birth;
         float x_othermortality;
 
          int32_t mosquito_weight;

@@ -29,15 +29,14 @@
             "Migration_Pattern": "SINGLE_ROUND_TRIPS"
         },
         "OUTPUT": {
-	    "logLevel_Individual": "INFO",
-	    "logLevel_Susceptibility": "INFO",
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO",
             "Custom_Reports_Filename": "custom_reports.json"
         },
         "PRIMARY": {
             "Config_Name": "Local_Migration_2Nodes_Single_Round_Trips",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 100,
-            "Python_Script_Path": "LOCAL"
+            "Simulation_Duration": 100
         }
     },
     "Default_Config_Path": "defaults/generic_science_default_config.json"

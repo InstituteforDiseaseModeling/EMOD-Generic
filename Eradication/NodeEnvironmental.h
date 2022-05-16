@@ -22,7 +22,6 @@ namespace Kernel
 
     class NodeEnvironmental : public Node, public INodeEnvironmental
     {
-        GET_SCHEMA_STATIC_WRAPPER(NodeEnvironmental )
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
     public:

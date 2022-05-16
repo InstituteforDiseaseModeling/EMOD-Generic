@@ -38,8 +38,7 @@
         "PRIMARY": {
             "Config_Name": "3Nodes_stationary_dist_Migration_Heterogeneity",
             "Geography": "MigrationSFTs",
-            "Simulation_Duration": 1000,
-            "Python_Script_Path": "LOCAL"
+            "Simulation_Duration": 1000
         },
         "Temporary_MigrationModel": {
             "Spatial_Output_Channels": [

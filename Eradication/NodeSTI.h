@@ -16,7 +16,6 @@ namespace Kernel
 {
     class NodeSTI : public Node, public INodeSTI
     {
-        GET_SCHEMA_STATIC_WRAPPER(NodeSTI)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING();
         DECLARE_QUERY_INTERFACE();
 

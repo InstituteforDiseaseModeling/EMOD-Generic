@@ -167,17 +167,25 @@ namespace Kernel
     {}
 
     NodeParams::NodeParams()
-        : ind_sampling_type(IndSamplingType::TRACK_ALL)
+        : age_init_dist_type(DistributionType::DISTRIBUTION_OFF)
+        , ind_sampling_type(IndSamplingType::TRACK_ALL)
         , initial_sus_dist_type(DistributionType::DISTRIBUTION_OFF)
         , vector_sampling_type(VectorSamplingType::TRACK_ALL_VECTORS)
+        , vital_birth_dependence(VitalBirthDependence::FIXED_BIRTH_RATE)
         , vital_death_dependence(VitalDeathDependence::NONDISEASE_MORTALITY_BY_AGE_AND_GENDER)
         , enable_acquisition_heterogeneity(false)
+        , enable_birth(false)
         , enable_demographics_risk(false)
         , enable_hint(false)
+        , enable_infectivity_overdispersion(false)
+        , enable_infectivity_reservoir(false)
+        , enable_infectivity_scaling(false)
         , enable_initial_prevalence(false)
         , enable_initial_sus_dist(false)
+        , enable_maternal_infect_trans(false)
         , enable_natural_mortality(false)
         , enable_percentage_children(false)
+        , enable_vital_dynamics(false)
         , susceptibility_scaling(false)
         , vector_mortality(false)
         , base_sample_rate(0.0f)
@@ -191,6 +199,7 @@ namespace Kernel
         , min_sampling_cell_pop(0.0f)
         , node_contagion_decay_fraction(0.0f)
         , population_scaling_factor(0.0f)
+        , prob_maternal_infection_trans(0.0f)
         , rel_sample_rate_immune(0.0f)
         , sample_rate_0_18mo(0.0f)
         , sample_rate_10_14(0.0f)
@@ -200,6 +209,7 @@ namespace Kernel
         , sample_rate_5_9(0.0f)
         , sample_rate_birth(0.0f)
         , susceptibility_scaling_rate(0.0f)
+        , x_birth(0.0f)
         , x_othermortality(0.0f)
         , mosquito_weight(0)
         , number_clades(1)
@@ -649,48 +659,61 @@ namespace Kernel
         const std::map<std::string, std::string> dset_vec02    {{"Simulation_Type","VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"},{"Vector_Sampling_Type", "SAMPLE_IND_VECTORS"}};
         const std::map<std::string, std::string> dset_vec03    {{"Enable_Demographics_Builtin","0"},{"Simulation_Type","VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"}};
 
-        const std::map<std::string, std::string> dset_death01  {{"Enable_Demographics_Builtin","0"},{"Enable_Vital_Dynamics", "1"}};
-        const std::map<std::string, std::string> dset_death02  {{"Enable_Demographics_Builtin","0"},{"Enable_Vital_Dynamics", "1"},{"Enable_Natural_Mortality", "1"}};
+        const std::map<std::string, std::string> dset_birth01  {{"Enable_Vital_Dynamics","1"}};
+        const std::map<std::string, std::string> dset_birth02  {{"Enable_Vital_Dynamics","1"},{"Enable_Birth","1"}};
+        const std::map<std::string, std::string> dset_birth03  {{"Simulation_Type","STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,VECTOR_SIM,MALARIA_SIM,DENGUE_SIM,PY_SIM"},{"Enable_Vital_Dynamics","1"},{"Enable_Birth","1"}};
+        const std::map<std::string, std::string> dset_birth04  {{"Simulation_Type","STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,VECTOR_SIM,MALARIA_SIM,DENGUE_SIM,PY_SIM"},{"Enable_Vital_Dynamics","1"},{"Enable_Birth","1"},{"Enable_Maternal_Infection_Transmission","1"}};
+        const std::map<std::string, std::string> dset_death01  {{"Enable_Demographics_Builtin","0"},{"Enable_Vital_Dynamics","1"}};
+        const std::map<std::string, std::string> dset_death02  {{"Enable_Demographics_Builtin","0"},{"Enable_Vital_Dynamics","1"},{"Enable_Natural_Mortality","1"}};
 
 
         // Node parameters
+        initConfig("Age_Initialization_Distribution_Type",             node_params.age_init_dist_type,     config,  MetadataDescriptor::Enum("Age_Initialization_Distribution_Type",            Age_Initialization_Distribution_Type_DESC_TEXT,            MDD_ENUM_ARGS(DistributionType)));
+        initConfig("Birth_Rate_Dependence",                            node_params.vital_birth_dependence, config,  MetadataDescriptor::Enum("Birth_Rate_Dependence",                           Birth_Rate_Dependence_DESC_TEXT,                           MDD_ENUM_ARGS(VitalBirthDependence)),  nullptr, nullptr,   &dset_birth02 );
         initConfig("Death_Rate_Dependence",                            node_params.vital_death_dependence, config,  MetadataDescriptor::Enum("Death_Rate_Dependence",                           Death_Rate_Dependence_DESC_TEXT,                           MDD_ENUM_ARGS(VitalDeathDependence)),  nullptr,  nullptr,  &dset_death02);
         initConfig("Individual_Sampling_Type",                         node_params.ind_sampling_type,      config,  MetadataDescriptor::Enum("Individual_Sampling_Type",                        Individual_Sampling_Type_DESC_TEXT,                        MDD_ENUM_ARGS(IndSamplingType)));
         initConfig("Susceptibility_Initialization_Distribution_Type",  node_params.initial_sus_dist_type,  config,  MetadataDescriptor::Enum("Susceptibility_Initialization_Distribution_Type", Susceptibility_Initialization_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionType)),      nullptr,  nullptr,  &dset_isus02);
         initConfig("Vector_Sampling_Type",                             node_params.vector_sampling_type,   config,  MetadataDescriptor::Enum("Vector_Sampling_Type",                            Vector_Sampling_Type_DESC_TEXT,                            MDD_ENUM_ARGS(VectorSamplingType)),    nullptr,  nullptr,  &dset_vec01);
 
         initConfigTypeMap("Enable_Acquisition_Heterogeneity",             &node_params.enable_acquisition_heterogeneity,  Enable_Acquisition_Heterogeneity_DESC_TEXT,             false,  nullptr,  nullptr,  &dset_risk01);
+        initConfigTypeMap("Enable_Birth",                                 &node_params.enable_birth,                      Enable_Birth_DESC_TEXT,                                 true,   nullptr,  nullptr,  &dset_birth01);
         initConfigTypeMap("Enable_Demographics_Risk",                     &node_params.enable_demographics_risk,          Enable_Demographics_Risk_DESC_TEXT,                     false,  nullptr,  nullptr,  &dset_risk02);
         initConfigTypeMap("Enable_Heterogeneous_Intranode_Transmission",  &node_params.enable_hint,                       Enable_Heterogeneous_Intranode_Transmission_DESC_TEXT,  false,  nullptr,  nullptr,  &dset_hint);
+        initConfigTypeMap("Enable_Infection_Rate_Overdispersion",         &node_params.enable_infectivity_overdispersion, Enable_Infection_Rate_Overdispersion_DESC_TEXT,         false,  nullptr,  nullptr,  &dset_inf01);
+        initConfigTypeMap("Enable_Infectivity_Reservoir",                 &node_params.enable_infectivity_reservoir,      Enable_Infectivity_Reservoir_DESC_TEXT,                 false); 
         initConfigTypeMap("Enable_Infectivity_Scaling",                   &node_params.enable_infectivity_scaling,        Enable_Infectivity_Scaling_DESC_TEXT,                   false,  nullptr,  nullptr,  &dset_inf01);
         initConfigTypeMap("Enable_Initial_Prevalence",                    &node_params.enable_initial_prevalence,         Enable_Initial_Prevalence_DESC_TEXT,                    false,  nullptr,  nullptr,  &dset_iprev);
         initConfigTypeMap("Enable_Initial_Susceptibility_Distribution",   &node_params.enable_initial_sus_dist,           Enable_Initial_Susceptibility_Distribution_DESC_TEXT,   false,  nullptr,  nullptr,  &dset_isus01);
+        initConfigTypeMap("Enable_Maternal_Infection_Transmission",       &node_params.enable_maternal_infect_trans,      Enable_Maternal_Infection_Transmission_DESC_TEXT,       false,  nullptr,  nullptr,  &dset_birth03);
         initConfigTypeMap("Enable_Natural_Mortality",                     &node_params.enable_natural_mortality,          Enable_Natural_Mortality_DESC_TEXT,                     false,  nullptr,  nullptr,  &dset_death01);
         initConfigTypeMap("Enable_Percentage_Children",                   &node_params.enable_percentage_children,        Enable_Percentage_Children_DESC_TEXT,                   false,  nullptr,  nullptr,  &dset_vec03);
         initConfigTypeMap("Enable_Susceptibility_Scaling",                &node_params.susceptibility_scaling,            Enable_Susceptibility_Scaling_DESC_TEXT,                false,  nullptr,  nullptr,  &dset_polio01);
         initConfigTypeMap("Enable_Vector_Mortality",                      &node_params.vector_mortality,                  Enable_Vector_Mortality_DESC_TEXT,                       true,  nullptr,  nullptr,  &dset_vec01);
+        initConfigTypeMap("Enable_Vital_Dynamics",                        &node_params.enable_vital_dynamics,             Enable_Vital_Dynamics_DESC_TEXT,                         true);
 
-        initConfigTypeMap("Base_Individual_Sample_Rate",        &node_params.base_sample_rate,                  Base_Individual_Sample_Rate_DESC_TEXT,          1.0e-5f,      1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp01);
-        initConfigTypeMap("Environmental_Cutoff_Days",          &node_params.environmental_cutoff_days,         Environmental_Cutoff_Days_DESC_TEXT,            0.0f,  DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Peak_Start",           &node_params.environmental_peak_start,          Environmental_Peak_Start_DESC_TEXT,             0.0f,       500.0f,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Ramp_Down_Duration",   &node_params.environmental_ramp_down_duration,  Environmental_Ramp_Down_Duration_DESC_TEXT,  FLT_MIN,  DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Ramp_Up_Duration",     &node_params.environmental_ramp_up_duration,    Environmental_Ramp_Up_Duration_DESC_TEXT,    FLT_MIN,  DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Immune_Downsample_Min_Age",          &node_params.immune_downsample_min_age,         Immune_Downsample_Min_Age_DESC_TEXT,            0.0f,      FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp02);
-        initConfigTypeMap("Immune_Threshold_For_Downsampling",  &node_params.immune_threshold_for_downsampling, Immune_Threshold_For_Downsampling_DESC_TEXT,    0.0f,         1.0f,     0.0f,  nullptr,  nullptr,  &dset_samp02);
-        initConfigTypeMap("Max_Node_Population_Samples",        &node_params.max_sampling_cell_pop,             Max_Node_Population_Samples_DESC_TEXT,          1.0f,      FLT_MAX,    30.0f,  nullptr,  nullptr,  &dset_samp04);
-        initConfigTypeMap("Min_Node_Population_Samples",        &node_params.min_sampling_cell_pop,             Min_Node_Population_Samples_DESC_TEXT,          0.0f,      FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp01);
-        initConfigTypeMap("Node_Contagion_Decay_Rate",          &node_params.node_contagion_decay_fraction,     Node_Contagion_Decay_Rate_DESC_TEXT,            0.0f,         1.0f,     1.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Relative_Sample_Rate_Immune",        &node_params.rel_sample_rate_immune,            Relative_Sample_Rate_Immune_DESC_TEXT,          0.001f,       1.0f,     0.1f,  nullptr,  nullptr,  &dset_samp02);
-        initConfigTypeMap("Sample_Rate_Birth",                  &node_params.sample_rate_birth,                 Sample_Rate_Birth_DESC_TEXT,                    0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_0_18mo",                 &node_params.sample_rate_0_18mo,                Sample_Rate_0_18mo_DESC_TEXT,                   0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_18mo_4yr",               &node_params.sample_rate_18mo_4yr,              Sample_Rate_18mo_4yr_DESC_TEXT,                 0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_5_9",                    &node_params.sample_rate_5_9,                   Sample_Rate_5_9_DESC_TEXT,                      0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_10_14",                  &node_params.sample_rate_10_14,                 Sample_Rate_10_14_DESC_TEXT,                    0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_15_19",                  &node_params.sample_rate_15_19,                 Sample_Rate_15_19_DESC_TEXT,                    0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Sample_Rate_20_Plus",                &node_params.sample_rate_20_plus,               Sample_Rate_20_plus_DESC_TEXT,                  0.001f,       1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
-        initConfigTypeMap("Susceptibility_Scaling_Rate",        &node_params.susceptibility_scaling_rate,       Susceptibility_Scaling_Rate_DESC_TEXT,          0.0f,      FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_polio02);
-        initConfigTypeMap("x_Base_Population",                  &node_params.population_scaling_factor,         x_Base_Population_DESC_TEXT,                    0.0f,      FLT_MAX,     1.0f); 
-        initConfigTypeMap("x_Other_Mortality",                  &node_params.x_othermortality,                  x_Other_Mortality_DESC_TEXT,                    0.0f,      FLT_MAX,     1.0f,  nullptr,  nullptr,  &dset_death02);
+        initConfigTypeMap("Base_Individual_Sample_Rate",                  &node_params.base_sample_rate,                  Base_Individual_Sample_Rate_DESC_TEXT,                     1.0e-5f,         1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp01);
+        initConfigTypeMap("Environmental_Cutoff_Days",                    &node_params.environmental_cutoff_days,         Environmental_Cutoff_Days_DESC_TEXT,                       0.0f,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Environmental_Peak_Start",                     &node_params.environmental_peak_start,          Environmental_Peak_Start_DESC_TEXT,                        0.0f,          500.0f,     2.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Environmental_Ramp_Down_Duration",             &node_params.environmental_ramp_down_duration,  Environmental_Ramp_Down_Duration_DESC_TEXT,             FLT_MIN,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Environmental_Ramp_Up_Duration",               &node_params.environmental_ramp_up_duration,    Environmental_Ramp_Up_Duration_DESC_TEXT,               FLT_MIN,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Immune_Downsample_Min_Age",                    &node_params.immune_downsample_min_age,         Immune_Downsample_Min_Age_DESC_TEXT,                       0.0f,         FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp02);
+        initConfigTypeMap("Immune_Threshold_For_Downsampling",            &node_params.immune_threshold_for_downsampling, Immune_Threshold_For_Downsampling_DESC_TEXT,               0.0f,            1.0f,     0.0f,  nullptr,  nullptr,  &dset_samp02);
+        initConfigTypeMap("Maternal_Infection_Transmission_Probability",  &node_params.prob_maternal_infection_trans,     Maternal_Infection_Transmission_Probability_DESC_TEXT,     0.0f,            1.0f,     0.0f,  nullptr,  nullptr,  &dset_birth04);
+        initConfigTypeMap("Max_Node_Population_Samples",                  &node_params.max_sampling_cell_pop,             Max_Node_Population_Samples_DESC_TEXT,                     1.0f,         FLT_MAX,    30.0f,  nullptr,  nullptr,  &dset_samp04);
+        initConfigTypeMap("Min_Node_Population_Samples",                  &node_params.min_sampling_cell_pop,             Min_Node_Population_Samples_DESC_TEXT,                     0.0f,         FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp01);
+        initConfigTypeMap("Node_Contagion_Decay_Rate",                    &node_params.node_contagion_decay_fraction,     Node_Contagion_Decay_Rate_DESC_TEXT,                       0.0f,            1.0f,     1.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Relative_Sample_Rate_Immune",                  &node_params.rel_sample_rate_immune,            Relative_Sample_Rate_Immune_DESC_TEXT,                     0.001f,          1.0f,     0.1f,  nullptr,  nullptr,  &dset_samp02);
+        initConfigTypeMap("Sample_Rate_Birth",                            &node_params.sample_rate_birth,                 Sample_Rate_Birth_DESC_TEXT,                               0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_0_18mo",                           &node_params.sample_rate_0_18mo,                Sample_Rate_0_18mo_DESC_TEXT,                              0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_18mo_4yr",                         &node_params.sample_rate_18mo_4yr,              Sample_Rate_18mo_4yr_DESC_TEXT,                            0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_5_9",                              &node_params.sample_rate_5_9,                   Sample_Rate_5_9_DESC_TEXT,                                 0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_10_14",                            &node_params.sample_rate_10_14,                 Sample_Rate_10_14_DESC_TEXT,                               0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_15_19",                            &node_params.sample_rate_15_19,                 Sample_Rate_15_19_DESC_TEXT,                               0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Sample_Rate_20_Plus",                          &node_params.sample_rate_20_plus,               Sample_Rate_20_plus_DESC_TEXT,                             0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
+        initConfigTypeMap("Susceptibility_Scaling_Rate",                  &node_params.susceptibility_scaling_rate,       Susceptibility_Scaling_Rate_DESC_TEXT,                     0.0f,         FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_polio02);
+        initConfigTypeMap("x_Base_Population",                            &node_params.population_scaling_factor,         x_Base_Population_DESC_TEXT,                               0.0f,         FLT_MAX,     1.0f);
+        initConfigTypeMap("x_Birth",                                      &node_params.x_birth,                           x_Birth_DESC_TEXT,                                         0.0f,         FLT_MAX,     1.0f,  nullptr,  nullptr,  &dset_birth02 );
+        initConfigTypeMap("x_Other_Mortality",                            &node_params.x_othermortality,                  x_Other_Mortality_DESC_TEXT,                               0.0f,         FLT_MAX,     1.0f,  nullptr,  nullptr,  &dset_death02);
 
         initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,                  Log2_Number_of_Genomes_per_Clade_DESC_TEXT,   0, SHIFT_BIT,     0,  nullptr,  nullptr,  &dset_strain02);
         initConfigTypeMap("Mosquito_Weight",                   &node_params.mosquito_weight,  Mosquito_Weight_DESC_TEXT,                    1,     10000,     1,  nullptr,  nullptr,  &dset_vec02);

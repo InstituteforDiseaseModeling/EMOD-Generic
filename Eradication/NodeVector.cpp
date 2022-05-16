@@ -49,8 +49,6 @@ namespace Kernel
         HANDLE_INTERFACE(INodeVector)
     END_QUERY_INTERFACE_DERIVED(NodeVector, Node)
 
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(NodeVector, NodeVector)
-
     NodeVector::NodeVector() 
         : m_larval_habitats()
         , m_vectorpopulations()

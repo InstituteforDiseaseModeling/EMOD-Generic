@@ -27,7 +27,6 @@ namespace Kernel
 
     class NodeVector : public Node, public IVectorNodeContext, public INodeVector
     {
-        GET_SCHEMA_STATIC_WRAPPER(NodeVector)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
 

@@ -6,7 +6,7 @@ import pandas as pd
 import os
 from collections import namedtuple
 import dtk_test.dtk_sft as sft
-import dtk_api.dtk_migration as mig
+import dtk_test.dtk_migration as mig
 
 
 # DEVNOTE: add contact to point to input path, although we should probably interrogate the environment to get the

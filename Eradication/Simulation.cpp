@@ -279,7 +279,12 @@ namespace Kernel
 
     bool Simulation::ValidateConfiguration(const ::Configuration *config)
     {
-        const ClimateParams* cp = ClimateConfig::GetClimateParams();
+        const ClimateParams*   cp = ClimateConfig::GetClimateParams();
+        const MigrationParams* mp = MigrationConfig::GetMigrationParams();
+        const NodeParams*      np = NodeConfig::GetNodeParams();
+        const AgentParams*     ap = AgentConfig::GetAgentParams();
+        const SimParams*       sp = SimConfig::GetSimParams();
+
         if( demographics_factory->GetEnableDemographicsBuiltin() && cp->climate_structure != ClimateStructure::CLIMATE_OFF 
                                                                  && cp->climate_structure != ClimateStructure::CLIMATE_CONSTANT )
         {
@@ -287,7 +292,6 @@ namespace Kernel
                                                                                       "Climate_Model", ClimateStructure::pairs::lookup_key(cp->climate_structure));
         }
 
-        const MigrationParams* mp = MigrationConfig::GetMigrationParams();
         if( mp->enable_mig_family && !CanSupportFamilyTrips() )
         {
             std::stringstream msg;
@@ -301,7 +305,6 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        const NodeParams* np = NodeConfig::GetNodeParams();
         if( np->environmental_ramp_up_duration + np->environmental_ramp_down_duration + np->environmental_cutoff_days >= DAYSPERYEAR )
         {
             std::ostringstream msg;
@@ -314,13 +317,21 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        if( (GetParams()->sim_type == SimType::STI_SIM || GetParams()->sim_type == SimType::HIV_SIM) && 
+        // Check for not-yet-implemented strain tracking features.
+        if(ap->enable_strain_tracking && np->enable_infectivity_reservoir)
+        {
+            std::ostringstream msg;
+            msg << "Enable_Strain_Tracking with Enable_Infectivity_Reservoir functionality not yet added.";
+            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
+
+        if( (sp->sim_type == SimType::STI_SIM || sp->sim_type == SimType::HIV_SIM) && 
             (np->ind_sampling_type != IndSamplingType::TRACK_ALL)      &&
             (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                     "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(np->ind_sampling_type),
-                                                    "Simulation_Type", SimType::pairs::lookup_key(GetParams()->sim_type),
+                                                    "Simulation_Type", SimType::pairs::lookup_key(sp->sim_type),
                                                     "Relationship-based transmission network only works with 100% sampling.");
         }
 
@@ -335,27 +346,27 @@ namespace Kernel
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Skipping", 1, "Enable_Heterogeneous_Intranode_Transmission", 1);
         }
 
-        if(AgentConfig::GetAgentParams()->enable_genome_mutation && AgentConfig::GetAgentParams()->genome_mutation_rates.size() == 0)
+        if(ap->enable_genome_mutation && ap->genome_mutation_rates.size() == 0)
         {
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Genome_Mutation", "1", "Genome_Mutation_Rates", "<empty>");
         }
 
-        if(AgentConfig::GetAgentParams()->enable_genome_dependent_infectivity && AgentConfig::GetAgentParams()->genome_infectivity_multipliers.size() == 0)
+        if(ap->enable_genome_dependent_infectivity && ap->genome_infectivity_multipliers.size() == 0)
         {
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Genome_Dependent_Infectivity", "1", "Genome_Infectivity_Multipliers", "<empty>");
         }
 
-        if(AgentConfig::GetAgentParams()->enable_label_mutator && AgentConfig::GetAgentParams()->genome_mutations_labeled.size() == 0)
+        if(ap->enable_label_mutator && ap->genome_mutations_labeled.size() == 0)
         {
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Enable_Label_By_Mutator", "1", "Genome_Mutations_Labeled", "<empty>");
         }
 
-        if( GetParams()->enable_interventions && GetParams()->campaign_filename.empty() )
+        if(sp->enable_interventions && sp->campaign_filename.empty())
         {
             throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Campaign_Filename' is empty.  You must have a file." );
         }
 
-        if( SimConfig::GetSimParams()->enable_property_output && !IPFactory::GetInstance()->HasIPs() )
+        if(sp->enable_property_output && !IPFactory::GetInstance()->HasIPs() )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "<Number of Individual Properties>", "0", "Enable_Property_Output", "1" );
         }

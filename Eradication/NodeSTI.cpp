@@ -27,11 +27,8 @@ SETUP_LOGGING( "NodeSTI" )
 
 namespace Kernel
 {
-    GET_SCHEMA_STATIC_WRAPPER_IMPL(NodeSTI,NodeSTI)
-
     BEGIN_QUERY_INTERFACE_DERIVED(NodeSTI, Node)
         HANDLE_INTERFACE(INodeSTI)
-        HANDLE_INTERFACE(IConfigurable)
     END_QUERY_INTERFACE_DERIVED(NodeSTI, Node)
 
     NodeSTI::NodeSTI(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)

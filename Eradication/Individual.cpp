@@ -1224,10 +1224,9 @@ namespace Kernel
         return m_newly_symptomatic;
     }
 
-
     ProbabilityNumber IndividualHuman::getProbMaternalTransmission() const
     {
-        return parent->GetProbMaternalTransmission();
+        return parent->GetParams()->prob_maternal_infection_trans;
     }
 
     void serialize_waypoint_types( IArchive& ar, std::vector<MigrationType::Enum>& waypointTripTypes )
