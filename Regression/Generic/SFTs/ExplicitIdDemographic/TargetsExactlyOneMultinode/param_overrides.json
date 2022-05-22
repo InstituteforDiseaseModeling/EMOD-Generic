@@ -15,9 +15,11 @@
         "Migration_Model": "FIXED_RATE_MIGRATION",
         "Migration_Pattern": "RANDOM_WALK_DIFFUSION",
         "Enable_Event_DB": 1,
+        "SQL_Busy_Timeout": 3000.0,
         "SQL_Events": [
             "NewInfection"
         ],
+        "SQL_Start_Time": 0.0,
         "Geography": "NONE",
         "Config_Name": "ExplicitID_TargetsExactlyOne_Multinode",
         "Build_Campaign_Event_At": 25,

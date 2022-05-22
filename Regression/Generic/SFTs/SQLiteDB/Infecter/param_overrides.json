@@ -55,7 +55,9 @@
             "Report_Event_Recorder_Individual_Properties": [
                 "Geographic"
             ],
-            "SQL_Events": []
+            "SQL_Busy_Timeout": 3000.0,
+            "SQL_Events": [],
+            "SQL_Start_Time": 0.0
         },
         "PRIMARY": {
             "Config_Name": "GENERIC_SQLiteDB_Infecter",

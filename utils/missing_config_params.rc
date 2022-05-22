@@ -41,7 +41,9 @@
 #define Network_Infectivity_Coefficient_DESC_TEXT                 "List of coefficients to use in gravity model expression for network infectivity."
 #define Network_Infectivity_Exponent_DESC_TEXT                    "List of distance exponents to use in gravity model expression for network infectivity."
 
+#define SQL_Busy_Timeout_DESC_TEXT                                "Milliseconds to timeout (exception) when database is locked for writing."
 #define SQL_Events_DESC_TEXT                                      "List of events to include in the SQLite event database."
+#define SQL_Start_Time_DESC_TEXT                                  "Simulation time to start writing to the SQLite event database."
 
 #define Enable_Label_By_Infector_DESC_TEXT                        "Indicates if an infection should be labeled with the unique identifer of the agent that transmits the infection."
 #define Enable_Label_By_Mutator_DESC_TEXT                         "Indicates if an infection should be labeled with the unique identifer of the agent infected at time of mutation."

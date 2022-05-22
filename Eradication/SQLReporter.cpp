@@ -52,6 +52,8 @@ namespace Kernel
 
     SQLReporter::SQLReporter()
         : db(nullptr)
+        , busy_timeout(0.0f)
+        , start_time(0.0f)
         , event_list()
         , sql_properties_to_report()
     { }
@@ -135,7 +137,7 @@ namespace Kernel
         }
 
         // Set 3 second busy timeout
-        sqlite3_busy_timeout(db, 3000);
+        sqlite3_busy_timeout(db, busy_timeout);
 
         return;
     }
@@ -144,6 +146,9 @@ namespace Kernel
     bool SQLReporter::Configure( const Configuration* inputJson )
     {
         bool ret_val;
+
+        initConfigTypeMap("SQL_Busy_Timeout",     &busy_timeout,     SQL_Busy_Timeout_DESC_TEXT,     0.0f,  FLT_MAX,  3000.0f, "Enable_Event_DB");
+        initConfigTypeMap("SQL_Start_Time",       &start_time,       SQL_Start_Time_DESC_TEXT,       0.0f,  FLT_MAX,     0.0f, "Enable_Event_DB");
 
         initVectorConfig("SQL_Events", eventTriggerList, inputJson, MetadataDescriptor::VectorOfEnum("SQL_Events", SQL_Events_DESC_TEXT, MDD_ENUM_ARGS(EventTrigger)), "Enable_Event_DB");
 
@@ -155,6 +160,11 @@ namespace Kernel
 
     bool SQLReporter::notifyOnEvent(IIndividualHumanEventContext* context, const EventTrigger::Enum& trigger)
     {
+        if(GetTime(context) < start_time)
+        {
+            return true;
+        }
+
         IndividualForSQL record;
 
         int               id           = context->GetSuid().data;
@@ -212,6 +222,11 @@ namespace Kernel
 
     void SQLReporter::EndTimestep(float currentTime, float dt)
     {
+        if(currentTime < start_time)
+        {
+            return;
+        }
+
         // Build insert into table SQL statements
         stringstream sql;
 

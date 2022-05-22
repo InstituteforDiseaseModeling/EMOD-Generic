@@ -33,12 +33,14 @@
                 "DiseaseDeaths",
                 "NonDiseaseDeaths"
             ],
+            "SQL_Busy_Timeout": 3000.0,
             "SQL_Events": [
                 "NewInfection",
                 "InfectionCleared",
                 "DiseaseDeaths",
                 "NonDiseaseDeaths"
-            ]
+            ],
+            "SQL_Start_Time": 0.0
         },
         "PRIMARY": {
             "Config_Name": "GENERIC_SQLiteDB_Recovered_and_Deaths",

@@ -55,10 +55,12 @@
             "Report_Event_Recorder_Individual_Properties": [
                 "Household"
             ],
+            "SQL_Busy_Timeout": 3000.0,
             "SQL_Events": [
                 "NewInfection",
                 "NewlySymptomatic"
-            ]
+            ],
+            "SQL_Start_Time": 0.0
         },
         "PRIMARY": {
             "Config_Name": "GENERIC_SQLiteDB_household",

@@ -42,11 +42,13 @@
             "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Event_DB": 1,
             "Enable_Property_Output": 1,
+            "SQL_Busy_Timeout": 3000.0,
             "SQL_Events": [
                 "NewInfection",
                 "NewlySymptomatic",
                 "InfectionCleared"
-            ]
+            ],
+            "SQL_Start_Time": 0.0
         },
         "PRIMARY": {
             "Config_Name": "SQLiteDB_Serialization",

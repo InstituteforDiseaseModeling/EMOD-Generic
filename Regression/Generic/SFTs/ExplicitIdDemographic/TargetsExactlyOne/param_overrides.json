@@ -14,9 +14,11 @@
         "Enable_Initial_Prevalence": 0,
         "Enable_Vital_Dynamics": 0,
         "Enable_Event_DB": 1,
+        "SQL_Busy_Timeout": 3000.0,
         "SQL_Events": [
             "NewInfection"
         ],
+        "SQL_Start_Time": 0.0,
         "Geography": "NONE",
         "Config_Name": "ExplicitID_TargetsExactlyOne",
         "Build_Campaign_Event_At": 25,

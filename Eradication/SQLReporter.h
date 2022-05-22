@@ -50,6 +50,9 @@ namespace Kernel
 
         sqlite3* db;
 
+        float busy_timeout;
+        float start_time;
+
         std::vector<IndividualForSQL> event_list;
 
         jsonConfigurable::tDynamicStringSet sql_properties_to_report;
