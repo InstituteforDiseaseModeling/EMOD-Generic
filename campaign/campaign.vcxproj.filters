@@ -108,9 +108,6 @@
     <ClInclude Include="..\Eradication\InterventionsContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Eradication\IntranodeTransmissionTypes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Eradication\ISimulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -42,8 +42,8 @@ def application(report_file):
                 # collect dose_response probabilities and dose for route contact
                 line = "TimeStep: " + str(timestep) + " " + line
                 lines_c.append(line)
-            # route=0, outbreak; route=1, contact; route=2, environment
-            elif ("AcquireNewInfection:" in line) and ("route=1" in line):
+            # route=2, outbreak; route=0, contact; route=1, environment
+            elif ("AcquireNewInfection:" in line) and ("route=0" in line):
                 count_contact += 1
 
     success = True

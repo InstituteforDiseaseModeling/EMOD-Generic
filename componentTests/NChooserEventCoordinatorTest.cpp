@@ -348,7 +348,7 @@ SUITE(NChooserEventCoordinatorTest)
     TEST_FIXTURE(NChooserEventCoordinatorFixture, TestInvalidYears)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/NChooserEventCoordinatorTest/TestInvalidYears.json",
-            "Variable or parameter 'Start_Year' with value 2100 is incompatible with variable or parameter 'End_Year' with value 1950. Start_Year must be < End_Year" );
+            "Variable or parameter 'Start_Year' with value 2100.000000 is incompatible with variable or parameter 'End_Year' with value 1950.000000. Start_Year must be < End_Year" );
     }
 
     TEST_FIXTURE(NChooserEventCoordinatorFixture, TestNoNumTargeted)
@@ -396,7 +396,7 @@ SUITE(NChooserEventCoordinatorTest)
     TEST_FIXTURE(NChooserEventCoordinatorFixture, TestInvalidAgeRange)
     {
         TestHelper_ConfigureException( __LINE__, "testdata/NChooserEventCoordinatorTest/TestInvalidAgeRange.json",
-            "Variable or parameter 'Min' with value 100 is incompatible with variable or parameter 'Max' with value 9. Min must be < Max" );
+            "Variable or parameter 'Min' with value 100.000000 is incompatible with variable or parameter 'Max' with value 9.000000. Min must be < Max" );
     }
 #endif
 

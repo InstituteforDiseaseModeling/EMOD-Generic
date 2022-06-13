@@ -636,8 +636,8 @@ namespace Kernel
                                                  uint32_t attemptFeed,
                                                  TransmissionRoute::Enum route )
     {
-        release_assert( (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) || (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR) );
-        auto vector = ((route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) ? IndividualHumanVector::vector_indoor : IndividualHumanVector::vector_outdoor );
+        release_assert( (route == TransmissionRoute::VECTOR_TO_HUMAN_INDOOR) || (route == TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR) );
+        auto vector = ((route == TransmissionRoute::VECTOR_TO_HUMAN_INDOOR) ? IndividualHumanVector::vector_indoor : IndividualHumanVector::vector_outdoor );
         m_context->DepositFromIndividual( strain, float( attemptFeed ) * species()->transmissionmod, vector, route );
     }
 
@@ -645,7 +645,7 @@ namespace Kernel
                                                           uint32_t attemptFeed,
                                                           TransmissionRoute::Enum route )
     {
-        release_assert( (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) || (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR) );
+        release_assert( (route == TransmissionRoute::VECTOR_TO_HUMAN_INDOOR) || (route == TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR) );
         uint32_t infected_bites = 0;
         if( cohort->GetState() == VectorStateEnum::STATE_INFECTIOUS )
         {
@@ -655,7 +655,7 @@ namespace Kernel
             const IStrainIdentity& strain = cohort->GetStrainIdentity();
 
             LOG_DEBUG_F( "Vector->Human [%s] infectiousness (aka bite) of strain %d, 'population' %d, xmod %f.\n",
-                         (route == TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR) ? "indoor" : "outdoor",
+                         (route == TransmissionRoute::VECTOR_TO_HUMAN_INDOOR) ? "indoor" : "outdoor",
                          strain.GetCladeID(),
                          attemptFeed,
                          species()->transmissionmod );
@@ -679,12 +679,12 @@ namespace Kernel
 
             switch (route)
             {
-                case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR:
+                case TransmissionRoute::HUMAN_TO_VECTOR_INDOOR:
                     txGroups = m_txIndoor;
                     group = IndividualHumanVector::vector_indoor;
                     break;
 
-                case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR:
+                case TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR:
                     txGroups = m_txOutdoor;
                     group = IndividualHumanVector::vector_outdoor;
                     break;
@@ -795,8 +795,8 @@ namespace Kernel
         outdoorbites += attempt_feed_outdoor;
 
         // for the infectious cohort, need to update infectious bites
-        indoorinfectiousbites  += VectorToHumanTransmission( cohort, attempt_feed_indoor,  TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR );
-        outdoorinfectiousbites += VectorToHumanTransmission( cohort, attempt_feed_outdoor, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR );
+        indoorinfectiousbites  += VectorToHumanTransmission( cohort, attempt_feed_indoor,  TransmissionRoute::VECTOR_TO_HUMAN_INDOOR );
+        outdoorinfectiousbites += VectorToHumanTransmission( cohort, attempt_feed_outdoor, TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR );
 
         // indoor feeds
         uint32_t died_indoor = 0;
@@ -814,7 +814,7 @@ namespace Kernel
             // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             float prob_feed = probs()->indoor_successfulfeed_human;
 
-            infected_indoor = CalculateHumanToVectorInfection( TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR,
+            infected_indoor = CalculateHumanToVectorInfection( TransmissionRoute::HUMAN_TO_VECTOR_INDOOR,
                                                                cohort,
                                                                prob_feed,
                                                                feed_indoor );
@@ -837,7 +837,7 @@ namespace Kernel
 
             float prob_feed = (1.0f - probs()->outdoor_returningmortality) * probs()->outdoor_successfulfeed_human * x_infectiouscorrection;
 
-            infected_outdoor = CalculateHumanToVectorInfection( TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR,
+            infected_outdoor = CalculateHumanToVectorInfection( TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR,
                                                                 cohort,
                                                                 prob_feed,
                                                                 feed_outdoor );

@@ -203,7 +203,7 @@ namespace Kernel
     }
 
 
-    void IndividualHumanMalaria::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
+    void IndividualHumanMalaria::ExposeToInfectivity(float dt)
     {
         // Here we track exposure in the antibody_capacity to CSP.  This is not used at the moment to reduce bite probability of success, but it could in the future as knowledge improves
 
@@ -222,9 +222,7 @@ namespace Kernel
             m_CSP_antibody->SetAntigenicPresence(false);
         }
 
-        // Now decide whether the individual's exposure results in an infection
-        TransmissionGroupMembership_t dummy( -1 );
-        IndividualHumanVector::ExposeToInfectivity( dt, dummy );
+        IndividualHumanVector::ExposeToInfectivity(dt);
     }
 
     void IndividualHumanMalaria::ApplyTotalBitingExposure()
@@ -437,8 +435,8 @@ namespace Kernel
     void IndividualHumanMalaria::DepositFractionalContagionByStrain(float weight, IVectorInterventionsEffects* ivie, uint32_t cladeID, uint64_t geneticID)
     {
         StrainIdentity id = StrainIdentity(cladeID, geneticID);
-        parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-        parent->DepositFromIndividual( id, weight*ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+        parent->DepositFromIndividual( id, weight*ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::HUMAN_TO_VECTOR_INDOOR );
+        parent->DepositFromIndividual( id, weight*ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR );
     }
 
     void IndividualHumanMalaria::ResetClinicalSymptoms()

@@ -550,7 +550,7 @@ shouldInfect(PyObject* self, PyObject* args)
     {
         std::cout << "Failed to parse id for isInfected (as int)." << std::endl;
     }
-    bool should_infect = population.at( id )->ShouldAcquire( contagion, 1, -1 );
+    bool should_infect = population.at( id )->ShouldAcquire( contagion, 1, -1, TransmissionRoute::CONTACT );
     //std::cout << "IsInfected returned " << inf_status  << std::endl;
     return Py_BuildValue("b", should_infect );
 }

@@ -30,7 +30,8 @@ SETUP_LOGGING( "NodeTyphoid" )
 
 namespace Kernel
 {
-    NodeTyphoid::NodeTyphoid() : NodeEnvironmental()
+    NodeTyphoid::NodeTyphoid()
+        : NodeEnvironmental()
     {
         delete event_context_host;
         NodeTyphoid::setupEventContextHost();
@@ -45,9 +46,8 @@ namespace Kernel
 
     void NodeTyphoid::Initialize()
     { 
-        // ???
-        maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_CONTACT  ] = 1.0f;
-        maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ] = 1.0f;
+        maxInfectionProb[ TransmissionRoute::CONTACT  ] = 1.0f;
+        maxInfectionProb[ TransmissionRoute::ENVIRONMENTAL ] = 1.0f;
         NodeEnvironmental::Initialize();
     }
 
@@ -82,25 +82,6 @@ namespace Kernel
         NodeEnvironmental::resetNodeStateCounters();
     }
 
-    void NodeTyphoid::updateNodeStateCounters(IndividualHuman *ih)
-    {
-        float mc_weight                = float(ih->GetMonteCarloWeight());
-        IIndividualHumanTyphoid *tempind2 = NULL;
-        if( ih->QueryInterface( GET_IID( IIndividualHumanTyphoid ), (void**)&tempind2 ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "tempind2", "IndividualHumanTyphoid", "IndividualHuman" );
-        }
-
-        NodeEnvironmental::updateNodeStateCounters(ih);
-    }
-
-
-    void NodeTyphoid::finalizeNodeStateCounters(void)
-    {
-        NodeEnvironmental::finalizeNodeStateCounters();
-       
-    }
-
     IndividualHuman *NodeTyphoid::createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
     {
         return IndividualHumanTyphoid::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
@@ -109,8 +90,8 @@ namespace Kernel
     int NodeTyphoid::calcGap()
     {
         int gap = 1;
-        float cp = maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_CONTACT ];
-        float ep = maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ];
+        float cp = maxInfectionProb[ TransmissionRoute::CONTACT ];
+        float ep = maxInfectionProb[ TransmissionRoute::ENVIRONMENTAL ];
         float maxProb = 1-((1-cp)*(1-ep));
         if (maxProb>=1.0)
         {
@@ -136,7 +117,7 @@ namespace Kernel
             auto contagion        = map_iter.second;
 
             // The math below is for ENVIRO ONLY (though contact is closely similar)
-            if( routeName == ENVIRONMENTAL )
+            if( routeName == TransmissionRoute::ENVIRONMENTAL )
             {
                 auto max_poss_exposures = 3.0f; // what to put here???
                 NonNegativeFloat infects = 1.0f-pow( 1.0f + contagion * ( pow( 2.0f, (1/IndividualHumanTyphoid::alpha) ) -1.0f )/IndividualHumanTyphoid::N50, -IndividualHumanTyphoid::alpha ); // Dose-response for prob of infection
@@ -146,7 +127,7 @@ namespace Kernel
                 {
                     maxProbRet = prob;
                 }
-                maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ] = maxProbRet;
+                maxInfectionProb[ TransmissionRoute::ENVIRONMENTAL ] = maxProbRet;
                 LOG_INFO_F( "The max probability of infection over the environmental route (w/o immunity or interventions) for this node is: %f.\n", maxProbRet );
             }
             else // "contact"
@@ -161,7 +142,7 @@ namespace Kernel
                 {
                     maxProbRet = prob;
                 }
-                maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_CONTACT ] = maxProbRet;
+                maxInfectionProb[ TransmissionRoute::CONTACT ] = maxProbRet;
                 LOG_INFO_F( "The max probability of infection over the contact route (w/o immunity or interventions) for this node is: %f.\n", maxProbRet );
             }
         } 

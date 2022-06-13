@@ -71,7 +71,7 @@ namespace Kernel
         virtual void ClearNewInfectionState() override;
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) override;
 
-        virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership) override;
+        virtual void ExposeToInfectivity(float dt) override;
         virtual void UpdateInfectiousness(float dt) override;
 
         virtual void SetContextTo(INodeContext* context);

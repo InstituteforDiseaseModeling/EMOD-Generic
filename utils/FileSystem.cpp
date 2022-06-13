@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <sys/stat.h> // stat()
 #include <algorithm> //std::replace()
 #include <fstream>
+#include <cstring>
 
 #include "Exceptions.h"
 #include "FileSystem.h"

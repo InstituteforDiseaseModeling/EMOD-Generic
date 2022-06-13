@@ -214,10 +214,6 @@ namespace Kernel
 
         BuildTransmissionRoutes( 1.0f );
 
-        // Do once for all nodes
-        RouteList_t route_indoor{ INDOOR };
-        RouteList_t route_outdoor{ OUTDOOR };
-
         tProperties vectorProperties{ { INDOOR, VECTOR }, { OUTDOOR, VECTOR } };
         tProperties humanProperties{ { INDOOR, HUMAN }, { OUTDOOR, HUMAN } };
 
@@ -634,19 +630,19 @@ namespace Kernel
 
         switch (route)
         {
-            case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR:
+            case TransmissionRoute::HUMAN_TO_VECTOR_INDOOR:
                 transmissionGroups->DepositContagion( strainIDs, contagion_quantity, shedder );
                 break;
 
-            case TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR:
+            case TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR:
                 txOutdoor->DepositContagion( strainIDs, contagion_quantity, shedder );
                 break;
 
-            case TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR:
+            case TransmissionRoute::VECTOR_TO_HUMAN_INDOOR:
                 transmissionGroups->DepositContagion( strainIDs, contagion_quantity, shedder );
                 break;
 
-            case TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR:
+            case TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR:
                 txOutdoor->DepositContagion( strainIDs, contagion_quantity, shedder );
                 break;
 
@@ -656,10 +652,10 @@ namespace Kernel
         }
     }
 
-    void NodeVector::ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt )
+    void NodeVector::ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route )
     {
-        transmissionGroups->ExposeToContagion( candidate, IndividualHumanVector::human_indoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR );
-        txOutdoor->ExposeToContagion( candidate, IndividualHumanVector::human_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR );
+        transmissionGroups->ExposeToContagion( candidate, IndividualHumanVector::human_indoor, dt, TransmissionRoute::VECTOR_TO_HUMAN_INDOOR );
+        txOutdoor->ExposeToContagion( candidate, IndividualHumanVector::human_outdoor, dt, TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR );
     }
 
     float NodeVector::GetTotalContagion( void )

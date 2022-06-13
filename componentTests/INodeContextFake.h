@@ -129,7 +129,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
-    virtual void ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt ) override
+    virtual void ExposeIndividual( IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route ) override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
@@ -139,7 +139,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
-    virtual void GetGroupMembershipForIndividual( const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) override
+    virtual void GetGroupMembershipForIndividual( TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
@@ -149,7 +149,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
-    virtual std::map< std::string, float > GetContagionByRoute() const override
+    virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
@@ -164,7 +164,7 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
-    virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value )
+    virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value )
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." );
     }
@@ -284,11 +284,6 @@ public:
     }
 
     virtual void SetWaitingForFamilyTrip( suids::suid migrationDestination, MigrationType::Enum migrationType, float timeUntilTrip, float timeAtDestination, bool isDestinationNewHome ) override
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
-
-    virtual float GetMeanAgeInfection() const override
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }

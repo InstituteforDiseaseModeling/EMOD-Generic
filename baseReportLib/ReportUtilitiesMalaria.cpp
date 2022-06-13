@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 
+#include <cfloat>
 #include "RANDOM.h"
 #include "Log.h"
 #include "ReportUtilitiesMalaria.h"

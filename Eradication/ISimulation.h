@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include <string>
+#include <functional>
 #include "ISerializable.h"
 #include "Configuration.h"
 #include "IdmDateTime.h"

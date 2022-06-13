@@ -27,10 +27,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeContext.h"
 #include "StrainIdentity.h"
 
-#define ADULT_AGE_YRS                 (15.0f)
-#define BIRTHRATE_SANITY_VALUE        (0.005f)
-#define CONTACT                       "contact"
-
 
 class Report;
 class ReportVector;
@@ -123,7 +119,6 @@ namespace Kernel
         virtual float               GetInfectionRate()          const override;
         virtual float               GetSusceptDynamicScaling()  const override;
         virtual long int            GetPossibleMothers()        const override;
-        virtual float               GetMeanAgeInfection()       const override;
         virtual uint64_t            GetTotalGenomes()           const override;
 
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override;
@@ -131,27 +126,23 @@ namespace Kernel
 
         // Heterogeneous intra-node transmission
         virtual void ChangePropertyMatrix(const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
-        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) override;
-        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) override;
-        virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
+        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route) override;
+        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route) override;
+        virtual void GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override;
         virtual void SetupIntranodeTransmission();
         virtual ITransmissionGroups* CreateTransmissionGroups();
         virtual ITransmissionGroups* GetTransmissionGroups() const override;
-        virtual void AddDefaultRoute( void );
-        virtual void AddRoute( const std::string& rRouteName );
+        virtual void AddRoute(TransmissionRoute::Enum rRouteName);
         virtual void BuildTransmissionRoutes( float contagionDecayRate );
-        virtual bool IsValidTransmissionRoute( const string& transmissionRoute );
 
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override;
 
-        virtual void ValidateIntranodeTransmissionConfiguration();
-
         virtual float GetTotalContagion( void ) override;
-        virtual std::map< std::string, float > GetContagionByRoute() const;
+        virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const;
         virtual const RouteList_t& GetTransmissionRoutes() const override;
 
-        virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override;
+        virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) override;
         virtual float GetLatitudeDegrees()override;
         virtual float GetLongitudeDegrees() override;
 
@@ -267,7 +258,6 @@ namespace Kernel
 
         float mean_age_infection;      // (years)
         float newInfectedPeopleAgeProduct;
-        static const int infection_averaging_window = 1;   // = 30 time steps
         std::list<float> infected_people_prior; // [infection_averaging_window];
         std::list<float> infected_age_people_prior; // [infection_averaging_window];
 

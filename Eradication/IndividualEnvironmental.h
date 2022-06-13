@@ -35,7 +35,6 @@ namespace Kernel
         virtual void CreateSusceptibility(float = 1.0, float = 1.0) override;
 
         virtual void UpdateInfectiousness(float dt) override;
-        virtual void UpdateGroupMembership() override;
         virtual void UpdateGroupPopulation(float size_changes) override;
 
     protected:
@@ -49,7 +48,6 @@ namespace Kernel
         virtual void ReportInfectionState();
 
         TransmissionRoute::Enum exposureRoute;
-        std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
     private:
     };

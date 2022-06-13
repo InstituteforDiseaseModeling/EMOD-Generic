@@ -70,7 +70,7 @@ namespace Kernel
 
         virtual InfectionStateChange::_enum GetStateChange() const override;
         virtual float GetInfectiousness() const override;
-        virtual float GetInfectiousnessByRoute( const string& route ) const override; //used in multi-route simulations
+        virtual float GetInfectiousnessByRoute(TransmissionRoute::Enum txRoute) const override;
 
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void GetInfectiousStrainID(IStrainIdentity* infstrain); // the ID of the strain being shed
@@ -92,8 +92,6 @@ namespace Kernel
         float infectious_timer;
         float infectiousness;
 
-        map<string, float> infectiousnessByRoute; //used in multi-route simulations (e.g. environmental, polio)
-        
         InfectionStateChange::_enum StateChange;    //  Lets individual know something has happened
 
         StrainIdentity* infection_strain;           // this a pointer because disease modules may wish to implement derived types 

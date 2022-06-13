@@ -270,7 +270,7 @@ namespace Kernel
         potential_exposure_flag = true;
     }
 
-    void IndividualHumanSTI::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
+    void IndividualHumanSTI::ExposeToInfectivity(float dt)
     {
         if( potential_exposure_flag )
         {

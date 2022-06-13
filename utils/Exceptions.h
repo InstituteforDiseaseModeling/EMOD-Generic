@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
-#include "BoostLibWrapper.h"
 #include "IdmApi.h"
 #include "CajunIncludes.h"
 #include <vector>

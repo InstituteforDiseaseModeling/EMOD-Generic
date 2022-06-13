@@ -67,15 +67,15 @@ def application(report_file):
                 count_new_infection += 1
                 line = "line: " + str(num) + " TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
-            elif ("AcquireNewInfection:" in line) and (("route=32" in line) or ("route=0" in line)):
+            elif ("AcquireNewInfection:" in line) and ("route=2" in line):
                 count_outbreak += 1
                 line = "line: " + str(num) + " TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
-            elif ("AcquireNewInfection:" in line) and ("route=1" in line):
+            elif ("AcquireNewInfection:" in line) and ("route=0" in line):
                 count_contact += 1
                 line = "line: " + str(num) + " TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
-            elif ("AcquireNewInfection:" in line) and ("route=2" in line):
+            elif ("AcquireNewInfection:" in line) and ("route=1" in line):
                 count_enviro += 1
                 line = "line: " + str(num) + " TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
@@ -128,12 +128,12 @@ def application(report_file):
 
         for i in range(0, len(lines)):
             line = lines[i]
-            if "AcquireNewInfection:" in line and ("route=32" in line or "route=2" in line or "route=0" in line):
+            if "AcquireNewInfection:" in line and ("route=1" in line or "route=2" in line):
                 next_line = lines[i+1]
                 if not re.search("doseTracking = Low", next_line):
                     error_log.append(line)
                     error_log.append(next_line)
-            elif "AcquireNewInfection:" in line and "route=1" in line:
+            elif "AcquireNewInfection:" in line and "route=0" in line:
                 next_line = lines[i+1]
                 if not re.search("doseTracking = High", next_line):
                     error_log.append(line)
@@ -142,7 +142,7 @@ def application(report_file):
         if error_log:
             success = False
             report_file.write("BAD: Some infected individuals didn't fall in the right doseTracking categories."
-                              " Expected: route 32/0 or 2 - doseTracking = Low and route 1 - doseTracking = High. "
+                              " Expected: route 1 or 2 - doseTracking = Low and route 0 - doseTracking = High. "
                               "Please see the details in \"category_error_log.txt\".\n")
             with open("category_error_log.txt", "w") as log:
                 for line in error_log:

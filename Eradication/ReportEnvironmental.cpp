@@ -38,17 +38,16 @@ namespace Kernel {
             LOG_VALID_F( "nis = %d\n", ( nis ) );
             auto mcw = individual->GetMonteCarloWeight();
             if ( nis == NewInfectionState::NewAndDetected ||
-                 nis == NewInfectionState::NewInfection /*||
-                 nis == NewInfectionState::NewlyDetected*/ )
+                 nis == NewInfectionState::NewInfection )
             {
                 auto inf = individual->GetInfections().back();
                 StrainIdentity strain;
                 inf->GetInfectiousStrainID( &strain );
-                if( strain.GetGeneticID() == 0 )
+                if( strain.GetGeneticID() == TransmissionRoute::ENVIRONMENTAL )
                 {
                     enviro_infections_counter += mcw;
                 }
-                else if( strain.GetGeneticID() == 1 )
+                else if( strain.GetGeneticID() == TransmissionRoute::CONTACT )
                 {
                     contact_infections_counter += mcw;
                 }
@@ -62,8 +61,8 @@ namespace Kernel {
         Report::LogNodeData( pNC );
        
         auto contagionPop = pNC->GetContagionByRoute();
-        NonNegativeFloat contactContagionPop = contagionPop["contact"];
-        NonNegativeFloat enviroContagionPop = contagionPop["environmental"];
+        NonNegativeFloat contactContagionPop = contagionPop[TransmissionRoute::CONTACT];
+        NonNegativeFloat enviroContagionPop = contagionPop[TransmissionRoute::ENVIRONMENTAL];
         LOG_DEBUG_F( "Recording %f as 'Contact Contagion Population'.\n", float(contactContagionPop) );
         LOG_DEBUG_F( "Recording %f as 'Environmental  Contagion Population'.\n", float(enviroContagionPop) );
         Accumulate( "Contact Contagion Population", contactContagionPop  );

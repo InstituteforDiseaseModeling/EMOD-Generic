@@ -31,7 +31,6 @@ namespace Kernel
         virtual ~IndividualHumanPy(void);
 
         virtual void CreateSusceptibility(float imm_mod = 1.0, float risk_mod = 1.0);
-        virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership);
 
     protected:
         // New Exposure Pattern
@@ -41,7 +40,6 @@ namespace Kernel
         virtual void setupInterventionsContainer();
         virtual void PropagateContextToDependents();
 
-        virtual void UpdateGroupMembership() override;
         virtual void UpdateInfectiousness(float dt);
         virtual void Update(float currenttime, float dt);
         virtual Infection* createInfection(suids::suid _suid);
@@ -57,8 +55,6 @@ namespace Kernel
         TransmissionRoute::Enum _routeOfInfection; // how did this person get infected?
         bool isDead;  // is this individual dead?
         bool state_changed;
-
-        std::map<std::string, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
     private:
 

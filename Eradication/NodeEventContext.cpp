@@ -30,29 +30,29 @@ SETUP_LOGGING( "NodeEventContext" )
 namespace Kernel
 {
     NodeEventContextHost::NodeEventContextHost()
-    : node(nullptr)
-    , arrival_distribution_sources()
-    , departure_distribution_sources()
-    , node_interventions()
-    , broadcaster_impl()
-    , birthrate_multiplier(1.0f)
-    , connection_multiplier_inbound(1.0f)
-    , connection_multiplier_outbound(1.0f)
-    , infectivity_multiplier(1.0f)
+        : node(nullptr)
+        , arrival_distribution_sources()
+        , departure_distribution_sources()
+        , node_interventions()
+        , broadcaster_impl()
+        , birthrate_multiplier(1.0f)
+        , connection_multiplier_inbound(1.0f)
+        , connection_multiplier_outbound(1.0f)
+        , inf_mult_by_route()
     {
         arrival_distribution_sources.clear();
     }
 
     NodeEventContextHost::NodeEventContextHost(Node* _node)
-    : node(_node)
-    , arrival_distribution_sources()
-    , departure_distribution_sources()
-    , node_interventions()
-    , broadcaster_impl()
-    , birthrate_multiplier(1.0f)
-    , connection_multiplier_inbound(1.0f)
-    , connection_multiplier_outbound(1.0f)
-    , infectivity_multiplier(1.0f)
+        : node(_node)
+        , arrival_distribution_sources()
+        , departure_distribution_sources()
+        , node_interventions()
+        , broadcaster_impl()
+        , birthrate_multiplier(1.0f)
+        , connection_multiplier_inbound(1.0f)
+        , connection_multiplier_outbound(1.0f)
+        , inf_mult_by_route()
     {
         arrival_distribution_sources.clear();
     }
@@ -100,6 +100,14 @@ namespace Kernel
     void NodeEventContextHost::SetContextTo( INodeContext* context )
     {
         PropagateContextToDependents();
+    }
+
+    void NodeEventContextHost::SetupTxRoutes()
+    {
+        for( auto & tx_route: node->GetTransmissionRoutes() )
+        {
+            inf_mult_by_route[tx_route] = 1.0f;
+        }
     }
 
     // method 1 for VisitIndividuals uses a functor/lambda function
@@ -306,9 +314,9 @@ namespace Kernel
         connection_multiplier_outbound *= outbound;
     }
 
-    void NodeEventContextHost::UpdateInfectivityMultiplier(float mult_val)
+    void NodeEventContextHost::UpdateInfectivityMultiplier(float mult_val, TransmissionRoute::Enum tx_route)
     {
-        infectivity_multiplier         *= mult_val;
+        inf_mult_by_route.at(tx_route) *= mult_val;
     }
 
     void NodeEventContextHost::UpdateInterventions(float dt)
@@ -316,8 +324,11 @@ namespace Kernel
         birthrate_multiplier            = 1.0f;
         connection_multiplier_inbound   = 1.0f;
         connection_multiplier_outbound  = 1.0f;
-        infectivity_multiplier          = 1.0f;
-        
+        for( auto & route_mult: inf_mult_by_route )
+        {
+            route_mult.second = 1.0f;
+        }
+
         std::vector<INodeDistributableIntervention*> expired_list;
         for( auto intervention : node_interventions )
         {
@@ -552,8 +563,8 @@ namespace Kernel
         return connection_multiplier_outbound;
     }
 
-    float NodeEventContextHost::GetInfectivityMultiplier() const
+    float NodeEventContextHost::GetInfectivityMultiplier(TransmissionRoute::Enum tx_route) const
     {
-        return infectivity_multiplier;
+        return inf_mult_by_route.at(tx_route);
     }
 }

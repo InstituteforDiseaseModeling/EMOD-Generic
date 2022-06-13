@@ -666,7 +666,7 @@ namespace Kernel
     // ------------------------------------------------------------------------
 
     IPIntraNodeTransmission::IPIntraNodeTransmission()
-        : m_RouteName("contact")
+        : m_tx_route(TransmissionRoute::CONTACT)
         , m_Matrix()
     {
     }
@@ -725,39 +725,40 @@ namespace Kernel
             if( !rDemog[ IP_TM_KEY ].Contains( IP_TM_MATRIX_KEY ) )
             {
                 LOG_DEBUG("Did NOT find 'Matrix' key.\n");
-                // Going to assume we have "version 2" format (multiroute), which is a map of routes to Matrices. Possible values are: "contact" and "environmental".
-                std::set< std::string > routeNames { "contact", "environmental" };
-
-                // We will do some work here for the sake of our users - if they
-                // capitalize (or camel case?) their route names, we will still
-                // be able to use them.
-                std::map<std::string, std::string> keyMap;
+                // Going to assume we have "version 2" format (multiroute), which is a map of routes to Matrices.
                 for (auto iterator = rDemog[ IP_TM_KEY ].Begin(); iterator != rDemog[ IP_TM_KEY ].End(); ++iterator)
                 {
-                    std::string key(iterator.GetKey());
-                    std::string keyLower(key);
+                    std::string keyUser(iterator.GetKey());
+                    std::string keyLower(keyUser);
                     std::transform(keyLower.begin(), keyLower.end(), keyLower.begin(), ::tolower);
-                    keyMap[ keyLower ] = key;
-                }
+                    TransmissionRoute::Enum tx_route;
 
-                for( auto route : routeNames )
-                {
-                    // route is already lowercase, see if one of the keys from the JSON (lowercase) in the keyMap matches.
-                    if ( keyMap.find(route) != keyMap.end() )
+                    if(keyLower == "contact")
                     {
-                        // Get the route name as specified by the user (and in the JSON), it might not be lowercase.
-                        std::string userRouteName( keyMap[route] );
+                        tx_route = TransmissionRoute::CONTACT;
+                    }
+                    else if(keyLower == "environmental")
+                    {
+                        tx_route = TransmissionRoute::ENVIRONMENTAL;
+                    }
+                    else 
+                    {
+                        // Multiroute == Two route
+                        std::ostringstream msg;
+                        msg << "Invalid " << IP_TM_ROUTE_KEY << " in '" << IP_TM_KEY << "' for property '" << rKeyStr.c_str() << '.' << endl
+                            << "Expecting either " << "contact" << " or " << "environmental" << ".";
+                        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                    }
 
+                    // Use the user route name to index into the JSON.
+                    if( rDemog[ IP_TM_KEY ][ keyUser.c_str() ].Contains( IP_TM_MATRIX_KEY ) )
+                    {
+                        LOG_DEBUG("Found 'Matrix' key under route.\n");
                         // Use the user route name to index into the JSON.
-                        if( rDemog[ IP_TM_KEY ][ userRouteName.c_str() ].Contains( IP_TM_MATRIX_KEY ) )
-                        {
-                            LOG_DEBUG("Found 'Matrix' key under route.\n");
-                            // Use the user route name to index into the JSON.
-                            ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ userRouteName.c_str() ][ IP_TM_MATRIX_KEY ], numValues );
-                            // Store the result, for internal use, using the lowercase version of the route name.
-                            m_RouteToMatrixMap[ route ] = m_Matrix;
-                            m_Matrix.clear();
-                        }
+                        ReadTxMatrix( rKeyStr, rDemog[ IP_TM_KEY ][ keyUser.c_str() ][ IP_TM_MATRIX_KEY ], numValues );
+                        // Store the result, for internal use, using the lowercase version of the route name.
+                        m_RouteToMatrixMap[tx_route] = m_Matrix;
+                        m_Matrix.clear();
                     }
                 }
             }
@@ -766,8 +767,28 @@ namespace Kernel
                 if( rDemog[ IP_TM_KEY ].Contains( IP_TM_ROUTE_KEY ) )
                 {
                     LOG_DEBUG("Found 'Route' key.\n");
-                    m_RouteName =  rDemog[ IP_TM_KEY ][ IP_TM_ROUTE_KEY ].AsString();
-                    std::transform(m_RouteName.begin(), m_RouteName.end(), m_RouteName.begin(), ::tolower);
+                    std::string RouteName = rDemog[ IP_TM_KEY ][ IP_TM_ROUTE_KEY ].AsString();
+                    std::transform(RouteName.begin(), RouteName.end(), RouteName.begin(), ::tolower);
+                    TransmissionRoute::Enum tx_route;
+
+                    if(RouteName == "contact")
+                    {
+                        tx_route = TransmissionRoute::CONTACT;
+                    }
+                    else if(RouteName == "environmental")
+                    {
+                        tx_route = TransmissionRoute::ENVIRONMENTAL;
+                    }
+                    else 
+                    {
+                        // Multiroute == Two route
+                        std::ostringstream msg;
+                        msg << "Invalid " << IP_TM_ROUTE_KEY << " in '" << IP_TM_KEY << "' for property '" << rKeyStr.c_str() << '.' << endl
+                            << "Expecting either " << "contact" << " or " << "environmental" << ".";
+                        throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+                    }
+
+                    m_tx_route = tx_route;
                 }
                 else 
                 {
@@ -783,9 +804,9 @@ namespace Kernel
         return m_Matrix.size() > 0 || m_RouteToMatrixMap.size() > 0;
     }
 
-    const std::string& IPIntraNodeTransmission::GetRouteName() const
+    TransmissionRoute::Enum IPIntraNodeTransmission::GetRouteName() const
     {
-        return m_RouteName;
+        return m_tx_route;
     }
 
     const std::vector<std::vector<float>>& IPIntraNodeTransmission::GetMatrix() const
@@ -793,7 +814,7 @@ namespace Kernel
         return m_Matrix;
     }
 
-    const std::map< std::string, std::vector<std::vector<float>>>& IPIntraNodeTransmission::GetRouteToMatrixMap() const
+    const std::map<TransmissionRoute::Enum, std::vector<std::vector<float>>>& IPIntraNodeTransmission::GetRouteToMatrixMap() const
     {
         return m_RouteToMatrixMap;
     }

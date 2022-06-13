@@ -10,7 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "ISupports.h"
-#include "IntranodeTransmissionTypes.h"
+#include "SimulationEnums.h"
 #include "IContagionPopulation.h"
 #include <list>
 #include "IInfection.h"
@@ -20,7 +20,7 @@ namespace Kernel
     class Infection;
     struct IInfectable : ISupports
     {
-        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) = 0;
+        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route = TransmissionRoute::CONTACT ) = 0;
         virtual const infection_list_t& GetInfections() const = 0;
         virtual float GetInterventionReducedAcquire() const = 0;
 

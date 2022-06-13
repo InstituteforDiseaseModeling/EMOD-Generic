@@ -194,8 +194,8 @@ namespace Kernel
         // Acquire infections with strain tracking for exposed queues
 
         LOG_DEBUG("Exposure to contagion: human to vector.\n");
-        m_txIndoor->ExposeToContagion(  (IInfectable*)this, IndividualHumanVector::vector_indoor,  dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-        m_txOutdoor->ExposeToContagion( (IInfectable*)this, IndividualHumanVector::vector_outdoor, dt, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+        m_txIndoor->ExposeToContagion(  (IInfectable*)this, IndividualHumanVector::vector_indoor,  dt, TransmissionRoute::HUMAN_TO_VECTOR_INDOOR );
+        m_txOutdoor->ExposeToContagion( (IInfectable*)this, IndividualHumanVector::vector_outdoor, dt, TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR );
         IndoorExposedQueues.clear();
         OutdoorExposedQueues.clear();
     }
@@ -347,7 +347,7 @@ namespace Kernel
                 indoorbites += float( indoor_bites );
 
                 // for the infectious cohort, need to update infectious bites
-                indoorinfectiousbites += VectorToHumanTransmission( cohort, cohort->GetPopulation(), TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR );
+                indoorinfectiousbites += VectorToHumanTransmission( cohort, cohort->GetPopulation(), TransmissionRoute::VECTOR_TO_HUMAN_INDOOR );
 
                 // Reset cumulative probability for another random draw
                 // to assign outdoor-feeding outcomes among the following:
@@ -380,7 +380,7 @@ namespace Kernel
                 outdoorbites += float( outdoor_bites );
 
                 // for the infectious cohort, need to update infectious bites
-                outdoorinfectiousbites += VectorToHumanTransmission( cohort, cohort->GetPopulation(), TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR );
+                outdoorinfectiousbites += VectorToHumanTransmission( cohort, cohort->GetPopulation(), TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR );
 
                 // Reset cumulative probability for another random draw
                 // to assign outdoor-feeding outcomes among the following:
@@ -502,11 +502,11 @@ namespace Kernel
         if ( infection_prob == 0 ) return;
 
         // Determine whether we are acting on an indoor or outdoor exposed population
-        if ( transmission_route == TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR )
+        if ( transmission_route == TransmissionRoute::HUMAN_TO_VECTOR_INDOOR )
         {
             ExposeCohortList( cp, IndoorExposedQueues, probs()->indoor_successfulfeed_human, infection_prob );
         }
-        else if ( transmission_route == TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR )
+        else if ( transmission_route == TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR )
         {
             ExposeCohortList( cp, OutdoorExposedQueues, probs()->outdoor_successfulfeed_human, infection_prob );
         }

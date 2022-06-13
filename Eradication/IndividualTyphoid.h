@@ -93,7 +93,6 @@ namespace Kernel
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
         virtual float GetImmunityReducedAcquire() const override;
         virtual HumanStateChange GetStateChange() const;
-        //virtual void applyNewInterventionEffects(float dt);
         virtual void ForceClearInfection();
         
     protected:
@@ -113,15 +112,7 @@ namespace Kernel
         // typhoid constants
         static const float P1; // probability that an infection becomes clinical
         static const float P5; // probability of typhoid death
-        //////////JG REMOVE static const float P6; // probability of sterile immunity after acute infection
         static const float P7; // probability of clinical immunity after acute infection
-        //////////JG REMOVE static const float P8; // probability of sterile immunity from a subclinical infectin in the clinically immune
-        //////////JG REMOVE static const float P9; // probability of sterile immunity from a subclinical infection
-
-
-        // typhoid constants from "OutBase.csv" file
-        //////////JG REMOVE static float agechronicmale[200]; //probability of becoming chronic carrier, male
-        //////////JG REMOVE static float agechronicfemale[200]; //probability of becoming chronic carrier, female
 
         // environmental exposure constants
         static const int N50;

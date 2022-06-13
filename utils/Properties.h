@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
+#include "SimulationEnums.h"
 #include "BaseProperties.h"
 #include "PropertiesString.h" //want to remove
 
@@ -195,17 +196,17 @@ namespace Kernel
         void Read( const std::string& rKeyStr, const JsonObjectDemog& rDemog, int numValues );
         void ReadTxMatrix( const std::string& rKeyStr, const JsonObjectDemog& rDemog, int numValues );
 
-        const std::string& GetRouteName() const;
+        TransmissionRoute::Enum GetRouteName() const;
         bool HasMatrix() const;
         const std::vector<std::vector<float>>& GetMatrix() const;
-        const std::map< std::string, std::vector<std::vector<float>>>& GetRouteToMatrixMap() const;
+        const std::map<TransmissionRoute::Enum, std::vector<std::vector<float>>>& GetRouteToMatrixMap() const;
 
     private:
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        std::string m_RouteName;
+        TransmissionRoute::Enum m_tx_route;
         std::vector<std::vector<float>> m_Matrix;
-        std::map< std::string, std::vector<std::vector<float>>> m_RouteToMatrixMap;
+        std::map<TransmissionRoute::Enum, std::vector<std::vector<float>>> m_RouteToMatrixMap;
 #pragma warning( pop )
     };
 

@@ -28,12 +28,14 @@ namespace Kernel
     NodeInfectivityMult::NodeInfectivityMult()
         : BaseNodeIntervention()
         , duration(0.0f)
+        , tx_route(TransmissionRoute::CONTACT)
         , mult_by_duration()
     { }
 
     NodeInfectivityMult::NodeInfectivityMult(const NodeInfectivityMult& original)
         : BaseNodeIntervention(original)
         , duration(original.duration)
+        , tx_route(original.tx_route)
         , mult_by_duration(original.mult_by_duration)
     { }
 
@@ -42,6 +44,8 @@ namespace Kernel
 
     bool NodeInfectivityMult::Configure(const Configuration* inputJson)
     {
+        initConfig("Transmission_Route",  tx_route,  inputJson, MetadataDescriptor::Enum("Transmission_Route", NIMIV_Transmission_Route_DESC_TEXT, MDD_ENUM_ARGS(TransmissionRoute)));
+
         initConfigTypeMap("Multiplier_By_Duration",  &mult_by_duration,  NIMIV_Multiplier_By_Duration_DESC_TEXT);
 
         return BaseNodeIntervention::Configure( inputJson );
@@ -49,7 +53,12 @@ namespace Kernel
 
     bool NodeInfectivityMult::Distribute(INodeEventContext* context, IEventCoordinator2* pEC)
     {
-        duration = 0.0f;
+        // Verify that transmission route is supported for current simulation
+        RouteList_t tx_routes = context->GetNodeContext()->GetTransmissionRoutes();
+        if(!std::count(tx_routes.begin(), tx_routes.end(), tx_route))
+        {
+            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Transmission route not supported for current simulation type." );
+        }
 
         bool distributed = BaseNodeIntervention::Distribute(context, pEC);
 
@@ -66,7 +75,7 @@ namespace Kernel
         }
         else
         {
-            parent->UpdateInfectivityMultiplier(mult_by_duration.getValueLinearInterpolation(duration, 1.0f));
+            parent->UpdateInfectivityMultiplier(mult_by_duration.getValueLinearInterpolation(duration, 1.0f), tx_route);
         }
     }
 
@@ -76,7 +85,8 @@ namespace Kernel
 
         NodeInfectivityMult& infect_mult_obj = *obj;
 
-        ar.labelElement("duration")                        & infect_mult_obj.duration;
-        ar.labelElement("mult_by_duration")                & infect_mult_obj.mult_by_duration;
+        ar.labelElement("duration")           &            infect_mult_obj.duration;
+        ar.labelElement("tx_route")           & (uint32_t&)infect_mult_obj.tx_route;
+        ar.labelElement("mult_by_duration")   &            infect_mult_obj.mult_by_duration;
     }
 }

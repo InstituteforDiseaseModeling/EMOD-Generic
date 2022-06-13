@@ -137,7 +137,7 @@ SUITE(PropertiesTest)
             CHECK( it == ip_values_1.end() );
 
             CHECK( ip_list[0]->GetIntraNodeTransmission( 1 ).HasMatrix() );
-            CHECK_EQUAL( std::string("contact"), ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
+            CHECK_EQUAL( TransmissionRoute::CONTACT, ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
             CHECK_EQUAL( 2,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix().size() );
             CHECK_EQUAL( 2,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix()[0].size() );
             CHECK_EQUAL( 1.1f, ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix()[0][0] );
@@ -154,7 +154,7 @@ SUITE(PropertiesTest)
             CHECK( !ip_values_2.Contains( "Risk:XXX"    ) );
 
             CHECK( !ip_list[1]->GetIntraNodeTransmission( 1 ).HasMatrix() );
-            CHECK_EQUAL( std::string("contact"), ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
+            CHECK_EQUAL( TransmissionRoute::CONTACT, ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
             CHECK_EQUAL( 0, ip_list[1]->GetIntraNodeTransmission( 1 ).GetMatrix().size() );
 
             it = ip_values_2.begin();
@@ -226,7 +226,7 @@ SUITE(PropertiesTest)
             CHECK( value_set_it == value_set.end() );
 
             CHECK( ip_list[0]->GetIntraNodeTransmission( 1 ).HasMatrix() );
-            CHECK_EQUAL( std::string("contact"), ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
+            CHECK_EQUAL( TransmissionRoute::CONTACT, ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
             CHECK_EQUAL( 3,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix().size() );
             CHECK_EQUAL( 3,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix()[0].size() );
             CHECK_EQUAL( 1.4f, ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix()[0][0] );
@@ -306,7 +306,7 @@ SUITE(PropertiesTest)
             CHECK( ip_values.Contains( "QualityOfCare:Bad"  ) );
 
             CHECK( !ip_list[0]->GetIntraNodeTransmission( 1 ).HasMatrix() );
-            CHECK_EQUAL( std::string("contact"), ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
+            CHECK_EQUAL( TransmissionRoute::CONTACT, ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
             CHECK_EQUAL( 0,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix().size() );
 
             std::string act_filename = "testdata/PropertiesTest/output/TestReadTransitions-Transitions-Actual.json" ;
@@ -376,7 +376,7 @@ SUITE(PropertiesTest)
             CHECK( ip_values.Contains( "Place:SchoolBreak_NonInteraction"  ) );
 
             CHECK( ip_list[0]->GetIntraNodeTransmission( 1 ).HasMatrix() );
-            CHECK_EQUAL( std::string("contact"), ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
+            CHECK_EQUAL( TransmissionRoute::CONTACT, ip_list[0]->GetIntraNodeTransmission( 1 ).GetRouteName() );
             CHECK_EQUAL( 5,    ip_list[0]->GetIntraNodeTransmission( 1 ).GetMatrix().size() );
 
             std::string act_filename = "testdata/PropertiesTest/output/TestReadTransitionsSchool-Transitions-Actual.json" ;
@@ -459,7 +459,7 @@ SUITE(PropertiesTest)
 
         const auto& r_access_trans_1 = p_ip_access->GetIntraNodeTransmission( 1 );
         CHECK( r_access_trans_1.HasMatrix() );
-        CHECK_EQUAL( std::string( "contact" ), r_access_trans_1.GetRouteName() );
+        CHECK_EQUAL( TransmissionRoute::CONTACT, r_access_trans_1.GetRouteName() );
         CHECK_EQUAL( 2, r_access_trans_1.GetMatrix().size() );
         CHECK_EQUAL( 2, r_access_trans_1.GetMatrix()[ 0 ].size() );
         CHECK_EQUAL( 2, r_access_trans_1.GetMatrix()[ 1 ].size() );
@@ -470,7 +470,7 @@ SUITE(PropertiesTest)
 
         const auto& r_access_trans_2 = p_ip_access->GetIntraNodeTransmission( 2 );
         CHECK( r_access_trans_2.HasMatrix() );
-        CHECK_EQUAL( std::string( "contact" ), r_access_trans_2.GetRouteName() );
+        CHECK_EQUAL( TransmissionRoute::CONTACT, r_access_trans_2.GetRouteName() );
         CHECK_EQUAL( 2, r_access_trans_2.GetMatrix().size() );
         CHECK_EQUAL( 2, r_access_trans_2.GetMatrix()[ 0 ].size() );
         CHECK_EQUAL( 2, r_access_trans_2.GetMatrix()[ 1 ].size() );
@@ -484,7 +484,7 @@ SUITE(PropertiesTest)
 
         const auto& r_risk_trans_2 = p_ip_risk->GetIntraNodeTransmission( 2 );
         CHECK( r_risk_trans_2.HasMatrix() );
-        CHECK_EQUAL( std::string( "contact" ), r_access_trans_2.GetRouteName() );
+        CHECK_EQUAL( TransmissionRoute::CONTACT, r_access_trans_2.GetRouteName() );
         CHECK_EQUAL( 3, r_risk_trans_2.GetMatrix().size() );
         CHECK_EQUAL( 3, r_risk_trans_2.GetMatrix()[ 0 ].size() );
         CHECK_EQUAL( 3, r_risk_trans_2.GetMatrix()[ 1 ].size() );

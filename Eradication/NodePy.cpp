@@ -87,20 +87,12 @@ namespace Kernel
         Node::updateNodeStateCounters(ih);
     }
 
-
-    void NodePy::finalizeNodeStateCounters(void)
-    {
-        Node::finalizeNodeStateCounters();
-       
-    }
-
-    IndividualHuman *NodePy::createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
+    IndividualHuman* NodePy::createHuman(suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
     {
         return IndividualHumanPy::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
     }
 
-    NodePyTest *
-    NodePyTest::CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
+    NodePyTest* NodePyTest::CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
     {
         auto *newnode = _new_ NodePyTest(_parent_sim, externalNodeId, node_suid);
         newnode->Initialize();

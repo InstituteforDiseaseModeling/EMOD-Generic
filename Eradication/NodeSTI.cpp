@@ -92,11 +92,11 @@ namespace Kernel
 
     void NodeSTI::SetupIntranodeTransmission()
     {
-        //RelationshipGroups * relNodePools = dynamic_cast<RelationshipGroups*>(TransmissionGroupsFactory::CreateNodeGroups(TransmissionGroupType::RelationshipGroups));
         RelationshipGroups * relNodePools = _new_ RelationshipGroups( GetRng() );
         relNodePools->SetParent( this );
         transmissionGroups = relNodePools;
-        routes.push_back(string("contact"));
+        AddRoute(TransmissionRoute::CONTACT);
+        event_context_host->SetupTxRoutes();
         transmissionGroups->Build(1.0f, 1, 1);
     }
 
@@ -224,8 +224,6 @@ namespace Kernel
         float mc_weight
     )
     {
-        //TransmissionGroupMembership_t membership;
-        //transmissionGroups->UpdatePopulationSize( membership, 0, 0 );
     }
 
     REGISTER_SERIALIZABLE(NodeSTI);
@@ -233,7 +231,5 @@ namespace Kernel
     void NodeSTI::serialize(IArchive& ar, NodeSTI* obj)
     {
         Node::serialize(ar, obj);
-        // NodeSTI& node = *obj;
-        // clorton TODO
     }
 }

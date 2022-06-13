@@ -95,14 +95,14 @@ namespace Kernel
         float sample = 0.0;
         if( environment_ip_key_value.IsValid() )
         {
-            sample = p_node_context->GetContagionByRouteAndProperty( "environmental", environment_ip_key_value );
+            sample = p_node_context->GetContagionByRouteAndProperty( TransmissionRoute::ENVIRONMENTAL, environment_ip_key_value );
             LOG_INFO_F( "Intervention_Name=%s  IP=%s  sample = %f  sample_threshold=%f\n",
                          GetName().c_str(), environment_ip_key_value.ToString().c_str(), sample, sample_threshold );
         }
         else
         {
-            std::map<std::string, float> route_2_contagion = p_node_context->GetContagionByRoute();
-            sample = route_2_contagion.at( "environmental" );
+            std::map<TransmissionRoute::Enum, float> route_2_contagion = p_node_context->GetContagionByRoute();
+            sample = route_2_contagion.at(TransmissionRoute::ENVIRONMENTAL);
             LOG_INFO_F( "Intervention_Name=%s  sample = %f  sample_threshold=%f\n",
                          GetName().c_str(), sample, sample_threshold );
         }

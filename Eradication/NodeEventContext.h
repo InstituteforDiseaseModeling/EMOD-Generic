@@ -16,6 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "ISupports.h"
 #include "Types.h"
+#include "SimulationEnums.h"
 #include "Configuration.h"
 #include "suids.hpp"
 #include "IndividualEventContext.h"
@@ -76,6 +77,7 @@ namespace Kernel
 
         virtual const suids::suid & GetId() const = 0;
         virtual void SetContextTo(INodeContext* context) = 0;
+        virtual void SetupTxRoutes() = 0;
 
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name) = 0;
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) = 0;
@@ -98,14 +100,14 @@ namespace Kernel
 
         virtual void  IncrementCampaignCost(float cost)                          = 0;
 
-        virtual void  UpdateBirthRateMultiplier(float mult_val)                  = 0;
-        virtual void  UpdateConnectionModifiers(float inbound, float outbound)   = 0;
-        virtual void  UpdateInfectivityMultiplier(float mult_val)                = 0;
+        virtual void  UpdateBirthRateMultiplier(float mult_val)                                      = 0;
+        virtual void  UpdateConnectionModifiers(float inbound, float outbound)                       = 0;
+        virtual void  UpdateInfectivityMultiplier(float mult_val, TransmissionRoute::Enum txRoute)   = 0;
 
-        virtual float GetBirthRateMultiplier()            const = 0;
-        virtual float GetInboundConnectionModifier()      const = 0;
-        virtual float GetOutboundConnectionModifier()     const = 0;
-        virtual float GetInfectivityMultiplier()          const = 0;
+        virtual float GetBirthRateMultiplier()                                      const = 0;
+        virtual float GetInboundConnectionModifier()                                const = 0;
+        virtual float GetOutboundConnectionModifier()                               const = 0;
+        virtual float GetInfectivityMultiplier(TransmissionRoute::Enum txRoute)     const = 0;
     };
 
     class Simulation;

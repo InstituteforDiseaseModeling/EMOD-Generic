@@ -56,14 +56,14 @@ namespace Kernel
 
         virtual void  UpdateInterventions(float = 0.0f) override;
 
-        virtual void  UpdateBirthRateMultiplier(float mult_val) override;
-        virtual void  UpdateConnectionModifiers(float inbound, float outbound) override;
-        virtual void  UpdateInfectivityMultiplier(float mult_val) override;
+        virtual void  UpdateBirthRateMultiplier(float mult_val)                                      override;
+        virtual void  UpdateConnectionModifiers(float inbound, float outbound)                       override;
+        virtual void  UpdateInfectivityMultiplier(float mult_val, TransmissionRoute::Enum tx_route)  override;
 
-        virtual float GetBirthRateMultiplier() const override;
-        virtual float GetInboundConnectionModifier() const override;
-        virtual float GetOutboundConnectionModifier() const override;
-        virtual float GetInfectivityMultiplier() const override;
+        virtual float GetBirthRateMultiplier()                                    const override;
+        virtual float GetInboundConnectionModifier()                              const override;
+        virtual float GetOutboundConnectionModifier()                             const override;
+        virtual float GetInfectivityMultiplier(TransmissionRoute::Enum tx_route)   const override;
 
         // TODO: methods to install hooks for birth and other things...can follow similar pattern presumably
 
@@ -73,6 +73,7 @@ namespace Kernel
         virtual const suids::suid & GetId() const override;
 
         virtual void SetContextTo(INodeContext* context) override;
+        virtual void SetupTxRoutes() override;
 
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name) override;
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) override;
@@ -109,9 +110,10 @@ namespace Kernel
         float birthrate_multiplier;
         float connection_multiplier_inbound;
         float connection_multiplier_outbound;
-        float infectivity_multiplier;
+        std::map<TransmissionRoute::Enum, float> inf_mult_by_route;
 
         typedef std::map<ITravelLinkedDistributionSource*,int> travel_distribution_source_map_t;
+
         travel_distribution_source_map_t arrival_distribution_sources;
         travel_distribution_source_map_t departure_distribution_sources;
 

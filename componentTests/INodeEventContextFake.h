@@ -188,14 +188,16 @@ public:
 
     virtual void  IncrementCampaignCost(float cost)               { /* Gets called by component tests; must do nothing and not throw an exception to work correctly */                          }
 
-    virtual void  UpdateBirthRateMultiplier(float val)            { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual void  UpdateConnectionModifiers(float in, float out)  { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual void  UpdateInfectivityMultiplier(float val)          { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  SetupTxRoutes()                                                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
-    virtual float GetBirthRateMultiplier()                  const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual float GetInboundConnectionModifier()            const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual float GetOutboundConnectionModifier()           const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual float GetInfectivityMultiplier()                const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  UpdateBirthRateMultiplier(float val)                                      { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  UpdateConnectionModifiers(float in, float out)                            { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual void  UpdateInfectivityMultiplier(float val, TransmissionRoute::Enum txRoute)   { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
+    virtual float GetBirthRateMultiplier()                                    const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetInboundConnectionModifier()                              const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetOutboundConnectionModifier()                             const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual float GetInfectivityMultiplier(TransmissionRoute::Enum txRoute)   const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual RANDOMBASE* GetRng()
     {

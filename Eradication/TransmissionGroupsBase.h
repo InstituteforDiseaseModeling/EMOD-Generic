@@ -138,7 +138,7 @@ namespace Kernel
         virtual void Build(float contagionDecayRate, uint32_t numberOfClades = 1, uint64_t numberOfGenomes = 1) {}
         virtual void GetGroupMembershipForProperties(const tProperties& properties) const { }
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) {}
-        virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const {}
+        virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route) const {}
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) {}
         virtual void EndUpdate(float infectivityCorrection, float infectivityAddition, float infectivityOverdispersion) {}
 

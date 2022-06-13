@@ -63,17 +63,12 @@ namespace Kernel
                             float initial_age = 0.0f, 
                             int gender = 0 );
         
-	virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) const;
+    virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) const;
 
     protected:
         virtual IInfection* createInfection(suids::suid _suid) override;
         virtual void setupInterventionsContainer() override;
         ISusceptibilityHIV * hiv_susceptibility;
-
-        // from HIVPerson (HIV branch), kto: clean up these comments later
-        // individual characteristics, node-agnostic for now.
-        //
-        // medical chart variables
 
         // variables for reporting
         unsigned int pos_num_partners_while_CD4500plus;

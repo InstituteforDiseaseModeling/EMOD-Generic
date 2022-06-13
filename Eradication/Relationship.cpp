@@ -30,17 +30,6 @@ SETUP_LOGGING( "Relationship" )
 #define PROPERTY_KEY_PREFIX_LENGTH (13)
 #define SLOT_SEPARATOR ('-')
 
-void 
-howlong(
-    clock_t before,
-    const char * label = "NA"
-)
-{
-    clock_t after = clock();
-    clock_t diff = after - before;
-    float thediff = diff/(float)CLOCKS_PER_SEC;
-}
-
 namespace Kernel {
 
     // static
@@ -158,8 +147,6 @@ namespace Kernel {
 
         male_partner->AddRelationship( this );
         female_partner->AddRelationship( this );
-
-        howlong( init, "R::Init" );
     }
 
     Relationship::~Relationship()

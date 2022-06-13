@@ -19,13 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 SETUP_LOGGING( "RelationshipMgr" )
 
-static void
-    howlong(
-        clock_t before,
-        const char * label = "NA"
-    )
-{ }
-
 namespace Kernel
 {
     BEGIN_QUERY_INTERFACE_BODY(RelationshipManager)
@@ -45,82 +38,13 @@ namespace Kernel
     {
     }
 
-/*
-    double RelationshipManager::CND(double d)
-    {
-        const double       A1 = 0.31938153;
-        const double       A2 = -0.356563782;
-        const double       A3 = 1.781477937;
-        const double       A4 = -1.821255978;
-        const double       A5 = 1.330274429;
-        const double RSQRT2PI = 0.39894228040143267793994605993438;
-
-        double
-        K = 1.0 / (1.0 + 0.2316419 * fabs(d));
-
-        double
-        cnd = RSQRT2PI * exp(- 0.5 * d * d) *
-              (K * (A1 + K * (A2 + K * (A3 + K * (A4 + K * A5)))));
-
-        if (d > 0)
-            cnd = 1.0 - cnd;
-
-        return cnd;
-    }
-*/
-
-    //static
-/*
-    float RelationshipManager::selectAgeFromCDF( float targetAge )
-    {
-        float draw = Environment::getInstance()->RNG->e();
-        float cnd = CND( draw-0.5 );
-        float age_offset = (cnd*20*DAYSPERYEAR) - 10*DAYSPERYEAR;
-        float rel_age = targetAge + age_offset;
-        return rel_age;
-    }
-*/
-
-/*
-    RelationshipManager::tAgeBasedMarket::iterator
-    RelationshipManager::SelectByAge(
-        float targetAge,
-        tAgeBasedMarket &candidatesByAge,
-        IIndividualHumanSTI** partnerOut
-    )
-    {
-        *partnerOut = nullptr;
-        float targetPartnerAge = selectAgeFromCDF( targetAge );
-        LOG_DEBUG_F( "%s: Searching sorted-by-age individuals with %d people.\n", __FUNCTION__, candidatesByAge.size() );
-
-        for( auto it = candidatesByAge.begin();
-                  it != candidatesByAge.end();
-                  ++it )
-        {
-            float age = it->first;
-            if( age > targetPartnerAge )
-            {
-                // LOG_DEBUG_F( "%s: Let's choose this one\n", __FUNCTION__ );
-                (*partnerOut) = it->second;
-                return it;
-            }
-        }
-
-        // TBD: failure control path. Throw exception?
-        // We're hitting this, throw "SelectByAge() isn't returning anything! =:^O";
-        return candidatesByAge.end();
-    }
-*/
-
     void RelationshipManager::Update( list<IIndividualHuman*>& individualHumans, ITransmissionGroups* parent, float dt )
     {
-        clock_t before = clock();
         release_assert( parent );
         nodePools = static_cast<RelationshipGroups*>(parent); // don't need to do this over and over do we?
 
         // update all existing relationships
         LOG_INFO_F( "%s: Updating %d relationships\n", __FUNCTION__, nodeRelationships.size() );
-        //clock_t before_update = clock();
         for( auto it = nodeRelationships.begin();
                   it != nodeRelationships.end();
                    )
@@ -167,7 +91,6 @@ namespace Kernel
                 LOG_DEBUG_F( "%s: relationship %d is ongoing. No action.\n", __FUNCTION__, pRel->GetSuid().data );
             }
         }
-        howlong( before, "RM::Update" );
     }
 
     IRelationship* RelationshipManager::Emigrate( IRelationship* pRel )

@@ -32,6 +32,6 @@ shouldInfect(PyObject* self, PyObject* args)
         PyErr_SetString(PyExc_RuntimeError, "Failed to parse valid id in shouldInfect.");
         return NULL;
     }
-    bool should_infect = population.at( id )->ShouldAcquire( contagion, 1, 1.0 );
+    bool should_infect = population.at( id )->ShouldAcquire( contagion, 1, 1.0, TransmissionRoute::CONTACT );
     return Py_BuildValue("b", should_infect );
 }

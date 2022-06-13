@@ -29,7 +29,7 @@ namespace Kernel {
         PropertyReportEnvironmental( const std::string& rReportName );
 
         // virtual void postProcessAccumulatedData() override;
-        void reportContagionForRoute( const std::string& route, IndividualProperty* property, INodeContext* pNC );
+        void reportContagionForRoute( TransmissionRoute::Enum route, IndividualProperty* property, INodeContext* pNC );
 
         // counters
         std::map< std::string, float > new_contact_infections;

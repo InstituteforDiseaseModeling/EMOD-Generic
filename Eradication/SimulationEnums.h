@@ -18,7 +18,7 @@ namespace Kernel
     ENUM_DEFINE(Gender,
         ENUM_VALUE_SPEC(MALE                                                , 0)        // previously: #define MALE 1
         ENUM_VALUE_SPEC(FEMALE                                              , 1)        // previously: #define FEMALE 2
-        ENUM_VALUE_SPEC(COUNT                                               , 2) )
+        ENUM_VALUE_SPEC(COUNT                                               , 2))
 
     // ENUM defs for CLIMATE_STRUCTURE
     ENUM_DEFINE(ClimateStructure, 
@@ -117,8 +117,26 @@ namespace Kernel
         ENUM_VALUE_SPEC(TYPHOID_SIM                                         , 10)
         ENUM_VALUE_SPEC(DENGUE_SIM                                          , 11))
 
+    // ENUM defs for transmission
+    ENUM_DEFINE(TransmissionRoute,
+        ENUM_VALUE_SPEC(CONTACT                                             , 0)
+        ENUM_VALUE_SPEC(ENVIRONMENTAL                                       , 1)
+        ENUM_VALUE_SPEC(OUTBREAK                                            , 2)
+        ENUM_VALUE_SPEC(VECTOR_TO_HUMAN                                     , 10)
+        ENUM_VALUE_SPEC(VECTOR_TO_HUMAN_INDOOR                              , 11)
+        ENUM_VALUE_SPEC(VECTOR_TO_HUMAN_OUTDOOR                             , 12)
+        ENUM_VALUE_SPEC(HUMAN_TO_VECTOR                                     , 20)
+        ENUM_VALUE_SPEC(HUMAN_TO_VECTOR_INDOOR                              , 21)
+        ENUM_VALUE_SPEC(HUMAN_TO_VECTOR_OUTDOOR                             , 22)
+        ENUM_VALUE_SPEC(INDOOR                                              , 31)
+        ENUM_VALUE_SPEC(OUTDOOR                                             , 32))
+
+    ENUM_DEFINE(TransmissionGroupType,
+        ENUM_VALUE_SPEC(StrainAwareGroups                                   , 0)
+        ENUM_VALUE_SPEC(RelationshipGroups                                  , 1))
+
     // ENUM defs for VITAL_BIRTH_DEPENDENCE
-    ENUM_DEFINE(VitalBirthDependence, 
+    ENUM_DEFINE(VitalBirthDependence,
         ENUM_VALUE_SPEC(FIXED_BIRTH_RATE                                    , 0)
         ENUM_VALUE_SPEC(POPULATION_DEP_RATE                                 , 1)
         ENUM_VALUE_SPEC(DEMOGRAPHIC_DEP_RATE                                , 2)
@@ -126,7 +144,8 @@ namespace Kernel
         ENUM_VALUE_SPEC(INDIVIDUAL_PREGNANCIES_BY_AGE_AND_YEAR              , 4))
 
     // ENUM defs for VITAL_DEATH_DEPENDENCE
-    ENUM_DEFINE(VitalDeathDependence,                                               // TODO: FIXED_DEATH_RATE (Makeham), Gompertz–Makeham, Lifetable, Heligman-Pollard, Siler (5-Component Competing Hazard), 
+    // TODO: FIXED_DEATH_RATE (Makeham), Gompertz-Makeham, Lifetable, Heligman-Pollard, Siler (5-Component Competing Hazard)
+    ENUM_DEFINE(VitalDeathDependence,
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_AGE_AND_GENDER              , 0)
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_YEAR_AND_AGE_FOR_EACH_GENDER, 1))
 
@@ -155,7 +174,7 @@ namespace Kernel
     ENUM_DEFINE(RiskGroup,
         ENUM_VALUE_SPEC(LOW                                                 , 0)
         ENUM_VALUE_SPEC(HIGH                                                , 1)
-        ENUM_VALUE_SPEC(COUNT                                               , 2) )
+        ENUM_VALUE_SPEC(COUNT                                               , 2))
 
     ENUM_DEFINE(TBFastProgressorType,
         ENUM_VALUE_SPEC(AGE                                                 , 0)

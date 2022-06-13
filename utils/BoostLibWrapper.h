@@ -18,9 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <boost/scoped_ptr.hpp>                  // Controller.cpp
 
 
-#include <boost/lexical_cast.hpp>                // Exceptions.cpp
-
-
 #include <boost/preprocessor.hpp>                // EnumSupport.h
 
 

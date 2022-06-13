@@ -38,9 +38,9 @@ namespace Kernel
         virtual ~IndividualHumanVector();
 
         virtual void CreateSusceptibility(float immunity_modifier = 1.0, float risk_modifier = 1.0) override;
-        virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership) override;
+        virtual void ExposeToInfectivity(float dt) override;
         virtual void UpdateInfectiousness(float dt) override;
-        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tranmsission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
+        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route ) override;
 
         virtual void UpdateGroupPopulation(float size_changes) override;
 

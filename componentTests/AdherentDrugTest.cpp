@@ -151,7 +151,7 @@ SUITE( AdherentDrugTest )
     TEST_FIXTURE( AdherentDrugFixture, TestNonAdherenceDistributionSum )
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AdherentDrugTest/TestNonAdherenceDistributionSum.json",
-                                       "Variable or parameter 'Sum(Non_Adherence_Distribution)' with value 1.5 is incompatible with variable or parameter 'Required' with value 1. The values of 'Non_Adherence_Distribution' must sum to 1.0." );
+                                       "Variable or parameter 'Sum(Non_Adherence_Distribution)' with value 1.500000 is incompatible with variable or parameter 'Required' with value 1.000000. The values of 'Non_Adherence_Distribution' must sum to 1.0." );
     }
 
     TEST_FIXTURE( AdherentDrugFixture, TestNextUpdate )

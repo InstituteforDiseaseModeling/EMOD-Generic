@@ -33,31 +33,8 @@ namespace Kernel
     InfectionEnvironmental::~InfectionEnvironmental(void)
     { }
 
-    void InfectionEnvironmental::SetParameters(IStrainIdentity* _infstrain, float incubation_period_override )
-    {
-        Infection::SetParameters( _infstrain, incubation_period_override );
-
-        infectiousnessByRoute[string("environmental")]    = Infection::GetInfectiousness();
-        infectiousnessByRoute[string("contact")]          = Infection::GetInfectiousness();
-    }
-
-    void InfectionEnvironmental::Update(float dt, ISusceptibilityContext* immunity)
-    {
-        Infection::Update(dt);
-
-        //for Environmental, same infectiousness is deposited to both environmental and contact routes (if applicable)
-        //By default (if HINT is off), only environmental route is available.
-        infectiousnessByRoute[string("environmental")]    = Infection::GetInfectiousness();
-        infectiousnessByRoute[string("contact")]          = Infection::GetInfectiousness();
-    }
-
     InfectionEnvironmental::InfectionEnvironmental(IIndividualHumanContext *context) : Kernel::Infection(context)
     { }
-
-    void InfectionEnvironmental::Initialize(suids::suid _suid)
-    {
-        Kernel::Infection::Initialize(_suid);
-    }
 
     InfectionEnvironmental *InfectionEnvironmental::CreateInfection(IIndividualHumanContext *context, suids::suid _suid)
     {
@@ -72,7 +49,6 @@ namespace Kernel
     void InfectionEnvironmental::serialize(IArchive& ar, InfectionEnvironmental* obj)
     {
         Infection::serialize(ar, obj);
-        // nothing else, yet
     }
 }
 

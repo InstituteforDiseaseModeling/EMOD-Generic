@@ -14,7 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IWaningEffect.h"
 #include "Interventions.h"
 #include "InterventionFactory.h"
-#include "IntranodeTransmissionTypes.h"
+#include "SimulationEnums.h"
 
 namespace Kernel
 { 

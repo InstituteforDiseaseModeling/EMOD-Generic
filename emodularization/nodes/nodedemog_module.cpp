@@ -243,7 +243,7 @@ namespace Test {
     {
         public:
             TestNode( Kernel::ISimulationContext * parent_sim,  ExternalNodeId_t externalNodeId, Kernel::suids::suid _suid )
-            : Kernel::Node( parent_sim, externalNodeId, _suid )
+                : Kernel::Node( parent_sim, externalNodeId, _suid )
             {
                 //SetContextTo( parent_sim ); // optional?
                 Initialize();
@@ -399,7 +399,8 @@ pop(PyObject* self, PyObject* args)
         std::cout << "Failure parsing demographics filename." << std::endl;
     }
 
-    try {
+    try
+    {
         for (auto node : nodes)
         {
             delete node;

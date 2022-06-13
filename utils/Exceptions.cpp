@@ -196,7 +196,7 @@ static const char* nullptr_str = "nullptr";
 namespace Kernel {
 
     DetailedException::DetailedException( const char * file_name, int line_num, const char * func_name )
-    : std::runtime_error( std::string( "\nException in " ) + GET_STR(file_name) + " at " + boost::lexical_cast<std::string>(line_num) + " in " + GET_STR(func_name) + ".\n" )
+    : std::runtime_error( std::string( "\nException in " ) + GET_STR(file_name) + " at " + std::to_string(line_num) + " in " + GET_STR(func_name) + ".\n" )
     , _msg()
     , _stackTrace()
     , _fileName( file_name )
@@ -381,25 +381,25 @@ namespace Kernel {
     IncoherentConfigurationException::IncoherentConfigurationException( const char * file_name, int line_num, const char* func_name, const char* existing_label, double existing_value, const char* test_label, double test_value, const char* details )
     : DetailedException( file_name, line_num, func_name )
     {
-        createICEMessage( existing_label, boost::lexical_cast<std::string>(existing_value).c_str(), test_label, boost::lexical_cast<std::string>(test_value).c_str(), details );
+        createICEMessage( existing_label, std::to_string(existing_value).c_str(), test_label, std::to_string(test_value).c_str(), details );
     }
 
     IncoherentConfigurationException::IncoherentConfigurationException( const char * file_name, int line_num, const char* func_name, const char* existing_label, unsigned long existing_value, const char* test_label, unsigned long test_value, const char* details )
     : DetailedException( file_name, line_num, func_name )
     {
-        createICEMessage( existing_label, boost::lexical_cast<std::string>(existing_value).c_str(), test_label, boost::lexical_cast<std::string>(test_value).c_str(), details );
+        createICEMessage( existing_label, std::to_string(existing_value).c_str(), test_label, std::to_string(test_value).c_str(), details );
     }
 
     IncoherentConfigurationException::IncoherentConfigurationException( const char * file_name, int line_num, const char* func_name, const char* existing_label, signed int existing_value, const char* test_label, signed int test_value, const char* details )
     : DetailedException( file_name, line_num, func_name )
     {
-        createICEMessage( existing_label, boost::lexical_cast<std::string>(existing_value).c_str(), test_label, boost::lexical_cast<std::string>(test_value).c_str(), details );
+        createICEMessage( existing_label, std::to_string(existing_value).c_str(), test_label, std::to_string(test_value).c_str(), details );
     }
 
     IncoherentConfigurationException::IncoherentConfigurationException( const char * file_name, int line_num, const char* func_name, const char* existing_label, float existing_value, const char* test_label, float test_value, const char* details )
     : DetailedException( file_name, line_num, func_name )
     {
-        createICEMessage( existing_label, boost::lexical_cast<std::string>(existing_value).c_str(), test_label, boost::lexical_cast<std::string>(test_value).c_str(), details );
+        createICEMessage( existing_label, std::to_string(existing_value).c_str(), test_label, std::to_string(test_value).c_str(), details );
     }
 
     IncoherentConfigurationException::IncoherentConfigurationException(
@@ -429,7 +429,7 @@ namespace Kernel {
     )
         : DetailedException(file_name, line_num, func_name)
     {
-        createICEMessage(existing_label, boost::lexical_cast<std::string>(existing_value).c_str(), test_label, test_value, details);
+        createICEMessage(existing_label, std::to_string(existing_value).c_str(), test_label, test_value, details);
     }
 
     void IncoherentConfigurationException::createICEMessage(

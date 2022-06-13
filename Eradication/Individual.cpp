@@ -86,7 +86,7 @@ namespace Kernel
         , susceptibility(nullptr)
         , infections()
         , interventions(nullptr)
-        , transmissionGroupMembership()
+        , transmissionGroupMembershipByRoute()
         , m_is_infected(false)
         , infectiousness(0.0f)
         , cumulativeInfs(0)
@@ -130,7 +130,7 @@ namespace Kernel
         , susceptibility(nullptr)
         , infections()
         , interventions(nullptr)
-        , transmissionGroupMembership()
+        , transmissionGroupMembershipByRoute()
         , m_is_infected(false)
         , infectiousness(0.0f)
         , cumulativeInfs(0)
@@ -499,7 +499,7 @@ namespace Kernel
         }
 
         //  Get new infections
-        ExposeToInfectivity(dt, transmissionGroupMembership); // Need to do it even if infectivity==0, because of diseases in which immunity of acquisition depends on challenge (eg malaria)
+        ExposeToInfectivity(dt); // Need to do it even if infectivity==0, because of diseases in which immunity of acquisition depends on challenge (eg malaria)
         if( broadcaster )
         {
             broadcaster->TriggerObservers(GetEventContext(), EventTrigger::ExposureComplete);
@@ -843,8 +843,13 @@ namespace Kernel
     {
         tProperties properties = GetProperties()->GetOldVersion();
         const RouteList_t& routes = parent->GetTransmissionRoutes();
+        LOG_DEBUG_F( "Updating transmission group membership for individual %d for %d routes.\n", this->GetSuid().data, routes.size() );
 
-        parent->GetGroupMembershipForIndividual( routes, properties, transmissionGroupMembership );
+        for( auto& route : routes )
+        {
+            LOG_DEBUG_F( "Updating for Route %s.\n", TransmissionRoute::pairs::lookup_key(route) );
+            parent->GetGroupMembershipForIndividual( route, properties, transmissionGroupMembershipByRoute[route] );
+        }
     }
 
     void IndividualHuman::UpdateGroupPopulation(float size_changes)
@@ -926,9 +931,12 @@ namespace Kernel
     //   Infection methods
     //------------------------------------------------------------------
 
-    void IndividualHuman::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
+    void IndividualHuman::ExposeToInfectivity(float dt)
     {
-        parent->ExposeIndividual(static_cast<IInfectable*>(this), transmissionGroupMembership, dt);
+        for(auto& entry : transmissionGroupMembershipByRoute)
+        {
+            parent->ExposeIndividual(static_cast<IInfectable*>(this), entry.second, dt, entry.first);
+        }
     }
 
     // TODO: port normal exposure_to_infectivity logic to this pattern as well <ERAD-328>
@@ -936,7 +944,7 @@ namespace Kernel
     {
         ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*susceptibility->getModRisk()*interventions->GetInterventionReducedAcquire());
         LOG_DEBUG_F( "id = %lu, group_id = %d, total contagion = %f, dt = %f, immunity factor = %f, interventions factor = %f, prob=%f, infectiousness=%f\n",
-                     GetSuid().data, transmissionGroupMembership.group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
+                     GetSuid().data, transmissionGroupMembershipByRoute[transmission_route].group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
         bool acquire = false; 
         if( IndividualHumanConfig::enable_skipping ) 
         {
@@ -1021,21 +1029,36 @@ namespace Kernel
 
         for (auto infection : infections)
         {
-            infectiousness += infection->GetInfectiousness();
             float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousness() * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
+
             StrainIdentity tmp_strainIDs;
             infection->GetInfectiousStrainID(&tmp_strainIDs);
+
             if(GetParams()->enable_label_infector)
             {
                 uint64_t new_genome = (static_cast<uint64_t>(GetSuid().data) << SHIFT_BIT) + (tmp_strainIDs.GetGeneticID() & MAX_24BIT);
                 tmp_strainIDs.SetGeneticID(new_genome);
             }
-            if( tmp_infectiousness )
+
+            for(auto& entry : transmissionGroupMembershipByRoute)
             {
-                LOG_DEBUG_F( "Individual %d depositing contagion into transmission group.\n", GetSuid().data );
-                parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, transmissionGroupMembership );
-            }
+                LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first));
+                if (entry.first==TransmissionRoute::CONTACT)
+                {
+                    if (tmp_infectiousness > 0.0f)
+                    {
+                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
+                        parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second, TransmissionRoute::CONTACT );
+                        infectiousness += infection->GetInfectiousnessByRoute(TransmissionRoute::CONTACT);
+                    }
+                }
+                else
+                {
+                    release_assert(false);
+                }
+           }
         }
+
         float raw_inf = infectiousness;
         infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
         LOG_VALID_F("Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f, weight=%f).\n",
@@ -1266,8 +1289,6 @@ namespace Kernel
         ar.labelElement("susceptibility") & individual.susceptibility;
         ar.labelElement("infections") & individual.infections;
         ar.labelElement("interventions") & individual.interventions;
-        // don't serialize transmissionGroupMembership, it will be reconstituted on deserialization
-        // don't serialize transmissionGroupMembershipByRoute, it will be reconstituted on deserialization
         ar.labelElement("m_is_infected") & individual.m_is_infected;
         ar.labelElement("infectiousness") & individual.infectiousness;
         ar.labelElement("cumulativeInfs") & individual.cumulativeInfs;

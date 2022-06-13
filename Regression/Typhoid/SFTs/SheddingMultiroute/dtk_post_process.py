@@ -35,10 +35,10 @@ def application(report_file):
                 # append time step and depositing line to lists
                 ind_id = sft.get_val("Individual ", line)
                 line = "TimeStep: " + str(timestep) + " ind_id: " + str(ind_id) + " " + line
-                if re.search("contact", line):
+                if re.search("CONTACT", line):
                     lines_contact.append(line)
                     contact_shedding_count += 1
-                elif re.search("environment", line):
+                elif re.search("ENVIRONMENT", line):
                     lines_environment.append(line)
                     env_shedding_count += 1
     success = True

@@ -71,7 +71,7 @@ def application(report_file):
                 # append time step and Exposing line to lists
                 line = "TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
-            elif  "depositing" in line and "route environment" in line:
+            elif  "depositing" in line and "route ENVIRONMENT" in line:
                 # get shedding of contact route and add it to accumulated shedding
                 shedding = float(sft.get_val("depositing ", line))
                 cum += shedding
@@ -105,7 +105,7 @@ def application(report_file):
                         cp_stdout_dict[timestep] = [environment, expected_cp]
                         if math.fabs(environment-expected_cp) > 1e-2 * expected_cp:
                             success = False
-                            ind_id = int(sft.get_val("inividual ", line))
+                            ind_id = int(sft.get_val("individual ", line))
                             report_file.write("BAD: at time {0}, individuals are exposed on route environment with contagion "
                                               "population = {1} StatPop = {2}, expected {3}."
                                               "\n".format(timestep, environment, Statpop[timestep - start_time - 1],

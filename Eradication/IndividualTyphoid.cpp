@@ -37,15 +37,6 @@ SETUP_LOGGING( "IndividualTyphoid" )
 
 namespace Kernel
 {
-//#ifdef LOG_INFO_F
-//#undef LOG_INFO_F
-//#endif
-//#define LOG_INFO_F printf
-//#ifdef LOG_DEBUG_F
-//#undef LOG_DEBUG_F
-//#endif
-//#define LOG_DEBUG_F printf
-
     float IndividualHumanTyphoidConfig::environmental_incubation_period = 0.0f; // NaturalNumber please
     float IndividualHumanTyphoidConfig::typhoid_acute_infectiousness = 0.0f;
     float IndividualHumanTyphoidConfig::typhoid_chronic_relative_infectiousness = 0.0f;
@@ -159,7 +150,7 @@ namespace Kernel
 #else 
         _infection_count=0; // should not be necessary
         doseTracking = "Low";
-        exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTBREAK;
+        exposureRoute = TransmissionRoute::OUTBREAK;
 #endif
     }
 
@@ -230,7 +221,7 @@ namespace Kernel
         doseTracking = "High";
     }
 
-    void IndividualHumanTyphoid::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route )
+    void IndividualHumanTyphoid::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )
     { 
 #ifdef ENABLE_PYTHOID
         if( GetRng()->e() > IndividualHumanTyphoidConfig::typhoid_exposure_fraction )
@@ -249,11 +240,9 @@ namespace Kernel
             // silly. can't seem to figure out how to do floats so doing this way for now!
             PyObject* py_contagion_pop = PyLong_FromLong( cp->GetTotalContagion() );
 
-            //PyObject* py_contagion_pop = Py_BuildValue( "%f", 
             PyObject* py_dt = PyLong_FromLong( dt );
 
-            //PyObject* py_tx_route = PyString_FromFormat( "%s", TransmissionRoute::pairs::lookup_key( transmission_route ) );
-            PyObject* py_tx_route = PyLong_FromLong( transmission_route == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ? 0 : 1 );
+            PyObject* py_tx_route = PyLong_FromLong( tx_route == TransmissionRoute::ENVIRONMENTAL ? 0 : 1 );
             PyTuple_SetItem(vars, 0, py_existing_id );
             PyTuple_SetItem(vars, 1, py_contagion_pop  );
             PyTuple_SetItem(vars, 2, py_dt  );
@@ -271,7 +260,6 @@ namespace Kernel
         delete check;
         return;
 #else
-        //LOG_DEBUG_F("Expose route: %d, %f\n", transmission_route, cp->GetTotalContagion());
         if ( IsInfected() )
         {
             return;
@@ -287,8 +275,8 @@ namespace Kernel
             bool bEnvironmentalAllowed = false;
             bool bContactAllowed = false;
             // Decide with route to pick (ignore) based on probabilities.
-            float e_prob = parent->GetMaxInfectionProb( TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ); 
-            float c_prob = parent->GetMaxInfectionProb( TransmissionRoute::TRANSMISSIONROUTE_CONTACT ); 
+            float e_prob = parent->GetMaxInfectionProb( TransmissionRoute::ENVIRONMENTAL ); 
+            float c_prob = parent->GetMaxInfectionProb( TransmissionRoute::CONTACT ); 
             if ( ( e_prob + c_prob ) == 0 )
             {
                 return;
@@ -326,13 +314,13 @@ namespace Kernel
                 bEnvironmentalAllowed = true;
             }
 
-            if ( !bEnvironmentalAllowed && (transmission_route==TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL) )
+            if ( !bEnvironmentalAllowed && (tx_route==TransmissionRoute::ENVIRONMENTAL) )
             {
                 LOG_DEBUG_F( "Return without exposure: route is enviro and we're only doing contact.\n" );
                 return;
             }
 
-            if ( !bContactAllowed && (transmission_route==TransmissionRoute::TRANSMISSIONROUTE_CONTACT) )
+            if ( !bContactAllowed && (tx_route==TransmissionRoute::CONTACT) )
             {
                 LOG_DEBUG_F( "Return without exposure: route is contact and we're only doing enviro.\n" );
                 return;
@@ -340,7 +328,7 @@ namespace Kernel
         }
 
         doseTracking = "Low";
-        if ( transmission_route == TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL )
+        if ( tx_route == TransmissionRoute::ENVIRONMENTAL )
         {
             // Reduce exposure amount by node-level (environmental) intervention effect.
             auto typhoid_node_iv_effects = (NodeTyphoidEventContextHost*)(parent->GetEventContext());
@@ -389,7 +377,7 @@ namespace Kernel
                 if ( IndividualHumanConfig::enable_skipping )
                 {
                     // Skipping code coming soon! Yes, this commented-out code is here for a reason.
-                    float maxProb = parent->GetMaxInfectionProb( transmission_route ); 
+                    float maxProb = parent->GetMaxInfectionProb( tx_route ); 
                     assert(maxProb>=0.0 && maxProb<=1.0);
                     assert(maxProb>=prob);
                     if ( maxProb==prob ) // individual is maximally susceptible
@@ -409,17 +397,16 @@ namespace Kernel
                 
                 if ( acquire )
                 {
-                    exposureRoute = transmission_route;
+                    exposureRoute = tx_route;
                     StrainIdentity strainId;
                     LOG_DEBUG("INDIVIDUAL INFECTED BY ENVIRONMENT.\n"); // This is for reporting DON'T DELETE :)
                     quantizeEnvironmentalDoseTracking( exposure );
-                    //LOG_INFO_F("dose %f, tracking %s", environment, doseTracking);
                     AcquireNewInfection(&strainId);
                 }
                 return;
             }
         }
-        else if ( transmission_route==TransmissionRoute::TRANSMISSIONROUTE_CONTACT )
+        else if ( tx_route==TransmissionRoute::CONTACT )
         {
             float fContact = cp->GetTotalContagion() * ((TyphoidInterventionsContainer*)interventions)->GetContactDoseAttenuation();
             if ( fContact == 0 )
@@ -463,7 +450,7 @@ namespace Kernel
             bool acquire = false; 
             if( IndividualHumanConfig::enable_skipping )
             {
-                float maxProb = parent->GetMaxInfectionProb( transmission_route );  // contact
+                float maxProb = parent->GetMaxInfectionProb( tx_route );  // contact
                 release_assert(maxProb>=0.0 && maxProb<=1.0);
                 release_assert(maxProb>=prob || fabs(maxProb-prob) < 0.001);
                 if( maxProb==prob ) // individual is maximally susceptible
@@ -484,7 +471,7 @@ namespace Kernel
             if( acquire )
             {
                 LOG_DEBUG("INDIVIDUAL INFECTED BY CONTACT.\n"); // FOR REPORTING
-                exposureRoute = transmission_route;
+                exposureRoute = tx_route;
                 StrainIdentity strainId;
                 quantizeContactDoseTracking( fContact ); 
                 AcquireNewInfection(&strainId);
@@ -495,16 +482,6 @@ namespace Kernel
         
 #endif
     }
-
-    /*void IndividualHumanTyphoid::ExposeToInfectivity(float dt, const TransmissionGroupMembership_t* transmissionGroupMembership)
-    {
-        if( IndividualHumanConfig::enable_skipping )
-        {
-            route_prob_draw = GetRng()->e();
-        }
-        IndividualHumanEnvironmental::ExposeToInfectivity(dt, &transmissionGroupMembershipByRoute.at("contact"));
-        IndividualHumanEnvironmental::ExposeToInfectivity(dt, &transmissionGroupMembershipByRoute["environmental"]);
-    }*/
 
     void IndividualHumanTyphoid::UpdateInfectiousness(float dt)
     {
@@ -519,7 +496,7 @@ namespace Kernel
                 static PyObject * vars = PyTuple_New(2);
                 PyObject* py_existing_id = PyLong_FromLong( GetSuid().data );
                 PyTuple_SetItem( vars, 0, py_existing_id );
-                PyObject* py_route_str = PyString_FromFormat( "%s", route.c_str() );
+                PyObject* py_route_str = PyString_FromFormat( "%s", TransmissionRoute::pairs::lookup_key(route) );
                 PyTuple_SetItem( vars, 1, py_route_str );
                 PyObject * retVal = PyObject_CallObject( pFunc, vars );
                 PyErr_Print();
@@ -543,30 +520,27 @@ namespace Kernel
         state_to_report = ((InfectionTyphoid*)infections.front())->GetStateToReport();
         for (auto infection : infections)
         {
-            //LOG_DEBUG("Getting infectiousness by route.\n");
-
             StrainIdentity tmp_strainID;
             infection->GetInfectiousStrainID(&tmp_strainID);
 
             //deposit oral to 'contact', fecal to 'environmental' pool 
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
-                //LOG_DEBUG_F("Found route:%s.\n",entry.first.c_str());
                 auto tic = (TyphoidInterventionsContainer*)interventions;
                 auto irt = interventions->GetInterventionReducedTransmit(); // from regular vaccine
-                if (entry.first==string( CONTACT ))
+                if (entry.first==TransmissionRoute::CONTACT)
                 {
                     auto cda = tic->GetContactDepositAttenuation(); // from environmental intervention
                     float tmp_infectiousnessOral = m_mc_weight * infection->GetInfectiousness() * cda * irt;
                     if (tmp_infectiousnessOral > 0.0f)
                     {
                         LOG_VALID_F("Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s. Intervention factor %f.\n",
-                                    GetSuid().data, tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time), state_to_report.c_str(), cda
+                                    GetSuid().data, tmp_infectiousnessOral, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time), state_to_report.c_str(), cda
                                    );
-                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
-                    } 
+                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::CONTACT );
+                    }
                 }
-                else if (entry.first==string( ENVIRONMENTAL ))
+                else if (entry.first==TransmissionRoute::ENVIRONMENTAL)
                 {
                     float tmp_infectiousnessFecal =  m_mc_weight * infection->GetInfectiousness() * irt;
                     if (tmp_infectiousnessFecal > 0.0f)
@@ -575,15 +549,13 @@ namespace Kernel
                         auto eda = typhoid_node_event->GetEnviroDepositAttenuation( GetProperties() ); 
                         tmp_infectiousnessFecal *= eda;
                         LOG_VALID_F( "Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s..\n",
-                                     GetSuid().data, tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time)
-                                   );
-                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL );
-                        ///LOG_DEBUG_F("contagion= %f\n", cp->GetTotalContagion());
+                                     GetSuid().data, tmp_infectiousnessFecal, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time) );
+                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::ENVIRONMENTAL );
                     }
                 }
                 else
                 {
-                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", entry.first.c_str());
+                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", TransmissionRoute::pairs::lookup_key(entry.first));
                 }
             }
         }
@@ -689,7 +661,7 @@ namespace Kernel
         //LOG_INFO_F("Prepatent %d. dose %s \n", _prepatent_duration, doseTracking);
         _infection_count ++;
 #endif
-        exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTBREAK;
+        exposureRoute = TransmissionRoute::OUTBREAK;
         doseTracking = "Low";
     }
 
@@ -808,16 +780,12 @@ namespace Kernel
     }
 
     REGISTER_SERIALIZABLE(IndividualHumanTyphoid);
-    //template PoolManager<IndividualHumanTyphoid> IndividualHumanTyphoid::_pool;
-    //template<> std::stack<IndividualHumanTyphoid*> PoolManager<IndividualHumanTyphoid>::_pool;                                   
     void IndividualHumanTyphoid::serialize(IArchive& ar, IndividualHumanTyphoid* obj)
     {
         IndividualHumanTyphoid& individual = *obj;
-        //ar.labelElement("P1") & individual.P1;
         ar.labelElement("state_to_report") & individual.state_to_report;
         ar.labelElement("isChronic") & individual.isChronic;
         ar.labelElement("_infection_count") & individual._infection_count;
-        //ar.labelElement("_routeOfInfection") & individual._routeOfInfection;
         ar.labelElement("state_changed") & individual.state_changed;
         ar.labelElement("doseTracking") & individual.doseTracking;
         ar.labelElement("_infection_count") & individual._infection_count;

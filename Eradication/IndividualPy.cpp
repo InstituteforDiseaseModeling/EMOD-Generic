@@ -42,8 +42,7 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(IndividualHumanPy, IndividualHuman)
 
     IndividualHumanPy::IndividualHumanPy(suids::suid _suid, float monte_carlo_weight, float initial_age, int gender) 
-    : IndividualHuman(_suid, monte_carlo_weight, initial_age, gender)
-    , transmissionGroupMembershipByRoute()
+        : IndividualHuman(_suid, monte_carlo_weight, initial_age, gender)
     {
 #ifdef ENABLE_PYTHON_FEVER
         // Call into python script to notify of new individual 
@@ -103,7 +102,7 @@ namespace Kernel
         susceptibility = newsusceptibility;
     }
 
-    void IndividualHumanPy::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route )
+    void IndividualHumanPy::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )
     { 
         if( cp->GetTotalContagion() == 0 )
         {
@@ -117,7 +116,7 @@ namespace Kernel
         if( pFunc )
         {
             // pass individual id AND dt
-            PyObject* vars   = Py_BuildValue( "lfll", GetSuid().data, cp->GetTotalContagion(), static_cast<int>(dt), (transmission_route==TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ? 0 : 1) );
+            PyObject* vars   = Py_BuildValue( "lfll", GetSuid().data, cp->GetTotalContagion(), static_cast<int>(dt), (tx_route==TransmissionRoute::ENVIRONMENTAL ? 0 : 1) );
             PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
             if( retVal == nullptr )
@@ -142,11 +141,6 @@ namespace Kernel
         return;
     }
 
-    void IndividualHumanPy::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
-    {
-        IndividualHuman::ExposeToInfectivity(dt, transmissionGroupMembership);
-    }
-
     void IndividualHumanPy::UpdateInfectiousness(float dt)
     {
 #ifdef ENABLE_PYTHON_FEVER
@@ -156,7 +150,7 @@ namespace Kernel
             if( pFunc )
             {
                 // pass individual id ONLY
-                PyObject* vars   = Py_BuildValue( "ls", GetSuid().data, route.c_str() );
+                PyObject* vars   = Py_BuildValue( "ls", GetSuid().data, TransmissionRoute::pairs::lookup_key(route) );
                 PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
                 if( retVal == nullptr )
@@ -172,7 +166,7 @@ namespace Kernel
                 release_assert( transmissionGroupMembershipByRoute.find( route ) != transmissionGroupMembershipByRoute.end() );
                 if( val > 0 )
                 {
-                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, route.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
+                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, TransmissionRoute::pairs::lookup_key(route), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                     parent->DepositFromIndividual( tmp_strainID, (float) val, transmissionGroupMembershipByRoute.at( route ) );
                 }
 
@@ -291,20 +285,6 @@ namespace Kernel
             retVal = HumanStateChange::KilledByInfection;
         }
         return retVal;
-    }
-
-    void IndividualHumanPy::UpdateGroupMembership()
-    {
-        tProperties properties = GetProperties()->GetOldVersion();
-        const RouteList_t& routes = parent->GetTransmissionRoutes();
-        LOG_DEBUG_F( "Updating transmission group membership for individual %d for %d routes (first route is %s).\n", this->GetSuid().data, routes.size(), routes[ 0 ].c_str() );
-
-        for( auto& route : routes )
-        {
-            LOG_DEBUG_F( "Updating for Route %s.\n", route.c_str() );
-            parent->GetGroupMembershipForIndividual(RouteList_t{ route }, properties, transmissionGroupMembershipByRoute[route]);
-        }
-        IndividualHuman::UpdateGroupMembership();
     }
 }
 

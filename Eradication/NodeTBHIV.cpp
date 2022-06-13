@@ -25,16 +25,14 @@ namespace Kernel
 
     NodeTBHIV::~NodeTBHIV(void)
     {
-        //delete HIVCoinfectionDistribution;
-        //delete HIVMortalityDistribution;
     }
 
     NodeTBHIV::NodeTBHIV() : NodeTB() { }
 
     NodeTBHIV::NodeTBHIV(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
-    : NodeTB(_parent_sim, externalNodeId, node_suid)
-    , HIVCoinfectionDistribution( nullptr )
-    , HIVMortalityDistribution( nullptr )
+        : NodeTB(_parent_sim, externalNodeId, node_suid)
+        , HIVCoinfectionDistribution( nullptr )
+        , HIVMortalityDistribution( nullptr )
     {
     }
 

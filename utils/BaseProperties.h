@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <set>
 #include <string>
 #include <vector>
+#include <functional>
 #include "JsonObjectDemog.h"
 #include "IdmApi.h"
 #include "ISerializable.h"

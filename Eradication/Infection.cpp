@@ -87,7 +87,6 @@ namespace Kernel
         , incubation_timer(0.0f)
         , infectious_timer(0.0f)
         , infectiousness(0.0f)
-        , infectiousnessByRoute()
         , StateChange(InfectionStateChange::None)
         , infection_strain(nullptr)
         , m_is_symptomatic( false )
@@ -108,7 +107,6 @@ namespace Kernel
         , incubation_timer(0.0f)
         , infectious_timer(0.0f)
         , infectiousness(0.0f)
-        , infectiousnessByRoute()
         , StateChange(InfectionStateChange::None)
         , infection_strain(nullptr)
         , m_is_symptomatic( false )
@@ -362,13 +360,9 @@ namespace Kernel
         return duration > incubation_timer ? inf_val : 0.0f;
     }
 
-    float Infection::GetInfectiousnessByRoute( const string& route ) const
+    float Infection::GetInfectiousnessByRoute(TransmissionRoute::Enum txRoute) const
     {
-        if( infectiousnessByRoute.find( route ) == infectiousnessByRoute.end() )
-        {
-            throw BadMapKeyException( __FILE__, __LINE__, __FUNCTION__, "infectiousnesssByRoute", route.c_str() );
-        }
-        return infectiousnessByRoute.at(route); 
+        return GetInfectiousness();
     }
 
     // Created for TB, but makes sense to be in base class, but no-one else is using yet, placeholder functionality
@@ -415,7 +409,6 @@ namespace Kernel
         ar.labelElement( "incubation_timer" )              & infection.incubation_timer;
         ar.labelElement( "infectious_timer" )              & infection.infectious_timer;
         ar.labelElement( "infectiousness" )                & infection.infectiousness;
-        ar.labelElement( "infectiousnessByRoute" )         & infection.infectiousnessByRoute;
 
         ar.labelElement( "StateChange" )                   & (uint32_t&)infection.StateChange;
 

@@ -1341,8 +1341,6 @@ namespace Kernel
 #endif
 
         node->SetParameters( nodedemographics_factory, climate_factory );
-
-        // node->PopulateFromDemographics();    // Skip this, node already is populated.
         node->InitializeTransmissionGroupPopulations();
 
         node_event_context_list.push_back( node->GetEventContext() );

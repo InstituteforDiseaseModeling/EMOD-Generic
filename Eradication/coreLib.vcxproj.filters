@@ -294,9 +294,6 @@
     <ClInclude Include="SusceptibilityTyphoid.h">
       <Filter>Source Files\Environmental\Typoid</Filter>
     </ClInclude>
-    <ClInclude Include="IntranodeTransmissionTypes.h">
-      <Filter>Source Files\HINT</Filter>
-    </ClInclude>
     <ClInclude Include="IContagionPopulation.h">
       <Filter>Source Files\HINT</Filter>
     </ClInclude>

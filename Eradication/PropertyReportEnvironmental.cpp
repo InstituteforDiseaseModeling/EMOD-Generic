@@ -77,11 +77,11 @@ PropertyReportEnvironmental::LogIndividualData(
             auto inf = individual->GetInfections().back();
             StrainIdentity si;
             inf->GetInfectiousStrainID( &si );
-            if( si.GetGeneticID() == 0 )
+            if( si.GetGeneticID() == TransmissionRoute::ENVIRONMENTAL )
             {
                 new_enviro_infections[ reportingBucket ] += mc_weight;
             }
-            else if( si.GetGeneticID() == 1 )
+            else if( si.GetGeneticID() == TransmissionRoute::CONTACT )
             {
                 new_contact_infections[ reportingBucket ] += mc_weight;
             }
@@ -99,8 +99,6 @@ PropertyReportEnvironmental::LogNodeData( INodeContext* pNC )
     {
         std::string reportingBucket = PropertiesToString( entry );
 
-        //Accumulate("Active Environmental Infections:" + reportingBucket, active_infections[reportingBucket] );
-        //active_infections[reportingBucket] = 0.0f;
         Accumulate( _num_enviro_infections_label + ":" + reportingBucket, new_enviro_infections[ reportingBucket ] );
         Accumulate( _num_contact_infections_label + ":" + reportingBucket, new_contact_infections[ reportingBucket ] );
         new_enviro_infections[ reportingBucket ] = 0;
@@ -118,19 +116,15 @@ PropertyReportEnvironmental::LogNodeData( INodeContext* pNC )
                 auto hint = property->GetIntraNodeTransmission( nodeId );
                 auto matrix = hint.GetMatrix();
 
-                std::string routeName;
-
                 if ( matrix.size() > 0 )
                 {
-                    routeName = hint.GetRouteName();
-                    reportContagionForRoute( routeName, property, pNC );
+                    reportContagionForRoute( hint.GetRouteName(), property, pNC );
                 }
                 else if ( hint.GetRouteToMatrixMap().size() > 0 )
                 {
                     for (auto entry : hint.GetRouteToMatrixMap())
                     {
-                        routeName = entry.first;
-                        reportContagionForRoute( routeName, property, pNC );
+                        reportContagionForRoute( entry.first, property, pNC );
                     }
                 }
                 else //HINT is enabled, but no transmission matrix is detected
@@ -146,15 +140,15 @@ PropertyReportEnvironmental::LogNodeData( INodeContext* pNC )
     }
 }
 
-void PropertyReportEnvironmental::reportContagionForRoute( const std::string& route, IndividualProperty* property, INodeContext* pNC )
+void PropertyReportEnvironmental::reportContagionForRoute( TransmissionRoute::Enum route, IndividualProperty* property, INodeContext* pNC )
 {
-    if ( (route != CONTACT) && (route != ENVIRONMENTAL) )
+    if ( (route != TransmissionRoute::CONTACT) && (route != TransmissionRoute::ENVIRONMENTAL) )
     {
-        LOG_WARN_F( "Unknown route '%s' in IndividualProperties for node %d.\n", route.c_str(), pNC->GetExternalID() );
+        LOG_WARN_F( "Unknown route '%s' in IndividualProperties for node %d.\n", TransmissionRoute::pairs::lookup_key(route), pNC->GetExternalID() );
         return;
     }
 
-    std::string prefix = (route == CONTACT) ? "Contagion (Contact):" : "Contagion (Environment):";
+    std::string prefix = (route == TransmissionRoute::CONTACT) ? "Contagion (Contact):" : "Contagion (Environment):";
     for (auto& value : property->GetValues<IPKeyValueContainer>())
     {
         const string& label = value.ToString();
@@ -163,13 +157,4 @@ void PropertyReportEnvironmental::reportContagionForRoute( const std::string& ro
     }
 }
 
-/*
-void
-PropertyReportEnvironmental::postProcessAccumulatedData()
-{
-    LOG_DEBUG( "postProcessAccumulatedData in PropertyReportEnvironmental\n" );
-    PropertyReport::postProcessAccumulatedData();
 }
-*/
-}
-

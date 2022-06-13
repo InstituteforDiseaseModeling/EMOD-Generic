@@ -67,7 +67,7 @@ def application(report_file, debug = False):
                 line = "TimeStep: " + str(timestep) + " " + line
                 lines.append(line)
                 # get shedding of contact route and add it to accumulated shedding
-            elif "depositing" in line and "route contact" in line:
+            elif "depositing" in line and "route CONTACT" in line:
                 shedding = float(sft.get_val("depositing ", line))
                 cum += shedding
                 line = "TimeStep: " + str(timestep) + " " + line
@@ -97,7 +97,7 @@ def application(report_file, debug = False):
                         fContact_dict[timestep] = [fContact, expected_cp]
                         if math.fabs(fContact-expected_cp) > 1e-2:
                             success = False
-                            ind_id = int(sft.get_val("inividual ", line))
+                            ind_id = int(sft.get_val("individual ", line))
                             report_file.write("BAD:  at time {0}, individuals are exposed on route contact with contagion population "
                                               "= {1} StatPop = {2}, expected {3}."
                                               "\n".format(timestep, fContact, Statpop[timestep - start_time - 1], expected_cp))

@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 #include "ISusceptibilityContext.h"
 #include "suids.hpp"
+#include "SimulationEnums.h"
 #include "Common.h"             // InfectionStateChange
 #include "Types.h"              // NonNegativeFloat
 
@@ -24,8 +25,8 @@ namespace Kernel
         virtual void Update( float, ISusceptibilityContext* = nullptr ) = 0;
         virtual InfectionStateChange::_enum GetStateChange() const = 0;
         virtual float GetInfectiousness() const = 0;
+        virtual float GetInfectiousnessByRoute(TransmissionRoute::Enum) const = 0;
 
-        virtual float GetInfectiousnessByRoute( const std::string& route ) const = 0;
         virtual void GetInfectiousStrainID( IStrainIdentity* ) = 0;
         virtual const IStrainIdentity* GetStrain() const  = 0;
 

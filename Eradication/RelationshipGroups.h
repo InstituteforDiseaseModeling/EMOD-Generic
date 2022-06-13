@@ -70,7 +70,7 @@ namespace Kernel {
             virtual void ChangeMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix) override;
             virtual void UpdatePopulationSize(const TransmissionGroupMembership_t& transmissionGroupMembership, float size_changes, float mc_weight);
             virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t poolMembership);
-            virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t poolMembership, float deltaTee, TransmissionRoute::Enum tx_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) const;
+            virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t poolMembership, float deltaTee, TransmissionRoute::Enum tx_route) const;
             virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f);
 
             virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership);

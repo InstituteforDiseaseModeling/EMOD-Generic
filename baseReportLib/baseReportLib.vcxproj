@@ -137,7 +137,6 @@
     <ClInclude Include="..\Eradication\IndividualEventContext.h" />
     <ClInclude Include="..\Eradication\INodeContext.h" />
     <ClInclude Include="..\Eradication\InterventionsContainer.h" />
-    <ClInclude Include="..\Eradication\IntranodeTransmissionTypes.h" />
     <ClInclude Include="..\Eradication\ITransmissionGroups.h" />
     <ClInclude Include="..\Eradication\MalariaDrugTypeParameters.h" />
     <ClInclude Include="..\Eradication\NodeEventContext.h" />

@@ -35,14 +35,12 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(IndividualHumanEnvironmental, IndividualHuman)
 
     IndividualHumanEnvironmental::IndividualHumanEnvironmental( suids::suid _suid, float monte_carlo_weight, float initial_age, int gender) 
-    : IndividualHuman( _suid, monte_carlo_weight, initial_age, gender)
-    , exposureRoute( TransmissionRoute::Enum( 0 ) )
-    , transmissionGroupMembershipByRoute()
+        : IndividualHuman( _suid, monte_carlo_weight, initial_age, gender)
+        , exposureRoute( TransmissionRoute::ENVIRONMENTAL )
     {
     }
 
-    IndividualHumanEnvironmental *
-    IndividualHumanEnvironmental::CreateHuman(INodeContext *context, suids::suid id, float MCweight, float init_age, int gender)
+    IndividualHumanEnvironmental* IndividualHumanEnvironmental::CreateHuman(INodeContext *context, suids::suid id, float MCweight, float init_age, int gender)
     {
         IndividualHumanEnvironmental *newindividual = _new_ IndividualHumanEnvironmental( id, MCweight, init_age, gender);
 
@@ -72,8 +70,8 @@ namespace Kernel
         for (auto infection : infections)
         {
             LOG_DEBUG("Getting infectiousness by route.\n");
-            float tmp_infectiousnessFecal =  m_mc_weight * infection->GetInfectiousnessByRoute(string("environmental"));
-            float tmp_infectiousnessOral = m_mc_weight * infection->GetInfectiousnessByRoute(string("contact"));
+            float tmp_infectiousnessFecal = m_mc_weight * infection->GetInfectiousnessByRoute(TransmissionRoute::ENVIRONMENTAL);
+            float tmp_infectiousnessOral  = m_mc_weight * infection->GetInfectiousnessByRoute(TransmissionRoute::CONTACT);
 
             StrainIdentity tmp_strainID;
             infection->GetInfectiousStrainID(&tmp_strainID);
@@ -84,31 +82,30 @@ namespace Kernel
 
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
-                LOG_DEBUG_F("Found route:%s.\n",entry.first.c_str());
-                if (entry.first==string("contact"))
+                LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first));
+                if (entry.first==TransmissionRoute::CONTACT)
                 {
                     if (tmp_infectiousnessOral > 0.0f)
                     {
-                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessOral, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
-                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
-                        infectiousness += infection->GetInfectiousnessByRoute(string("contact"));
+                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessOral, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
+                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::CONTACT );
+                        infectiousness += infection->GetInfectiousnessByRoute(TransmissionRoute::CONTACT);
                     }
                 }
-                else if (entry.first==string("environmental"))
+                else if (entry.first==TransmissionRoute::ENVIRONMENTAL)
                 {
                     if (tmp_infectiousnessFecal > 0.0f)
                     {
-                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessFecal, entry.first.c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());    
-                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL );
-                        infectiousness += infection->GetInfectiousnessByRoute(string("environmental"));
+                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousnessFecal, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());    
+                        parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::ENVIRONMENTAL );
+                        infectiousness += infection->GetInfectiousnessByRoute(TransmissionRoute::ENVIRONMENTAL);
                     }
                 }
                 else
                 {
-                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", entry.first.c_str());
+                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", TransmissionRoute::pairs::lookup_key(entry.first));
                 }
            }
-
         }
     }
 
@@ -117,29 +114,15 @@ namespace Kernel
         parent->UpdateTransmissionGroupPopulation(GetProperties()->GetOldVersion(), size_changes, this->GetMonteCarloWeight());
     }
 
-    void IndividualHumanEnvironmental::UpdateGroupMembership()
-    {
-        tProperties properties = GetProperties()->GetOldVersion();
-        const RouteList_t& routes = parent->GetTransmissionRoutes();
-        LOG_DEBUG_F( "Updating transmission group membership for individual %d for %d routes (first route is %s).\n", this->GetSuid().data, routes.size(), routes[ 0 ].c_str() );
-
-        for( auto& route : routes )
-        {
-            LOG_DEBUG_F( "Updating for Route %s.\n", route.c_str() );
-            parent->GetGroupMembershipForIndividual( RouteList_t{ route }, properties, transmissionGroupMembershipByRoute[ route ] );
-        }
-        IndividualHuman::UpdateGroupMembership();
-    }
-
     IInfection* IndividualHumanEnvironmental::createInfection( suids::suid _suid )
     {
         return InfectionEnvironmental::CreateInfection(this, _suid);
     }
 
-    void IndividualHumanEnvironmental::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmissionRoute )
+    void IndividualHumanEnvironmental::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )
     {
-        exposureRoute = transmissionRoute;
-        IndividualHuman::Expose( cp, dt, transmissionRoute );
+        exposureRoute = tx_route;
+        IndividualHuman::Expose( cp, dt, tx_route );
     }
 
     void IndividualHumanEnvironmental::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
@@ -150,18 +133,9 @@ namespace Kernel
             infstrain->ResolveInfectingStrain( &infectingStrain );
             if ( incubation_period_override == 0.0f )
             {
-                infectingStrain.SetGeneticID( 2 );
-                exposureRoute = TransmissionRoute::TRANSMISSIONROUTE_OUTBREAK;
+                exposureRoute = TransmissionRoute::OUTBREAK;
             }
-            else if (exposureRoute == TransmissionRoute::TRANSMISSIONROUTE_CONTACT)
-            {
-                infectingStrain.SetGeneticID( 1 );
-            }
-            else // TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL
-            { 
-                infectingStrain.SetGeneticID( 0 );
-            }
-
+            infectingStrain.SetGeneticID(static_cast<int>(exposureRoute));
             IndividualHuman::AcquireNewInfection( &infectingStrain, incubation_period_override );
         }
         else
@@ -175,12 +149,7 @@ namespace Kernel
     void IndividualHumanEnvironmental::serialize(IArchive& ar, IndividualHumanEnvironmental* obj)
     {
         IndividualHuman::serialize(ar, obj);
-        /* IndividualHumanEnvironmental doesn't (yet) have any member fields.
-        IndividualHumanEnvironmental& individual = *dynamic_cast<IndividualHumanEnvironmental*>(obj);
-        ar.startObject();
-        ar.endObject();
-        */
     }
 }
 
-#endif // ENABLE_POLIO
+#endif // ENABLE_ENVIRONMENTAL

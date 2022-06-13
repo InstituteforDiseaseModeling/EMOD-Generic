@@ -10,7 +10,7 @@ class StubNode : public INodeContext
         : INodeContext()
         , node_properties()
         , m_pRNG(nullptr)
-        , m_RouteList()
+        , m_RouteList(1,TransmissionRoute::CONTACT)
         , m_NodeId(Kernel::suids::nil_suid())
         {
             //IPFactory::CreateFactory();
@@ -98,16 +98,16 @@ class StubNode : public INodeContext
         virtual void Update(float dt) override { std::cout << __FUNCTION__ << std::endl; }
         virtual IIndividualHuman* processImmigratingIndividual( IIndividualHuman* ) override { return nullptr; }
         
-        virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) override { std::cout << __FUNCTION__ << std::endl; }
+        virtual void GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) override { /*std::cout << __FUNCTION__ << std::endl; CALLED ALL THE TIME; PROHIBITIVE TO LOG */ }
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override { std::cout << __FUNCTION__ << std::endl; }
-        virtual std::map< std::string, float > GetContagionByRoute() const { std::cout << __FUNCTION__ << std::endl; return std::map< std::string, float >(); }
+        virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const { std::cout << __FUNCTION__ << std::endl; return std::map< TransmissionRoute::Enum, float >(); }
         virtual float GetTotalContagion( void ) { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual ITransmissionGroups* GetTransmissionGroups() const override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
-        virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) override  { std::cout << __FUNCTION__ << std::endl; return 0; }
+        virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) override  { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) override { std::cout << __FUNCTION__ << std::endl; }
 
 
-        virtual const RouteList_t& GetTransmissionRoutes( ) const override { std::cout << __FUNCTION__ << std::endl; return m_RouteList; }
+        virtual const RouteList_t& GetTransmissionRoutes() const override { return m_RouteList; }
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override { std::cout << __FUNCTION__ << std::endl; return act_prob_vec_t(); }
         virtual IMigrationInfo* GetMigrationInfo() override { /*std::cout << __FUNCTION__ << std::endl; CALLED ALL THE TIME; PROHIBITIVE TO LOG */ return nullptr; }
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const override
@@ -124,15 +124,13 @@ class StubNode : public INodeContext
             return mortality_rate; 
         }
 
-        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) override
+        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route ) override
         {
             // Let's call into a python callback here to let python layer do transmission
             if( deposit_callback != nullptr )
             {
                 int individual_id = strain_IDs.GetGeneticID();
-                //std::cout << individual_id  << " depositing contagion." << std::endl;
                 PyObject *arglist = Py_BuildValue("f,i", contagion_quantity, individual_id ); // TBD: Need to get more individual info?
-                //PyObject *arglist = Py_BuildValue("f,i", 2.444, 55 ); // TBD: Need to get more individual info?
                 PyObject *retVal = PyObject_CallObject(deposit_callback, arglist);
                 Py_DECREF(arglist);
             }
@@ -151,7 +149,6 @@ class StubNode : public INodeContext
         virtual uint64_t    GetTotalGenomes()  const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual const Climate* GetLocalWeather() const override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
         virtual long int GetPossibleMothers()  const override { std::cout << __FUNCTION__ << std::endl; return 0; }
-        virtual float GetMeanAgeInfection()    const override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual float GetLatitudeDegrees() override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual float GetLongitudeDegrees() override { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual ExternalNodeId_t GetExternalID() const override { std::cout << __FUNCTION__ << std::endl; return 0; }
@@ -180,9 +177,8 @@ class StubNode : public INodeContext
 
         // We want to be able to infect someone but not with existing Tx groups. Call into py layer here and get a bool back
         // True to infect, False to leave alone.
-        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) override
+        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route) override
         {
-            //transmissionGroups->ExposeToContagion(candidate, individual, dt);
             if( my_callback != nullptr )
             {
                 PyObject *arglist = Py_BuildValue("(s,f,i)", "expose", 1.0, dynamic_cast<IIndividualHuman*>(candidate)->GetSuid().data );

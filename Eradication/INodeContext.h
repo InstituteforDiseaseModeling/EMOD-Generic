@@ -21,6 +21,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #define INDEX_RST_CONTAGION       (2)
 #define INDEX_RST_NEW_INF         (3)
 
+#define ADULT_AGE_YRS                 (15.0f)
+#define BIRTHRATE_SANITY_VALUE        (0.005f)
+
 namespace Kernel
 {
     struct IdmDateTime;
@@ -80,16 +83,16 @@ namespace Kernel
 
         // heterogeneous intra-node transmission
         virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) = 0;
-        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt) = 0;
-        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT) = 0;
-        virtual void GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) = 0;
+        virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route=TransmissionRoute::CONTACT) = 0;
+        virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route=TransmissionRoute::CONTACT) = 0;
+        virtual void GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut ) = 0;
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) = 0;
-        virtual std::map< std::string, float > GetContagionByRoute() const = 0; // developed for Typhoid/Environmental
+        virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const = 0;
         virtual float GetTotalContagion( void ) = 0;
         virtual ITransmissionGroups* GetTransmissionGroups() const = 0;
-        virtual const RouteList_t& GetTransmissionRoutes( ) const = 0;
+        virtual const RouteList_t& GetTransmissionRoutes() const = 0;
 
-        virtual float GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value ) = 0;
+        virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) = 0;
 
         // Discrete HINT contagion
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) = 0;
@@ -110,7 +113,6 @@ namespace Kernel
         virtual float               GetInfectionRate()          const = 0;
         virtual float               GetSusceptDynamicScaling()  const = 0;
         virtual long int            GetPossibleMothers()        const = 0;
-        virtual float               GetMeanAgeInfection()       const = 0;
         virtual uint64_t            GetTotalGenomes()           const = 0;
 
         virtual float GetNonDiseaseMortalityRateByAgeAndSex( float age, Gender::Enum sex ) const = 0;

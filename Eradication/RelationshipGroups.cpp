@@ -22,11 +22,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 SETUP_LOGGING( "RelationshipGroups" )
 
-extern void howlong(
-    clock_t before,
-    const char * label = "NA"
-);
-
 namespace Kernel {
 
 #ifndef DISABLE_STI

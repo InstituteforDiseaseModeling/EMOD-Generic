@@ -423,12 +423,12 @@ namespace Kernel
         }
 
         //  Get new infections
-        ExposeToInfectivity(dt, transmissionGroupMembership); // Need to do it even if infectivity==0, because of diseases in which immunity of acquisition depends on challenge (eg malaria)
+        ExposeToInfectivity(dt); // Need to do it even if infectivity==0, because of diseases in which immunity of acquisition depends on challenge (eg malaria)
 
         // Exogenous re-infection of Latently infected here dt = 0 is flag for this
         if (IndividualHumanCoInfectionConfig::enable_exogenous)
         {
-            ExposeToInfectivity(0, transmissionGroupMembership);
+            ExposeToInfectivity(0);
         }
 
         //  Is there an active infection for statistical purposes?
@@ -586,11 +586,13 @@ namespace Kernel
 
             StrainIdentity tmp_strainIDs;
             infection->GetInfectiousStrainID(&tmp_strainIDs);
-            if( tmp_infectiousness )
+            for(auto& entry : transmissionGroupMembershipByRoute)
             {
-                parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, transmissionGroupMembership);
-            }
-
+                if (tmp_infectiousness > 0.0f)
+                {
+                    parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second);
+                }
+           }
             // TODO: in IndividualTB we only count FIRST active infection in container, here we comment that out? reconsider only counting FIRST active infection in container
         }
 

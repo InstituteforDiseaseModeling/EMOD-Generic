@@ -86,7 +86,7 @@ namespace Kernel
 
         // Infections and Susceptibility
         virtual void CreateSusceptibility( float imm_mod=1.0f, float risk_mod=1.0f ) override;
-        virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership) override;
+        virtual void ExposeToInfectivity(float dt) override;
         virtual void Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route) override;
 
         virtual void UpdateGroupMembership() override;

@@ -38,6 +38,7 @@
 
 #define Max_Distributions_Per_Node_DESC_TEXT                          "Maximum number of individuals in the target demographic that will receive this intervention."
 
+#define NIMIV_Transmission_Route_DESC_TEXT                            "Transmssion route to be multiplied by the intervention."
 #define NIMIV_Multiplier_By_Duration_DESC_TEXT                        "Value of infectivity multiplier based on the duration of the intervention; uses interpolated value map."
 
 #define NBRMIV_Multiplier_By_Duration_DESC_TEXT                       "Value of birth rate multiplier based on the duration of the intervention; uses interpolated value map."

@@ -38,7 +38,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FileSystem.h"
 #include "IMigrationInfo.h"
 #include "Individual.h"
-#include "IntranodeTransmissionTypes.h"
 #include "SerializationParameters.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
@@ -104,10 +103,6 @@ namespace Kernel
         , Cumulative_Reported_Infections(0.0f)
         , Campaign_Cost(0.0f)
         , Possible_Mothers(0)
-        , mean_age_infection(0.0f)
-        , newInfectedPeopleAgeProduct(0.0f)           // counters starting with this one were only used for old spatial reporting and can probably now be removed
-        , infected_people_prior()
-        , infected_age_people_prior()
         , infectionrate(0.0f)
         , mInfectivity(0.0f)
         , strain_map_data()
@@ -184,10 +179,6 @@ namespace Kernel
         , Cumulative_Reported_Infections(0.0f)
         , Campaign_Cost(0.0f)
         , Possible_Mothers(0)
-        , mean_age_infection(0.0f)
-        , newInfectedPeopleAgeProduct(0.0f)           // counters starting with this one were only used for old spatial reporting and can probably now be removed
-        , infected_people_prior()
-        , infected_age_people_prior()
         , infectionrate(0.0f)
         , mInfectivity(0.0f)
         , strain_map_data()
@@ -356,15 +347,9 @@ namespace Kernel
         return transmissionGroups;
     }
 
-    void Node::AddDefaultRoute( void )
-    {
-        AddRoute( "contact" );
-    }
-
-    void Node::AddRoute( const std::string& rRouteName )
+    void Node::AddRoute(TransmissionRoute::Enum tx_route)
     { 
-        LOG_DEBUG_F("Adding route %s.\n", rRouteName.c_str());
-        routes.push_back( rRouteName );
+        routes.push_back(tx_route);
     }
 
     void Node::BuildTransmissionRoutes( float contagionDecayRate )
@@ -378,8 +363,6 @@ namespace Kernel
 
         if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && GetParams()->enable_hint ) 
         {
-            ValidateIntranodeTransmissionConfiguration();
-
             for( auto p_ip : IPFactory::GetInstance()->GetIPList() )
             {
                 auto hint = p_ip->GetIntraNodeTransmission( GetExternalID() );
@@ -387,8 +370,7 @@ namespace Kernel
 
                 if ( matrix.size() > 0 )
                 {
-                    std::string routeName = hint.GetRouteName();
-                    AddRoute( routeName );
+                    AddRoute(hint.GetRouteName());
                     transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
                                                      p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
                                                      matrix );
@@ -397,9 +379,8 @@ namespace Kernel
                 {
                     for (auto entry : hint.GetRouteToMatrixMap())
                     {
-                        std::string routeName = entry.first;
+                        AddRoute(entry.first);
                         auto& matrix = entry.second;
-                        AddRoute( routeName );
                         transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
                                                          p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
                                                          matrix );
@@ -408,30 +389,30 @@ namespace Kernel
                 else //HINT is enabled, but no transmission matrix is detected
                 {
                     // This is okay. We don't need every IP to participate in HINT.
+                    AddRoute(TransmissionRoute::CONTACT);
                 }
             }
         }
         else //HINT is not enabled
         {
-            AddDefaultRoute();
+            AddRoute(TransmissionRoute::CONTACT);
         }
 
+        event_context_host->SetupTxRoutes();
         BuildTransmissionRoutes( 1.0f );
     }
 
-    void Node::GetGroupMembershipForIndividual(const RouteList_t& route, const tProperties& properties, TransmissionGroupMembership_t& transmissionGroupMembership)
+    void Node::GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& transmissionGroupMembership)
     {
         LOG_DEBUG_F( "Calling GetGroupMembershipForProperties\n" );
         transmissionGroups->GetGroupMembershipForProperties(properties, transmissionGroupMembership );
     }
 
-    std::map< std::string, float >
-    Node::GetContagionByRoute()
-    const
+    std::map<TransmissionRoute::Enum, float> Node::GetContagionByRoute() const
     {
         // Honestly not sure how to implement this in the general case yet.
         //throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "This function is only supported in NodeTyphoid at this time." );
-        std::map<std::string, float> contagionByRoute;
+        std::map<TransmissionRoute::Enum, float> contagionByRoute;
         release_assert( GetTransmissionRoutes().size() > 0 );
         for( auto & route: GetTransmissionRoutes() )
         {
@@ -455,7 +436,7 @@ namespace Kernel
         return routes;
     }
 
-    float Node::GetContagionByRouteAndProperty( const std::string& route, const IPKeyValue& property_value )
+    float Node::GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value )
     {
         return transmissionGroups->GetContagionByProperty( property_value );
     }
@@ -472,13 +453,14 @@ namespace Kernel
         transmissionGroups->ChangeMatrix(propertyName, newScalingMatrix);
     }
 
-    void Node::ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt)
+    void Node::ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route)
     {
         if( bSkipping )
         {
             return;
         }
-        transmissionGroups->ExposeToContagion(candidate, individual, dt, TransmissionRoute::TRANSMISSIONROUTE_CONTACT);
+
+        transmissionGroups->ExposeToContagion(candidate, individual, dt, route);
     }
 
     void Node::DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route )
@@ -559,7 +541,6 @@ namespace Kernel
             if( gap == 1 )
             {
                 bSkipping = false;
-                //ProbabilityNumber max_prob = std::max( maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_CONTACT ], maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_ENVIRONMENTAL ] );
                 gap = calcGap();
                 LOG_DEBUG_F( "The (next) gap to skip for this node is calculated as: %d.\n", gap );
             }
@@ -756,7 +737,7 @@ namespace Kernel
         LOG_DEBUG_F("[updateInfectivity] starting infectionrate = %f\n", infectionrate);
 
         // Incorporate multiplicative infectivity
-        float infectivity_multiplication = event_context_host->GetInfectivityMultiplier();
+        float infectivity_multiplication = event_context_host->GetInfectivityMultiplier(TransmissionRoute::CONTACT);
 
         // Constant bias
         if(GetParams()->enable_infectivity_scaling)
@@ -2163,38 +2144,6 @@ namespace Kernel
 
     void Node::finalizeNodeStateCounters(void)
     {
-        infected_people_prior.push_back( float(new_infections) );
-        if( infected_people_prior.size() > infection_averaging_window )
-        {
-            infected_people_prior.pop_front();
-        }
-        if( newInfectedPeopleAgeProduct < 0 )
-        {
-            throw CalculatedValueOutOfRangeException( __FILE__, __LINE__, __FUNCTION__, "newInfectedPeopleAgeProduct", newInfectedPeopleAgeProduct, 0 );
-        }
-
-        infected_age_people_prior.push_back( float(newInfectedPeopleAgeProduct) );
-        if( infected_age_people_prior.size() > infection_averaging_window )
-        {
-            infected_age_people_prior.pop_front();
-        }
-
-        double numerator = std::accumulate(infected_age_people_prior.begin(), infected_age_people_prior.end(), 0.0);
-        if( numerator < 0.0 )
-        {
-            throw CalculatedValueOutOfRangeException( __FILE__, __LINE__, __FUNCTION__, "numerator", numerator, 0 );
-        }
-
-        float denominator = std::accumulate( infected_people_prior.begin(), infected_people_prior.end(), 0 );
-        if( denominator && numerator )
-        {
-            mean_age_infection = numerator/( denominator * DAYSPERYEAR);
-            LOG_DEBUG_F( "mean_age_infection = %f/%f*365.\n", numerator, denominator );
-        }
-        else
-        {
-            mean_age_infection = 0; // necessary? KM comment - yes, if numerator = 0 then normal calc is OK; if denom is 0 (say, in an eradication context), then above calc will throw Inf/NaN/exception, depending on divide-by-zero handling.
-        }
     }
 
     //------------------------------------------------------------------
@@ -2459,11 +2408,6 @@ namespace Kernel
         return Possible_Mothers;
     }
 
-    float Node::GetMeanAgeInfection() const
-    {
-        return mean_age_infection;
-    }
-
     uint64_t Node::GetTotalGenomes() const
     {
         return GetParams()->number_genomes;
@@ -2500,33 +2444,13 @@ namespace Kernel
         return net_inf_rep;
     }
 
-    bool Node::IsValidTransmissionRoute( const string& transmissionRoute )
-    {
-        static std::string route;
-        bool isValid = false;
-
-        if ( route.length() == 0 )
-        {
-            // If we have not seen a route name yet, anything is fair game.
-            isValid = true;
-            route = transmissionRoute;
-        }
-        else
-        {
-            // If we have seen a route name previously, subsequent route names must match.
-            isValid = (transmissionRoute == route);
-        }
-
-        return isValid;
-    }
-
     int Node::calcGap()
     {
         int gap = 1;
         if( IndividualHumanConfig::enable_skipping )
         {
             release_assert( maxInfectionProb.size()>0 );
-            float maxProb = GetMaxInfectionProb( TransmissionRoute::TRANSMISSIONROUTE_CONTACT );
+            float maxProb = GetMaxInfectionProb( TransmissionRoute::CONTACT );
             if (maxProb>=1.0)
             {
                 gap=1;
@@ -2554,38 +2478,11 @@ namespace Kernel
             {
                 maxProbRet = prob;
             }
-            maxInfectionProb[ TransmissionRoute::TRANSMISSIONROUTE_CONTACT ] = maxProbRet;
+            maxInfectionProb[ TransmissionRoute::CONTACT ] = maxProbRet;
             LOG_INFO_F( "The max probability of infection over the contact route (w/o immunity or interventions) for this node is: %f.\n", maxProbRet );
         } 
         gap = 1;
         bSkipping = false; // changes from individual to individual. Initialize to false
-    }
-
-    void Node::ValidateIntranodeTransmissionConfiguration()
-    {
-        bool oneOrMoreMatrices = false;
-
-        for( auto p_ip : IPFactory::GetInstance()->GetIPList() )
-        {
-            if( p_ip->GetIntraNodeTransmission( GetExternalID() ).HasMatrix() )
-            {
-                oneOrMoreMatrices = true;
-
-                string route_name = p_ip->GetIntraNodeTransmission( GetExternalID() ).GetRouteName();
-                if( !IsValidTransmissionRoute( route_name ) )
-                {
-                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "All HINT route names must match for GENERIC_SIM.\n" );
-                }
-
-                oneOrMoreMatrices = true;
-            }
-        }
-
-        if (!oneOrMoreMatrices) 
-        {
-            LOG_WARN("HINT Configuration: heterogeneous intranode transmission is enabled, but no transmission matrices were found in the demographics file(s).\n");
-            // TODO throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, "HINT Configuration: No transmission matrices were found in the demographics file(s).");
-        }
     }
 
     REGISTER_SERIALIZABLE(Node);
@@ -2651,16 +2548,14 @@ namespace Kernel
             ar.labelElement("Cumulative_Infections")             & node.Cumulative_Infections;
             ar.labelElement("Cumulative_Reported_Infections")    & node.Cumulative_Reported_Infections;
             ar.labelElement("Campaign_Cost")                     & node.Campaign_Cost;
-            ar.labelElement("mean_age_infection")                & node.mean_age_infection;
-            ar.labelElement("newInfectedPeopleAgeProduct")       & node.newInfectedPeopleAgeProduct;
             ar.labelElement("infectionrate")                     & node.infectionrate;
             ar.labelElement("mInfectivity")                      & node.mInfectivity;
 
             ar.labelElement("distribution_demographic_risk")            & node.distribution_demographic_risk;
             ar.labelElement("distribution_susceptibility")              & node.distribution_susceptibility;
             ar.labelElement("distribution_age")                         & node.distribution_age;
-            
-            ar.labelElement("routes")                            & node.routes;
+
+            //ar.labelElement("routes")                            & node.routes;
             ar.labelElement("bSkipping")                         & node.bSkipping;
         }
     }

@@ -155,9 +155,9 @@ namespace Kernel
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) override;
 
         // Infections
-        virtual void ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership);
-        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
-        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
+        virtual void ExposeToInfectivity(float dt);
+        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route ) override;
+        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) override;
         virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
 
         virtual const infection_list_t &GetInfections() const override;
@@ -204,7 +204,8 @@ namespace Kernel
         Susceptibility*               susceptibility;   // individual susceptibility (i.e. immune system)
         infection_list_t              infections;
         InterventionsContainer*       interventions;
-        TransmissionGroupMembership_t transmissionGroupMembership;
+
+        std::map<TransmissionRoute::Enum, TransmissionGroupMembership_t> transmissionGroupMembershipByRoute;
 
         // Infections
         bool  m_is_infected;    // TODO: replace with more sophisticated strain-tracking capability

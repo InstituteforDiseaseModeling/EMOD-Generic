@@ -28,12 +28,8 @@ namespace Kernel
         static InfectionEnvironmental *CreateInfection(IIndividualHumanContext *context, suids::suid _suid);
         virtual ~InfectionEnvironmental(void);
 
-        virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
-        virtual void SetParameters(IStrainIdentity* _infstrain=nullptr, float incubation_period_override = -1.0f ) override;
-
     protected:
         InfectionEnvironmental(IIndividualHumanContext *context);
-        virtual void Initialize(suids::suid _suid) override;
         InfectionEnvironmental();
 
         DECLARE_SERIALIZABLE(InfectionEnvironmental);

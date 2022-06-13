@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include <iostream>
+#include <functional>
 #include "UnitTest++.h"
 #include "Exceptions.h"
 #include "JsonObjectDemog.h"

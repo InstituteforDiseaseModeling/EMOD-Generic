@@ -100,7 +100,7 @@ namespace Kernel
     }
 
 
-    void IndividualHumanVector::ExposeToInfectivity(float dt, TransmissionGroupMembership_t transmissionGroupMembership)
+    void IndividualHumanVector::ExposeToInfectivity(float dt)
     {
         // Reset counters
         m_strain_exposure.clear();
@@ -108,7 +108,7 @@ namespace Kernel
 
         // Expose individual to all pools in weighted collection (i.e. indoor + outdoor)
         LOG_VALID("Exposure to contagion: vector to human.\n");
-        parent->ExposeIndividual( this, transmissionGroupMembership, dt );
+        parent->ExposeIndividual( this, transmissionGroupMembershipByRoute[TransmissionRoute::CONTACT], dt);
 
         // Decide based on total exposure to infectious bites
         // whether the individual becomes infected and with what strain
@@ -141,7 +141,7 @@ namespace Kernel
         AcquireNewInfection(&contPop);
     }
 
-    void IndividualHumanVector::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route )
+    void IndividualHumanVector::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )
     {
         release_assert( cp );
         release_assert( susceptibility );
@@ -156,18 +156,18 @@ namespace Kernel
         release_assert( vector_interventions );
         float acqmod = GetRelativeBitingRate() * susceptibility->getModAcquire() * interventions->GetInterventionReducedAcquire();
 
-        switch( transmission_route )
+        switch( tx_route )
         {
-            case TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_INDOOR:
+            case TransmissionRoute::VECTOR_TO_HUMAN_INDOOR:
                 acqmod *= vector_interventions->GetblockIndoorVectorAcquire();
                 break;
 
-            case TransmissionRoute::TRANSMISSIONROUTE_VECTOR_TO_HUMAN_OUTDOOR:
+            case TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR:
                 acqmod *= vector_interventions->GetblockOutdoorVectorAcquire();
                 break;
         
             default:
-                throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "transmission_route", transmission_route, TransmissionRoute::pairs::lookup_key( transmission_route ) );
+                throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "transmission_route", tx_route, TransmissionRoute::pairs::lookup_key( tx_route ) );
         }
 
         // Accumulate vector of pairs of strain ids and cumulative infection probability
@@ -244,8 +244,8 @@ namespace Kernel
                          host_vector_weight,
                          infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit()
                        );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_INDOOR );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::TRANSMISSIONROUTE_HUMAN_TO_VECTOR_OUTDOOR );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::HUMAN_TO_VECTOR_INDOOR );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR );
         }
     }
 

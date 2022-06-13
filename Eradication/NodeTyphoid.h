@@ -24,7 +24,6 @@ namespace Kernel
     class NodeTyphoid : public NodeEnvironmental
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        //DECLARE_QUERY_INTERFACE()
 
         // TODO Get rid of friending and provide accessors for all these floats
         friend class ::ReportTyphoid;
@@ -35,8 +34,6 @@ namespace Kernel
         virtual ~NodeTyphoid(void);
 
         virtual void resetNodeStateCounters(void);
-        virtual void updateNodeStateCounters(IndividualHuman *ih);
-        virtual void finalizeNodeStateCounters(void);
 
         virtual int calcGap() override;
 

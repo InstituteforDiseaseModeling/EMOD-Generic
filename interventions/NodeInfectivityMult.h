@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionFactory.h"
 #include "FactorySupport.h"
 #include "Configuration.h"
+#include "SimulationEnums.h"
 #include "InterpolatedValueMap.h"
 
 namespace Kernel
@@ -37,8 +38,8 @@ namespace Kernel
         static void serialize(IArchive&, NodeInfectivityMult*);
 
     protected:
-        float                 duration;
-
-        InterpolatedValueMap  mult_by_duration;
+        float                      duration;
+        TransmissionRoute::Enum    tx_route;
+        InterpolatedValueMap       mult_by_duration;
     };
 }

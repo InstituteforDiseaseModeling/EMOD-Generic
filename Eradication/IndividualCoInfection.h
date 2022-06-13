@@ -130,7 +130,7 @@ namespace Kernel
         virtual void CreateSusceptibility(float=1.0, float=1.0) override;
         virtual void UpdateInfectiousness(float dt) override;
         virtual void Update(float currenttime, float dt) override;
-        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
+        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route ) override;
         virtual void CheckHIVVitalDynamics(float=1.0); // non-disease mortality, does not override
          //Deaths
         virtual void BroadcastDeath()                       override;
@@ -215,7 +215,7 @@ namespace Kernel
 
         virtual float GetImmunityReducedAcquire() override; 
 
-        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route = TransmissionRoute::TRANSMISSIONROUTE_CONTACT ) override;
+        virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) override;
 
     protected:
         IndividualHumanCoInfection( suids::suid _suid, float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);

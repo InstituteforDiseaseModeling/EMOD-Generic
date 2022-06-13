@@ -254,7 +254,7 @@ update(PyObject* self, PyObject* args)
     }
     if( population.find( id ) != population.end() )
     {
-        //std::cout << "Calling update on individual " << id << std::endl;
+        population.at(id)->UpdateGroupMembership();
         population.at(id)->UpdateInfectiousness( 1.0 ); // includes shedding
         population.at(id)->Update(1.0f, 1.0f); // includes exposure & natural mortality
     }
@@ -276,7 +276,7 @@ updateShedding(PyObject* self, PyObject* args)
     }
     if( population.find( id ) != population.end() )
     {
-        //std::cout << "Calling UpdateInfectiousness on individual " << id << std::endl;
+        population.at(id)->UpdateGroupMembership();
         population.at(id)->UpdateInfectiousness( 1.0 ); // includes shedding
     }
     else
@@ -297,9 +297,8 @@ updateMain(PyObject* self, PyObject* args)
     }
     if( population.find( id ) != population.end() )
     {
-        //std::cout << "Calling update on individual " << id << std::endl;
+        population.at(id)->UpdateGroupMembership();
         population.at(id)->Update(1.0f, 1.0f); // includes exposure & natural mortality
-        //std::cout << "Called update on individual " << id << std::endl;
     }
     else
     {
@@ -308,17 +307,6 @@ updateMain(PyObject* self, PyObject* args)
     
     Py_RETURN_NONE;
 }
-
-/*
-static PyObject*
-setEnumParam(PyObject* self, PyObject* args)
-{
-    char * param_name;
-    person->Update( 0.0f, 1.0f );
-
-    Py_RETURN_NONE;
-}
-*/
 
 static PyObject*
 getAge(PyObject* self, PyObject* args)

@@ -6,11 +6,13 @@ EMOD is licensed under the Creative Commons Attribution-Noncommercial-ShareAlike
 To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 
 ***************************************************************************************************/
+
 #include <stdafx.h>
 #include <cstdio>
 #include <string>
 #include <assert.h>
 
+#include <functional>
 #include <sstream>
 
 #include "Log.h"
@@ -429,7 +431,7 @@ namespace Kernel {
     float JsonObjectDemog::GetFloat(const char* key) const
     {
         double val = GetDouble( key );
-        float f_val = val ;
+        float f_val = static_cast<float>(val) ;
         return f_val ;
     }
 
@@ -535,7 +537,7 @@ namespace Kernel {
 
     float JsonObjectDemog::AsFloat() const 
     { 
-        return AsDouble();
+        return static_cast<float>(AsDouble());
     }
 
     double JsonObjectDemog::AsDouble() const 
@@ -958,7 +960,7 @@ namespace Kernel {
         OutputStringStream os;
         rapidjson::PrettyWriter<OutputStringStream> writer(os);
         doc.Accept(writer);
-        int len = os.str().size();
+        size_t len = os.str().size();
         if (len > 0)
         {
             prettyString = (char*) malloc(len + 1);

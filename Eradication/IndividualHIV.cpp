@@ -152,14 +152,7 @@ namespace Kernel
 
     }
 
-    bool
-    IndividualHumanHIV::ShouldAcquire(
-        float contagion,
-        float dt,
-        float suscept_mod,
-        TransmissionRoute::Enum transmission_route
-    )
-    const
+    bool IndividualHumanHIV::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) const
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Function exists due to inheritance but not implemented yet in HIV. Not needed or used for system-level operation." );
     }
