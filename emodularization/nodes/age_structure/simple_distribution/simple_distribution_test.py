@@ -183,7 +183,7 @@ class SimpleDistributionTest(unittest.TestCase):
         pass
 
     @given(mean=strategies.floats(min_value=3650, max_value=32850),
-           width=strategies.floats(min_value=1e-2, max_value=3650))
+           width=strategies.floats(min_value=10, max_value=3650))
     @example(mean=18250, width=1825)
     @settings(max_examples=10, deadline=None)
     def test_simple_distribution_gaussian(self, mean, width):
@@ -192,21 +192,11 @@ class SimpleDistributionTest(unittest.TestCase):
         initial_population = 10000
         flag = age_support.Constants.FLAG_GAUSSIAN
         age_peeps = self.run_simple_initialization_test(initial_population, flag, mean, width)
-        # replaced with test_e
-        # success = dtk_sft.test_gaussian(age_peeps,
-        #                                mean,
-        #                                width,
-        #                                round=True,
-        #                                 allow_negative = False)
         success = dtk_sft.test_eGaussNonNeg(age_peeps,
                                             mean,
                                             width,
                                             round=True)
         if self.debug or self.saveplot:
-            # replaced with truncated normal distribution
-            # scipy_distro = stats.norm.rvs(mean,
-            #                               width,
-            #                               len(age_peeps))
             a = -mean / width
             b = (sys.float_info.max - mean) / width
             scipy_distro = stats.truncnorm.rvs(a,
@@ -228,11 +218,10 @@ class SimpleDistributionTest(unittest.TestCase):
             print("TEST SIMPLE DISTRIBUTION GAUSSIAN: failed")
             print("rerun TEST SIMPLE DISTRIBUTION GAUSSIAN")
             age_peeps = self.run_simple_initialization_test(initial_population, flag, mean, width)
-            success = dtk_sft.test_gaussian(age_peeps,
-                                       mean,
-                                       width,
-                                       round=True,
-                                        allow_negative = False)
+            success = dtk_sft.test_eGaussNonNeg(age_peeps,
+                                                mean,
+                                                width,
+                                                round=True)
             if not success:
                 if not os.path.exists('./failed'):
                     os.makedirs('./failed')

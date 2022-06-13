@@ -50,7 +50,7 @@ class HpcMonitor(regression_local_monitor.Monitor):
 
         p = subprocess.Popen(hpc_command_line, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         p.wait(timeout=30)
-        assert p.returncode is 0, hpc_command_line
+        assert p.returncode == 0, hpc_command_line
 
     def run(self):
     

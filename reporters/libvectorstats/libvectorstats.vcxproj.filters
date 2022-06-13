@@ -34,5 +34,8 @@
     <ClCompile Include="ReportVectorStatsEModule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Eradication\Infection.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -14,18 +14,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Debug.h"
 #include "Log.h"
 
-#define ENV_VAR_PYTHON              "IDM_PYTHON3_PATH"
+#define ENV_VAR_PYTHON              "IDM_PYTHON3X_PATH"
 #define PYTHON_SCRIPT_PATH_NOT_SET  ""
 
 SETUP_LOGGING("PythonSupport")
 
 namespace Kernel
 {
-#ifdef ENABLE_PYTHON
-    // Need custom NoneType because of delay-load DLL
-    void*       PythonSupport::PythonNoneType             = Py_BuildValue("");
-#endif
-
     std::string PythonSupport::SCRIPT_PRE_PROCESS         = "dtk_pre_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS        = "dtk_post_process";
     std::string PythonSupport::SCRIPT_POST_PROCESS_SCHEMA = "dtk_post_process_schema";
@@ -74,6 +69,7 @@ namespace Kernel
         {
             LOG_INFO_F( "Python script path: %s\n", m_PythonScriptPath.c_str() );
         }
+
 #ifdef WIN32
         // Get path to python installation
         char* c_python_path = getenv(ENV_VAR_PYTHON);
@@ -83,6 +79,7 @@ namespace Kernel
             msg << "Cannot find environmental variable " << ENV_VAR_PYTHON << ".\n";
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
+
         std::string python_home = c_python_path;
         python_home = FileSystem::RemoveTrailingChars( python_home );
         LOG_INFO_F( "Python home path: %s\n", python_home.c_str() );
@@ -90,9 +87,11 @@ namespace Kernel
         if( !FileSystem::DirectoryExists( python_home ) )
         {
             std::stringstream msg;
-            msg << "IDM_PYTHON3_PATH=" << python_home << ". Directory was not found.";
+            msg << ENV_VAR_PYTHON << "=" << python_home << ". Directory was not found.";
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
+
+        SetDllDirectoryA(c_python_path);
         Py_SetPythonHome( Py_DecodeLocale( python_home.c_str(), nullptr ) );
 #endif
 
@@ -107,7 +106,7 @@ namespace Kernel
         PyObject* path_user = PyUnicode_FromString( m_PythonScriptPath.c_str() );
         release_assert( path_user );
         release_assert( !PyList_Insert(sys_path, 0, path_user) );
-        
+
         PyObject* path_default = PyUnicode_FromString( "" );
         release_assert( path_default );
         release_assert( !PyList_Insert(sys_path, 0, path_default) );
@@ -188,14 +187,23 @@ namespace Kernel
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
+        // Local instance of NoneType
+        PyObject* none_type = Py_BuildValue("");
+
         // Handle return value
         if(PyUnicode_Check(retVal))
         {
-            const char* retValuePtr = PyUnicode_AsUTF8(retVal);
-            release_assert( retValuePtr );
-            returnString.assign( retValuePtr );
+            wchar_t*    utf_chars;
+            Py_ssize_t  num_chars = PyUnicode_GetSize(retVal) + 1;
+
+            // Possible data loss if return string is non-UTF8
+            utf_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
+            PyUnicode_AsWideChar(retVal, utf_chars, num_chars);
+            std::wstring temp_wstr(utf_chars);
+            free(utf_chars);
+            returnString.assign(temp_wstr.begin(), temp_wstr.end());
         }
-        else if (retVal != PythonSupport::PythonNoneType)
+        else if (retVal != none_type)
         {
             std::stringstream msg;
             msg << "Python function '" << python_function_name << "' in " << python_module_name
@@ -212,6 +220,7 @@ namespace Kernel
         // Memory cleanup
         Py_XDECREF(vars);
         Py_XDECREF(retVal);
+        Py_XDECREF(none_type);
 #endif
         return returnString;
     }
@@ -280,10 +289,16 @@ namespace Kernel
         // Store pointers to everything within the python module
         while (PyDict_Next(pDict, &dict_pos, &dict_key, &dict_value))
         {
-            std::string python_dict_entry;
-            const char* retValuePtr = PyUnicode_AsUTF8( dict_key );
-            release_assert( retValuePtr );
-            python_dict_entry.assign( retValuePtr );
+            wchar_t*    utf_chars;
+            Py_ssize_t  num_chars = PyUnicode_GetSize(dict_key) + 1;
+
+            // Possible data loss if function name is non-UTF8
+            utf_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
+            PyUnicode_AsWideChar(dict_key, utf_chars, num_chars);
+            std::wstring temp_wstr(utf_chars);
+            free(utf_chars);
+            std::string python_dict_entry(temp_wstr.begin(), temp_wstr.end());
+
             if(PyCallable_Check(dict_value))
             {
                 PyObjectsMap[python_module_name][python_dict_entry] = dict_value;

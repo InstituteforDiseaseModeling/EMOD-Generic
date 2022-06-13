@@ -149,7 +149,7 @@
         "Post_Infection_Acquisition_Multiplier": 0.35,
         "Post_Infection_Mortality_Multiplier": 1,
         "Post_Infection_Transmission_Multiplier": 1,
-        "Python_Script_Path": "LOCAL",
+        "Python_Script_Path": "SHARED",
         "Rainfall_Filename": "",
         "Rainfall_Scale_Factor": 1,
         "Regional_Migration_Filename": "",

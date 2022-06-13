@@ -57,9 +57,6 @@
     <ClInclude Include="..\utils\Configure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Eradication\Contexts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Eradication\DllDefs.h">
       <Filter>Header Files</Filter>
     </ClInclude>

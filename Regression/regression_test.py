@@ -704,7 +704,7 @@ def main():
     if not (sweep and not science):
         test_runner.print_report_results()
 
-    if ru.final_warnings is not "":
+    if ru.final_warnings != "":
         print("----------------")
         print(ru.final_warnings)
         print("----------------")

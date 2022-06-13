@@ -24,6 +24,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #endif
 #endif
 
+#define PY_SSIZE_T_CLEAN
+#define Py_LIMITED_API 0x03060000
 #include "Python.h"
 
 #ifdef WIN32
@@ -39,8 +41,6 @@ namespace Kernel
     class PythonSupport
     {
     public:
-        static void* PythonNoneType;
-
         static std::string SCRIPT_PRE_PROCESS;
         static std::string SCRIPT_POST_PROCESS;
         static std::string SCRIPT_POST_PROCESS_SCHEMA;

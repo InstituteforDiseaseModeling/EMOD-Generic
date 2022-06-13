@@ -22,7 +22,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                211.3788604736
+                211.3786315918
             ],
             "smeared_true_gametocytes": [
                 0
@@ -82,7 +82,7 @@
                 240.694732666
             ],
             "smeared_true_asexual_parasites": [
-                251.2995910645
+                251.2998657227
             ],
             "smeared_true_gametocytes": [
                 51.70269012451
@@ -150,7 +150,7 @@
             ],
             "smeared_true_gametocytes": [
                 0,
-                169.9265899658
+                169.9269561768
             ],
             "asexual_parasites": [
                 120,
@@ -234,9 +234,9 @@
             ],
             "smeared_true_gametocytes": [
                 0,
-                244.7616729736,
+                244.7617950439,
                 434.2090759277,
-                121.4165420532
+                121.4167480469
             ],
             "asexual_parasites": [
                 740,
@@ -485,8 +485,8 @@
                 8474.357421875
             ],
             "smeared_true_gametocytes": [
-                824.309387207,
-                84.65687561035
+                824.3098754883,
+                84.65685272217
             ],
             "asexual_parasites": [
                 300,
@@ -565,12 +565,12 @@
                 21.69624900818
             ],
             "smeared_true_asexual_parasites": [
-                289.4098205566,
-                3087.831542969
+                289.4096679688,
+                3087.828125
             ],
             "smeared_true_gametocytes": [
                 726.0522460938,
-                4.641283512115
+                4.641285896301
             ],
             "asexual_parasites": [
                 640,
@@ -641,7 +641,7 @@
                 13833.68261719
             ],
             "smeared_true_gametocytes": [
-                49.23024749756
+                49.23027420044
             ],
             "asexual_parasites": [
                 160
@@ -913,7 +913,7 @@
                 666.0774536133
             ],
             "smeared_true_gametocytes": [
-                101.3677139282
+                101.3678283691
             ],
             "asexual_parasites": [
                 500
@@ -1246,7 +1246,7 @@
                 3269.073974609
             ],
             "smeared_true_asexual_parasites": [
-                3832.665039063
+                3832.675537109
             ],
             "smeared_true_gametocytes": [
                 7100.458984375
@@ -1501,7 +1501,7 @@
                 678.1589355469
             ],
             "smeared_true_gametocytes": [
-                8.0697889328
+                8.069787025452
             ],
             "asexual_parasites": [
                 960
@@ -1569,8 +1569,8 @@
                 1867.740478516
             ],
             "smeared_true_gametocytes": [
-                1267.181274414,
-                0.003169575706124
+                1267.179931641,
+                0.003169579198584
             ],
             "asexual_parasites": [
                 180,
@@ -1770,7 +1770,7 @@
             ],
             "smeared_true_gametocytes": [
                 0.7043485641479,
-                2966.197998047,
+                2966.194824219,
                 2905.973388672
             ],
             "asexual_parasites": [
@@ -1858,11 +1858,11 @@
             ],
             "smeared_true_asexual_parasites": [
                 466.4720458984,
-                1685.621826172
+                1685.623657227
             ],
             "smeared_true_gametocytes": [
                 1730.769775391,
-                197.9258880615
+                197.9263153076
             ],
             "asexual_parasites": [
                 150,
@@ -2001,7 +2001,7 @@
                 2028.570800781
             ],
             "smeared_true_gametocytes": [
-                396.4889526367
+                396.4893798828
             ],
             "asexual_parasites": [
                 350
@@ -2078,12 +2078,12 @@
             "smeared_true_asexual_parasites": [
                 618.2751464844,
                 247.2894744873,
-                1058.731933594
+                1058.733032227
             ],
             "smeared_true_gametocytes": [
-                185.5759887695,
-                355.1481628418,
-                496.433807373
+                185.5761871338,
+                355.1483459473,
+                496.4335327148
             ],
             "asexual_parasites": [
                 120,
@@ -2165,11 +2165,11 @@
                 75.4104309082
             ],
             "smeared_true_asexual_parasites": [
-                536.2905883789,
+                536.2908325195,
                 2532.107910156
             ],
             "smeared_true_gametocytes": [
-                335.6921081543,
+                335.6922912598,
                 19.22228431702
             ],
             "asexual_parasites": [
@@ -2253,7 +2253,7 @@
             ],
             "smeared_true_asexual_parasites": [
                 2265.231201172,
-                282.2143859863,
+                282.2140808105,
                 3593.847412109
             ],
             "smeared_true_gametocytes": [
@@ -2349,7 +2349,7 @@
                 158.3751373291
             ],
             "smeared_true_gametocytes": [
-                6.27979183197
+                6.279794692993
             ],
             "asexual_parasites": [
                 370
@@ -2414,7 +2414,7 @@
                 13.73725414276
             ],
             "smeared_true_asexual_parasites": [
-                247.5796203613
+                247.5793609619
             ],
             "smeared_true_gametocytes": [
                 0.09188243746758
@@ -2686,11 +2686,11 @@
             "smeared_true_asexual_parasites": [
                 425.6233520508,
                 254.1562652588,
-                595.9088745117
+                595.9092407227
             ],
             "smeared_true_gametocytes": [
                 603.7598876953,
-                177.7725982666,
+                177.7726898193,
                 203.2362976074
             ],
             "asexual_parasites": [
@@ -2966,10 +2966,10 @@
                 34.203956604
             ],
             "smeared_true_asexual_parasites": [
-                856.8597412109
+                856.860168457
             ],
             "smeared_true_gametocytes": [
-                117.6209411621
+                117.6208724976
             ],
             "asexual_parasites": [
                 1040
@@ -3090,7 +3090,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                1394.863525391
+                1394.862792969
             ],
             "smeared_true_gametocytes": [
                 0
@@ -3162,7 +3162,7 @@
                 151.6631011963
             ],
             "smeared_true_asexual_parasites": [
-                2629.783447266
+                2629.787597656
             ],
             "smeared_true_gametocytes": [
                 1581.235473633
@@ -3226,7 +3226,7 @@
             ],
             "smeared_true_asexual_parasites": [
                 1570.382080078,
-                6293.787109375
+                6293.80078125
             ],
             "smeared_true_gametocytes": [
                 0,
@@ -3442,7 +3442,7 @@
             ],
             "smeared_true_gametocytes": [
                 3.09171628952,
-                1851.396484375,
+                1851.39453125,
                 419.5939331055,
                 77.24833679199
             ],
@@ -3606,7 +3606,7 @@
             ],
             "smeared_true_gametocytes": [
                 0,
-                166.7015228271,
+                166.7013397217,
                 359.4905090332
             ],
             "asexual_parasites": [
@@ -3706,7 +3706,7 @@
             ],
             "smeared_true_gametocytes": [
                 9.747241020203,
-                468.579498291,
+                468.5792541504,
                 531.1600952148
             ],
             "asexual_parasites": [
@@ -3786,7 +3786,7 @@
                 85.70054626465
             ],
             "smeared_true_asexual_parasites": [
-                164.2035675049
+                164.2037506104
             ],
             "smeared_true_gametocytes": [
                 235.5575408936
@@ -3966,7 +3966,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                6559.974609375
+                6559.989257813
             ],
             "smeared_true_gametocytes": [
                 0
@@ -4029,7 +4029,7 @@
                 474.2276000977
             ],
             "smeared_true_asexual_parasites": [
-                513.7922363281,
+                513.7916870117,
                 400.2109375
             ],
             "smeared_true_gametocytes": [
@@ -4114,7 +4114,7 @@
             ],
             "smeared_true_asexual_parasites": [
                 771.2333984375,
-                347.451385498
+                347.4515686035
             ],
             "smeared_true_gametocytes": [
                 305.2886657715,
@@ -4189,7 +4189,7 @@
                 1301.8046875
             ],
             "smeared_true_gametocytes": [
-                16.40916442871
+                16.40916824341
             ],
             "asexual_parasites": [
                 920
@@ -4321,7 +4321,7 @@
                 2188.793212891
             ],
             "smeared_true_gametocytes": [
-                519.8060302734
+                519.8054199219
             ],
             "asexual_parasites": [
                 480
@@ -4395,7 +4395,7 @@
             "smeared_true_gametocytes": [
                 211.4727630615,
                 410.0993347168,
-                136.0537872314
+                136.0538635254
             ],
             "asexual_parasites": [
                 1060,
@@ -4485,7 +4485,7 @@
                 352.9750671387
             ],
             "smeared_true_gametocytes": [
-                96.46155548096
+                96.46139526367
             ],
             "asexual_parasites": [
                 820
@@ -4790,10 +4790,10 @@
                 69.00797271729
             ],
             "smeared_true_asexual_parasites": [
-                1310.3125
+                1310.311157227
             ],
             "smeared_true_gametocytes": [
-                5.903221607208
+                5.903227806091
             ],
             "asexual_parasites": [
                 690
@@ -4854,10 +4854,10 @@
                 760.1091918945
             ],
             "smeared_true_asexual_parasites": [
-                1535.838623047
+                1535.836914063
             ],
             "smeared_true_gametocytes": [
-                1593.498168945
+                1593.49987793
             ],
             "asexual_parasites": [
                 770
@@ -5054,10 +5054,10 @@
             ],
             "smeared_true_asexual_parasites": [
                 2039.45690918,
-                752.9178466797
+                752.9182739258
             ],
             "smeared_true_gametocytes": [
-                8.431592941284,
+                8.431593894958,
                 1015.767822266
             ],
             "asexual_parasites": [
@@ -5206,7 +5206,7 @@
                 473.7266235352
             ],
             "smeared_true_asexual_parasites": [
-                352.363067627
+                352.36328125
             ],
             "smeared_true_gametocytes": [
                 468.2878723145
@@ -5282,7 +5282,7 @@
             ],
             "smeared_true_gametocytes": [
                 0.7661518454552,
-                109.2959976196
+                109.2956390381
             ],
             "asexual_parasites": [
                 130,
@@ -5494,7 +5494,7 @@
                 0.2190594375134
             ],
             "smeared_true_asexual_parasites": [
-                310.2370910645
+                310.2372741699
             ],
             "smeared_true_gametocytes": [
                 0
@@ -5682,7 +5682,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                115.3631286621
+                115.3630065918
             ],
             "smeared_true_gametocytes": [
                 0
@@ -5742,10 +5742,10 @@
                 2.162697792053
             ],
             "smeared_true_asexual_parasites": [
-                301.1607666016
+                301.1612548828
             ],
             "smeared_true_gametocytes": [
-                1.682395815849
+                1.68239569664
             ],
             "asexual_parasites": [
                 1060
@@ -5865,7 +5865,7 @@
                 1713.72668457
             ],
             "smeared_true_gametocytes": [
-                13.18202495575
+                13.18202114105
             ],
             "asexual_parasites": [
                 120
@@ -6134,7 +6134,7 @@
                 383.9716186523
             ],
             "smeared_true_asexual_parasites": [
-                383.3723449707
+                383.3725585938
             ],
             "smeared_true_gametocytes": [
                 124.1927337646
@@ -6269,13 +6269,13 @@
             ],
             "smeared_true_asexual_parasites": [
                 1722.65637207,
-                4232.162597656,
+                4232.153320313,
                 1113.387573242
             ],
             "smeared_true_gametocytes": [
                 1077.458618164,
-                129.5419158936,
-                106.3185272217
+                129.5419769287,
+                106.3185806274
             ],
             "asexual_parasites": [
                 310,
@@ -6502,11 +6502,11 @@
             ],
             "smeared_true_asexual_parasites": [
                 414.9367675781,
-                308.6490783691
+                308.6485900879
             ],
             "smeared_true_gametocytes": [
-                3359.050292969,
-                44.81908798218
+                3359.055908203,
+                44.81906509399
             ],
             "asexual_parasites": [
                 230,
@@ -6929,7 +6929,7 @@
                 1396.348144531
             ],
             "smeared_true_asexual_parasites": [
-                2054.066162109,
+                2054.067382813,
                 972.3428955078
             ],
             "smeared_true_gametocytes": [
@@ -7074,7 +7074,7 @@
                 0.06019881740212
             ],
             "smeared_true_asexual_parasites": [
-                11788.53320313
+                11788.57226563
             ],
             "smeared_true_gametocytes": [
                 0.002574912970886
@@ -7222,10 +7222,10 @@
                 84.03273010254
             ],
             "smeared_true_asexual_parasites": [
-                2396.264404297
+                2396.26171875
             ],
             "smeared_true_gametocytes": [
-                24.96559143066
+                24.9656047821
             ],
             "asexual_parasites": [
                 720
@@ -7413,7 +7413,7 @@
                 2259.902587891
             ],
             "smeared_true_gametocytes": [
-                15.99915885925
+                15.99915409088
             ],
             "asexual_parasites": [
                 870
@@ -7534,7 +7534,7 @@
                 1380.513671875
             ],
             "smeared_true_asexual_parasites": [
-                130.5579223633
+                130.5577087402
             ],
             "smeared_true_gametocytes": [
                 2750.895507813
@@ -7734,7 +7734,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                131.4397583008
+                131.4399719238
             ],
             "smeared_true_gametocytes": [
                 0
@@ -7862,7 +7862,7 @@
                 682.5514526367
             ],
             "smeared_true_asexual_parasites": [
-                196.1576080322
+                196.1579284668
             ],
             "smeared_true_gametocytes": [
                 2017.278930664
@@ -7931,7 +7931,7 @@
                 924.9623413086
             ],
             "smeared_true_asexual_parasites": [
-                555.1221923828,
+                555.121887207,
                 5016.894042969,
                 1420.91418457,
                 3203.857421875
@@ -7939,8 +7939,8 @@
             "smeared_true_gametocytes": [
                 675.3350219727,
                 51.02065658569,
-                254.3407897949,
-                2853.383789063
+                254.340927124,
+                2853.38671875
             ],
             "asexual_parasites": [
                 510,
@@ -8090,7 +8090,7 @@
                 0
             ],
             "smeared_true_asexual_parasites": [
-                1335.291259766
+                1335.291992188
             ],
             "smeared_true_gametocytes": [
                 0
@@ -8302,10 +8302,10 @@
                 27.2014503479
             ],
             "smeared_true_asexual_parasites": [
-                4425.071289063
+                4425.061523438
             ],
             "smeared_true_gametocytes": [
-                85.92979431152
+                85.92984008789
             ],
             "asexual_parasites": [
                 690
@@ -8374,8 +8374,8 @@
             ],
             "smeared_true_gametocytes": [
                 0,
-                1388.897338867,
-                1993.343994141
+                1388.894287109,
+                1993.339599609
             ],
             "asexual_parasites": [
                 140,
@@ -8629,7 +8629,7 @@
                 2521.114013672
             ],
             "smeared_true_gametocytes": [
-                0.6612938046455
+                0.6612933278084
             ],
             "asexual_parasites": [
                 740
@@ -8690,11 +8690,11 @@
             ],
             "smeared_true_asexual_parasites": [
                 924.4496459961,
-                3994.955566406
+                3994.948974609
             ],
             "smeared_true_gametocytes": [
                 9711.55859375,
-                3.286020994186
+                3.286023378372
             ],
             "asexual_parasites": [
                 1190,
@@ -8825,7 +8825,7 @@
                 2547.002929688
             ],
             "smeared_true_gametocytes": [
-                2.357289791107
+                2.357288122177
             ],
             "asexual_parasites": [
                 1050
@@ -9506,7 +9506,7 @@
             ],
             "smeared_true_asexual_parasites": [
                 554.3419799805,
-                439.3224487305
+                439.3222045898
             ],
             "smeared_true_gametocytes": [
                 0,
@@ -9581,12 +9581,12 @@
                 187.4876251221
             ],
             "smeared_true_asexual_parasites": [
-                2611.655517578,
+                2611.658447266,
                 967.701965332
             ],
             "smeared_true_gametocytes": [
                 2990.486572266,
-                53.31094741821
+                53.31089019775
             ],
             "asexual_parasites": [
                 1170,
@@ -9674,7 +9674,7 @@
             ],
             "smeared_true_gametocytes": [
                 0.1461272835732,
-                307.1371459961,
+                307.1373291016,
                 572.5726928711
             ],
             "asexual_parasites": [
@@ -10105,8 +10105,8 @@
                 691.2750244141
             ],
             "smeared_true_gametocytes": [
-                1705.207275391,
-                50.21237945557
+                1705.208251953,
+                50.21228027344
             ],
             "asexual_parasites": [
                 150,
@@ -10185,7 +10185,7 @@
                 3814.62109375
             ],
             "smeared_true_gametocytes": [
-                262.0073547363,
+                262.007232666,
                 0.2335176318884,
                 506.1374206543
             ],
@@ -10266,10 +10266,10 @@
                 77.13726806641
             ],
             "smeared_true_asexual_parasites": [
-                807.3978271484
+                807.3973388672
             ],
             "smeared_true_gametocytes": [
-                262.7537841797
+                262.7539367676
             ],
             "asexual_parasites": [
                 550
@@ -10541,7 +10541,7 @@
                 844.6216430664
             ],
             "smeared_true_gametocytes": [
-                35.09687423706
+                35.09688186646
             ],
             "asexual_parasites": [
                 190
@@ -10609,7 +10609,7 @@
                 837.9902954102
             ],
             "smeared_true_gametocytes": [
-                426.6815185547
+                426.6817321777
             ],
             "asexual_parasites": [
                 70
@@ -10673,7 +10673,7 @@
                 1055.512207031
             ],
             "smeared_true_gametocytes": [
-                626.407043457
+                626.4067382813
             ],
             "asexual_parasites": [
                 220
@@ -11397,7 +11397,7 @@
                 2441.180908203
             ],
             "smeared_true_gametocytes": [
-                15.00113010406
+                15.00112628937
             ],
             "asexual_parasites": [
                 270
@@ -11609,7 +11609,7 @@
                 992.0153198242
             ],
             "smeared_true_gametocytes": [
-                113.4818496704
+                113.4819107056
             ],
             "asexual_parasites": [
                 1140
@@ -11681,13 +11681,13 @@
             ],
             "smeared_true_asexual_parasites": [
                 3025.067382813,
-                50.30638122559,
+                50.30624389648,
                 589.2526855469
             ],
             "smeared_true_gametocytes": [
-                12.80480575562,
+                12.80480194092,
                 2679.575683594,
-                213.6207733154
+                213.6206512451
             ],
             "asexual_parasites": [
                 360,
@@ -11781,7 +11781,7 @@
                 2209.096435547
             ],
             "smeared_true_gametocytes": [
-                19.24145889282
+                19.24139404297
             ],
             "asexual_parasites": [
                 240
@@ -11842,7 +11842,7 @@
                 2873.868896484
             ],
             "smeared_true_asexual_parasites": [
-                261.1170959473
+                261.1166687012
             ],
             "smeared_true_gametocytes": [
                 567.4442138672
@@ -11973,7 +11973,7 @@
                 1780.71875
             ],
             "smeared_true_gametocytes": [
-                349.2240600586
+                349.2238769531
             ],
             "asexual_parasites": [
                 250
@@ -12030,7 +12030,7 @@
                 327.9899902344
             ],
             "smeared_true_asexual_parasites": [
-                1617.537841797
+                1617.536865234
             ],
             "smeared_true_gametocytes": [
                 343.7368164063
@@ -12094,7 +12094,7 @@
                 6506.201660156
             ],
             "smeared_true_asexual_parasites": [
-                131.9077301025
+                131.9075927734
             ],
             "smeared_true_gametocytes": [
                 3186.887207031
@@ -12166,7 +12166,7 @@
             ],
             "smeared_true_gametocytes": [
                 10.48307037354,
-                0.8395750522614,
+                0.839575946331,
                 12918.43359375
             ],
             "asexual_parasites": [
@@ -12253,8 +12253,8 @@
                 527.8259887695
             ],
             "smeared_true_gametocytes": [
-                418.3707275391,
-                5.427820205688
+                418.3704833984,
+                5.427818775177
             ],
             "asexual_parasites": [
                 230,
@@ -12529,12 +12529,12 @@
                 12.75083827972
             ],
             "smeared_true_asexual_parasites": [
-                3112.560546875,
+                3112.565673828,
                 492.0580749512
             ],
             "smeared_true_gametocytes": [
                 227.8421478271,
-                8.772498130798
+                8.772499084473
             ],
             "asexual_parasites": [
                 640,
@@ -12614,10 +12614,10 @@
                 240.0650939941
             ],
             "smeared_true_asexual_parasites": [
-                176.7278137207
+                176.7275238037
             ],
             "smeared_true_gametocytes": [
-                140.398727417
+                140.398651123
             ],
             "asexual_parasites": [
                 980
@@ -12677,7 +12677,7 @@
                 27.13637161255
             ],
             "smeared_true_asexual_parasites": [
-                2801.308837891,
+                2801.304199219,
                 100.1442642212
             ],
             "smeared_true_gametocytes": [
@@ -12758,7 +12758,7 @@
             ],
             "smeared_true_gametocytes": [
                 0,
-                818.6429443359
+                818.6425170898
             ],
             "asexual_parasites": [
                 190,
@@ -12837,7 +12837,7 @@
                 3886.872802734
             ],
             "smeared_true_gametocytes": [
-                7.224285125732
+                7.224280834198
             ],
             "asexual_parasites": [
                 150
@@ -12957,8 +12957,8 @@
                 4667.849121094
             ],
             "smeared_true_asexual_parasites": [
-                1401.994018555,
-                287.9853210449
+                1401.992431641,
+                287.9856567383
             ],
             "smeared_true_gametocytes": [
                 0,
@@ -13033,7 +13033,7 @@
                 918.130065918
             ],
             "smeared_true_gametocytes": [
-                1355.001831055
+                1355.003295898
             ],
             "asexual_parasites": [
                 490
@@ -13094,7 +13094,7 @@
             ],
             "smeared_true_asexual_parasites": [
                 1122.370727539,
-                1154.461303711
+                1154.460571289
             ],
             "smeared_true_gametocytes": [
                 9637.490234375,
@@ -13306,7 +13306,7 @@
                 444.1987609863
             ],
             "smeared_true_asexual_parasites": [
-                1710.694335938
+                1710.693359375
             ],
             "smeared_true_gametocytes": [
                 326.6812133789
@@ -13372,7 +13372,7 @@
                 7491.796386719
             ],
             "smeared_true_asexual_parasites": [
-                441.1786193848,
+                441.1788635254,
                 1413.940551758,
                 1057.616577148
             ],
@@ -13461,7 +13461,7 @@
                 5010.596191406
             ],
             "smeared_true_gametocytes": [
-                301.0728149414
+                301.0729980469
             ],
             "asexual_parasites": [
                 210

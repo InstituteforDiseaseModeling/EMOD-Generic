@@ -230,7 +230,7 @@ if os.sys.platform == 'win32':
                           "#/utils",
                           "#/libgeneric_static",
                           os.environ['IDM_BOOST_PATH'],
-                          os.environ['IDM_PYTHON3_PATH']+"/include",
+                          os.environ['IDM_PYTHON3X_PATH']+"/include",
                           "#/Dependencies/ComputeClusterPack/Include",
                           "#/cajun/include",
                           "#/rapidjson/include",
@@ -301,12 +301,7 @@ if os.sys.platform.startswith("linux"):
         nixLibPrefix = "lib64"
         env.Append( EXTRALIBPATH=["/usr/lib64" , "/lib64" ] )
 
-    if(sys.version_info.major == 2):  # Bamboo linux build still uses python 2
-        env.Append( LIBS=["python3.6m"] )
-        env.Append( EXTRACPPPATH=["/opt/python/python3.6.3/include/python3.6m"] )
-        env.Append( EXTRACPPPATH=["/usr/include/python3.6m"] )
-        env.Append( EXTRALIBPATH=["/opt/python/python3.6.3/lib"] )
-    elif(sys.version_info.minor == 6):
+    if(sys.version_info.minor == 6):
         env.Append( LIBS=["python3.6m"] )
         env.Append( EXTRACPPPATH=["/usr/include/python3.6m"] )
     elif(sys.version_info.minor == 7):
@@ -418,7 +413,7 @@ elif "win32" == os.sys.platform:
     winLibString += ""
     env.Append( LIBS=Split(winLibString) )
 
-    env.Append( EXTRALIBPATH=[ os.environ['IDM_PYTHON3_PATH']+"/libs" ] )
+    env.Append( EXTRALIBPATH=[ os.environ['IDM_PYTHON3X_PATH']+"/libs" ] )
     env.Append( LIBS=["python3.lib"] )
 
     env.Append( EXTRALIBPATH=[ "#/Dependencies/ComputeClusterPack/Lib/amd64" ] )

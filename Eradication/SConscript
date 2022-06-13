@@ -43,6 +43,7 @@ else:
     erad_env = env.Clone()
     if os.name != "posix":
         erad_env.Append( LINKFLAGS=[ "/STACK:\"100000000,100000000\"" ] )
+        erad_env.Append( LINKFLAGS=[ "/DELAYLOAD:python3.dll" ] )
         erad_env.Append( LIBS=["delayimp.lib"] )
         erad_env.Append(LIBPATH = ["$BUILD_DIR/Eradication"])
         erad_env.Append(LIBS=["/WHOLEARCHIVE:coreLib"])
