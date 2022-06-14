@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <list>
 #include <map>
 #include <string>
+#include <cmath>
 
 #include "Common.h"
 #include "Configure.h"

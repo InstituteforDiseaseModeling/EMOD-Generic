@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 #include <string>
 #include <ctime>
+#include <cmath>
 
 #include "Debug.h"
 #include "Environment.h"

@@ -9,6 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include <ctime>
+#include <cmath>
 
 #include "Debug.h"
 #include "NodeDemographics.h"
