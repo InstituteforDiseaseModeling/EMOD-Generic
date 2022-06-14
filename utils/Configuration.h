@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <set>
 #include <vector>
 #include <map>
+#include <climits>
 
 #include "ISupports.h"
 #include "CajunIncludes.h"
