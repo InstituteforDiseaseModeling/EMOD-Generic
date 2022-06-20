@@ -75,13 +75,11 @@ PropertyReportEnvironmental::LogIndividualData(
             nis == NewInfectionState::NewInfection )
         {
             auto inf = individual->GetInfections().back();
-            StrainIdentity si;
-            inf->GetInfectiousStrainID( &si );
-            if( si.GetGeneticID() == TransmissionRoute::ENVIRONMENTAL )
+            if( inf->GetSourceRoute() == TransmissionRoute::ENVIRONMENTAL )
             {
                 new_enviro_infections[ reportingBucket ] += mc_weight;
             }
-            else if( si.GetGeneticID() == TransmissionRoute::CONTACT )
+            else if( inf->GetSourceRoute() == TransmissionRoute::CONTACT )
             {
                 new_contact_infections[ reportingBucket ] += mc_weight;
             }

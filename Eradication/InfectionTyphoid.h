@@ -47,7 +47,7 @@ namespace Kernel
         static InfectionTyphoid *CreateInfection(IIndividualHumanContext *context, suids::suid _suid);
         virtual ~InfectionTyphoid(void);
 
-        virtual void SetParameters( IStrainIdentity* infstrain = nullptr, float incubation_period_override = -1.0f ) override;
+        virtual void SetParameters( IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route ) override;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void Update(float dt, ISusceptibilityContext* _immunity = nullptr) override;
         void SetMCWeightOfHost(float ind_mc_weight);

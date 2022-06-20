@@ -182,7 +182,7 @@ namespace Kernel
         m_duration_since_init_infection = 0.0f;
     }
 
-    void InfectionTB::SetParameters(IStrainIdentity* infstrain, float incubation_period_override)
+    void InfectionTB::SetParameters(IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route)
     {
         LOG_DEBUG_F( "New TB infection for individual %d; incubation_period_override = %d.\n", parent->GetSuid().data, incubation_period_override );
         CreateInfectionStrain(infstrain);

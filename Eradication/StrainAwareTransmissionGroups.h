@@ -102,8 +102,7 @@ namespace Kernel
         virtual void UseTotalPopulationForNormalization() override { normalizeByTotalPopulation = true; }
         virtual void UseGroupPopulationForNormalization() override { normalizeByTotalPopulation = false; }
 
-        virtual void SetTag( const std::string& tag ) override   { this->tag = tag; }
-        virtual const std::string& GetTag( void ) const override { return tag; }
+        virtual void SetTag( const std::string& tag ) override { this->tag = tag; }
 
         virtual float GetTotalContagion( void ) override;                                           // Return total contagion.
         virtual float GetTotalContagionForGroup( TransmissionGroupMembership_t group ) override;    // Return total contagion for given membership.

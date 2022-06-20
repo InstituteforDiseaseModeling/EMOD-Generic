@@ -35,10 +35,7 @@ namespace Kernel
         HANDLE_INTERFACE(SusceptibilityTBConfig)
     END_QUERY_INTERFACE_BODY(SusceptibilityTBConfig)
 
-    bool
-    SusceptibilityTBConfig::Configure(
-        const Configuration* config
-    )
+    bool SusceptibilityTBConfig::Configure( const Configuration* config )
     {
         initConfigTypeMap( "TB_Immune_Loss_Fraction", &TB_immune_loss_fraction, TB_Immune_Loss_Fraction_DESC_TEXT, 0.0f, 1.0f, 0.5f );
         initConfigTypeMap( "TB_Smear_Positive_Fraction_Child", &TB_smear_positive_fraction_child, TB_Smear_Positive_Fraction_Child_DESC_TEXT, 0.0f, 1.0f, 1.0f );
@@ -63,8 +60,8 @@ namespace Kernel
             throw IncoherentConfigurationException(__FILE__, __LINE__, __FUNCTION__, "Fraction child smear positive individuals is" , TB_smear_positive_fraction_child, "Fraction child extrapulmonary individuals", TB_extrapulmonary_fraction_child);
         }
 
-        LOG_INFO_F("Fraction adult smear-negative individuals is %f\n",1.0f - (TB_smear_positive_fraction_adult +TB_extrapulmonary_fraction_adult) );
-        LOG_INFO_F("Fraction child smear-negative individuals is %f\n",1.0f - (TB_smear_positive_fraction_child +TB_extrapulmonary_fraction_child) );
+        LOG_DEBUG_F("Fraction adult smear-negative individuals is %f\n",1.0f - (TB_smear_positive_fraction_adult +TB_extrapulmonary_fraction_adult) );
+        LOG_DEBUG_F("Fraction child smear-negative individuals is %f\n",1.0f - (TB_smear_positive_fraction_child +TB_extrapulmonary_fraction_child) );
 
         return ret;
     }
@@ -255,9 +252,7 @@ namespace Kernel
 
     SusceptibilityTB::~SusceptibilityTB(void) { }
 
-    bool
-    SusceptibilityTB::IsImmune()
-    const
+    bool SusceptibilityTB::IsImmune() const
     {
         return m_is_immune;
     }

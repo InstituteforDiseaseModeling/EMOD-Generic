@@ -32,9 +32,8 @@ namespace Kernel {
         HANDLE_INTERFACE(IContagionProbabilities)
     END_QUERY_INTERFACE_BODY(DiscreteContagionPopulation)
 
-    std::string RelationshipGroups::tag( "relationship" );
-
     RelationshipGroups::RelationshipGroups( RANDOMBASE * prng )
+        : tag( "relationship" )
     {
     }
 

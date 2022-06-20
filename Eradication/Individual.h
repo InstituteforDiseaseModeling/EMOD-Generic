@@ -159,7 +159,7 @@ namespace Kernel
         virtual void ExposeToInfectivity(float dt);
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route ) override;
         virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) override;
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
+        virtual void AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override ) override;
 
         virtual const infection_list_t &GetInfections() const override;
         virtual bool IsSymptomatic() const override;

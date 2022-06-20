@@ -36,7 +36,6 @@ namespace Kernel
 
     IndividualHumanEnvironmental::IndividualHumanEnvironmental( suids::suid _suid, float monte_carlo_weight, float initial_age, int gender) 
         : IndividualHuman( _suid, monte_carlo_weight, initial_age, gender)
-        , exposureRoute( TransmissionRoute::ENVIRONMENTAL )
     {
     }
 
@@ -57,11 +56,6 @@ namespace Kernel
     void IndividualHumanEnvironmental::CreateSusceptibility(float imm_mod, float risk_mod)
     {
         susceptibility = SusceptibilityEnvironmental::CreateSusceptibility(this, imm_mod, risk_mod);
-    }
-
-    void IndividualHumanEnvironmental::ReportInfectionState()
-    {
-        m_new_infection_state = NewInfectionState::NewInfection; 
     }
 
     void IndividualHumanEnvironmental::UpdateInfectiousness(float dt)
@@ -109,39 +103,19 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanEnvironmental::UpdateGroupPopulation(float size_changes)
-    {
-        parent->UpdateTransmissionGroupPopulation(GetProperties()->GetOldVersion(), size_changes, this->GetMonteCarloWeight());
-    }
-
     IInfection* IndividualHumanEnvironmental::createInfection( suids::suid _suid )
     {
         return InfectionEnvironmental::CreateInfection(this, _suid);
     }
 
-    void IndividualHumanEnvironmental::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )
+    void IndividualHumanEnvironmental::AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
-        exposureRoute = tx_route;
-        IndividualHuman::Expose( cp, dt, tx_route );
-    }
+        if ( incubation_period_override == 0.0f )
+        {
+            tx_route = TransmissionRoute::OUTBREAK;
+        }
 
-    void IndividualHumanEnvironmental::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
-    {
-        if ( infstrain )
-        {
-            StrainIdentity infectingStrain;
-            infstrain->ResolveInfectingStrain( &infectingStrain );
-            if ( incubation_period_override == 0.0f )
-            {
-                exposureRoute = TransmissionRoute::OUTBREAK;
-            }
-            infectingStrain.SetGeneticID(static_cast<int>(exposureRoute));
-            IndividualHuman::AcquireNewInfection( &infectingStrain, incubation_period_override );
-        }
-        else
-        {
-            IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );
-        }
+        IndividualHuman::AcquireNewInfection( infstrain, tx_route, incubation_period_override );
     }
 
     REGISTER_SERIALIZABLE(IndividualHumanEnvironmental);

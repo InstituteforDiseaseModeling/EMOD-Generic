@@ -34,7 +34,7 @@ namespace Kernel
         // Setup
         virtual void setupMaternalAntibodies(IIndividualHumanContext* mother, INodeContext* node) = 0;
         virtual bool ShouldAcquire( float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route = TransmissionRoute::CONTACT ) = 0;
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
+        virtual void AcquireNewInfection(const IStrainIdentity* infstrain=nullptr, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT, float incubation_period_override=-1.0f ) = 0;
         virtual void SetParameters( INodeContext* pParent, float imm_mod, float risk_mod) = 0;
         virtual void InitializeHuman() = 0;
 

@@ -61,7 +61,7 @@ namespace Kernel
         virtual ~InfectionHIV(void);
         static InfectionHIV *CreateInfection(IIndividualHumanContext *context, suids::suid _suid);
 
-        virtual void SetParameters( IStrainIdentity* infstrain=nullptr, float incubation_period_override = -1.0f ) override;
+        virtual void SetParameters( IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route ) override;
         virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
         virtual void SetContextTo(IIndividualHumanContext* context) override;
 

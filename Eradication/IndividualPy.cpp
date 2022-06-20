@@ -131,7 +131,7 @@ namespace Kernel
             if( val )
             {
                 StrainIdentity strainId;
-                AcquireNewInfection(&strainId);
+                AcquireNewInfection(&strainId, tx_route, -1.0f);
             }
 
             Py_XDECREF(vars);
@@ -247,10 +247,9 @@ namespace Kernel
         return IndividualHuman::Update( currenttime, dt);
     }
 
-    void IndividualHumanPy::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
+    void IndividualHumanPy::AcquireNewInfection( const IStrainIdentity *infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
-        LOG_DEBUG_F("AcquireNewInfection: route %d\n", _routeOfInfection);
-        IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );
+        IndividualHuman::AcquireNewInfection( infstrain, tx_route, incubation_period_override );
 
 #ifdef ENABLE_PYTHON_FEVER
         PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_PYTHON_FEVER, "acquire_infection" ));

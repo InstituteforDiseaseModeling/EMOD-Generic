@@ -30,9 +30,6 @@ namespace Kernel
 
     protected:
         NodeEnvironmental( ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid );
-
-        ITransmissionGroups* txEnvironment;
-
         NodeEnvironmental();
 
         // Factory methods
@@ -52,7 +49,6 @@ namespace Kernel
         virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) override;
         virtual void GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
         virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const override;
-        virtual uint64_t GetTotalGenomes() const override;
 
         DECLARE_SERIALIZABLE(NodeEnvironmental);
 

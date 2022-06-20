@@ -91,6 +91,7 @@ namespace Kernel
         , infection_strain(nullptr)
         , m_is_symptomatic( false )
         , m_is_newly_symptomatic( false )
+        , m_source_route(TransmissionRoute::CONTACT)
     {
     }
 
@@ -111,6 +112,7 @@ namespace Kernel
         , infection_strain(nullptr)
         , m_is_symptomatic( false )
         , m_is_newly_symptomatic( false )
+        , m_source_route(TransmissionRoute::CONTACT)
     {
     }
 
@@ -132,7 +134,7 @@ namespace Kernel
         delete infection_strain;
     }
 
-    void Infection::SetParameters( IStrainIdentity* infstrain, float incubation_period_override ) // or something
+    void Infection::SetParameters( IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route )
     {
         // Set up infection strain
         CreateInfectionStrain(infstrain);
@@ -189,6 +191,7 @@ namespace Kernel
 
         total_duration = incubation_timer + infectious_timer;
         StateChange    = InfectionStateChange::None;
+        m_source_route = tx_route;
     }
 
     void Infection::InitInfectionImmunology(ISusceptibilityContext* _immunity)
@@ -329,6 +332,11 @@ namespace Kernel
         return StateChange;
     }
 
+    TransmissionRoute::Enum Infection::GetSourceRoute() const
+    {
+        return m_source_route;
+    }
+
     float Infection::GetInfectiousness() const
     {
         float inf_val = infectiousness;
@@ -416,5 +424,6 @@ namespace Kernel
 
         ar.labelElement( "m_is_symptomatic" )              & infection.m_is_symptomatic;
         ar.labelElement( "m_is_newly_symptomatic" )        & infection.m_is_newly_symptomatic;
+        ar.labelElement( "m_source_route" )                & (uint32_t&)infection.m_source_route;
     }
 }

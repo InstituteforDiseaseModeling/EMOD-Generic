@@ -232,7 +232,7 @@ namespace Kernel
                    );
     }
 
-    void InfectionHIV::SetParameters( IStrainIdentity* infstrain, float incubation_period_override)
+    void InfectionHIV::SetParameters( IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route)
     {
         // Don't call down into baseclass.
         CreateInfectionStrain(infstrain);

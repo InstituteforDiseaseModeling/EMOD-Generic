@@ -97,7 +97,7 @@ namespace Kernel
 
         virtual float GetInfectiousness() const override;
 
-        virtual void SetParameters(IStrainIdentity* infstrain=nullptr, float incubation_period_override = -1.0f) override;
+        virtual void SetParameters(IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route) override;
         virtual void Update(float dt, ISusceptibilityContext* immunity = nullptr) override;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void SetContextTo(IIndividualHumanContext * context) override;

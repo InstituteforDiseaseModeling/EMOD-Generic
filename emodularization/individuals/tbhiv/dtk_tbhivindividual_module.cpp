@@ -738,7 +738,7 @@ giveHIV(PyObject* self, PyObject* args)
         std::cout << "Failed to parse id for giveHIV (as int)." << std::endl;
     }
     StrainIdentity strainIDs; // just going to use antigen=0
-    population[ id ]->AcquireNewInfectionHIV(&strainIDs, 0);
+    population[ id ]->AcquireNewInfectionHIV(&strainIDs, TransmissionRoute::CONTACT, 0.0f);
     Py_RETURN_NONE;
 }
 

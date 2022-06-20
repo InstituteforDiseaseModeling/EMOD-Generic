@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#pragma warning(disable : 4996) // getenv function is deprecated
+#pragma warning(disable : 4996) // wcstombs function is deprecated on windows
 
 #include <string>
 #include <map>

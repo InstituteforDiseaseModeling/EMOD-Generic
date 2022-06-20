@@ -220,8 +220,9 @@ namespace Kernel
         bool                family_is_destination_new_home;
 
         // Heterogeneous intra-node transmission
-        ITransmissionGroups *transmissionGroups;
-        
+        ITransmissionGroups*  transmissionGroups;
+        ITransmissionGroups*  txEnvironment;
+
         // Climate and demographics
         Climate *localWeather;
         IMigrationInfo *migration_info;

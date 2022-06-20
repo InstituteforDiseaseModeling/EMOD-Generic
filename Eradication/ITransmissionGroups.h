@@ -52,7 +52,6 @@ namespace Kernel
         virtual void UseGroupPopulationForNormalization( void ) = 0;
 
         virtual void SetTag( const std::string& tag ) = 0;
-        virtual const std::string& GetTag( void ) const = 0;
 
         virtual float GetTotalContagion( void ) = 0;                                            // Return total contagion.
         virtual float GetTotalContagionForGroup( TransmissionGroupMembership_t txGroups) = 0;   // Return total contagion for given membership.

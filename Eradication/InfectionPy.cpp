@@ -70,11 +70,6 @@ namespace Kernel
     {
     }
 
-    void InfectionPy::SetParameters(StrainIdentity* infstrain, float incubation_period_override)
-    {
-        Infection::SetParameters(infstrain, incubation_period_override);
-    }
-
     void InfectionPy::InitInfectionImmunology(Susceptibility* _immunity)
     {
         ISusceptibilityPy* immunity = NULL;

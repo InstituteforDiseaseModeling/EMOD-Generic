@@ -150,7 +150,6 @@ namespace Kernel
 #else 
         _infection_count=0; // should not be necessary
         doseTracking = "Low";
-        exposureRoute = TransmissionRoute::OUTBREAK;
 #endif
     }
 
@@ -253,7 +252,7 @@ namespace Kernel
             if( val )
             {
                 StrainIdentity strainId;
-                AcquireNewInfection(&strainId);
+                AcquireNewInfection(&strainId, tx_route, -1.0f);
             }
             Py_DECREF( retVal );
         }
@@ -397,11 +396,10 @@ namespace Kernel
                 
                 if ( acquire )
                 {
-                    exposureRoute = tx_route;
                     StrainIdentity strainId;
                     LOG_DEBUG("INDIVIDUAL INFECTED BY ENVIRONMENT.\n"); // This is for reporting DON'T DELETE :)
                     quantizeEnvironmentalDoseTracking( exposure );
-                    AcquireNewInfection(&strainId);
+                    AcquireNewInfection(&strainId, tx_route, -1.0f);
                 }
                 return;
             }
@@ -471,10 +469,9 @@ namespace Kernel
             if( acquire )
             {
                 LOG_DEBUG("INDIVIDUAL INFECTED BY CONTACT.\n"); // FOR REPORTING
-                exposureRoute = tx_route;
                 StrainIdentity strainId;
                 quantizeContactDoseTracking( fContact ); 
-                AcquireNewInfection(&strainId);
+                AcquireNewInfection(&strainId, tx_route, -1.0f);
             }
 
             return;
@@ -635,16 +632,16 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanTyphoid::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
+    void IndividualHumanTyphoid::AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
         if( IsInfected() )
         {
             return;
         }
 
-        LOG_DEBUG_F("AcquireNewInfection: individual=%d, route=%d, IsInfected=%d\n", GetSuid().data, exposureRoute, IsInfected() );
+        LOG_DEBUG_F("AcquireNewInfection: individual=%d, route=%d, IsInfected=%d\n", GetSuid().data, tx_route, IsInfected() );
         // neither environmental nor contact source. probably from initial seeding
-        IndividualHumanEnvironmental::AcquireNewInfection( infstrain, incubation_period_override );
+        IndividualHumanEnvironmental::AcquireNewInfection( infstrain, tx_route, incubation_period_override );
 #ifdef ENABLE_PYTHOID
         volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "acquire_infection" ));
@@ -661,7 +658,6 @@ namespace Kernel
         //LOG_INFO_F("Prepatent %d. dose %s \n", _prepatent_duration, doseTracking);
         _infection_count ++;
 #endif
-        exposureRoute = TransmissionRoute::OUTBREAK;
         doseTracking = "Low";
     }
 

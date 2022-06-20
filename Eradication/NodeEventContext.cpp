@@ -496,7 +496,7 @@ namespace Kernel
             IIndividualHuman* new_individual = node->configureAndAddNewIndividual(mc_weight, import_age, 0.0f, female_prob, 1.0f, 1.0f);
 
             // Start as infectious (incubation_period = 0)
-            new_individual->AcquireNewInfection( outbreak_strainID, 0.0f );
+            new_individual->AcquireNewInfection( outbreak_strainID, TransmissionRoute::OUTBREAK, 0.0f );
         }
     }
 

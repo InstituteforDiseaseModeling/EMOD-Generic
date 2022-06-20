@@ -90,7 +90,7 @@ namespace Kernel
         virtual void UpdateInfectiousness(float dt);
         virtual void Update(float currenttime, float dt);
         virtual Infection* createInfection(suids::suid _suid);
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) override;
+        virtual void AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override ) override;
         virtual float GetImmunityReducedAcquire() const override;
         virtual HumanStateChange GetStateChange() const;
         virtual void ForceClearInfection();
@@ -121,6 +121,5 @@ namespace Kernel
 
     private:
         SusceptibilityTyphoid * typhoid_susceptibility;
-        std::map< TransmissionRoute::Enum, float > contagion_population_by_route;
     };
 }

@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 
 #define ENV_VAR_PYTHON              "IDM_PYTHON3X_PATH"
+#define PYTHON_DLL                  "python3.dll"
 #define PYTHON_SCRIPT_PATH_NOT_SET  ""
 
 SETUP_LOGGING("PythonSupport")
@@ -72,18 +73,20 @@ namespace Kernel
 
 #ifdef WIN32
         // Get path to python installation
-        char* c_python_path = getenv(ENV_VAR_PYTHON);
-        if( c_python_path == nullptr )
+        size_t  path_len;
+        char*   c_python_path;
+        errno_t err_val = _dupenv_s( &c_python_path, &path_len, ENV_VAR_PYTHON );
+        if(err_val)
         {
             std::stringstream msg;
             msg << "Cannot find environmental variable " << ENV_VAR_PYTHON << ".\n";
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
+        LOG_INFO_F( "Python home path: %s\n", c_python_path );
 
-        std::string python_home = c_python_path;
+        // Check directory existance
+        std::string python_home(c_python_path);
         python_home = FileSystem::RemoveTrailingChars( python_home );
-        LOG_INFO_F( "Python home path: %s\n", python_home.c_str() );
-
         if( !FileSystem::DirectoryExists( python_home ) )
         {
             std::stringstream msg;
@@ -91,7 +94,16 @@ namespace Kernel
             throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
+        // Set DLL search path to python install directory
         SetDllDirectoryA(c_python_path);
+        free( c_python_path );
+        HMODULE p_dll = LoadLibraryA(PYTHON_DLL);
+        if( p_dll == nullptr )
+        {
+            std::stringstream msg;
+            msg << "Cannot run python scripts because " << PYTHON_DLL << " not found in " << python_home << ".";
+            throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
+        }
         Py_SetPythonHome( Py_DecodeLocale( python_home.c_str(), nullptr ) );
 #endif
 
@@ -193,15 +205,18 @@ namespace Kernel
         // Handle return value
         if(PyUnicode_Check(retVal))
         {
-            wchar_t*    utf_chars;
-            Py_ssize_t  num_chars = PyUnicode_GetSize(retVal) + 1;
+            wchar_t*    wide_chars;
+            char*       norm_chars;
+            Py_ssize_t  num_chars = PyUnicode_GetLength(retVal) + 1;
+            wide_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
+            norm_chars = static_cast<char*>(malloc(num_chars*sizeof(char)));
 
             // Possible data loss if return string is non-UTF8
-            utf_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
-            PyUnicode_AsWideChar(retVal, utf_chars, num_chars);
-            std::wstring temp_wstr(utf_chars);
-            free(utf_chars);
-            returnString.assign(temp_wstr.begin(), temp_wstr.end());
+            PyUnicode_AsWideChar(retVal, wide_chars, num_chars);
+            wcstombs(norm_chars, wide_chars, num_chars);
+            returnString = norm_chars;
+            free(wide_chars);
+            free(norm_chars);
         }
         else if (retVal != none_type)
         {
@@ -289,15 +304,18 @@ namespace Kernel
         // Store pointers to everything within the python module
         while (PyDict_Next(pDict, &dict_pos, &dict_key, &dict_value))
         {
-            wchar_t*    utf_chars;
-            Py_ssize_t  num_chars = PyUnicode_GetSize(dict_key) + 1;
+            wchar_t*    wide_chars;
+            char*       norm_chars;
+            Py_ssize_t  num_chars = PyUnicode_GetLength(dict_key) + 1;
+            wide_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
+            norm_chars = static_cast<char*>(malloc(num_chars*sizeof(char)));
 
             // Possible data loss if function name is non-UTF8
-            utf_chars = static_cast<wchar_t*>(malloc(num_chars*sizeof(wchar_t)));
-            PyUnicode_AsWideChar(dict_key, utf_chars, num_chars);
-            std::wstring temp_wstr(utf_chars);
-            free(utf_chars);
-            std::string python_dict_entry(temp_wstr.begin(), temp_wstr.end());
+            PyUnicode_AsWideChar(dict_key, wide_chars, num_chars);
+            wcstombs(norm_chars, wide_chars, num_chars);
+            std::string python_dict_entry(norm_chars);
+            free(wide_chars);
+            free(norm_chars);
 
             if(PyCallable_Check(dict_value))
             {

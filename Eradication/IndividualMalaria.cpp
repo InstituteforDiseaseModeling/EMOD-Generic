@@ -243,7 +243,7 @@ namespace Kernel
             float strain_cdf_draw = GetRng()->e() * m_total_exposure;
             std::vector<strain_exposure_t>::iterator it = std::lower_bound( m_strain_exposure.begin(), m_strain_exposure.end(), strain_cdf_draw, compare_strain_exposure_float_less()); 
             IStrainIdentity * pSI = &(it->first);
-            AcquireNewInfection( pSI );
+            IndividualHuman::AcquireNewInfection( pSI, TransmissionRoute::CONTACT, -1.0f );
         }
     }
 

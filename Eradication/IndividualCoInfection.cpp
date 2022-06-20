@@ -169,7 +169,7 @@ namespace Kernel
         return susceptibilitylist;
     }
 
-    void IndividualHumanCoInfection::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
+    void IndividualHumanCoInfection::AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
         LOG_DEBUG( "AcquireNewInfection\n" );
         StrainIdentity newStrainId;
@@ -192,7 +192,7 @@ namespace Kernel
                 IInfectionTB* pinfection = NULL;
                 if (s_OK == newinf->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfection) )
                 { 
-                    newinf->SetParameters(&newStrainId, incubation_period_override);
+                    newinf->SetParameters(&newStrainId, incubation_period_override, tx_route);
 
                     if (HasHIV() )
                     {
@@ -213,7 +213,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanCoInfection::AcquireNewInfectionHIV( const IStrainIdentity *infstrain, float incubation_period_override ) 
+    void IndividualHumanCoInfection::AcquireNewInfectionHIV( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override ) 
     {
         LOG_DEBUG( "AcquireNewInfectionHIV\n" );
         //code is nearly duplicate to AcquireNewInfection but only gives new infection to HIV(the non-transmitting infection)
@@ -239,7 +239,7 @@ namespace Kernel
         //this should always be true, just use for debugging
         if (s_OK == newinf->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfectionHIV) )
         {
-            newinf->SetParameters(const_cast<IStrainIdentity*>(infstrain), incubation_period_override);
+            newinf->SetParameters(const_cast<IStrainIdentity*>(infstrain), incubation_period_override, tx_route);
             newinf->InitInfectionImmunology(susceptibility_hiv);
 
             LOG_DEBUG( "Adding infection to infections list.\n" );
@@ -256,9 +256,7 @@ namespace Kernel
             }
 
             hiv_person->GetHIVInterventionsContainer()->BroadcastNewHIVInfection();
-        }    
-
-        //LOG_VALID_F( " Individual %lu acquired %d new infections \n", suid.data, newInfectionlist.size() );   // newInfectionlist got shadowed in AcquireNewInfection()
+        }
     }
 
     void IndividualHumanCoInfection::SetForwardTBAct( std::vector<float> &vin)
@@ -506,7 +504,7 @@ namespace Kernel
         return( GetRng()->SmartDraw( prob ) ); // infection results from this strain? 
     }
 
-    void IndividualHumanCoInfection::Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route)
+    void IndividualHumanCoInfection::Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route)
     {
         StrainIdentity strainIDs;
 
@@ -543,12 +541,12 @@ namespace Kernel
         }
         else
         {
-            bool shouldAcquire = ShouldAcquire( cp->GetTotalContagion(), dt, suscept_mod, transmission_route );
+            bool shouldAcquire = ShouldAcquire( cp->GetTotalContagion(), dt, suscept_mod, tx_route );
 
             if( shouldAcquire )
             {
                 cp->ResolveInfectingStrain(&strainIDs); // get the genome ID
-                AcquireNewInfection(&strainIDs);
+                AcquireNewInfection(&strainIDs, tx_route, -1.0f);
             }
         }
     }

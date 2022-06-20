@@ -65,12 +65,14 @@ namespace Kernel
 
         virtual suids::suid GetSuid() const;
 
-        virtual void SetParameters(IStrainIdentity* infstrain = nullptr, float incubation_period_override = -1.0f );
+        virtual void SetParameters(IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route );
         virtual void Update(float, ISusceptibilityContext* = nullptr) override;
 
         virtual InfectionStateChange::_enum GetStateChange() const override;
         virtual float GetInfectiousness() const override;
         virtual float GetInfectiousnessByRoute(TransmissionRoute::Enum txRoute) const override;
+
+        virtual TransmissionRoute::Enum GetSourceRoute() const override;
 
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void GetInfectiousStrainID(IStrainIdentity* infstrain); // the ID of the strain being shed
@@ -78,7 +80,7 @@ namespace Kernel
         virtual bool IsActive() const override;
         virtual NonNegativeFloat GetDuration() const override;
         virtual bool StrainMatches( IStrainIdentity * pStrain );
-        
+
         virtual bool IsSymptomatic() const override;
 
     protected:
@@ -92,6 +94,7 @@ namespace Kernel
         float infectious_timer;
         float infectiousness;
 
+        TransmissionRoute::Enum     m_source_route;
         InfectionStateChange::_enum StateChange;    //  Lets individual know something has happened
 
         StrainIdentity* infection_strain;           // this a pointer because disease modules may wish to implement derived types 

@@ -805,7 +805,7 @@ namespace Kernel {
         assert( r_value.IsArray() );
 
         rapidjson::Value value_to_add;
-        value_to_add.SetString( rStr.c_str(), rStr.length(), r_doc.GetAllocator() );
+        value_to_add.SetString( rStr.c_str(), static_cast<int>(rStr.length()), r_doc.GetAllocator() );
 
         r_value.PushBack( value_to_add, r_doc.GetAllocator() );
     }

@@ -287,7 +287,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanSTI::Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route)
+    void IndividualHumanSTI::Expose(const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route)
     {
         if( IsInfected() )
         {
@@ -371,7 +371,7 @@ namespace Kernel
             // The ContagionProbability object can give us the ID of the Infector (Depositor)
             // We store this as the heretofore unused "Clade ID" of the Infecting Strain.
             strainId.SetCladeID(pCP_as_Probs->GetInfectorID());
-            AcquireNewInfection( &strainId );
+            AcquireNewInfection( &strainId, tx_route, -1.0f );
         }
     }
 
@@ -609,7 +609,7 @@ namespace Kernel
         }
     }
 
-    void IndividualHumanSTI::AcquireNewInfection( const IStrainIdentity *infstrain, float incubation_period_override )
+    void IndividualHumanSTI::AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
         int numInfs = int(infections.size());
         if( (numInfs >= IndividualHumanConfig::max_ind_inf) ||
@@ -645,7 +645,7 @@ namespace Kernel
             }
         }
 
-        IndividualHuman::AcquireNewInfection( infstrain, incubation_period_override );
+        IndividualHuman::AcquireNewInfection( infstrain, tx_route, incubation_period_override );
 
         if( broadcaster )
         {

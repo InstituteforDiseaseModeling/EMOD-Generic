@@ -29,12 +29,10 @@ namespace Kernel
 {
     NodeEnvironmental::NodeEnvironmental()
         : Node()
-        , txEnvironment(nullptr)
     { }
 
     NodeEnvironmental::NodeEnvironmental(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
         : Node(_parent_sim, externalNodeId, node_suid)
-        , txEnvironment(nullptr)
     { }
 
     NodeEnvironmental::~NodeEnvironmental(void)
@@ -57,7 +55,6 @@ namespace Kernel
     {
         Node::updateInfectivity(dt);
         txEnvironment->EndUpdate(getSeasonalAmplitude());
-        GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers( GetEventContext(), EventTriggerNode::SheddingComplete );
     }
 
     ITransmissionGroups* NodeEnvironmental::CreateTransmissionGroups()
@@ -301,12 +298,6 @@ namespace Kernel
         LOG_VALID_F( "contact: %f, environmental: %f\n", returnThis[TransmissionRoute::CONTACT], returnThis[TransmissionRoute::ENVIRONMENTAL] );
 
         return returnThis;
-    }
-
-    uint64_t NodeEnvironmental::GetTotalGenomes() const
-    {
-        // Environmental infections use genome to represent transmission route
-        return 3;
     }
 
     REGISTER_SERIALIZABLE(NodeEnvironmental);

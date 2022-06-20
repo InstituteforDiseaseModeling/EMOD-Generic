@@ -97,7 +97,7 @@ def parse_data(campaign_obj, filtered_lines, debug=False):
                     take_list.append(0)
         prev = campaign_obj[CampaignKeys.TIMES][i] if i < len(campaign_obj[CampaignKeys
                                                               .TIMES]) else campaign_obj[CampaignKeys.TIMES][-1]
-        d[i] = d[i] / num_in_age_bin if num_in_age_bin is not 0 else 0
+        d[i] = d[i] / num_in_age_bin if num_in_age_bin != 0 else 0
     outputdf['age'] = age_list
     outputdf['take'] = take_list
     if debug:

@@ -940,15 +940,15 @@ namespace Kernel
     }
 
     // TODO: port normal exposure_to_infectivity logic to this pattern as well <ERAD-328>
-    void IndividualHuman::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route)
+    void IndividualHuman::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route)
     {
         ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*susceptibility->getModRisk()*interventions->GetInterventionReducedAcquire());
         LOG_DEBUG_F( "id = %lu, group_id = %d, total contagion = %f, dt = %f, immunity factor = %f, interventions factor = %f, prob=%f, infectiousness=%f\n",
-                     GetSuid().data, transmissionGroupMembershipByRoute[transmission_route].group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
+                     GetSuid().data, transmissionGroupMembershipByRoute[tx_route].group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
         bool acquire = false; 
         if( IndividualHumanConfig::enable_skipping ) 
         {
-            float maxProb = parent->GetMaxInfectionProb( transmission_route ); 
+            float maxProb = parent->GetMaxInfectionProb( tx_route ); 
             if( maxProb > 0 )
             {
                 release_assert(maxProb>=0.0 && maxProb<=1.0);
@@ -983,20 +983,20 @@ namespace Kernel
 
         if( acquire ) 
         {
-            LOG_VALID_F( "Individual %d is acquiring a new infection on route %s.\n", GetSuid().data, TransmissionRoute::pairs::lookup_key( transmission_route ) );
-            AcquireNewInfection( (IStrainIdentity*)cp );
+            LOG_VALID_F( "Individual %d is acquiring a new infection on route %s.\n", GetSuid().data, TransmissionRoute::pairs::lookup_key( tx_route ) );
+            AcquireNewInfection( (IStrainIdentity*)cp, tx_route, -1.0f );
         }
     }
 
-    bool IndividualHuman::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum transmission_route)
+    bool IndividualHuman::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route)
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Function exists due to inheritance. Not a valid code path for GENERIC_SIM." );
     }
 
-    void IndividualHuman::AcquireNewInfection( const IStrainIdentity *strain_ptr, float incubation_period_override )
+    void IndividualHuman::AcquireNewInfection( const IStrainIdentity* strain_ptr, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
         StrainIdentity newStrainId;
-        if( strain_ptr != nullptr )
+        if(strain_ptr)
         {
             strain_ptr->ResolveInfectingStrain( &newStrainId ); // get the clade and genome ID
         }
@@ -1008,7 +1008,7 @@ namespace Kernel
             m_is_infected = true;
 
             IInfection* newinf = createInfection( parent->GetNextInfectionSuid() );
-            newinf->SetParameters(&newStrainId, incubation_period_override);
+            newinf->SetParameters(&newStrainId, incubation_period_override, tx_route);
             newinf->InitInfectionImmunology(susceptibility);
 
             LOG_DEBUG( "Adding infection to infections list.\n" );

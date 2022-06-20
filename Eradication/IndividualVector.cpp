@@ -38,20 +38,20 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(IndividualHumanVector, IndividualHuman)
 
     IndividualHumanVector::IndividualHumanVector(suids::suid _suid, double monte_carlo_weight, double initial_age, int gender)
-    : Kernel::IndividualHuman(_suid, float(monte_carlo_weight), float(initial_age), gender)
-    , m_strain_exposure()
-    , m_total_exposure(0.0f)
-    , vector_susceptibility(nullptr)
-    , vector_interventions(nullptr)
+        : Kernel::IndividualHuman(_suid, float(monte_carlo_weight), float(initial_age), gender)
+        , m_strain_exposure()
+        , m_total_exposure(0.0f)
+        , vector_susceptibility(nullptr)
+        , vector_interventions(nullptr)
     {
     }
 
     IndividualHumanVector::IndividualHumanVector(INodeContext *context)
-    : Kernel::IndividualHuman(context)
-    , m_strain_exposure()
-    , m_total_exposure(0.0f)
-    , vector_susceptibility(nullptr)
-    , vector_interventions(nullptr)
+        : Kernel::IndividualHuman(context)
+        , m_strain_exposure()
+        , m_total_exposure(0.0f)
+        , vector_susceptibility(nullptr)
+        , vector_interventions(nullptr)
     {
     }
 
@@ -138,7 +138,7 @@ namespace Kernel
         std::vector<strain_exposure_t>::iterator it = std::lower_bound( m_strain_exposure.begin(), m_strain_exposure.end(), strain_cdf_draw, compare_strain_exposure_float_less());
         TransmissionGroupsBase::ContagionPopulationImpl contPop( &(it->first), (it->second) );
         LOG_DEBUG_F( "Mosquito->Human infection transmission based on total exposure %f. Existing infections = %d.\n", m_total_exposure, GetInfections().size() );
-        AcquireNewInfection(&contPop);
+        IndividualHuman::AcquireNewInfection(&contPop, TransmissionRoute::CONTACT, -1.0f);
     }
 
     void IndividualHumanVector::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route )

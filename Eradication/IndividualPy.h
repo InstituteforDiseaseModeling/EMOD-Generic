@@ -43,7 +43,7 @@ namespace Kernel
         virtual void UpdateInfectiousness(float dt);
         virtual void Update(float currenttime, float dt);
         virtual Infection* createInfection(suids::suid _suid);
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f );
+        virtual void AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override);
         virtual HumanStateChange GetStateChange() const;
 
         std::string processPrePatent( float dt );
@@ -52,7 +52,6 @@ namespace Kernel
         std::string state_to_report; // pydemo status of individual
         std::string last_state_reported; // previous pydemo status of individual
         int _infection_count;     // number of times infected;
-        TransmissionRoute::Enum _routeOfInfection; // how did this person get infected?
         bool isDead;  // is this individual dead?
         bool state_changed;
 

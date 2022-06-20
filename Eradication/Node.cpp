@@ -27,6 +27,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionEnums.h"
 #include "Types.h"
 #include "NodeEventContext.h"
+#include "SimulationEventContext.h"
 #include "NodeEventContextHost.h"
 #include "TransmissionGroupMembership.h"
 #include "TransmissionGroupsFactory.h"
@@ -85,7 +86,8 @@ namespace Kernel
         , family_time_until_trip(0.0f)
         , family_time_at_destination(0.0f)
         , family_is_destination_new_home(false)
-        , transmissionGroups( nullptr )
+        , transmissionGroups(nullptr)
+        , txEnvironment(nullptr)
         , localWeather(nullptr)
         , migration_info(nullptr)
         , demographics()
@@ -161,7 +163,8 @@ namespace Kernel
         , family_time_until_trip(0.0f)
         , family_time_at_destination(0.0f)
         , family_is_destination_new_home(false)
-        , transmissionGroups( nullptr )
+        , transmissionGroups(nullptr)
+        , txEnvironment(nullptr)
         , localWeather(nullptr)
         , migration_info(nullptr)
         , demographics()
@@ -404,25 +407,36 @@ namespace Kernel
 
     void Node::GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& transmissionGroupMembership)
     {
-        LOG_DEBUG_F( "Calling GetGroupMembershipForProperties\n" );
-        transmissionGroups->GetGroupMembershipForProperties(properties, transmissionGroupMembership );
+        switch(route)
+        {
+            case TransmissionRoute::CONTACT:
+                transmissionGroups->GetGroupMembershipForProperties(properties, transmissionGroupMembership);
+                break;
+
+            default:
+                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
+        }
     }
 
     std::map<TransmissionRoute::Enum, float> Node::GetContagionByRoute() const
     {
-        // Honestly not sure how to implement this in the general case yet.
-        //throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "This function is only supported in NodeTyphoid at this time." );
         std::map<TransmissionRoute::Enum, float> contagionByRoute;
-        release_assert( GetTransmissionRoutes().size() > 0 );
+
         for( auto & route: GetTransmissionRoutes() )
         {
-            // how do we get membership? That's from an individual, but we are at node level here?????
-            // Need to get proper mapping for route name, route idx, and group id. Just hacking it here.
-            // This shouldn't be so "exposed". The tx group class should worry about indices.
-            // I don't want to know/worry about route indices here but don't want to rearch tx groups API either.  
-            auto contagion = transmissionGroups->GetTotalContagion();
+            float contagion;
+            switch(route)
+            {
+                case TransmissionRoute::CONTACT:
+                    contagion = transmissionGroups->GetTotalContagion();
+                    break;
+
+                default:
+                    throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
+            }
             contagionByRoute.insert( std::make_pair( route, contagion ) );
         }
+
         return contagionByRoute;
     }
 
@@ -438,14 +452,24 @@ namespace Kernel
 
     float Node::GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value )
     {
-        return transmissionGroups->GetContagionByProperty( property_value );
+        switch(route)
+        {
+            case TransmissionRoute::CONTACT:
+                return transmissionGroups->GetContagionByProperty( property_value );
+
+            default:
+                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
+        }
     }
 
     void Node::UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes, float mc_weight)
     {
-        TransmissionGroupMembership_t membership;
-        transmissionGroups->GetGroupMembershipForProperties( properties, membership ); 
-        transmissionGroups->UpdatePopulationSize(membership, size_changes, mc_weight);
+        if(transmissionGroups)
+        {
+            TransmissionGroupMembership_t membership;
+            transmissionGroups->GetGroupMembershipForProperties( properties, membership );
+            transmissionGroups->UpdatePopulationSize(membership, size_changes, mc_weight);
+        }
     }
 
     void Node::ChangePropertyMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix)
@@ -460,13 +484,30 @@ namespace Kernel
             return;
         }
 
-        transmissionGroups->ExposeToContagion(candidate, individual, dt, route);
+        switch(route)
+        {
+            case TransmissionRoute::CONTACT:
+                transmissionGroups->ExposeToContagion(candidate, individual, dt, route);
+                break;
+
+            default:
+                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
+        }
     }
 
     void Node::DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route )
     {
-        LOG_DEBUG_F("deposit from individual: clade index =%d, genome index = %d, quantity = %f\n", strain_IDs.GetCladeID(), strain_IDs.GetGeneticID(), contagion_quantity);
-        transmissionGroups->DepositContagion( strain_IDs, contagion_quantity, individual );
+        LOG_DEBUG_F("deposit from individual: clade index =%d, genome index = %d, quantity = %f, route = %d\n", strain_IDs.GetCladeID(), strain_IDs.GetGeneticID(), contagion_quantity, uint32_t(route) );
+
+        switch(route)
+        {
+            case TransmissionRoute::CONTACT:
+                transmissionGroups->DepositContagion( strain_IDs, contagion_quantity, individual );
+                break;
+
+            default:
+                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
+        }
     }
     
     act_prob_vec_t Node::DiscreteGetTotalContagion( void )
@@ -588,6 +629,9 @@ namespace Kernel
         // Update the likelihood of an individual becoming infected.
         // This is based on the current infectiousness at the start of the timestep of all individuals present at the start of the timestep
         updateInfectivity(dt);
+
+        // This is the one-and-only node event. Should look toward ways of deprecating the node event framework.
+        GetParent()->GetSimulationEventContext()->GetNodeEventBroadcaster()->TriggerObservers( GetEventContext(), EventTriggerNode::SheddingComplete );
 
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // !!! GH-798 - I had to change this for loop to use an index so that a user could have an Outbreak intervention within
@@ -1898,7 +1942,7 @@ namespace Kernel
             } 
 
             StrainIdentity init_prevalence_strain = StrainIdentity(init_prev_clade_actual, init_prev_genome_actual);
-            new_individual->AcquireNewInfection(&init_prevalence_strain);
+            new_individual->AcquireNewInfection(&init_prevalence_strain, TransmissionRoute::OUTBREAK, -1.0f);
         }
 
         new_individual->UpdateGroupMembership();

@@ -173,9 +173,10 @@ namespace Kernel
     {
     }
 
-    void InfectionTyphoid::SetParameters( IStrainIdentity* infstrain, float incubation_period_override )
+    void InfectionTyphoid::SetParameters( IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route )
     {
         CreateInfectionStrain(infstrain);
+        m_source_route = tx_route;
     }
 
     void InfectionTyphoid::InitInfectionImmunology(ISusceptibilityContext* _immunity)

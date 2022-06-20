@@ -81,7 +81,7 @@ namespace Kernel
             }
             else
             {
-                Ind_coinf->AcquireNewInfection(&outbreak_strain, incubation_period_override);
+                Ind_coinf->AcquireNewInfection(&outbreak_strain, TransmissionRoute::OUTBREAK, incubation_period_override);
             }
         }
         else if (infection_type == TBHIVInfectionType::HIV)
@@ -95,7 +95,7 @@ namespace Kernel
             }
             else
             {
-                Ind_coinf->AcquireNewInfectionHIV(&outbreak_strain, incubation_period_override);
+                Ind_coinf->AcquireNewInfectionHIV(&outbreak_strain, TransmissionRoute::OUTBREAK, incubation_period_override);
             }
         }
         else

@@ -585,7 +585,8 @@ forceInfect(PyObject* self, PyObject* args)
     {
         std::cout << "Failed to parse id for hasHIV (as int)." << std::endl;
     }
-    population[ id ]->AcquireNewInfection();
+    StrainIdentity strainIDs; // just going to use antigen=0
+    population[ id ]->AcquireNewInfection(&strainIDs, TransmissionRoute::CONTACT, 0.0f);
     Py_RETURN_NONE;
 }
 

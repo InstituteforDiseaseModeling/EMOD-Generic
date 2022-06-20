@@ -27,13 +27,15 @@ namespace Kernel
         virtual float GetInfectiousness() const = 0;
         virtual float GetInfectiousnessByRoute(TransmissionRoute::Enum) const = 0;
 
+        virtual TransmissionRoute::Enum GetSourceRoute() const = 0;
+
         virtual void GetInfectiousStrainID( IStrainIdentity* ) = 0;
         virtual const IStrainIdentity* GetStrain() const  = 0;
 
         virtual bool IsActive() const = 0;
         virtual NonNegativeFloat GetDuration() const = 0;
         virtual void SetContextTo(IIndividualHumanContext*) = 0;
-        virtual void SetParameters( IStrainIdentity* infstrain=nullptr, float incubation_period_override = -1.0f ) = 0;
+        virtual void SetParameters( IStrainIdentity* infstrain=nullptr, float incubation_period_override=-1.0f, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT ) = 0;
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) = 0;
         virtual bool StrainMatches( IStrainIdentity * pStrain ) = 0;
         virtual bool IsSymptomatic() const = 0;

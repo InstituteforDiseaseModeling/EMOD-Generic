@@ -41,13 +41,11 @@ namespace Kernel {
                  nis == NewInfectionState::NewInfection )
             {
                 auto inf = individual->GetInfections().back();
-                StrainIdentity strain;
-                inf->GetInfectiousStrainID( &strain );
-                if( strain.GetGeneticID() == TransmissionRoute::ENVIRONMENTAL )
+                if( inf->GetSourceRoute() == TransmissionRoute::ENVIRONMENTAL )
                 {
                     enviro_infections_counter += mcw;
                 }
-                else if( strain.GetGeneticID() == TransmissionRoute::CONTACT )
+                else if( inf->GetSourceRoute() == TransmissionRoute::CONTACT )
                 {
                     contact_infections_counter += mcw;
                 }

@@ -115,7 +115,7 @@ namespace Kernel {
             std::map< GroupIndex, int > infectors;
             float populationSize;
 
-            static std::string tag;
+            std::string tag;
 
         private:
             INodeSTI * m_parent;
@@ -123,8 +123,7 @@ namespace Kernel {
             virtual void UseTotalPopulationForNormalization( void ) { return; } // N/A
             virtual void UseGroupPopulationForNormalization( void ) { return; } // N/A
 
-            virtual void SetTag( const std::string& tag )   { return; };
-            virtual const std::string& GetTag( void ) const { return tag; };
+            virtual void SetTag( const std::string& tag ) override { this->tag = tag; }
 
             virtual float GetTotalContagionForGroup( TransmissionGroupMembership_t group ) override { return nanf("NAN"); }
 // NOTYET        virtual float GetTotalContagionForProperties( const IPKeyValueContainer& property_value ) override { return nanf("NAN"); }

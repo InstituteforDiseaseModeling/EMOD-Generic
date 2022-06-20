@@ -18,9 +18,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class Infection;
+
     struct IInfectable : ISupports
     {
-        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route = TransmissionRoute::CONTACT ) = 0;
+        virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT ) = 0;
         virtual const infection_list_t& GetInfections() const = 0;
         virtual float GetInterventionReducedAcquire() const = 0;
 
@@ -28,9 +29,10 @@ namespace Kernel
     };
 
     class StrainIdentity;
+
     struct IInfectionAcquirable : ISupports
     {
-        virtual void AcquireNewInfection( const IStrainIdentity *infstrain = nullptr, float incubation_period_override = -1.0f ) = 0;
+        virtual void AcquireNewInfection( const IStrainIdentity* infstrain=nullptr, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT, float incubation_period_override=-1.0f ) = 0;
 
         virtual ~IInfectionAcquirable() {}
     };

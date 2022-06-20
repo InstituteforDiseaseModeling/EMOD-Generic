@@ -69,7 +69,7 @@ namespace Kernel
         LOG_DEBUG( "Infecting individual from Outbreak.\n" );
         if( ignoreImmunity || context->GetParent()->GetRng()->SmartDraw(mod_acq) )
         {
-            individual->AcquireNewInfection(&outbreak_strain, incubation_period_override);
+            individual->AcquireNewInfection(&outbreak_strain, TransmissionRoute::OUTBREAK, incubation_period_override);
             distributed = true;
         }
         else
