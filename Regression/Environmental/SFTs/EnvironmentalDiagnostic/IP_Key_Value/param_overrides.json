@@ -26,10 +26,6 @@
                 "Infectious_Period_Constant": 5
             }
         },
-        "ENVIRONMENTAL": {
-            "Environmental_Ramp_Down_Duration": 2e-38,
-            "Environmental_Ramp_Up_Duration": 2e-38
-        },
         "LOGLEVEL": {
             "logLevel_EnvironmentalDiagnostic": "DEBUG"
         },

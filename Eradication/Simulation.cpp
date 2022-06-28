@@ -305,18 +305,6 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        if( np->environmental_ramp_up_duration + np->environmental_ramp_down_duration + np->environmental_cutoff_days >= DAYSPERYEAR )
-        {
-            std::ostringstream msg;
-            msg <<    "Environmental_Ramp_Up_Duration "   << "(" << np->environmental_ramp_up_duration   << ")"
-                << " + Environmental_Ramp_Down_Duration " << "(" << np->environmental_ramp_down_duration << ")"
-                << " + Environmental_Cutoff_Days "        << "(" << np->environmental_cutoff_days        << ")"
-                << " must be < 365. Equals "
-                << np->environmental_ramp_up_duration + np->environmental_ramp_down_duration + np->environmental_cutoff_days
-                << ".\n";
-            throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-
         // Check for not-yet-implemented strain tracking features.
         if(ap->enable_strain_tracking && np->enable_infectivity_reservoir)
         {

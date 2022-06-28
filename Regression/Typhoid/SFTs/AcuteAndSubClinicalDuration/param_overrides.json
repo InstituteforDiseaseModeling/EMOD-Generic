@@ -6,7 +6,7 @@
             "../../Santiago_Demographics.json"
         ],
         "Python_Script_Path": "SHARED",
-        "Run_Number": 0,
+        "Run_Number": 1,
         "Typhoid_Carrier_Probability": 0.13,
         "x_Base_Population": 0.4,
         "logLevel_InfectionTyphoid": "VALID"

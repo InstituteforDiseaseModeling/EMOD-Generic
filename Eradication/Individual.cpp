@@ -33,7 +33,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "EventTrigger.h"
 #include "ISimulationContext.h"
 #include "RANDOM.h"
-#include "RapidJsonImpl.h" // Once JSON lib wrapper is completely done, this underlying JSON library specific include can be taken out
 #include <IArchive.h>
 
 SETUP_LOGGING( "Individual" )

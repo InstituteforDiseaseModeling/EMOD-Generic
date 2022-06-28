@@ -6,10 +6,6 @@
             "../../../Santiago_100_overlay.json"
         ],
         "Enable_Vital_Dynamics": 0,
-        "Environmental_Cutoff_Days": 80,
-        "Environmental_Peak_Start": 30,
-        "Environmental_Ramp_Down_Duration": 40,
-        "Environmental_Ramp_Up_Duration": 60,
         "Incubation_Period_Constant": 0,
         "Node_Contagion_Decay_Rate": 1,
         "Python_Script_Path": "SHARED",

@@ -5,11 +5,6 @@
     <LocalDebuggerWorkingDirectory>..\Regression\Generic\00_Generic_Default</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='QuickStart|x64'">
-    <LocalDebuggerCommandArguments>-C config.json -I . -O testing --dll-path $(SolutionDir)$(Platform)\$(Configuration)</LocalDebuggerCommandArguments>
-    <LocalDebuggerWorkingDirectory>..\Regression\Generic\00_Generic_Default</LocalDebuggerWorkingDirectory>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerCommandArguments>-C config_flattened.json -I . -O testing --dll-path $(SolutionDir)$(Platform)\$(Configuration)</LocalDebuggerCommandArguments>
     <LocalDebuggerWorkingDirectory>..\Regression\Serialization\11_Generic_Version_2_Load</LocalDebuggerWorkingDirectory>

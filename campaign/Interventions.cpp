@@ -20,8 +20,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "EventTrigger.h"
 
-#include "RapidJsonImpl.h"
-
 SETUP_LOGGING( "Interventions" )
 
 //unsigned int total_intervention_counter = 0;

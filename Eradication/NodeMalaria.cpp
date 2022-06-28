@@ -117,23 +117,23 @@ namespace Kernel
         return NodeVector::addNewIndividual(monte_carlo_weight, initial_age, gender, initial_infection_count, immparam, riskparam);
     }
 
-    void NodeMalaria::LoadImmunityDemographicsDistribution()
+    void NodeMalaria::LoadImmunityDemographicsDistribution(const NodeDemographics* demog_ptr)
     {
         // For MALARIA sims, SusceptibilityDistributionFlag, SusceptibilityDistribution1, SusceptibilityDistribution2
         // map to Innate_Immune_Variation (e.g. variable pyrogenic threshold, cytokine killing)
-        DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
-        float susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
-        float susceptibility_dist2 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
+        DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
+        float susceptibility_dist1 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
+        float susceptibility_dist2 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
 
         distribution_susceptibility = DistributionFactory::CreateDistribution( susceptibility_dist_type );
         distribution_susceptibility->SetParameters( susceptibility_dist1, susceptibility_dist2, 0.0 );
 
-        MSP_mean_antibody_distribution         = NodeDemographicsDistribution::CreateDistribution(demographics["MSP_mean_antibody_distribution"],         "age");
-        nonspec_mean_antibody_distribution     = NodeDemographicsDistribution::CreateDistribution(demographics["nonspec_mean_antibody_distribution"],     "age");
-        PfEMP1_mean_antibody_distribution      = NodeDemographicsDistribution::CreateDistribution(demographics["PfEMP1_mean_antibody_distribution"],      "age");
-        MSP_variance_antibody_distribution     = NodeDemographicsDistribution::CreateDistribution(demographics["MSP_variance_antibody_distribution"],     "age");
-        nonspec_variance_antibody_distribution = NodeDemographicsDistribution::CreateDistribution(demographics["nonspec_variance_antibody_distribution"], "age");
-        PfEMP1_variance_antibody_distribution  = NodeDemographicsDistribution::CreateDistribution(demographics["PfEMP1_variance_antibody_distribution"],  "age");
+        MSP_mean_antibody_distribution         = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["MSP_mean_antibody_distribution"],         "age");
+        nonspec_mean_antibody_distribution     = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["nonspec_mean_antibody_distribution"],     "age");
+        PfEMP1_mean_antibody_distribution      = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["PfEMP1_mean_antibody_distribution"],      "age");
+        MSP_variance_antibody_distribution     = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["MSP_variance_antibody_distribution"],     "age");
+        nonspec_variance_antibody_distribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["nonspec_variance_antibody_distribution"], "age");
+        PfEMP1_variance_antibody_distribution  = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["PfEMP1_variance_antibody_distribution"],  "age");
     }
 
     float NodeMalaria::drawInitialSusceptibility(float ind_init_age)

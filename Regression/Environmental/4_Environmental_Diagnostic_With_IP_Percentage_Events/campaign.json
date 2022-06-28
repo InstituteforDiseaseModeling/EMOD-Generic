@@ -1,26 +1,60 @@
 {
     "Events": [
         {
-            "comment" : "No infections, NegativeResult",
             "class": "CampaignEvent",
-            "Start_Day": 10,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Start_Day": 0,
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions" : 4,
-                "Timesteps_Between_Repetitions" : 5,
+                "Number_Repetitions": -1,
+                "Timesteps_Between_Repetitions": 365.0,
+                "Intervention_Config": {
+                    "class": "NodeInfectivityMult",
+                    "Multiplier_By_Duration": {
+                        "Times": [
+                            0.0,
+                            2.0,
+                            361.0,
+                            363.0,
+                            365.0
+                        ],
+                        "Values": [
+                            0.0,
+                            1.0,
+                            1.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Transmission_Route": "ENVIRONMENTAL"
+                }
+            }
+        },
+        {
+            "comment": "No infections, NegativeResult",
+            "class": "CampaignEvent",
+            "Start_Day": 10,
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Event_Coordinator_Config": {
+                "class": "StandardInterventionDistributionEventCoordinator",
+                "Number_Repetitions": 4,
+                "Timesteps_Between_Repetitions": 5,
                 "Intervention_Config": {
                     "class": "EnvironmentalDiagnostic",
                     "Sample_Threshold": 1.0,
-                    "Environment_IP_Key_Value" : "Geographic:C",
-                    "Negative_Diagnosis_Event": "NegativeResult", 
-                    "Positive_Diagnosis_Event" : "PositiveResult"
+                    "Environment_IP_Key_Value": "Geographic:C",
+                    "Negative_Diagnosis_Event": "NegativeResult",
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 }
             }
         },
         {
             "class": "CampaignEvent",
-            "Start_Day" : 100,
+            "Start_Day": 100,
             "Target_Demographic": "Everyone",
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
@@ -31,7 +65,7 @@
                     "Geographic:A"
                 ],
                 "Demographic_Coverage": 1.0,
-                "Intervention_Config": { 
+                "Intervention_Config": {
                     "Incubation_Period_Override": 0,
                     "class": "OutbreakIndividual"
                 }
@@ -42,45 +76,49 @@
             }
         },
         {
-            "comment" : "Max infections, PositiveResult",
+            "comment": "Max infections, PositiveResult",
             "class": "CampaignEvent",
             "Start_Day": 101,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions" : 6,
-                "Timesteps_Between_Repetitions" : 5,
+                "Number_Repetitions": 6,
+                "Timesteps_Between_Repetitions": 5,
                 "Intervention_Config": {
                     "class": "EnvironmentalDiagnostic",
                     "Sample_Threshold": 1.0,
-                    "Environment_IP_Key_Value" : "Geographic:C",
-                    "Negative_Diagnosis_Event": "NegativeResult", 
-                    "Positive_Diagnosis_Event" : "PositiveResult"
+                    "Environment_IP_Key_Value": "Geographic:C",
+                    "Negative_Diagnosis_Event": "NegativeResult",
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 }
             }
         },
         {
-            "comment" : "Very little infections, NegativeResult",
+            "comment": "Very little infections, NegativeResult",
             "class": "CampaignEvent",
             "Start_Day": 350,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions" : 4,
-                "Timesteps_Between_Repetitions" : 5,
+                "Number_Repetitions": 4,
+                "Timesteps_Between_Repetitions": 5,
                 "Intervention_Config": {
                     "class": "EnvironmentalDiagnostic",
                     "Sample_Threshold": 1.0,
-                    "Environment_IP_Key_Value" : "Geographic:C",
-                    "Negative_Diagnosis_Event": "NegativeResult", 
-                    "Positive_Diagnosis_Event" : "PositiveResult"
+                    "Environment_IP_Key_Value": "Geographic:C",
+                    "Negative_Diagnosis_Event": "NegativeResult",
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 }
             }
         },
         {
             "class": "CampaignEvent",
             "Start_Day": 400,
-            "Target_Demographic": "Everyone",            
+            "Target_Demographic": "Everyone",
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
                 "Number_Repetitions": 1,
@@ -90,7 +128,7 @@
                     "Geographic:A"
                 ],
                 "Demographic_Coverage": 0.5,
-                "Intervention_Config": { 
+                "Intervention_Config": {
                     "Incubation_Period_Override": 0,
                     "class": "OutbreakIndividual"
                 }
@@ -98,41 +136,45 @@
             "Event_Name": "Outbreak",
             "Nodeset_Config": {
                 "class": "NodeSetAll"
-            } 
+            }
         },
         {
-            "comment" : "Smaller outbreak, PositiveResult",
+            "comment": "Smaller outbreak, PositiveResult",
             "class": "CampaignEvent",
             "Start_Day": 401,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions" : 6,
-                "Timesteps_Between_Repetitions" : 5,
+                "Number_Repetitions": 6,
+                "Timesteps_Between_Repetitions": 5,
                 "Intervention_Config": {
                     "class": "EnvironmentalDiagnostic",
                     "Sample_Threshold": 1.5,
-                    "Environment_IP_Key_Value" : "Geographic:C",
-                    "Negative_Diagnosis_Event": "NegativeResult", 
-                    "Positive_Diagnosis_Event" : "PositiveResult"
+                    "Environment_IP_Key_Value": "Geographic:C",
+                    "Negative_Diagnosis_Event": "NegativeResult",
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 }
             }
         },
         {
-            "comment" : "Back to no infections, NegativeResult",
+            "comment": "Back to no infections, NegativeResult",
             "class": "CampaignEvent",
             "Start_Day": 700,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "StandardInterventionDistributionEventCoordinator",
-                "Number_Repetitions" : 4,
-                "Timesteps_Between_Repetitions" : 5,
+                "Number_Repetitions": 4,
+                "Timesteps_Between_Repetitions": 5,
                 "Intervention_Config": {
                     "class": "EnvironmentalDiagnostic",
                     "Sample_Threshold": 1.0,
-                    "Environment_IP_Key_Value" : "Geographic:C",
-                    "Negative_Diagnosis_Event": "NegativeResult", 
-                    "Positive_Diagnosis_Event" : "PositiveResult"
+                    "Environment_IP_Key_Value": "Geographic:C",
+                    "Negative_Diagnosis_Event": "NegativeResult",
+                    "Positive_Diagnosis_Event": "PositiveResult"
                 }
             }
         },
@@ -140,63 +182,72 @@
             "comment": "Broadcast Event to start Surveillance",
             "class": "CampaignEvent",
             "Start_Day": 7,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "BroadcastCoordinatorEvent",
-                "Coordinator_Name" : "Coordnator_1",
-                "Cost_To_Consumer" : 10,
-                "Broadcast_Event" : "GP_EVENT_001"
+                "Coordinator_Name": "Coordnator_1",
+                "Cost_To_Consumer": 10,
+                "Broadcast_Event": "GP_EVENT_001"
             }
         },
         {
             "comment": "Count events and respond so we can see impact to ReportSurveillanceEventRecorder.",
             "class": "CampaignEvent",
             "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "SurveillanceEventCoordinator",
-                "Coordinator_Name" : "ACF_Counter",
-                "Start_Trigger_Condition_List" : [ "GP_EVENT_001" ],
-                "Stop_Trigger_Condition_List" : [ 
+                "Coordinator_Name": "ACF_Counter",
+                "Start_Trigger_Condition_List": [
+                    "GP_EVENT_001"
                 ],
-                "Duration" : -1,
-                "Incidence_Counter" : {
-                    "Counter_Type" : "PERIODIC",
-                    "Counter_Period" : 30,
-                    "Counter_Event_Type" : "NODE",
-                    "Trigger_Condition_List" : ["PositiveResult"],
-                    "Node_Property_Restrictions" : [],
-                    "Property_Restrictions_Within_Node" : [],
-                    "Target_Demographic": "Everyone",
-                    "Demographic_Coverage" : 1.0
-                },
-                "Responder" : {
-                    "Responded_Event" : "GP_EVENT_000",
-                    "Threshold_Type" : "PERCENTAGE_EVENTS",
-                    "Percentage_Events_To_Count" :
-                    [
-                        "NegativeResult", 
+                "Stop_Trigger_Condition_List": [],
+                "Duration": -1,
+                "Incidence_Counter": {
+                    "Counter_Type": "PERIODIC",
+                    "Counter_Period": 30,
+                    "Counter_Event_Type": "NODE",
+                    "Trigger_Condition_List": [
                         "PositiveResult"
                     ],
-                    "Action_List" :
-                    [
+                    "Node_Property_Restrictions": [],
+                    "Property_Restrictions_Within_Node": [],
+                    "Target_Demographic": "Everyone",
+                    "Demographic_Coverage": 1.0
+                },
+                "Responder": {
+                    "Responded_Event": "GP_EVENT_000",
+                    "Threshold_Type": "PERCENTAGE_EVENTS",
+                    "Percentage_Events_To_Count": [
+                        "NegativeResult",
+                        "PositiveResult"
+                    ],
+                    "Action_List": [
                         {
-                            "Threshold" : 0.5,
-                            "Event_Type" : "COORDINATOR",
-                            "Event_To_Broadcast" : "GP_EVENT_002"
+                            "Threshold": 0.5,
+                            "Event_Type": "COORDINATOR",
+                            "Event_To_Broadcast": "GP_EVENT_002"
                         }
                     ]
                 }
-            }            
+            }
         },
         {
             "class": "CampaignEvent",
             "Start_Day": 1,
-            "Nodeset_Config": { "class": "NodeSetAll" },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
             "Event_Coordinator_Config": {
                 "class": "TriggeredEventCoordinator",
                 "Coordinator_Name": "3n4_Vaccinator",
-                "Start_Trigger_Condition_List": [ "GP_EVENT_002" ],
+                "Start_Trigger_Condition_List": [
+                    "GP_EVENT_002"
+                ],
                 "Stop_Trigger_Condition_List": [],
                 "Number_Repetitions": 1,
                 "Timesteps_Between_Repetitions": 0,
@@ -206,14 +257,14 @@
                 "Property_Restrictions_Within_Node": [],
                 "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                   "class": "Vaccine",
-                   "Cost_To_Consumer": 2,
-                   "Vaccine_Take": 1,
-                   "Acquire_Config": {
-                      "class": "WaningEffectBox",
-                      "Initial_Effect": 1.0,
-                      "Box_Duration": 100
-                   }
+                    "class": "Vaccine",
+                    "Cost_To_Consumer": 2,
+                    "Vaccine_Take": 1,
+                    "Acquire_Config": {
+                        "class": "WaningEffectBox",
+                        "Initial_Effect": 1.0,
+                        "Box_Duration": 100
+                    }
                 },
                 "Completion_Event": "GP_EVENT_003"
             }
@@ -221,4 +272,3 @@
     ],
     "Use_Defaults": 1
 }
-

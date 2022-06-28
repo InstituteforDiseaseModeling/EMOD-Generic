@@ -226,7 +226,6 @@ namespace Kernel
         // Climate and demographics
         Climate *localWeather;
         IMigrationInfo *migration_info;
-        NodeDemographics demographics;
         ExternalNodeId_t externalId; // DON'T USE THIS EXCEPT FOR INPUT/OUTPUT PURPOSES!
         NPKeyValueContainer node_properties;
 
@@ -293,9 +292,9 @@ namespace Kernel
 
         virtual void Initialize();
         virtual void setupEventContextHost();
-        void ExtractDataFromDemographics();
-        virtual void LoadImmunityDemographicsDistribution();
-        virtual void LoadOtherDiseaseSpecificDistributions() {};
+        void ExtractDataFromDemographics(const NodeDemographics* demog_ptr);
+        virtual void LoadImmunityDemographicsDistribution(const NodeDemographics* demog_ptr);
+        virtual void LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr);
 
         // Updates
         virtual void updateInfectivity(float dt = 0.0f);

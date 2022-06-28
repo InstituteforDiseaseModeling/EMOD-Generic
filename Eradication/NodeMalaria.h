@@ -68,7 +68,7 @@ namespace Kernel
         NodeDemographicsDistribution* nonspec_variance_antibody_distribution;
         NodeDemographicsDistribution* PfEMP1_variance_antibody_distribution;
 
-        virtual void LoadImmunityDemographicsDistribution() override;
+        virtual void LoadImmunityDemographicsDistribution(const NodeDemographics* demog_ptr) override;
         virtual float drawInitialSusceptibility(float ind_init_age) override;
 
         virtual IIndividualHuman* createHuman( suids::suid id, float MCweight, float init_age, int gender) override;

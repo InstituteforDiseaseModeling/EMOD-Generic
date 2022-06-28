@@ -13,9 +13,6 @@
     <Filter Include="Header Files\External\cajun">
       <UniqueIdentifier>{d2663c07-686e-4541-ac54-202d4c8c29b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\External\rapidjson">
-      <UniqueIdentifier>{ff05490f-2d19-487f-bd4d-7175fac7c572}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\External\microsoft">
       <UniqueIdentifier>{4605cdaf-714d-4a92-8a63-4455a31ba642}</UniqueIdentifier>
     </Filter>

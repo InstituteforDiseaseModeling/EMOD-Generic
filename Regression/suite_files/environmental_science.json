@@ -8,7 +8,6 @@
         { "path" : "Environmental/SFTs/Multi_Route_HINT/Single_Property_Between_Groups" },
         { "path" : "Environmental/SFTs/Multi_Route_HINT/10_IP_Values_Within_Group" },
         { "path" : "Environmental/SFTs/Multi_Route_HINT/10_IP_Values_Between_Groups" },
-        { "path" : "Environmental/SFTs/Seasonality" },
         { "path" : "Environmental/SFTs/EnvironmentalDiagnostic/Threshold/Infectivity_ET_Threshold"},
         { "path" : "Environmental/SFTs/EnvironmentalDiagnostic/Threshold/Infectivity_GT_Threshold"},
         { "path" : "Environmental/SFTs/EnvironmentalDiagnostic/Threshold/Infectivity_LT_Threshold"},

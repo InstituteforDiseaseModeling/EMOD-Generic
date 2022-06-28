@@ -67,8 +67,6 @@ namespace Kernel
 
     void NodeInfectivityMult::Update(float dt)
     {
-        duration += dt;
-
         if(mult_by_duration.isAtEnd(duration))
         {
             expired = true;
@@ -77,6 +75,8 @@ namespace Kernel
         {
             parent->UpdateInfectivityMultiplier(mult_by_duration.getValueLinearInterpolation(duration, 1.0f), tx_route);
         }
+
+        duration += dt;
     }
 
     void NodeInfectivityMult::serialize(IArchive& ar, NodeInfectivityMult* obj)

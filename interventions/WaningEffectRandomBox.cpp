@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 
 #include "WaningEffect.h"
-#include "CajunIncludes.h"
 #include "IArchive.h"
 #include "IIndividualHumanContext.h"
 #include "RANDOM.h"

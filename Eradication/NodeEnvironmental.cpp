@@ -54,7 +54,10 @@ namespace Kernel
     void NodeEnvironmental::updateInfectivity(float dt)
     {
         Node::updateInfectivity(dt);
-        txEnvironment->EndUpdate(getSeasonalAmplitude());
+
+        // Incorporate multiplicative infectivity
+        float infectivity_multiplication = event_context_host->GetInfectivityMultiplier(TransmissionRoute::ENVIRONMENTAL);
+        txEnvironment->EndUpdate(infectivity_multiplication);
     }
 
     ITransmissionGroups* NodeEnvironmental::CreateTransmissionGroups()
@@ -69,110 +72,6 @@ namespace Kernel
     {
         transmissionGroups->Build(contagionDecayRate,                    GetParams()->number_clades, GetTotalGenomes());
         txEnvironment->Build(GetParams()->node_contagion_decay_fraction, GetParams()->number_clades, GetTotalGenomes());
-    }
-
-    float NodeEnvironmental::getSeasonalAmplitude() const
-    {
-        float amplification = 0.0f;
-
-        float peak_amplification = 1.0f;
-        float ramp_down_days = GetParams()->environmental_ramp_down_duration;
-        float ramp_up_days   = GetParams()->environmental_ramp_up_duration;
-        float cutoff_days    = GetParams()->environmental_cutoff_days;
-        float peak_start_day = floor(GetParams()->environmental_peak_start);
-        if (peak_start_day > DAYSPERYEAR)
-        {
-            peak_start_day = peak_start_day - DAYSPERYEAR;
-        }
-        //this is mostly for calibtool purposes
-        float peak_days = (DAYSPERYEAR - cutoff_days) - (ramp_down_days + ramp_up_days);
-        float peak_end_day = peak_start_day + peak_days;
-        if (peak_end_day > DAYSPERYEAR)
-        {
-            peak_end_day = peak_end_day - DAYSPERYEAR;
-        }
-
-        float slope_up = peak_amplification / ramp_up_days;
-        float slope_down = peak_amplification / ramp_down_days;
-
-        int SimDay = (int)GetTime().time; // is this the date of the simulated year?
-        int nDayOfYear = SimDay % DAYSPERYEAR;
-#define OFFSET (0.0f) // (0.5f)
-        if (peak_start_day - ramp_up_days > 0)
-        {
-            if ((nDayOfYear >= peak_start_day-ramp_up_days) && ( nDayOfYear < peak_start_day))
-            { // beginning of wastewater irrigation
-                amplification=((nDayOfYear- (peak_start_day-ramp_up_days))+ OFFSET )*(slope_up);
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage A: ramping up.\n" );
-            }
-            else if ((peak_start_day - peak_end_day >= 0) && ((nDayOfYear >= peak_start_day)  || (nDayOfYear<=peak_end_day)))
-            { // peak of wastewater irrigation
-                amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage B: peak amp plateau.\n" );
-            }
-            else if ((peak_start_day - peak_end_day < 0) && (nDayOfYear >= peak_start_day) && (nDayOfYear <= peak_end_day))
-            { // peak of wastewater irrigation
-                amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage C: peak amp plateau.\n" );
-            }
-            else if ((peak_end_day + ramp_down_days < DAYSPERYEAR) && (nDayOfYear > peak_end_day) && (nDayOfYear <= (peak_end_day+ramp_down_days)))
-            {
-                amplification= peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage D: slope down.\n" );
-            }
-            else if ((peak_end_day + ramp_down_days >= DAYSPERYEAR) && ((nDayOfYear > peak_end_day) || (nDayOfYear < ramp_down_days - (DAYSPERYEAR- peak_end_day))))
-            {
-                // end of wastewater irrigation
-                if (nDayOfYear > peak_end_day)
-                {
-                    amplification = peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(i): slope down.\n" );
-                }
-                if (nDayOfYear < ramp_down_days - (DAYSPERYEAR - peak_end_day))
-                {
-                    amplification = peak_amplification - (((DAYSPERYEAR-peak_end_day)+nDayOfYear- OFFSET )*slope_down);
-                    LOG_DEBUG_F( "Seasonal Amplification 1 stage E(ii): slope down.\n" );
-                }
-            }
-            else
-            {
-                LOG_DEBUG_F( "Seasonal Amplification 1 stage F: zero amp plateau.\n" );
-            }
-        }
-        else if (peak_start_day - ramp_up_days <= 0)
-        {
-            if ((nDayOfYear >= peak_start_day-ramp_up_days+DAYSPERYEAR) || ( nDayOfYear < peak_start_day))
-            { // beginning of wastewater irrigation
-                if (nDayOfYear >= peak_start_day-ramp_up_days+DAYSPERYEAR)
-                {
-                    amplification= (nDayOfYear - (peak_start_day-ramp_up_days+DAYSPERYEAR)+ OFFSET )*(slope_up);
-                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(i): ramping up.\n" );
-                }
-                else if (nDayOfYear < peak_start_day)
-                {
-                    amplification= (((ramp_up_days-peak_start_day) + nDayOfYear)  +  OFFSET )*(slope_up);
-                    LOG_DEBUG_F( "Seasonal Amplification 2 stage A(ii): ramping up.\n" );
-                }
-            }
-            if ((peak_start_day - peak_end_day > 0) && ((nDayOfYear >= peak_start_day)  || (nDayOfYear<=peak_end_day)))
-            { // peak of wastewater irrigation
-                amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage B: peak plateau.\n" );
-            }
-            else if ((peak_start_day - peak_end_day < 0) && (nDayOfYear >= peak_start_day) && (nDayOfYear <= peak_end_day))
-            { // peak of wastewater irrigation
-                amplification= peak_amplification;
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage C: peak plateau.\n" );
-            }
-            else if ((nDayOfYear > peak_end_day) && (nDayOfYear <= (peak_end_day+ramp_down_days)) )
-            { // end of wastewater irrigation
-                amplification= peak_amplification-(((nDayOfYear-peak_end_day)- OFFSET )*slope_down);
-                LOG_DEBUG_F( "Seasonal Amplification 2 stage D: bottom plateau.\n" );
-            }
-        }
-
-        LOG_VALID_F("amplification calculated as %f: day of year=%d, start=%f, end=%f, ramp_up=%f, ramp_down=%f, cutoff=%f.\n", amplification, nDayOfYear, peak_start_day, peak_end_day, ramp_up_days, ramp_down_days, cutoff_days );
-        return amplification;
     }
 
     void NodeEnvironmental::SetupIntranodeTransmission()
@@ -257,17 +156,6 @@ namespace Kernel
         LOG_DEBUG_F( "Calling %s.\n", __FUNCTION__ );
         ITransmissionGroups* txGroups = (route == TransmissionRoute::CONTACT) ? transmissionGroups : txEnvironment;
         txGroups->GetGroupMembershipForProperties( properties, transmissionGroupMembership );
-    }
-
-    void NodeEnvironmental::UpdateTransmissionGroupPopulation(const tProperties& properties, float size_delta, float mc_weight)
-    {
-        TransmissionGroupMembership_t contact;
-        transmissionGroups->GetGroupMembershipForProperties( properties, contact );
-        transmissionGroups->UpdatePopulationSize(contact, size_delta, mc_weight);
-
-        TransmissionGroupMembership_t environmental;
-        txEnvironment->GetGroupMembershipForProperties( properties, environmental );
-        txEnvironment->UpdatePopulationSize(environmental, size_delta, mc_weight);
     }
 
     void NodeEnvironmental::ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route)

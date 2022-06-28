@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include "NodeInfo.h"
-#include "JsonObject.h"
-#include "Serializer.h"
 #include "INodeContext.h"
 #include "NodeEventContext.h"
 

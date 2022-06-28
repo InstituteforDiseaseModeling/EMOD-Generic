@@ -10,9 +10,6 @@
             "Enable_Heterogeneous_Intranode_Transmission": 1
         },
         "DISEASE": {
-            "INFECTIOUSNESS": {
-                "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY"
-            },
             "Node_Contagion_Decay_Rate": 0.08
         },
         "Enable_Initial_Prevalence": 1,
@@ -23,7 +20,6 @@
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "Namawala",
-            "Node_Grid_Size": 0.009,
             "Report_Node_Event_Recorder_Events": [
                 "PositiveResult",
                 "NegativeResult"

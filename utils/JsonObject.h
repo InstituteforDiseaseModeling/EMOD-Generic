@@ -21,7 +21,6 @@ namespace Kernel {
     {
         JS_RAPIDJSON  = 0,
         JS_JSONSPIRIT = 1,
-        JS_CAJUN      = 2
     };
 
     // Json (root) object abstraction (or adapter interface) for different JSon libraries

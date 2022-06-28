@@ -21,7 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "ProgVersion.h"
 #include "Exceptions.h"
-#include "CajunIncludes.h"
 #ifdef __GNUC__
 #include <dlfcn.h>
 #include <dirent.h>

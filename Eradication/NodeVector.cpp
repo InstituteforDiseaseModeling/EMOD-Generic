@@ -51,6 +51,7 @@ namespace Kernel
 
     NodeVector::NodeVector() 
         : m_larval_habitats()
+        , m_vector_init_pop()
         , m_vectorpopulations()
         , m_VectorPopulationReportingList()
         , m_vector_lifecycle_probabilities( nullptr )
@@ -68,6 +69,7 @@ namespace Kernel
     NodeVector::NodeVector(ISimulationContext *context, ExternalNodeId_t externalNodeId, suids::suid _suid) 
         : Node(context, externalNodeId, _suid)
         , m_larval_habitats()
+        , m_vector_init_pop()
         , m_vectorpopulations()
         , m_VectorPopulationReportingList()
         , m_vector_lifecycle_probabilities( nullptr )
@@ -91,21 +93,40 @@ namespace Kernel
         m_vector_lifecycle_probabilities = VectorProbabilities::CreateVectorProbabilities();
     }
 
-    void NodeVector::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory )
+    void NodeVector::LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr)
     {
-        Node::SetParameters( demographics_factory, climate_factory );
-
-        if (demographics["NodeAttributes"].Contains("LarvalHabitatMultiplier"))
+        if((*demog_ptr)["NodeAttributes"].Contains("LarvalHabitatMultiplier"))
         {
             // This bit of magic gets around the fact that we have a few competing JSON patterns colliding right here, and we have to
             // go from one JSON view to string to another JSON view
-            std::istringstream config_string(demographics["NodeAttributes"].GetJsonObject().ToString());
+            std::istringstream config_string((*demog_ptr)["NodeAttributes"].GetJsonObject().ToString());
             Configuration* config = Configuration::Load(config_string, std::string(""));
             larval_habitat_multiplier.Configure(config);
         }
         else
         {
             LOG_DEBUG("Did not find the LarvalHabitatMultiplier property in NodeAttributes.\n");
+        }
+
+        for( auto& vector_species_name : GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_species_names )
+        {
+            int population_per_species = DEFAULT_VECTOR_POPULATION_SIZE;
+            if( (*demog_ptr)[ "NodeAttributes" ].Contains( "InitialVectorsPerSpecies" ) )
+            {
+                if( (*demog_ptr)[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].IsObject() )
+                {
+                    if( (*demog_ptr)[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].Contains( vector_species_name ) )
+                    {
+                        population_per_species = (*demog_ptr)[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ][ vector_species_name ].AsInt();
+                    }
+                }
+                else
+                {
+                    population_per_species = (*demog_ptr)[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].AsInt();
+                }
+            }
+            m_vector_init_pop[vector_species_name] = population_per_species;
+            LOG_DEBUG_F( "population_per_species = %f.\n", population_per_species );
         }
     }
 
@@ -377,22 +398,7 @@ namespace Kernel
 
         for( auto& vector_species_name : GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_species_names )
         {
-            int32_t population_per_species = DEFAULT_VECTOR_POPULATION_SIZE;
-            if( demographics[ "NodeAttributes" ].Contains( "InitialVectorsPerSpecies" ) )
-            {
-                if( demographics[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].IsObject() )
-                {
-                    if( demographics[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].Contains( vector_species_name ) )
-                    {
-                        population_per_species = demographics[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ][ vector_species_name ].AsInt();
-                    }
-                }
-                else
-                {
-                    population_per_species = demographics[ "NodeAttributes" ][ "InitialVectorsPerSpecies" ].AsInt();
-                }
-            }
-            LOG_DEBUG_F( "population_per_species = %f.\n", population_per_species );
+            int population_per_species = m_vector_init_pop[vector_species_name];
 
             VectorPopulation *vectorpopulation = nullptr;
 

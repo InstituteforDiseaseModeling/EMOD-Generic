@@ -30,9 +30,6 @@
     <ClInclude Include="..\utils\BoostLibWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\cajun\include\CajunIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Eradication\Climate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,9 +40,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\ClimateKoppen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\cast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\Configuration.h">
@@ -63,28 +57,16 @@
     <ClInclude Include="..\Eradication\DllLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\document.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\elements.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\EnumSupport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\Environment.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\cajun\include\exception.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\Exceptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\FactorySupport.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\filestream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\IContagionPopulation.h">
@@ -129,9 +111,6 @@
     <ClInclude Include="..\Eradication\Migration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rapidjson\modp\modp_numtoa.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Eradication\NodeRankMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -142,27 +121,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\internal\pow10.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\prettywriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\quick.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\rapidjson.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\RapidJsonImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\reader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\Serializer.h">
@@ -180,9 +138,6 @@
     <ClInclude Include="..\Eradication\Simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\internal\stack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -190,12 +145,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\StrainIdentity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\internal\strfunc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\stringbuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\Susceptibility.h">
@@ -214,15 +163,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\VectorContexts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\visitor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\include\rapidjson\writer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\cajun\include\writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\utils\suids.hpp">
@@ -269,10 +209,5 @@
     <ClCompile Include="NodeSetPolygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\cajun\include\cast.inl">
-      <Filter>Header Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

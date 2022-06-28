@@ -70,7 +70,7 @@ namespace Kernel
 
         virtual void resetNodeStateCounters( void ) override;
 
-        virtual void LoadOtherDiseaseSpecificDistributions() override;
+        virtual void LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr) override;
 
         NodeDemographicsDistribution* HIVCoinfectionDistribution;
         NodeDemographicsDistribution* HIVMortalityDistribution;

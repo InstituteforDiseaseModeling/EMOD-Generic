@@ -43,7 +43,6 @@ namespace Kernel
 
         virtual void DepositFromIndividual( const IStrainIdentity& strain_IDs, float contagion_quantity, TransmissionGroupMembership_t individual, TransmissionRoute::Enum route ) override;
 
-        virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override;
         virtual void ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route) override;
 
         virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) override;
@@ -53,6 +52,5 @@ namespace Kernel
         DECLARE_SERIALIZABLE(NodeEnvironmental);
 
     private:
-        float getSeasonalAmplitude() const;
     };
 }

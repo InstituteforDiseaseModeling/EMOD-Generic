@@ -92,10 +92,6 @@
             }
         },
         "ENVIRONMENTAL": {
-            "Environmental_Cutoff_Days": 0,
-            "Environmental_Peak_Start": 0,
-            "Environmental_Ramp_Down_Duration": 1,
-            "Environmental_Ramp_Up_Duration": 1,
             "Node_Contagion_Decay_Rate": 1.0
         },
         "FUDGE_FACTORS": {

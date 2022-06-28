@@ -52,7 +52,6 @@ namespace Kernel
         virtual void SetupIntranodeTransmission() override;
         virtual ITransmissionGroups* CreateTransmissionGroups() override;
         virtual void BuildTransmissionRoutes( float ) override;
-        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) override;
         virtual void updateInfectivity(float dt = 0.0f) override;
         virtual void updatePopulationStatistics(float dt = 1.0f) override;
         void         updateVectorLifecycleProbabilities(float dt);
@@ -69,6 +68,7 @@ namespace Kernel
     protected:
 
         std::map<std::string, VectorHabitatList_t> m_larval_habitats;
+        std::map<std::string, int>                 m_vector_init_pop;
         std::list<IVectorPopulation*>  m_vectorpopulations;
         VectorPopulationReportingList_t m_VectorPopulationReportingList;
 
@@ -83,6 +83,8 @@ namespace Kernel
         NodeVector();
         NodeVector(ISimulationContext *context, ExternalNodeId_t externalNodeId, suids::suid node_suid);
         virtual void Initialize() override;
+
+        virtual void LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr) override;
 
         virtual void setupEventContextHost() override;
         virtual void InitializeVectorPopulation( IVectorPopulation* vp );

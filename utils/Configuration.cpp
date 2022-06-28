@@ -241,41 +241,6 @@ Configuration* Configuration::CopyFromElement( const json::Element &elem, const 
     return _new_ Configuration( elem_copy, rDataLocation );
 }
 
-#if 0
-template<class Archive>
-void Configuration::serialize( Archive &ar, const unsigned int v )
-{
-    // hacked serialization....converts to string then serializes that, rather than trying to do an efficient serialization of the cajun objects themselves
-
-    if (typename Archive::is_loading())
-    {
-        string data;
-        ar & data;
-
-        istringstream iss(data, istringstream::in);
-
-        Element *elem = _new_ String();
-        Reader::Read(*elem, iss);
-
-        pElement = elem;
-#ifdef WIN32
-        this->QuickInterpreter::QuickInterpreter(*pElement); // reinit base class
-#else
-#warning "code commented out to get linux build to work"
-#endif
-
-    }
-    else
-    {
-        ostringstream oss(ostringstream::out);
-        Writer::Write(*pElement, oss);
-        // Trying 2-step for linux
-        std::string stringToSerialize = oss.str();
-        ar & stringToSerialize;
-    }
-}
-#endif
-
 /////////////////////////////////////////////////////////////////////////////////////////
 // config/json loading wrappers
 

@@ -40,8 +40,8 @@ def application(report_file):
                 # collect dose_response probabilities and dose for route environment
                 line = "TimeStep: " + str(timestep) + " " + line
                 lines_e.append(line)
-            # route=0, outbreak; route=1, contact; route=2, environment
-            elif ("AcquireNewInfection:" in line) and ("route=2" in line):
+            # route=0, contact; route=1, environment; route=2, outbreak
+            elif ("AcquireNewInfection:" in line) and ("route=1" in line):
                 count_enviro += 1
 
     success = True

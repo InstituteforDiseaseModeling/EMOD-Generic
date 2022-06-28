@@ -8,7 +8,7 @@
         "Enable_Vital_Dynamics": 1,
         "Python_Script_Path": "SHARED",
         "Report_Typhoid_ByAgeAndGender_Start_Year": 1900,
-        "Run_Number": 2,
+        "Run_Number": 5,
         "Simulation_Duration": 1460,
         "Typhoid_Carrier_Probability": 0.13,
         "Typhoid_Symptomatic_Fraction": 0.55,

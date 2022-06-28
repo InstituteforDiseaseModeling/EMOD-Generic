@@ -189,10 +189,6 @@ namespace Kernel
         , susceptibility_scaling(false)
         , vector_mortality(false)
         , base_sample_rate(0.0f)
-        , environmental_cutoff_days(0.0f)
-        , environmental_peak_start(0.0f)
-        , environmental_ramp_down_duration(0.0f)
-        , environmental_ramp_up_duration(0.0f)
         , immune_downsample_min_age(0.0f)
         , immune_threshold_for_downsampling(0.0f)
         , max_sampling_cell_pop(0.0f)
@@ -692,10 +688,6 @@ namespace Kernel
         initConfigTypeMap("Enable_Vital_Dynamics",                        &node_params.enable_vital_dynamics,             Enable_Vital_Dynamics_DESC_TEXT,                         true);
 
         initConfigTypeMap("Base_Individual_Sample_Rate",                  &node_params.base_sample_rate,                  Base_Individual_Sample_Rate_DESC_TEXT,                     1.0e-5f,         1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp01);
-        initConfigTypeMap("Environmental_Cutoff_Days",                    &node_params.environmental_cutoff_days,         Environmental_Cutoff_Days_DESC_TEXT,                       0.0f,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Peak_Start",                     &node_params.environmental_peak_start,          Environmental_Peak_Start_DESC_TEXT,                        0.0f,          500.0f,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Ramp_Down_Duration",             &node_params.environmental_ramp_down_duration,  Environmental_Ramp_Down_Duration_DESC_TEXT,             FLT_MIN,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
-        initConfigTypeMap("Environmental_Ramp_Up_Duration",               &node_params.environmental_ramp_up_duration,    Environmental_Ramp_Up_Duration_DESC_TEXT,               FLT_MIN,     DAYSPERYEAR,     2.0f,  nullptr,  nullptr,  &dset_env01);
         initConfigTypeMap("Immune_Downsample_Min_Age",                    &node_params.immune_downsample_min_age,         Immune_Downsample_Min_Age_DESC_TEXT,                       0.0f,         FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp02);
         initConfigTypeMap("Immune_Threshold_For_Downsampling",            &node_params.immune_threshold_for_downsampling, Immune_Threshold_For_Downsampling_DESC_TEXT,               0.0f,            1.0f,     0.0f,  nullptr,  nullptr,  &dset_samp02);
         initConfigTypeMap("Maternal_Infection_Transmission_Probability",  &node_params.prob_maternal_infection_trans,     Maternal_Infection_Transmission_Probability_DESC_TEXT,     0.0f,            1.0f,     0.0f,  nullptr,  nullptr,  &dset_birth04);

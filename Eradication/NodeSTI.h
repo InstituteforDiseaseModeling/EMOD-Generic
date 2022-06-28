@@ -34,7 +34,7 @@ namespace Kernel
         IRelationshipManager* relMan;
         ISociety* society;
 
-        virtual void SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory ) override;
+        virtual void LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr) override;
 
         // Factory methods
         virtual IIndividualHuman* createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender) override;

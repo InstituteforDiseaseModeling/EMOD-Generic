@@ -70,16 +70,14 @@ namespace Kernel
         Node::Initialize();
     }
 
-    void NodeSTI::SetParameters( NodeDemographicsFactory *demographics_factory, ClimateFactory *climate_factory )
+    void NodeSTI::LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr)
     {
-        Node::SetParameters( demographics_factory, climate_factory );
-
         const std::string SOCIETY_KEY( "Society" );
-        if( !demographics.Contains( SOCIETY_KEY ) )
+        if( !(*demog_ptr).Contains( SOCIETY_KEY ) )
         {
             throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "Could not find the 'Society' element in the demographics data." );
         }
-        std::istringstream iss( demographics[SOCIETY_KEY].ToString() );
+        std::istringstream iss( (*demog_ptr)[SOCIETY_KEY].ToString() );
         Configuration* p_config = Configuration::Load( iss, "demographics" );
         society->SetParameters( GetRng(), dynamic_cast<IIdGeneratorSTI*>(parent), p_config );
         delete p_config ;

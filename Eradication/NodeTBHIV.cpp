@@ -125,7 +125,7 @@ namespace Kernel
         return true;
     }
 
-    void NodeTBHIV::LoadOtherDiseaseSpecificDistributions()
+    void NodeTBHIV::LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr)
     {   
         if (IndividualHumanCoInfectionConfig::enable_coinfection)
         {
@@ -134,8 +134,8 @@ namespace Kernel
 
         if(GetParams()->enable_demographics_risk && IndividualHumanCoInfectionConfig::enable_coinfection)
         {
-            HIVCoinfectionDistribution = NodeDemographicsDistribution::CreateDistribution( demographics["IndividualAttributes"]["HIVCoinfectionDistribution"], "gender", "time", "age" );
-            HIVMortalityDistribution   = NodeDemographicsDistribution::CreateDistribution( demographics["IndividualAttributes"]["HIVTBCoinfMortalityDistribution"], "age", "year" );
+            HIVCoinfectionDistribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["HIVCoinfectionDistribution"], "gender", "time", "age");
+            HIVMortalityDistribution   = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["HIVTBCoinfMortalityDistribution"], "age", "year");
         }
     }
 

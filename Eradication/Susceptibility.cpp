@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Environment.h"
 #include "Susceptibility.h"
-#include "RapidJsonImpl.h"
 #include "Common.h"
 #include "RANDOM.h"
 

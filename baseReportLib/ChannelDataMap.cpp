@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "ChannelDataMap.h"
 #include "Log.h"
-#include "RapidJsonImpl.h"
 #include "Serializer.h"
 #include "FileSystem.h"
 #include "Exceptions.h"

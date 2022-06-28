@@ -90,7 +90,6 @@ namespace Kernel
         , txEnvironment(nullptr)
         , localWeather(nullptr)
         , migration_info(nullptr)
-        , demographics()
         , externalId(externalNodeId)
         , node_properties()
         , event_context_host(nullptr)
@@ -167,7 +166,6 @@ namespace Kernel
         , txEnvironment(nullptr)
         , localWeather(nullptr)
         , migration_info(nullptr)
-        , demographics()
         , externalId(0)
         , node_properties()
         , event_context_host(nullptr)
@@ -291,12 +289,8 @@ namespace Kernel
     {
         // Parameters set from an input filestream
         // TODO: Jeff, this is a bit hack-y that I had to do this. is there a better way?
-        NodeDemographics *demographics_temp = demographics_factory->CreateNodeDemographics(this);
-        release_assert( demographics_temp );
-        demographics = *(demographics_temp); // use copy constructor
-        delete demographics_temp;
-        uint32_t temp_externalId = demographics["NodeID"].AsUint();
-        release_assert( this->externalId == temp_externalId );
+        NodeDemographics* demog_ptr = demographics_factory->CreateNodeDemographics(this);
+        release_assert( demog_ptr );
 
         m_IndividualHumanSuidGenerator = suids::distributed_generator( GetSuid().data, demographics_factory->GetNodeIDs().size() );
 
@@ -304,40 +298,32 @@ namespace Kernel
         // Hack: commenting out for pymod work. Need real solution once I understand all this.
         if( NPFactory::GetInstance() )
         {
-            node_properties = NPFactory::GetInstance()->GetInitialValues( GetRng(), demographics.GetJsonObject() );
+            node_properties = NPFactory::GetInstance()->GetInitialValues( GetRng(), (*demog_ptr).GetJsonObject() );
         }
 
         LOG_DEBUG( "Looking for Individual_Properties in demographics.json file(s)\n" );
         if( IPFactory::GetInstance() )
         {
-            IPFactory::GetInstance()->Initialize( GetExternalID(), demographics.GetJsonObject() );
+            IPFactory::GetInstance()->Initialize( GetExternalID(), (*demog_ptr).GetJsonObject() );
         }
         //////////////////////////////////////////////////////////////////////////////////////
 
-        LoadOtherDiseaseSpecificDistributions();
-
-        ExtractDataFromDemographics();
+        ExtractDataFromDemographics(demog_ptr);
 
 #ifndef DISABLE_CLIMATE
         if ( climate_factory->GetParams()->climate_structure != ClimateStructure::CLIMATE_OFF )
         {
             LOG_DEBUG( "Parsing NodeAttributes->Altitude tag in node demographics file.\n" );
-            float altitude = float(demographics["NodeAttributes"]["Altitude"].AsDouble());
+            float altitude = float((*demog_ptr)["NodeAttributes"]["Altitude"].AsDouble());
             localWeather = climate_factory->CreateClimate( this, altitude, GetLatitudeDegrees(), GetRng() );
         }
 #endif
 
+        delete demog_ptr;
+
         SetupIntranodeTransmission();
 
         base_samp_rate_node = GetParams()->base_sample_rate;
-    }
-
-    void Node::LoadImmunityDemographicsDistribution()
-    {
-        // Overridden in derived classes POLIO_SIM and MALARIA_SIM
-        // If not overridden, "SusceptibilityDistribution" provides age-specific probabilities of being susceptible (1.0 = not immune; 0.0 = immune)
-        LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution tag in node demographics file.\n" );
-        SusceptibilityDistribution = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["SusceptibilityDistribution"]);
     }
 
     ITransmissionGroups* Node::CreateTransmissionGroups()
@@ -469,6 +455,13 @@ namespace Kernel
             TransmissionGroupMembership_t membership;
             transmissionGroups->GetGroupMembershipForProperties( properties, membership );
             transmissionGroups->UpdatePopulationSize(membership, size_changes, mc_weight);
+        }
+
+        if(txEnvironment)
+        {
+            TransmissionGroupMembership_t membership;
+            txEnvironment->GetGroupMembershipForProperties( properties, membership );
+            txEnvironment->UpdatePopulationSize(membership, size_changes, mc_weight);
         }
     }
 
@@ -1293,19 +1286,22 @@ namespace Kernel
         }
     }
 
-    void Node::ExtractDataFromDemographics()
+    void Node::ExtractDataFromDemographics(const NodeDemographics* demog_ptr)
     {
-        initial_population   = static_cast<uint32_t>(demographics["NodeAttributes"]["InitialPopulation"].AsUint64());
+        uint32_t temp_externalId = (*demog_ptr)["NodeID"].AsUint();
+        release_assert( this->externalId == temp_externalId );
 
-        _latitude            = static_cast<float>(demographics["NodeAttributes"]["Latitude"].AsDouble());
-        _longitude           = static_cast<float>(demographics["NodeAttributes"]["Longitude"].AsDouble());
+        initial_population   = static_cast<uint32_t>((*demog_ptr)["NodeAttributes"]["InitialPopulation"].AsUint64());
+
+        _latitude            = static_cast<float>((*demog_ptr)["NodeAttributes"]["Latitude"].AsDouble());
+        _longitude           = static_cast<float>((*demog_ptr)["NodeAttributes"]["Longitude"].AsDouble());
 
         if(GetParams()->enable_birth)
         {
             if(GetParams()->vital_birth_dependence != VitalBirthDependence::INDIVIDUAL_PREGNANCIES_BY_AGE_AND_YEAR)
             {
                 LOG_DEBUG("Parsing BirthRate\n");
-                birthrate = static_cast<float>(demographics["NodeAttributes"]["BirthRate"].AsDouble());
+                birthrate = static_cast<float>((*demog_ptr)["NodeAttributes"]["BirthRate"].AsDouble());
 
                 if( (GetParams()->vital_birth_dependence != VitalBirthDependence::FIXED_BIRTH_RATE) && (birthrate > BIRTHRATE_SANITY_VALUE) )
                 {
@@ -1315,7 +1311,7 @@ namespace Kernel
             else
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->FertilityDistribution tag in node demographics file.\n" );
-                FertilityDistribution = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["FertilityDistribution"], "age", "year");
+                FertilityDistribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["FertilityDistribution"], "age", "year");
             }
         }
 
@@ -1324,13 +1320,13 @@ namespace Kernel
             if(GetParams()->vital_death_dependence == VitalDeathDependence::NONDISEASE_MORTALITY_BY_AGE_AND_GENDER)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->MortalityDistribution tag in node demographics file.\n" );
-                MortalityDistribution = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["MortalityDistribution"], "gender", "age");
+                MortalityDistribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["MortalityDistribution"], "gender", "age");
             }
             else if(GetParams()->vital_death_dependence == VitalDeathDependence::NONDISEASE_MORTALITY_BY_YEAR_AND_AGE_FOR_EACH_GENDER)
             {
                 LOG_DEBUG("Parsing IndividualAttributes->MortalityDistributionMale and IndividualAttributes->MortalityDistributionFemale tags in node demographics file.\n");
-                MortalityDistributionMale   = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["MortalityDistributionMale"],   "age", "year");
-                MortalityDistributionFemale = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["MortalityDistributionFemale"], "age", "year");
+                MortalityDistributionMale   = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["MortalityDistributionMale"],   "age", "year");
+                MortalityDistributionFemale = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["MortalityDistributionFemale"], "age", "year");
             }
             else
             {
@@ -1341,7 +1337,7 @@ namespace Kernel
         if (GetParams()->age_init_dist_type == DistributionType::DISTRIBUTION_SIMPLE)
         {
             LOG_DEBUG( "Parsing IndividualAttributes->AgeDistributionFlag tag in node demographics file.\n" );
-            DistributionFunction::Enum age_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["AgeDistributionFlag"].AsInt());
+            DistributionFunction::Enum age_dist_type = DistributionFunction::Enum((*demog_ptr)["IndividualAttributes"]["AgeDistributionFlag"].AsInt());
             distribution_age = DistributionFactory::CreateDistribution( age_dist_type );
 
             float age_dist1 = 0.0;
@@ -1351,26 +1347,26 @@ namespace Kernel
             if(age_dist_type == DistributionFunction::CONSTANT_DISTRIBUTION)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution1 tag in node demographics file.\n" );
-                age_dist1 = float(demographics["IndividualAttributes"]["AgeDistribution1"].AsDouble());
+                age_dist1 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution1"].AsDouble());
             }
             else if(age_dist_type == DistributionFunction::UNIFORM_DISTRIBUTION)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution1 tag in node demographics file.\n" );
-                age_dist1 = float(demographics["IndividualAttributes"]["AgeDistribution1"].AsDouble());
+                age_dist1 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution1"].AsDouble());
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution2 tag in node demographics file.\n" );
-                age_dist2 = float(demographics["IndividualAttributes"]["AgeDistribution2"].AsDouble());
+                age_dist2 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution2"].AsDouble());
             }
             else if(age_dist_type == DistributionFunction::GAUSSIAN_DISTRIBUTION)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution1 tag in node demographics file.\n" );
-                age_dist1 = float(demographics["IndividualAttributes"]["AgeDistribution1"].AsDouble());
+                age_dist1 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution1"].AsDouble());
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution2 tag in node demographics file.\n" );
-                age_dist2 = float(demographics["IndividualAttributes"]["AgeDistribution2"].AsDouble());
+                age_dist2 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution2"].AsDouble());
             }
             else if(age_dist_type == DistributionFunction::EXPONENTIAL_DISTRIBUTION)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution1 tag in node demographics file.\n" );
-                age_dist1 = float(demographics["IndividualAttributes"]["AgeDistribution1"].AsDouble());
+                age_dist1 = float((*demog_ptr)["IndividualAttributes"]["AgeDistribution1"].AsDouble());
             }
             else
             {
@@ -1381,12 +1377,12 @@ namespace Kernel
         }
         else if (GetParams()->age_init_dist_type == DistributionType::DISTRIBUTION_COMPLEX)
         {
-            if( !demographics.Contains( "IndividualAttributes" ) || !demographics["IndividualAttributes"].Contains( "AgeDistribution" ) )
+            if( !(*demog_ptr).Contains( "IndividualAttributes" ) || !(*demog_ptr)["IndividualAttributes"].Contains( "AgeDistribution" ) )
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Age_Initialization_Distribution_Type", "DISTRIBUTION_COMPLEX", "['IndividualAttributes']['AgeDistribution']", "<not found>" );
             }
             LOG_DEBUG( "Parsing IndividualAttributes->AgeDistribution tag in node demographics file.\n" );
-            AgeDistribution = NodeDemographicsDistribution::CreateDistribution(demographics["IndividualAttributes"]["AgeDistribution"]);
+            AgeDistribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["AgeDistribution"]);
         }
 
         if(GetParams()->enable_initial_sus_dist)
@@ -1396,7 +1392,7 @@ namespace Kernel
             if(GetParams()->initial_sus_dist_type == DistributionType::DISTRIBUTION_SIMPLE)
             {
                 LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistributionFlag tag in node demographics file.\n" );
-                DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
+                DistributionFunction::Enum susceptibility_dist_type = DistributionFunction::Enum((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistributionFlag"].AsInt());
                 distribution_susceptibility = DistributionFactory::CreateDistribution( susceptibility_dist_type );
 
                 float susceptibility_dist1 = 0.0;
@@ -1406,21 +1402,21 @@ namespace Kernel
                 if(susceptibility_dist_type == DistributionFunction::CONSTANT_DISTRIBUTION)
                 {
                     LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution1 tag in node demographics file.\n" );
-                    susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
+                    susceptibility_dist1 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
                 }
                 else if(susceptibility_dist_type == DistributionFunction::UNIFORM_DISTRIBUTION)
                 {
                     LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution1 tag in node demographics file.\n" );
-                    susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
+                    susceptibility_dist1 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
                     LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution2 tag in node demographics file.\n" );
-                    susceptibility_dist2 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
+                    susceptibility_dist2 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
                 }
                 else if(susceptibility_dist_type == DistributionFunction::DUAL_CONSTANT_DISTRIBUTION)
                 {
                     LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution1 tag in node demographics file.\n" );
-                    susceptibility_dist1 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
+                    susceptibility_dist1 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution1"].AsDouble());
                     LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution2 tag in node demographics file.\n" );
-                    susceptibility_dist2 = float(demographics["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
+                    susceptibility_dist2 = float((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution2"].AsDouble());
                 }
                 else
                 {
@@ -1431,7 +1427,7 @@ namespace Kernel
             }
             else if(GetParams()->initial_sus_dist_type == DistributionType::DISTRIBUTION_COMPLEX)
             {
-                LoadImmunityDemographicsDistribution();
+                LoadImmunityDemographicsDistribution(demog_ptr);
             }
         }
 
@@ -1439,9 +1435,9 @@ namespace Kernel
         {
             LOG_DEBUG("Parsing RiskDistribution\n");
 
-            DistributionFunction::Enum risk_dist_type = DistributionFunction::Enum(demographics["IndividualAttributes"]["RiskDistributionFlag"].AsInt());
-            float risk_dist1                          = static_cast<float>(demographics["IndividualAttributes"]["RiskDistribution1"].AsDouble());
-            float risk_dist2                          = static_cast<float>(demographics["IndividualAttributes"]["RiskDistribution2"].AsDouble());
+            DistributionFunction::Enum risk_dist_type = DistributionFunction::Enum((*demog_ptr)["IndividualAttributes"]["RiskDistributionFlag"].AsInt());
+            float risk_dist1                          = static_cast<float>((*demog_ptr)["IndividualAttributes"]["RiskDistribution1"].AsDouble());
+            float risk_dist2                          = static_cast<float>((*demog_ptr)["IndividualAttributes"]["RiskDistribution2"].AsDouble());
 
             distribution_demographic_risk = DistributionFactory::CreateDistribution(risk_dist_type);
             distribution_demographic_risk->SetParameters(risk_dist1, risk_dist2, 0.0);
@@ -1451,7 +1447,7 @@ namespace Kernel
         {
             LOG_DEBUG("Parsing AcquisitionHeterogeneityVariance\n");
 
-            acquisition_heterogeneity_variance = static_cast<float>(demographics["IndividualAttributes"]["AcquisitionHeterogeneityVariance"].AsDouble());
+            acquisition_heterogeneity_variance = static_cast<float>((*demog_ptr)["IndividualAttributes"]["AcquisitionHeterogeneityVariance"].AsDouble());
 
             if(acquisition_heterogeneity_variance < 0.0f)
             {
@@ -1463,7 +1459,7 @@ namespace Kernel
         {
             LOG_DEBUG( "Parsing InfectivityOverdispersion\n" );
 
-            infectivity_overdispersion  = static_cast<float>(demographics["NodeAttributes"]["InfectivityOverdispersion"].AsDouble());
+            infectivity_overdispersion  = static_cast<float>((*demog_ptr)["NodeAttributes"]["InfectivityOverdispersion"].AsDouble());
 
             if(infectivity_overdispersion < 0.0f)
             {
@@ -1475,7 +1471,7 @@ namespace Kernel
         {
             LOG_DEBUG( "Parsing InfectivityReservoirSize, InfectivityReservoirStartTime, and InfectivityReservoirEndTime\n" );
 
-            infectivity_reservoir_size       = static_cast<float>(demographics["NodeAttributes"]["InfectivityReservoirSize"].AsDouble());
+            infectivity_reservoir_size       = static_cast<float>((*demog_ptr)["NodeAttributes"]["InfectivityReservoirSize"].AsDouble());
             infectivity_reservoir_start_time = 0.0f;
             infectivity_reservoir_end_time   = FLT_MAX;
 
@@ -1483,17 +1479,17 @@ namespace Kernel
             {
                 throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "InfectivityReservoirSize", infectivity_reservoir_size, 0.0f);
             }
-            if(demographics["NodeAttributes"].Contains("InfectivityReservoirStartTime"))
+            if((*demog_ptr)["NodeAttributes"].Contains("InfectivityReservoirStartTime"))
             {
-                infectivity_reservoir_start_time = static_cast<float>(demographics["NodeAttributes"]["InfectivityReservoirStartTime"].AsDouble());
+                infectivity_reservoir_start_time = static_cast<float>((*demog_ptr)["NodeAttributes"]["InfectivityReservoirStartTime"].AsDouble());
                 if(infectivity_reservoir_start_time < 0.0f)
                 {
                     throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "InfectivityReservoirStartTime", infectivity_reservoir_start_time, 0.0f);
                 }
             }
-            if(demographics["NodeAttributes"].Contains("InfectivityReservoirEndTime" ))
+            if((*demog_ptr)["NodeAttributes"].Contains("InfectivityReservoirEndTime" ))
             {
-                infectivity_reservoir_end_time = static_cast<float>(demographics["NodeAttributes"]["InfectivityReservoirEndTime"].AsDouble());
+                infectivity_reservoir_end_time = static_cast<float>((*demog_ptr)["NodeAttributes"]["InfectivityReservoirEndTime"].AsDouble());
                 if(infectivity_reservoir_end_time < infectivity_reservoir_start_time)
                 {
                     throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "InfectivityReservoirEndTime", infectivity_reservoir_end_time, infectivity_reservoir_start_time);
@@ -1505,7 +1501,7 @@ namespace Kernel
         {
             LOG_DEBUG( "Parsing InfectivityMultiplier\n" );
 
-            infectivity_multiplier = static_cast<float>(demographics["NodeAttributes"]["InfectivityMultiplier"].AsDouble());
+            infectivity_multiplier = static_cast<float>((*demog_ptr)["NodeAttributes"]["InfectivityMultiplier"].AsDouble());
             if(infectivity_multiplier < 0.0f)
             {
                 throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "InfectivityMultiplier", infectivity_multiplier, 0.0f);
@@ -1516,57 +1512,57 @@ namespace Kernel
         {
             LOG_DEBUG( "Parsing InitialPrevalence\n" );
 
-            initial_prevalence = static_cast<float>(demographics["IndividualAttributes"]["InitialPrevalence"].AsDouble());
+            initial_prevalence = static_cast<float>((*demog_ptr)["IndividualAttributes"]["InitialPrevalence"].AsDouble());
         }
 
         if (GetParams()->enable_percentage_children)
         {
             LOG_DEBUG( "Parsing PercentageChildren\n" );
 
-            initial_percentage_children = static_cast<float>(demographics["IndividualAttributes"]["PercentageChildren"].AsDouble());
+            initial_percentage_children = static_cast<float>((*demog_ptr)["IndividualAttributes"]["PercentageChildren"].AsDouble());
         }
 
         if (GetParams()->enable_initial_prevalence)
         {
             LOG_DEBUG( "Parsing InitialPrevalenceStrains\n" );
             // Parse initial strain distribution if present
-            if(demographics["IndividualAttributes"].Contains("InitialPrevalenceStrains"))
+            if((*demog_ptr)["IndividualAttributes"].Contains("InitialPrevalenceStrains"))
             {
-                if(!demographics["IndividualAttributes"]["InitialPrevalenceStrains"].IsArray())
+                if(!(*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"].IsArray())
                 {
                     throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "demographics file", "InitialPrevalenceStrains must be an array.");
                 }
 
-                for(int k1 = 0; k1 < demographics["IndividualAttributes"]["InitialPrevalenceStrains"].size(); k1++)
+                for(int k1 = 0; k1 < (*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"].size(); k1++)
                 {
-                    if(!demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1].IsObject())
+                    if(!(*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1].IsObject())
                     {
                         throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "demographics file", "All elements of InitialPrevalenceStrains must be objects.");
                     }
 
-                    if(!demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Clade"))
+                    if(!(*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Clade"))
                     {
                         throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "demographics file", "Each object in InitialPrevalenceStrains must contain \"Clade\".");
                     }
                     else
                     {
-                        init_prev_clade.push_back(static_cast<int>(demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Clade"].AsInt()));
+                        init_prev_clade.push_back(static_cast<int>((*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Clade"].AsInt()));
                     }
-                    if(!demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Genome"))
+                    if(!(*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Genome"))
                     {
                         throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "demographics file", "Each object in InitialPrevalenceStrains must contain \"Genome\".");
                     }
                     else
                     {
-                        init_prev_genome.push_back(static_cast<int>(demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Genome"].AsInt()));
+                        init_prev_genome.push_back(static_cast<int>((*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Genome"].AsInt()));
                     }
-                    if(!demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Fraction"))
+                    if(!(*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1].Contains("Fraction"))
                     {
                         throw InvalidInputDataException(__FILE__, __LINE__, __FUNCTION__, "demographics file", "Each object in InitialPrevalenceStrains must contain \"Fraction\".");
                     }
                     else
                     {
-                        init_prev_fraction.push_back(static_cast<float>(demographics["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Fraction"].AsDouble())); 
+                        init_prev_fraction.push_back(static_cast<float>((*demog_ptr)["IndividualAttributes"]["InitialPrevalenceStrains"][k1]["Fraction"].AsDouble())); 
                         if(init_prev_fraction.back() < 0.0f)
                         {
                             throw ConfigurationRangeException( __FILE__, __LINE__, __FUNCTION__, "Fraction", init_prev_fraction.back(), 0.0f);
@@ -1605,6 +1601,21 @@ namespace Kernel
             init_prev_fraction[k1] += init_prev_fraction[k1-1];
         }
         init_prev_fraction.back() = 1.0f; 
+
+        LoadOtherDiseaseSpecificDistributions(demog_ptr);
+    }
+
+    void Node::LoadImmunityDemographicsDistribution(const NodeDemographics* demog_ptr)
+    {
+        // Overridden in derived classes
+        LOG_DEBUG( "Parsing IndividualAttributes->SusceptibilityDistribution tag in node demographics file.\n" );
+        // Age-specific probabilities of being susceptible (1.0 = not immune; 0.0 = immune)
+        SusceptibilityDistribution = NodeDemographicsDistribution::CreateDistribution((*demog_ptr)["IndividualAttributes"]["SusceptibilityDistribution"]);
+    }
+
+    void Node::LoadOtherDiseaseSpecificDistributions(const NodeDemographics* demog_ptr)
+    {
+        // Overridden in derived classes
     }
 
     // This function adds newborns to the node according to behavior determined by the settings of various flags:
@@ -2352,7 +2363,6 @@ namespace Kernel
     {
         parent = context;
         propagateContextToDependents();
-        demographics.SetContext( parent->GetDemographicsContext(), (INodeContext*)(this) );
 
         // needed to get access to RNG - see GetRng() for more info
         if( parent->QueryInterface( GET_IID( ISimulation ), (void**)&parent_sim ) != s_OK )

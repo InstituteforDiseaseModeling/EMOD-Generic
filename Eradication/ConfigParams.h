@@ -168,10 +168,6 @@ namespace Kernel
         bool vector_mortality;
 
         float base_sample_rate;
-        float environmental_cutoff_days;
-        float environmental_peak_start;
-        float environmental_ramp_down_duration;
-        float environmental_ramp_up_duration;
         float immune_downsample_min_age;
         float immune_threshold_for_downsampling;
         float max_sampling_cell_pop;

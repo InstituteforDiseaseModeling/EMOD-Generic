@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <unordered_map>
 
 #include "Sugar.h"
-#include "CajunIncludes.h"
 #include "SimulationEnums.h"
 #include "Configure.h"
 #include "ExternalNodeId.h"
