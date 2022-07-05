@@ -35,7 +35,7 @@ if os.sys.platform != 'win32':
         sha1 = str( git_sha_handle.stdout.read().rstrip() ).replace( "b", "" ).replace( " ", "_" ).strip( '"' ).strip( "'" )
 
         git_date_handle = Popen( "git log -1 --pretty=%ai".encode("utf8").split(), stdout=PIPE )
-        git_date = str( git_date_handle.stdout.read().rstrip() ).replace( ' ', '_' )
+        git_date = str( git_date_handle.stdout.read().rstrip() ).replace( "b", "" ).replace( ' ', '_' )
 
     #print( str( rev ) )
 
