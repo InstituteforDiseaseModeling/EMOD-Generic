@@ -41,8 +41,6 @@ public:
     // ------------------
     virtual void SetAugmentor( IChannelDataMapOutputAugmentor* pAugmentor );
 
-    virtual void SetDefaultPrecision( bool );
-
 protected:
     BaseChannelReport( const std::string& rReportName );
 
@@ -61,8 +59,6 @@ protected:
     std::string report_name;
 
     unsigned int _nrmSize;
-
-    bool defaultPrecision;
 
     ChannelDataMap channelDataMap ;
 };

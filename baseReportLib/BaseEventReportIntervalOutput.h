@@ -14,9 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    struct IJsonObjectAdapter;
-    class JSerializer;
-
     // This is an interface to an object that is used to collect that data for
     // a particular reporting interval.  The data in this object is expected
     // to be sent to the Rank=0 core and accumulated there.
@@ -24,8 +21,8 @@ namespace Kernel
     {
         virtual void Clear() = 0;
         virtual void Update( const IIntervalData& rOther ) = 0;
-        virtual void Serialize( IJsonObjectAdapter& rjoa, JSerializer& js ) = 0;
-        virtual void Deserialize( IJsonObjectAdapter& rjoa ) = 0;
+        virtual void Serialize( json::Object& root ) = 0;
+        virtual void Deserialize( json::Object& root ) = 0;
     };
 
 
@@ -56,7 +53,7 @@ namespace Kernel
         // method for subclass to override/implement
         virtual void AccumulateOutput() {};
         virtual void ClearOutputData();
-        virtual void SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js ) {};
+        virtual void SerializeOutput( float currentTime, json::Object& root ) {};
         virtual std::string CreateOutputFilename( float currentTime );
         virtual void WriteOutput( float currentTime );
 

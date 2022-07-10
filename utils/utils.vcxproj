@@ -56,7 +56,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;WIN32;IDM_EXPORT;_DEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(IDM_BOOST_PATH);..\Dependencies\ComputeClusterPack\Include;..\cajun\Include;..\Eradication\;..\campaign;..\rapidjson\include;..\rapidjson\modp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDM_BOOST_PATH);..\Dependencies\ComputeClusterPack\Include;..\cajun\Include;..\Eradication\;..\campaign;..\rapidjson\include;</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
@@ -77,7 +77,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;WIN32;IDM_EXPORT;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(IDM_BOOST_PATH);..\Dependencies\ComputeClusterPack\Include;..\cajun\Include;..\Eradication\;..\campaign;..\rapidjson\include;..\rapidjson\modp</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(IDM_BOOST_PATH);..\Dependencies\ComputeClusterPack\Include;..\cajun\Include;..\Eradication\;..\campaign;..\rapidjson\include;</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -94,7 +94,6 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\rapidjson\modp\modp_numtoa.cpp" />
     <ClCompile Include="BinaryArchiveReader.cpp" />
     <ClCompile Include="BinaryArchiveWriter.cpp" />
     <ClCompile Include="Configuration.cpp">
@@ -119,10 +118,7 @@
     </ClCompile>
     <ClCompile Include="JsonFullReader.cpp" />
     <ClCompile Include="JsonFullWriter.cpp" />
-    <ClCompile Include="JsonObject.cpp" />
     <ClCompile Include="JsonObjectDemog.cpp" />
-    <ClCompile Include="JsonRawReader.cpp" />
-    <ClCompile Include="JsonRawWriter.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="MathFunctions.cpp" />
     <ClCompile Include="Memory.cpp" />
@@ -133,8 +129,6 @@
     <ClCompile Include="Properties.cpp" />
     <ClCompile Include="BaseProperties.cpp" />
     <ClCompile Include="RANDOM.cpp" />
-    <ClCompile Include="RapidJsonImpl.cpp" />
-    <ClCompile Include="Serializer.cpp" />
     <ClCompile Include="Sigmoid.cpp" />
     <ClCompile Include="StatusReporter.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -166,7 +160,6 @@
     <ClInclude Include="..\rapidjson\include\rapidjson\reader.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\writer.h" />
-    <ClInclude Include="..\rapidjson\modp\modp_numtoa.h" />
     <ClInclude Include="BaseEventTrigger.h" />
     <ClInclude Include="BaseEventTriggerTemplates.h" />
     <ClInclude Include="BasePropertiesTemplates.h" />
@@ -200,10 +193,7 @@
     <ClInclude Include="JsonConfigurableCollection.h" />
     <ClInclude Include="JsonFullReader.h" />
     <ClInclude Include="JsonFullWriter.h" />
-    <ClInclude Include="JsonObject.h" />
     <ClInclude Include="JsonObjectDemog.h" />
-    <ClInclude Include="JsonRawReader.h" />
-    <ClInclude Include="JsonRawWriter.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="MathFunctions.h" />
     <ClInclude Include="Memory.h" />
@@ -214,8 +204,6 @@
     <ClInclude Include="BaseProperties.h" />
     <ClInclude Include="PropertiesString.h" />
     <ClInclude Include="RANDOM.h" />
-    <ClInclude Include="RapidJsonImpl.h" />
-    <ClInclude Include="Serializer.h" />
     <ClInclude Include="Sigmoid.h" />
     <ClInclude Include="SparseContagion.h" />
     <ClInclude Include="StatusReporter.h" />

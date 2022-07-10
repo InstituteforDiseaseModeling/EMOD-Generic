@@ -138,14 +138,4 @@ namespace Kernel
     {
         return m_trigger_condition.ToString();
     }
-
-    void SimpleAnalyzer::JSerialize( IJsonObjectAdapter* root, JSerializer* helper ) const
-    {
-        throw new NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "JSON serialization not yet implemented.");
-    }
-
-    void SimpleAnalyzer::JDeserialize( IJsonObjectAdapter* root, JSerializer* helper )
-    {
-        throw new NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "JSON deserialization not yet implemented.");
-    }
 }

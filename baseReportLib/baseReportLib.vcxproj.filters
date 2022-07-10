@@ -120,9 +120,6 @@
     <ClInclude Include="..\Eradication\ITransmissionGroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\JsonObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>

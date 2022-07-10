@@ -311,7 +311,7 @@ namespace Kernel
         }
     }
 
-    std::vector<JsonObjectDemog> IPTransition::ConvertToCampaignEvent( const IPKey& rKey )
+    std::vector<JsonObjectDemog> IPTransition::ConvertToCampaignEvent(const std::string rKey )
     {
         std::vector<JsonObjectDemog> ret_list ;
 
@@ -321,7 +321,7 @@ namespace Kernel
         {
             intervention_config.Add( "class",                 "PropertyValueChanger" );
             intervention_config.Add( "Dont_Allow_Duplicates", 0.0                    );
-            intervention_config.Add( "Target_Property_Key",   rKey.ToString()        );
+            intervention_config.Add( "Target_Property_Key",   rKey                   );
             intervention_config.Add( "Target_Property_Value", m_To.GetValueAsString());
             intervention_config.Add( "Daily_Probability",     m_Probability          );
             intervention_config.Add( "Maximum_Duration",      m_Duration             );
@@ -339,7 +339,7 @@ namespace Kernel
             JsonObjectDemog act_config( JsonObjectDemog::JSON_OBJECT_OBJECT );
             act_config.Add( "class",                 "PropertyValueChanger" );
             act_config.Add( "Dont_Allow_Duplicates", 0.0                    );
-            act_config.Add( "Target_Property_Key",   rKey.ToString()        );
+            act_config.Add( "Target_Property_Key",   rKey                   );
             act_config.Add( "Target_Property_Value", m_To.GetValueAsString());
             act_config.Add( "Daily_Probability",     m_Probability          );
             act_config.Add( "Maximum_Duration",      m_Duration             );
@@ -385,7 +385,7 @@ namespace Kernel
 
         // Don't use property_restrictions to target age_bin transitions
         // Initial transitions for Age_Bins have no original property
-        if( m_From.IsValid() && (rKey.ToString() != IP_AGE_BIN_PROPERTY) )
+        if( m_From.IsValid() && (rKey != IP_AGE_BIN_PROPERTY) )
         {
             JsonObjectDemog prop_res_array( JsonObjectDemog::JSON_OBJECT_ARRAY );
             prop_res_array.PushBack( m_From.ToString() );
@@ -409,7 +409,7 @@ namespace Kernel
         std::string to_value_str = m_To.GetValueAsString();
         if( (m_Type == IP_TRANS_TYPE_VALUE_AGE) ||
             ((m_Type == IP_TRANS_TYPE_VALUE_TIMESTEP) && (m_Start == start_time) &&
-                                                         (rKey.ToString() == IP_AGE_BIN_PROPERTY) &&
+                                                         (rKey == IP_AGE_BIN_PROPERTY) &&
                                                          (to_value_str.find(IP_AGE_BIN_VALUE_0) !=  std::string::npos) ) )
         {
             JsonObjectDemog birth_intervention_config( JsonObjectDemog::JSON_OBJECT_OBJECT );
@@ -1080,20 +1080,6 @@ namespace Kernel
         }
     }
 
-    std::vector<JsonObjectDemog> IndividualProperty::ConvertTransitions()
-    {
-        std::vector<JsonObjectDemog> main_list ;
-        for( auto p_tran : m_Transitions )
-        {
-            std::vector<JsonObjectDemog> list = p_tran->ConvertToCampaignEvent( GetKey<IPKey>() );
-            for( auto jod : list )
-            {
-                main_list.push_back( jod );
-            }
-        }
-        return main_list;
-    }
-
     const IPIntraNodeTransmission& IndividualProperty::GetIntraNodeTransmission( uint32_t externalNodeId ) const
     {
         return *m_IntraNodeTransmissionMap.at( externalNodeId );
@@ -1154,23 +1140,34 @@ namespace Kernel
 
     void IPFactory::WriteTransitionsFile()
     {
-        JsonObjectDemog event_array(JsonObjectDemog::JSON_OBJECT_ARRAY );
+        json::Object       obj_root;
+        json::QuickBuilder json_doc(obj_root);
+
+        json::Array        arr_events;
         for( auto p_pa : m_IPList )
         {
             IndividualProperty* p_ip = static_cast<IndividualProperty*>(p_pa);
-            std::vector<JsonObjectDemog> list = p_ip->ConvertTransitions();
-            for( auto jod : list )
+            for( auto p_tran : p_ip->m_Transitions )
             {
-                event_array.PushBack( jod );
+                std::vector<JsonObjectDemog> camp_event_list = p_tran->ConvertToCampaignEvent(p_ip->GetKeyAsString());
+                for(size_t k1 = 0; k1 < camp_event_list.size(); k1++ )
+                {
+                    json::Object event_obj;
+                    istringstream event_str(camp_event_list[k1].ToString());
+                    json::Reader::Read(event_obj, event_str);
+                    arr_events.Insert(event_obj);
+                }
             }
         }
 
-        JsonObjectDemog out(JsonObjectDemog::JSON_OBJECT_OBJECT );
-        out.Add( "Use_Defaults", 1 );
-        out.Add( "Events", event_array );
+        json_doc["Use_Defaults"] = json::Number(1);
+        json_doc["Events"]       = arr_events;
 
+        ofstream ofs;
         std::string fn = FileSystem::Concat( EnvPtr->OutputPath, std::string(transitions_dot_json_filename) );
-        out.WriteToFile( fn.c_str() );
+        FileSystem::OpenFileForWriting( ofs, fn.c_str() );
+        json::Writer::Write(json_doc, ofs);
+        ofs.close();
     }
 
     BaseProperty* IPFactory::construct_ip( uint32_t externalNodeId,

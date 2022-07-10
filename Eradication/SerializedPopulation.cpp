@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "FileSystem.h"
 #include <iomanip>
-#include "JsonObject.h"
 #include "JsonFullReader.h"
 #include "JsonFullWriter.h"
 #include "Log.h"
@@ -595,20 +594,33 @@ namespace SerializedState {
             throw Kernel::FileIOException( __FILE__, __LINE__, __FUNCTION__, filename, msg.str().c_str() );
         }
 
-        Kernel::IJsonObjectAdapter* adapter = Kernel::CreateJsonObjAdapter();
-        adapter->Parse(header_text.c_str());
+        std::stringstream temp_ss;
+        temp_ss << header_text;
+        json::Object obj_header, data_loc;
+        json::Reader::Read(obj_header, temp_ss);
+        json::QuickInterpreter temp_head(obj_header);
+
+        if(temp_head.Exist("metadata"))
+        {
+            data_loc = temp_head["metadata"].As<json::Object>();
+        }
+        else
+        {
+            data_loc = obj_header;
+        }
+        json::QuickInterpreter quick_head(data_loc);
+
         // TODO clorton - wrap this with try/catch for JSON errors
-        auto& file_info = (*adapter).Contains("metadata") ? *((*adapter)["metadata"]) : *adapter;
-        header.version = file_info.GetUint("version");
-        header.date = file_info.GetString("date");
-        header.byte_count = file_info.GetUInt64("bytecount");
+        header.version    = quick_head["version"].As<json::Number>();
+        header.date       = quick_head["date"].As<json::String>();
+        header.byte_count = quick_head["bytecount"].As<json::Number>();
 
         switch (header.version)
         {
             case 1:
             {
                 // Fill in V2 values for a V1 header.
-                header.compressed = file_info.GetBool("compressed");
+                header.compressed  = quick_head["compressed"].As<json::Boolean>();
                 header.compression = header.compressed ? "SNAPPY" : "NONE";
                 header.chunk_count = 1;
                 header.chunk_sizes.push_back(header.byte_count);
@@ -619,14 +631,14 @@ namespace SerializedState {
             case 3:
             case 4:
             {
-                header.compression = file_info.GetString((header.version < 4) ? "engine" : "compression");
-                header.compressed = (header.compression != "NONE");
-                header.chunk_count = file_info.GetUint("chunkcount");
-                auto& chunk_sizes = *(file_info.GetJsonArray("chunksizes"));
-                for (size_t i = 0; i < chunk_sizes.GetSize(); ++i)
+                std::string key_str((header.version < 4) ? "engine" : "compression");
+                header.compression = quick_head[key_str].As<json::String>();
+                header.compressed  = (header.compression != "NONE");
+                header.chunk_count = static_cast<int>(quick_head["chunkcount"].As<json::Number>());
+                auto& chunk_sizes  = quick_head["chunksizes"].As<json::Array>();
+                for (size_t k1 = 0; k1 < chunk_sizes.Size(); ++k1)
                 {
-                    auto& item = *(chunk_sizes[Kernel::IndexType(i)]);
-                    size_t chunk_size = item.AsUint64();
+                    size_t chunk_size = static_cast<size_t>(quick_head["chunksizes"][k1].As<json::Number>());
                     header.chunk_sizes.push_back(chunk_size);
                 }
             }
@@ -638,8 +650,6 @@ namespace SerializedState {
         }
 
         header.Validate();
-
-        delete adapter;
     }
 
     void ReadChunk(FILE* f, size_t byte_count, const char* filename, vector<char>& chunk)

@@ -145,10 +145,8 @@
     <ClInclude Include="..\utils\Exceptions.h" />
     <ClInclude Include="..\utils\FactorySupport.h" />
     <ClInclude Include="..\utils\ISupports.h" />
-    <ClInclude Include="..\utils\JsonObject.h" />
     <ClInclude Include="..\utils\Log.h" />
     <ClInclude Include="..\utils\Properties.h" />
-    <ClInclude Include="..\utils\Serializer.h" />
     <ClInclude Include="..\utils\stdafx.h" />
     <ClInclude Include="..\utils\Sugar.h" />
     <ClInclude Include="..\utils\suids.hpp" />

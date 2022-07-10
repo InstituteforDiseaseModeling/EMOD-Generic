@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHuman.h"
 #include "IndividualEventContext.h"
 #include "ReportUtilities.h"
-#include "Serializer.h"
 
 SETUP_LOGGING("MalariaTransmissionReport")
 
@@ -79,65 +78,70 @@ namespace Kernel
     }
 
 
-    Transmission::Transmission(Location location_,
-        uint32_t txId_, std::vector<uint32_t> txInfIds_, std::vector<float> txGams_,
-        uint32_t acId_, uint32_t acInfId_)
-    : location(location_)
-    , transmitIndividualId(txId_)
-    , transmitInfectionIds(txInfIds_)
-    , transmitGametocyteDensities(txGams_)
-    , acquireIndividualId(acId_)
-    , acquireInfectionId(acInfId_)
+    Transmission::Transmission(Location location_, uint32_t txId_, std::vector<uint32_t> txInfIds_, std::vector<float> txGams_, uint32_t acId_, uint32_t acInfId_)
+        : location(location_)
+        , transmitIndividualId(txId_)
+        , transmitInfectionIds(txInfIds_)
+        , transmitGametocyteDensities(txGams_)
+        , acquireIndividualId(acId_)
+        , acquireInfectionId(acInfId_)
     {}
 
-    void Transmission::Serialize(IJsonObjectAdapter& root, JSerializer& helper)
+    void Transmission::WriteJson(json::Object& root)
     {
-        //LOG_DEBUG("Serializing Transmission\n");
-        root.BeginObject();
+        json::QuickBuilder json_doc(root);
+        json_doc["timestep"]      = json::Number(location.second);
+        json_doc["node_id"]       = json::Number(location.first);
 
-        //LOG_DEBUG("Inserting transmission variables\n");
-        root.Insert("timestep", location.second);
-        root.Insert("node_id", location.first);
-        root.Insert("acquireIndividualId", acquireIndividualId);
-        root.Insert("acquireInfectionId", acquireInfectionId);
-        root.Insert("transmitIndividualId", transmitIndividualId);
+        json_doc["acquireIndividualId"]   = json::Number(acquireIndividualId);
+        json_doc["acquireInfectionId"]    = json::Number(acquireInfectionId);
+        json_doc["transmitIndividualId"]  = json::Number(transmitIndividualId);
 
-        root.Insert("transmitInfectionIds");
-        helper.JSerialize(transmitInfectionIds, &root);
+        json::Array tx_ids;
+        for(size_t k1=0; k1<transmitInfectionIds.size(); k1++)
+        {
+            tx_ids.Insert(json::Number(transmitInfectionIds[k1]));
+        }
+        json_doc["transmitInfectionIds"] = tx_ids;
 
-        root.Insert("transmitGametocyteDensities");
-        helper.JSerialize(transmitGametocyteDensities, &root);
-
-        root.EndObject();
+        json::Array tx_dense;
+        for(size_t k1=0; k1<transmitGametocyteDensities.size(); k1++)
+        {
+            tx_dense.Insert(json::Number(transmitGametocyteDensities[k1]));
+        }
+        json_doc["transmitGametocyteDensities"] = tx_dense;
     }
 
 
-    ClinicalSample::ClinicalSample(Location location_, std::string event_,
-        uint32_t id_, std::vector<uint32_t> infIds_, std::vector<float> densities_)
-    : location(location_)
-    , sample_event(event_)
-    , individualId(id_)
-    , infectionIds(infIds_)
-    , parasiteDensities(densities_)
+    ClinicalSample::ClinicalSample(Location location_, std::string event_, uint32_t id_, std::vector<uint32_t> infIds_, std::vector<float> densities_)
+        : location(location_)
+        , sample_event(event_)
+        , individualId(id_)
+        , infectionIds(infIds_)
+        , parasiteDensities(densities_)
     {}
 
-    void ClinicalSample::Serialize(IJsonObjectAdapter& root, JSerializer& helper)
+    void ClinicalSample::WriteJson(json::Object& root)
     {
-        //LOG_DEBUG("Serializing ClinicalSample\n");
-        root.BeginObject();
+        json::QuickBuilder json_doc(root);
+        json_doc["timestep"]      = json::Number(location.second);
+        json_doc["node_id"]       = json::Number(location.first);
 
-        //LOG_DEBUG("Inserting clinical-sample variables\n");
-        root.Insert("timestep", location.second);
-        root.Insert("node_id", location.first);
-        root.Insert("individualId", individualId);
-        root.Insert("sample_event", sample_event.c_str());
+        json_doc["individualId"]  = json::Number(individualId);
+        json_doc["sample_event"]  = json::String(sample_event.c_str());
 
-        root.Insert("infectionIds");
-        helper.JSerialize(infectionIds, &root);
+        json::Array inf_ids;
+        for(size_t k1=0; k1<infectionIds.size(); k1++)
+        {
+            inf_ids.Insert(json::Number(infectionIds[k1]));
+        }
+        json_doc["infectionIds"] = inf_ids;
 
-        root.Insert("parasiteDensities");
-        helper.JSerialize(parasiteDensities, &root);
-
-        root.EndObject();
+        json::Array        para_dense;
+        for(size_t k1=0; k1<parasiteDensities.size(); k1++)
+        {
+            para_dense.Insert(json::Number(parasiteDensities[k1]));
+        }
+        json_doc["parasiteDensities"] = para_dense;
     }
 }

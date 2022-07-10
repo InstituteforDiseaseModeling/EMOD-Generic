@@ -1,0 +1,19 @@
+diff a/componentTests/componentTests.vcxproj b/componentTests/componentTests.vcxproj	(rejected hunks)
+@@ -56,7 +56,7 @@
+       <IntrinsicFunctions>false</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_POLIO;ENABLE_DENGUE;ENABLE_TYPHOID;WIN32;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+-      <AdditionalIncludeDirectories>$(ProjectDir)..\UnitTest++\src;..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;$(IDM_PYTHON3X_PATH)\include;</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>$(ProjectDir)..\UnitTest++\src;..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\snappy;$(IDM_PYTHON3X_PATH)\include;</AdditionalIncludeDirectories>
+       <FloatingPointModel>Precise</FloatingPointModel>
+       <MinimalRebuild>false</MinimalRebuild>
+       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+@@ -90,7 +90,7 @@
+       <IntrinsicFunctions>true</IntrinsicFunctions>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_POLIO;ENABLE_DENGUE;ENABLE_TYPHOID;WIN32;IDM_EXPORT;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+-      <AdditionalIncludeDirectories>$(ProjectDir)..\UnitTest++\src;..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;$(IDM_PYTHON3X_PATH)\include</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>$(ProjectDir)..\UnitTest++\src;..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\snappy;$(IDM_PYTHON3X_PATH)\include</AdditionalIncludeDirectories>
+       <FloatingPointModel>Precise</FloatingPointModel>
+       <BufferSecurityCheck>false</BufferSecurityCheck>
+       <MultiProcessorCompilation>true</MultiProcessorCompilation>

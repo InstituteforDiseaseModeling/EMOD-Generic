@@ -13,8 +13,7 @@ TODO: additional documentation.
 #include "../include/writer.h"
 #include <iostream>
 
-
-/*  
+/*
 
 TODO:
 * better documentation
@@ -25,9 +24,8 @@ TODO:
 namespace json
 {
 
-
-void Writer::Write(const Element& elementRoot, std::ostream& ostr, const std::string& indentChars) { 
-   Writer writer(ostr, indentChars);
+void Writer::Write(const Element& elementRoot, std::ostream& ostr, const std::string& indentChars, bool add_endl) {
+   Writer writer(ostr, indentChars, add_endl);
    elementRoot.Accept(writer);
    ostr.flush(); // all done
 }
@@ -47,18 +45,28 @@ void Writer::Visit(const Array& array) {
       m_ostr << "[]";
    else
    {
-      m_ostr << '[' << std::endl;
+      m_ostr << '[';
+      if(m_add_endl)
+      {
+         m_ostr << std::endl;
+      }
       ++m_nTabDepth;
 
       Array::const_iterator it(array.Begin()),
                             itEnd(array.End());
-      while (it != itEnd) {
+      while (it != itEnd)
+      {
          m_ostr << MultiIndent(m_nTabDepth);
          it->Accept(*this); 
 
          if (++it != itEnd)
+         {
             m_ostr << ',';
-         m_ostr << std::endl;
+         }
+         if(m_add_endl)
+         {
+            m_ostr << std::endl;
+         }
       }
 
       --m_nTabDepth;
@@ -71,18 +79,28 @@ void Writer::Visit(const Object& object) {
       m_ostr << "{}";
    else
    {
-      m_ostr << '{' << std::endl;
+      m_ostr << '{';
+      if(m_add_endl)
+      {
+         m_ostr << std::endl;
+      }
       ++m_nTabDepth;
 
       Object::const_iterator it(object.Begin()),
                              itEnd(object.End());
-      while (it != itEnd) {
-         m_ostr << MultiIndent(m_nTabDepth) << '"' << it->name << "\" : ";
+      while (it != itEnd)
+      {
+         m_ostr << MultiIndent(m_nTabDepth) << '"' << it->name << "\": ";
          it->element.Accept(*this); 
 
          if (++it != itEnd)
+         {
             m_ostr << ',';
-         m_ostr << std::endl;
+         }
+         if(m_add_endl)
+         {
+            m_ostr << std::endl;
+         }
       }
 
       --m_nTabDepth;
@@ -125,8 +143,7 @@ void Writer::Visit(const String& stringElement) {
       }
    }
 
-   m_ostr << '"';   
+   m_ostr << '"';
 }
-
 
 } // End namespace

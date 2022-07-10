@@ -200,7 +200,7 @@ void IDMAPI writeInputSchemas(
     // --------------------------
     // --- Write Schema to output
     // --------------------------
-    json::Writer::Write( total_schema, schema_ostream, "    " );
+    json::Writer::Write( total_schema, schema_ostream );
     schema_ostream_file.close();
 
     // PythonSupportPtr can be null during componentTests

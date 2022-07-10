@@ -99,9 +99,6 @@
     <ClInclude Include="..\Eradication\ITransmissionGroups.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\utils\JsonObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\utils\Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,9 +118,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\utils\Serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Eradication\SimulationEventContext.h">

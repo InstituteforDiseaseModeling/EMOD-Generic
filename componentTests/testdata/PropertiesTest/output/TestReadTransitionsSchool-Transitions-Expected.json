@@ -14,7 +14,7 @@
                     "Target_Property_Key": "Place",
                     "Target_Property_Value": "SchoolBreak_NonInteraction",
                     "Daily_Probability": 1,
-                    "Maximum_Duration": 3.402823466385e+38,
+                    "Maximum_Duration": 3.40282e+38,
                     "Revert": 20
                 },
                 "Target_Demographic": "Everyone",

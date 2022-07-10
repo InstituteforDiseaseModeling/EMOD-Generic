@@ -63,15 +63,6 @@
     <ClInclude Include="Coredump.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="JsonObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RapidJsonImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Serializer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Configure.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -97,9 +88,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\rapidjson\include\rapidjson\filestream.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\rapidjson\modp\modp_numtoa.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\rapidjson\include\rapidjson\internal\pow10.h">
@@ -175,12 +163,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IArchive.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonRawWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonRawReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ISerializable.h">
@@ -278,18 +260,6 @@
     <ClCompile Include="Coredump.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="JsonObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RapidJsonImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Serializer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rapidjson\modp\modp_numtoa.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Configure.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -315,12 +285,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InterpolatedValueMap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonRawWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonRawReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IArchive.cpp">

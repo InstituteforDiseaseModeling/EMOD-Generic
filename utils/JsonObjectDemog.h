@@ -29,7 +29,6 @@ namespace Kernel
     class IDMAPI JsonObjectDemog
     {
     public:
-        friend class JsonWriterDemog;
         class Iterator ;
 
         enum JsonObjectType
@@ -47,8 +46,6 @@ namespace Kernel
 
         bool operator==( const JsonObjectDemog& rThat ) const ;
         bool operator!=( const JsonObjectDemog& rThat ) const ;
-
-        void WriteToFile( const char* filename );
 
         // ------------------------------------------------------
         // --- Methods for creating an object from a string and
@@ -165,31 +162,5 @@ namespace Kernel
         std::shared_ptr<void> m_pDocument ;
         void* m_pValue ;
 #pragma warning( pop )
-    };
-
-    // A JsonWriter object allows one to create json formatted text
-    class IDMAPI JsonWriterDemog
-    {
-    public:
-        JsonWriterDemog(bool);
-        ~JsonWriterDemog();
-
-        const char* Text() const;
-        char* PrettyText() const;
-
-        JsonWriterDemog& operator <<(const char     bracket);
-        JsonWriterDemog& operator <<(const char*    value);
-        JsonWriterDemog& operator <<(const int32_t  value);
-        JsonWriterDemog& operator <<(const uint32_t value);
-        JsonWriterDemog& operator <<(const int64_t  value);
-        JsonWriterDemog& operator <<(const uint64_t value);
-        JsonWriterDemog& operator <<(const float    value);
-        JsonWriterDemog& operator <<(const double   value);
-        JsonWriterDemog& operator <<(const bool     value);
-        JsonWriterDemog& operator <<(const JsonObjectDemog& rValue );
-
-    private:
-        void* m_pBuffer ;
-        void* m_pWriter ;
     };
 }

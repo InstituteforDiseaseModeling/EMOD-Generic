@@ -7,11 +7,6 @@
 #include <cstdio>    // snprintf() or _sprintf_s()
 #include <new>        // placement new
 
-//#define MODP_D2A
-#ifdef MODP_D2A
-#include "modp_numtoa.h"
-#endif 
-
 namespace rapidjson {
 
 //! JSON writer
@@ -165,17 +160,8 @@ protected:
     void WriteDouble(double d) {
         char buffer[100];
 #if _MSC_VER
-#ifdef MODP_D2A
-        modp_dtoa(d, buffer, 6);
-        int ret = strlen(buffer);
-#else
-        //int ret = sprintf_s(buffer, sizeof(buffer), "%g", d);
-        //int ret = sprintf_s(buffer, sizeof(buffer), "%.13g", d);
         int ret = sprintf_s(buffer, sizeof(buffer), p_double_format, d);
-#endif
 #else
-        //int ret = snprintf(buffer, sizeof(buffer), "%g", d);
-        //int ret = snprintf(buffer, sizeof(buffer), "%.13g", d);
         int ret = snprintf(buffer, sizeof(buffer), p_double_format, d);
 #endif
         RAPIDJSON_ASSERT(ret >= 1);

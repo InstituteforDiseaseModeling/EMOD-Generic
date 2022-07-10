@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "ChannelDataMap.h"
 #include "Log.h"
-#include "Serializer.h"
 #include "FileSystem.h"
 #include "Exceptions.h"
 #include "ProgVersion.h"
@@ -24,11 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmMpi.h"
 #include "Debug.h"
 
-#include "JsonFullWriter.h"
-#include "JsonFullReader.h"
-
 using namespace std;
-using namespace json;
 
 SETUP_LOGGING( "ChannelData" )
 
@@ -163,27 +158,26 @@ void ChannelDataMap::ExponentialValues( const std::string& channel_name )
 void ChannelDataMap::Reduce()
 {
     LOG_DEBUG( "Reduce\n" );
-    // reduce each element of each channel
-    // will be very slow
-    // keeps track of how many timesteps have been reduced and only reduces ones that havent been reduced yet
-
     // --------------------------------------------------
     // --- Synchronize the number of channels in the map
     // --------------------------------------------------
+
+    json::Object obj_root;
+    json::QuickBuilder json_doc(obj_root);
+
     std::map<std::string,int> send_name_size_map;
     for( auto& entry : channel_data_map )
     {
+        json_doc[ entry.first ]           = json::Number(entry.second.size());
         send_name_size_map[ entry.first ] = entry.second.size();
     }
 
-    Kernel::JsonFullWriter writer;
-    Kernel::IArchive* par = static_cast<Kernel::IArchive*>(&writer);
-    Kernel::IArchive& ar = *par;
+    std::stringstream temp_ss;
+    json::Writer::Write(obj_root, temp_ss, "", false);
+    std::string json_data(temp_ss.str());
 
-    ar.labelElement("Channels") & send_name_size_map;
-
-    const char* buffer = ar.GetBuffer();
-    uint32_t buffer_size = ar.GetBufferSize();
+    const char* buffer = json_data.c_str();
+    uint32_t buffer_size = json_data.size();
 
     // send my channel names and number of channels to all other cores
     IdmMpi::RequestList outbound_requests;
@@ -215,21 +209,20 @@ void ChannelDataMap::Reduce()
 
         if (receive_size > 0)
         {
-            receive_json.resize( receive_size + 1 );
+            receive_json.resize( receive_size );
             EnvPtr->MPI.p_idm_mpi->ReceiveChars( receive_json.data(), receive_size, from_rank );
-            receive_json.push_back( '\0' );
 
-            Kernel::JsonFullReader reader( receive_json.data() );
-            Kernel::IArchive* reader_par = static_cast<Kernel::IArchive*>(&reader);
-            Kernel::IArchive& reader_ar = *reader_par;
+            std::stringstream temp_ss;
+            for(char c: receive_json) { temp_ss << c; }
 
-            std::map<std::string,int> get_name_size_map;
-            reader_ar.labelElement("Channels") & get_name_size_map;
+            json::Object obj_root;
+            json::Reader::Read(obj_root, temp_ss);
+            json::QuickInterpreter q_int(obj_root);
 
-            for( auto& entry : get_name_size_map )
+            for(auto it = obj_root.Begin(); it != obj_root.End(); ++it)
             {
-                std::string name = entry.first;
-                int         size = entry.second;
+                std::string name = it->name;
+                int         size = static_cast<int>((q_int[name]).As<json::Number>());
 
                 if( channel_data_map.count( name ) == 0 )
                 {
@@ -318,7 +311,8 @@ void ChannelDataMap::SetStartTime(float time)
 void ChannelDataMap::WriteOutput( 
     const std::string& filename, 
     std::map<std::string, std::string>& units_map, 
-    bool defaultPrecision )
+    bool compact_output,
+    int sigfigs )
 {
     // Add some header stuff to InsetChart.json.
     // { "Header":
@@ -344,81 +338,79 @@ void ChannelDataMap::WriteOutput(
     ostringstream dtk_ver;
     dtk_ver << pv.getRevisionNumber() << " " << pv.getSccsBranch() << " " << pv.getBuildDate();
 
-    Kernel::JSerializer js;
-    Kernel::IJsonObjectAdapter* pIJsonObj = Kernel::CreateJsonObjAdapter();
-    pIJsonObj->CreateNewWriter(false, defaultPrecision);
-    pIJsonObj->BeginObject();
+    json::Object       obj_root;
+    json::QuickBuilder json_doc(obj_root);
 
-    pIJsonObj->Insert("Header");
-    pIJsonObj->BeginObject();
-    pIJsonObj->Insert("DateTime",            now3.substr(0,now3.length()-1).c_str()); // have to remove trailing '\n'
-    pIJsonObj->Insert("DTK_Version",         dtk_ver.str().c_str());
-    pIJsonObj->Insert("Report_Type",         "InsetChart");
-    pIJsonObj->Insert("Report_Version",      "3.2");
-    float cfg_start_time = (*EnvPtr->Config)["Start_Time"].As<Number>();
-    float _start_time = start_time > -FLT_MAX ? start_time : cfg_start_time;
-    pIJsonObj->Insert("Start_Time",          _start_time);
+    // Header object
+    json::Object       obj_header;
+    json::QuickBuilder json_header(obj_header);
+
+    json_header["DateTime"]       = json::String(now3.substr(0,now3.length()-1).c_str());
+    json_header["DTK_Version"]    = json::String(dtk_ver.str().c_str());
+    json_header["Report_Type"]    = json::String("InsetChart");
+    json_header["Report_Version"] = json::String("3.2");
+
+    float cfg_start_time      = (*EnvPtr->Config)["Start_Time"].As<json::Number>();
+    float _start_time         = start_time > -FLT_MAX ? start_time : cfg_start_time;
+    json_header["Start_Time"] = json::Number(_start_time);
+
     if( start_year > -FLT_MAX )
     {
-        pIJsonObj->Insert("Report_Start_Year", start_year );
-        pIJsonObj->Insert("Report_Stop_Year",  stop_year  );
+        json_header["Report_Start_Year"] = json::Number(start_year);
+        json_header["Report_Stop_Year"]  = json::Number(stop_year);
     }
-    pIJsonObj->Insert("Simulation_Timestep", (*EnvPtr->Config)["Simulation_Timestep"].As<Number>() );
+    json_header["Simulation_Timestep"] = json::Number((*EnvPtr->Config)["Simulation_Timestep"].As<json::Number>());
     unsigned int timesteps = 0;
     if( !channel_data_map.empty() )
     {
         timesteps = (double)((channel_data_map.begin()->second).size());
     }
-    pIJsonObj->Insert("Timesteps", (int)timesteps);
-    pIJsonObj->Insert("Channels", (int)channel_data_map.size()); // this is "Header":"Channels" metadata
+    json_header["Timesteps"] = json::Number((int)timesteps);
+    json_header["Channels"]  = json::Number((int)channel_data_map.size()); // this is "Header":"Channels" metadata
 
     if( p_output_augmentor != nullptr )
     {
-        p_output_augmentor->AddDataToHeader( pIJsonObj );
+        p_output_augmentor->AddDataToHeader( obj_header );
     }
 
-    pIJsonObj->EndObject(); // end of "Header"
+    json_doc["Header"] = obj_header;
 
+    // Channel object
+    json::Object       channels_obj;
+    json::QuickBuilder json_channels(channels_obj);
     LOG_DEBUG("Iterating over channel_data_map\n");
-    pIJsonObj->Insert("Channels"); // this is the top-level "Channels" for arrays of time-series data
-    pIJsonObj->BeginObject();
+
     for( auto& entry : channel_data_map )
     {
-        std::string name = entry.first;
-        pIJsonObj->Insert(name.c_str());
-        pIJsonObj->BeginObject();
-        pIJsonObj->Insert("Units", units_map[name].c_str());
-        pIJsonObj->Insert("Data");
-        pIJsonObj->BeginArray();
-        for (auto val : entry.second)
+        json::Object       entry_obj;
+        json::QuickBuilder json_entry(entry_obj);
+
+        json::Array        data_arr;
+        for(auto val : entry.second)
         {
             if (std::isnan(val)) val = 0;   // Since NaN isn't part of the json standard, force all NaN values to zero
             if (std::isinf(val)) val = 0;   // Since INF isn't part of the json standard, force all INF values to zero
-            pIJsonObj->Add(val);
+            data_arr.Insert(json::Number(val));
         }
-        pIJsonObj->EndArray();
-        pIJsonObj->EndObject(); // end of channel by name
+        json_entry["Units"] = json::String(units_map[entry.first].c_str());
+        json_entry["Data"]  = data_arr;
+
+        channels_obj[entry.first] = entry_obj;
     }
-    pIJsonObj->EndObject(); // end of "Channels"
-    pIJsonObj->EndObject(); // end of entire report
+
+    json_doc["Channels"] = channels_obj;
 
     // Write output to file
-    // GetFormattedOutput() could be used for a smaller but less human readable file
     LOG_DEBUG("Writing JSON output file\n");
-    const char* buffer;
-    js.GetFormattedOutput(pIJsonObj, buffer);
 
     ofstream inset_chart_json;
     FileSystem::OpenFileForWriting( inset_chart_json, FileSystem::Concat( EnvPtr->OutputPath, filename ).c_str() );
-
-    inset_chart_json << buffer << endl;
+    inset_chart_json.precision(sigfigs);
+    std::string indent_chars((compact_output?"":"    "));
+    json::Writer::Write( json_doc, inset_chart_json, indent_chars, !compact_output );
     inset_chart_json.flush();
     inset_chart_json.close();
-
-    pIJsonObj->FinishWriter();
-    delete pIJsonObj ;
 }
-
 
 void ChannelDataMap::normalizeChannel(
     const std::string &channel_name,

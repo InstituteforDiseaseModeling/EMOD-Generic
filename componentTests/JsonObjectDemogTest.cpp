@@ -59,46 +59,42 @@ SUITE(JsonObjectDemogTest)
 
     TEST(TestJsonReadWrite)
     {
-        JsonWriterDemog writer( true ) ;
+        std::stringstream temp_ss;
+        temp_ss << "{";
+        temp_ss << "\"String\""          << ":" << "\"ThisString\",";
+        temp_ss << "\"Bool\""            << ":" << "true,";
+        temp_ss << "\"Int32\""           << ":" << "-2147483647,";
+        temp_ss << "\"Uint32\""          << ":" << "4294967295,";
+        temp_ss << "\"Int64\""           << ":" << "-9223372036854775807,";
+        temp_ss << "\"Uint64\""          << ":" << "18446744073709551615,";
+        temp_ss << "\"FloatMin\""        << ":" << "1.17549435e-038,";
+        temp_ss << "\"FloatMax\""        << ":" << "3.40282347e+038,";
+        temp_ss << "\"FloatEpsilon1\""   << ":" << "0.00001,";
+        temp_ss << "\"FloatEpsilon2\""   << ":" << "-0.00001,";
+        temp_ss << "\"DoubleMin\""       << ":" << "2.225073858507e-308,";
+        temp_ss << "\"DoubleMax\""       << ":" << "1.797693134862e+308,";
+        temp_ss << "\"DoubleEpsilon1\""  << ":" << "0.000000001,";
+        temp_ss << "\"DoubleEpsilon2\""  << ":" << "-0.000000001,";
+        temp_ss << "\"Object\""          << ":" << "{";
+        temp_ss <<   "\"ObjectString\""  << ":" <<   "\"String for Object\",";
+        temp_ss <<   "\"Int32\""         << ":" <<   "777"
+                                                << "},";
+        temp_ss << "\"ObjectOuter\""     << ":" << "{";
+        temp_ss <<   "\"ObjectString\""  << ":" <<   "\"String for ObjectOuter\",";
+        temp_ss <<   "\"Int32\""         << ":" <<   "999,";
+        temp_ss <<   "\"ObjectInner\""   << ":" <<   "{";
+        temp_ss <<     "\"Float\""       << ":" <<     "0.12345,";
+        temp_ss <<     "\"Bool\""        << ":" <<     "false"
+                                                <<   "}"
+                                                << "},";
+        temp_ss << "\"SingleArray\""     << ":" << "[   1,  2,  3,  4,  5],";
+        temp_ss << "\"DoubleArray\""     << ":" << "[[ 11, 12, 13, 14, 15],"
+                                                << " [ 21, 22, 23, 24, 25]]"
+                                                << "}";
 
-        writer << '{' 
-               <<     "String"         << "ThisString"
-               <<     "Bool"           << true
-               <<     "Int32"          << -2147483647
-               <<     "Uint32"         << uint32_t(4294967295)
-               <<     "Int64"          << int64_t(-9223372036854775807)
-               <<     "Uint64"         << uint64_t(18446744073709551615)
-               <<     "FloatMin"       << float(1.17549435e-038)
-               <<     "FloatMax"       << float(3.40282347e+038)
-               <<     "FloatEpsilon1"  << float( 0.00001)
-               <<     "FloatEpsilon2"  << float(-0.00001)
-               <<     "DoubleMin"      << double(2.225073858507e-308)
-               <<     "DoubleMax"      << double(1.797693134862e+308)
-               <<     "DoubleEpsilon1" << double( 0.000000001)
-               <<     "DoubleEpsilon2" << double(-0.000000001)
-               <<     "Object"
-               <<     '{'
-               <<         "ObjectString" << "String for Object"
-               <<         "Int32"        << 777
-               <<     '}'
-               <<     "ObjectOuter"
-               <<     '{'
-               <<         "ObjectString" << "String for ObjectOuter"
-               <<         "Int32"        << 999
-               <<         "ObjectInner"
-               <<         '{'
-               <<             "Float" << 0.12345
-               <<             "Bool"  << false
-               <<         '}'
-               <<     '}'
-               <<     "SingleArray" << '[' << 1 << 2 << 3 << 4 << 5 << ']'
-               <<     "DoubleArray" << '[' << '[' << 11 << 12 << 13 << 14 << 15 << ']'
-                                           << '[' << 21 << 22 << 23 << 24 << 25 << ']' << ']'
-               << '}' ;
-
+        // Extract as string and delete
         JsonObjectDemog json ;
-
-        json.Parse( writer.Text() );
+        json.Parse(temp_ss.str().c_str());
 
         CHECK_EQUAL( string("ThisString"),           json.GetString( "String"         ) );
         CHECK_EQUAL( true,                           json.GetBool(   "Bool"           ) );
@@ -271,47 +267,43 @@ SUITE(JsonObjectDemogTest)
 
     TEST_FIXTURE(JsonTestFixture,TestGettingDataErrorHandling)
     {
-        JsonWriterDemog writer( true ) ;
+        std::stringstream temp_ss;
+        temp_ss << "{";
+        temp_ss << "\"String\""          << ":" << "\"ThisString\",";
+        temp_ss << "\"Bool\""            << ":" << "true,";
+        temp_ss << "\"Int32\""           << ":" << "-2147483647,";
+        temp_ss << "\"Uint32\""          << ":" << "4294967295,";
+        temp_ss << "\"Int64\""           << ":" << "-9223372036854775807,";
+        temp_ss << "\"Uint64\""          << ":" << "18446744073709551615,";
+        temp_ss << "\"FloatMin\""        << ":" << "1.17549435e-038,";
+        temp_ss << "\"FloatMax\""        << ":" << "3.40282347e+038,";
+        temp_ss << "\"FloatEpsilon1\""   << ":" << "0.00001,";
+        temp_ss << "\"FloatEpsilon2\""   << ":" << "-0.00001,";
+        temp_ss << "\"Double\""          << ":" << "5.0,";
+        temp_ss << "\"DoubleMin\""       << ":" << "2.225073858507e-308,";
+        temp_ss << "\"DoubleMax\""       << ":" << "1.797693134862e+308,";
+        temp_ss << "\"DoubleEpsilon1\""  << ":" << "0.000000001,";
+        temp_ss << "\"DoubleEpsilon2\""  << ":" << "-0.000000001,";
+        temp_ss << "\"Object\""          << ":" << "{";
+        temp_ss <<   "\"ObjectString\""  << ":" <<   "\"String for Object\",";
+        temp_ss <<   "\"Int32\""         << ":" <<   "777"
+                                                << "},";
+        temp_ss << "\"ObjectOuter\""     << ":" << "{";
+        temp_ss <<   "\"ObjectString\""  << ":" <<   "\"String for ObjectOuter\",";
+        temp_ss <<   "\"Int32\""         << ":" <<   "999,";
+        temp_ss <<   "\"ObjectInner\""   << ":" <<   "{";
+        temp_ss <<     "\"Float\""       << ":" <<     "0.12345,";
+        temp_ss <<     "\"Bool\""        << ":" <<     "false"
+                                                <<   "}"
+                                                << "},";
+        temp_ss << "\"SingleArray\""     << ":" << "[ 1.1,2.2,3.3,4.4,5.5],";
+        temp_ss << "\"DoubleArray\""     << ":" << "[[ 11, 12, 13, 14, 15],"
+                                                << " [ 21, 22, 23, 24, 25]]"
+                                                << "}";
 
-        writer << '{' 
-               <<     "String"         << "ThisString"
-               <<     "Bool"           << true
-               <<     "Int32"          << -2147483647
-               <<     "Uint32"         << uint32_t(4294967295)
-               <<     "Int64"          << int64_t(-9223372036854775807)
-               <<     "Uint64"         << uint64_t(18446744073709551615)
-               <<     "FloatMin"       << float(1.17549435e-038)
-               <<     "FloatMax"       << float(3.40282347e+038)
-               <<     "FloatEpsilon1"  << float( 0.00001)
-               <<     "FloatEpsilon2"  << float(-0.00001)
-               <<     "Double"         << double(5.0)
-               <<     "DoubleMin"      << double(2.225073858507e-308)
-               <<     "DoubleMax"      << double(1.797693134862e+308)
-               <<     "DoubleEpsilon1" << double( 0.000000001)
-               <<     "DoubleEpsilon2" << double(-0.000000001)
-               <<     "Object"
-               <<     '{'
-               <<         "ObjectString" << "String for Object"
-               <<         "Int32"        << 777
-               <<     '}'
-               <<     "ObjectOuter"
-               <<     '{'
-               <<         "ObjectString" << "String for ObjectOuter"
-               <<         "Int32"        << 999
-               <<         "ObjectInner"
-               <<         '{'
-               <<             "Float" << 0.12345
-               <<             "Bool"  << false
-               <<         '}'
-               <<     '}'
-               <<     "SingleArray" << '[' << 1.1 << 2.1 << 3.1 << 4.1 << 5.1 << ']'
-               <<     "DoubleArray" << '[' << '[' << 11 << 12 << 13 << 14 << 15 << ']'
-                                           << '[' << 21 << 22 << 23 << 24 << 25 << ']' << ']'
-               << '}' ;
-
+        // Extract as string and delete
         JsonObjectDemog json ;
-
-        json.Parse( writer.Text() );
+        json.Parse(temp_ss.str().c_str());
 
         auto func1 = [] ( const JsonObjectDemog& rJson ) { rJson.GetString("InvalidName"); };
         TestHelper_BadAccessException( __LINE__, json, func1, 

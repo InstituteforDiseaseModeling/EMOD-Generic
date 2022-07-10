@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BaseEventReportIntervalOutput.h"
 #include "ReportUtilities.h"
 #include "FileSystem.h"
-#include "Serializer.h"
 #include <math.h>
 
 SETUP_LOGGING( "BaseEventReportIntervalOutput" )
@@ -151,20 +150,14 @@ namespace Kernel
 
         if( EnvPtr->MPI.Rank != 0 )
         {
-            IJsonObjectAdapter* pIJsonObj = CreateJsonObjAdapter();
-            pIJsonObj->CreateNewWriter();
-            pIJsonObj->BeginObject();
+            json::Object obj_root;
+            m_pIntervalData->Serialize(obj_root);
 
-            JSerializer js;
-            m_pIntervalData->Serialize( *pIJsonObj, js );
+            std::stringstream temp_ss;
+            json::Writer::Write(obj_root, temp_ss);
+            std::string json_data(temp_ss.str());
 
-            pIJsonObj->EndObject();
-
-            std::string json_data = pIJsonObj->ToString();
-
-            delete pIJsonObj;
-
-            ReportUtilities::SendData( json_data );
+            ReportUtilities::SendData(json_data);
         }
         else
         {
@@ -172,16 +165,16 @@ namespace Kernel
             {
                 std::vector<char> received;
                 ReportUtilities::GetData( fromRank, received );
+                std::stringstream temp_ss;
+                for(char c: received) { temp_ss << c; }
 
-                IJsonObjectAdapter* pIJsonObj = CreateJsonObjAdapter();
-                pIJsonObj->Parse( received.data() );
+                json::Object obj_root;
+                json::Reader::Read(obj_root, temp_ss);
 
                 m_pMulticoreDataExchange->Clear();
-                m_pMulticoreDataExchange->Deserialize( *pIJsonObj );
+                m_pMulticoreDataExchange->Deserialize(obj_root);
 
                 m_pIntervalData->Update( *m_pMulticoreDataExchange );
-
-                delete pIJsonObj;
             }
         }
     }
@@ -224,38 +217,8 @@ namespace Kernel
 
     void BaseEventReportIntervalOutput::WriteOutput( float currentTime )
     {
-        // --------------------------------------
-        // --- Serialize data to JSON for output
-        // --------------------------------------
-        JSerializer js;
-        IJsonObjectAdapter* pIJsonObj = CreateJsonObjAdapter();
-        pIJsonObj->CreateNewWriter();
-        pIJsonObj->BeginObject();
-
-        SerializeOutput( currentTime, *pIJsonObj, js );
-
-        pIJsonObj->EndObject();
-
-        // -------------------------------
-        // --- Output JSON to text string
-        // -------------------------------
-        char* output_text = nullptr;
-        if( m_PrettyFormat )
-        {
-            js.GetPrettyFormattedOutput( pIJsonObj, output_text );
-        }
-        else
-        {
-            const char* const_text = nullptr;
-            js.GetFormattedOutput( pIJsonObj, const_text );
-            output_text = const_cast<char*>(const_text);
-        }
-        if( output_text == nullptr )
-        {
-            std::stringstream ss;
-            ss << "Error converting JSON to text, base output_file_name=" << GetBaseOutputFilename();
-            throw SerializationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-        }
+        json::Object obj_root;
+        SerializeOutput( currentTime, obj_root );
 
         // --------------------
         // --- Create filename
@@ -269,21 +232,9 @@ namespace Kernel
         LOG_INFO_F( "Writing file: %s\n", output_file_name.c_str() );
         ofstream ofs;
         FileSystem::OpenFileForWriting( ofs, output_file_name.c_str() );
-
-        ofs << output_text << endl;
-        if( m_PrettyFormat )
-        {
-            // the pretty format is an allocated string
-            delete output_text ;
-        }
-        output_text = nullptr ;
-
-        if (ofs.is_open())
-        {
-            ofs.close();
-        }
-        pIJsonObj->FinishWriter();
-        delete pIJsonObj ;
+        std::string indent_chars((m_PrettyFormat?"    ":""));
+        json::Writer::Write(obj_root, ofs, indent_chars, m_PrettyFormat);
+        ofs.close();
     }
 }
 

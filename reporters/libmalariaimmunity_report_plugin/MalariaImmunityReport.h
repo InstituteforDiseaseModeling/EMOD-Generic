@@ -28,8 +28,8 @@ namespace Kernel
         // IIntervalData methods
         virtual void Clear() override;
         virtual void Update( const IIntervalData& rOther ) override;
-        virtual void Serialize( IJsonObjectAdapter& rjoa, JSerializer& js ) override;
-        virtual void Deserialize( IJsonObjectAdapter& rjoa ) override;
+        virtual void Serialize(json::Object& root) override;
+        virtual void Deserialize(json::Object& root) override;
 
         // other
         void SetVectorSize( int size );
@@ -56,7 +56,7 @@ namespace Kernel
     protected:
         // BaseEventReportIntervalOutput
         virtual void AccumulateOutput() override;
-        virtual void SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js ) override;
+        virtual void SerializeOutput( float currentTime, json::Object& root ) override;
 
     private:
         

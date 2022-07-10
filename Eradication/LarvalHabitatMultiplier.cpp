@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "LarvalHabitatMultiplier.h"
 #include "SimulationConfig.h"
-#include "JsonObjectDemog.h"
 #include "Log.h"
 #include "VectorParameters.h"
 #include "VectorSpeciesParameters.h"

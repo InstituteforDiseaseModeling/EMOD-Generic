@@ -57,15 +57,3 @@ namespace Kernel
         INodeEventContext * m_parent;
     };
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, SimpleAnalyzer& obj, const unsigned int v)
-    {
-        ar & obj.m_timer;
-        ar & obj.m_reporting_interval;
-        ar & obj.m_trigger_condition;
-    }
-}
-#endif

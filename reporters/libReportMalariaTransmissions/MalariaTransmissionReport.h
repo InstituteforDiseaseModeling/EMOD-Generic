@@ -56,7 +56,6 @@ namespace Kernel
         bool IsActive() const;
         bool IsFinished() const;
 
-        void SerializeTransmissions(IJsonObjectAdapter& pIJsonObj, JSerializer& js);
         void WriteOutput( float currentTime );
 
         bool m_PrettyFormat;

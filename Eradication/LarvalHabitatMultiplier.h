@@ -19,8 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class JsonObjectDemog;
-
     class LarvalHabitatMultiplierSpec : public JsonConfigurable
     {
         GET_SCHEMA_STATIC_WRAPPER(LarvalHabitatMultiplierSpec)

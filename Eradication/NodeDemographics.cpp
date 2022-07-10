@@ -815,35 +815,47 @@ void NodeDemographicsFactory::WriteDefaultDemographicsFile( const std::string& r
     date_str = date_str.substr( 0, date_str.length()-1 ); // has '\n' end for some reason 
 #pragma warning( pop )
 
-    JsonWriterDemog writer( true ) ;
-    writer << '{' 
-           <<     "Metadata"
-           <<     '{'
-           <<          "DateCreated"  << date_str.c_str()
-           <<          "Tool" << "Eradication.exe"
-           <<          "Author" << "DTK"
-           <<          "IdReference" << idreference.c_str()
-           <<          "NodeCount" << nodeIDs.size()
-           <<     '}'
-           <<     "Defaults" << layer_defaults[0]
-           <<     "Nodes"
-           <<     '[' ;
+    // Initialize writer and open primary object
+    json::Object       obj_root;
+    json::QuickBuilder json_doc(obj_root);
 
+    // Metadata object
+    json::Object       obj_metadata;
+    json::QuickBuilder json_metadata(obj_metadata);
+
+    json_metadata["DateCreated"]    = json::String(date_str.c_str());
+    json_metadata["Tool"]           = json::String("Eradication.exe");
+    json_metadata["Author"]         = json::String("DTK");
+    json_metadata["IdReference"]    = json::String(idreference.c_str());
+    json_metadata["NodeCount"]      = json::Number(nodeIDs.size());
+
+    json_doc["Metadata"] = obj_metadata;
+
+    // Default values
+    std::stringstream temp_ss_defaults;
+    temp_ss_defaults << layer_defaults[0].ToString();
+    json::Object obj_defaults;
+    json::Reader::Read(obj_defaults, temp_ss_defaults);
+    json_doc["Defaults"] = obj_defaults;
+
+    // Array of nodes
+    json::Array        arr_nodes;
     for( uint32_t i = 0 ; i < nodeIDs.size() ; i++ )
     {
-        ExternalNodeId_t node_id = nodeIDs[i] ;
-        JsonObjectDemog node_json = nodedata_maps[0][node_id] ;
-        writer << node_json ;
+        ExternalNodeId_t node_id = nodeIDs[i];
+        JsonObjectDemog node_json = nodedata_maps[0][node_id];
+        std::stringstream temp_ss_node;
+        temp_ss_node << node_json.ToString();
+        json::Object obj_node;
+        json::Reader::Read(obj_node, temp_ss_node);
+        arr_nodes.Insert(obj_node);
     }
+    json_doc["Nodes"] = arr_nodes;
 
-    writer <<     ']'
-           << '}' ;
-
-    std::string text = writer.PrettyText();
-
+    // Write to file
     std::ofstream json_file;
     FileSystem::OpenFileForWriting( json_file, rFilename.c_str() );
-    json_file << text ;
+    json::Writer::Write(json_doc, json_file);
     json_file.close();
 }
 

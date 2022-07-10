@@ -15,12 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IReport.h"
 #include "Configuration.h"
 
-namespace Kernel
-{
-    struct IJsonObjectAdapter;
-    class JSerializer;
-}
-
 struct MalariaPatient
 {
     MalariaPatient(int id_, float age_, float birthday_);
@@ -42,14 +36,11 @@ struct MalariaPatient
     int n_drug_treatments;
     std::vector<std::string> drug_treatments;
 
-    virtual void JSerialize( Kernel::IJsonObjectAdapter* root, Kernel::JSerializer* helper );
+    virtual void JSerialize( json::Object& );
 
 protected:
-    void SerializeChannel( std::string channel_name, std::vector<float> &channel_data,
-                           Kernel::IJsonObjectAdapter* root, Kernel::JSerializer* helper );
-    void SerializeChannel( std::string channel_name, std::vector<std::string> &channel_data,
-                           Kernel::IJsonObjectAdapter* root, Kernel::JSerializer* helper );
-
+    void SerializeChannel( std::string channel_name, std::vector<float> &channel_data, json::Object& root);
+    void SerializeChannel( std::string channel_name, std::vector<std::string> &channel_data, json::Object& root );
 };
 
 class MalariaPatientJSONReport : public Kernel::BaseReport

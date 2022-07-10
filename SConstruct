@@ -234,7 +234,6 @@ if os.sys.platform == 'win32':
                           "#/Dependencies/ComputeClusterPack/Include",
                           "#/cajun/include",
                           "#/rapidjson/include",
-                          "#/rapidjson/modp",
                           "#/snappy",
                           "#/lz4/lib"])
 else:
@@ -257,7 +256,6 @@ else:
                           "#/libgeneric_static",
                           "#/cajun/include",
                           "#/rapidjson/include",
-                          "#/rapidjson/modp",
                           "#/snappy",
                           "#/lz4/lib"])
 

@@ -18,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "HivObjectFactory.h"
 #include "HIVReportEventRecorder.h"
 #include "IndividualHIV.h"
-#include "JsonObject.h"
 
 SETUP_LOGGING( "SimulationHIV" )
 
@@ -170,8 +169,9 @@ namespace Kernel
         addNode_internal( node, nodedemographics_factory, climate_factory );
     }
 
-    void SimulationHIV::AddDataToHeader( IJsonObjectAdapter* pIJsonObj )
+    void SimulationHIV::AddDataToHeader( json::Object& root )
     {
-        pIJsonObj->Insert("Base_Year", GetParams()->sim_time_base_year);
+        json::QuickBuilder json_doc(root);
+        json_doc["Base_Year"] = json::Number(GetParams()->sim_time_base_year);
     }
 }

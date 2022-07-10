@@ -22,10 +22,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Sugar.h"
 #include "IIndividualHuman.h"
 #include "ProgVersion.h"
-#include "Serializer.h"
 
 using namespace std;
-using namespace json;
 
 SETUP_LOGGING( "BinnedReport" )
 
@@ -276,159 +274,147 @@ void BinnedReport::Finalize()
     std::string now3 = std::string(asctime(now2));
 #endif
 
-    Kernel::JSerializer js;
-    Kernel::IJsonObjectAdapter* pIJsonObj = Kernel::CreateJsonObjAdapter();
-    pIJsonObj->CreateNewWriter();
-    pIJsonObj->BeginObject();
-
-    pIJsonObj->Insert("Header");
-    pIJsonObj->BeginObject();
-    pIJsonObj->Insert("DateTime", now3.substr(0,now3.length()-1).c_str()); // have to remove trailing '\n'
     ProgDllVersion pv;
     ostringstream dtk_ver;
     dtk_ver << pv.getRevisionNumber() << " " << pv.getSccsBranch() << " " << pv.getBuildDate();
-    pIJsonObj->Insert("DTK_Version", dtk_ver.str().c_str());
-    pIJsonObj->Insert("Report_Version", "2.1");
-    int timesteps = 0;
+
+    // Document root
+    json::Object       obj_root;
+    json::QuickBuilder json_doc(obj_root);
+
+    // "Header": {}
+    json::Object       obj_header;
+    json::QuickBuilder json_header(obj_header);
+
+    json_header["DateTime"]       = json::String(now3.substr(0,now3.length()-1).c_str());
+    json_header["DTK_Version"]    = json::String(dtk_ver.str().c_str());
+    json_header["Report_Version"] = json::String("2.1");
+
+    unsigned int timesteps = 0;
     if( !channelDataMap.IsEmpty() && num_total_bins > 0 )
     {
         timesteps = int(double(channelDataMap.GetChannelLength()) / double(num_total_bins));
     }
-    pIJsonObj->Insert("Timesteps", timesteps);
+    json_header["Timesteps"]      = json::Number((int)timesteps);
 
     if( p_output_augmentor != nullptr )
     {
-        p_output_augmentor->AddDataToHeader( pIJsonObj );
+        p_output_augmentor->AddDataToHeader( obj_header );
     }
 
-    pIJsonObj->Insert("Subchannel_Metadata");
-    pIJsonObj->BeginObject();
+    // "Subchannel Metadata": {}
+    json::Object       obj_meta;
+    json::QuickBuilder json_meta(obj_meta);
 
-    pIJsonObj->Insert("AxisLabels");
-    pIJsonObj->BeginArray();
-    js.JSerialize(axis_labels, pIJsonObj);
-    pIJsonObj->EndArray();
-
-    pIJsonObj->Insert("NumBinsPerAxis");
-    pIJsonObj->BeginArray();
-    js.JSerialize(num_bins_per_axis, pIJsonObj);
-    pIJsonObj->EndArray();
-
-    pIJsonObj->Insert("ValuesPerAxis");
-    pIJsonObj->BeginArray();
-    for (auto& values : values_per_axis)
+    // "AxisLabels": [[data]]
+    json::Array arr_labels1, arr_labels2;
+    for(size_t k1 = 0; k1 < axis_labels.size(); k1++)
     {
-        pIJsonObj->BeginArray();
-        js.JSerialize(values, pIJsonObj);
-        pIJsonObj->EndArray();
+        arr_labels2.Insert(json::String(axis_labels[k1]));
     }
-    pIJsonObj->EndArray();
+    arr_labels1.Insert(arr_labels2);
+    json_meta["AxisLabels"] = arr_labels1;
 
-    pIJsonObj->Insert("MeaningPerAxis");
-    pIJsonObj->BeginArray();
-    //for (auto& names : friendly_names_per_axis)
+    // "NumBinsPerAxis": [[data]]
+    json::Array        arr_numbin1, arr_numbin2;
+    for(size_t k1 = 0; k1 < num_bins_per_axis.size(); k1++)
     {
-        pIJsonObj->BeginArray();
-        //js.JSerialize(names, pIJsonObj);
-        js.JSerialize(_age_bin_friendly_names, pIJsonObj);
-        pIJsonObj->EndArray();
+        arr_numbin2.Insert(json::Number(num_bins_per_axis[k1]));
     }
-    pIJsonObj->EndArray();
-    pIJsonObj->EndObject(); // end of "Subchannel_Metadata"
+    arr_numbin1.Insert(arr_numbin2);
+    json_meta["NumBinsPerAxis"] = arr_numbin1;
 
-    pIJsonObj->Insert("Channels", int(channelDataMap.GetNumChannels())); // this is "Header":"Channels" metadata
-    pIJsonObj->EndObject(); // end of "Header"
+    // "ValuesPerAxis": [[[data1],[data2],...]]
+    json::Array        arr_values1, arr_values2;
+    for(size_t k1 = 0; k1 < values_per_axis.size(); k1++)
+    {
+        json::Array        arr_values3;
+        for(size_t k2 = 0; k2 < values_per_axis[k1].size(); k2++)
+        {
+            arr_values3.Insert(json::Number(values_per_axis[k1][k2]));
+        }
+        arr_values2.Insert(arr_values3);
+    }
+    arr_values1.Insert(arr_values2);
+    json_meta["ValuesPerAxis"]  = arr_values1;
 
+    // "MeaningPerAxis": [[[data]]]
+    json::Array        arr_explan1, arr_explan2, arr_explan3;
+    for(size_t k1 = 0; k1 < _age_bin_friendly_names.size(); k1++)
+    {
+        arr_explan3.Insert(json::String(_age_bin_friendly_names[k1]));
+    }
+    arr_explan2.Insert(arr_explan3);
+    arr_explan1.Insert(arr_explan2);
+    json_meta["MeaningPerAxis"] = arr_explan1;
+
+    json_header["Subchannel_Metadata"] = obj_meta;
+    json_header["Channels"]            = json::Number((int)channelDataMap.GetNumChannels());
+
+    json_doc["Header"] = obj_header;
+
+    // "Channels": {}
     LOG_DEBUG("Iterating over channelDataMap\n");
-    std::vector<std::string> channel_names = channelDataMap.GetChannelNames();
-    pIJsonObj->Insert("Channels"); // this is the top-level "Channels" for arrays of time-series data
-    pIJsonObj->BeginObject();
-    for( auto name : channel_names )
+    json::Object       obj_channels;
+    json::QuickBuilder json_channels(obj_channels);
+
+    // Iterate over channel entry
+    for( auto& name : channelDataMap.GetChannelNames() )
     {
         const ChannelDataMap::channel_data_t& channel_data = channelDataMap.GetChannel( name );
 
-        pIJsonObj->Insert(name.c_str());
-        pIJsonObj->BeginObject();
-        pIJsonObj->Insert("Units", units_map[name].c_str());
-        pIJsonObj->Insert("Data");
-        formatChannelDataBins(pIJsonObj, channel_data.data(), num_bins_per_axis, 0, num_total_bins);
-        pIJsonObj->EndObject(); // end of channel by name
+        json::Object       obj_entry;
+        json::QuickBuilder json_entry(obj_entry);
+
+        // "Data": [[data1],[data2],...]
+        json::Array arr_data;
+        formatChannelDataBins(arr_data, channel_data.data(), num_bins_per_axis, 0, num_total_bins);
+
+        json_entry["Units"] = json::String(units_map[name].c_str());
+        json_entry["Data"]  = arr_data;
+
+        json_channels[name] = obj_entry;
     }
-    pIJsonObj->EndObject(); // end of "Channels"
-    pIJsonObj->EndObject(); // end of "BinnedReport"
+
+    json_doc["Channels"] = obj_channels;
 
     // Write output to file
-    // GetPrettyFormattedOutput() can be used for nicer indentation but bigger filesize
     LOG_DEBUG("Writing JSON output file\n");
-    char* buffer;
-    js.GetPrettyFormattedOutput(pIJsonObj, buffer);
-
     ofstream binned_report_json;
     FileSystem::OpenFileForWriting( binned_report_json, FileSystem::Concat( EnvPtr->OutputPath, report_name ).c_str() );
-
-    binned_report_json << buffer << endl;
+    json::Writer::Write( json_doc, binned_report_json );
     binned_report_json.close();
-
-    pIJsonObj->FinishWriter();
-    delete pIJsonObj ;
 }
 
-json::Element BinnedReport::formatChannelDataBins(const float data[], std::vector<int>& dims, int start_axis, int num_remaining_bins)
+void BinnedReport::formatChannelDataBins(json::Array& root, const float data[], std::vector<int>& dims, int start_axis, int num_remaining_bins)
 {
-    json::Array arr;
-    LOG_DEBUG("formatChannelDataBins\n");
-
     if(start_axis < dims.size())
     {
         int num_bins = num_remaining_bins / dims[start_axis];
-        arr.Resize(dims[start_axis]);
-        for(int i = 0; i < dims[start_axis]; i++)
+        for(int k1=0; k1<dims[start_axis]; k1++)
         {
-            arr[i] = formatChannelDataBins(data + (i * num_bins), dims, start_axis + 1, num_bins);
+            formatChannelDataBins(root, data + (k1 * num_bins), dims, start_axis+1, num_bins);
         }
     }
     else
     {
-        arr.Resize(num_timesteps);
-        for(int i = 0; i < num_timesteps; i++)
+        json::Array arr_subarr;
+        for(int k1=0; k1<num_timesteps; k1++)
         {
-            ChannelDataMap::channel_data_t::value_type val = data[i * num_total_bins];
+            ChannelDataMap::channel_data_t::value_type val = data[k1 * num_total_bins];
             if (std::isnan(val)) val = 0;   // Since NaN isn't part of the json standard, force all NaN values to zero
-            arr[i] = Number(val);
+            arr_subarr.Insert(json::Number(val));
         }
+        root.Insert(arr_subarr);
     }
-
-    return arr;
 }
 
-void BinnedReport::formatChannelDataBins(Kernel::IJsonObjectAdapter* pIJsonObj, const float data[], std::vector<int>& dims, int start_axis, int num_remaining_bins)
+void BinnedReport::populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map )
 {
-    LOG_DEBUG("formatChannelDataBins\n");
-
-    if(start_axis < dims.size())
-    {
-        int num_bins = num_remaining_bins / dims[start_axis];
-        pIJsonObj->BeginArray();
-        for(int i = 0; i < dims[start_axis]; i++)
-        {
-            formatChannelDataBins(pIJsonObj, data + (i * num_bins), dims, start_axis + 1, num_bins);
-        }
-        pIJsonObj->EndArray();
-    }
-    else
-    {
-        pIJsonObj->BeginArray();
-        for(int i = 0; i < num_timesteps; i++)
-        {
-            ChannelDataMap::channel_data_t::value_type val = data[i * num_total_bins];
-            if (std::isnan(val)) val = 0;   // Since NaN isn't part of the json standard, force all NaN values to zero
-            pIJsonObj->Add(val);
-        }
-        pIJsonObj->EndArray();
-    }
 }
 
+void BinnedReport::postProcessAccumulatedData()
+{
+}
 
-void BinnedReport::populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map ) { }
-void BinnedReport::postProcessAccumulatedData() { }
 }

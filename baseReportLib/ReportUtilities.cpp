@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ReportUtilities.h"
 #include "Environment.h"
 #include "IdmMpi.h"
-#include "Serializer.h"
 
 SETUP_LOGGING( "ReportUtilities" )
 
@@ -26,24 +25,19 @@ namespace ReportUtilities
     // ----------------------
     // --- Local access only
     // ----------------------
-
-    // ------------------------------------------------------------------------
-    // --- NOTE: I want to use templates for the string and double versions but
-    // --- I'm not sure how to handle the IJsonObjectAdapter method call.
-    // --- I tried type_traits but I still wasn't getting a good code savings.
-    // ------------------------------------------------------------------------
-    void InternalDeserializeVector( IJsonObjectAdapter* p_json_array, bool isSettingValuesInVector, std::vector<std::string>& rData )
+    void InternalDeserializeVector( const json::QuickInterpreter& q_int, bool isSettingValuesInVector, std::vector<std::string>& rData )
     {
-        if( isSettingValuesInVector && (rData.size() != p_json_array->GetSize()) )
+        const json::Array& json_array = q_int.As<json::Array>();
+        if( isSettingValuesInVector && (rData.size() != json_array.Size()) )
         {
             std::stringstream ss;
-            ss << "Cannot deserialize json into 1D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << p_json_array->GetSize();
+            ss << "Cannot deserialize json into 1D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << json_array.Size();
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        for( unsigned int i = 0; i < p_json_array->GetSize(); ++i )
+        for( unsigned int i = 0; i < json_array.Size(); ++i )
         {
-            std::string value = (*p_json_array)[ IndexType( i ) ]->AsString();
+            std::string value = (q_int[i]).As<json::String>();
             if( isSettingValuesInVector )
             {
                 rData[ i ] = value;
@@ -55,18 +49,19 @@ namespace ReportUtilities
         }
     }
 
-    void InternalDeserializeVector( IJsonObjectAdapter* p_json_array, bool isSettingValuesInVector, std::vector<double>& rData )
+    void InternalDeserializeVector( const json::QuickInterpreter&& q_int, bool isSettingValuesInVector, std::vector<double>& rData )
     {
-        if( isSettingValuesInVector && (rData.size() != p_json_array->GetSize()) )
+        const json::Array& json_array = q_int.As<json::Array>();
+        if( isSettingValuesInVector && (rData.size() != json_array.Size()) )
         {
             std::stringstream ss;
-            ss << "Cannot deserialize json into 1D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << p_json_array->GetSize();
+            ss << "Cannot deserialize json into 1D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << json_array.Size();
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        for( unsigned int i = 0; i < p_json_array->GetSize(); ++i )
+        for( unsigned int i = 0; i < json_array.Size(); ++i )
         {
-            double value = (*p_json_array)[ IndexType( i ) ]->AsDouble();
+            double value = static_cast<double>((q_int[i]).As<json::Number>());
             if( isSettingValuesInVector )
             {
                 rData[ i ] = value;
@@ -78,48 +73,51 @@ namespace ReportUtilities
         }
     }
 
-    void InternalDeserializeVector( IJsonObjectAdapter* p_json_array, bool isSettingValuesInVector, std::vector<std::vector<double>>& rData )
+    void InternalDeserializeVector( const json::QuickInterpreter&& q_int, bool isSettingValuesInVector, std::vector<std::vector<double>>& rData )
     {
-        if( isSettingValuesInVector && (rData.size() != p_json_array->GetSize()) )
+        const json::Array& json_array = q_int.As<json::Array>();
+        if( isSettingValuesInVector && (rData.size() != json_array.Size()) )
         {
             std::stringstream ss;
-            ss << "Cannot deserialize json into 2D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << p_json_array->GetSize();
+            ss << "Cannot deserialize json into 2D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << json_array.Size();
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        for( unsigned int i = 0; i < p_json_array->GetSize(); ++i )
+        for( unsigned int i = 0; i < json_array.Size(); ++i )
         {
-            InternalDeserializeVector( (*p_json_array)[ IndexType( i ) ], isSettingValuesInVector, rData[ i ] );
+            InternalDeserializeVector( json_array[i], isSettingValuesInVector, rData[ i ] );
         }
     }
 
-    void InternalDeserializeVector( IJsonObjectAdapter* p_json_array, bool isSettingValuesInVector, std::vector<std::vector<std::vector<double>>>& rData )
+    void InternalDeserializeVector( const json::QuickInterpreter&& q_int, bool isSettingValuesInVector, std::vector<std::vector<std::vector<double>>>& rData )
     {
-        if( isSettingValuesInVector && (rData.size() != p_json_array->GetSize()) )
+        const json::Array& json_array = q_int.As<json::Array>();
+        if( isSettingValuesInVector && (rData.size() != json_array.Size()) )
         {
             std::stringstream ss;
-            ss << "Cannot deserialize json into 3D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << p_json_array->GetSize();
+            ss << "Cannot deserialize json into 3D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << json_array.Size();
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        for( unsigned int i = 0; i < p_json_array->GetSize(); ++i )
+        for( unsigned int i = 0; i < json_array.Size(); ++i )
         {
-            InternalDeserializeVector( (*p_json_array)[ IndexType( i ) ], isSettingValuesInVector, rData[ i ] );
+            InternalDeserializeVector( json_array[i], isSettingValuesInVector, rData[ i ] );
         }
     }
 
-    void InternalDeserializeVector( IJsonObjectAdapter* p_json_array, bool isSettingValuesInVector, std::vector<std::vector<std::vector<std::vector<double>>>>& rData )
+    void InternalDeserializeVector( const json::QuickInterpreter& q_int, bool isSettingValuesInVector, std::vector<std::vector<std::vector<std::vector<double>>>>& rData )
     {
-        if( isSettingValuesInVector && (rData.size() != p_json_array->GetSize()) )
+        const json::Array& json_array = q_int.As<json::Array>();
+        if( isSettingValuesInVector && (rData.size() != json_array.Size()) )
         {
             std::stringstream ss;
-            ss << "Cannot deserialize json into 4D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << p_json_array->GetSize();
+            ss << "Cannot deserialize json into 4D-array because they are not the same size.  vector.size=" << rData.size() << "  json_size=" << json_array.Size();
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        for( unsigned int i = 0; i < p_json_array->GetSize(); ++i )
+        for( unsigned int i = 0; i < json_array.Size(); ++i )
         {
-            InternalDeserializeVector( (*p_json_array)[ IndexType( i ) ], isSettingValuesInVector, rData[ i ] );
+            InternalDeserializeVector( json_array[i], isSettingValuesInVector, rData[ i ] );
         }
     }
 
@@ -176,95 +174,136 @@ namespace ReportUtilities
         rReceive[size] = '\0';
     }
 
-    void SerializeVector( IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<std::string>& rData )
+    void SerializeVector(json::Object& root, const char* pName, std::vector<std::string>& rData )
     {
-        root.Insert( pName );
-        helper.JSerialize( rData, &root );
-    }
+        json::QuickBuilder json_root(root);
 
-    void SerializeVector( IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<float>& rData )
-    {
-        root.Insert( pName );
-        helper.JSerialize( rData, &root );
-    }
-
-    void SerializeVector( IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<double>& rData )
-    {
-        root.Insert( pName );
-        helper.JSerialize( rData, &root );
-    }
-
-    void SerializeVector( IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<std::vector<double>>& rData )
-    {
-        root.Insert( pName );
-        helper.JSerialize( rData, &root );
-    }
-
-    void SerializeVector( IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<std::vector<std::vector<double>>>& rData )
-    {
-        root.Insert( pName );
-        root.BeginArray();
-        for( std::vector<std::vector<double>>& inner : rData)
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
         {
-            helper.JSerialize( inner, &root );
+            arr_dim1.Insert(json::String(rData[k1]));
         }
-        root.EndArray();
+        json_root[pName] = arr_dim1;
     }
 
-    void SerializeVector(IJsonObjectAdapter& root, JSerializer& helper, const char* pName, std::vector<std::vector<std::vector<std::vector<double>>>>& rData)
+    void SerializeVector(json::Object& root, const char* pName, std::vector<float>& rData )
     {
-        root.Insert(pName);
-        root.BeginArray();
-        for (std::vector<std::vector<std::vector<double>>>& inner : rData)
+        json::QuickBuilder json_root(root);
+
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
         {
-            helper.JSerialize(inner, &root);
+            arr_dim1.Insert(json::Number(rData[k1]));
         }
-        root.EndArray();
+        json_root[pName] = arr_dim1;
     }
 
-    void DeserializeVector( IJsonObjectAdapter& root, bool isSettingValuesInVector, const char* pName, std::vector<std::string>& rData )
+    void SerializeVector(json::Object& root, const char* pName, std::vector<double>& rData )
     {
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( pName );
+        json::QuickBuilder json_root(root);
 
-        InternalDeserializeVector( p_json_array, isSettingValuesInVector, rData );
-
-        delete p_json_array;
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
+        {
+            arr_dim1.Insert(json::Number(rData[k1]));
+        }
+        json_root[pName] = arr_dim1;
     }
 
-    void DeserializeVector( IJsonObjectAdapter& root, bool isSettingValuesInVector, const char* pName, std::vector<double>& rData )
+    void SerializeVector(json::Object& root, const char* pName, std::vector<std::vector<double>>& rData )
     {
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( pName );
+        json::QuickBuilder json_root(root);
 
-        InternalDeserializeVector( p_json_array, isSettingValuesInVector, rData );
-
-        delete p_json_array;
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
+        {
+            json::Array        arr_dim2;
+            for(size_t k2 = 0; k2 < rData[k1].size(); k2++)
+            {
+                arr_dim2.Insert(json::Number(rData[k1][k2]));
+            }
+            arr_dim1.Insert(arr_dim2);
+        }
+        json_root[pName] = arr_dim1;
     }
 
-    void DeserializeVector( IJsonObjectAdapter& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<double>>& rData )
+    void SerializeVector(json::Object& root, const char* pName, std::vector<std::vector<std::vector<double>>>& rData )
     {
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( pName );
+        json::QuickBuilder json_root(root);
 
-        InternalDeserializeVector( p_json_array, isSettingValuesInVector, rData );
-
-        delete p_json_array;
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
+        {
+            json::Array        arr_dim2;
+            for(size_t k2 = 0; k2 < rData[k1].size(); k2++)
+            {
+                json::Array        arr_dim3;
+                for(size_t k3 = 0; k3 < rData[k1][k2].size(); k3++)
+                {
+                    arr_dim3.Insert(json::Number(rData[k1][k2][k3]));
+                }
+                arr_dim2.Insert(arr_dim3);
+            }
+            arr_dim1.Insert(arr_dim2);
+        }
+        json_root[pName] = arr_dim1;
     }
 
-    void DeserializeVector( IJsonObjectAdapter& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<std::vector<double>>>& rData )
+    void SerializeVector( json::Object& root, const char* pName, std::vector<std::vector<std::vector<std::vector<double>>>>& rData )
     {
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( pName );
+        json::QuickBuilder json_root(root);
 
-        InternalDeserializeVector( p_json_array, isSettingValuesInVector, rData );
-
-        delete p_json_array;
+        json::Array        arr_dim1;
+        for(size_t k1 = 0; k1 < rData.size(); k1++)
+        {
+            json::Array        arr_dim2;
+            for(size_t k2 = 0; k2 < rData[k1].size(); k2++)
+            {
+                json::Array        arr_dim3;
+                for(size_t k3 = 0; k3 < rData[k1][k2].size(); k3++)
+                {
+                    json::Array        arr_dim4;
+                    for(size_t k4 = 0; k4 < rData[k1][k2][k3].size(); k4++)
+                    {
+                        arr_dim4.Insert(json::Number(rData[k1][k2][k3][k4]));
+                    }
+                    arr_dim3.Insert(arr_dim4);
+                }
+                arr_dim2.Insert(arr_dim3);
+            }
+            arr_dim1.Insert(arr_dim2);
+        }
+        json_root[pName] = arr_dim1;
     }
 
-    void DeserializeVector( IJsonObjectAdapter& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<std::vector<std::vector<double>>>>& rData )
+    void DeserializeVector( json::Object& root, bool isSettingValuesInVector, const char* pName, std::vector<std::string>& rData )
     {
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( pName );
+        json::QuickInterpreter q_int(root);
+        InternalDeserializeVector( q_int[pName], isSettingValuesInVector, rData );
+    }
 
-        InternalDeserializeVector( p_json_array, isSettingValuesInVector, rData );
+    void DeserializeVector( json::Object& root, bool isSettingValuesInVector, const char* pName, std::vector<double>& rData )
+    {
+        json::QuickInterpreter q_int(root);
+        InternalDeserializeVector( q_int[pName], isSettingValuesInVector, rData );
+    }
 
-        delete p_json_array;
+    void DeserializeVector( json::Object& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<double>>& rData )
+    {
+        json::QuickInterpreter q_int(root);
+        InternalDeserializeVector( q_int[pName], isSettingValuesInVector, rData );
+    }
+
+    void DeserializeVector( json::Object& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<std::vector<double>>>& rData )
+    {
+        json::QuickInterpreter q_int(root);
+        InternalDeserializeVector( q_int[pName], isSettingValuesInVector, rData );
+    }
+
+    void DeserializeVector( json::Object& root, bool isSettingValuesInVector, const char* pName, std::vector<std::vector<std::vector<std::vector<double>>>>& rData )
+    {
+        json::QuickInterpreter q_int(root);
+        InternalDeserializeVector( q_int[pName], isSettingValuesInVector, rData );
     }
 
     void AddVector( std::vector<double>& rThis, const std::vector<double>& rThat )

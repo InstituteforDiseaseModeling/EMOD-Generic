@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "componentTests.h"
 
 #include "Exceptions.h"
-#include "JsonObject.h"
-#include "Serializer.h"
 #include "ReportUtilitiesMalaria.h"
 #include "RandomFake.h"
 

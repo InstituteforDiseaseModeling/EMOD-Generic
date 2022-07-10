@@ -12,15 +12,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Environment.h"
 #include "Configuration.h"
 #include "Sugar.h"
-#include "CajunIncludes.h"
 #include "Exceptions.h"
 #include "Configure.h"
 #include "FileSystem.h"
 #ifdef EMBEDDED_PYTHON_DEMO
 #include "Python.h"
 #endif
-
-#include "Serializer.h"
 
 SETUP_LOGGING( "Configuration" )
 

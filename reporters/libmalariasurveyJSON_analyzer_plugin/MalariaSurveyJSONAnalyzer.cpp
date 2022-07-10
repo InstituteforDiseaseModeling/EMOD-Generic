@@ -17,7 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualMalaria.h"
 #include "SusceptibilityMalaria.h"
 #include "NodeEventContext.h"
-#include "Serializer.h"
 #include "INodeContext.h"
 
 #include "DllInterfaceHelper.h"
@@ -93,71 +92,68 @@ namespace Kernel
     {
     }
 
-    void MalariaPatient::Serialize( IJsonObjectAdapter& root, JSerializer& helper )
+    void MalariaPatient::Serialize( json::Object& root )
     {
         LOG_DEBUG("Serializing MalariaPatient\n");
-        root.BeginObject();
 
+        json::QuickBuilder mp_json(root);
         LOG_DEBUG("Inserting simple variables\n");
-        root.Insert("id",             id);
-        root.Insert("node_id",        node_id);
-        root.Insert("initial_age",    initial_age);
-        root.Insert("local_birthday", local_birthday);
+        mp_json["id"]             = json::Number(id);
+        mp_json["node_id"]        = json::Number(node_id);
+        mp_json["initial_age"]    = json::Number(initial_age);
+        mp_json["local_birthday"] = json::Number(local_birthday);
 
-        root.Insert("strain_ids");
-        root.BeginArray();
+        json::Array arr_strains;
         for (auto& inner : strain_ids)
         {
-            // TODO: add helper function for serializing pair<int,int> ??
-            root.BeginArray();
-            root.Add(inner.first);
-            root.Add(inner.second);
-            root.EndArray();
+            json::Array arr_pair;
+            arr_pair.Insert(json::Number(inner.first));
+            arr_pair.Insert(json::Number(inner.second));
+            arr_strains.Insert(arr_pair);
         }
-        root.EndArray();
+        mp_json["strain_ids"] = arr_strains;
 
         LOG_DEBUG("Inserting array variables\n");
-        ReportUtilities::SerializeVector( root, helper, "ip_data",                        ip_data                          );
-        ReportUtilities::SerializeVector( root, helper, "true_asexual_parasites",         true_asexual_density             );
-        ReportUtilities::SerializeVector( root, helper, "true_gametocytes",               true_gametocyte_density          );
-        ReportUtilities::SerializeVector( root, helper, "smeared_true_asexual_parasites", smeared_true_asexual_density     );
-        ReportUtilities::SerializeVector( root, helper, "smeared_true_gametocytes",       smeared_true_gametocyte_density  );
-        ReportUtilities::SerializeVector( root, helper, "asexual_parasites",              asexual_parasite_density         );
-        ReportUtilities::SerializeVector( root, helper, "gametocytes",                    gametocyte_density               );
-        ReportUtilities::SerializeVector( root, helper, "smeared_asexual_parasites",      smeared_asexual_parasite_density );
-        ReportUtilities::SerializeVector( root, helper, "smeared_gametocytes",            smeared_gametocyte_density       );
-        ReportUtilities::SerializeVector( root, helper, "infectiousness",                 infectiousness                   );
-        ReportUtilities::SerializeVector( root, helper, "infectiousness_smeared",         infectiousness_smeared           );
-        ReportUtilities::SerializeVector( root, helper, "infectiousness_age_scaled",      infectiousness_age_scaled        );
-        ReportUtilities::SerializeVector( root, helper, "pos_asexual_fields",             pos_asexual_fields               );
-        ReportUtilities::SerializeVector( root, helper, "pos_gametocyte_fields",          pos_gametocyte_fields            );
-        ReportUtilities::SerializeVector( root, helper, "temps",                          fever                            );
-        ReportUtilities::SerializeVector( root, helper, "rdt",                            rdt                              );
-
-        root.EndObject();
+        ReportUtilities::SerializeVector( root, "ip_data",                        ip_data                          );
+        ReportUtilities::SerializeVector( root, "true_asexual_parasites",         true_asexual_density             );
+        ReportUtilities::SerializeVector( root, "true_gametocytes",               true_gametocyte_density          );
+        ReportUtilities::SerializeVector( root, "smeared_true_asexual_parasites", smeared_true_asexual_density     );
+        ReportUtilities::SerializeVector( root, "smeared_true_gametocytes",       smeared_true_gametocyte_density  );
+        ReportUtilities::SerializeVector( root, "asexual_parasites",              asexual_parasite_density         );
+        ReportUtilities::SerializeVector( root, "gametocytes",                    gametocyte_density               );
+        ReportUtilities::SerializeVector( root, "smeared_asexual_parasites",      smeared_asexual_parasite_density );
+        ReportUtilities::SerializeVector( root, "smeared_gametocytes",            smeared_gametocyte_density       );
+        ReportUtilities::SerializeVector( root, "infectiousness",                 infectiousness                   );
+        ReportUtilities::SerializeVector( root, "infectiousness_smeared",         infectiousness_smeared           );
+        ReportUtilities::SerializeVector( root, "infectiousness_age_scaled",      infectiousness_age_scaled        );
+        ReportUtilities::SerializeVector( root, "pos_asexual_fields",             pos_asexual_fields               );
+        ReportUtilities::SerializeVector( root, "pos_gametocyte_fields",          pos_gametocyte_fields            );
+        ReportUtilities::SerializeVector( root, "temps",                          fever                            );
+        ReportUtilities::SerializeVector( root, "rdt",                            rdt                              );
     }
 
-    std::vector< std::pair<uint32_t,uint64_t> > DeserializeStrainIds( IJsonObjectAdapter& root )
+    std::vector< std::pair<uint32_t,uint64_t> > DeserializeStrainIds( json::Object& root )
     {
         std::vector< std::pair<uint32_t,uint64_t> > value_list;
 
-        IJsonObjectAdapter* p_json_array = root.GetJsonArray( "strain_ids" );
-        for( unsigned int i = 0 ; i < p_json_array->GetSize(); ++i )
+        json::QuickInterpreter q_int(root);
+        json::Array json_array = q_int["strain_ids"].As<json::Array>();
+        for( unsigned int i = 0 ; i < json_array.Size(); ++i )
         {
-            IJsonObjectAdapter* p_inner_array = (*p_json_array)[IndexType(i)];
-            uint32_t first  = (*p_inner_array)[IndexType(0)]->AsInt();
-            uint64_t second = (*p_inner_array)[IndexType(1)]->AsInt();
+            uint32_t first  = static_cast<uint32_t>(q_int["strain_ids"][i][0].As<json::Number>());
+            uint64_t second = static_cast<uint64_t>(q_int["strain_ids"][i][1].As<json::Number>());
             value_list.push_back( std::make_pair( first, second ) );
         }
         return value_list;
     }
 
-    void MalariaPatient::Deserialize( IJsonObjectAdapter& root )
+    void MalariaPatient::Deserialize( json::Object& root )
     {
-        id             = root.GetInt(   "id"             );
-        node_id        = root.GetInt(   "node_id"        );
-        initial_age    = root.GetFloat( "initial_age"    );
-        local_birthday = root.GetFloat( "local_birthday" );
+        json::QuickInterpreter q_int(root);
+        id             = static_cast<int>(q_int["id"].As<json::Number>());
+        node_id        = static_cast<int>(q_int["node_id"].As<json::Number>());
+        initial_age    = static_cast<float>(q_int["initial_age"].As<json::Number>());
+        local_birthday = static_cast<float>(q_int["local_birthday"].As<json::Number>());
 
         strain_ids = DeserializeStrainIds( root );
 
@@ -251,31 +247,35 @@ namespace Kernel
         }
     }
 
-    void MalariaPatientMap::Serialize( IJsonObjectAdapter& rjoa, JSerializer& js )
+    void MalariaPatientMap::Serialize( json::Object& root )
     {
-        rjoa.Insert("patient_array");
-        rjoa.BeginArray();
+        json::QuickBuilder mpm_json(root);
+
+        json::Array arr_mpm;
         for( auto &id_patient_pair: m_Map )
         {
             MalariaPatient* patient = id_patient_pair.second;
             release_assert( patient );
-            patient->Serialize( rjoa, js );
+            json::Object mpm_data;
+            patient->Serialize(mpm_data);
+            arr_mpm.Insert(mpm_data);
         }
-        rjoa.EndArray();
+        mpm_json["patient_array"] = arr_mpm;
     }
 
-    void MalariaPatientMap::Deserialize( IJsonObjectAdapter& rjoa )
+    void MalariaPatientMap::Deserialize( json::Object& root )
     {
-        IJsonObjectAdapter* p_json_array = rjoa.GetJsonArray("patient_array");
+        json::QuickInterpreter q_int(root);
 
-        for( unsigned int i = 0 ; i < p_json_array->GetSize() ; ++i )
+        json::Array json_array = q_int["patient_array"].As<json::Array>();
+
+        for( size_t i = 0 ; i < json_array.Size() ; ++i )
         {
             MalariaPatient* new_patient = new MalariaPatient(-1,-1,-1);
-            new_patient->Deserialize( *(*p_json_array)[i] );
-
+            json::Object mp_obj = q_int["patient_array"][i].As<json::Object>();
+            new_patient->Deserialize( mp_obj );
             Add( new_patient );
         }
-        delete p_json_array;
     }
 
     MalariaPatient* MalariaPatientMap::FindPatient( uint32_t id )
@@ -430,11 +430,12 @@ namespace Kernel
         return true;
     }
 
-    void MalariaSurveyJSONAnalyzer::SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js )
+    void MalariaSurveyJSONAnalyzer::SerializeOutput( float currentTime, json::Object& root )
     {
-        output.Insert("ntsteps", m_reporting_interval);
+        json::QuickBuilder msja_json(root);
+        msja_json["ntsteps"] = json::Number(m_reporting_interval);
 
         release_assert( m_pPatientMap );
-        m_pPatientMap->Serialize( output, js );
+        m_pPatientMap->Serialize( root );
     }
 }

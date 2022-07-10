@@ -13,8 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "componentTests.h"
 
 #include "Exceptions.h"
-#include "JsonObject.h"
-#include "Serializer.h"
 #include "ReportUtilities.h"
 
 using namespace Kernel;
@@ -114,23 +112,15 @@ SUITE( ReportUtilitiesTest )
             // -------------------------------
             // --- Seriaize data to a string
             // -------------------------------
-            IJsonObjectAdapter* p_serialize = CreateJsonObjAdapter();
-            p_serialize->CreateNewWriter();
-            p_serialize->BeginObject();
+            json::Object obj_write;
 
-            JSerializer js;
+            ReportUtilities::SerializeVector( obj_write, str_oneD.c_str(),   oneD_a );
+            ReportUtilities::SerializeVector( obj_write, str_twoD.c_str(),   twoD_a );
+            ReportUtilities::SerializeVector( obj_write, str_threeD.c_str(), threeD );
 
-            ReportUtilities::SerializeVector( *p_serialize, js, str_oneD.c_str(), oneD_a );
-            ReportUtilities::SerializeVector( *p_serialize, js, str_twoD.c_str(), twoD_a );
-            ReportUtilities::SerializeVector( *p_serialize, js, str_threeD.c_str(), threeD );
-
-            p_serialize->EndObject();
-
-            std::string json_data = p_serialize->ToPrettyString();
-            //PrintDebug( json_data );
-
-            delete p_serialize;
-            p_serialize = nullptr;
+            std::stringstream temp_ss_write;
+            json::Writer::Write(obj_write, temp_ss_write);
+            std::string json_data(temp_ss_write.str());
 
             // ---------------------
             // --- Deserialize data
@@ -143,12 +133,14 @@ SUITE( ReportUtilitiesTest )
             InitVector( twoD_a.size(), twoD_a[0].size(), read_twoD );
             InitVector( threeD.size(), threeD[0].size(), threeD[0][0].size(), read_threeD );
 
-            IJsonObjectAdapter* p_deserialize = CreateJsonObjAdapter();
-            p_deserialize->Parse( json_data.data() );
+            json::Object obj_read;
+            std::stringstream temp_ss_read;
+            temp_ss_read << json_data;
+            json::Reader::Read(obj_read, temp_ss_read);
 
-            ReportUtilities::DeserializeVector( *p_deserialize, true, str_oneD.c_str(),   read_oneD   );
-            ReportUtilities::DeserializeVector( *p_deserialize, true, str_twoD.c_str(),   read_twoD   );
-            ReportUtilities::DeserializeVector( *p_deserialize, true, str_threeD.c_str(), read_threeD );
+            ReportUtilities::DeserializeVector( obj_read, true, str_oneD.c_str(),   read_oneD   );
+            ReportUtilities::DeserializeVector( obj_read, true, str_twoD.c_str(),   read_twoD   );
+            ReportUtilities::DeserializeVector( obj_read, true, str_threeD.c_str(), read_threeD );
 
             CHECK_ARRAY_EQUAL( oneD_a, read_oneD, uint32_t(oneD_a.size()) );
 
@@ -166,9 +158,6 @@ SUITE( ReportUtilitiesTest )
                     CHECK_ARRAY_EQUAL( threeD[ i ][ j ], read_threeD[ i ][ j ], uint32_t( threeD[ i ][ j ].size() ) );
                 }
             }
-
-            delete p_deserialize;
-            p_deserialize = nullptr;
         }
         catch( DetailedException& re )
         {

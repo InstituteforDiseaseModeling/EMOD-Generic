@@ -22,7 +22,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ProgVersion.h"
 #include "IdmMpi.h"
 #include "ReportUtilities.h"
-#include "Serializer.h"
 
 #include "ISimulationContext.h"
 #include "MalariaContexts.h"
@@ -485,85 +484,41 @@ namespace Kernel
         }
     }
 
-    void MalariaTransmissionReport::SerializeTransmissions(IJsonObjectAdapter& pIJsonObj,
-                                                           JSerializer& js )
-    {
-        // transmitted infections (new infections linked to infecting human via infectious vector)
-        pIJsonObj.Insert("transmissions");
-        pIJsonObj.BeginArray();
-        for(auto &transmission : transmissions)
-        {
-            transmission->Serialize(pIJsonObj, js);
-        }
-        pIJsonObj.EndArray();
-
-        // sampled infections (treated clinical cases, reactive follow-up, etc.)
-        pIJsonObj.Insert("samples");
-        pIJsonObj.BeginArray();
-        for (auto &sample : samples)
-        {
-            sample->Serialize(pIJsonObj, js);
-        }
-        pIJsonObj.EndArray();
-    }
-
     void MalariaTransmissionReport::WriteOutput( float currentTime )
     {
-        // Open output file
-        ofstream ofs;
-        std::ostringstream output_file_name;
-        output_file_name << GetBaseOutputFilename() << ".json";
-        LOG_INFO_F( "Writing file: %s\n", output_file_name.str().c_str() );
-        ofs.open( FileSystem::Concat( EnvPtr->OutputPath, output_file_name.str() ).c_str() );
-        if (!ofs.is_open())
-        {
-            throw FileIOException( __FILE__, __LINE__, __FUNCTION__, output_file_name.str().c_str() );
-        }
+        json::Object       obj_root;
+        json::QuickBuilder json_doc(obj_root);
 
         // Accumulate array of transmissions as JSON
-        JSerializer js;
-        LOG_DEBUG("Creating JSON object adaptor.\n");
-        IJsonObjectAdapter* pIJsonObj = CreateJsonObjAdapter();
-        LOG_DEBUG("Creating new JSON writer.\n");
-        pIJsonObj->CreateNewWriter();
-        LOG_DEBUG("Beginning transmission array.\n");
-        pIJsonObj->BeginObject();
-        SerializeTransmissions(*pIJsonObj, js);
-        pIJsonObj->EndObject();
+        json::Array tx_array;
+        for(auto &transmission : transmissions)
+        {
+            json::Object tx_obj;
+            transmission->WriteJson(tx_obj);
+            tx_array.Insert(tx_obj);
+        }
+        json_doc["transmissions"] = tx_array;
 
-        // Write output to file
-        // GetFormattedOutput() could be used for a smaller but less human readable file
-        char* sHumans = nullptr;
-        if( m_PrettyFormat )
+        // sampled infections (treated clinical cases, reactive follow-up, etc.)
+        json::Array samp_array;
+        for (auto &sample : samples)
         {
-            js.GetPrettyFormattedOutput(pIJsonObj, sHumans);
+            json::Object samp_obj;
+            sample->WriteJson(samp_obj);
+            samp_array.Insert(samp_obj);
         }
-        else
-        {
-            const char* const_humans = nullptr;
-            js.GetFormattedOutput( pIJsonObj, const_humans );
-            sHumans = const_cast<char*>(const_humans);
-        }
+        json_doc["samples"] = samp_array;
 
-        if (sHumans)
-        {
-            ofs << sHumans << endl;
-            if( m_PrettyFormat )
-            {
-                delete sHumans ;
-            }
-            sHumans = nullptr ;
-        }
-        else
-        {
-            throw FileIOException( __FILE__, __LINE__, __FUNCTION__, output_file_name.str().c_str() );
-        }
+        // Filename
+        std::ostringstream output_file_name;
+        output_file_name << GetBaseOutputFilename() << ".json";
 
-        if (ofs.is_open())
-        {
-            ofs.close();
-        }
-        pIJsonObj->FinishWriter();
-        delete pIJsonObj ;
+        // Output file
+        LOG_INFO_F( "Writing file: %s\n", output_file_name.str().c_str() );
+        ofstream ofs;
+        ofs.open( FileSystem::Concat( EnvPtr->OutputPath, output_file_name.str() ).c_str() );
+        std::string indent_chars((m_PrettyFormat?"    ":""));
+        json::Writer::Write(json_doc, ofs, indent_chars, m_PrettyFormat);
+        ofs.close();
     }
 }

@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FileSystem.h"
 #include "Exceptions.h"
 #include "ProgVersion.h"
-#include "Serializer.h"
 
 using namespace std;
 
@@ -30,7 +29,6 @@ BaseChannelReport::BaseChannelReport( const std::string& rReportName )
     , report_name( rReportName )
     , _nrmSize( 0 )
     , channelDataMap()
-    , defaultPrecision( true )
 {
 }
 
@@ -73,7 +71,7 @@ BaseChannelReport::Finalize()
     std::map<std::string, std::string> units_map;
     populateSummaryDataUnitsMap(units_map);
 
-    channelDataMap.WriteOutput( GetReportName(), units_map, defaultPrecision );
+    channelDataMap.WriteOutput( GetReportName(), units_map );
 }
 
 std::string BaseChannelReport::GetReportName() const
@@ -129,18 +127,3 @@ void BaseChannelReport::SetAugmentor( IChannelDataMapOutputAugmentor* pAugmentor
 {
     channelDataMap.SetAugmentor( pAugmentor );
 }
-
-void BaseChannelReport::SetDefaultPrecision( bool defaultPrecisionVal )
-{
-    defaultPrecision = defaultPrecisionVal;
-}
-
-#if 0
-template<class Archive>
-void serialize(Archive &ar, Report& report, const unsigned int v)
-{
-    ar & report.timesteps_reduced;
-    ar & report.channelDataMap;
-    ar & report._nrmSize;
-}
-#endif

@@ -24,7 +24,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ProgVersion.h"
 
 #include "FactorySupport.h"
-#include "Serializer.h"
 
 //******************************************************************************
 
@@ -93,47 +92,51 @@ MalariaPatient::~MalariaPatient()
 {
 }
 
-void MalariaPatient::JSerialize( IJsonObjectAdapter* root, JSerializer* helper )
+void MalariaPatient::JSerialize( json::Object& root )
 {
     LOG_DEBUG("Serializing MalariaPatient\n");
-    root->BeginObject();
 
     LOG_DEBUG("Inserting simple variables\n");
-    root->Insert("id", id);
-    root->Insert("initial_age", initial_age);
-    root->Insert("birthday", birthday);
+    json::QuickBuilder json_obj(root);
+    json_obj["id"]          = json::Number(id);
+    json_obj["initial_age"] = json::Number(initial_age);
+    json_obj["birthday"]    = json::Number(birthday);
 
     LOG_DEBUG("Inserting array variables\n");
-    SerializeChannel("true_asexual_parasites", true_asexual_density, root, helper);
-    SerializeChannel("true_gametocytes", true_gametocyte_density, root, helper);
-    SerializeChannel("asexual_parasites", asexual_parasite_density, root, helper);
-    SerializeChannel("gametocytes", gametocyte_density, root, helper);
-    SerializeChannel("infected_mosquito_fraction", infectiousness, root, helper);
-    SerializeChannel("hemoglobin", hemoglobin, root, helper);
-    SerializeChannel("temps", fever, root, helper);
-    SerializeChannel("treatment", drug_treatments, root, helper);
-    SerializeChannel("asexual_positive_fields", pos_fields_of_view, root, helper);
-    SerializeChannel("gametocyte_positive_fields", gametocyte_pos_fields_of_view, root, helper);
-
-    root->EndObject();
+    SerializeChannel("true_asexual_parasites", true_asexual_density, root);
+    SerializeChannel("true_gametocytes", true_gametocyte_density, root);
+    SerializeChannel("asexual_parasites", asexual_parasite_density, root);
+    SerializeChannel("gametocytes", gametocyte_density, root);
+    SerializeChannel("infected_mosquito_fraction", infectiousness, root);
+    SerializeChannel("hemoglobin", hemoglobin, root);
+    SerializeChannel("temps", fever, root);
+    SerializeChannel("treatment", drug_treatments, root);
+    SerializeChannel("asexual_positive_fields", pos_fields_of_view, root);
+    SerializeChannel("gametocyte_positive_fields", gametocyte_pos_fields_of_view, root);
 }
 
-void MalariaPatient::SerializeChannel( std::string channel_name, std::vector<float> &channel_data,
-                                       IJsonObjectAdapter* root, JSerializer* helper )
+void MalariaPatient::SerializeChannel( std::string channel_name, std::vector<float> &channel_data, json::Object& root )
 {
-    root->Insert(channel_name.c_str());
-    root->BeginArray();
-    helper->JSerialize(channel_data, root);
-    root->EndArray();
+    json::QuickBuilder json_obj(root);
+
+    json::Array arr_data;
+    for(size_t k1=0; k1<channel_data.size(); k1++)
+    {
+        arr_data.Insert(json::Number(channel_data[k1]));
+    }
+    json_obj[channel_name.c_str()] = arr_data;
 }
 
-void MalariaPatient::SerializeChannel( std::string channel_name, std::vector<std::string> &channel_data,
-                                       IJsonObjectAdapter* root, JSerializer* helper )
+void MalariaPatient::SerializeChannel( std::string channel_name, std::vector<std::string> &channel_data, json::Object& root )
 {
-    root->Insert(channel_name.c_str());
-    root->BeginArray();
-    helper->JSerialize(channel_data, root);
-    root->EndArray();
+    json::QuickBuilder json_obj(root);
+
+    json::Array arr_data;
+    for(size_t k1=0; k1<channel_data.size(); k1++)
+    {
+        arr_data.Insert(json::String(channel_data[k1]));
+    }
+    json_obj[channel_name.c_str()] = arr_data;
 }
 
 // ----------------------------------------
@@ -282,50 +285,22 @@ void MalariaPatientJSONReport::Finalize()
     FileSystem::OpenFileForWriting( ofs, FileSystem::Concat( EnvPtr->OutputPath, output_file_name.str() ).c_str() );
 
     // Accumulate array of patients as JSON
-    int counter = 0;
-    JSerializer js;
-    LOG_DEBUG("Creating JSON object adaptor.\n");
-    IJsonObjectAdapter* pIJsonObj = CreateJsonObjAdapter();
-    LOG_DEBUG("Creating new JSON writer.\n");
-    pIJsonObj->CreateNewWriter();
-    LOG_DEBUG("Beginning malaria patient array.\n");
-    pIJsonObj->BeginObject();
-    pIJsonObj->Insert("patient_array");
-    pIJsonObj->BeginArray();
+    json::Object obj_root;
+    json::QuickBuilder json_doc(obj_root);
+
+    json::Array arr_patient;
     for(auto &id_patient_pair: patient_map)
     {
+        json::Object dat_patient;
         MalariaPatient* patient = id_patient_pair.second;
-        LOG_DEBUG_F("Serializing patient %d\n", counter);
-        patient->JSerialize(pIJsonObj, &js);
-        LOG_DEBUG_F("Finished serializing patient %d\n", counter);
+        patient->JSerialize(dat_patient);
+        arr_patient.Insert(dat_patient);
     }
-    pIJsonObj->EndArray();
-    pIJsonObj->Insert("ntsteps", ntsteps);
-    pIJsonObj->EndObject();
+    json_doc["patient_array"] = arr_patient;
+    json_doc["ntsteps"]       = json::Number(ntsteps);
 
     // Write output to file
-    // GetPrettyFormattedOutput() can be used for nicer indentation but bigger filesize
-    // NOTE: This report can be quite large.  The pretty format can take this report
-    //       from 60 MB to 300 MB.
-    const char* sHumans;
-    js.GetFormattedOutput(pIJsonObj, sHumans);
-    if (sHumans)
-    {
-        ofs << sHumans << endl;
-        LOG_DEBUG("Done inserting\n");
-    }
-    else
-    {
-        std::stringstream ss;
-        ss << "Failed to create JSON formatted data for file '" << output_file_name.str() << "'";
-        throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-    }
-    if (ofs.is_open())
-    {
-        ofs.close();
-        LOG_DEBUG("Done writing\n");
-    }
-    pIJsonObj->FinishWriter();
-    delete pIJsonObj ;
+    json::Writer::Write(json_doc, ofs, "", false);
+    ofs.close();
 }
 

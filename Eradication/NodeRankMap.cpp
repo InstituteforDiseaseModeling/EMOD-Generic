@@ -15,8 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "FileSystem.h"
 #include "INodeInfo.h"
-#include "JsonRawWriter.h"
-#include "JsonRawReader.h"
 #include "LoadBalanceScheme.h"
 #include "MpiDataExchanger.h"
 #include "BinaryArchiveWriter.h"
@@ -82,59 +80,62 @@ namespace Kernel
 
             if (EnvPtr->MPI.NumTasks > 1)
             {
-                auto json_writer = new JsonRawWriter();
-                IArchive& writer = *static_cast<IArchive*>(json_writer);
+                auto binary_writer = new BinaryArchiveWriter();
+                IArchive* writer = static_cast<IArchive*>(binary_writer);
                 size_t count = rankMap.size();
-                writer.startArray( count );
-                LOG_VALID_F( "Serializing %d suid-rank map entries.\n", count );
+                writer->startArray( count );
                 for (auto& entry : rankMap)
                 {
                     INodeInfo* pni = entry.second;
-                    writer.startObject();
+                    writer->startObject();
                     // ---------------------------------------------------------------
                     // --- true => write all of the data about the node since this is
                     // --- the first time and the other nodes will need it
                     // ---------------------------------------------------------------
-                    writer.labelElement("value"); pni->serialize(writer, true);
-                    writer.endObject();
+                    writer->labelElement( "value" ); pni->serialize( *writer, true );
+                    writer->endObject();
                 }
-                writer.endArray();
+                writer->endArray();
 
                 for (int rank = 0; rank < EnvPtr->MPI.NumTasks; ++rank)
                 {
                     if (rank == EnvPtr->MPI.Rank)
                     {
-                        const char* buffer = writer.GetBuffer();
-                        size_t size = writer.GetBufferSize();
-                        LOG_VALID_F( "Broadcasting serialized map (%d bytes)\n", size );
-                        EnvPtr->MPI.p_idm_mpi->PostChars( const_cast<char*>(buffer), size, rank );
+                        char* buffer_temp = const_cast<char*>(writer->GetBuffer());
+                        size_t buffer_size = writer->GetBufferSize();
+                        LOG_VALID_F( "Broadcasting serialized map (%d bytes)\n", buffer_size );
+                        EnvPtr->MPI.p_idm_mpi->PostChars( buffer_temp, buffer_size, rank );
                     }
                     else
                     {
+                        // -----------------------------------------
+                        // --- Deserialize the data from the buffer
+                        // -----------------------------------------
                         std::vector<char> received;
                         EnvPtr->MPI.p_idm_mpi->GetChars( received, rank );
-                        auto json_reader = new JsonRawReader( received.data() );
-                        IArchive& reader = *static_cast<IArchive*>(json_reader);
-                        reader.startArray( count );
-                            LOG_VALID_F( "Merging %d suid-rank map entries from rank %d\n", count, rank );
-                            for (size_t i = 0; i < count; ++i)
-                            {
-                                INodeInfo* pni = this->pNodeInfoFactory->CreateNodeInfo();
-                                reader.startObject();
-                                    // ---------------------------------------------------------------
-                                    // --- true => read all of the data about the node since this is
-                                    // --- the first time this core needs the data about the nodes
-                                    // ---------------------------------------------------------------
-                                    reader.labelElement( "value" ); pni->serialize( reader, true );
-                                reader.endObject();
-                                mergedMap[ pni->GetSuid() ] = pni; // own memory
-                            }
-                        reader.endArray();
-                        delete json_reader;
+                        auto binary_reader = new BinaryArchiveReader( received.data(), received.size());
+                        IArchive* reader = static_cast<IArchive*>(binary_reader);
+
+                        size_t count=0;
+                        reader->startArray( count );
+                        for (size_t i = 0; i < count; ++i)
+                        {
+                            INodeInfo* pni = this->pNodeInfoFactory->CreateNodeInfo();
+                            reader->startObject();
+                            // ---------------------------------------------------------------
+                            // --- true => read all of the data about the node since this is
+                            // --- the first time this core needs the data about the nodes
+                            // ---------------------------------------------------------------
+                            reader->labelElement( "value" ); pni->serialize( *reader, true );
+                            reader->endObject();
+                            mergedMap[ pni->GetSuid() ] = pni;
+                        }
+                        reader->endArray();
+                        delete binary_reader;
                     }
                 }
 
-                delete json_writer;
+                delete binary_writer;
             }
         }
         catch (std::exception &e)
@@ -181,12 +182,12 @@ namespace Kernel
             int id = nodes_in_my_rank[i]->GetSuid().data;
             INodeInfo* pni = nodes_in_my_rank[i] ;
             writer->startObject();
-                // ---------------------------------------------------------
-                // --- false => Since we are just updating the other cores, 
-                // --- we only need to send the data that has changed.
-                // ----------------------------------------------------------
-                writer->labelElement( "key"   ) & id; // send id so receive can use to put in map
-                writer->labelElement( "value" ); pni->serialize( *writer, false );
+            // ---------------------------------------------------------
+            // --- false => Since we are just updating the other cores, 
+            // --- we only need to send the data that has changed.
+            // ----------------------------------------------------------
+            writer->labelElement( "key"   ) & id; // send id so receive can use to put in map
+            writer->labelElement( "value" ); pni->serialize( *writer, false );
             writer->endObject();
         }
         writer->endArray();
@@ -256,14 +257,13 @@ namespace Kernel
             {
                 suids::suid id;
                 converter->startObject();
-                    // ---------------------------------------------------------
-                    // --- false => Since we are just updating the INodeInfo objects 
-                    // --- for the nodes on the other cores, we only need to read 
-                    // --- the data that has changed.
-                    // ----------------------------------------------------------
-                    converter->labelElement("key") & id;
-                    INodeInfo* pni = rankMap.at( id );
-                    converter->labelElement( "value" ); pni->serialize( *converter, false );
+                // ---------------------------------------------------------
+                // --- false => Since we are just updating the other cores, 
+                // --- we only need to send the data that has changed.
+                // ----------------------------------------------------------
+                converter->labelElement("key") & id;
+                INodeInfo* pni = rankMap.at( id );
+                converter->labelElement( "value" ); pni->serialize( *converter, false );
                 converter->endObject();
             }
             converter->endArray();

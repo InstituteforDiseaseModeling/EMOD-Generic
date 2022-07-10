@@ -125,18 +125,18 @@ namespace Kernel
         ReportUtilities::AddVector( this->sumsqr_pfemp1_by_agebin  , rOther.sumsqr_pfemp1_by_agebin  );
     }
 
-    void ImmunityData::Serialize( IJsonObjectAdapter& root, JSerializer& js )
+    void ImmunityData::Serialize(json::Object& root)
     {
-        ReportUtilities::SerializeVector( root, js, "sum_population" , sum_population_by_agebin );
-        ReportUtilities::SerializeVector( root, js, "sum_MSP"        , sum_MSP_by_agebin        );
-        ReportUtilities::SerializeVector( root, js, "sum_nonspec"    , sum_nonspec_by_agebin    );
-        ReportUtilities::SerializeVector( root, js, "sum_pfemp1"     , sum_pfemp1_by_agebin     );
-        ReportUtilities::SerializeVector( root, js, "sumsqr_MSP"     , sumsqr_MSP_by_agebin     );
-        ReportUtilities::SerializeVector( root, js, "sumsqr_nonspec" , sumsqr_nonspec_by_agebin );
-        ReportUtilities::SerializeVector( root, js, "sumsqr_pfemp1"  , sumsqr_pfemp1_by_agebin  );
+        ReportUtilities::SerializeVector( root, "sum_population" , sum_population_by_agebin );
+        ReportUtilities::SerializeVector( root, "sum_MSP"        , sum_MSP_by_agebin        );
+        ReportUtilities::SerializeVector( root, "sum_nonspec"    , sum_nonspec_by_agebin    );
+        ReportUtilities::SerializeVector( root, "sum_pfemp1"     , sum_pfemp1_by_agebin     );
+        ReportUtilities::SerializeVector( root, "sumsqr_MSP"     , sumsqr_MSP_by_agebin     );
+        ReportUtilities::SerializeVector( root, "sumsqr_nonspec" , sumsqr_nonspec_by_agebin );
+        ReportUtilities::SerializeVector( root, "sumsqr_pfemp1"  , sumsqr_pfemp1_by_agebin  );
     }
 
-    void ImmunityData::Deserialize( IJsonObjectAdapter& root )
+    void ImmunityData::Deserialize(json::Object& root)
     {
         ReportUtilities::DeserializeVector( root, true, "sum_population" , sum_population_by_agebin );
         ReportUtilities::DeserializeVector( root, true, "sum_MSP"        , sum_MSP_by_agebin        );
@@ -309,15 +309,15 @@ namespace Kernel
         PfEMP1_std_by_agebin.push_back(   pfemp1_stds   );
     }
 
-    void MalariaImmunityReport::SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js )
+    void MalariaImmunityReport::SerializeOutput( float currentTime, json::Object& root )
     {
-        ReportUtilities::SerializeVector( output, js, "Age Bins" , ages );
+        ReportUtilities::SerializeVector( root, "Age Bins" , ages );
 
-        ReportUtilities::SerializeVector( output, js, "MSP Mean by Age Bin"            , MSP_mean_by_agebin     );
-        ReportUtilities::SerializeVector( output, js, "Non-Specific Mean by Age Bin"   , nonspec_mean_by_agebin );
-        ReportUtilities::SerializeVector( output, js, "PfEMP1 Mean by Age Bin"         , PfEMP1_mean_by_agebin  );
-        ReportUtilities::SerializeVector( output, js, "MSP StdDev by Age Bin"          , MSP_std_by_agebin      );
-        ReportUtilities::SerializeVector( output, js, "Non-Specific StdDev by Age Bin" , nonspec_std_by_agebin  );
-        ReportUtilities::SerializeVector( output, js, "PfEMP1 StdDev by Age Bin"       , PfEMP1_std_by_agebin   );
+        ReportUtilities::SerializeVector( root, "MSP Mean by Age Bin"            , MSP_mean_by_agebin     );
+        ReportUtilities::SerializeVector( root, "Non-Specific Mean by Age Bin"   , nonspec_mean_by_agebin );
+        ReportUtilities::SerializeVector( root, "PfEMP1 Mean by Age Bin"         , PfEMP1_mean_by_agebin  );
+        ReportUtilities::SerializeVector( root, "MSP StdDev by Age Bin"          , MSP_std_by_agebin      );
+        ReportUtilities::SerializeVector( root, "Non-Specific StdDev by Age Bin" , nonspec_std_by_agebin  );
+        ReportUtilities::SerializeVector( root, "PfEMP1 StdDev by Age Bin"       , PfEMP1_std_by_agebin   );
     }
 }

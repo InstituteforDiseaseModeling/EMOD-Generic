@@ -15,7 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <tuple>
 
 #include "INodeContext.h"
-
+#include "CajunIncludes.h"
 
 namespace Kernel
 {
@@ -56,9 +56,6 @@ namespace Kernel
 
     typedef std::pair<ExternalNodeId_t, int> Location;  // (node external id, time step)
 
-
-    struct IJsonObjectAdapter;
-    class JSerializer;
     struct Transmission
     {
         Location location;
@@ -70,11 +67,9 @@ namespace Kernel
         uint32_t acquireIndividualId;  // infection-acquiring individual
         uint32_t acquireInfectionId;
 
-        Transmission(Location location_,
-            uint32_t txId_, std::vector<uint32_t> txInfIds_, std::vector<float> txGams_,
-            uint32_t acId_, uint32_t acInfId_);
+        Transmission(Location location_, uint32_t txId_, std::vector<uint32_t> txInfIds_, std::vector<float> txGams_, uint32_t acId_, uint32_t acInfId_);
 
-        void Serialize(IJsonObjectAdapter& root, JSerializer& helper);
+        void WriteJson(json::Object& root);
     };
 
     struct ClinicalSample
@@ -86,9 +81,8 @@ namespace Kernel
         std::vector<uint32_t> infectionIds;
         std::vector<float> parasiteDensities;
 
-        ClinicalSample(Location location_, std::string event_,
-            uint32_t id_, std::vector<uint32_t> infIds_, std::vector<float> densities_);
+        ClinicalSample(Location location_, std::string event_, uint32_t id_, std::vector<uint32_t> infIds_, std::vector<float> densities_);
 
-        void Serialize(IJsonObjectAdapter& root, JSerializer& helper);
+        void WriteJson(json::Object& root);
     };
 }

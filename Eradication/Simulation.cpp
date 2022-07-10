@@ -40,11 +40,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "LoadBalanceScheme.h"
 #include "EventTrigger.h"
 #include "RandomNumberGeneratorFactory.h"
-
 #include "DllLoader.h"
-
-#include "JsonRawWriter.h"
-#include "JsonRawReader.h"
 #include "MpiDataExchanger.h"
 #include "IdmMpi.h"
 #include "Properties.h"
@@ -1018,7 +1014,6 @@ namespace Kernel
         // --- Memory Check
         // ----------------
         MemoryGauge::CheckMemoryFailure( false );
-
 
         return;
     }

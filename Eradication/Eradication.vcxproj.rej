@@ -1,0 +1,19 @@
+diff a/Eradication/Eradication.vcxproj b/Eradication/Eradication.vcxproj	(rejected hunks)
+@@ -78,7 +78,7 @@
+       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+       <IntrinsicFunctions>false</IntrinsicFunctions>
+       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+-      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;..\lz4\lib;$(IDM_PYTHON3X_PATH)\include;</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\utils\;..\campaign\;..\Eradication\;..\interventions\;..\rapidjson\include;..\snappy;..\lz4\lib;$(IDM_PYTHON3X_PATH)\include;</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_POLIO;ENABLE_DENGUE;ENABLE_TYPHOID;ENABLE_ENVIRONMENTAL;WIN32;IDM_EXPORT;_DEBUG;_CONSOLE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+       <MinimalRebuild>false</MinimalRebuild>
+       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+@@ -129,7 +129,7 @@
+       <TargetEnvironment>X64</TargetEnvironment>
+     </Midl>
+     <ClCompile>
+-      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\rapidjson\modp;..\snappy;..\lz4\lib;$(IDM_PYTHON3X_PATH)\include</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\Dependencies\ComputeClusterPack\Include;$(IDM_BOOST_PATH);%(AdditionalIncludeDirectories);..\cajun\include;..\baseReportLib;..\campaign\;..\utils\;..\Eradication\;..\interventions\;..\rapidjson\include;..\snappy;..\lz4\lib;$(IDM_PYTHON3X_PATH)\include</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>BOOST_ALL_NO_LIB;ENABLE_PYTHON;ENABLE_PYTHON_FEVER;ENABLE_POLIO;ENABLE_DENGUE;ENABLE_TYPHOID;ENABLE_ENVIRONMENTAL;WIN32;IDM_EXPORT;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+       <FloatingPointModel>Precise</FloatingPointModel>

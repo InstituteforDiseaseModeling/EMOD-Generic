@@ -14,17 +14,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <string>
 
 #include "IdmApi.h"
-
-namespace Kernel
-{
-    struct IJsonObjectAdapter;
-}
-
+#include "CajunIncludes.h"
 
 struct IChannelDataMapOutputAugmentor
 {
     // The implementor of this method is allowed to add data to the Header section of the output.
-    virtual void AddDataToHeader( Kernel::IJsonObjectAdapter* pIJsonObj ) = 0;
+    virtual void AddDataToHeader( json::Object& root ) = 0;
 };
 
 
@@ -67,7 +62,7 @@ public:
     // user may call multiple times, each time the reduce will only apply to time steps accumulated since the last call
     void Reduce();
 
-    virtual void WriteOutput( const std::string& filename, std::map<std::string, std::string>& units_map, bool defaultPrecision = true);
+    virtual void WriteOutput( const std::string& filename, std::map<std::string, std::string>& units_map, bool compact_output=true, int sigfigs=6);
 
     void normalizeChannel( const std::string &channel_name, const std::string& normalization_channel );
     void normalizeChannel( const std::string &channel_name, float normalization_value );

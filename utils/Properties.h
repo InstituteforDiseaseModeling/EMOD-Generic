@@ -117,7 +117,7 @@ namespace Kernel
         void Read( int idx, int itran, const JsonObjectDemog& rDemog, const std::string& rKeyStr );
 
         // Return a json object in CampaignEvent format
-        std::vector<JsonObjectDemog> ConvertToCampaignEvent( const IPKey& rKey );
+        std::vector<JsonObjectDemog> ConvertToCampaignEvent(const std::string);
 
         void Validate( const JsonObjectDemog& rDemog );
 
@@ -227,8 +227,6 @@ namespace Kernel
         friend class IPFactory;
 
         IndividualProperty( uint32_t externalNodeId, const std::string& rKeyStr, const std::map<std::string,float>& rValues );
-
-        std::vector<JsonObjectDemog> ConvertTransitions();
 
         static KeyValueInternal* get_kvi_func( BaseFactory* pFact, const char* ip_key_str, const std::string& rKvStr );
 

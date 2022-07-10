@@ -43,8 +43,8 @@ namespace Kernel
         std::vector<double> fever;
         std::vector<double> rdt;
 
-        virtual void Serialize( IJsonObjectAdapter& root, JSerializer& helper );
-        virtual void Deserialize( IJsonObjectAdapter& root );
+        virtual void Serialize( json::Object& root );
+        virtual void Deserialize( json::Object& root );
 
     };
 
@@ -57,8 +57,8 @@ namespace Kernel
         // IIntervalData methods
         virtual void Clear() override;
         virtual void Update( const IIntervalData& rOther ) override;
-        virtual void Serialize( IJsonObjectAdapter& rjoa, JSerializer& js ) override;
-        virtual void Deserialize( IJsonObjectAdapter& rjoa ) override;
+        virtual void Serialize( json::Object& root ) override;
+        virtual void Deserialize( json::Object& root ) override;
 
         // other methods
         MalariaPatient* FindPatient( uint32_t id );
@@ -81,7 +81,7 @@ namespace Kernel
 
     protected:
         // BaseEventReportIntervalOutput
-        virtual void SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js ) override;
+        virtual void SerializeOutput( float currentTime, json::Object& root ) override;
 
         std::string m_IPKeyToCollect;
         MalariaPatientMap* m_pPatientMap;

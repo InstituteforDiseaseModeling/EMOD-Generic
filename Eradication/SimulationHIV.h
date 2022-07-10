@@ -34,7 +34,7 @@ namespace Kernel
         virtual void Reports_CreateBuiltIn();
 
         // IChannelDataMapOutputAugmentor
-        virtual void AddDataToHeader( IJsonObjectAdapter* pIJsonObj );
+        virtual void AddDataToHeader( json::Object& root );
 
     protected:
         virtual void Initialize() override;

@@ -23,7 +23,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "ReportUtilities.h"
 #include "ReportUtilitiesMalaria.h"
-#include "Serializer.h"
 #include "INodeContext.h"
 
 #include "DllInterfaceHelper.h"
@@ -245,49 +244,52 @@ namespace Kernel
         ReportUtilities::AddVector( this->sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam_age_scaled, rOther.sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam_age_scaled );
     }
 
-    void ReportIntervalData::Serialize( IJsonObjectAdapter& root, JSerializer& js )
+    void ReportIntervalData::Serialize(json::Object& root)
     {
-        root.Insert( "EIR"                      , sum_EIR                      );
-        root.Insert( "population_2to10"         , sum_population_2to10         );
-        root.Insert( "parasite_positive_2to10"  , sum_parasite_positive_2to10  );
-        root.Insert( "no_infected_days"         , sum_no_infected_days         );
-        root.Insert( "days_under_1pct_infected" , sum_days_under_1pct_infected );
+        json::QuickBuilder q_builder(root);
+        q_builder["EIR"]                       = json::Number(sum_EIR);
+        q_builder["population_2to10"]          = json::Number(sum_population_2to10);
+        q_builder["parasite_positive_2to10"]   = json::Number(sum_parasite_positive_2to10);
+        q_builder["no_infected_days"]          = json::Number(sum_no_infected_days);
+        q_builder["days_under_1pct_infected"]  = json::Number(sum_days_under_1pct_infected);
 
-        ReportUtilities::SerializeVector( root, js, "population"               , sum_population_by_agebin                );
-        ReportUtilities::SerializeVector( root, js, "parasite_positive"        , sum_parasite_positive_by_agebin         );
-        ReportUtilities::SerializeVector( root, js, "gametocyte_positive"      , sum_gametocyte_positive_by_agebin       );
-        ReportUtilities::SerializeVector( root, js, "log_parasite_density"     , sum_log_parasite_density_by_agebin      );
-        ReportUtilities::SerializeVector( root, js, "rdt_positive"             , sum_rdt_positive_by_agebin              );
-        ReportUtilities::SerializeVector( root, js, "clinical_cases"           , sum_clinical_cases_by_agebin            );
-        ReportUtilities::SerializeVector( root, js, "severe_cases"             , sum_severe_cases_by_agebin              );
-        ReportUtilities::SerializeVector( root, js, "severe_anemia"            , sum_severe_anemia_by_agebin             );
-        ReportUtilities::SerializeVector( root, js, "moderate_anemia"          , sum_moderate_anemia_by_agebin           );
-        ReportUtilities::SerializeVector( root, js, "mild_anemia"              , sum_mild_anemia_by_agebin               );
-        ReportUtilities::SerializeVector( root, js, "severe_cases_by_anemia"   , sum_severe_cases_by_anemia_by_agebin    );
-        ReportUtilities::SerializeVector( root, js, "severe_cases_by_parasites", sum_severe_cases_by_parasites_by_agebin );
-        ReportUtilities::SerializeVector( root, js, "severe_cases_by_fever"    , sum_severe_cases_by_fever_by_agebin     );
+        ReportUtilities::SerializeVector( root, "population"               , sum_population_by_agebin                );
+        ReportUtilities::SerializeVector( root, "parasite_positive"        , sum_parasite_positive_by_agebin         );
+        ReportUtilities::SerializeVector( root, "gametocyte_positive"      , sum_gametocyte_positive_by_agebin       );
+        ReportUtilities::SerializeVector( root, "log_parasite_density"     , sum_log_parasite_density_by_agebin      );
+        ReportUtilities::SerializeVector( root, "rdt_positive"             , sum_rdt_positive_by_agebin              );
+        ReportUtilities::SerializeVector( root, "clinical_cases"           , sum_clinical_cases_by_agebin            );
+        ReportUtilities::SerializeVector( root, "severe_cases"             , sum_severe_cases_by_agebin              );
+        ReportUtilities::SerializeVector( root, "severe_anemia"            , sum_severe_anemia_by_agebin             );
+        ReportUtilities::SerializeVector( root, "moderate_anemia"          , sum_moderate_anemia_by_agebin           );
+        ReportUtilities::SerializeVector( root, "mild_anemia"              , sum_mild_anemia_by_agebin               );
+        ReportUtilities::SerializeVector( root, "severe_cases_by_anemia"   , sum_severe_cases_by_anemia_by_agebin    );
+        ReportUtilities::SerializeVector( root, "severe_cases_by_parasites", sum_severe_cases_by_parasites_by_agebin );
+        ReportUtilities::SerializeVector( root, "severe_cases_by_fever"    , sum_severe_cases_by_fever_by_agebin     );
 
-        ReportUtilities::SerializeVector( root, js, "binned_PfPR",                 sum_binned_PfPR_by_agebin                 );
-        ReportUtilities::SerializeVector( root, js, "binned_PfgamPR",              sum_binned_PfgamPR_by_agebin              );
-        ReportUtilities::SerializeVector( root, js, "binned_PfPR_smeared",         sum_binned_PfPR_by_agebin_smeared         );
-        ReportUtilities::SerializeVector( root, js, "binned_PfgamPR_smeared",      sum_binned_PfgamPR_by_agebin_smeared      );
-        ReportUtilities::SerializeVector( root, js, "binned_PfPR_true_smeared",    sum_binned_PfPR_by_agebin_true_smeared    );
-        ReportUtilities::SerializeVector( root, js, "binned_PfgamPR_true_smeared", sum_binned_PfgamPR_by_agebin_true_smeared );
+        ReportUtilities::SerializeVector( root, "binned_PfPR",                 sum_binned_PfPR_by_agebin                 );
+        ReportUtilities::SerializeVector( root, "binned_PfgamPR",              sum_binned_PfgamPR_by_agebin              );
+        ReportUtilities::SerializeVector( root, "binned_PfPR_smeared",         sum_binned_PfPR_by_agebin_smeared         );
+        ReportUtilities::SerializeVector( root, "binned_PfgamPR_smeared",      sum_binned_PfgamPR_by_agebin_smeared      );
+        ReportUtilities::SerializeVector( root, "binned_PfPR_true_smeared",    sum_binned_PfPR_by_agebin_true_smeared    );
+        ReportUtilities::SerializeVector( root, "binned_PfgamPR_true_smeared", sum_binned_PfgamPR_by_agebin_true_smeared );
 
-        ReportUtilities::SerializeVector( root, js, "binned_Infectiousness",                                sum_binned_infection_by_pfprbin_and_agebin                                );
-        ReportUtilities::SerializeVector( root, js, "binned_Infectiousness_age_scaled",                     sum_binned_infection_by_pfprbin_and_agebin_age_scaled                     );
-        ReportUtilities::SerializeVector( root, js, "binned_Infectiousness_smeared",                        sum_binned_infection_by_pfprbin_and_agebin_smeared                        );
-        ReportUtilities::SerializeVector( root, js, "binned_Infectiousness_smeared_inf_and_gam",            sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam            );
-        ReportUtilities::SerializeVector( root, js, "binned_Infectiousness_smeared_inf_and_gam_age_scaled", sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam_age_scaled );
+        ReportUtilities::SerializeVector( root, "binned_Infectiousness",                                sum_binned_infection_by_pfprbin_and_agebin                                );
+        ReportUtilities::SerializeVector( root, "binned_Infectiousness_age_scaled",                     sum_binned_infection_by_pfprbin_and_agebin_age_scaled                     );
+        ReportUtilities::SerializeVector( root, "binned_Infectiousness_smeared",                        sum_binned_infection_by_pfprbin_and_agebin_smeared                        );
+        ReportUtilities::SerializeVector( root, "binned_Infectiousness_smeared_inf_and_gam",            sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam            );
+        ReportUtilities::SerializeVector( root, "binned_Infectiousness_smeared_inf_and_gam_age_scaled", sum_binned_infection_by_pfprbin_and_agebin_smeared_inf_and_gam_age_scaled );
     }
 
-    void ReportIntervalData::Deserialize( IJsonObjectAdapter& root )
+    void ReportIntervalData::Deserialize(json::Object& root)
     {
-        sum_EIR                      = root.GetFloat( "EIR"                      );
-        sum_population_2to10         = root.GetFloat( "population_2to10"         );
-        sum_parasite_positive_2to10  = root.GetFloat( "parasite_positive_2to10"  );
-        sum_no_infected_days         = root.GetFloat( "no_infected_days"         );
-        sum_days_under_1pct_infected = root.GetFloat( "days_under_1pct_infected" );
+        json::QuickInterpreter q_int(root);
+
+        sum_EIR                      = q_int["EIR"].As<Number>();
+        sum_population_2to10         = q_int["population_2to10"].As<Number>();
+        sum_parasite_positive_2to10  = q_int["parasite_positive_2to10"].As<Number>();
+        sum_no_infected_days         = q_int["no_infected_days"].As<Number>();
+        sum_days_under_1pct_infected = q_int["days_under_1pct_infected"].As<Number>();
 
         ReportUtilities::DeserializeVector( root, true, "population"               , sum_population_by_agebin                );
         ReportUtilities::DeserializeVector( root, true, "parasite_positive"        , sum_parasite_positive_by_agebin         );
@@ -829,61 +831,59 @@ namespace Kernel
         fraction_under_1pct_infected.push_back( m_pReportData->sum_days_under_1pct_infected / m_reporting_interval );
     }
 
-    void MalariaSummaryReport::SerializeOutput( float currentTime, IJsonObjectAdapter& output, JSerializer& js )
+    void MalariaSummaryReport::SerializeOutput( float currentTime, json::Object& root )
     {
-        output.Insert( "Metadata" );
-        output.BeginObject();
-        output.Insert("Start_Day", GetStartDay() );
-        output.Insert("Reporting_Interval", m_reporting_interval );
-        ReportUtilities::SerializeVector( output, js, "Age Bins"           , ages     );
-        ReportUtilities::SerializeVector( output, js, "Parasitemia Bins"   , PfPRbins );
-        ReportUtilities::SerializeVector( output, js, "Gametocytemia Bins" , PfPRbins ); // not sure why same data
-        ReportUtilities::SerializeVector(output, js, "Infectiousness Bins", Infectionbins);
-        output.EndObject();
+        json::QuickBuilder mal_json(root);
 
-        output.Insert( "DataByTime" );
-        output.BeginObject();
-        ReportUtilities::SerializeVector( output, js, "Time Of Report"                    , time_of_report               );
-        ReportUtilities::SerializeVector( output, js, "Annual EIR"                        , annual_EIRs                  );
-        ReportUtilities::SerializeVector( output, js, "PfPR_2to10"                        , PfPRs_2to10                  );
-        ReportUtilities::SerializeVector( output, js, "No Infection Streak"               , duration_no_infection_streak );
-        ReportUtilities::SerializeVector( output, js, "Fraction Days Under 1pct Infected" , fraction_under_1pct_infected );
-        output.EndObject();
+        json::Object obj_meta;
+        json::QuickBuilder mal_meta(obj_meta);
+        mal_meta["Start_Day"]          = json::Number(GetStartDay());
+        mal_meta["Reporting_Interval"] = json::Number(m_reporting_interval);
+        ReportUtilities::SerializeVector( obj_meta, "Age Bins"           , ages     );
+        ReportUtilities::SerializeVector( obj_meta, "Parasitemia Bins"   , PfPRbins );
+        ReportUtilities::SerializeVector( obj_meta, "Gametocytemia Bins" , PfPRbins ); // not sure why same data
+        ReportUtilities::SerializeVector( obj_meta, "Infectiousness Bins", Infectionbins );
+        mal_json["Metadata"] = obj_meta;
 
-        output.Insert( "DataByTimeAndAgeBins" );
-        output.BeginObject();
-        ReportUtilities::SerializeVector( output, js, "PfPR by Age Bin"                                 , PfPRs_by_agebin                                 );
-        ReportUtilities::SerializeVector( output, js, "Pf Gametocyte Prevalence by Age Bin"             , PfgamPRs_by_agebin                              );
-        ReportUtilities::SerializeVector( output, js, "Mean Log Parasite Density"                       , mean_log_parasite_density_by_agebin             );
-        ReportUtilities::SerializeVector( output, js, "RDT PfPR by Age Bin"                             , RDT_PfPRs_by_agebin                             );
-        ReportUtilities::SerializeVector( output, js, "Annual Clinical Incidence by Age Bin"            , annual_clinical_incidences_by_agebin            );
-        ReportUtilities::SerializeVector( output, js, "Annual Severe Incidence by Age Bin"              , annual_severe_incidences_by_agebin              );
-        ReportUtilities::SerializeVector( output, js, "Average Population by Age Bin"                   , average_population_by_agebin                    );
-        ReportUtilities::SerializeVector( output, js, "Annual Severe Incidence by Anemia by Age Bin"    , annual_severe_incidences_by_anemia_by_agebin    );
-        ReportUtilities::SerializeVector( output, js, "Annual Severe Incidence by Parasites by Age Bin" , annual_severe_incidences_by_parasites_by_agebin );
-        ReportUtilities::SerializeVector( output, js, "Annual Severe Incidence by Fever by Age Bin"     , annual_severe_incidences_by_fever_by_agebin     );
-        ReportUtilities::SerializeVector( output, js, "Annual Severe Anemia"                            , annual_severe_anemia_by_agebin                  );
-        ReportUtilities::SerializeVector( output, js, "Annual Moderate Anemia"                          , annual_moderate_anemia_by_agebin                );
-        ReportUtilities::SerializeVector( output, js, "Annual Mild Anemia"                              , annual_mild_anemia_by_agebin                    );
-        output.EndObject();
+        json::Object obj_dbt;
+        ReportUtilities::SerializeVector( obj_dbt, "Time Of Report"                    , time_of_report               );
+        ReportUtilities::SerializeVector( obj_dbt, "Annual EIR"                        , annual_EIRs                  );
+        ReportUtilities::SerializeVector( obj_dbt, "PfPR_2to10"                        , PfPRs_2to10                  );
+        ReportUtilities::SerializeVector( obj_dbt, "No Infection Streak"               , duration_no_infection_streak );
+        ReportUtilities::SerializeVector( obj_dbt, "Fraction Days Under 1pct Infected" , fraction_under_1pct_infected );
+        mal_json["DataByTime"] = obj_dbt;
 
-        output.Insert( "DataByTimeAndPfPRBinsAndAgeBins" );
-        output.BeginObject();
-        ReportUtilities::SerializeVector( output, js, "PfPR by Parasitemia and Age Bin"   ,             binned_PfPRs_by_agebin                 );
-        ReportUtilities::SerializeVector( output, js, "PfPR by Gametocytemia and Age Bin" ,             binned_PfgamPRs_by_agebin              );
-        ReportUtilities::SerializeVector( output, js, "Smeared PfPR by Parasitemia and Age Bin",        binned_PfPRs_by_agebin_smeared         );
-        ReportUtilities::SerializeVector( output, js, "Smeared PfPR by Gametocytemia and Age Bin",      binned_PfgamPRs_by_agebin_smeared      );
-        ReportUtilities::SerializeVector( output, js, "Smeared True PfPR by Parasitemia and Age Bin",   binned_PfPRs_by_agebin_true_smeared    );
-        ReportUtilities::SerializeVector( output, js, "Smeared True PfPR by Gametocytemia and Age Bin", binned_PfgamPRs_by_agebin_true_smeared );
-        output.EndObject();
+        json::Object obj_dbtaab;
+        ReportUtilities::SerializeVector( obj_dbtaab, "PfPR by Age Bin"                                 , PfPRs_by_agebin                                 );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Pf Gametocyte Prevalence by Age Bin"             , PfgamPRs_by_agebin                              );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Mean Log Parasite Density"                       , mean_log_parasite_density_by_agebin             );
+        ReportUtilities::SerializeVector( obj_dbtaab, "RDT PfPR by Age Bin"                             , RDT_PfPRs_by_agebin                             );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Clinical Incidence by Age Bin"            , annual_clinical_incidences_by_agebin            );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Severe Incidence by Age Bin"              , annual_severe_incidences_by_agebin              );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Average Population by Age Bin"                   , average_population_by_agebin                    );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Severe Incidence by Anemia by Age Bin"    , annual_severe_incidences_by_anemia_by_agebin    );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Severe Incidence by Parasites by Age Bin" , annual_severe_incidences_by_parasites_by_agebin );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Severe Incidence by Fever by Age Bin"     , annual_severe_incidences_by_fever_by_agebin     );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Severe Anemia"                            , annual_severe_anemia_by_agebin                  );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Moderate Anemia"                          , annual_moderate_anemia_by_agebin                );
+        ReportUtilities::SerializeVector( obj_dbtaab, "Annual Mild Anemia"                              , annual_mild_anemia_by_agebin                    );
+        mal_json["DataByTimeAndAgeBins"] = obj_dbtaab;
 
-        output.Insert("DataByTimeAndInfectiousnessBinsAndPfPRBinsAndAgeBins");
-        output.BeginObject();
-        ReportUtilities::SerializeVector(output, js, "Infectiousness by Gametocytemia and Age Bin",                            binned_Infectiousness                                );
-        ReportUtilities::SerializeVector(output, js, "Age scaled Infectiousness by Gametocytemia and Age Bin",                 binned_Infectiousness_age_scaled                     );
-        ReportUtilities::SerializeVector(output, js, "Infectiousness by smeared Gametocytemia and Age Bin",                    binned_Infectiousness_smeared                        );
-        ReportUtilities::SerializeVector(output, js, "Smeared Infectiousness by smeared Gametocytemia and Age Bin",            binned_Infectiousness_smeared_inf_and_gam            );
-        ReportUtilities::SerializeVector(output, js, "Age scaled Smeared Infectiousness by smeared Gametocytemia and Age Bin", binned_Infectiousness_smeared_inf_and_gam_age_scaled );
-        output.EndObject();
+        json::Object obj_dbtapbaab;
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "PfPR by Parasitemia and Age Bin"   ,             binned_PfPRs_by_agebin                 );
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "PfPR by Gametocytemia and Age Bin" ,             binned_PfgamPRs_by_agebin              );
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "Smeared PfPR by Parasitemia and Age Bin",        binned_PfPRs_by_agebin_smeared         );
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "Smeared PfPR by Gametocytemia and Age Bin",      binned_PfgamPRs_by_agebin_smeared      );
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "Smeared True PfPR by Parasitemia and Age Bin",   binned_PfPRs_by_agebin_true_smeared    );
+        ReportUtilities::SerializeVector( obj_dbtapbaab, "Smeared True PfPR by Gametocytemia and Age Bin", binned_PfgamPRs_by_agebin_true_smeared );
+        mal_json["DataByTimeAndPfPRBinsAndAgeBins"] = obj_dbtapbaab;
+
+        json::Object obj_dbtaibapbaab;
+        ReportUtilities::SerializeVector(obj_dbtaibapbaab, "Infectiousness by Gametocytemia and Age Bin",                            binned_Infectiousness                                );
+        ReportUtilities::SerializeVector(obj_dbtaibapbaab, "Age scaled Infectiousness by Gametocytemia and Age Bin",                 binned_Infectiousness_age_scaled                     );
+        ReportUtilities::SerializeVector(obj_dbtaibapbaab, "Infectiousness by smeared Gametocytemia and Age Bin",                    binned_Infectiousness_smeared                        );
+        ReportUtilities::SerializeVector(obj_dbtaibapbaab, "Smeared Infectiousness by smeared Gametocytemia and Age Bin",            binned_Infectiousness_smeared_inf_and_gam            );
+        ReportUtilities::SerializeVector(obj_dbtaibapbaab, "Age scaled Smeared Infectiousness by smeared Gametocytemia and Age Bin", binned_Infectiousness_smeared_inf_and_gam_age_scaled );
+        mal_json["DataByTimeAndInfectiousnessBinsAndPfPRBinsAndAgeBins"] = obj_dbtaibapbaab;
     }
 }
