@@ -2,8 +2,8 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
-                "../../demographics_1000_overlay.json"
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json"
             ],
             "Population_Scale_Type": "FIXED_SCALING",
             "x_Base_Population": 0.1

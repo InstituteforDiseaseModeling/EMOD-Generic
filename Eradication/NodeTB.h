@@ -38,8 +38,6 @@ namespace Kernel
         virtual ~NodeTB(void);
         static NodeTB *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid);
 
-        virtual ITransmissionGroups* CreateTransmissionGroups() override;
-        virtual void BuildTransmissionRoutes( float contagionDecayRate ) override;
         virtual void resetNodeStateCounters(void) override;
 
         virtual IIndividualHuman* addNewIndividual(

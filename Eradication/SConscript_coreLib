@@ -96,6 +96,7 @@ else:
                             "../interventions/DelayedIntervention.cpp",
                             "../interventions/Diagnostics.cpp",
                             "../interventions/Drugs.cpp",
+                            "../interventions/EnvironmentalDiagnostic.cpp",
                             "../interventions/HealthSeekingBehavior.cpp",
                             "../interventions/ImmunityBloodTest.cpp",
                             "../interventions/ImportPressure.cpp",
@@ -218,11 +219,8 @@ else:
                             "IndividualEnvironmental.cpp",
                             "InfectionEnvironmental.cpp",
                             "NodeEnvironmental.cpp",
-                            "PropertyReportEnvironmental.cpp",
-                            "ReportEnvironmental.cpp",
                             "SimulationEnvironmental.cpp",
-                            "SusceptibilityEnvironmental.cpp",
-                            "../interventions/EnvironmentalDiagnostic.cpp",
+                            "SusceptibilityEnvironmental.cpp"
                         ]
 
     polioSrcFiles = environmentalSrcFiles + [

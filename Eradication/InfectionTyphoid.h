@@ -14,7 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class InfectionTyphoidConfig : public InfectionEnvironmentalConfig
+    class InfectionTyphoidConfig : public InfectionConfig
     {
         friend class IndividualTyphoid;
         GET_SCHEMA_STATIC_WRAPPER(InfectionTyphoidConfig)

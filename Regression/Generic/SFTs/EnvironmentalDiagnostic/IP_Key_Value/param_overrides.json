@@ -1,0 +1,43 @@
+{
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
+    "parameters": {
+        "CAMPAIGNS": {
+            "Custom_Individual_Events": [
+                "NegativeResult",
+                "PositiveResult",
+                "Blackout"
+            ],
+            "Custom_Node_Events": [
+                "NegativeResult",
+                "PositiveResult"
+            ]
+        },
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json",
+                "../../Demographics/demographics_2groups_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 0.1,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
+                "Enable_Immunity": 0,
+                "Infectious_Period_Constant": 5,
+                "Node_Contagion_Decay_Rate": 1.0
+            }
+        },
+        "LOGLEVEL": {
+            "logLevel_EnvironmentalDiagnostic": "DEBUG"
+        },
+        "PRIMARY": {
+            "Config_Name": "EnvironmentalDiagnostic_IP_Key_Value",
+            "Enable_Environmental_Route": 1,
+            "Enable_Heterogeneous_Intranode_Transmission": 1,
+            "Enable_Property_Output": 1,
+            "Simulation_Duration": 180
+
+        }
+    }
+}

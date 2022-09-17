@@ -2,9 +2,9 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
+                "../../Demographics/demographics.json",
                 "demographics_superspreader_overlay.json",
-                "../../demographics_5000_overlay.json"
+                "../../Demographics/demographics_5000_overlay.json"
             ],
             "Enable_Heterogeneous_Intranode_Transmission": 1,
             "SAMPLING": {

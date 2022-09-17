@@ -3,9 +3,9 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
-                "../../demographics_2groups_2_properties_trans_wi_overlay.json",
-                "../../demographics_10000_overlay.json"
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_2groups_2_properties_trans_wi_overlay.json",
+                "../../Demographics/demographics_10000_overlay.json"
             ],
             "Enable_Demographics_Reporting": 1,
             "IMMUNITY": {

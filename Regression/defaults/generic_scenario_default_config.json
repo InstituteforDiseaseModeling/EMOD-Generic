@@ -75,6 +75,7 @@
             "x_Base_Population": 1
         },
         "DISEASE": {
+            "Enable_Environmental_Route": 0,
             "Enable_Infection_Rate_Overdispersion": 0,
             "Enable_Infectivity_Reservoir": 0,
             "Enable_Infectivity_Scaling": 0,

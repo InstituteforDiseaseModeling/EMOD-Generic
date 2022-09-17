@@ -1,0 +1,41 @@
+{
+    "Default_Config_Path": "../../defaults/generic_default_config.json",
+    "parameters": {
+        "Infectious_Period_Exponential": 6,
+        "Incubation_Period_Constant": 3,
+        "Custom_Node_Events": [
+            "Positive_Event_Node",
+            "Negative_Event_Node"
+        ],
+        "Custom_Reports_Filename": "",
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "Namawala_single_node_demographics.json"
+            ]
+        },
+        "Enable_Initial_Prevalence": 0,
+        "Enable_Report_Node_Event_Recorder": 1,
+        "Enable_Environmental_Route": 1,
+        "Node_Contagion_Decay_Rate": 0.3,
+        "PRIMARY": {
+            "Config_Name": "2_EnvironmentalDiagnostic",
+            "ENUMS": {
+                "Simulation_Type": "GENERIC_SIM"
+            },
+            "Enable_Strain_Tracking": 0,
+            "Enable_Termination_On_Zero_Total_Infectivity": 0,
+            "Geography": "Namawala",
+            "Node_Grid_Size": 0.009,
+            "Run_Number": 49,
+            "Simulation_Duration": 730
+        },
+        "Population_Scale_Type": "FIXED_SCALING",
+        "Report_Node_Event_Recorder_Events": [
+            "Positive_Event_Node",
+            "Negative_Event_Node"
+        ],
+        "Report_Node_Event_Recorder_Ignore_Events_In_List": 0,
+        "Report_Node_Event_Recorder_Node_Properties": [],
+        "Report_Node_Event_Recorder_Stats_By_IPs": []
+    }
+}

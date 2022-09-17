@@ -17,6 +17,7 @@
     "Enable_Demographics_Gender": 0,
     "Enable_Demographics_Other": 0,
     "Enable_Disease_Mortality": 0,
+    "Enable_Environmental_Route": 0,
     "Enable_Heterogeneous_Intranode_Transmission": 0,
     "Enable_Immunity": 0,
     "Enable_Immunity_Initialization_Distribution": 0,

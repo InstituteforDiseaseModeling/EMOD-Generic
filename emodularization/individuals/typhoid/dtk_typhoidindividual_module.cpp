@@ -200,10 +200,6 @@ static Kernel::IndividualHumanTyphoid* initInd( int sex, float age, float mcw )
         SusceptibilityConfig                 gen_susceptibility_config_obj;
         InfectionConfig                      gen_infection_config_obj;
 
-        IndividualHumanEnvironmentalConfig   env_individual_config_obj;
-        SusceptibilityEnvironmentalConfig    env_susceptibility_config_obj;
-        InfectionEnvironmentalConfig         env_infection_config_obj;
-
         IndividualHumanTyphoidConfig         typ_individual_config_obj;
         SusceptibilityTyphoidConfig          typ_susceptibility_config_obj;
         InfectionTyphoidConfig               typ_infection_config_obj;
@@ -212,10 +208,6 @@ static Kernel::IndividualHumanTyphoid* initInd( int sex, float age, float mcw )
         gen_individual_config_obj.Configure( configStubJson );
         gen_susceptibility_config_obj.Configure( configStubJson );
         gen_infection_config_obj.Configure( configStubJson );
-
-        env_individual_config_obj.Configure( configStubJson );
-        env_susceptibility_config_obj.Configure( configStubJson );
-        env_infection_config_obj.Configure( configStubJson );
 
         typ_individual_config_obj.Configure( configStubJson );
         typ_susceptibility_config_obj.Configure( configStubJson );

@@ -61,7 +61,10 @@ protected:
     float countOfRecovered;
     float countOfImmunized;
     float countOfWaning;
-    clock_t last_time;
+
+    float enviro_infections_counter;
+    float contact_infections_counter;
+
 
     static const std::string Report::_stat_pop_label;
     static const std::string Report::_infected_fraction_label;
@@ -75,4 +78,7 @@ protected:
     static const std::string Report::_immunized_pop_label;
     static const std::string Report::_hum_infectious_res_label;
     static const std::string Report::_infection_rate_label;
+
+private:
+    bool env_rep;
 };

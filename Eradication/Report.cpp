@@ -15,6 +15,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Report.h"
 #include "INodeContext.h"
 #include "IIndividualHuman.h"
+#include "SimulationEnums.h"
+#include "ConfigParams.h"
 #include "Climate.h"
 
 using namespace std;
@@ -30,33 +32,41 @@ const string Report::_recovered_pop_label  ( "Recovered Population" );
 const string Report::_waning_pop_label     ( "Waning Population" );
 const string Report::_immunized_pop_label  ( "Immunized Population" );
 
-static const std::string _report_name        ( "InsetChart.json" );
-const string Report::_new_infections_label   ( "New Infections" );
-const string Report::_infected_fraction_label( "Infected Fraction" );
-const string Report::_hum_infectious_res_label( "Human Infectious Reservoir" );
-const string Report::_infection_rate_label( "Daily (Human) Infection Rate" );
-//const string Report::_aoi_label( "Mean Age Of Infection" );
+const string Report::_infected_fraction_label   ( "Infected Fraction" );
+const string Report::_new_infections_label      ( "New Infections" );
+const string Report::_hum_infectious_res_label  ( "Human Infectious Reservoir" );
+const string Report::_infection_rate_label      ( "Daily (Human) Infection Rate" );
+
 
 /////////////////////////
 // Initialization methods
 /////////////////////////
-Kernel::IReport*
-Report::CreateReport()
+Kernel::IReport* Report::CreateReport()
 {
     return new Report();
 }
 
+
 Report::Report()
-: Report( _report_name )
+    : Report( "InsetChart.json" )
 {
 }
 
+
 Report::Report( const std::string& rReportName )
-: BaseChannelReport( rReportName )
-, last_time( 0 )
-, new_infections(0.0f)
-, new_reported_infections(0.0f)
-, disease_deaths(0.0f)
+    : BaseChannelReport( rReportName )
+    , env_rep(false)
+    , contact_infections_counter(0.0f)
+    , countOfSusceptibles(0.0f)
+    , countOfExposed(0.0f)
+    , countOfInfectious(0.0f)
+    , countOfRecovered(0.0f)
+    , countOfImmunized(0.0f)
+    , countOfWaning(0.0f)
+    , disease_deaths(0.0f)
+    , enviro_infections_counter(0.0f)
+    , new_infections(0.0f)
+    , new_reported_infections(0.0f)
 {
 }
 
@@ -68,10 +78,12 @@ void Report::BeginTimestep()
 {
     BaseChannelReport::BeginTimestep();
 
-    new_infections = 0.0f;
+    new_infections          = 0.0f;
     new_reported_infections = 0.0f;
 
-    // SEIRW reporting
+    enviro_infections_counter  = 0.0f;
+    contact_infections_counter = 0.0f;
+
     countOfSusceptibles = 0.0f;
     countOfExposed      = 0.0f;
     countOfInfectious   = 0.0f;
@@ -79,45 +91,55 @@ void Report::BeginTimestep()
     countOfWaning       = 0.0f;
 }
 
-void Report::EndTimestep( float currentTime, float dt )
-{
-    Accumulate("Disease Deaths", disease_deaths);
-    BaseChannelReport::EndTimestep( currentTime, dt );
-}
 
-void
-Report::LogIndividualData(
-    Kernel::IIndividualHuman* individual
-)
+void Report::LogIndividualData( Kernel::IIndividualHuman* individual )
 {
-    float monte_carlo_weight = float(individual->GetMonteCarloWeight());
-
-    NewInfectionState::_enum nis = individual->GetNewInfectionState();
+    auto mcw = individual->GetMonteCarloWeight();
+    auto nis = individual->GetNewInfectionState();
 
     if(nis == NewInfectionState::NewAndDetected || nis == NewInfectionState::NewInfection)
-        new_infections += monte_carlo_weight;
+    {
+        new_infections += mcw;
+
+        // Check is necessarry; new infection may have already cleared
+        if(individual->GetInfections().size() > 0)
+        {
+            auto inf = individual->GetInfections().back();
+            if( inf->GetSourceRoute() == Kernel::TransmissionRoute::ENVIRONMENTAL )
+            {
+                enviro_infections_counter += mcw;
+            }
+            else if( inf->GetSourceRoute() == Kernel::TransmissionRoute::CONTACT )
+            {
+                contact_infections_counter += mcw;
+            }
+        }
+    }
 
     if(nis == NewInfectionState::NewAndDetected || nis == NewInfectionState::NewlyDetected)
-        new_reported_infections += monte_carlo_weight;
+    {
+        new_reported_infections += mcw;
+    }
 
     if(individual->GetStateChange() == HumanStateChange::KilledByInfection)
-        disease_deaths += monte_carlo_weight;
+    {
+        disease_deaths += mcw;
+    }
 
-    UpdateSEIRW(individual, monte_carlo_weight);
+    UpdateSEIRW(individual, mcw);
 }
 
-void
-Report::LogNodeData(
-    Kernel::INodeContext * pNC
-)
+
+void Report::LogNodeData( Kernel::INodeContext * pNC )
 {
     LOG_DEBUG( "LogNodeData\n" );
 
-    Accumulate(_stat_pop_label, pNC->GetStatPop());
-    Accumulate("Births", pNC->GetBirths());
-    Accumulate("Infected", pNC->GetInfected());
+    Accumulate(_stat_pop_label,          pNC->GetStatPop());
+    Accumulate("Births",                 pNC->GetBirths());
+    Accumulate("Infected",               pNC->GetInfected());
     Accumulate("Symptomatic Population", pNC->GetSymptomatic());
-    Accumulate("Newly Symptomatic", pNC->GetNewlySymptomatic() + new_reported_infections ); //either GetNewlySymptomatic() or new_reported_infections is used (other channel is 0)
+
+    Accumulate("Newly Symptomatic",      pNC->GetNewlySymptomatic() + new_reported_infections ); //either GetNewlySymptomatic() or new_reported_infections is used (other channel is 0)
     new_reported_infections = 0.0f;
 
     if (pNC->GetLocalWeather())
@@ -128,20 +150,41 @@ Report::LogNodeData(
         Accumulate("Relative Humidity", pNC->GetLocalWeather()->humidity());
     }
 
-    Accumulate(_new_infections_label,                 new_infections);
+    if(pNC->GetParams()->enable_environmental_route)
+    {
+        env_rep = true;
+        auto contagionPop = pNC->GetContagionByRoute();
+
+        Accumulate("Contact Contagion Population",       contagionPop[Kernel::TransmissionRoute::CONTACT]  );
+        Accumulate("Environmental Contagion Population", contagionPop[Kernel::TransmissionRoute::ENVIRONMENTAL] );
+    }
+
+    Accumulate(_new_infections_label,            new_infections);
     new_infections = 0.0f;
 
     Accumulate("Campaign Cost",                  pNC->GetCampaignCost());
     Accumulate("Human Infectious Reservoir",     pNC->GetInfectivity());
-    Accumulate(_infection_rate_label,   pNC->GetInfectionRate());
+    Accumulate(_infection_rate_label,            pNC->GetInfectionRate());
 
     AccumulateSEIRW();
 }
 
-void 
-Report::populateSummaryDataUnitsMap(
-    std::map<std::string, std::string> &units_map
-)
+
+void Report::EndTimestep( float currentTime, float dt )
+{
+    Accumulate("Disease Deaths", disease_deaths);
+
+    if(env_rep)
+    {
+        Accumulate( "New Infections By Route (ENVIRONMENT)",  enviro_infections_counter );
+        Accumulate( "New Infections By Route (CONTACT)",      contact_infections_counter );
+    }
+
+    BaseChannelReport::EndTimestep( currentTime, dt );
+}
+
+
+void Report::populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map )
 {
     units_map[_stat_pop_label]                  = "Population";
     units_map["Births"]                         = "Births";
@@ -160,8 +203,7 @@ Report::populateSummaryDataUnitsMap(
 
 
 // normalize by timestep and create derived channels
-void
-Report::postProcessAccumulatedData()
+void Report::postProcessAccumulatedData()
 {
     LOG_DEBUG( "postProcessAccumulatedData\n" );
 
@@ -179,6 +221,7 @@ Report::postProcessAccumulatedData()
     // add derived channels
     NormalizeSEIRWChannels();
 }
+
 
 void Report::UpdateSEIRW( const Kernel::IIndividualHuman* individual, float monte_carlo_weight )
 {
@@ -211,6 +254,7 @@ void Report::UpdateSEIRW( const Kernel::IIndividualHuman* individual, float mont
     }
 }
 
+
 void Report::AccumulateSEIRW()
 {
     Accumulate( _susceptible_pop_label, countOfSusceptibles );
@@ -225,6 +269,7 @@ void Report::AccumulateSEIRW()
     countOfRecovered    = 0.0f;
     countOfWaning       = 0.0f;
 }
+
 
 void Report::AddSEIRWUnits( std::map<std::string, std::string> &units_map )
 {

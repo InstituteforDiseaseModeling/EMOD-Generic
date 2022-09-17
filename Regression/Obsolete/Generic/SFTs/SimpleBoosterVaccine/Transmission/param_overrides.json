@@ -4,7 +4,7 @@
             "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
             "Demographics_Filenames": [
                 "../../demographics.json",
-                "../../demographics_2groups_overlay.json"
+                "../../demographics_2groups_overlay_3.json"
             ],
             "IMMUNITY": {
                 "Enable_Immunity": 0,

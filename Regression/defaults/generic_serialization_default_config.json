@@ -73,6 +73,7 @@
             "x_Base_Population": 1
         },
         "DISEASE": {
+            "Enable_Environmental_Route": 0,
             "Enable_Superinfection": 0,
             "INCUBATION": {
                 "Incubation_Period_Constant": 3,

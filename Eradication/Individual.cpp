@@ -994,6 +994,11 @@ namespace Kernel
 
     void IndividualHuman::AcquireNewInfection( const IStrainIdentity* strain_ptr, TransmissionRoute::Enum tx_route, float incubation_period_override )
     {
+        if ( incubation_period_override == 0.0f )
+        {
+            tx_route = TransmissionRoute::OUTBREAK;
+        }
+
         StrainIdentity newStrainId;
         if(strain_ptr)
         {
@@ -1028,8 +1033,6 @@ namespace Kernel
 
         for (auto infection : infections)
         {
-            float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousness() * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
-
             StrainIdentity tmp_strainIDs;
             infection->GetInfectiousStrainID(&tmp_strainIDs);
 
@@ -1042,18 +1045,12 @@ namespace Kernel
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
                 LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first));
-                if (entry.first==TransmissionRoute::CONTACT)
+                float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousnessByRoute(entry.first) * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
+                if (tmp_infectiousness > 0.0f)
                 {
-                    if (tmp_infectiousness > 0.0f)
-                    {
-                        LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
-                        parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second, TransmissionRoute::CONTACT );
-                        infectiousness += infection->GetInfectiousnessByRoute(TransmissionRoute::CONTACT);
-                    }
-                }
-                else
-                {
-                    release_assert(false);
+                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
+                    parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second, entry.first );
+                    infectiousness += infection->GetInfectiousnessByRoute(entry.first);
                 }
            }
         }

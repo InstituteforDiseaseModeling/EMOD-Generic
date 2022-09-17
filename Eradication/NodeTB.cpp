@@ -25,9 +25,14 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(NodeTB, NodeAirborne)
 
 
-    NodeTB::~NodeTB(void) { }
+    NodeTB::~NodeTB(void)
+    {
+    }
 
-    NodeTB::NodeTB() : NodeAirborne() { }
+    NodeTB::NodeTB()
+        : NodeAirborne()
+    {
+    }
 
     NodeTB::NodeTB(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid)
         : NodeAirborne(_parent_sim, externalNodeId, node_suid)
@@ -50,16 +55,6 @@ namespace Kernel
     IIndividualHuman* NodeTB::createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender)
     {
         return IndividualHumanCoInfection::CreateHuman(this, suid, monte_carlo_weight, initial_age, gender);
-    }
-
-    ITransmissionGroups* NodeTB::CreateTransmissionGroups()
-    {
-        return TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
-    }
-
-    void NodeTB::BuildTransmissionRoutes( float contagionDecayRate )
-    {
-        transmissionGroups->Build( contagionDecayRate, GetParams()->number_clades, GetTotalGenomes());
     }
 
     uint64_t NodeTB::GetTotalGenomes() const

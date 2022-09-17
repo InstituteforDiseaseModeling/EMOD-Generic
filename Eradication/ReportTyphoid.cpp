@@ -60,7 +60,7 @@ void ReportTyphoid::BeginTimestep()
 {
     if( recording ) // not sure what BeginTimestep even does for us
     {
-        return ReportEnvironmental::BeginTimestep();
+        return Report::BeginTimestep();
     }
 }
 
@@ -77,7 +77,7 @@ void ReportTyphoid::setRecordingFlag()
     else
     {
         recording = false;
-        ReportEnvironmental::BeginTimestep(); // ??? can we clear anything accumulated in the first timestep that we no longer want?
+        Report::BeginTimestep(); // ??? can we clear anything accumulated in the first timestep that we no longer want?
     }
 }
 
@@ -86,10 +86,7 @@ void ReportTyphoid::EndTimestep( float currentTime, float dt )
     setRecordingFlag();
     if( recording )
     {
-        //ReportEnvironmental::EndTimestep( currentTime, dt ); 
-        // bypass generic-level EndTimestep coz we don't care about those channels.
-        BaseChannelReport::EndTimestep( currentTime, dt );
-        ReportEnvironmental::EndTimestep( currentTime, dt );
+        Report::EndTimestep( currentTime, dt );
 
         // Make sure we push at least one zero per timestep
         Accumulate( _num_chronic_carriers_label, 0 );
@@ -114,10 +111,7 @@ ReportTyphoid::populateSummaryDataUnitsMap(
     std::map<std::string, std::string> &units_map
 )
 {
-    ReportEnvironmental::populateSummaryDataUnitsMap(units_map);
-    
-    // Additional malaria channels
-    //units_map[_wpv1_prev_label]                 = _infected_fraction_label;
+    Report::populateSummaryDataUnitsMap(units_map);
 }
 
 void
@@ -125,12 +119,7 @@ ReportTyphoid::LogIndividualData(
     IIndividualHuman * individual
 )
 {
-    /*if( recording == false ) 
-    {
-        return;
-    }*/
-
-    ReportEnvironmental::LogIndividualData( individual );
+    Report::LogIndividualData( individual );
     IIndividualHumanTyphoid* typhoid_individual = NULL;
     if( individual->QueryInterface( GET_IID( IIndividualHumanTyphoid ), (void**)&typhoid_individual ) != s_OK )
     {
@@ -174,7 +163,7 @@ ReportTyphoid::LogNodeData(
         return;
     }
 
-    ReportEnvironmental::LogNodeData( pNC );
+    Report::LogNodeData( pNC );
     Accumulate( _num_chronic_carriers_label, chron_carriers_counter  );
     Accumulate( _num_subclinic_infections_label, subclinical_infections_counter );
     Accumulate( _num_acute_infections_label, acute_infections_counter );

@@ -16,7 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class SusceptibilityTyphoid;
-    class IndividualHumanTyphoidConfig : public IndividualHumanEnvironmentalConfig
+    class IndividualHumanTyphoidConfig : public IndividualHumanConfig
     {
         GET_SCHEMA_STATIC_WRAPPER(IndividualHumanTyphoidConfig)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()  

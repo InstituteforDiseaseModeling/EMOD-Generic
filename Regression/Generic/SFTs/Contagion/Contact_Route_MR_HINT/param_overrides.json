@@ -1,0 +1,25 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json",
+                "../../Demographics/demographics_mr_2groups_contact_only_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Enable_Immunity": 0,
+                "Infectious_Period_Constant": 60,
+                "Node_Contagion_Decay_Rate": 1.0
+            }
+        },
+        "PRIMARY": {
+            "Config_Name": "Contact_Route_Contagion_with_MR_HINT",
+            "Enable_Environmental_Route": 1,
+            "Enable_Heterogeneous_Intranode_Transmission": 1,
+            "Enable_Property_Output": 1
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

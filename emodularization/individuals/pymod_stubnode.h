@@ -10,7 +10,7 @@ class StubNode : public INodeContext
         : INodeContext()
         , node_properties()
         , m_pRNG(nullptr)
-        , m_RouteList(1,TransmissionRoute::CONTACT)
+        , m_RouteList({TransmissionRoute::CONTACT})
         , m_NodeId(Kernel::suids::nil_suid())
         {
             //IPFactory::CreateFactory();
@@ -102,7 +102,6 @@ class StubNode : public INodeContext
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override { std::cout << __FUNCTION__ << std::endl; }
         virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const { std::cout << __FUNCTION__ << std::endl; return std::map< TransmissionRoute::Enum, float >(); }
         virtual float GetTotalContagion( void ) { std::cout << __FUNCTION__ << std::endl; return 0; }
-        virtual ITransmissionGroups* GetTransmissionGroups() const override { std::cout << __FUNCTION__ << std::endl; return nullptr; }
         virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) override  { std::cout << __FUNCTION__ << std::endl; return 0; }
         virtual void ChangePropertyMatrix( const std::string& propertyName, const ScalingMatrix_t& newScalingMatrix ) override { std::cout << __FUNCTION__ << std::endl; }
 

@@ -124,7 +124,7 @@ namespace Kernel
                 break;
 #if defined(ENABLE_ENVIRONMENTAL)
                 case SimType::ENVIRONMENTAL_SIM:
-                    newsim = SimulationEnvironmental::CreateSimulation(EnvPtr->Config);
+                    throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ENVIRONMENTAL_SIM currently disabled. Consider using GENERIC_SIM." );
                 break;
 #endif
 #if defined( ENABLE_POLIO)
@@ -149,9 +149,7 @@ namespace Kernel
 #endif
 #ifndef DISABLE_AIRBORNE
                 case SimType::AIRBORNE_SIM:
-                    throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "AIRBORNE_SIM currently disabled. Consider using GENERIC_SIM or TBHIV_SIM." );
-                    newsim = SimulationAirborne::CreateSimulation(EnvPtr->Config);
-                break;
+                    throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "AIRBORNE_SIM currently disabled. Consider using GENERIC_SIM." );
 #endif
 #ifndef DISABLE_TBHIV
                 case SimType::TBHIV_SIM:

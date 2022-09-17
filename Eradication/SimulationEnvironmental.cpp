@@ -15,8 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEnvironmental.h"
 #include "InfectionEnvironmental.h"
 #include "SusceptibilityEnvironmental.h"
-#include "ReportEnvironmental.h"
-#include "PropertyReportEnvironmental.h"
 #include "ProgVersion.h"
 
 using namespace Kernel;
@@ -27,10 +25,9 @@ SETUP_LOGGING( "SimulationEnvironmental" )
 
 namespace Kernel
 {
-    SimulationEnvironmental::SimulationEnvironmental() : Simulation()
+    SimulationEnvironmental::SimulationEnvironmental()
+        : Simulation()
     {
-        reportClassCreator = ReportEnvironmental::CreateReport;
-        propertiesReportClassCreator = PropertyReportEnvironmental::CreateReport;
     }
 
     SimulationEnvironmental::~SimulationEnvironmental(void)
@@ -45,14 +42,6 @@ namespace Kernel
     void SimulationEnvironmental::Initialize(const ::Configuration *config)
     {
         Simulation::Initialize(config);
-
-        IndividualHumanEnvironmentalConfig   env_individual_config_obj;
-        SusceptibilityEnvironmentalConfig    env_susceptibility_config_obj;
-        InfectionEnvironmentalConfig         env_infection_config_obj;
-
-        env_individual_config_obj.Configure( config );
-        env_susceptibility_config_obj.Configure( config );
-        env_infection_config_obj.Configure( config );
     }
 
     SimulationEnvironmental *SimulationEnvironmental::CreateSimulation()
@@ -84,8 +73,6 @@ namespace Kernel
 
     bool SimulationEnvironmental::ValidateConfiguration(const ::Configuration *config)
     {
-        // TODO: any disease-specific validation goes here.
-
         return Simulation::ValidateConfiguration(config);
     }
 

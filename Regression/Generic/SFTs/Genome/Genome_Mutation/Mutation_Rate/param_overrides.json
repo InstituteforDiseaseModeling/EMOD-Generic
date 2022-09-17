@@ -2,8 +2,8 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../../demographics.json",
-                "../../../demographics_5000_overlay.json"
+                "../../../Demographics/demographics.json",
+                "../../../Demographics/demographics_5000_overlay.json"
             ],
             "Enable_Acquisition_Heterogeneity": 0,
             "IMMUNITY": {

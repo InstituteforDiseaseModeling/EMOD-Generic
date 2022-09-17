@@ -89,7 +89,6 @@ namespace Kernel
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) = 0;
         virtual std::map<TransmissionRoute::Enum, float> GetContagionByRoute() const = 0;
         virtual float GetTotalContagion( void ) = 0;
-        virtual ITransmissionGroups* GetTransmissionGroups() const = 0;
         virtual const RouteList_t& GetTransmissionRoutes() const = 0;
 
         virtual float GetContagionByRouteAndProperty( TransmissionRoute::Enum route, const IPKeyValue& property_value ) = 0;

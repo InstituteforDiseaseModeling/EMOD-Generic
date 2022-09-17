@@ -12,8 +12,8 @@
         "Config_Name": "MultiEffectBoosterVaccine/TransmissionMortality",
         "Custom_Reports_Filename": "NoCustomReports",
         "Demographics_Filenames": [
-            "../../demographics.json",
-            "../../demographics_4groups_2seed_overlay.json"
+            "../../Demographics/demographics.json",
+            "../../Demographics/demographics_4groups_2seed_overlay.json"
         ],
         "Enable_Demographics_Reporting": 0,
         "Enable_Disease_Mortality": 1,

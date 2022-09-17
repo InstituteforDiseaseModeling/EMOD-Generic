@@ -13,15 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class InfectionEnvironmentalConfig : public InfectionConfig
-    {
-    public:
-        virtual bool Configure( const Configuration* config ) override;
-
-    protected:
-        friend class InfectionEnvironmental;
-    };
-
     class InfectionEnvironmental : public Infection
     {
     public:

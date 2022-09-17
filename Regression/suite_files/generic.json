@@ -2,6 +2,7 @@
     "tests": [
         { "path": "Generic/00_Generic_Default" },
         { "path": "Generic/1_Generic_MinimalConfig" },
+        { "path": "Generic/4_Environmental_Diagnostic_With_IP_Percentage_Events" },
         { "path": "Generic/4_Generic_MinConfig_EnableAging" },
         { "path": "Generic/7_Generic_MinConfig_EnableInterventions" },
         { "path": "Generic/8_Generic_MinConfig_EnableMaternalTx" },
@@ -80,11 +81,19 @@
         { "path": "Scenarios/HINT/05_SeattleCommuting" }
     ],
     "skipped": [
+        { "path": "Generic/2_Environmental_Diagnostic" },
         { "path": "Generic/71_Generic_RngPerCore_FromSerializedPop" },
         { "path": "Generic/72_Generic_RngPerNode_FromSerializedPop" },
         { "path": "Generic/72_Generic_IncidenceEventCoordinator" }
     ],
+    "skipped:no_climate_in_generic": [
+        { "path": "Generic/1_Airborne_Namawala" },
+        { "path": "Generic/3_Environmental_Diagnostic_With_IP" },
+        { "path": "Generic/5_Environmental_Diagnostic_Specificity_Sensitivity" }
+    ],
     "skipped:num_cores_too_large": [
+        { "path": "Multicore_Nosibe/1_Airborne_Namawala" },
+        { "path": "Multicore_Nosibe/1_Environmental_Namawala" },
         { "path": "Multicore_Nosibe/Scenarios/Generic/01_SIR" },
         { "path": "Multicore_Nosibe/Scenarios/Generic/02_SIR_Vaccinations/A_BaselineOutbreak" },
         { "path": "Multicore_Nosibe/Scenarios/Generic/02_SIR_Vaccinations/B_Vaccinations" },

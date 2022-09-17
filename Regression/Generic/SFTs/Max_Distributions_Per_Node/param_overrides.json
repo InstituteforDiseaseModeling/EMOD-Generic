@@ -22,7 +22,7 @@
             }
         },
         "OUTPUT": {
-            "Report_Event_Recorder": 1,
+            "Enable_Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "NewInfection",
                 "EveryUpdate"

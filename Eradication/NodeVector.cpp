@@ -198,7 +198,7 @@ namespace Kernel
     {
         // create two routes (indoor and outdoor), and two groups for each route (human, mosquito).
         // future expansion of heterogeneous intra-node transmission could start here.
-        transmissionGroups = CreateTransmissionGroups();
+        CreateTransmissionGroups();
 
         ScalingMatrix_t scalingMatrix{
             { 0.0f, 1.0f },
@@ -233,7 +233,7 @@ namespace Kernel
 
         LOG_DEBUG("Building indoor/outdoor human-vector groups.\n");
 
-        BuildTransmissionRoutes( 1.0f );
+        BuildTransmissionRoutes();
 
         tProperties vectorProperties{ { INDOOR, VECTOR }, { OUTDOOR, VECTOR } };
         tProperties humanProperties{ { INDOOR, HUMAN }, { OUTDOOR, HUMAN } };
@@ -611,16 +611,16 @@ namespace Kernel
         txOutdoor->UpdatePopulationSize(IndividualHumanVector::human_outdoor, size_changes, mc_weight);
     }
 
-    ITransmissionGroups* NodeVector::CreateTransmissionGroups()
+    void NodeVector::CreateTransmissionGroups()
     {
+        transmissionGroups = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
+        transmissionGroups->SetTag( INDOOR );
+
         txOutdoor = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
         txOutdoor->SetTag( OUTDOOR );
-        auto txIndoor = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
-        txIndoor->SetTag( INDOOR );
-        return txIndoor;    // Will become this->transmissionGroups
     }
 
-    void NodeVector::BuildTransmissionRoutes( float /* contagionDecayRate */ )
+    void NodeVector::BuildTransmissionRoutes()
     {
         transmissionGroups->Build( 1.0f, GetParams()->number_clades, GetTotalGenomes() );
         txOutdoor->Build( 1.0f,          GetParams()->number_clades, GetTotalGenomes() );

@@ -2,8 +2,8 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
-                "../../demographics_100_overlay.json"
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_100_overlay.json"
             ],
             "IMMUNITY": {
                 "Enable_Immunity": 0

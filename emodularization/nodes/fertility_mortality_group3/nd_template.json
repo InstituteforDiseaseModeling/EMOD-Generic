@@ -15,6 +15,7 @@
     "Enable_Birth": 1,
     "Enable_Demographics_Builtin": 0,
     "Enable_Disease_Mortality": 0,
+    "Enable_Environmental_Route": 0,
     "Enable_Heterogeneous_Intranode_Transmission": 0,
     "Enable_Immunity": 0,
     "Enable_Immunity_Initialization_Distribution": 0,

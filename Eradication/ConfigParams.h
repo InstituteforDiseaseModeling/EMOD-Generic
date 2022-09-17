@@ -154,6 +154,7 @@ namespace Kernel
         bool enable_acquisition_heterogeneity;
         bool enable_birth;
         bool enable_demographics_risk;
+        bool enable_environmental_route;
         bool enable_hint;
         bool enable_infectivity_overdispersion;
         bool enable_infectivity_reservoir;

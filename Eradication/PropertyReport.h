@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "Report.h"
+#include "Properties.h"
 
 /*
 Flexible aggregator for simulation-wide numeric values. Intended to serve as the mechanism for reporting inset charts.
@@ -44,10 +45,11 @@ namespace Kernel {
         // new functions and members exclusive to this class
         typedef std::map< std::string, std::string > tKeyValuePair; // pairs?
         typedef std::set< tKeyValuePair > tPermutations;
+
         tPermutations permutationsSet;
         std::vector<std::string> permutationsList;
-        static void GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePair perm, tPermutations &permutationsSet );
 
+        static void GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePair perm, tPermutations &permutationsSet );
 
         virtual void postProcessAccumulatedData() override;
 
@@ -58,21 +60,10 @@ namespace Kernel {
         std::map< std::string, float > infected;
         std::map< std::string, float > statPop;
 
-        //labels
-        static const char * _pop_label;
-        static const char * _infected_label;
-        static const char * _new_infections_label;
-        static const char * _disease_deaths_label;
+        std::map< std::string, float > new_contact_infections;
+        std::map< std::string, float > new_enviro_infections;
+
+    private:
+        void reportContagionForRoute( TransmissionRoute::Enum tx_route, IndividualProperty* property, INodeContext* pNC );
     };
-
 };
-
-#if 0
-template<class Archive>
-void serialize(Archive &ar, PropertyReport& report, const unsigned int v)
-{
-    //ar & report.timesteps_reduced;
-    //ar & report.channelDataMap;
-    //ar & report._nrmSize;
-}
-#endif

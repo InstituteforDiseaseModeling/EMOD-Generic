@@ -6,7 +6,7 @@
         },
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
+                "../../Demographics/demographics.json",
                 "complex_immunity_overlay.json"
             ],
             "IMMUNITY": {

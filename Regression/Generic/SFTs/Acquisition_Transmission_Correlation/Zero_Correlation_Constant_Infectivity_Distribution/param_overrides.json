@@ -2,7 +2,7 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics_2nodes.json",
+                "../../Demographics/demographics_2nodes.json",
                 "demographics_AcquisitionHeterogeneityVariance_overlay.json"
             ],
             "Enable_Acquisition_Heterogeneity": 1,

@@ -3,9 +3,9 @@
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
-                "../../demographics.json",
+                "../../Demographics/demographics.json",
                 "demographics_mr_2groups_overlay.json",
-                "../../demographics_1000_overlay.json"
+                "../../Demographics/demographics_1000_overlay.json"
             ],
             "Enable_Demographics_Reporting": 1,
             "Enable_Initial_Prevalence": 1,

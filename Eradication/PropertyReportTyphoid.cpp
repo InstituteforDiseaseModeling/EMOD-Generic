@@ -22,7 +22,6 @@ using namespace json;
 
 SETUP_LOGGING( "PropertyReportTyphoid" )
 
-static const std::string _report_name = "PropertyReportTyphoid.json";
 
 namespace Kernel
 {
@@ -39,7 +38,7 @@ PropertyReportTyphoid::CreateReport()
 }
 
 PropertyReportTyphoid::PropertyReportTyphoid()
-    : PropertyReportEnvironmental( _report_name )
+    : PropertyReport( "PropertyReportTyphoid.json" )
     , start_year( 0.0 )
     , stop_year( FLT_MAX )
     , is_collecting_data( false )
@@ -116,7 +115,7 @@ PropertyReportTyphoid::LogIndividualData(
 {
     if( !is_collecting_data ) return;
 
-    PropertyReportEnvironmental::LogIndividualData( individual );
+    PropertyReport::LogIndividualData( individual );
 }
 
 void
@@ -126,7 +125,7 @@ PropertyReportTyphoid::LogNodeData(
 {
     if( !is_collecting_data ) return;
 
-    PropertyReportEnvironmental::LogNodeData(pNC);
+    PropertyReport::LogNodeData(pNC);
 
 }
 

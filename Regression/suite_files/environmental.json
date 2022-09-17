@@ -1,10 +1,6 @@
 {
     "tests": [
-        { "path": "Environmental/4_Environmental_Diagnostic_With_IP_Percentage_Events" }
     ],
     "skipped": [
-    ],
-    "skipped:num_cores_too_large": [
-        { "path": "Multicore_Nosibe/1_Environmental_Namawala" }
     ]
 }

@@ -12,8 +12,8 @@
         "Config_Name": "SimpleVaccine_Acquisition_Additive",
         "Custom_Reports_Filename": "NoCustomReports",
         "Demographics_Filenames": [
-            "../demographics.json",
-            "../demographics_4groups_overlay.json"
+            "../Demographics/demographics.json",
+            "../Demographics/demographics_4groups_overlay.json"
         ],
         "Enable_Demographics_Reporting": 0,
         "Enable_Disease_Mortality": 0,

@@ -163,12 +163,6 @@ namespace Kernel
         return temp_susceptibility;
     }
 
-    void NodeMalaria::BuildTransmissionRoutes(float contagionDecayRate)
-    {
-        transmissionGroups->Build( 1.0f, GetParams()->number_clades, GetTotalGenomes() );
-        txOutdoor->Build( 1.0f,          GetParams()->number_clades, GetTotalGenomes() );
-    }
-
     uint64_t NodeMalaria::GetTotalGenomes() const
     {
         uint64_t number_genomes = static_cast<uint64_t>(1) << GET_CONFIGURABLE(SimulationConfig)->malaria_params->pGenomeMarkers->Size();

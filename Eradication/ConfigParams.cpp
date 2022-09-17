@@ -61,6 +61,7 @@ namespace Kernel
         }
         if(sim_config_obj.MatchesDependency(config, "Simulation_Type", "POLIO_SIM"))
         {
+            config->Add("Enable_Environmental_Route",                   1);
             config->Add("Enable_Disease_Mortality",                     1);
             config->Add("Enable_Immune_Decay",                          1);
             config->Add("Enable_Immunity",                              1);
@@ -176,6 +177,7 @@ namespace Kernel
         , enable_acquisition_heterogeneity(false)
         , enable_birth(false)
         , enable_demographics_risk(false)
+        , enable_environmental_route(false)
         , enable_hint(false)
         , enable_infectivity_overdispersion(false)
         , enable_infectivity_reservoir(false)
@@ -626,7 +628,8 @@ namespace Kernel
 
 
         // Node parameter dependencies
-        const std::map<std::string, std::string> dset_env01    {{"Simulation_Type","ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM"}};
+        const std::map<std::string, std::string> dset_env01    {{"Simulation_Type","GENERIC_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM"}};
+        const std::map<std::string, std::string> dset_env02    {{"Simulation_Type","GENERIC_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM"},{"Enable_Environmental_Route","1"}};
 
         const std::map<std::string, std::string> dset_hint     {{"Enable_Demographics_Builtin","0"},{"Simulation_Type","GENERIC_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,TBHIV_SIM,PY_SIM,ENVIRONMENTAL_SIM,TYPHOID_SIM,POLIO_SIM"}};
 
@@ -674,6 +677,7 @@ namespace Kernel
         initConfigTypeMap("Enable_Acquisition_Heterogeneity",             &node_params.enable_acquisition_heterogeneity,  Enable_Acquisition_Heterogeneity_DESC_TEXT,             false,  nullptr,  nullptr,  &dset_risk01);
         initConfigTypeMap("Enable_Birth",                                 &node_params.enable_birth,                      Enable_Birth_DESC_TEXT,                                 true,   nullptr,  nullptr,  &dset_birth01);
         initConfigTypeMap("Enable_Demographics_Risk",                     &node_params.enable_demographics_risk,          Enable_Demographics_Risk_DESC_TEXT,                     false,  nullptr,  nullptr,  &dset_risk02);
+        initConfigTypeMap("Enable_Environmental_Route",                   &node_params.enable_environmental_route,        Enable_Environmental_Route_DESC_TEXT,                   false,  nullptr,  nullptr,  &dset_env01);
         initConfigTypeMap("Enable_Heterogeneous_Intranode_Transmission",  &node_params.enable_hint,                       Enable_Heterogeneous_Intranode_Transmission_DESC_TEXT,  false,  nullptr,  nullptr,  &dset_hint);
         initConfigTypeMap("Enable_Infection_Rate_Overdispersion",         &node_params.enable_infectivity_overdispersion, Enable_Infection_Rate_Overdispersion_DESC_TEXT,         false,  nullptr,  nullptr,  &dset_inf01);
         initConfigTypeMap("Enable_Infectivity_Reservoir",                 &node_params.enable_infectivity_reservoir,      Enable_Infectivity_Reservoir_DESC_TEXT,                 false); 
@@ -693,7 +697,7 @@ namespace Kernel
         initConfigTypeMap("Maternal_Infection_Transmission_Probability",  &node_params.prob_maternal_infection_trans,     Maternal_Infection_Transmission_Probability_DESC_TEXT,     0.0f,            1.0f,     0.0f,  nullptr,  nullptr,  &dset_birth04);
         initConfigTypeMap("Max_Node_Population_Samples",                  &node_params.max_sampling_cell_pop,             Max_Node_Population_Samples_DESC_TEXT,                     1.0f,         FLT_MAX,    30.0f,  nullptr,  nullptr,  &dset_samp04);
         initConfigTypeMap("Min_Node_Population_Samples",                  &node_params.min_sampling_cell_pop,             Min_Node_Population_Samples_DESC_TEXT,                     0.0f,         FLT_MAX,     0.0f,  nullptr,  nullptr,  &dset_samp01);
-        initConfigTypeMap("Node_Contagion_Decay_Rate",                    &node_params.node_contagion_decay_fraction,     Node_Contagion_Decay_Rate_DESC_TEXT,                       0.0f,            1.0f,     1.0f,  nullptr,  nullptr,  &dset_env01);
+        initConfigTypeMap("Node_Contagion_Decay_Rate",                    &node_params.node_contagion_decay_fraction,     Node_Contagion_Decay_Rate_DESC_TEXT,                       0.0f,            1.0f,     1.0f,  nullptr,  nullptr,  &dset_env02);
         initConfigTypeMap("Relative_Sample_Rate_Immune",                  &node_params.rel_sample_rate_immune,            Relative_Sample_Rate_Immune_DESC_TEXT,                     0.001f,          1.0f,     0.1f,  nullptr,  nullptr,  &dset_samp02);
         initConfigTypeMap("Sample_Rate_Birth",                            &node_params.sample_rate_birth,                 Sample_Rate_Birth_DESC_TEXT,                               0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);
         initConfigTypeMap("Sample_Rate_0_18mo",                           &node_params.sample_rate_0_18mo,                Sample_Rate_0_18mo_DESC_TEXT,                              0.001f,          1.0f,     1.0f,  nullptr,  nullptr,  &dset_samp03);

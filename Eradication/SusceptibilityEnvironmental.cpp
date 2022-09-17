@@ -19,7 +19,8 @@ namespace Kernel
     {
     }
 
-    SusceptibilityEnvironmental::SusceptibilityEnvironmental(IIndividualHumanContext *context) : Susceptibility(context)
+    SusceptibilityEnvironmental::SusceptibilityEnvironmental(IIndividualHumanContext *context)
+        : Susceptibility(context)
     {
     }
 

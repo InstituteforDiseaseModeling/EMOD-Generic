@@ -5,7 +5,7 @@
         },
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics_10nodes.json",
+                "../../Demographics/demographics_10nodes.json",
                 "../demographics_overlay.json"
             ],
             "Enable_Initial_Prevalence": 0,

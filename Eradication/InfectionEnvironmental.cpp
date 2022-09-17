@@ -19,14 +19,6 @@ SETUP_LOGGING( "InfectionEnvironmental" )
 
 namespace Kernel
 {
-    bool InfectionEnvironmentalConfig::Configure( const Configuration * config )
-    {
-        LOG_DEBUG("Configure\n");
-
-        bool bRet = JsonConfigurable::Configure( config );
-        return bRet;
-    }
-
     InfectionEnvironmental::InfectionEnvironmental()
     { }
 

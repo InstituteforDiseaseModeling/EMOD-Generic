@@ -36,17 +36,13 @@ namespace Kernel {
         std::map< std::string, float > active_retx_infections;
         std::map< std::string, float > active_naive_symptomatic_infections;
 
-    //    std::map< std::string, float > pr_infections;
         std::map< std::string, float > active_smearpos_infections;
 
         std::map< std::string, float > disease_deaths_onTreatment;
         std::map< std::string, float > disease_deaths_txnaive;
         std::map< std::string, float > disease_deaths_MDR;
-    //    std::map< std::string, float > disease_deaths_onTreatment_MDR;
 
         std::map< std::string, float > onTreatment;
-    //    std::map< std::string, float > Naive_onTreatment;
-    //    std::map< std::string, float > Retx_onTreatment;
 
         std::map< std::string, float > MDR_active_infections;
         std::map< std::string, float > MDR_active_evolved_infections;

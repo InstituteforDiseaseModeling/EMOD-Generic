@@ -50,8 +50,8 @@ namespace Kernel
 
         virtual void PopulateFromDemographics() override;
         virtual void SetupIntranodeTransmission() override;
-        virtual ITransmissionGroups* CreateTransmissionGroups() override;
-        virtual void BuildTransmissionRoutes( float ) override;
+        virtual void CreateTransmissionGroups() override;
+        virtual void BuildTransmissionRoutes() override;
         virtual void updateInfectivity(float dt = 0.0f) override;
         virtual void updatePopulationStatistics(float dt = 1.0f) override;
         void         updateVectorLifecycleProbabilities(float dt);

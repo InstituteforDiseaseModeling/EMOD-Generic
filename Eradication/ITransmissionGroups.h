@@ -29,7 +29,7 @@ namespace Kernel
     typedef std::vector<float>                             MatrixRow_t;
     typedef std::vector<MatrixRow_t>                       ScalingMatrix_t;
     typedef std::set<StrainIdentity*>                      StrainIdentitySet_t;   // Order isn't important here
-    typedef std::vector<TransmissionRoute::Enum>           RouteList_t;
+    typedef std::set<TransmissionRoute::Enum>              RouteList_t;
 
     // Forward declare this so that it is available but opaque to the consumers.
     struct TransmissionGroupMembership_t;

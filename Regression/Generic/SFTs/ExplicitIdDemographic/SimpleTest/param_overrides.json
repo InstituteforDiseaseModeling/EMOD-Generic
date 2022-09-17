@@ -9,7 +9,7 @@
         "Infectious_Period_Constant": 5,
         "Enable_Demographics_Builtin": 0,
         "Demographics_Filenames": [
-            "../../demographics.json"
+            "../../Demographics/demographics.json"
         ],
         "Enable_Initial_Prevalence": 0,
         "Enable_Vital_Dynamics": 0,

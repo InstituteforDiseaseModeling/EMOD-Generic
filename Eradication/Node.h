@@ -131,10 +131,9 @@ namespace Kernel
         virtual void GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& membershipOut) override;
         virtual void UpdateTransmissionGroupPopulation(const tProperties& properties, float size_changes,float mc_weight) override;
         virtual void SetupIntranodeTransmission();
-        virtual ITransmissionGroups* CreateTransmissionGroups();
-        virtual ITransmissionGroups* GetTransmissionGroups() const override;
+        virtual void CreateTransmissionGroups();
         virtual void AddRoute(TransmissionRoute::Enum rRouteName);
-        virtual void BuildTransmissionRoutes( float contagionDecayRate );
+        virtual void BuildTransmissionRoutes();
 
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override;
 

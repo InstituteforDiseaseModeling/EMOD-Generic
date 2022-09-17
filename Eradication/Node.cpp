@@ -326,29 +326,37 @@ namespace Kernel
         base_samp_rate_node = GetParams()->base_sample_rate;
     }
 
-    ITransmissionGroups* Node::CreateTransmissionGroups()
+    void Node::CreateTransmissionGroups()
     {
-        return TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
-    }
+        transmissionGroups = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
+        transmissionGroups->SetTag( "contact" );
 
-    ITransmissionGroups* Node::GetTransmissionGroups() const
-    {
-        return transmissionGroups;
+        if(GetParams()->enable_environmental_route)
+        {
+            txEnvironment = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
+            txEnvironment->SetTag( "environmental" );
+            txEnvironment->UseGroupPopulationForNormalization();
+        }
     }
 
     void Node::AddRoute(TransmissionRoute::Enum tx_route)
     { 
-        routes.push_back(tx_route);
+        routes.insert(tx_route);
     }
 
-    void Node::BuildTransmissionRoutes( float contagionDecayRate )
+    void Node::BuildTransmissionRoutes()
     {
-        transmissionGroups->Build( contagionDecayRate, GetParams()->number_clades, GetTotalGenomes() );
+        transmissionGroups->Build(1.0f, GetParams()->number_clades, GetTotalGenomes() );
+
+        if(GetParams()->enable_environmental_route)
+        {
+            txEnvironment->Build(GetParams()->node_contagion_decay_fraction, GetParams()->number_clades, GetTotalGenomes());
+        }
     }
 
     void Node::SetupIntranodeTransmission()
     {
-        transmissionGroups = CreateTransmissionGroups();
+        CreateTransmissionGroups();
 
         if( IPFactory::GetInstance() && IPFactory::GetInstance()->HasIPs() && GetParams()->enable_hint ) 
         {
@@ -359,36 +367,78 @@ namespace Kernel
 
                 if ( matrix.size() > 0 )
                 {
-                    AddRoute(hint.GetRouteName());
-                    transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
-                                                     p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
-                                                     matrix );
+                    auto tx_route = hint.GetRouteName();
+                    AddRoute(tx_route);
+                    switch(tx_route)
+                    {
+                        case TransmissionRoute::CONTACT:
+                            release_assert(transmissionGroups);
+                            transmissionGroups->AddProperty( p_ip->GetKeyAsString(), p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(), matrix );
+                            break;
+
+                        case TransmissionRoute::ENVIRONMENTAL:
+                            if(!GetParams()->enable_environmental_route)
+                            {
+                                throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Route", "ENVIRONMENTAL", "Enable_Environmental_Route", "0" );
+                            }
+                            release_assert(txEnvironment);
+                            txEnvironment->AddProperty( p_ip->GetKeyAsString(), p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(), matrix );
+                            break;
+
+                        default:
+                            throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(tx_route), TransmissionRoute::pairs::lookup_key(tx_route));
+                    }
                 }
                 else if ( hint.GetRouteToMatrixMap().size() > 0 )
                 {
                     for (auto entry : hint.GetRouteToMatrixMap())
                     {
-                        AddRoute(entry.first);
+                        auto tx_route = entry.first;
                         auto& matrix = entry.second;
-                        transmissionGroups->AddProperty( p_ip->GetKeyAsString(),
-                                                         p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(),
-                                                         matrix );
+                        AddRoute(tx_route);
+                        switch(tx_route)
+                        {
+                            case TransmissionRoute::CONTACT:
+                                release_assert(transmissionGroups);
+                                transmissionGroups->AddProperty( p_ip->GetKeyAsString(), p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(), matrix );
+                                break;
+
+                            case TransmissionRoute::ENVIRONMENTAL:
+                                if(!GetParams()->enable_environmental_route)
+                                {
+                                    throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Route", "ENVIRONMENTAL", "Enable_Environmental_Route", "0" );
+                                }
+                                release_assert(txEnvironment);
+                                txEnvironment->AddProperty( p_ip->GetKeyAsString(), p_ip->GetValues<IPKeyValueContainer>().GetValuesToList(), matrix );
+                                break;
+
+                            default:
+                                throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(tx_route), TransmissionRoute::pairs::lookup_key(tx_route));
+                        }
                     }
                 }
                 else //HINT is enabled, but no transmission matrix is detected
                 {
                     // This is okay. We don't need every IP to participate in HINT.
                     AddRoute(TransmissionRoute::CONTACT);
+                    if(GetParams()->enable_environmental_route)
+                    {
+                        AddRoute(TransmissionRoute::ENVIRONMENTAL);
+                    }
                 }
             }
         }
         else //HINT is not enabled
         {
             AddRoute(TransmissionRoute::CONTACT);
+            if(GetParams()->enable_environmental_route)
+            {
+                AddRoute(TransmissionRoute::ENVIRONMENTAL);
+            }
         }
 
         event_context_host->SetupTxRoutes();
-        BuildTransmissionRoutes( 1.0f );
+        BuildTransmissionRoutes();
     }
 
     void Node::GetGroupMembershipForIndividual(TransmissionRoute::Enum route, const tProperties& properties, TransmissionGroupMembership_t& transmissionGroupMembership)
@@ -396,7 +446,13 @@ namespace Kernel
         switch(route)
         {
             case TransmissionRoute::CONTACT:
+                release_assert(transmissionGroups);
                 transmissionGroups->GetGroupMembershipForProperties(properties, transmissionGroupMembership);
+                break;
+
+            case TransmissionRoute::ENVIRONMENTAL:
+                release_assert(txEnvironment);
+                txEnvironment->GetGroupMembershipForProperties(properties, transmissionGroupMembership);
                 break;
 
             default:
@@ -414,7 +470,15 @@ namespace Kernel
             switch(route)
             {
                 case TransmissionRoute::CONTACT:
+                    release_assert(transmissionGroups);
                     contagion = transmissionGroups->GetTotalContagion();
+                    LOG_VALID_F( "contact: %f\n", contagion );
+                    break;
+
+                case TransmissionRoute::ENVIRONMENTAL:
+                    release_assert(txEnvironment);
+                    contagion = txEnvironment->GetTotalContagion();
+                    LOG_VALID_F( "environmental: %f\n", contagion );
                     break;
 
                 default:
@@ -428,7 +492,19 @@ namespace Kernel
 
     float Node::GetTotalContagion( void )
     {
-        return transmissionGroups->GetTotalContagion();
+        float tot_contagion = 0.0f;
+
+        if(transmissionGroups)
+        {
+            tot_contagion += transmissionGroups->GetTotalContagion();
+        }
+
+        if(txEnvironment)
+        {
+            tot_contagion += txEnvironment->GetTotalContagion();
+        }
+
+        return tot_contagion;
     }
 
     const RouteList_t& Node::GetTransmissionRoutes() const
@@ -441,7 +517,12 @@ namespace Kernel
         switch(route)
         {
             case TransmissionRoute::CONTACT:
+                release_assert(transmissionGroups);
                 return transmissionGroups->GetContagionByProperty( property_value );
+
+            case TransmissionRoute::ENVIRONMENTAL:
+                release_assert(txEnvironment);
+                return txEnvironment->GetContagionByProperty( property_value );
 
             default:
                 throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
@@ -467,7 +548,15 @@ namespace Kernel
 
     void Node::ChangePropertyMatrix(const string& propertyName, const ScalingMatrix_t& newScalingMatrix)
     {
-        transmissionGroups->ChangeMatrix(propertyName, newScalingMatrix);
+        if(transmissionGroups)
+        {
+            transmissionGroups->ChangeMatrix(propertyName, newScalingMatrix);
+        }
+
+        if(txEnvironment)
+        {
+            txEnvironment->ChangeMatrix(propertyName, newScalingMatrix);
+        }
     }
 
     void Node::ExposeIndividual(IInfectable* candidate, TransmissionGroupMembership_t individual, float dt, TransmissionRoute::Enum route)
@@ -480,7 +569,13 @@ namespace Kernel
         switch(route)
         {
             case TransmissionRoute::CONTACT:
+                release_assert(transmissionGroups);
                 transmissionGroups->ExposeToContagion(candidate, individual, dt, route);
+                break;
+
+            case TransmissionRoute::ENVIRONMENTAL:
+                release_assert(txEnvironment);
+                txEnvironment->ExposeToContagion(candidate, individual, dt, route);
                 break;
 
             default:
@@ -495,14 +590,20 @@ namespace Kernel
         switch(route)
         {
             case TransmissionRoute::CONTACT:
+                release_assert(transmissionGroups);
                 transmissionGroups->DepositContagion( strain_IDs, contagion_quantity, individual );
+                break;
+
+            case TransmissionRoute::ENVIRONMENTAL:
+                release_assert(txEnvironment);
+                txEnvironment->DepositContagion( strain_IDs, contagion_quantity, individual );
                 break;
 
             default:
                 throw BadEnumInSwitchStatementException(__FILE__, __LINE__, __FUNCTION__, "route", uint32_t(route), TransmissionRoute::pairs::lookup_key(route));
         }
     }
-    
+
     act_prob_vec_t Node::DiscreteGetTotalContagion( void )
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, 
@@ -831,6 +932,13 @@ namespace Kernel
         mInfectivity  *= infectivity_multiplication;
 
         transmissionGroups->EndUpdate(infectivity_multiplication, infectivity_addition, infectivity_overdispersion);
+
+        if(txEnvironment)
+        {
+            // Incorporate multiplicative infectivity
+            float env_inf_mult = event_context_host->GetInfectivityMultiplier(TransmissionRoute::ENVIRONMENTAL);
+            txEnvironment->EndUpdate(env_inf_mult);
+        }
 
         LOG_DEBUG_F("[updateInfectivity] final infectionrate = %f\n", infectionrate);
 

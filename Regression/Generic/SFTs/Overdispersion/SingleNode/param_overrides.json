@@ -2,7 +2,7 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../../demographics.json",
+                "../../Demographics/demographics.json",
                 "demographics_2groups_overlay.json",
                 "demographics_overdispersion_overlay.json"
             ],

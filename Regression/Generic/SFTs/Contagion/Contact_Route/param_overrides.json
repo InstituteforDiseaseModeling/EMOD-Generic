@@ -1,0 +1,29 @@
+{
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "../../Demographics/demographics_1000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 0.2,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
+                "Enable_Immunity": 0,
+                "Node_Contagion_Decay_Rate": 1.0
+            }
+        },
+        "INTRANODE_TRANSMISSION": {
+            "Enable_Heterogeneous_Intranode_Transmission": 0
+        },
+        "OUTPUT": {
+            "Enable_Property_Output": 0
+        },
+        "PRIMARY": {
+            "Config_Name": "Contact_Route_Contagion",
+            "Enable_Environmental_Route": 1
+        }
+    }
+}

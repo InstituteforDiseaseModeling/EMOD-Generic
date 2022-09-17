@@ -20,8 +20,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel {
 
-    typedef SpatialReport SpatialReportEnvironmental;
-    class SpatialReportTyphoid : public SpatialReportEnvironmental
+    class SpatialReportTyphoid : public SpatialReport
     {
         GET_SCHEMA_STATIC_WRAPPER(SpatialReportTyphoid)
 

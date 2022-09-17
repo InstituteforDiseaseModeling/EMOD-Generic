@@ -3,7 +3,7 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
-                "../demographics.json"
+                "../Demographics/demographics.json"
             ],
             "IMMUNITY": {
                 "Enable_Immunity": 0

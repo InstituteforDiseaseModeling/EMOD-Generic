@@ -9,12 +9,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "PropertyReportEnvironmental.h"
-//#include "IndividualTyphoid.h"
+#include "PropertyReport.h"
 
 namespace Kernel {
 
-    class PropertyReportTyphoid : public PropertyReportEnvironmental
+    class PropertyReportTyphoid : public PropertyReport
     {
         GET_SCHEMA_STATIC_WRAPPER( PropertyReportTyphoid )
     public:

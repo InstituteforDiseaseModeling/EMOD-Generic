@@ -402,9 +402,6 @@
     <ClInclude Include="SpatialReportMalaria.h">
       <Filter>Source Files\Reporting\Vector\Malaria</Filter>
     </ClInclude>
-    <ClInclude Include="ReportEnvironmental.h">
-      <Filter>Source Files\Reporting\Environmental</Filter>
-    </ClInclude>
     <ClInclude Include="ReportTyphoid.h">
       <Filter>Source Files\Reporting\Environmental\Typoid</Filter>
     </ClInclude>
@@ -1275,9 +1272,6 @@
     <ClInclude Include="ConfigParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PropertyReportEnvironmental.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RandomNumberGeneratorFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1447,9 +1441,6 @@
     </ClCompile>
     <ClCompile Include="SpatialReportMalaria.cpp">
       <Filter>Source Files\Reporting\Vector\Malaria</Filter>
-    </ClCompile>
-    <ClCompile Include="ReportEnvironmental.cpp">
-      <Filter>Source Files\Reporting\Environmental</Filter>
     </ClCompile>
     <ClCompile Include="ReportTyphoid.cpp">
       <Filter>Source Files\Reporting\Environmental\Typoid</Filter>
@@ -2194,9 +2185,6 @@
     </ClCompile>
     <ClCompile Include="SerializationParameters.cpp">
       <Filter>Source Files\Kernel</Filter>
-    </ClCompile>
-    <ClCompile Include="PropertyReportEnvironmental.cpp">
-      <Filter>Source Files\Reporting\Environmental</Filter>
     </ClCompile>
     <ClCompile Include="SqlLogger.cpp">
       <Filter>Source Files\Reporting</Filter>

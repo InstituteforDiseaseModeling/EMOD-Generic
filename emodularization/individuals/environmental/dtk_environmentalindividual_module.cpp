@@ -201,18 +201,10 @@ static Kernel::IndividualHumanEnvironmental* initInd( int sex, float age, float 
         SusceptibilityConfig                 gen_susceptibility_config_obj;
         InfectionConfig                      gen_infection_config_obj;
 
-        IndividualHumanEnvironmentalConfig   env_individual_config_obj;
-        SusceptibilityEnvironmentalConfig    env_susceptibility_config_obj;
-        InfectionEnvironmentalConfig         env_infection_config_obj;
-
         gen_config_obj.Configure( configStubJson );
         gen_individual_config_obj.Configure( configStubJson );
         gen_susceptibility_config_obj.Configure( configStubJson );
         gen_infection_config_obj.Configure( configStubJson );
-
-        env_individual_config_obj.Configure( configStubJson );
-        env_susceptibility_config_obj.Configure( configStubJson );
-        env_infection_config_obj.Configure( configStubJson );
 
         std::cout << "Initialized Statics from gi.json." << std::endl;
     }

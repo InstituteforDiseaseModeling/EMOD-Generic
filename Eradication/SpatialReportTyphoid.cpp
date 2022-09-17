@@ -40,19 +40,19 @@ SpatialReportTyphoid::CreateReport()
 }
 
 SpatialReportTyphoid::SpatialReportTyphoid()
-: SpatialReportEnvironmental()
+    : SpatialReport()
 {
 }
 
 void SpatialReportTyphoid::populateChannelInfos(tChanInfoMap &channel_infos)
 {
-    SpatialReportEnvironmental::populateChannelInfos(channel_infos);
+    SpatialReport::populateChannelInfos(channel_infos);
 }
 
 
 void SpatialReportTyphoid::LogIndividualData( IIndividualHuman * individual )
 {
-    SpatialReportEnvironmental::LogIndividualData(individual);
+    SpatialReport::LogIndividualData(individual);
 
     float monte_carlo_weight = (float)individual->GetMonteCarloWeight();
 

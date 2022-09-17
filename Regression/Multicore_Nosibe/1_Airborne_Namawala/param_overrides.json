@@ -74,7 +74,7 @@
         "PRIMARY": {
             "Config_Name": "1_Airborne_Namawala -- multicore -- Madagascar_Nosibe",
             "ENUMS": {
-                "Simulation_Type": "AIRBORNE_SIM"
+                "Simulation_Type": "GENERIC_SIM"
             },
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
@@ -82,7 +82,6 @@
             "Node_Grid_Size": 0.009,
             "Run_Number": 50,
             "Simulation_Duration": 365
-        },
-        "logLevel_NodeAirborne": "DEBUG"
+        }
     }
 }

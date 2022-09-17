@@ -13,7 +13,7 @@
         "Custom_Reports_Filename": "",
         "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
         "Demographics_Filenames": [
-            "../../demographics.json"
+            "../../Demographics/demographics.json"
         ],
         "Enable_Demographics_Reporting": 0,
         "Enable_Disease_Mortality": 0,

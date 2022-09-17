@@ -17,7 +17,6 @@ using namespace json;
 
 SETUP_LOGGING( "PropertyReportTB" )
 
-static const std::string _report_name = "PropertyReportTB.json";
 
 namespace Kernel
 {
@@ -32,7 +31,7 @@ PropertyReportTB::CreateReport()
 }
 
 PropertyReportTB::PropertyReportTB()
-    :PropertyReport( _report_name )
+    :PropertyReport( "PropertyReportTB.json" )
 {
 }
 
@@ -65,8 +64,7 @@ PropertyReportTB::LogIndividualData(
             if (individual_tb->IsTreatmentNaive() ) 
             {
                 disease_deaths_txnaive[ reportingBucket ] += monte_carlo_weight;
-            }//if (individual_tb->IsMDR() )
-            //    disease_deaths_onTreatment_MDR[ reportingBucket ] += monte_carlo_weight;
+            }
         }
     }
 
@@ -100,18 +98,9 @@ PropertyReportTB::LogIndividualData(
             }
         }
 
-//        if(individual_tb->HasPendingRelapseInfection())
-//            if (!individual_tb->IsOnTreatment())
-//                pr_infections[reportingBucket ] +=monte_carlo_weight;
-
         if (individual_tb->IsOnTreatment() ) 
         {
             onTreatment[ reportingBucket ] += monte_carlo_weight;
-        
-            /*if (individual_tb->IsTreatmentNaive() )
-                Naive_onTreatment[ reportingBucket ] =+ monte_carlo_weight;
-            else
-                Retx_onTreatment[ reportingBucket ] += monte_carlo_weight;*/
         }
 
         if (individual_tb->IsMDR() && individual_tb->HasActiveInfection()  ) 
@@ -194,24 +183,14 @@ PropertyReportTB::LogNodeData(
         active_retx_infections[reportingBucket] = 0.0f;
         Accumulate("Active Naive Symptomatic TB Infections:" + reportingBucket,            active_naive_symptomatic_infections[reportingBucket] );
         active_naive_symptomatic_infections[reportingBucket] = 0.0f;
-//        Accumulate("PR TB Infections:" + reportingBucket,            pr_infections[reportingBucket] );
-//        pr_infections[reportingBucket] = 0.0f;
         Accumulate("Active Smearpos TB Infections:" + reportingBucket, active_smearpos_infections[reportingBucket] );
         active_smearpos_infections[reportingBucket] = 0.0f;
 
         Accumulate("Disease Deaths while on tx (cumulative):" + reportingBucket,        disease_deaths_onTreatment[reportingBucket]);
         Accumulate("Disease Deaths tx naive (cumulative):" + reportingBucket,            disease_deaths_txnaive[reportingBucket]);
         Accumulate("Disease Deaths MDR (cumulative):" + reportingBucket,            disease_deaths_MDR[reportingBucket]);
-        
-//        Accumulate("Disease Deaths while on tx MDR (cumulative):" + reportingBucket,        disease_deaths_onTreatment_MDR[reportingBucket]);
-            
         Accumulate("Receiving Treatment:" + reportingBucket,        onTreatment[reportingBucket]);
         onTreatment[reportingBucket] = 0.0f;
-//        Accumulate("Receiving Treatment Naive:" + reportingBucket,        Naive_onTreatment[reportingBucket]);
-//        Naive_onTreatment[reportingBucket] = 0.0f;
-//        Accumulate("Receiving Treatment Retx:" + reportingBucket,  Retx_onTreatment[reportingBucket]);
-//        Retx_onTreatment[reportingBucket]=0.0f;
-            
         Accumulate("Active MDR TB Infections:" + reportingBucket,        MDR_active_infections[reportingBucket] );
         MDR_active_infections[reportingBucket] = 0.0f;
         Accumulate("Active MDR Naive TB Infections:" + reportingBucket,        MDR_active_naive_infections[reportingBucket] );
@@ -261,7 +240,6 @@ PropertyReportTB::postProcessAccumulatedData()
     for (const auto& entry : permutationsSet)
     {
         std::string reportingBucket = PropertiesToString( entry );
-//        normalizeChannel("Active TB Infections:"+ reportingBucket,            _pop_label + reportingBucket);
     }
 }
 

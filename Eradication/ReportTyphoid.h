@@ -9,7 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "ReportEnvironmental.h"
+#include "Report.h"
 #include "TyphoidDefs.h" // for N_TYPHOID_SEROTYPES
 #include "SimulationEnums.h" // for TyphoidVirusTypes
 #include "TransmissionGroupMembership.h"
@@ -18,7 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel {
 
-    class ReportTyphoid : public ReportEnvironmental
+    class ReportTyphoid : public Report
     {
         GET_SCHEMA_STATIC_WRAPPER(ReportTyphoid)
         public:

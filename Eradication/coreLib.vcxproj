@@ -426,7 +426,6 @@
     <ClInclude Include="PairFormationStatsImpl.h" />
     <ClInclude Include="PfaFactory.h" />
     <ClInclude Include="PropertyReport.h" />
-    <ClInclude Include="PropertyReportEnvironmental.h" />
     <ClInclude Include="PropertyReportTB.h" />
     <ClInclude Include="PropertyReportTyphoid.h" />
     <ClInclude Include="PropertyRestrictions.h" />
@@ -446,7 +445,6 @@
     <ClInclude Include="RelationshipType.h" />
     <ClInclude Include="Report.h" />
     <ClInclude Include="ReportAirborne.h" />
-    <ClInclude Include="ReportEnvironmental.h" />
     <ClInclude Include="ReportEventRecorder.h" />
     <ClInclude Include="ReportEventRecorderCoordinator.h" />
     <ClInclude Include="ReportEventRecorderNode.h" />
@@ -735,7 +733,6 @@
     <ClCompile Include="PairFormationStatsImpl.cpp" />
     <ClCompile Include="PfaFactory.cpp" />
     <ClCompile Include="PropertyReport.cpp" />
-    <ClCompile Include="PropertyReportEnvironmental.cpp" />
     <ClCompile Include="PropertyReportTB.cpp" />
     <ClCompile Include="PropertyReportTyphoid.cpp" />
     <ClCompile Include="PropertyRestrictions.cpp" />
@@ -756,7 +753,6 @@
     <ClCompile Include="RelationshipType.cpp" />
     <ClCompile Include="Report.cpp" />
     <ClCompile Include="ReportAirborne.cpp" />
-    <ClCompile Include="ReportEnvironmental.cpp" />
     <ClCompile Include="ReportEventRecorder.cpp" />
     <ClCompile Include="ReportEventRecorderCoordinator.cpp" />
     <ClCompile Include="ReportEventRecorderNode.cpp" />

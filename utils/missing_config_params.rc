@@ -53,3 +53,5 @@
 #define Enable_Nonuniform_Shedding_DESC_TEXT                      "Indicates if the time course of infectivity shedding for an infected individual should follow the probability density function of a beta distribution; uniform shedding otherwise."
 #define Shedding_Distribution_Alpha_DESC_TEXT                     "Alpha parameter for the beta distribution probability density function describing the time course of infectivity shedding by an infected individual."
 #define Shedding_Distribution_Beta_DESC_TEXT                      "Beta parameter for the beta distribution probability density function describing the time course of infectivity shedding by an infected individual."
+
+#define Enable_Environmental_Route_DESC_TEXT                      "Indicates if a transmission group for environmental contagion should be used."
