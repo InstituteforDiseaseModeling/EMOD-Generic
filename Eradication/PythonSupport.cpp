@@ -76,7 +76,7 @@ namespace Kernel
         size_t  path_len;
         char*   c_python_path;
         errno_t err_val = _dupenv_s( &c_python_path, &path_len, ENV_VAR_PYTHON );
-        if(err_val)
+        if(err_val || !c_python_path)
         {
             std::stringstream msg;
             msg << "Cannot find environmental variable " << ENV_VAR_PYTHON << ".\n";
