@@ -112,7 +112,7 @@ namespace Kernel
         IOutbreakConsumer *ioc;
         if (s_OK == parent->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
         {
-            ioc->AddImportCases(&outbreak_strain, import_age, num_imports, female_prob, mc_weight);
+            ioc->AddImportCases(&outbreak_strain, import_age, num_imports, 1.0f, female_prob, mc_weight);
         }
     }
 }

@@ -60,6 +60,7 @@ namespace Kernel
         uint64_t    genome;
         int         num_cases_per_node;
         float       import_age;
+        float       inf_prob;
         float       female_prob;
         float       mc_weight;
     };

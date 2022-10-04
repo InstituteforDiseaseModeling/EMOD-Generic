@@ -43,7 +43,7 @@ namespace Kernel
 
     struct IDMAPI IOutbreakConsumer : public ISupports
     {
-        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float female_prob, float mc_weight) = 0;
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight) = 0;
     };
 
     struct ITravelLinkedDistributionSource : ISupports

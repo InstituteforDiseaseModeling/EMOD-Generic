@@ -4,7 +4,7 @@
         "Config_Name": "Typhoid_22_NodeEnviroIntervention_SheddingProperties",
         "Demographics_Filenames": [
             "../Santiago_Demographics.json",
-            "../Santiago/IP_1_Overlay.json"
+            "../IP_1_Overlay.json"
         ],
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,

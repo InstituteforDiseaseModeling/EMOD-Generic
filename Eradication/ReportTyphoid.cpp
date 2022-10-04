@@ -31,10 +31,10 @@ GET_SCHEMA_STATIC_WRAPPER_IMPL(ReportTyphoid,ReportTyphoid)
 
 
 ReportTyphoid::ReportTyphoid()
-: recording( false )
-, parent(nullptr)
-, startYear(0.0f)
-, stopYear(0.0f)
+    : recording( false )
+    , parent(nullptr)
+    , startYear(0.0f)
+    , stopYear(0.0f)
 {
 }
 
@@ -97,8 +97,7 @@ void ReportTyphoid::EndTimestep( float currentTime, float dt )
     LOG_DEBUG_F( "recording = %d\n", recording );
 }
 
-void
-ReportTyphoid::postProcessAccumulatedData()
+void ReportTyphoid::postProcessAccumulatedData()
 {
     // Don't call into base class -- too much stuff we don't want. Just copy-paste a couple into here.
     LOG_DEBUG( "postProcessAccumulatedData\n" );
@@ -106,18 +105,12 @@ ReportTyphoid::postProcessAccumulatedData()
     //addDerivedCumulativeSummaryChannel(_new_infections_label, "Cumulative Infections");
 }
 
-void
-ReportTyphoid::populateSummaryDataUnitsMap(
-    std::map<std::string, std::string> &units_map
-)
+void ReportTyphoid::populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map )
 {
     Report::populateSummaryDataUnitsMap(units_map);
 }
 
-void
-ReportTyphoid::LogIndividualData(
-    IIndividualHuman * individual
-)
+void ReportTyphoid::LogIndividualData( IIndividualHuman * individual )
 {
     Report::LogIndividualData( individual );
     IIndividualHumanTyphoid* typhoid_individual = NULL;
@@ -146,10 +139,7 @@ ReportTyphoid::LogIndividualData(
     }
 }
 
-void
-ReportTyphoid::LogNodeData(
-    INodeContext * pNC
-)
+void ReportTyphoid::LogNodeData( INodeContext * pNC )
 {
     if( parent == nullptr )
     {

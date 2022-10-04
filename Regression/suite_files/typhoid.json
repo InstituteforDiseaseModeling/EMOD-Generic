@@ -21,11 +21,9 @@
         { "path": "Typhoid/Typhoid_19_NodeInterventionDeposit" },
         { "path": "Typhoid/Typhoid_20_NodeInterventionDose" },
         { "path": "Typhoid/Typhoid_21_NodeInterventionExposures" },
-        { "path": "Typhoid/Typhoid_22_NodeInterventionDepositProps" },
-        { "path": "Typhoid/Typhoid_23_TriggeredEventCoordinator" }
+        { "path": "Typhoid/Typhoid_22_NodeInterventionDepositProps" }
     ],
     "skipped": [
-        { "path": "Typhoid/FeatureTests/SingleIndividualIntrahost" },
-        { "path": "Typhoid/FeatureTests/SingleIndividualOutbreakSeries" }
+        { "path": "Typhoid/Typhoid_23_TriggeredEventCoordinator" }
     ]
 }

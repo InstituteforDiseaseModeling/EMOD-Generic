@@ -488,7 +488,7 @@ namespace Kernel
         sources.clear();
     }
 
-    void NodeEventContextHost::AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float female_prob, float mc_weight )
+    void NodeEventContextHost::AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight )
     {
         for (int i = 0; i < num_cases_per_node; i++)
         {
@@ -496,7 +496,10 @@ namespace Kernel
             IIndividualHuman* new_individual = node->configureAndAddNewIndividual(mc_weight, import_age, 0.0f, female_prob, 1.0f, 1.0f);
 
             // Start as infectious (incubation_period = 0)
-            new_individual->AcquireNewInfection( outbreak_strainID, TransmissionRoute::OUTBREAK, 0.0f );
+            if(GetRng()->SmartDraw(inf_prob))
+            {
+                new_individual->AcquireNewInfection( outbreak_strainID, TransmissionRoute::OUTBREAK, 0.0f );
+            }
         }
     }
 

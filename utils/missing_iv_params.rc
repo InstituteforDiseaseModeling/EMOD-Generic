@@ -10,8 +10,9 @@
 #define CIPM_Property_Name_DESC_TEXT                                  "Individual property to target for matrix replacement."
 #define CIPM_New_Matrix_DESC_TEXT                                     "New transmission matrix for specified individual property."
 
-#define Import_Female_Prob_DESC_TEXT                                  "The probability each imported case will be female."
-#define Import_Agent_MC_Weight_DESC_TEXT                              "The sampling weight of imported cases."
+#define Import_Female_Prob_DESC_TEXT                                  "Probability an imported agent will be female."
+#define Import_Agent_MC_Weight_DESC_TEXT                              "Sampling weight of imported agents."
+#define Probability_of_Infection_DESC_TEXT                            "Probability an imported agent will be infected."
 
 #define Event_Trigger_Distributed_DESC_TEXT                           "Event to be broadcast when intervention is distributed. See list of available events for possible values."
 #define Event_Trigger_Expired_DESC_TEXT                               "Event to be broadcast when intervention expires. See list of available events for possible values."

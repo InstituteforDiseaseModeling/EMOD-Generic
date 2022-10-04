@@ -38,6 +38,7 @@ namespace Kernel
         , genome(0)
         , num_cases_per_node(0)
         , import_age(0.0f)
+        , inf_prob(0.0f)
         , female_prob(0.0f)
         , mc_weight(0.0f)
     {
@@ -55,6 +56,9 @@ namespace Kernel
         initConfigTypeMap( "Import_Female_Prob",      &female_prob,       Import_Female_Prob_DESC_TEXT,         0.0f,                       1.0f,        0.5f );
         initConfigTypeMap( "Import_Agent_MC_Weight",  &mc_weight,         Import_Agent_MC_Weight_DESC_TEXT,  FLT_MIN,                    FLT_MAX,        1.0f );
 
+        initConfigTypeMap( "Probability_of_Infection", &inf_prob,         Probability_of_Infection_DESC_TEXT,   0.0f,                       1.0f,        1.0f );
+
+
         // --------------------------------------------------------------
         // --- Don't call BaseIntervention::Configure() because we don't
         // --- want to inherit those parameters.
@@ -70,7 +74,7 @@ namespace Kernel
 
         if (s_OK == context->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
         {
-            ioc->AddImportCases(&outbreak_strain, import_age, num_cases_per_node, female_prob, mc_weight);
+            ioc->AddImportCases(&outbreak_strain, import_age, num_cases_per_node, inf_prob, female_prob, mc_weight);
             wasDistributed = true;
         }
         else
