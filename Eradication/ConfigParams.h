@@ -339,6 +339,7 @@ namespace Kernel
         bool enable_termination_on_zero_total_infectivity;
 
         float net_infect_max_frac;
+        float net_infect_min_conn;
         float net_infect_min_dist;
         float sim_time_base_year;
         float sim_time_delta;

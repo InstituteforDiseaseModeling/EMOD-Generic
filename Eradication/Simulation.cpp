@@ -113,11 +113,10 @@ namespace Kernel
         , demographics_factory(nullptr)
         , m_pRngFactory( new RandomNumberGeneratorFactory() )
         , new_node_observers()
-        , node_ctxt_ptr_vec()
-        , node_info_ptr_vec()
-        , node_ctxt_info_dex()
-        , node_pop_vec()
+        , node_ctxt_vec()
+        , node_ipop_vec()
         , node_dist_mat()
+        , node_info_mat()
     {
         LOG_DEBUG( "CTOR\n" );
 
@@ -853,9 +852,9 @@ namespace Kernel
         // -----------------------------------
         // --- Network Infectivity - Calculate
         // -----------------------------------
-        float total_sim_pop = FLT_MIN;
+        float stat_pop      = FLT_MIN;
         float max_exp_frac  = GetParams()->net_infect_max_frac;
-        float min_inf_val   = 1.0e-8f;
+        float conn_min      = GetParams()->net_infect_min_conn;
 
         if(GetParams()->enable_net_infect)
         {
@@ -863,41 +862,33 @@ namespace Kernel
             float inf_mult, inf_cum;
 
             // Get current populations for nodes on this rank
-            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            for(k1 = 0; k1 < node_ctxt_vec.size(); k1++)
             {
-                node_pop_vec[k1] = node_ctxt_ptr_vec[k1]->GetStatPop();
+                node_ipop_vec[k1] = node_ctxt_vec[k1]->GetStatPop();
             }
 
             // Get current total population for nodes on all ranks
-            for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+            stat_pop = FLT_MIN;
+            for(auto node_info_ptr : nodeRankMap.GetRankMap())
             {
-                total_sim_pop += node_info_ptr_vec[k2]->GetPopulation();
+                stat_pop += node_info_ptr.second->GetPopulation();
             }
 
             // Calculate network infectivity (push fraction) for nodes on this rank
-            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            for(k1 = 0; k1 < node_ctxt_vec.size(); k1++)
             {
                 inf_cum = 0.0f;
-
-                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                for(k2 = 0; k2 < node_dist_mat[k1].size(); k2++)
                 {
-                    if(k2 == node_ctxt_info_dex[k1])
+                    inf_mult = node_dist_mat[k1][k2] * node_info_mat[k1][k2]->GetPopulation() / stat_pop;
+                    if(inf_mult > conn_min)
                     {
-                        continue;
+                        inf_cum += inf_mult;
                     }
-
-                    inf_mult = node_dist_mat[node_ctxt_info_dex[k1]][k2] * node_info_ptr_vec[k2]->GetPopulation() / total_sim_pop;
-
-                    if(inf_mult < min_inf_val)
-                    {
-                        continue;
-                    }
-
-                    inf_cum += inf_mult;
                 }
 
                 // Update push fraction within node
-                node_ctxt_ptr_vec[k1]->SetNetInfectFrac(inf_cum);
+                node_ctxt_vec[k1]->SetNetInfectFrac(inf_cum);
             }
         }
 
@@ -937,34 +928,26 @@ namespace Kernel
             float cur_inf_val, inf_mult, n_exp_frac, node_exp_mult;
 
             // Calculate network infectivity (pull fraction)
-            for(k1 = 0; k1 < node_ctxt_ptr_vec.size(); k1++)
+            for(k1 = 0; k1 < node_ctxt_vec.size(); k1++)
             {
-                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                for(k2 = 0; k2 < node_dist_mat[k1].size(); k2++)
                 {
-                    if(k2 == node_ctxt_info_dex[k1])
+                    if(node_info_mat[k1][k2]->GetNetInfRep()->size() == 0)
                     {
                         continue;
                     }
 
-                    if(node_info_ptr_vec[k2]->GetNetInfRep()->size() == 0)
-                    {
-                        continue;
-                    }
-
-                    n_exp_frac    = node_info_ptr_vec[k2]->GetNetInfectFrac();
+                    n_exp_frac    = node_info_mat[k1][k2]->GetNetInfectFrac();
                     node_exp_mult = (n_exp_frac < max_exp_frac) ? 1.0f : (max_exp_frac/n_exp_frac);
+                    inf_mult      = node_dist_mat[k1][k2] * node_exp_mult * node_ipop_vec[k1] / stat_pop;
 
-                    inf_mult = node_dist_mat[node_ctxt_info_dex[k1]][k2] * node_exp_mult * node_pop_vec[k1] / total_sim_pop;
-
-                    if(inf_mult < min_inf_val)
+                    if(inf_mult > conn_min)
                     {
-                        continue;
-                    }
-
-                    for(k3 = 0; k3 < node_info_ptr_vec[k2]->GetNetInfRep()->size(); k3++)
-                    {
-                        cur_inf_val = node_info_ptr_vec[k2]->GetNetInfRep()->GetInf(k3) * inf_mult;
-                        node_ctxt_ptr_vec[k1]->DepositNetInf(node_info_ptr_vec[k2]->GetNetInfRep()->GetId(k3), cur_inf_val);
+                        for(k3 = 0; k3 < node_info_mat[k1][k2]->GetNetInfRep()->size(); k3++)
+                        {
+                            cur_inf_val = node_info_mat[k1][k2]->GetNetInfRep()->GetInf(k3) * inf_mult;
+                            node_ctxt_vec[k1]->DepositNetInf(node_info_mat[k1][k2]->GetNetInfRep()->GetId(k3), cur_inf_val);
+                        }
                     }
                 }
             }
@@ -1068,56 +1051,59 @@ namespace Kernel
             }
 
             LOG_INFO("Initializing values for network infectivity calculations\n");
-            // Cache copy of node/nodeinfo pointers to avoid repeated map indexing
-            int k1, k2, k3;
-            float dist_fac = 0.0f;
+            int k1, k3, net_deg;
+            float dist_fac, coef_sum, push_val, pull_val, stat_pop;
+            float conn_min = GetParams()->net_infect_min_conn;
             float dist_min = GetParams()->net_infect_min_dist;
-            node_info_ptr_vec.resize(nodeRankMap.Size(), nullptr);
-            node_ctxt_ptr_vec.resize(nodes.size(),       nullptr);
-            node_ctxt_info_dex.resize(nodes.size(),           -1);
 
-            k2 = 0;
-            for(auto node_info_obj : nodeRankMap.GetRankMap())
+            node_ctxt_vec.resize(nodes.size());
+            node_ipop_vec.resize(nodes.size());
+            node_dist_mat.resize(nodes.size());
+            node_info_mat.resize(nodes.size());
+
+            stat_pop = FLT_MIN;
+            for(auto node_info_ptr : nodeRankMap.GetRankMap())
             {
-                node_info_ptr_vec[k2] = node_info_obj.second;
-                k2++;
+                stat_pop += node_info_ptr.second->GetPopulation();
             }
 
-            k1 = 0;
-            for(auto node_obj : nodes)
+            k1      = 0;
+            net_deg = 0;
+            for(auto node_ctxt_ptr : nodes)
             {
-                node_ctxt_ptr_vec[k1] = node_obj.second;
-                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
+                // Cache copy of node pointers to avoid repeated map indexing
+                node_ctxt_vec[k1] = node_ctxt_ptr.second;
+
+                for(auto node_info_ptr : nodeRankMap.GetRankMap())
                 {
-                    if(node_obj.first == node_info_ptr_vec[k2]->GetSuid())
+                    if(node_ctxt_ptr.first == node_info_ptr.first)
                     {
-                        node_ctxt_info_dex[k1] = k2;
-                        break;
+                        continue;
                     }
-                }
-                release_assert(node_ctxt_info_dex[k1] >= 0);
-                k1++;
-            }
 
-            node_pop_vec.resize(node_ctxt_ptr_vec.size());
-            node_dist_mat.resize(node_info_ptr_vec.size());
-            for(k1 = 0; k1 < node_info_ptr_vec.size(); k1++)
-            {
-                node_dist_mat[k1].resize(node_info_ptr_vec.size(),0.0f);
-                for(k2 = 0; k2 < node_info_ptr_vec.size(); k2++)
-                {
-                    dist_fac  = CalculateDistanceKm(node_info_ptr_vec[k1]->GetLongitudeDegrees(),
-                                                    node_info_ptr_vec[k1]->GetLatitudeDegrees(),
-                                                    node_info_ptr_vec[k2]->GetLongitudeDegrees(),
-                                                    node_info_ptr_vec[k2]->GetLatitudeDegrees());
-                    dist_fac  = (dist_fac > dist_min ? dist_fac : dist_min);
+                    coef_sum = 0.0f;
+                    dist_fac = CalculateDistanceKm(node_ctxt_ptr.second->GetLongitudeDegrees(), node_ctxt_ptr.second->GetLatitudeDegrees(),
+                                                   node_info_ptr.second->GetLongitudeDegrees(), node_info_ptr.second->GetLatitudeDegrees());
+                    dist_fac = (dist_fac > dist_min ? dist_fac : dist_min);
                     for(k3 = 0; k3 < GetParams()->net_infect_grav_coeff.size(); k3++)
                     {
-                        node_dist_mat[k1][k2] += GetParams()->net_infect_grav_coeff[k3] / 
-                                                 std::pow(dist_fac,GetParams()->net_infect_grav_dpow[k3]);
+                        coef_sum += GetParams()->net_infect_grav_coeff[k3] /
+                                    std::pow(dist_fac,GetParams()->net_infect_grav_dpow[k3]);
+                    }
+
+                    // Initialize sparse connections matrices
+                    push_val = coef_sum/stat_pop*node_info_ptr.second->GetPopulation();
+                    pull_val = coef_sum/stat_pop*node_ctxt_ptr.second->GetStatPop();
+                    if(push_val > conn_min || pull_val > conn_min)
+                    {
+                        node_dist_mat[k1].push_back(coef_sum);
+                        node_info_mat[k1].push_back(node_info_ptr.second);
                     }
                 }
+                net_deg += static_cast<int>(node_dist_mat[k1].size());
+                k1++;
             }
+            LOG_INFO_F("Average number of connections for node in infectivity network: %.1f\n", net_deg/(k1+FLT_MIN));
         }
 
         // We'd like to be able to run even if a processor has no nodes, but there are other issues.

@@ -37,6 +37,7 @@
 
 #define Enable_Network_Infectivity_DESC_TEXT                      "Indicates if simulation should transfer infectivity between nodes."
 #define Network_Infectivity_Max_Export_Frac_DESC_TEXT             "Maximum fraction of a node's infectivity that is exported when using network infectivity."
+#define Network_Infectivity_Min_Connection_DESC_TEXT              "Minimum threshold to exceed for creating a connection for network infectivity. Zero implies full connectivity. Use small positive values to prune unimportant connections in large networks."
 #define Network_Infectivity_Min_Distance_DESC_TEXT                "Minimum distance between nodes to use in gravity model expression for network infectivity."
 #define Network_Infectivity_Coefficient_DESC_TEXT                 "List of coefficients to use in gravity model expression for network infectivity."
 #define Network_Infectivity_Exponent_DESC_TEXT                    "List of distance exponents to use in gravity model expression for network infectivity."

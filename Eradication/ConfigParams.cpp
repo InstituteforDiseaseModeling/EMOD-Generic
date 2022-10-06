@@ -341,6 +341,7 @@ namespace Kernel
         , enable_termination_on_total_wall_time(false)
         , enable_termination_on_zero_total_infectivity(false)
         , net_infect_max_frac(0.0f)
+        , net_infect_min_conn(0.0f)
         , net_infect_min_dist(0.0f)
         , sim_time_base_year(0.0f)
         , sim_time_delta(0.0f)
@@ -916,6 +917,7 @@ namespace Kernel
         initConfigTypeMap("Base_Year",                                &sim_params.sim_time_base_year,      Base_Year_DESC_TEXT,                           MIN_YEAR,  MAX_YEAR,   2015.0f,  nullptr,  nullptr,  &dset_time01);
         initConfigTypeMap("Minimum_End_Time",                         &sim_params.sim_time_end_min,        Minimum_End_Time_DESC_TEXT,                        0.0f,   FLT_MAX,      0.0f,  nullptr,  nullptr,  &dset_abort01);
         initConfigTypeMap("Network_Infectivity_Max_Export_Frac",      &sim_params.net_infect_max_frac,     Network_Infectivity_Max_Export_Frac_DESC_TEXT,     0.0f,      1.0f,      0.5f,  nullptr,  nullptr,  &dset_netinf02);
+        initConfigTypeMap("Network_Infectivity_Min_Connection",       &sim_params.net_infect_min_conn,     Network_Infectivity_Min_Connection_DESC_TEXT,      0.0f,   FLT_MAX,      0.0f,  nullptr,  nullptr,  &dset_netinf02);
         initConfigTypeMap("Network_Infectivity_Min_Distance",         &sim_params.net_infect_min_dist,     Network_Infectivity_Min_Distance_DESC_TEXT,        0.01f,  FLT_MAX,      1.0f,  nullptr,  nullptr,  &dset_netinf02);
         initConfigTypeMap("Simulation_Duration",                      &sim_params.sim_time_total,          Simulation_Duration_DESC_TEXT,                     0.0f,   FLT_MAX,      1.0f);
         initConfigTypeMap("Simulation_Timestep",                      &sim_params.sim_time_delta,          Simulation_Timestep_DESC_TEXT,                     0.0f,   FLT_MAX,      1.0f);

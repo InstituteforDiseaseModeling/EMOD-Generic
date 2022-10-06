@@ -210,11 +210,11 @@ namespace Kernel
         NodeDemographicsFactory* demographics_factory;
         RandomNumberGeneratorFactory* m_pRngFactory;
 
-        std::vector<INodeContext*>          node_ctxt_ptr_vec;
-        std::vector<INodeInfo*>             node_info_ptr_vec;
-        std::vector<int>                    node_ctxt_info_dex;
-        std::vector<float>                  node_pop_vec;
-        std::vector<std::vector<float>>     node_dist_mat;
+        std::vector<INodeContext*>            node_ctxt_vec;
+        std::vector<float>                    node_ipop_vec;
+
+        std::vector<std::vector<float>>       node_dist_mat;
+        std::vector<std::vector<INodeInfo*>>  node_info_mat;
 
 #pragma warning( pop )
     protected:
