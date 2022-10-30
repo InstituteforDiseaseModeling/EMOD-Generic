@@ -396,7 +396,7 @@ namespace Kernel {
     }
 
     void
-    RelationshipGroups::EndUpdate(float infectivityMultiplier, float infectivityAddition, float infectivityOverdispersion)
+    RelationshipGroups::EndUpdate(float infectivityMultiplier, float infectivityOverdispersion)
     {
         LOG_DEBUG_F( "%s: shedContagion.size() = %d\n", __FUNCTION__, shedContagion.size() );
 

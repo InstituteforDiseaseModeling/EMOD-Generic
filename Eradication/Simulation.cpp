@@ -300,14 +300,6 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
         }
 
-        // Check for not-yet-implemented strain tracking features.
-        if(ap->enable_strain_tracking && np->enable_infectivity_reservoir)
-        {
-            std::ostringstream msg;
-            msg << "Enable_Strain_Tracking with Enable_Infectivity_Reservoir functionality not yet added.";
-            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
-
         if( (sp->sim_type == SimType::STI_SIM || sp->sim_type == SimType::HIV_SIM) && 
             (np->ind_sampling_type != IndSamplingType::TRACK_ALL)      &&
             (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )

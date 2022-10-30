@@ -322,19 +322,9 @@ namespace Kernel
         }
     }
 
-    void StrainAwareTransmissionGroups::EndUpdate( float infectivityMultiplier, float infectivityAddition, float infectivityOverdispersion )
+    void StrainAwareTransmissionGroups::EndUpdate( float infectivityMultiplier, float infectivityOverdispersion )
     {
         LOG_VALID_F( "(%s) Enter (%s)\n", tag.c_str(), __FUNCTION__ );
-
-        float additionalContagion = infectivityAddition;
-
-        if ( (infectivityAddition != 0.0f) &&
-             ((getGroupCount() > 1) || (cladeCount > 1) || (genomeCount > 1)) )
-        {
-            LOG_WARN_F( "StrainAwareTransmissionGroups::EndUpdate() infectivityAddition != 0 (%f actual), but one or more of # HINT groups (%d), clade count (%d), or genome count (%d) is > 1. Using 0 for additional contagion.\n",
-                        infectivityAddition, getGroupCount(), cladeCount, genomeCount );
-            additionalContagion = 0.0f;
-        }
 
         for (size_t iClade = 0; iClade < cladeCount; ++iClade)
         {
@@ -371,7 +361,6 @@ namespace Kernel
             LOG_VALID_F ( "(%s) Decay rate for route 0 = %f => decay factor = %f\n", tag.c_str(), contagionDecayRate, decayFactor );
             vectorScalarMultiply( refCurrentContagionForCladeBySourceGroup, decayFactor );
             vectorElementAdd( refCurrentContagionForCladeBySourceGroup, refNewlyDepositedContagionForCladeByGroup );
-            vectorScalarAdd( refCurrentContagionForCladeBySourceGroup, additionalContagion );
 
             // We just added this to the current contagion accumulator. Clear it out.
             size_t groupCount = getGroupCount();
@@ -439,7 +428,7 @@ namespace Kernel
                 {
                     auto genomeId    = entry.first;
                     auto contagion   = entry.second;
-                    refCurrentContagionForCladeAndSourceGroupByGenome[genomeId] += (contagion + additionalContagion);
+                    refCurrentContagionForCladeAndSourceGroupByGenome[genomeId] += contagion;
                 }
 
                 // Current contagion, per genome, (by source group) has been updated from new contagion, per genome, (by source group)

@@ -44,7 +44,7 @@ namespace Kernel
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) = 0;
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT) const = 0;
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) = 0;
-        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) = 0;
+        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityOverdispersion = 0.0f) = 0;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) = 0;
         virtual void LoadSparseRepVecs(sparse_contagion_repr& inf_rep) = 0;
 

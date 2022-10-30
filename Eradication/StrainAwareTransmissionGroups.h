@@ -95,7 +95,7 @@ namespace Kernel
         virtual void DepositContagion(const IStrainIdentity& strain, float amount, TransmissionGroupMembership_t transmissionGroupMembership) override;
         virtual void ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t transmissionGroupMembership, float deltaTee, TransmissionRoute::Enum tx_route) const override;
         virtual void CorrectInfectivityByGroup(float infectivityCorrection, TransmissionGroupMembership_t transmissionGroupMembership) override;
-        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float InfectivityAddition = 0.0f, float infectivityOverdispersion = 0.0f) override;
+        virtual void EndUpdate(float infectivityMultiplier = 1.0f, float infectivityOverdispersion = 0.0f) override;
         virtual float GetContagionByProperty( const IPKeyValue& property_value ) override;
         virtual void LoadSparseRepVecs(sparse_contagion_repr& inf_rep) override;
 

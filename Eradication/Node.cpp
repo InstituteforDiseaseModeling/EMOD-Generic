@@ -874,41 +874,40 @@ namespace Kernel
         infectionrate = mInfectivity / statPop;
         LOG_DEBUG_F("[updateInfectivity] starting infectionrate = %f\n", infectionrate);
 
-        // Incorporate multiplicative infectivity
-        float infectivity_multiplication = event_context_host->GetInfectivityMultiplier(TransmissionRoute::CONTACT);
-
-        // Constant bias
-        if(GetParams()->enable_infectivity_scaling)
-        {
-            infectivity_multiplication *= infectivity_multiplier;
-        }
-
         // Incorporate additive infectivity
-        float infectivity_addition = 0.0f;
-
-        // Constant source
         if(GetParams()->enable_infectivity_reservoir)
         {
+            float infectivity_addition = 0.0f;
+
             if( GetTime().time >= infectivity_reservoir_start_time &&
                 GetTime().time <  infectivity_reservoir_end_time     )
             {
                 infectivity_addition += infectivity_reservoir_size * dt;
             }
+
+            // Current random number generation (Jun2021) only has precision at 2^-23
+            float delta_infectionrate = infectivity_addition/statPop;
+            #define MINIMUM_INFECTIVITY_ADD (1.0e-6f)
+            if(delta_infectionrate > MINIMUM_INFECTIVITY_ADD)
+            {
+                mInfectivity  += infectivity_addition;
+                infectionrate += delta_infectionrate;
+            }
+            else if(GetRng()->SmartDraw(delta_infectionrate/MINIMUM_INFECTIVITY_ADD))
+            {
+                infectivity_addition = MINIMUM_INFECTIVITY_ADD*statPop;
+                mInfectivity  += infectivity_addition;
+                infectionrate += MINIMUM_INFECTIVITY_ADD;
+            }
+
+            transmissionGroups->DepositContagion(StrainIdentity(0,0), infectivity_addition, TransmissionGroupMembership_t(0));
         }
 
-        // Current random number generation (Jun2021) only has precision at 2^-23
-        float delta_infectionrate = infectivity_addition/statPop;
-        #define MINIMUM_INFECTIVITY_ADD (1.0e-6f)
-        if(delta_infectionrate > MINIMUM_INFECTIVITY_ADD)
+        // Incorporate multiplicative infectivity
+        float infectivity_multiplication = event_context_host->GetInfectivityMultiplier(TransmissionRoute::CONTACT);
+        if(GetParams()->enable_infectivity_scaling)
         {
-            mInfectivity  += infectivity_addition;
-            infectionrate += delta_infectionrate;
-        }
-        else if(GetRng()->SmartDraw(delta_infectionrate/MINIMUM_INFECTIVITY_ADD))
-        {
-            infectivity_addition = MINIMUM_INFECTIVITY_ADD*statPop;
-            mInfectivity  += infectivity_addition;
-            infectionrate += MINIMUM_INFECTIVITY_ADD;
+            infectivity_multiplication *= infectivity_multiplier;
         }
 
         // Resolve network infectivity
@@ -931,7 +930,7 @@ namespace Kernel
         infectionrate *= infectivity_multiplication;
         mInfectivity  *= infectivity_multiplication;
 
-        transmissionGroups->EndUpdate(infectivity_multiplication, infectivity_addition, infectivity_overdispersion);
+        transmissionGroups->EndUpdate(infectivity_multiplication, infectivity_overdispersion);
 
         if(txEnvironment)
         {
