@@ -36,6 +36,7 @@ namespace Kernel
     struct INodeContext;
     struct IMigrationInfoFactory;
     struct IIndividualHumanInterventionsContext;
+    struct IIndividualHumanSTI;
     class  Infection;
     class  InterventionsContainer;
     struct ISusceptibilityContext;
@@ -100,11 +101,11 @@ namespace Kernel
         virtual suids::suid GetNextInfectionSuid() override;
         virtual RANDOMBASE* GetRng() override;
 
-        virtual IIndividualHumanInterventionsContext* GetInterventionsContext() const override;
-        virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection) override;
-        virtual IVaccineConsumer*                     GetVaccineContext() const;
-        virtual IIndividualHumanEventContext*         GetEventContext() override;
-        virtual ISusceptibilityContext*               GetSusceptibilityContext() const override;
+        virtual IIndividualHumanInterventionsContext* GetInterventionsContext()                                  const   override;
+        virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection)          override;
+        virtual IVaccineConsumer*                     GetVaccineContext()                                        const   override;
+        virtual IIndividualHumanEventContext*         GetEventContext()                                                  override;
+        virtual ISusceptibilityContext*               GetSusceptibilityContext()                                 const   override;
 
         // IIndividualHumanEventContext methods
         virtual bool              IsPregnant()                     const override { return is_pregnant; };
@@ -121,8 +122,11 @@ namespace Kernel
         virtual void              BroadcastDeath()                       override;
         virtual void              Die( HumanStateChange )                override;
 
-        virtual INodeEventContext   * GetNodeEventContext() override; // for campaign cost reporting in e.g. HealthSeekingBehavior
-        virtual IPKeyValueContainer* GetProperties() override;
+        virtual IIndividualHuman*    GetIndividual()                     override;
+        virtual IIndividualHumanSTI* GetIndividualSTI()                  override { return nullptr; }
+        virtual INodeEventContext*   GetNodeEventContext()               override; // for campaign cost reporting in e.g. HealthSeekingBehavior
+        virtual IPKeyValueContainer* GetProperties()                     override;
+
         virtual const std::string& GetPropertyReportString() const override { return m_PropertyReportString; }
         virtual void SetPropertyReportString( const std::string& str ) override { m_PropertyReportString = str; }
         virtual bool AtHome() const override;

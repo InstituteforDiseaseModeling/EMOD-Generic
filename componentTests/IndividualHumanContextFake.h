@@ -121,6 +121,11 @@ public:
         return m_pInterventionsContext ;
     }
 
+    virtual IIndividualHuman* GetIndividual() override
+    {
+        return static_cast<IIndividualHuman*>(this);
+    }
+
     virtual IIndividualHumanEventContext* GetEventContext() override
     {
         return static_cast<IIndividualHumanEventContext*>(this) ;
@@ -151,6 +156,11 @@ public:
     virtual IVaccineConsumer* GetVaccineContext()              const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection)       override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
+    virtual IIndividualHumanSTI* GetIndividualSTI() override
+    {
+        return static_cast<IIndividualHumanSTI*>(this);
+    }
 
     virtual const std::string& GetPropertyReportString() const     override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void SetPropertyReportString( const std::string& str ) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }

@@ -12,7 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Exceptions.h"
 #include "InterventionFactory.h"
-#include "NodeEventContext.h"  // for IOutbreakConsumer methods
+#include "NodeEventContext.h"
 #include "StrainIdentity.h"
 #include "ISimulationContext.h"
 #include "RANDOM.h"
@@ -23,7 +23,6 @@ namespace Kernel
 {
     BEGIN_QUERY_INTERFACE_BODY(Outbreak)
         HANDLE_INTERFACE(IConfigurable)
-        //HANDLE_INTERFACE(IDistributableIntervention)
         HANDLE_INTERFACE(IBaseIntervention)
         HANDLE_INTERFACE(INodeDistributableIntervention)
         HANDLE_INTERFACE(IOutbreak)
@@ -66,28 +65,20 @@ namespace Kernel
         return JsonConfigurable::Configure( inputJson );;
     }
 
-    bool Outbreak::Distribute(INodeEventContext *context, IEventCoordinator2* pEC)
+    bool Outbreak::Distribute(INodeEventContext* p_nec, IEventCoordinator2* pEC)
     {
         bool wasDistributed = false;
-        const StrainIdentity outbreak_strain(clade,genome);
-        IOutbreakConsumer *ioc;
 
-        if (s_OK == context->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
-        {
-            ioc->AddImportCases(&outbreak_strain, import_age, num_cases_per_node, inf_prob, female_prob, mc_weight);
-            wasDistributed = true;
-        }
-        else
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IOutbreakConsumer", "INodeEventContext" );
-        }
+        const StrainIdentity outbreak_strain(clade,genome);
+        p_nec->AddImportCases(&outbreak_strain, import_age, num_cases_per_node, inf_prob, female_prob, mc_weight);
+        wasDistributed = true;
 
         return wasDistributed;
     }
 
     void Outbreak::Update( float dt )
     {
-        LOG_WARN("updating outbreak (?!?)\n");
         // Distribute() doesn't call GiveIntervention() for this intervention, so it isn't added to the NodeEventContext's list of NDI
+        release_assert(false);
     }
 }

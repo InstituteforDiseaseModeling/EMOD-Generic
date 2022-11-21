@@ -53,6 +53,11 @@ public:
         return m_Parent ;
     }
 
+    IInterventionConsumer* GetInterventionConsumer()
+    {
+        return static_cast<IInterventionConsumer*>(this);
+    }
+
     virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string &type_name)
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
@@ -61,11 +66,6 @@ public:
     virtual std::list<IDistributableIntervention*> GetInterventionsByName(const std::string &intervention_name)
     { 
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
-
-    virtual std::list<void*> GetInterventionsByInterface( iid_t iid )
-    { 
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); 
     }
 
     virtual void PurgeExisting( const std::string &iv_name )
@@ -83,6 +83,16 @@ public:
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
 
+    virtual bool ContainsExistingByName( const std::string &name )
+    {
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." );
+    }
+
+    virtual std::list<IDrug*> GetDrugInterventions()
+    { 
+        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); 
+    }
+
     virtual void ChangeProperty( const char *property, const char* new_value ) override
     {
         if( m_Parent != nullptr )
@@ -90,11 +100,6 @@ public:
             IPKeyValue kv( property, new_value );
             m_Parent->GetEventContext()->GetProperties()->Set( kv );
         }
-    }
-
-    virtual bool ContainsExistingByName( const std::string &name )
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented." );
     }
 
     virtual void CheckSTINetworkParams(const char *prop = nullptr, const char* new_value = nullptr) {}

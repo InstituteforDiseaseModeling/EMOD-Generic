@@ -35,17 +35,6 @@ namespace Kernel
     class RANDOMBASE;
     struct IdmDateTime;
 
-    /* possible TODO: could differentiate these in the future to provide extra information related to the travel
-    struct IIndividualHumanTravelLinkedDistributionContext : public IIndividualHumanEventContext
-    {
-
-    };*/
-
-    struct IDMAPI IOutbreakConsumer : public ISupports
-    {
-        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight) = 0;
-    };
-
     struct ITravelLinkedDistributionSource : ISupports
     {
         virtual void ProcessDeparting(IIndividualHumanEventContext *dc) = 0;
@@ -87,6 +76,8 @@ namespace Kernel
         virtual bool ContainsExisting( const std::string& iv_name ) = 0;
         virtual bool ContainsExistingByName( const std::string& iv_name ) = 0;
 
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight) = 0;
+
         virtual bool IsInPolygon(float* vertex_coords, int numcoords) = 0;
         virtual bool IsInPolygon( const json::Array &poly ) = 0;
         virtual bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist ) = 0;
@@ -96,6 +87,8 @@ namespace Kernel
         virtual int GetIndividualHumanCount() const = 0;
         virtual ExternalNodeId_t GetExternalId() const = 0;
 
+        virtual INodeInterventionConsumer*   GetNodeInterventionConsumer()   = 0;
+        virtual ICampaignCostObserver*       GetCampaignCostObserver()       = 0;
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() = 0;
 
         virtual void  IncrementCampaignCost(float cost)                          = 0;

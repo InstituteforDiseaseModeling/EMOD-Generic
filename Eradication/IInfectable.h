@@ -12,12 +12,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISupports.h"
 #include "SimulationEnums.h"
 #include "IContagionPopulation.h"
-#include <list>
 #include "IInfection.h"
 
 namespace Kernel
 {
-    class Infection;
+    struct IIndividualHuman;
 
     struct IInfectable : ISupports
     {
@@ -25,10 +24,10 @@ namespace Kernel
         virtual const infection_list_t& GetInfections() const = 0;
         virtual float GetInterventionReducedAcquire() const = 0;
 
+        virtual IIndividualHuman* GetIndividual() = 0;
+
         virtual ~IInfectable() {}
     };
-
-    class StrainIdentity;
 
     struct IInfectionAcquirable : ISupports
     {

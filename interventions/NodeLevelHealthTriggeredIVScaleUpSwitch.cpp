@@ -90,22 +90,12 @@ namespace Kernel
         return current_demographic_coverage;
     }
 
-    void NodeLevelHealthTriggeredIVScaleUpSwitch::onDisqualifiedByCoverage(
-                IIndividualHumanEventContext *pIndiv
-    )
+    void NodeLevelHealthTriggeredIVScaleUpSwitch::onDisqualifiedByCoverage(IIndividualHumanEventContext *pIndiv)
     {
         //if qualify by everything except demographic coverage, give the not_covered_individualintervention_config 
         // this intervention is the one phased out as the actual_individualintervention_config is phased in
         // if the not_covered_individualintervention_config is NULL, then there is no intervention to phase out
         LOG_DEBUG("The person qualified by everything except demographic coverage, give the not_covered_individualintervention_config \n");
-
-
-        // Query for campaign cost observer interface from INodeEventContext *parent
-        ICampaignCostObserver *iCCO;
-        if (s_OK != parent->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&iCCO))
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "ICampaignCostObserver", "INodeEventContext" );
-        }
 
         const json::Array & interventions_array = json::QuickInterpreter(not_covered_intervention_configs._json).As<json::Array>();
         LOG_DEBUG_F("not_covered_intervention_configs array size = %d\n", interventions_array.Size());
@@ -131,12 +121,10 @@ namespace Kernel
 
                 if( di )
                 {
-                    di->Distribute( pIndiv->GetInterventionsContext(), iCCO );
+                    di->Distribute( pIndiv->GetInterventionsContext(), parent->GetCampaignCostObserver() );
                     LOG_DEBUG("A Node level health-triggered intervention was successfully distributed, gave the not_covered_intervention_configs\n");
-                    // It's not at all clear to me that we would incur cost at this point, but we could.
-                    //iCCO->notifyCampaignExpenseIncurred( interventionCost, pIndiv );
                 }
             }
-         }       
+        }
     }
 }

@@ -71,8 +71,6 @@ namespace Kernel
             foundInterface = static_cast<INodeEventContext*>(this);
         else if (iid == GET_IID(INodeInterventionConsumer))
             foundInterface = static_cast<INodeInterventionConsumer*>(this);
-        else if (iid == GET_IID(IOutbreakConsumer))
-            foundInterface = static_cast<IOutbreakConsumer*>(this);
         else if (iid == GET_IID(ICampaignCostObserver))
             foundInterface = static_cast<ICampaignCostObserver*>(this);
         else if (iid == GET_IID( IIndividualEventBroadcaster ))
@@ -546,9 +544,19 @@ namespace Kernel
         return nodeId;
     }
 
+    INodeInterventionConsumer* NodeEventContextHost::GetNodeInterventionConsumer()
+    {
+        return static_cast<INodeInterventionConsumer*>(this);
+    }
+
+    ICampaignCostObserver* NodeEventContextHost::GetCampaignCostObserver()
+    {
+        return static_cast<ICampaignCostObserver*>(this);
+    }
+
     IIndividualEventBroadcaster* NodeEventContextHost::GetIndividualEventBroadcaster()
     {
-        return this;
+        return static_cast<IIndividualEventBroadcaster*>(this);
     }
 
     float NodeEventContextHost::GetBirthRateMultiplier() const

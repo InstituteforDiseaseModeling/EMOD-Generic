@@ -2007,7 +2007,10 @@ namespace Kernel
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );
     }
 
-    const SimulationConfig* VectorPopulation::params()  const { return GET_CONFIGURABLE(SimulationConfig); }
+    const SimulationConfig* VectorPopulation::params() const
+    {
+        return GET_CONFIGURABLE(SimulationConfig);
+    }
 
     const infection_list_t& VectorPopulation::GetInfections() const
     {
@@ -2019,12 +2022,16 @@ namespace Kernel
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );
     }
 
+    IIndividualHuman* VectorPopulation::GetIndividual()
+    {
+        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );
+    }
+
     REGISTER_SERIALIZABLE(VectorPopulation);
 
     void VectorPopulation::serialize(IArchive& ar, VectorPopulation* obj)
     {
         VectorPopulation& population = *obj;
-//        ar.labelElement("m_larval_habitats") & population.m_larval_habitats;  // NodeVector owns this information.
         ar.labelElement("m_larval_capacities"); Kernel::serialize(ar, population.m_larval_capacities);
         ar.labelElement("neweggs") & population.neweggs;
         ar.labelElement("adult") & population.adult;
@@ -2055,14 +2062,7 @@ namespace Kernel
         ar.labelElement("InfectedQueues") & population.InfectedQueues;
         ar.labelElement("InfectiousQueues") & population.InfectiousQueues;
         ar.labelElement("MaleQueues") & population.MaleQueues;
-        // Species parameters and probabilities will be set in SetContextTo()
-        // ar.labelElement("m_species_params"); VectorSpeciesParameters::serialize(ar, const_cast<VectorSpeciesParameters*&>(population.m_species_params));
-        // ar.labelElement("m_probabilities"); VectorProbabilities::serialize(ar, population.m_probabilities);
         ar.labelElement("m_VectorMortality") & population.m_VectorMortality;
-
-        // do not need to serialize these since they are updated each time step before they are used
-        //m_LocalMortalityProbabilityTable()
-        //m_DefaultLocalMortalityProbability( 1.0 )
     }
 
     void serialize(IArchive& ar, std::pair<float, float>& pair)

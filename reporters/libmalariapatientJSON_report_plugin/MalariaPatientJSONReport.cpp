@@ -239,7 +239,7 @@ void MalariaPatientJSONReport::LogIndividualData( IIndividualHuman* individual )
     patient->gametocyte_pos_fields_of_view.push_back(float(gam_pos_fields));
 
     // New drugs
-    std::list<void*> drug_list = individual->GetInterventionsContext()->GetInterventionsByInterface( GET_IID(IDrug) );
+    std::list<IDrug*> drug_list = individual->GetInterventionsContext()->GetDrugInterventions();
     LOG_DEBUG_F( "Drug doses distributed = %d\n", drug_list.size() );
 
     int new_drugs = drug_list.size() - patient->n_drug_treatments;
@@ -248,7 +248,7 @@ void MalariaPatientJSONReport::LogIndividualData( IIndividualHuman* individual )
 
     while(new_drugs > 0)
     {
-        IDrug* p_drug = static_cast<IDrug*>(drug_list.back());
+        IDrug* p_drug = drug_list.back();
         new_drug_names += p_drug->GetDrugName();
         drug_list.pop_back();
         new_drugs--;

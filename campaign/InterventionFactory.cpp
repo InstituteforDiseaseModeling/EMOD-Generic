@@ -223,11 +223,13 @@ namespace Kernel
         return m_UseDefaults;
     }
 
-    void InterventionFactory::ModifySchema( json::QuickBuilder& rSchema, ISupports*pObject )
+    void InterventionFactory::ModifySchema( json::QuickBuilder& rSchema, ISupports* pObject )
     {
         std::string type_string;
+
         IDistributableIntervention* p_intervention_individual = nullptr;
         INodeDistributableIntervention* p_intervention_node = nullptr;
+
         if( pObject->QueryInterface( GET_IID(IDistributableIntervention), (void**)&p_intervention_individual ) == s_OK )
         {
             type_string = "IndividualTargeted";
@@ -241,6 +243,7 @@ namespace Kernel
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                  "Intervention class is not 'IDistributableIntervention' or 'INodeDistributableIntervention'." );
         }
+
         rSchema[std::string("iv_type")] = json::String(type_string);
     }
 }

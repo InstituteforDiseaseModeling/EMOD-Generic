@@ -122,8 +122,7 @@ namespace Kernel
         return ret ;
     }
 
-    bool
-    BaseIntervention::Expired()
+    bool BaseIntervention::Expired()
     {
         return expired;
     }
@@ -141,7 +140,7 @@ namespace Kernel
         }
     }
 
-    bool BaseIntervention::Distribute( IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pICCO )
+    bool BaseIntervention::Distribute( IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pICCO )
     {
         if( dont_allow_duplicates && context->ContainsExistingByName(name) )
         {
@@ -161,31 +160,22 @@ namespace Kernel
         }
 
         bool wasDistributed=false;
-        IInterventionConsumer * ic;
-        if (s_OK == (context->QueryInterface(GET_IID(IInterventionConsumer), (void**)&ic) ) )
+
+        if( context->GetInterventionConsumer()->GiveIntervention(this) )
         {
-            assert(ic);
-            if( ic->GiveIntervention(this) )
+            // Need to get Individual pointer from interventions container pointer. Try parent.
+            IIndividualHumanEventContext * pIndiv = (context->GetParent())->GetEventContext();
+            if( pICCO )
             {
-                // Need to get Individual pointer from interventions container pointer. Try parent.
-                IIndividualHumanEventContext * pIndiv = (context->GetParent())->GetEventContext();
-                if( pICCO )
-                {
-                    pICCO->notifyCampaignExpenseIncurred( cost_per_unit, pIndiv );
-                }
-                wasDistributed = true;
-                if(event_trigger_distributed != EventTrigger::NoTrigger)
-                {
-                    pIndiv->GetNodeEventContext()->GetIndividualEventBroadcaster()->TriggerObservers(pIndiv, event_trigger_distributed);
-                }
+                pICCO->notifyCampaignExpenseIncurred( cost_per_unit, pIndiv );
             }
-        } 
-        else
-        {
-            std::ostringstream oss;
-            oss << "Unable to distribute intervention because IIndividualHumanInterventionsContext doesn't support IInterventionConsumer." << std::endl;
-            throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, oss.str().c_str() );
+            wasDistributed = true;
+            if(event_trigger_distributed != EventTrigger::NoTrigger)
+            {
+                pIndiv->GetNodeEventContext()->GetIndividualEventBroadcaster()->TriggerObservers(pIndiv, event_trigger_distributed);
+            }
         }
+
         return wasDistributed;
     }
 
@@ -337,8 +327,7 @@ namespace Kernel
         return ret ;
     }
 
-    bool
-    BaseNodeIntervention::Expired()
+    bool BaseNodeIntervention::Expired()
     {
         return expired;
     }
@@ -372,22 +361,13 @@ namespace Kernel
         }
 
         bool wasDistributed=false;
-        INodeInterventionConsumer * ic;
-        if (s_OK == (context->QueryInterface(GET_IID(INodeInterventionConsumer), (void**)&ic) ) )
+
+        if( context->GetNodeInterventionConsumer()->GiveIntervention(this) )
         {
-            assert(ic);
-            if( ic->GiveIntervention(this) )
-            {
-                wasDistributed = true;
-                context->IncrementCampaignCost(cost_per_unit);
-            }
-        } 
-        else
-        {
-            std::ostringstream oss;
-            oss << "Unable to distribute intervention because INodeEventContext doesn't support INodeInterventionConsumer." << std::endl;
-            throw IllegalOperationException(  __FILE__, __LINE__, __FUNCTION__, oss.str().c_str() );
+            wasDistributed = true;
+            context->IncrementCampaignCost(cost_per_unit);
         }
+
         return wasDistributed;
     }
 

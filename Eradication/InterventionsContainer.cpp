@@ -92,7 +92,6 @@ namespace Kernel
             std::string cur_iv_type_name = typeid( *intervention ).name();
             if( cur_iv_type_name == type_name )
             {
-                LOG_DEBUG("Found one...\n");
                 interventions_of_type.push_back( intervention );
             }
         }
@@ -113,21 +112,6 @@ namespace Kernel
         }
 
         return interventions_list;
-    }
-
-    std::list<void*> InterventionsContainer::GetInterventionsByInterface( iid_t iid )
-    {
-        std::list<void*> interface_list;
-        for (auto intervention : interventions)
-        {
-            void* p_interface = nullptr;
-            if ( s_OK == intervention->QueryInterface( iid, (void**)&p_interface) )
-            {
-                interface_list.push_back( p_interface );
-            }
-        }
-
-        return interface_list;
     }
 
     void InterventionsContainer::PurgeExisting( const std::string& iv_name )
@@ -176,6 +160,21 @@ namespace Kernel
             }
         }
         return false;
+    }
+
+    std::list<IDrug*> InterventionsContainer::GetDrugInterventions()
+    {
+        std::list<IDrug*> drug_list;
+        for (auto intervention : interventions)
+        {
+            IDrug* p_drug = intervention->GetDrug();
+            if ( p_drug )
+            {
+                drug_list.push_back(p_drug);
+            }
+        }
+
+        return drug_list;
     }
 
     void InterventionsContainer::PreInfectivityUpdate( float dt )
@@ -401,10 +400,7 @@ namespace Kernel
         }
     }
 
-    void
-    InterventionsContainer::SetContextTo(
-        IIndividualHumanContext* context
-    )
+    void InterventionsContainer::SetContextTo(IIndividualHumanContext* context)
     {
         parent = context;
         if (parent)
@@ -413,15 +409,30 @@ namespace Kernel
         }
     }
 
-    IIndividualHumanContext*
-    InterventionsContainer::GetParent()
+    IIndividualHumanContext* InterventionsContainer::GetParent()
     {
         return parent;
     }
 
-    float InterventionsContainer::GetInterventionReducedAcquire()   const { return drugVaccineReducedAcquire;   }
-    float InterventionsContainer::GetInterventionReducedTransmit()  const { return drugVaccineReducedTransmit;  }
-    float InterventionsContainer::GetInterventionReducedMortality() const { return drugVaccineReducedMortality; }
+    IInterventionConsumer* InterventionsContainer::GetInterventionConsumer()
+    {
+        return static_cast<IInterventionConsumer*>(this);
+    }
+
+    float InterventionsContainer::GetInterventionReducedAcquire() const
+    {
+        return drugVaccineReducedAcquire;
+    }
+
+    float InterventionsContainer::GetInterventionReducedTransmit() const
+    { 
+        return drugVaccineReducedTransmit;
+    }
+
+    float InterventionsContainer::GetInterventionReducedMortality() const
+    {
+        return drugVaccineReducedMortality; 
+    }
 
     REGISTER_SERIALIZABLE(InterventionsContainer);
 

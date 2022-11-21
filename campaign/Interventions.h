@@ -28,6 +28,12 @@ namespace Kernel
 {
     struct IIndividualHumanContext;
     struct IIndividualHumanEventContext;
+    struct IIndividualHumanInterventionsContext;
+    struct IInterventionConsumer;
+    struct IDrug;
+    struct IHealthSeekingBehavior;
+    struct INodeEventContext;
+    struct IEventCoordinator2;
 
     struct IDMAPI ICampaignCostObserver : ISupports
     {
@@ -35,8 +41,6 @@ namespace Kernel
         virtual void notifyCampaignEventOccurred( /*const*/ ISupports * pDistributedIntervention, /*const*/ ISupports * pDistributor, /*const*/ IIndividualHumanContext * pDistributeeIndividual ) = 0;
         virtual ~ICampaignCostObserver() {}
     };
-
-    struct IIndividualHumanInterventionsContext;
 
 #pragma warning(push)
 #pragma warning(disable: 4251) // See IdmApi.h for details
@@ -55,6 +59,9 @@ namespace Kernel
         virtual bool NeedsInfectiousLoopUpdate() const = 0;
         virtual bool NeedsPreInfectivityUpdate() const = 0;
 
+        virtual IDrug*                     GetDrug()             = 0;
+        virtual IHealthSeekingBehavior*    GetHSB()              = 0;
+
         virtual ~IDistributableIntervention() { }
     };
 #pragma warning(pop)
@@ -66,18 +73,19 @@ namespace Kernel
         virtual IIndividualHumanContext* GetParent() = 0;
         virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string &type_name) = 0;
         virtual std::list<IDistributableIntervention*> GetInterventionsByName(const std::string &intervention_name) = 0;
-        virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) = 0;
         virtual void PurgeExisting( const std::string &iv_name ) = 0;
         virtual void PurgeExistingByName( const std::string &iv_name ) = 0;
         virtual bool ContainsExisting( const std::string &iv_name ) = 0;
         virtual bool ContainsExistingByName( const std::string &name ) = 0;
+
+        virtual std::list<IDrug*> GetDrugInterventions() = 0;
+
         virtual void ChangeProperty( const char *property, const char* new_value ) = 0;
+
+        virtual IInterventionConsumer* GetInterventionConsumer() = 0;
 
         virtual ~IIndividualHumanInterventionsContext() {}
     };
-
-    struct INodeEventContext;
-    struct IEventCoordinator2;
 
     struct IDMAPI INodeDistributableIntervention : ISupports
     {
@@ -110,8 +118,6 @@ namespace Kernel
         virtual float GetCostPerUnit() const = 0;
     };
 
-    struct IIndividualHumanEventContext;
-
     // TODO - BaseInterventions looks concrete, but can't be instantiated. :(
     struct IDMAPI BaseIntervention : IDistributableIntervention, IBaseIntervention, JsonConfigurable
     {
@@ -125,6 +131,9 @@ namespace Kernel
         virtual void OnExpiration() override;
         virtual bool NeedsInfectiousLoopUpdate() const { return false; }
         virtual bool NeedsPreInfectivityUpdate() const { return false; }
+
+        virtual IDrug*                     GetDrug()       override     { return nullptr; }
+        virtual IHealthSeekingBehavior*    GetHSB()        override     { return nullptr; }
 
     protected:
         BaseIntervention();
@@ -151,7 +160,7 @@ namespace Kernel
         EventTrigger::Enum event_trigger_expired;
     };
 
-    struct BaseNodeIntervention : IBaseIntervention, JsonConfigurable, INodeDistributableIntervention
+    struct BaseNodeIntervention : INodeDistributableIntervention, IBaseIntervention, JsonConfigurable
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
@@ -163,7 +172,6 @@ namespace Kernel
         virtual void SetExpired( bool isExpired ) override;
         virtual void OnExpiration() override;
         virtual void SetContextTo( INodeEventContext *context ) override;
-
 
     protected:
         BaseNodeIntervention();

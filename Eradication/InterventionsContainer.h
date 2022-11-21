@@ -15,9 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    // this container becomes a help implementation member of the relevant IndividualHuman class 
-    // it needs to implement consumer interfaces for all the relevant intervention types
-    // InterventionsContainer is a generic 
+    struct IDrug;
 
     struct IVaccineConsumer : public ISupports
     {
@@ -45,12 +43,16 @@ namespace Kernel
         virtual IIndividualHumanContext* GetParent() override;
         virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string& type_name) override;
         virtual std::list<IDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) override;
-        virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) override;
         virtual void PurgeExisting( const std::string& iv_name ) override;
         virtual void PurgeExistingByName( const std::string& iv_name ) override;
         virtual bool ContainsExisting( const std::string& iv_name ) override;
         virtual bool ContainsExistingByName( const std::string &iv_name ) override;
+
+        virtual std::list<IDrug*> GetDrugInterventions() override;
+
         virtual void ChangeProperty( const char *property, const char* new_value ) override;
+
+        virtual IInterventionConsumer* GetInterventionConsumer() override;
 
         // IUnknown
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;

@@ -79,6 +79,8 @@ namespace Kernel
 
         virtual suids::suid GetSuid() const override { return IndividualHuman::GetSuid(); }
         virtual bool IsInfected() const override { return IndividualHuman::IsInfected(); }
+        virtual IIndividualHumanEventContext*      GetEventContext()   override { return IndividualHuman::GetEventContext(); }
+        virtual IIndividualHumanSTI*               GetIndividualSTI()  override;
         virtual suids::suid GetNodeSuid() const override;
         virtual const IPKeyValueContainer& GetPropertiesConst() const override;
 

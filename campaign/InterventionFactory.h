@@ -54,7 +54,7 @@ namespace Kernel
         template<class IObject, class Factory> friend class Kernel::ObjectFactory;
 
         InterventionFactory();
-        virtual void ModifySchema( json::QuickBuilder& rSchema, ISupports*pObject );
+        virtual void ModifySchema( json::QuickBuilder& rSchema, ISupports* pObject ) override;
 
         bool m_UseDefaults;
     };

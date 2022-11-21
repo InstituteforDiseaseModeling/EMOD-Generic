@@ -1105,9 +1105,20 @@ namespace Kernel
         return AgentConfig::GetAgentParams();
     }
 
-    suids::suid IndividualHuman::GetSuid() const         { return suid; }
-    suids::suid IndividualHuman::GetNextInfectionSuid()  { return parent->GetNextInfectionSuid(); }
-    RANDOMBASE* IndividualHuman::GetRng()              { return parent->GetRng(); }
+    suids::suid IndividualHuman::GetSuid() const
+    {
+        return suid;
+    }
+
+    suids::suid IndividualHuman::GetNextInfectionSuid()
+    {
+        return parent->GetNextInfectionSuid();
+    }
+
+    RANDOMBASE* IndividualHuman::GetRng()
+    {
+        return parent->GetRng();
+    }
 
     IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContext() const
     {
@@ -1123,6 +1134,11 @@ namespace Kernel
     {
         //Note can also throw exception here since it's not using the infection to find the intervention
         return static_cast<IIndividualHumanInterventionsContext*>(interventions); 
+    }
+
+    IIndividualHuman* IndividualHuman::GetIndividual()
+    {
+        return static_cast<IIndividualHuman*>(this);
     }
 
     IIndividualHumanEventContext* IndividualHuman::GetEventContext()
@@ -1200,13 +1216,16 @@ namespace Kernel
         }
     }
 
-    INodeEventContext * IndividualHuman::GetNodeEventContext()
+    INodeEventContext* IndividualHuman::GetNodeEventContext()
     {
         release_assert( GetParent() );
         return GetParent()->GetEventContext();
     }
 
-    IIndividualHumanContext* IndividualHuman::GetContextPointer() { return this; }
+    IIndividualHumanContext* IndividualHuman::GetContextPointer()
+    {
+        return this;
+    }
 
     INodeContext* IndividualHuman::GetParent() const
     {
@@ -1218,7 +1237,6 @@ namespace Kernel
         return parent->GetSuid();
     }
 
-
     IPKeyValueContainer* IndividualHuman::GetProperties()
     {
         return &Properties;
@@ -1229,7 +1247,7 @@ namespace Kernel
         return infections;
     }
 
-    bool  IndividualHuman::IsSymptomatic() const
+    bool IndividualHuman::IsSymptomatic() const
     {
         for( auto &it : infections )
         {
@@ -1238,7 +1256,7 @@ namespace Kernel
         return false;
     }
 
-    bool  IndividualHuman::IsNewlySymptomatic() const
+    bool IndividualHuman::IsNewlySymptomatic() const
     {
         return m_newly_symptomatic;
     }

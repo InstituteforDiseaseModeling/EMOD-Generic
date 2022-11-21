@@ -29,7 +29,8 @@ namespace Kernel
         virtual ~HealthSeekingBehaviorUpdateable() {};
 
         //IHealthSeekingBehavior
-        virtual void UpdateProbabilityofSeeking(float new_probability_of_seeking) override; //this function only called by TBInterventions Container
+        virtual void UpdateProbabilityofSeeking(float new_probability_of_seeking) override;
+        virtual IHealthSeekingBehavior* GetHSB() override;
 
     protected:
         DECLARE_SERIALIZABLE(HealthSeekingBehaviorUpdateable);

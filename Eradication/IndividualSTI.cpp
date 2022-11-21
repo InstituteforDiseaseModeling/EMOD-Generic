@@ -496,9 +496,7 @@ namespace Kernel
        }
    }
 
-    void IndividualHumanSTI::Die(
-        HumanStateChange newState
-    )
+    void IndividualHumanSTI::Die(HumanStateChange newState)
     {
         release_assert( (newState == HumanStateChange::DiedFromNaturalCauses) || (newState == HumanStateChange::KilledByInfection) );
 
@@ -923,6 +921,11 @@ namespace Kernel
         {
             return 1.0f;
         }
+    }
+
+    IIndividualHumanSTI* IndividualHumanSTI::GetIndividualSTI()
+    {
+        return static_cast<IIndividualHumanSTI*>(this);
     }
 
     bool IndividualHumanSTI::IsCircumcised() const

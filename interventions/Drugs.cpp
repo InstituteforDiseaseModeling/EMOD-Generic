@@ -30,10 +30,8 @@ namespace Kernel
 #ifndef INTERVENTIONS_AS_DLLS
     //IMPLEMENT_FACTORY_REGISTERED(GenericDrug)
 #endif
-    bool
-    GenericDrug::Configure(
-        const Configuration * inputJson
-    )
+
+    bool GenericDrug::Configure( const Configuration* inputJson )
     {
         initConfigTypeMap("Primary_Decay_Time_Constant", &fast_decay_time_constant, DRUG_Primary_Decay_Time_Constant_DESC_TEXT, 0, 999999);
         initConfigTypeMap("Remaining_Doses", &remaining_doses, DRUG_Remaining_Doses_DESC_TEXT, -1, 999999);
@@ -168,6 +166,11 @@ namespace Kernel
     GenericDrug::GetDrugName() const
     {
         return drug_name;
+    }
+
+    IDrug* GenericDrug::GetDrug()
+    {
+        return static_cast<IDrug*>(this);
     }
 
     float

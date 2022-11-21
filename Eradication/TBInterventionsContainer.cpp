@@ -53,39 +53,27 @@ namespace Kernel
 
     void TBInterventionsContainer::UpdateHealthSeekingBehaviors(float new_probability_of_seeking)
     {
-        IHealthSeekingBehavior * IHSB = nullptr;
-
-        //this section for counting the number of HSB interventions in the interventionslist
-        std::list<void*> list_of_HSB = GetInterventionsByInterface( GET_IID(IHealthSeekingBehavior) );
-        LOG_DEBUG_F("Number of IHealthSeekingBehavior in intervention list %d\n", list_of_HSB.size()); 
-        
-        if (list_of_HSB.size() == 0)
+        int hsb_count = 0;
+        for (auto intervention : interventions)
         {
-            LOG_DEBUG("no IHealthSeekingBehavior to update \n");
-        }
-        else
-        {
-            //this section for counting how updatomg each of the non-expired HSB with the new_probability_of_seeking
-            for (auto active_HSB : list_of_HSB)
+            IHealthSeekingBehavior* p_hsb = intervention->GetHSB();
+            if ( p_hsb )
             {
-                IHealthSeekingBehavior* IHSB = static_cast<IHealthSeekingBehavior*>(active_HSB);
-                IHSB->UpdateProbabilityofSeeking( new_probability_of_seeking ); 
+                p_hsb->UpdateProbabilityofSeeking( new_probability_of_seeking );
+                hsb_count++;
             }
         }
+        LOG_DEBUG_F("Number of IHealthSeekingBehavior in intervention list %d\n", hsb_count); 
     }
-
 
     int TBInterventionsContainer::GetNumTBDrugsActive()
     {
-        //this section for counting the number of IDrug interventions in the interventionslist
-        std::list<void*> list_of_tb_drugs = GetInterventionsByInterface( GET_IID(IDrug) );
+        std::list<IDrug*> list_of_tb_drugs = GetDrugInterventions();
         LOG_DEBUG_F("Number of IDrug in intervention list %d\n",  list_of_tb_drugs.size());
         
-        //this section for counting how many of the IDrug interventions have efficacy > 0 (not expired)
         int num_tb_drugs_active = 0;
-        for (void* tb_drug_on_board : list_of_tb_drugs)
+        for (IDrug* ITB_Drug : list_of_tb_drugs)
         {
-            IDrug* ITB_Drug = static_cast<IDrug*>(tb_drug_on_board);
             release_assert( ITB_Drug );
             if (ITB_Drug->GetDrugCurrentEfficacy() > 0)
             {

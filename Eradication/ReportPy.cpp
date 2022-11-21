@@ -95,11 +95,6 @@ ReportPy::LogNodeData(
 )
 {
     Report::LogNodeData( pNC );
-    const INodePy * pPyNode = NULL; // TBD: Use limited read-only interface, not full NodePy
-    if( pNC->QueryInterface( GET_IID( INodePy), (void**) &pPyNode ) != s_OK )
-    {
-        throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pNC", "INodePy", "INodeContext" );
-    }
 }
 
 }

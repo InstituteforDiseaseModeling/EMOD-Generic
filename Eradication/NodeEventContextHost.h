@@ -28,7 +28,6 @@ namespace Kernel
     // Like, you know, what partial class declarations are for.
     class NodeEventContextHost : public INodeEventContext,
                                  public INodeInterventionConsumer,
-                                 public IOutbreakConsumer,
                                  public ICampaignCostObserver,
                                  public IIndividualEventBroadcaster
     {
@@ -51,7 +50,11 @@ namespace Kernel
         virtual INodeContext* GetNodeContext() override;
         virtual int GetIndividualHumanCount() const override;
         virtual ExternalNodeId_t GetExternalId() const override;
+
+        virtual INodeInterventionConsumer*   GetNodeInterventionConsumer()   override;
+        virtual ICampaignCostObserver*       GetCampaignCostObserver()       override;
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() override;
+
         virtual void IncrementCampaignCost(float cost) override;
 
         virtual void  UpdateInterventions(float = 0.0f) override;
@@ -83,12 +86,10 @@ namespace Kernel
         virtual bool ContainsExisting( const std::string& iv_name ) override;
         virtual bool ContainsExistingByName( const std::string& iv_name ) override;
 
+        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight) override;
+
         // INodeInterventionConsumer
         virtual bool GiveIntervention( INodeDistributableIntervention * pIV ) override;
-
-        // IOutbreakConsumer
-        virtual void AddImportCases( const StrainIdentity* outbreak_strainID, float import_age, int num_cases_per_node, float inf_prob, float female_prob, float mc_weight) override;
-        //virtual void IncreasePrevalence(StrainIdentity* outbreak_strainID, IEventCoordinator2* pEC) override;
 
         // IIndividualTriggeredInterventionConsumer
         virtual void RegisterObserver( IIndividualEventObserver *pIEO, const EventTrigger::Enum& trigger ) override;

@@ -82,7 +82,7 @@ namespace Kernel
         virtual void UpdateTreatmentStatus( const EventTrigger::Enum& new_treatment_status ) override;
         
         //functions in the ITBInterventionsContainer
-        virtual int GetNumTBDrugsActive() override; //this function needs to be non-const so it can call GetInterventionsByInterface
+        virtual int GetNumTBDrugsActive() override;
         virtual bool GetTxNaiveStatus() const override;
         virtual bool GetTxFailedStatus() const override;
         virtual bool GetTxEverRelapsedStatus() const override;

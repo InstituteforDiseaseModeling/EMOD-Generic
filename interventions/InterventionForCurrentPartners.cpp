@@ -123,10 +123,10 @@ namespace Kernel
 
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        IIndividualHumanSTI* p_human_sti = nullptr;
-        if( s_OK != parent->QueryInterface( GET_IID( IIndividualHumanSTI ), (void**)&p_human_sti ) )
+        IIndividualHumanSTI* p_human_sti = parent->GetIndividualSTI();
+        if( !p_human_sti )
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanSTI", "IIndividualHumanContext" );
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "p_human_sti", "IIndividualHumanSTI");
         }
 
         RelationshipSet_t relationships = p_human_sti->GetRelationships();
@@ -211,15 +211,7 @@ namespace Kernel
         for( auto p_rel : reducedRelationships )
         {
             IIndividualHumanSTI* p_human_sti_partner = p_rel->GetPartner( pHumanStiSelf );
-            IIndividualHumanEventContext* p_human_event = nullptr;
-            if( p_human_sti_partner->QueryInterface( GET_IID( IIndividualHumanEventContext ), (void**)&p_human_event ) != s_OK )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__,
-                                               "p_human_sti_partner",
-                                               "IIndividualHumanEventContext",
-                                               "IIndividualHumanSTI" );
-            }
-            partners.push_back( p_human_event );
+            partners.push_back( p_human_sti_partner->GetEventContext() );
         }
         return partners;
     }
@@ -360,14 +352,7 @@ namespace Kernel
 
     void InterventionForCurrentPartners::DistributeToPartnersIntervention( const std::vector<IIndividualHumanEventContext*>& partners )
     {
-        ICampaignCostObserver* pICCO;
-        if( parent->GetEventContext()->GetNodeEventContext()->QueryInterface( GET_IID( ICampaignCostObserver ), (void**)&pICCO ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__,
-                                           "parent->GetEventContext()->GetNodeEventContext()",
-                                           "ICampaignCostObserver",
-                                           "INodeEventContext" );
-        }
+        ICampaignCostObserver* pICCO = parent->GetEventContext()->GetNodeEventContext()->GetCampaignCostObserver();
 
         for( auto p_human_event : partners )
         {

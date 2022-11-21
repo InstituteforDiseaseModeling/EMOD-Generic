@@ -31,6 +31,11 @@ namespace Kernel
         probability_of_seeking = new_probability_of_seeking;
     }
 
+    IHealthSeekingBehavior* HealthSeekingBehaviorUpdateable::GetHSB()
+    {
+        return static_cast<IHealthSeekingBehavior*>(this);
+    }
+
     REGISTER_SERIALIZABLE(HealthSeekingBehaviorUpdateable);
 
     void HealthSeekingBehaviorUpdateable::serialize(IArchive& ar, HealthSeekingBehaviorUpdateable* obj)

@@ -47,6 +47,7 @@ namespace Kernel
         // IDrug
         virtual const std::string& GetDrugName() const override;
         virtual float GetDrugCurrentEfficacy() const override;
+        virtual IDrug* GetDrug() override;
 
     protected:
         GenericDrug( const std::string& rDefaultName = JsonConfigurable::default_string );

@@ -180,14 +180,13 @@ class StubNode : public INodeContext
         {
             if( my_callback != nullptr )
             {
-                PyObject *arglist = Py_BuildValue("(s,f,i)", "expose", 1.0, dynamic_cast<IIndividualHuman*>(candidate)->GetSuid().data );
+                IIndividualHuman* ind = candidate->GetIndividual();
+                PyObject *arglist = Py_BuildValue("(s,f,i)", "expose", 1.0, ind->GetSuid().data );
                 PyObject *retVal = PyObject_CallObject(my_callback, arglist);
                 bool infect = false;
                 infect = bool(PyLong_AsLong( retVal ));
                 if( infect )
                 {
-                    IInfectionAcquirable* ind = nullptr;
-                    candidate->QueryInterface( GET_IID( IInfectionAcquirable ), reinterpret_cast<void**>(&ind) );
                     ind->AcquireNewInfection();
                 }
                 Py_DECREF(arglist);

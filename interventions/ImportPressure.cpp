@@ -12,7 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Exceptions.h"
 #include "InterventionFactory.h"
-#include "NodeEventContext.h"  // for ISporozoiteChallengeConsumer methods
+#include "NodeEventContext.h"
 #include "RANDOM.h"
 
 SETUP_LOGGING( "ImportPressure" );
@@ -106,14 +106,9 @@ namespace Kernel
         float daily_import_pressure  = durations_and_pressures.back().second;   
         int   num_imports            = parent->GetRng()->Poisson(daily_import_pressure*dt);
         const StrainIdentity outbreak_strain(clade,genome);
+        parent->AddImportCases(&outbreak_strain, import_age, num_imports, 1.0f, female_prob, mc_weight);
 
         LOG_DEBUG_F("Duration counter = %f, Total duration = %f, import_pressure = %0.2f, import_cases = %d\n", duration_counter, durations_and_pressures.back().first, daily_import_pressure, num_imports);
-
-        IOutbreakConsumer *ioc;
-        if (s_OK == parent->QueryInterface(GET_IID(IOutbreakConsumer), (void**)&ioc))
-        {
-            ioc->AddImportCases(&outbreak_strain, import_age, num_imports, 1.0f, female_prob, mc_weight);
-        }
     }
 }
 

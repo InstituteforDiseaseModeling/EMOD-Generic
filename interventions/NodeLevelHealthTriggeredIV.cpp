@@ -36,49 +36,50 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(NodeLevelHealthTriggeredIV)
 
     NodeLevelHealthTriggeredIV::NodeLevelHealthTriggeredIV()
-    : BaseNodeIntervention()
-    , m_trigger_conditions()
-    , max_duration(0.0f)
-    , duration(0.0f)
-    , num_distributed(0)
-    , node_property_restrictions()
-    , demographic_restrictions()
-    , m_disqualified_by_coverage_only(false)
-    , blackout_period(0.0)
-    , blackout_time_remaining(0.0)
-    , blackout_event_trigger( EventTrigger::NoTrigger )
-    , blackout_on_first_occurrence(false)
-    , notification_occurred(false)
-    , distribute_on_return_home(false)
-    , event_occurred_list()
-    , event_occurred_while_resident_away()
-    , actual_individual_intervention_config()
-    , actual_node_intervention_config()
-    , m_di(nullptr)
-    , m_ndi(nullptr)
+        : BaseNodeIntervention()
+        , m_trigger_conditions()
+        , max_duration(0.0f)
+        , duration(0.0f)
+        , num_distributed(0)
+        , node_property_restrictions()
+        , demographic_restrictions()
+        , m_disqualified_by_coverage_only(false)
+        , blackout_period(0.0)
+        , blackout_time_remaining(0.0)
+        , blackout_event_trigger( EventTrigger::NoTrigger )
+        , blackout_on_first_occurrence(false)
+        , notification_occurred(false)
+        , distribute_on_return_home(false)
+        , event_occurred_list()
+        , event_occurred_while_resident_away()
+        , actual_individual_intervention_config()
+        , actual_node_intervention_config()
+        , m_di(nullptr)
+        , m_ndi(nullptr)
     {
     }
 
     NodeLevelHealthTriggeredIV::NodeLevelHealthTriggeredIV( const NodeLevelHealthTriggeredIV& rMaster )
-    : BaseNodeIntervention( rMaster )
-    , m_trigger_conditions( rMaster.m_trigger_conditions )
-    , max_duration( rMaster.max_duration )
-    , duration( rMaster.duration )
-    , node_property_restrictions( rMaster.node_property_restrictions )
-    , demographic_restrictions( rMaster.demographic_restrictions )
-    , m_disqualified_by_coverage_only( rMaster.m_disqualified_by_coverage_only )
-    , blackout_period( rMaster.blackout_period )
-    , blackout_time_remaining( rMaster.blackout_time_remaining )
-    , blackout_event_trigger( rMaster.blackout_event_trigger )
-    , blackout_on_first_occurrence( rMaster.blackout_on_first_occurrence )
-    , notification_occurred( rMaster.notification_occurred )
-    , distribute_on_return_home( rMaster.distribute_on_return_home )
-    , event_occurred_list( rMaster.event_occurred_list )
-    , event_occurred_while_resident_away( rMaster.event_occurred_while_resident_away )
-    , actual_individual_intervention_config( rMaster.actual_individual_intervention_config )
-    , actual_node_intervention_config( rMaster.actual_node_intervention_config )
-    , m_di( nullptr )
-    , m_ndi( nullptr )
+        : BaseNodeIntervention( rMaster )
+        , m_trigger_conditions( rMaster.m_trigger_conditions )
+        , max_duration( rMaster.max_duration )
+        , duration( rMaster.duration )
+        , num_distributed( rMaster.num_distributed )
+        , node_property_restrictions( rMaster.node_property_restrictions )
+        , demographic_restrictions( rMaster.demographic_restrictions )
+        , m_disqualified_by_coverage_only( rMaster.m_disqualified_by_coverage_only )
+        , blackout_period( rMaster.blackout_period )
+        , blackout_time_remaining( rMaster.blackout_time_remaining )
+        , blackout_event_trigger( rMaster.blackout_event_trigger )
+        , blackout_on_first_occurrence( rMaster.blackout_on_first_occurrence )
+        , notification_occurred( rMaster.notification_occurred )
+        , distribute_on_return_home( rMaster.distribute_on_return_home )
+        , event_occurred_list( rMaster.event_occurred_list )
+        , event_occurred_while_resident_away( rMaster.event_occurred_while_resident_away )
+        , actual_individual_intervention_config( rMaster.actual_individual_intervention_config )
+        , actual_node_intervention_config( rMaster.actual_node_intervention_config )
+        , m_di( nullptr )
+        , m_ndi( nullptr )
     {
         if( rMaster.m_di != nullptr )
         {
@@ -95,10 +96,12 @@ namespace Kernel
         delete m_di;
         delete m_ndi;
     }
+
     int NodeLevelHealthTriggeredIV::AddRef()
     {
         return BaseNodeIntervention::AddRef();
     }
+
     int NodeLevelHealthTriggeredIV::Release()
     {
         return BaseNodeIntervention::Release();
@@ -220,11 +223,10 @@ namespace Kernel
     }
 
     //returns false if didn't get the intervention
-    bool NodeLevelHealthTriggeredIV::notifyOnEvent(
-        IIndividualHumanEventContext *pIndiv,
-        const EventTrigger::Enum& trigger
-    )
+    bool NodeLevelHealthTriggeredIV::notifyOnEvent(IIndividualHumanEventContext* pIndiv, const EventTrigger::Enum& trigger)
     {
+        assert( parent );
+
         // ----------------------------------------------------------------------
         // --- Ignore events for nodes that don't qualify due to their properties
         // ----------------------------------------------------------------------
@@ -233,11 +235,7 @@ namespace Kernel
             return false;
         }
 
-        IIndividualHuman *p_human = nullptr;
-        if (s_OK != pIndiv->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_human))
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIndiv", "IIndividualHuman", "IIndividualHumanEventContext" );
-        }
+        IIndividualHuman *p_human = pIndiv->GetIndividual();
 
         bool missed_intervention = false ;
         if( distribute_on_return_home && (trigger == EventTrigger::Emigrating) )
@@ -306,8 +304,6 @@ namespace Kernel
                     EventTrigger::pairs::lookup_key( trigger )
                    );
 
-        assert( parent );
-
         bool distributed = false;
         if( m_di != nullptr )
         {
@@ -324,19 +320,12 @@ namespace Kernel
                 return false;
             }
 
-            // Query for campaign cost observer interface from INodeEventContext *parent
-            ICampaignCostObserver *iCCO;
-            if (s_OK != parent->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&iCCO))
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "ICampaignCostObserver", "INodeEventContext" );
-            }
-
             // Huge performance win by cloning instead of configuring.
             IDistributableIntervention *di = m_di->Clone();
             release_assert( di );
             di->AddRef();
 
-            distributed = di->Distribute( pIndiv->GetInterventionsContext(), iCCO );
+            distributed = di->Distribute( pIndiv->GetInterventionsContext(), parent->GetCampaignCostObserver() );
             if( distributed )
             {
                 num_distributed++;

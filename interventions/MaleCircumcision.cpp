@@ -33,12 +33,12 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(MaleCircumcision)
     
     MaleCircumcision::MaleCircumcision()
-    : BaseIntervention()
-    , m_ReducedAcquire(1.0)
-    , m_ApplyIfHigherReducedAcquire(false)
-    , m_DistrbutedEventTrigger()
-    , m_pCircumcisionConsumer(nullptr)
-    , has_been_applied(false)
+        : BaseIntervention()
+        , m_ReducedAcquire(1.0)
+        , m_ApplyIfHigherReducedAcquire(false)
+        , m_DistrbutedEventTrigger()
+        , m_pCircumcisionConsumer(nullptr)
+        , has_been_applied(false)
     {
         initSimTypes( 2, "STI_SIM", "HIV_SIM" );
     }
@@ -56,7 +56,7 @@ namespace Kernel
                                        ICampaignCostObserver * const pCCO )
     {
         // ------------------------------------------
-        // --- Get the CircumcisionConumer for later
+        // --- Get the CircumcisionConusmer for later
         // ------------------------------------------
         if (s_OK != context->QueryInterface(GET_IID(ISTICircumcisionConsumer), (void**)&m_pCircumcisionConsumer) )
         {
@@ -66,10 +66,10 @@ namespace Kernel
         // -----------------------------------------------------------------
         // --- Make sure the the person is male and not already circumcised
         // -----------------------------------------------------------------
-        IIndividualHumanSTI* p_sti = nullptr;
-        if (s_OK != context->GetParent()->QueryInterface(GET_IID(IIndividualHumanSTI), (void**)&p_sti) )
+        IIndividualHumanSTI* p_sti = context->GetParent()->GetIndividualSTI();
+        if ( !p_sti )
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanSTI", "IIndividualHumanInterventionsContext" );
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "p_sti", "IIndividualHumanSTI");
         }
 
         if( context->GetParent()->GetEventContext()->GetGender() == Gender::FEMALE )
@@ -85,7 +85,7 @@ namespace Kernel
         // --- same timestep.
         // !!! Added the !IsCircumcised() due to requirement to not expire!!!
         // --------------------------------------------------------------------------
-        if( (context->GetInterventionsByInterface( GET_IID(ICircumcision) ).size() > 0) && !p_sti->IsCircumcised() )
+        if( (context->GetInterventionsByType(typeid(MaleCircumcision).name()).size() > 0) && !p_sti->IsCircumcised() )
         {
             return false;
         }

@@ -21,6 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct IIndividualHumanInterventionsContext;
+    struct IIndividualHuman;
     struct INodeEventContext;
     class IPKeyValueContainer;
 
@@ -42,9 +43,10 @@ namespace Kernel
         virtual suids::suid GetSuid() const = 0;
 
         // useful sub contexts
-        virtual IIndividualHumanInterventionsContext *GetInterventionsContext() const  = 0;
-        virtual INodeEventContext *GetNodeEventContext() = 0;
-        virtual IPKeyValueContainer * GetProperties() = 0;
+        virtual IIndividualHumanInterventionsContext*  GetInterventionsContext() const  = 0;
+        virtual IIndividualHuman*                      GetIndividual()                  = 0;
+        virtual INodeEventContext*                     GetNodeEventContext()            = 0;
+        virtual IPKeyValueContainer*                   GetProperties()                  = 0;
 
         // TODO: add more methods here to extend programmatic capability of event coordinators w.r.t. to individual state!
     };

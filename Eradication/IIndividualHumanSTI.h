@@ -21,6 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel 
 {
     class IPKeyValueContainer;
+    struct IIndividualHumanEventContext;
     struct IRelationshipParameters;
     struct IRelationship;
     struct IdmDateTime;
@@ -29,6 +30,7 @@ namespace Kernel
     {
         virtual suids::suid GetSuid() const = 0; // pass-through to base
         virtual bool IsInfected() const = 0; //  pass-through to base
+        virtual IIndividualHumanEventContext* GetEventContext() = 0;
         virtual const IPKeyValueContainer& GetPropertiesConst() const = 0;
         virtual suids::suid GetNodeSuid() const = 0;
         virtual bool IsBehavioralSuperSpreader() const = 0;

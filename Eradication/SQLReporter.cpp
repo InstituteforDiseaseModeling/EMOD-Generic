@@ -12,7 +12,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <string>
 #include "SQLReporter.h"
 #include "IndividualEventContext.h"
-#include "IInfectable.h"
+#include "IIndividualHuman.h"
+#include "IStrainIdentity.h"
 #include "Properties.h"
 #include "NodeEventContext.h"
 #include "SimulationEnums.h"
@@ -201,15 +202,10 @@ namespace Kernel
         }
         record.IPs = ss.str();
 
-        IInfectable* p_infectable = nullptr;
-        if (context->QueryInterface(GET_IID(IInfectable), (void**)&p_infectable) != s_OK)
+        IIndividualHuman* p_ind = context->GetIndividual();
+        if( p_ind->GetInfections().size() > 0 )
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "p_recipient", "IInfectable", "IIndividualHuman" );
-        }
-
-        if( p_infectable->GetInfections().size() > 0 )
-        {
-            auto inf           = p_infectable->GetInfections().front();
+            auto inf           = p_ind->GetInfections().front();
             auto genome_data   = inf->GetStrain()->GetGeneticID();
             record.label       = (genome_data >> SHIFT_BIT);
         }

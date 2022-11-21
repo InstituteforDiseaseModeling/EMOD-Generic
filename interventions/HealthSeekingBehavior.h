@@ -24,7 +24,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
 
-    class SimpleHealthSeekingBehavior : public BaseIntervention //, public JsonConfigurable
+    class SimpleHealthSeekingBehavior : public BaseIntervention
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, SimpleHealthSeekingBehavior, IDistributableIntervention)
 
@@ -43,8 +43,6 @@ namespace Kernel
         // IDistributingDistributableIntervention
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) override;
         virtual void Update(float dt) override;
-
-        //virtual void Expire();
 
     protected:
 

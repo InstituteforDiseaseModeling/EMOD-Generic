@@ -114,9 +114,19 @@ public:
     // ------------------------------
     // --- INodeEventContext Methods
     // ------------------------------
+    virtual INodeInterventionConsumer* GetNodeInterventionConsumer()
+    {
+        return static_cast<INodeInterventionConsumer*>(this);
+    }
+
+    virtual ICampaignCostObserver* GetCampaignCostObserver()
+    {
+        return static_cast<ICampaignCostObserver*>(this);
+    }
+
     virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster()
     {
-        return this;
+        return static_cast<IIndividualEventBroadcaster*>(this);
     }
 
     virtual const IdmDateTime& GetTime() const
@@ -181,6 +191,8 @@ public:
     virtual void PurgeExistingByName( const std::string& iv_name )                                                    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool ContainsExisting( const std::string& iv_name )                                                       { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool ContainsExistingByName( const std::string& iv_name )                                                 { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
+    virtual void AddImportCases(const StrainIdentity*, float, int, float, float, float)                               { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual bool IsInPolygon(float* vertex_coords, int numcoords) { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool IsInPolygon( const json::Array &poly )           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
