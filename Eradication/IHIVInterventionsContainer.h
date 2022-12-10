@@ -24,15 +24,6 @@ namespace Kernel
     struct IHIVIntervention: public ISupports
     {};
 
-    struct IHIVDrugEffects : ISupports
-    {
-        //virtual HIVDrugTypeParameters::tHIVDTPMap& GetHIVdtParams() = 0;
-        virtual float GetDrugInactivationRate() = 0;
-        virtual float GetDrugClearanceRate() = 0;
-        virtual ~IHIVDrugEffects() { }
-    };
-
-
     // interface for HIV medical chart queries and updates
     struct IHIVMedicalHistory : public ISupports
     {
@@ -93,6 +84,9 @@ namespace Kernel
 
         virtual void GoOnART( bool viralSupression, float daysToAchieveSuppression ) = 0;
         virtual void GoOffART() = 0;
+
+        virtual float GetDrugInactivationRate() = 0;
+        virtual float GetDrugClearanceRate() = 0;
     };
 
     class IHIVMTCTEffects : public ISupports
@@ -111,5 +105,7 @@ namespace Kernel
         virtual float GetDurationSinceLastStartingART() const = 0;
         virtual const ProbabilityNumber& GetProbMaternalTransmissionModifier() const = 0;
         virtual void BroadcastNewHIVInfection() = 0;
+        virtual IHIVDrugEffectsApply* GetHIVDrugEffectApply() = 0;
+        virtual IHIVMedicalHistory*   GetHIVMedicalHistory()  = 0;
     };
 }

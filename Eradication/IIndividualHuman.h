@@ -63,17 +63,19 @@ namespace Kernel
         virtual NewInfectionState::_enum GetNewInfectionState() const = 0;
         virtual HumanStateChange GetStateChange() const = 0;
 
-        virtual IMigrate* GetIMigrate() = 0;
-        virtual IIndividualHumanInterventionsContext* GetInterventionsContext() const = 0;
+        virtual IMigrate*                               GetIMigrate()                       = 0;
+        virtual IIndividualHumanInterventionsContext*   GetInterventionsContext()     const = 0;
+        virtual IVaccineConsumer*                       GetVaccineContext()           const = 0;
+        virtual IIndividualHumanEventContext*           GetEventContext()                   = 0;
+        virtual IIndividualHumanContext*                GetIndividualContext()              = 0;
+        virtual ISusceptibilityContext*                 GetSusceptibilityContext()    const = 0;
+
+        virtual INodeContext*                           GetParent()                   const = 0;
 
         virtual IPKeyValueContainer* GetProperties() = 0;
         virtual const std::string& GetPropertyReportString() const = 0;
         virtual void SetPropertyReportString( const std::string& str ) = 0;
 
-        virtual INodeContext* GetParent() const = 0;
-        virtual IVaccineConsumer* GetVaccineContext() const = 0;
-
-        virtual IIndividualHumanEventContext *GetEventContext() = 0;    // access to specific attributes of the individual useful for events
         virtual bool IsPossibleMother() const = 0;
         virtual void UpdateMCSamplingRate(float current_sampling_rate) = 0;
         virtual bool IsPregnant() const = 0;
@@ -81,7 +83,6 @@ namespace Kernel
         virtual void InitiatePregnancy(float duration = (DAYSPERWEEK * WEEKS_FOR_GESTATION)) = 0;
         virtual float GetInfectiousness() const = 0;
         virtual ProbabilityNumber getProbMaternalTransmission() const = 0;
-        virtual ISusceptibilityContext* GetSusceptibilityContext() const = 0;
         virtual inline Kernel::suids::suid GetParentSuid() const = 0;
         virtual bool IsMigrating() = 0;
         virtual void ClearNewInfectionState() = 0;

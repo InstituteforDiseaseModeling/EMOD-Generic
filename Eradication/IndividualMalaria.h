@@ -50,6 +50,8 @@ namespace Kernel
         static IndividualHumanMalaria *CreateHuman(INodeContext *context, suids::suid _suid, double monte_carlo_weight = 1.0f, double initial_age = 0.0f, int gender = 0);
         virtual ~IndividualHumanMalaria();
 
+        virtual IMalariaHumanContext* GetIndividualMalaria() override;
+
         // IMalariaHumanContext methods
         virtual void  PerformMalariaTest(int test_type) override;
         virtual void  CountPositiveSlideFields(RANDOMBASE* rng, int nfields, float uL_per_field, int& positive_asexual_fields, int& positive_gametocyte_fields) const override;

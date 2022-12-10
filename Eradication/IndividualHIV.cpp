@@ -131,25 +131,19 @@ namespace Kernel
         }
     }
 
-    ISusceptibilityHIV*
-    IndividualHumanHIV::GetHIVSusceptibility()
-    const
+    ISusceptibilityHIV* IndividualHumanHIV::GetHIVSusceptibility() const
     {
         return hiv_susceptibility;
     }
 
-    IHIVInterventionsContainer*
-    IndividualHumanHIV::GetHIVInterventionsContainer()
-    const
+    IHIVInterventionsContainer* IndividualHumanHIV::GetHIVInterventionsContainer() const
     {
-        IHIVInterventionsContainer *ic = nullptr;
-        if (s_OK == interventions->QueryInterface(GET_IID( IHIVInterventionsContainer ), (void**)&ic) )
-        {
-            return ic;
-        } else {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "interventions", "IHIVInterventionsContainer", "interventions" );
-        }
+        return interventions->GetContainerHIV();
+    }
 
+    IIndividualHumanHIV* IndividualHumanHIV::GetIndividualHIV()
+    {
+        return static_cast<IIndividualHumanHIV*>(this);
     }
 
     bool IndividualHumanHIV::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route ) const
@@ -185,13 +179,11 @@ namespace Kernel
         return birth_this_timestep;
     }
 
-    ProbabilityNumber
-    IndividualHumanHIV::getProbMaternalTransmission()
-    const
+    ProbabilityNumber IndividualHumanHIV::getProbMaternalTransmission() const
     {
         ProbabilityNumber retValue = IndividualHuman::getProbMaternalTransmission();
-        auto mod = float(GetHIVInterventionsContainer()->GetProbMaternalTransmissionModifier());
-        if( GetHIVInterventionsContainer()->OnArtQuery() && GetHIVInterventionsContainer()->GetArtStatus() != ARTStatus::ON_BUT_ADHERENCE_POOR )
+        float mod = static_cast<float>(interventions->GetContainerHIV()->GetProbMaternalTransmissionModifier());
+        if( interventions->GetContainerHIV()->OnArtQuery() && interventions->GetContainerHIV()->GetArtStatus() != ARTStatus::ON_BUT_ADHERENCE_POOR )
         {
             retValue *= IndividualHumanHIVConfig::maternal_transmission_ART_multiplier;
             LOG_DEBUG_F( "Mother giving birth on ART: prob tx = %f\n", float(retValue) );
@@ -205,33 +197,9 @@ namespace Kernel
         return retValue;
     }
 
-
-    std::string
-    IndividualHumanHIV::toString()
-    const
+    std::string IndividualHumanHIV::toString() const
     {
         return IndividualHumanSTI::toString();
-#if 0
-        std::ostringstream me;
-        me << "id="
-           << GetSuid().data
-           << ",gender="
-           << ( GetGender()==MALE ? "male" : "female" )
-           << ",age="
-           << GetAge()/DAYSPERYEAR
-           << ",num_infections="
-           << infections.size()
-           << ",num_relationships="
-           << relationships.size()
-           << ",num_relationships_lifetime="
-           << num_lifetime_relationships
-           << ",num_relationships_last_6_months="
-           << last_6_month_relationships.size()
-           << ",promiscuity_flags="
-           << std::hex << static_cast<unsigned>(promiscuity_flags)
-           ;
-        return me.str();
-#endif
     }
 
     REGISTER_SERIALIZABLE(IndividualHumanHIV);

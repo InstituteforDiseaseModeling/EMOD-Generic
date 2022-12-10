@@ -21,6 +21,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct IIndividualHumanContext;
+    struct IWaningEffectCount;
 
     struct IDMAPI IWaningEffect : ISerializable
     {
@@ -31,6 +32,7 @@ namespace Kernel
         virtual void  SetContextTo( IIndividualHumanContext *context ) = 0;
         virtual void  SetInitial(float newVal) = 0;
         virtual void  SetCurrentTime(float dt) = 0;
+        virtual IWaningEffectCount* GetEffectCount() = 0;
     };
 
     // WaningEffect classes implement this interface if their WaningEffect is not really

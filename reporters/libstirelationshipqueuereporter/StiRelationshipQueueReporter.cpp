@@ -112,11 +112,8 @@ namespace Kernel
             int max_bins_f = 0 ;
             for( auto p_NEC : rNodeEventContextList )
             {
-                INodeSTI * p_node_sti = nullptr;
-                if (s_OK != p_NEC->GetNodeContext()->QueryInterface(GET_IID(INodeSTI), (void**)&p_node_sti) )
-                {
-                    throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "p_NEC->GetNodeContext()", "INodeSTI", "INodeContext");
-                }
+                INodeSTI * p_node_sti = p_NEC->GetNodeContext()->GetNodeSTI();
+                release_assert(p_node_sti);
                 ISociety* p_society = p_node_sti->GetSociety();
                 for( int irel = 0 ; irel < RelationshipType::COUNT ; irel++ )
                 {
@@ -166,13 +163,10 @@ namespace Kernel
         // --------------------------------
         // --- Get access to the queue data
         // --------------------------------
-        INodeSTI * p_node_sti = nullptr;
-        if (s_OK != pNC->QueryInterface(GET_IID(INodeSTI), (void**)&p_node_sti) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pNC", "INodeSTI", "INodeContext");
-        }
-        ISociety* p_society = p_node_sti->GetSociety();
 
+        INodeSTI* p_node_sti = pNC->GetNodeSTI();
+        release_assert(p_node_sti);
+        ISociety* p_society = p_node_sti->GetSociety();
 
         for( int irel = 0 ; irel < RelationshipType::COUNT ; irel++ )
         {

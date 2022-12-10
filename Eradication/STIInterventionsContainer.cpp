@@ -94,6 +94,11 @@ namespace Kernel
         return circumcision_reduced_require;
     }
 
+    ISTIInterventionsContainer* STIInterventionsContainer::GetContainerSTI()
+    {
+        return static_cast<ISTIInterventionsContainer*>(this);
+    }
+
     void STIInterventionsContainer::ApplyCircumcision( float reduceAcquire ) 
     {
         // Need to get gender

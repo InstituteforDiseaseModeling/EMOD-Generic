@@ -167,7 +167,6 @@ namespace Test {
                 throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
             }
 
-            virtual const IInterventionFactory* GetInterventionFactory() const override { return nullptr; }
             virtual const DemographicsContext* GetDemographicsContext() const override { return demographics_factory->CreateDemographicsContext(); }
             virtual const SimParams* GetParams() const override { return nullptr; }
 

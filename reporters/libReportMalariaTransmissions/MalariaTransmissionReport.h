@@ -28,7 +28,7 @@ namespace Kernel
         ExternalNodeId_t to_node_id;
 
         MigratingVector(uint64_t id, ExternalNodeId_t from_node_id, ExternalNodeId_t to_node_id);
-        MigratingVector(IVectorCohortIndividual* pivci, ISimulationContext* pSim, const suids::suid& nodeSuid);
+        MigratingVector(IVectorCohort* pvc, IVectorCohortIndividual* pivci, ISimulationContext* pSim, const suids::suid& nodeSuid);
     };
 
     class MalariaTransmissionReport : public BaseEventReport, public IVectorMigrationReporting

@@ -135,17 +135,8 @@ namespace Kernel
 
     bool ReportHumanMigrationTracking::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& trigger )
     {
-        IIndividualHuman* p_ih = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_ih) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHuman", "IIndividualHumanEventContext");
-        }
-        IMigrate * im = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IMigrate), (void**)&im) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IMigrate", "IIndividualHumanEventContext");
-        }
-
+        IIndividualHuman* p_ih = context->GetIndividual();
+        IMigrate * im = p_ih->GetIMigrate();
         ISimulationContext* p_sim = context->GetNodeEventContext()->GetNodeContext()->GetParent();
 
         float        time           = context->GetNodeEventContext()->GetTime().time;

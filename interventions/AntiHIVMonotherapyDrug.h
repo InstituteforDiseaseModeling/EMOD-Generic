@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "Drugs.h"
-//#include "HIVEnums.h"
 #include "HIVInterventionsContainer.h"  // For IHIVIntervention 
 
 namespace Kernel
@@ -36,7 +35,6 @@ namespace Kernel
         // IDistributableIntervention
         virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * const pCCO );
 
-
     protected:
         virtual void  ConfigureDrugTreatment( IIndividualHumanInterventionsContext * ivc ) override;
 
@@ -49,11 +47,9 @@ namespace Kernel
 
         virtual void ApplyEffects();            // DJK: ApplyEffects() --> ApplyAction() <ERAD-1853>
 
-        IHIVDrugEffectsApply * ihivda;
+        IHIVDrugEffectsApply* ihivda;
 
         HIVDrugClass::Enum hiv_drug_class;        // Class of HIV drug
         ReverseTranscriptaseNucleosideAnalog::Enum nucleoside_analog;   // Used only for NRTI drugs to identify target
-
-        ICampaignCostObserver * m_pCCO;
     };
 }

@@ -22,6 +22,10 @@ namespace Kernel
     struct IIndividualHumanInterventionsContext;
     struct IIndividualHumanEventContext;
     struct IIndividualHumanSTI;
+    struct IIndividualHumanHIV;
+    struct IIndividualHumanTB;
+    struct IMalariaHumanContext;
+    class  IIndividualHumanPolio;
     struct ISusceptibilityContext;
     struct INodeContext;
     struct NodeDemographics;
@@ -39,8 +43,11 @@ namespace Kernel
         virtual RANDOMBASE* GetRng() = 0;
 
         virtual IIndividualHumanInterventionsContext*  GetInterventionsContext()                                   const = 0; // internal components of individuals interact with interventions via this interface
-        virtual IIndividualHumanInterventionsContext*  GetInterventionsContextbyInfection( IInfection* infection )       = 0; // internal components of individuals interact with interventions via this interface
         virtual IIndividualHumanSTI*                   GetIndividualSTI()                                                = 0;
+        virtual IIndividualHumanHIV*                   GetIndividualHIV()                                                = 0;
+        virtual IIndividualHumanTB*                    GetIndividualTB()                                                 = 0;
+        virtual IMalariaHumanContext*                  GetIndividualMalaria()                                            = 0;
+        virtual IIndividualHumanPolio*                 GetIndividualPolio()                                              = 0;
         virtual IVaccineConsumer*                      GetVaccineContext()                                         const = 0;
         virtual IIndividualHumanEventContext*          GetEventContext()                                                 = 0; // access to specific attributes of the individual useful for events
         virtual ISusceptibilityContext*                GetSusceptibilityContext()                                  const = 0; // access to immune attributes useful for infection, interventions, reporting, etc.

@@ -72,7 +72,6 @@ namespace Kernel
         virtual float GetImmunityReducedAcquire() = 0;
     };
 
-    //class IndividualHumanCoInfection : public IIndividualHumanCoInfection, public IIndividualHumanTB, public IndividualHumanAirborne, public IIndividualHumanHIV 
     class IndividualHumanCoInfectionConfig : public IndividualHumanConfig
     {
         friend class SimulationTBHIV;
@@ -172,7 +171,6 @@ namespace Kernel
         virtual std::string toString() const override; // serialization, for logging
 
         //IIndividualHumanTB
-        //virtual void RegisterInfectionIncidenceObserver( IInfectionIncidenceObserver *); //move this is not IIndividualHumanTB, not override
         virtual bool HasFailedTreatment() const override;
         virtual bool IsTreatmentNaive() const override;
         virtual bool IsFastProgressor() const override;
@@ -181,7 +179,6 @@ namespace Kernel
         virtual float GetDurationSinceInitInfection() const override;
 
         IInfectionTB* GetTBInfection() const ; 
-        //virtual void UnRegisterAllObservers ( IInfectionIncidenceObserver *); // does not override
 
         //used for ReportTBHIV
         virtual bool HasHIV() const override;
@@ -190,7 +187,8 @@ namespace Kernel
         virtual ITBInterventionsContainer* GetTBInterventionsContainer() const override;
 
         //IIndividualHumanContext
-        virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection) override;
+        virtual IIndividualHumanTB* GetIndividualTB() override;
+        virtual IIndividualHumanHIV* GetIndividualHIV() override;
         virtual float GetNextLatentActivation(float time) const override;
 
         //Hooks for changing infectiousness, activation, mortality based on CD4 count and age (maybe there is a more natural spot for this)

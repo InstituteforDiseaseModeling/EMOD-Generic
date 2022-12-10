@@ -50,16 +50,6 @@ namespace Kernel
                 }
             }
         }    
-        else if (iid == GET_IID(IHIVDrugEffects))
-        {
-            for (auto container : InterventionsContainerList)
-            {
-                if (container->QueryInterface(GET_IID(IHIVDrugEffects), (void**)&foundInterface ) == s_OK)
-                {
-                    break; 
-                }
-            }
-        }    
         else if (iid == GET_IID(IHIVDrugEffectsApply))
         {
             for (auto container : InterventionsContainerList)
@@ -97,11 +87,9 @@ namespace Kernel
                     }
                 }
             }
-
             //status = InterventionsContainer::QueryInterface(iid, (void**)&foundInterface);
             // TODO! QI down into the base class, this automatically takes the first off the interventions container list and QIs down to its base class????
             // What to do about repeats of the base class + Master has its own Base class
-            
         }
         else
         {
@@ -113,10 +101,9 @@ namespace Kernel
         return status;
     }
 
-    MasterInterventionsContainer::MasterInterventionsContainer() :
-        InterventionsContainer(),
-        InterventionsContainerList()
-
+    MasterInterventionsContainer::MasterInterventionsContainer()
+        : InterventionsContainer()
+        , InterventionsContainerList()
     {
     }
 
@@ -195,6 +182,22 @@ namespace Kernel
         }
     }
 
+    IHIVInterventionsContainer* MasterInterventionsContainer::GetContainerHIV()
+    {
+        IHIVInterventionsContainer* p_ret = nullptr;
+
+        for (auto container : InterventionsContainerList)
+        {
+            p_ret = container->GetContainerHIV();
+            if(p_ret)
+            {
+                break;
+            }
+        }
+
+        return p_ret;
+    }
+
     void MasterInterventionsContainer::UpdateVaccineAcquireRate( float acq, bool isMultiplicative )
     {
         for (auto container : InterventionsContainerList)
@@ -265,13 +268,13 @@ namespace Kernel
 
     bool MasterInterventionsContainer::GiveIntervention( IDistributableIntervention * pIV )
     {
-        IHIVDrugEffects* phivde;
+        IHIVIntervention* phivde;
         if ( pIV->QueryInterface(GET_IID(IHIVIntervention), (void**)&phivde ) == s_OK)
         {
             for (auto container : InterventionsContainerList)
             {
-                ISupports* tempInterface;
-                if (container->QueryInterface(GET_IID(IHIVInterventionsContainer), (void**)&tempInterface ) == s_OK)
+                IHIVInterventionsContainer* tempInterface = container->GetContainerHIV();
+                if(tempInterface)
                 {
                     return container->GiveIntervention(pIV);
                 }

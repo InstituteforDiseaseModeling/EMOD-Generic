@@ -163,6 +163,11 @@ namespace Kernel
         return society;
     }
 
+    INodeSTI* NodeSTI::GetNodeSTI()
+    {
+        return static_cast<INodeSTI*>(this);
+    }
+
     void
     NodeSTI::processEmigratingIndividual(
         IIndividualHuman* individual

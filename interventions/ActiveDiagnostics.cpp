@@ -24,9 +24,7 @@ namespace Kernel
 
     IMPLEMENT_FACTORY_REGISTERED(ActiveDiagnostic)
 
-    bool ActiveDiagnostic::Configure(
-        const Configuration * inputJson
-    )
+    bool ActiveDiagnostic::Configure(const Configuration* inputJson)
     {
         bool ret = SimpleDiagnostic::Configure(inputJson);
         return ret;
@@ -47,11 +45,12 @@ namespace Kernel
         LOG_DEBUG("Positive test Result function\n");
 
         // Apply diagnostic test with given specificity/sensitivity
-        IIndividualHumanTB* tb_ind = nullptr;
-        if(parent->QueryInterface( GET_IID( IIndividualHumanTB ), (void**)&tb_ind ) != s_OK)
+        IIndividualHumanTB* tb_ind = parent->GetIndividualTB();
+        if( !tb_ind )
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanTB", "IIndividualHuman" );
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "tb_ind", "IIndividualHumanTB");
         }
+
         bool activeinf = tb_ind->HasActiveInfection();
         LOG_DEBUG_F( "Individual %d is %s from God-level.\n", parent->GetSuid().data, ( activeinf ? "positive" : "negative" ) );
 

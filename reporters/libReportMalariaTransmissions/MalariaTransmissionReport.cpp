@@ -89,13 +89,10 @@ namespace Kernel
     {
     }
 
-    MigratingVector::MigratingVector(IVectorCohortIndividual* pivci, ISimulationContext* pSim, const suids::suid& nodeSuid)
+    MigratingVector::MigratingVector(IVectorCohort* pvc, IVectorCohortIndividual* pivci, ISimulationContext* pSim, const suids::suid& nodeSuid)
     {
-        IMigrate * pim = nullptr;
-        if (s_OK != pivci->QueryInterface(GET_IID(IMigrate), (void**)&pim))
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pivci", "IMigrate", "IVectorCohortIndividual");
-        }
+        IMigrate* pim = pvc->GetIMigrate();
+        release_assert(pim);
 
         id = pivci->GetID();
         from_node_id = pSim->GetNodeExternalID(nodeSuid);
@@ -129,18 +126,15 @@ namespace Kernel
 
     void MalariaTransmissionReport::LogVectorMigration(ISimulationContext* pSim, float currentTime, const suids::suid& nodeSuid, IVectorCohort* pvc)
     {
-        IVectorCohortIndividual * pivci = NULL;
-        if (s_OK != pvc->QueryInterface(GET_IID(IVectorCohortIndividual), (void**)&pivci))
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pvc", "IVectorCohortIndividual", "IVectorCohort");
-        }
+        IVectorCohortIndividual* pivci = pvc->GetCohortIndividual();
+        release_assert(pivci);
 
         VectorStateEnum::Enum state = pvc->GetState();
 
         if (state == VectorStateEnum::STATE_INFECTIOUS)
         {
             // Need to track infectious mosquitos who are migrating
-            MigratingVector mv(pivci, pSim, nodeSuid);
+            MigratingVector mv(pvc, pivci, pSim, nodeSuid);
             LOG_DEBUG_F("Infectious mosquito (id=%d) migrating from node %d to %d\n", mv.id, mv.from_node_id, mv.to_node_id);
 
             auto found = infectious_mosquitos_current.find(mv.to_node_id);
@@ -154,7 +148,7 @@ namespace Kernel
         else if (state == VectorStateEnum::STATE_INFECTED && pvc->GetProgress() == 0)
         {
             // Also need to track newly infected mosquitos who are migrating
-            MigratingVector mv(pivci, pSim, nodeSuid);
+            MigratingVector mv(pvc, pivci, pSim, nodeSuid);
             LOG_DEBUG_F("Newly infected mosquito (id=%d) migrating from node %d to %d\n", mv.id, mv.from_node_id, mv.to_node_id);
 
             Location location = std::make_pair(mv.from_node_id, timeStep);
@@ -347,13 +341,8 @@ namespace Kernel
 
     InfectiousMosquitos_t MalariaTransmissionReport::BufferInfectiousVectors( INodeEventContext *context )
     {
-        INodeContext* pNC = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(INodeContext), (void**)&pNC) )
-        {
-            throw QueryInterfaceException(
-                __FILE__, __LINE__, __FUNCTION__,
-                "context", "INodeContext", "INodeEventContext");
-        }
+        INodeContext* pNC = context->GetNodeContext();
+        release_assert(pNC);
 
         return BufferInfectiousVectors(pNC);
     }
@@ -363,13 +352,8 @@ namespace Kernel
         ExternalNodeId_t node_id = pNC->GetExternalID();
         Location location = std::make_pair(node_id, timeStep);
 
-        INodeVector* inv = NULL;
-        if (s_OK != pNC->QueryInterface(GET_IID(INodeVector), (void**)&inv))
-        {
-            throw QueryInterfaceException(
-                __FILE__, __LINE__, __FUNCTION__,
-                "pNC", "INodeVector", "INodeContext");
-        }
+        INodeVector* inv = pNC->GetNodeVector();
+        release_assert(inv);
 
         InfectiousMosquitos_t tmp_infectious;
         for (auto pop : inv->GetVectorPopulationReporting())
@@ -410,13 +394,8 @@ namespace Kernel
         Location location = std::make_pair(node_id, timeStep + 1);  // notifyOnEvent called before LogNodeData, so offset by 1.
         LOG_DEBUG_F("LogNodeData for suid=%d (externalId=%d).\n", pNC->GetSuid().data, node_id);
 
-        INodeVector* inv = NULL;
-        if (s_OK != pNC->QueryInterface(GET_IID(INodeVector), (void**)&inv) )
-        {
-            throw QueryInterfaceException(
-                __FILE__, __LINE__, __FUNCTION__,
-                "pNC", "INodeVector", "INodeContext");
-        }
+        INodeVector* inv = pNC->GetNodeVector();
+        release_assert(inv);
 
         for (auto pop : inv->GetVectorPopulationReporting())
         {

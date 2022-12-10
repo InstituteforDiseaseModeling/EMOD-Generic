@@ -81,6 +81,8 @@ namespace Kernel
         virtual NonNegativeFloat GetDuration() const override;
         virtual bool StrainMatches( IStrainIdentity * pStrain );
 
+        virtual IInfectionMalaria*        GetInfectionMalaria()           override { return nullptr; }
+
         virtual bool IsSymptomatic() const override;
 
     protected:

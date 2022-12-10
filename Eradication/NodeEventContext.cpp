@@ -75,9 +75,6 @@ namespace Kernel
             foundInterface = static_cast<ICampaignCostObserver*>(this);
         else if (iid == GET_IID( IIndividualEventBroadcaster ))
             foundInterface = static_cast<IIndividualEventBroadcaster*>(this);
-        // -->> add support for other I*Consumer interfaces here <<--      
-        else if (iid == GET_IID(IGlobalContext))
-            node->QueryInterface(iid, (void**) &foundInterface);
         else if (iid == GET_IID(INodeContext))
             foundInterface = (INodeContext*)node;
         else
@@ -387,21 +384,6 @@ namespace Kernel
         }
 
         return interventions_list;
-    }
-
-    std::list<void*> NodeEventContextHost::GetInterventionsByInterface( iid_t iid )
-    {
-        std::list<void*> interface_list;
-        for (auto intervention : node_interventions)
-        {
-            void* p_interface = nullptr;
-            if ( s_OK == intervention->QueryInterface( iid, (void**)&p_interface) )
-            {
-                interface_list.push_back( p_interface );
-            }
-        }
-
-        return interface_list;
     }
 
     void NodeEventContextHost::PurgeExisting( const std::string& iv_name )

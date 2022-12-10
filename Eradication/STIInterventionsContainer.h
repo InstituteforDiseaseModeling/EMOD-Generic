@@ -51,6 +51,7 @@ namespace Kernel
 
         // IIndividualHumanInterventionsContext
         virtual void ChangeProperty( const char *property, const char* new_value) override;
+        virtual ISTIInterventionsContainer* GetContainerSTI() override;
 
         virtual float GetInterventionReducedAcquire() const override;
         virtual float GetInterventionReducedTransmit() const override;

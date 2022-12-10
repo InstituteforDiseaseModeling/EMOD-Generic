@@ -243,8 +243,6 @@ namespace Kernel
             foundInterface = static_cast<INodeContext*>(this);
         else if ( iid == GET_IID(ISupports) )
             foundInterface = static_cast<ISupports*>(static_cast<INodeContext*>(this));
-        else if (iid == GET_IID(IGlobalContext))
-            parent->QueryInterface(iid, (void**) &foundInterface);
         else
             foundInterface = nullptr;
 

@@ -44,6 +44,8 @@ namespace Kernel
                                                      const std::string* vector_species_name );
         virtual ~VectorCohortIndividual();
 
+        virtual IVectorCohortIndividual* GetCohortIndividual() override;
+
         virtual void Merge( IVectorCohort* pCohortToAdd ) override;
         virtual IVectorCohort* Split( uint32_t numLeaving ) override;
         virtual void AddNewEggs( uint32_t daysToGestate, uint32_t new_eggs ) override;

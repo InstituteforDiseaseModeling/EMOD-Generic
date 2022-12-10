@@ -40,6 +40,7 @@ namespace Kernel
         virtual IIndividualHuman* createHuman( suids::suid suid, float monte_carlo_weight, float initial_age, int gender) override;
 
         // INodeContext
+        virtual INodeSTI* GetNodeSTI() override;
         virtual act_prob_vec_t DiscreteGetTotalContagion( void ) override;
 
         // INodeSTI

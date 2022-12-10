@@ -664,13 +664,17 @@ namespace Kernel
         txOutdoor->ExposeToContagion( candidate, IndividualHumanVector::human_outdoor, dt, TransmissionRoute::VECTOR_TO_HUMAN_OUTDOOR );
     }
 
+    INodeVector* NodeVector::GetNodeVector()
+    {
+        return static_cast<INodeVector*>(this);
+    }
+
     float NodeVector::GetTotalContagion( void )
     {
         float contagion = transmissionGroups->GetTotalContagion() + txOutdoor->GetTotalContagion();
 
         return contagion;
     }
-
 
     REGISTER_SERIALIZABLE(NodeVector);
 

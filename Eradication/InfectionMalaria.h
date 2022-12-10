@@ -63,6 +63,8 @@ namespace Kernel
 
         virtual void Update(float, ISusceptibilityContext* = nullptr) override;
 
+        virtual IInfectionMalaria*        GetInfectionMalaria()       override;
+
         // TODO: intrahost_report needs to be reimplemented as a custom reporter
 
         // DrugResistance Interface

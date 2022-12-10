@@ -94,6 +94,10 @@ namespace Kernel
         return true;
     }
 
+    IWaningEffectCount* WaningEffectMapCount::GetEffectCount()
+    {
+        return static_cast<IWaningEffectCount*>(this);
+    }
 
     REGISTER_SERIALIZABLE( WaningEffectMapCount );
 

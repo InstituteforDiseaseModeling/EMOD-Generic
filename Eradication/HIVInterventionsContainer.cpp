@@ -40,7 +40,6 @@ namespace Kernel
     #define LIFETIME (120*365.0f)
 
     BEGIN_QUERY_INTERFACE_DERIVED(HIVInterventionsContainer, STIInterventionsContainer)
-        HANDLE_INTERFACE(IHIVDrugEffects)
         HANDLE_INTERFACE(IHIVDrugEffectsApply)
         HANDLE_INTERFACE(IHIVInterventionsContainer)
         HANDLE_INTERFACE(IHIVMedicalHistory)
@@ -97,6 +96,21 @@ namespace Kernel
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanHIV", "IIndividualHumanContext" );
         }
+    }
+
+    IHIVInterventionsContainer* HIVInterventionsContainer::GetContainerHIV()
+    {
+        return static_cast<IHIVInterventionsContainer*>(this);
+    }
+
+    IHIVDrugEffectsApply* HIVInterventionsContainer::GetHIVDrugEffectApply()
+    {
+        return static_cast<IHIVDrugEffectsApply*>(this);
+    }
+
+    IHIVMedicalHistory* HIVInterventionsContainer::GetHIVMedicalHistory()
+    {
+        return static_cast<IHIVMedicalHistory*>(this);
     }
 
     void HIVInterventionsContainer::InfectiousLoopUpdate(float dt)
@@ -684,8 +698,6 @@ namespace Kernel
         ar.labelElement("last_recorded_CD4"                ) & container.last_recorded_CD4;
         ar.labelElement("num_times_started_ART"            ) & container.num_times_started_ART;
         ar.labelElement("received_HIV_test_results"        ) & (uint32_t&)container.received_HIV_test_results;
-
-        //hiv_parent set in SetContextTo
     }
 
     void HIVInterventionsContainer::BroadcastNewHIVInfection()

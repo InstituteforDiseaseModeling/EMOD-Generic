@@ -43,6 +43,7 @@ namespace Kernel
         virtual float Current()                 const override {return 0.0f;};
         virtual bool  Expired()                 const override {return true;};
         virtual void  SetContextTo(IIndividualHumanContext*) override {};
+        virtual IWaningEffectCount* GetEffectCount()  override { return nullptr; };
 
         DECLARE_SERIALIZABLE(WaningEffectNull);
     };
@@ -68,6 +69,7 @@ namespace Kernel
         virtual bool  Expired() const override { return false; };
         virtual void SetContextTo( IIndividualHumanContext *context ) override {};
         virtual void  SetInitial(float newVal) override;
+        virtual IWaningEffectCount* GetEffectCount()  override { return nullptr; };
 
     protected:
         float currentEffect;
@@ -302,6 +304,7 @@ namespace Kernel
         virtual IWaningEffect* Clone() override;
         virtual void  Update( float dt ) override;
         virtual float Current() const override;
+        virtual IWaningEffectCount* GetEffectCount() override;
 
         //IWaningEffectCount methods
         virtual int32_t AddRef( void ) { return WaningEffectMapPiecewise::AddRef(); }
@@ -366,6 +369,7 @@ namespace Kernel
         virtual void  SetContextTo( IIndividualHumanContext *context ) override;
         virtual void  SetInitial( float newVal ) override;
         virtual void  SetCurrentTime( float dt ) override;
+        virtual IWaningEffectCount* GetEffectCount() override;
 
         // IWaningEffectCount methods
         virtual void SetCount( uint32_t numCounts ) override;

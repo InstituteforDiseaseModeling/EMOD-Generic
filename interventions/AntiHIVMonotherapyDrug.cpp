@@ -29,8 +29,8 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(AntiHIVMonotherapyDrug)
 
     AntiHIVMonotherapyDrug::AntiHIVMonotherapyDrug()
-    : GenericDrug()
-    , ihivda(NULL)
+        : GenericDrug()
+        , ihivda(nullptr)
     {
         initSimTypes( 2, "HIV_SIM", "TBHIV_SIM" );
     }
@@ -49,10 +49,7 @@ namespace Kernel
         return 0;       // ART monotherapy does not clear HIV
     }
 
-    bool
-    AntiHIVMonotherapyDrug::Configure(
-        const Configuration * inputJson
-    )
+    bool AntiHIVMonotherapyDrug::Configure(const Configuration* inputJson)
     {
         initConfigTypeMap( "Drug_Name", &drug_name, "Name of the HIV drug to distribute in a drugs intervention." );
         initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, DRUG_Cost_To_Consumer_DESC_TEXT, 0, 999999, 10);
@@ -60,44 +57,44 @@ namespace Kernel
         return GenericDrug::Configure( inputJson );
     }
 
-    bool
-    AntiHIVMonotherapyDrug::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * pCCO
-    )
+    bool AntiHIVMonotherapyDrug::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* pCCO)
     {
-        if (s_OK != context->QueryInterface(GET_IID(IHIVDrugEffectsApply), (void**)&ihivda) )
+        IHIVInterventionsContainer* p_hiv_container = context->GetContainerHIV();
+        if(!p_hiv_container)
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IHIVDrugEffectsApply", "IIndividualHumanInterventionsContext" );
-        } 
-        
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "p_hiv_container", "IHIVInterventionsContainer");
+        }
+
+        ihivda = p_hiv_container->GetHIVDrugEffectApply();
+        if(!ihivda)
+        {
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "ihivda", "IHIVDrugEffectsApply");
+        }
+
         return GenericDrug::Distribute( context, pCCO ); //GHH do not use this because it uses the base class of interventionscontext, the TBInterventionsContainer!
     }
 
-    void
-    AntiHIVMonotherapyDrug::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void AntiHIVMonotherapyDrug::SetContextTo(IIndividualHumanContext* context)
     {
-        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IHIVDrugEffectsApply), (void**)&ihivda) )
+        IHIVInterventionsContainer* p_hiv_container = context->GetInterventionsContext()->GetContainerHIV();
+        if(!p_hiv_container)
         {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IHIVDrugEffectsApply", "IIndividualHumanContext" );
-        } 
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "p_hiv_container", "IHIVInterventionsContainer");
+        }
+
+        ihivda = p_hiv_container->GetHIVDrugEffectApply();
+        if(!ihivda)
+        {
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "ihivda", "IHIVDrugEffectsApply");
+        }
 
         return GenericDrug::SetContextTo( context );
     }
 
-    void 
-    AntiHIVMonotherapyDrug::ConfigureDrugTreatment( 
-        IIndividualHumanInterventionsContext * ivc
-    )
+    void AntiHIVMonotherapyDrug::ConfigureDrugTreatment(IIndividualHumanInterventionsContext* ivc)
     {
-        IHIVDrugEffects * hivde = NULL;
-        if( ivc->QueryInterface( GET_IID(IHIVDrugEffects), (void**)&hivde ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "ivc", "IHIVDrugEffects", "IIndividualHumanInterventionsContext" );
-        };
-        auto hivdtMap = hivde->GetHIVdtParams();
+        release_assert(ihivda)
+        auto hivdtMap = ihivda->GetHIVdtParams();
 
         if( hivdtMap.find( drug_name ) == hivdtMap.end() )
         {
@@ -122,22 +119,13 @@ namespace Kernel
         hiv_drug_class = hivdtMap[drug_name]->hiv_drug_class;
         if( hiv_drug_class == HIVDrugClass::NucleosideReverseTranscriptaseInhibitor )
             nucleoside_analog = hivdtMap[drug_name]->nucleoside_analog;   // Used only for NRTI drugs to identify target
-
-        IGlobalContext *pGC = NULL;
-
-        //primary_decay_time_constant = hivdtMap[drug_name]->drug_decay_T1;
-        //secondary_decay_time_constant = hivdtMap[drug_name]->drug_decay_T2;
-
-        //PkPdParameterValidation();
     }
-
 
     void AntiHIVMonotherapyDrug::ApplyEffects()
     {
-        assert(ihivda);
+        release_assert(ihivda)
         ihivda->ApplyDrugConcentrationAction( drug_name, current_concentration );
     }
-
 }
 
 #endif

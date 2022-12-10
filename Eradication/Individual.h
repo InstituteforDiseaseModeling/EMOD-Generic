@@ -37,6 +37,7 @@ namespace Kernel
     struct IMigrationInfoFactory;
     struct IIndividualHumanInterventionsContext;
     struct IIndividualHumanSTI;
+    struct IIndividualHumanTB;
     class  Infection;
     class  InterventionsContainer;
     struct ISusceptibilityContext;
@@ -102,10 +103,17 @@ namespace Kernel
         virtual RANDOMBASE* GetRng() override;
 
         virtual IIndividualHumanInterventionsContext* GetInterventionsContext()                                  const   override;
-        virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection)          override;
         virtual IVaccineConsumer*                     GetVaccineContext()                                        const   override;
+        virtual IIndividualHumanContext*              GetIndividualContext()                                             override;
         virtual IIndividualHumanEventContext*         GetEventContext()                                                  override;
         virtual ISusceptibilityContext*               GetSusceptibilityContext()                                 const   override;
+
+        virtual IIndividualHuman*         GetIndividual()                override;
+        virtual IIndividualHumanSTI*      GetIndividualSTI()             override { return nullptr; }
+        virtual IIndividualHumanHIV*      GetIndividualHIV()             override { return nullptr; }
+        virtual IIndividualHumanTB*       GetIndividualTB()              override { return nullptr; }
+        virtual IMalariaHumanContext*     GetIndividualMalaria()         override { return nullptr; }
+        virtual IIndividualHumanPolio*    GetIndividualPolio()           override { return nullptr; }
 
         // IIndividualHumanEventContext methods
         virtual bool              IsPregnant()                     const override { return is_pregnant; };
@@ -122,8 +130,6 @@ namespace Kernel
         virtual void              BroadcastDeath()                       override;
         virtual void              Die( HumanStateChange )                override;
 
-        virtual IIndividualHuman*    GetIndividual()                     override;
-        virtual IIndividualHumanSTI* GetIndividualSTI()                  override { return nullptr; }
         virtual INodeEventContext*   GetNodeEventContext()               override; // for campaign cost reporting in e.g. HealthSeekingBehavior
         virtual IPKeyValueContainer* GetProperties()                     override;
 

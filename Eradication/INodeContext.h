@@ -40,6 +40,8 @@ namespace Kernel
     struct INodeEventContext;
     struct IIndividualHuman;
     struct ISimulationContext;
+    class  INodeVector;
+    class  INodeSTI;
     class NPKeyValueContainer;
 
     struct IDMAPI INodeContext : ISerializable
@@ -59,6 +61,8 @@ namespace Kernel
         } ;
 
         virtual ISimulationContext* GetParent() = 0;
+        virtual INodeVector*        GetNodeVector() = 0;
+        virtual INodeSTI*           GetNodeSTI()    = 0;
 
         virtual const NodeParams* GetParams() const = 0;
 
@@ -110,6 +114,8 @@ namespace Kernel
         virtual float               GetCampaignCost()           const = 0;
         virtual float               GetInfectivity()            const = 0;
         virtual float               GetInfectionRate()          const = 0;
+        virtual float               GetLatitudeDegrees()              = 0;
+        virtual float               GetLongitudeDegrees()             = 0;
         virtual float               GetSusceptDynamicScaling()  const = 0;
         virtual long int            GetPossibleMothers()        const = 0;
         virtual uint64_t            GetTotalGenomes()           const = 0;
@@ -124,11 +130,6 @@ namespace Kernel
         virtual       void                    SetNetInfectFrac(float)                         = 0;
         virtual const sparse_contagion_repr&  GetNetInfRep()                            const = 0;
         virtual       void                    DepositNetInf(sparse_contagion_id,float)        = 0;
-
-        // These methods are not const because they will extract the value from the demographics
-        // if it has not been done yet.
-        virtual float GetLatitudeDegrees() = 0;
-        virtual float GetLongitudeDegrees() = 0;
 
         // This method will ONLY be used for reporting by input node ID, don't use it elsewhere!
         virtual ExternalNodeId_t GetExternalID() const = 0;

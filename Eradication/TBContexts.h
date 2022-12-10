@@ -13,8 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-
-    class IIndividualHumanTB : public ISupports //this is the simple TB interface, use for TB/HIV 
+    struct IIndividualHumanTB : public ISupports //this is the simple TB interface, use for TB/HIV 
     {
     public:
         virtual bool HasActiveInfection() const = 0;
@@ -52,13 +51,4 @@ namespace Kernel
         virtual float GetMDREvolvedIncidentCounter() const = 0;
         virtual float GetMDRFastIncidentCounter()     const = 0;
     };
-
-    ENUM_DEFINE(TBInfectionState,
-		    ENUM_VALUE_SPEC(None                            , 0)
-		    ENUM_VALUE_SPEC(Latent                          , 1)
-		    ENUM_VALUE_SPEC(ActivePreSymptomatic            , 2)
-		    ENUM_VALUE_SPEC(ActiveSymptomaticSmearPositive  , 3)
-		    ENUM_VALUE_SPEC(ActiveSymptomaticSmearNegative  , 4)
-		    ENUM_VALUE_SPEC(ActiveSymptomaticExtraPulmonary , 5))
-
 }

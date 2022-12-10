@@ -890,10 +890,14 @@ namespace Kernel
 
     }
 
-    const SimulationConfig *
-    InfectionMalaria::params()
+    const SimulationConfig* InfectionMalaria::params()
     {
         return GET_CONFIGURABLE(SimulationConfig);
+    }
+
+    IInfectionMalaria* InfectionMalaria::GetInfectionMalaria()
+    {
+        return static_cast<IInfectionMalaria*>(this);
     }
 
     int64_t InfectionMalaria::get_MaleGametocytes(int stage) const

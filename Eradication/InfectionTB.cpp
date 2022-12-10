@@ -330,16 +330,6 @@ namespace Kernel
         LOG_DEBUG( "Initializing a latent infection.\n" ); 
         StateChange = InfectionStateChange::TBLatent; 
 
-        /*if(Environment::getInstance()->Log->CheckLogLevel(Logger::DEBUG, "EEL"))
-        {
-            std::ostringstream msg;
-            msg << "t=" << ((INodeContext*)((IndividualHuman*)parent)->GetParent())->GetTime().time;
-            msg << ",hum_id=" << parent->GetSuid().data;
-            msg << ",new_inf_state=10"; //10 is TBlatent
-            msg << ",inf_id=-1";;
-            msg << ",inf_mdr=" << IsMDR();
-            Environment::getInstance()->Log->Log(Logger::DEBUG, "EEL", "%s\n", msg.str().c_str()  );
-        }*/
         ISusceptibilityTB* immunityTB = nullptr;
         if( immunity->QueryInterface( GET_IID( ISusceptibilityTB ), (void**)&immunityTB ) != s_OK )
         {

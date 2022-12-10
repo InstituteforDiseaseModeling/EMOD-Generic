@@ -583,6 +583,11 @@ namespace Kernel
         //malaria_susceptibility->Drug_Action_Report();
     }
 
+    IMalariaHumanContext* IndividualHumanMalaria::GetIndividualMalaria()
+    {
+        return static_cast<IMalariaHumanContext*>(this);
+    }
+
     void IndividualHumanMalaria::SetContextTo(INodeContext* context)
     {
         IndividualHumanVector::SetContextTo(context);

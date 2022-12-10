@@ -69,7 +69,6 @@ namespace Kernel
     // Enable querying of interfaces from Simulation objects
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Simulation,Simulation)
     BEGIN_QUERY_INTERFACE_BODY(Simulation)
-        HANDLE_INTERFACE(IGlobalContext)
         HANDLE_INTERFACE(ISimulation)
         HANDLE_INTERFACE(ISimulationContext)
         HANDLE_ISUPPORTS_VIA(ISimulationContext)
@@ -88,7 +87,6 @@ namespace Kernel
         , node_events_to_be_processed()
         , node_event_context_list()
         , migratingIndividualQueues()
-        , m_interventionFactoryObj(nullptr)
         , demographicsContext(nullptr)
         , infectionSuidGenerator(EnvPtr->MPI.Rank, EnvPtr->MPI.NumTasks)
         , nodeSuidGenerator(EnvPtr->MPI.Rank, EnvPtr->MPI.NumTasks)
@@ -374,8 +372,6 @@ namespace Kernel
         gen_susceptibility_config_obj.Configure( config );
         gen_infection_config_obj.Configure( config );
         mem_gauge_obj.Configure( config );
-
-        m_interventionFactoryObj = InterventionFactory::getInstance();
 
         setupMigrationQueues();
         setupEventContextHost();
@@ -1515,11 +1511,6 @@ namespace Kernel
         {
             entry.second->SetContextTo(context);
         }
-    }
-
-    const IInterventionFactory* Simulation::GetInterventionFactory() const
-    {
-        return m_interventionFactoryObj;
     }
 
     REGISTER_SERIALIZABLE(Simulation);

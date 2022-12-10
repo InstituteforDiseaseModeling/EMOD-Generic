@@ -63,9 +63,6 @@ namespace Kernel
         virtual bool Configure( const ::Configuration *json ) override;
         virtual bool TimeToStop() override;
 
-        // IGlobalContext interfaces
-        virtual const IInterventionFactory* GetInterventionFactory() const override;
-
         // ISimulation methods
         virtual bool  Populate() override;
         virtual void  Update() override;
@@ -168,7 +165,6 @@ namespace Kernel
         std::vector<std::vector<IIndividualHuman*>> migratingIndividualQueues;
 
         // Master copies of contained-class flags are maintained here so that they only get serialized once
-        const IInterventionFactory* m_interventionFactoryObj;
         const DemographicsContext *demographicsContext;
 
         // Simulation-unique ID generators for each type of child object that might exist in our system

@@ -94,8 +94,8 @@ namespace Kernel
             // --- If there is, then make sure that it is configure properly
             // --- for the number of doses.
             // --------------------------------------------------------------
-            IWaningEffectCount* p_count_effect = nullptr;
-            if( s_OK == m_pAdherenceEffect->QueryInterface( GET_IID( IWaningEffectCount ), (void**)&p_count_effect ) )
+            IWaningEffectCount* p_count_effect = m_pAdherenceEffect->GetEffectCount();
+            if(p_count_effect)
             {
                 int num_doses = GetNumDoses();
                 if( !p_count_effect->IsValidConfiguration( num_doses ) )
@@ -227,8 +227,8 @@ namespace Kernel
     {
         m_pAdherenceEffect->Update( dt );
 
-        IWaningEffectCount* p_count_effect = nullptr;
-        if( s_OK == m_pAdherenceEffect->QueryInterface( GET_IID( IWaningEffectCount ), (void**)&p_count_effect ) )
+        IWaningEffectCount* p_count_effect = m_pAdherenceEffect->GetEffectCount();
+        if(p_count_effect)
         {
             int current_dose = 1; // m_TotalDoses = -1 implies infinte doses so always the first dose
             if( m_TotalDoses > 0 )

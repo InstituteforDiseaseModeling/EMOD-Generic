@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "NodeEventContext.h"
 #include "IIndividualHuman.h"
+#include "IIndividualHumanContext.h"
 #include "IIndividualHumanSTI.h"
 #include "IdmDateTime.h"
 #include "INodeContext.h"
@@ -212,11 +213,8 @@ namespace Kernel
     {
         if( !m_IsCollectingData ) return;
 
-        IIndividualHumanSTI* p_sti = nullptr;
-        if( s_OK != individual->QueryInterface( GET_IID( IIndividualHumanSTI ), (void**)&p_sti ) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualHumanSTI", "IIndividualHuman" );
-        }
+        IIndividualHumanSTI* p_sti = individual->GetIndividualContext()->GetIndividualSTI();
+        release_assert(p_sti);
 
         uint32_t relationship_count[ RelationshipType::COUNT ];
         memset( relationship_count, 0, sizeof( uint32_t )*RelationshipType::COUNT );

@@ -45,7 +45,6 @@ public:
     virtual ISimulationEventContext*     GetSimulationEventContext() override                                                                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual std::vector<IReport*>&       GetReports() override                                                                                          { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual std::vector<IReport*>&       GetReportsNeedingIndividualData() override                                                                     { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual const IInterventionFactory*  GetInterventionFactory() const override                                                                        { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual QueryResult                  QueryInterface( iid_t iid, void** pinstance ) override                                                         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual int32_t                      AddRef() override                                                                                              { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual int32_t                      Release() override                                                                                             { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
@@ -173,6 +172,9 @@ public:
     {
         throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
     }
+
+    virtual INodeVector*             GetNodeVector()             override         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual INodeSTI*                GetNodeSTI()                override         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual NPKeyValueContainer& GetNodeProperties() override
     {

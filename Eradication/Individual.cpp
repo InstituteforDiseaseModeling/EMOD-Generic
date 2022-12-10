@@ -192,8 +192,6 @@ namespace Kernel
             foundInterface = static_cast<IMigrate*>(this);
         else if ( iid == GET_IID(ISupports) )
             foundInterface = static_cast<ISupports*>(static_cast<IIndividualHumanContext*>(this));
-        else if (iid == GET_IID(IGlobalContext))
-            parent->QueryInterface(iid, reinterpret_cast<void**>(&foundInterface));
         else
             foundInterface = nullptr;
 
@@ -1130,15 +1128,14 @@ namespace Kernel
         return static_cast<IVaccineConsumer*>(interventions);
     }
 
-    IIndividualHumanInterventionsContext* IndividualHuman::GetInterventionsContextbyInfection(IInfection* infection)
-    {
-        //Note can also throw exception here since it's not using the infection to find the intervention
-        return static_cast<IIndividualHumanInterventionsContext*>(interventions); 
-    }
-
     IIndividualHuman* IndividualHuman::GetIndividual()
     {
         return static_cast<IIndividualHuman*>(this);
+    }
+
+    IIndividualHumanContext* IndividualHuman::GetIndividualContext()
+    {
+        return static_cast<IIndividualHumanContext*>(this);
     }
 
     IIndividualHumanEventContext* IndividualHuman::GetEventContext()

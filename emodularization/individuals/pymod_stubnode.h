@@ -169,6 +169,9 @@ class StubNode : public INodeContext
         virtual const std::vector<IIndividualHuman*>&             GetHumans()         const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
         virtual       std::map<std::pair<uint32_t,uint64_t>, std::vector<float>>& GetStrainData() override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
 
+        virtual       INodeVector*            GetNodeVector()                               override { return nullptr; }
+        virtual       INodeSTI*               GetNodeSTI()                                  override { return nullptr; }
+
         virtual const float                   GetNetInfectFrac()                      const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
         virtual       void                    SetNetInfectFrac(float)                       override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }
         virtual const sparse_contagion_repr&  GetNetInfRep()                          const override { throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "" ); }

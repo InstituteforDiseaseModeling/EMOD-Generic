@@ -155,8 +155,8 @@ namespace Kernel
     {
         for( int i = 0; i < m_EffectCollection.Size(); ++i )
         {
-            IWaningEffectCount* p_count_effect = nullptr;
-            if( s_OK != m_EffectCollection[ i ]->QueryInterface( GET_IID( IWaningEffectCount ), (void**)&p_count_effect ) )
+            IWaningEffectCount* p_count_effect = m_EffectCollection[i]->GetEffectCount();
+            if(!p_count_effect)
             {
                 m_EffectCollection[ i ]->Update( dt );
             }
@@ -167,8 +167,8 @@ namespace Kernel
     {
         for( int i = 0; i < m_EffectCollection.Size(); ++i )
         {
-            IWaningEffectCount* p_count_effect = nullptr;
-            if( s_OK == m_EffectCollection[ i ]->QueryInterface( GET_IID( IWaningEffectCount ), (void**)&p_count_effect ) )
+            IWaningEffectCount* p_count_effect = m_EffectCollection[i]->GetEffectCount();
+            if(p_count_effect)
             {
                 p_count_effect->SetCount( numCounts );
             }
@@ -180,8 +180,8 @@ namespace Kernel
         bool valid = true;
         for( int i = 0; valid && (i < m_EffectCollection.Size()); ++i )
         {
-            IWaningEffectCount* p_count_effect = nullptr;
-            if( s_OK == m_EffectCollection[ i ]->QueryInterface( GET_IID( IWaningEffectCount ), (void**)&p_count_effect ) )
+            IWaningEffectCount* p_count_effect = m_EffectCollection[i]->GetEffectCount();
+            if(p_count_effect)
             {
                 valid = p_count_effect->IsValidConfiguration( maxCount );
             }
@@ -260,6 +260,11 @@ namespace Kernel
         {
             m_EffectCollection[ i ]->SetCurrentTime( dt );
         }
+    }
+
+    IWaningEffectCount* WaningEffectCombo::GetEffectCount()
+    {
+        return static_cast<IWaningEffectCount*>(this);
     }
 
     REGISTER_SERIALIZABLE( WaningEffectCombo );

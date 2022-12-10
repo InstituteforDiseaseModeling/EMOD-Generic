@@ -21,13 +21,15 @@ namespace Kernel
 {
     // this container has the necessary other interventionscontainers
 
-    class IMasterInterventionsContainer : public ISupports
+    class IMasterInterventionsContainer
+        : public ISupports
     {
         virtual bool GiveIntervention( IDistributableIntervention * pIV ) = 0;
     };
 
-    class MasterInterventionsContainer : public InterventionsContainer,
-        public IMasterInterventionsContainer
+    class MasterInterventionsContainer
+        : public InterventionsContainer
+        , public IMasterInterventionsContainer
 
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
@@ -42,6 +44,8 @@ namespace Kernel
         virtual IIndividualHumanContext* GetParent() override;
         virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string& type_name) override;
         virtual void PurgeExisting( const std::string& iv_name ) override;
+
+        virtual IHIVInterventionsContainer* GetContainerHIV() override;
 
         // ISupports
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;

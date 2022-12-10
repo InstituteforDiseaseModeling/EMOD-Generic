@@ -170,7 +170,20 @@ namespace Kernel
         ENUM_VALUE_SPEC(MOPV3                                               , 4)
         ENUM_VALUE_SPEC(IPV                                                 , 5)) 
 
-    // ENUM defs for RiskGroup
+    ENUM_DEFINE(EvolutionPolioClockType, 
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_NONE                                 , 0)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_LINEAR                               , 1)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_IMMUNITY                             , 2)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION_AND_IMMUNITY               , 3)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION                            , 4)
+        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_POISSONSITES                         , 5))
+
+    ENUM_DEFINE(VDPVVirulenceModelType, 
+        ENUM_VALUE_SPEC(POLIO_VDPV_NONVIRULENT                              , 0)
+        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS                                , 1)
+        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS_AND_LOG_INFECTIVITY            , 2)
+        ENUM_VALUE_SPEC(POLIO_VDPV_LOG_PARALYSIS_AND_LOG_INFECTIVITY        , 3))
+
     ENUM_DEFINE(RiskGroup,
         ENUM_VALUE_SPEC(LOW                                                 , 0)
         ENUM_VALUE_SPEC(HIGH                                                , 1)
@@ -182,19 +195,11 @@ namespace Kernel
         ENUM_VALUE_SPEC(POVERTY_SUSCEPTIBILITY_TO_INFECTION                 , 2)
         ENUM_VALUE_SPEC(POVERTY_AND_SUSCEPTIBILITY                          , 3))
 
-    // ENUM defs for evolution_polio_clock_type
-    ENUM_DEFINE(EvolutionPolioClockType, 
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_NONE                                 , 0)
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_LINEAR                               , 1)
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_IMMUNITY                             , 2)
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION_AND_IMMUNITY               , 3)
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_REVERSION                            , 4)
-        ENUM_VALUE_SPEC(POLIO_EVOCLOCK_POISSONSITES                         , 5))
-
-    // ENUM defs for VDPV_virulence_model_type
-    ENUM_DEFINE(VDPVVirulenceModelType, 
-        ENUM_VALUE_SPEC(POLIO_VDPV_NONVIRULENT                              , 0)
-        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS                                , 1)
-        ENUM_VALUE_SPEC(POLIO_VDPV_PARALYSIS_AND_LOG_INFECTIVITY            , 2)
-        ENUM_VALUE_SPEC(POLIO_VDPV_LOG_PARALYSIS_AND_LOG_INFECTIVITY        , 3))
+    ENUM_DEFINE(TBInfectionState,
+        ENUM_VALUE_SPEC(None                                                , 0)
+        ENUM_VALUE_SPEC(Latent                                              , 1)
+        ENUM_VALUE_SPEC(ActivePreSymptomatic                                , 2)
+        ENUM_VALUE_SPEC(ActiveSymptomaticSmearPositive                      , 3)
+        ENUM_VALUE_SPEC(ActiveSymptomaticSmearNegative                      , 4)
+        ENUM_VALUE_SPEC(ActiveSymptomaticExtraPulmonary                     , 5))
 }

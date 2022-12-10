@@ -97,7 +97,6 @@ namespace Kernel
         new_mdr_fast_active_infection_counter(0),
         infection2susceptibilitymap()
     {
-
     } 
 
     IndividualHumanCoInfection::~IndividualHumanCoInfection( void ) 
@@ -247,15 +246,8 @@ namespace Kernel
             infection2susceptibilitymap[newinf] = susceptibility_hiv;
             infectioncount_hiv++;
             LifeCourseLatencyUpdateAll();
-            
-            IIndividualHumanHIV* hiv_person = nullptr;
 
-            if (s_OK != this->QueryInterface(GET_IID(IIndividualHumanHIV), (void **) &hiv_person) )
-            {
-                  throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "hiv_person", "IndividualHumanCoInfection", "IIndividualHumanHIV");
-            }
-
-            hiv_person->GetHIVInterventionsContainer()->BroadcastNewHIVInfection();
+            interventions->GetContainerHIV()->BroadcastNewHIVInfection();
         }
     }
 
@@ -600,7 +592,6 @@ namespace Kernel
         {
             infectiousness *= dynamic_cast <SusceptibilityTB*>(susceptibility_tb) ->getModTransmit(this) * interventions->GetInterventionReducedTransmit();
         }
-    
     }
 
     bool IndividualHumanCoInfection::SetNewInfectionState(InfectionStateChange::_enum inf_state_change)
@@ -700,7 +691,6 @@ namespace Kernel
             TB_CD4_Infectiousness_Map[*it_cd4_strata] = *it_infectiousness++;
             TB_CD4_Primary_Progression_Map[*it_cd4_strata] = *it_primary_progression++;
             TB_CD4_Susceptibility_Map[*it_cd4_strata++] = *it_susceptibility++;
-            
         }
     }
 
@@ -755,7 +745,7 @@ namespace Kernel
         }
     }
 
-        float IndividualHumanCoInfection::GetCD4PrimaryMap( float CD4) const
+    float IndividualHumanCoInfection::GetCD4PrimaryMap( float CD4) const
     {
         //Do some quick linear interpolation hmm sort of replicating code here but in principle might want differnt interpolations so OK for now
         auto it_bound_above = IndividualHumanCoInfectionConfig::TB_CD4_Primary_Progression_Map.lower_bound(CD4);
@@ -966,7 +956,6 @@ namespace Kernel
         }
 
         return false;
-
     }
 
     bool IndividualHumanCoInfection::IsTreatmentNaive() const
@@ -1022,7 +1011,6 @@ namespace Kernel
         }
         return false;
     }
-
 
     bool IndividualHumanCoInfection::HasHIV() const
     {
@@ -1119,15 +1107,19 @@ namespace Kernel
         return true;
     }
 
-    IIndividualHumanInterventionsContext* IndividualHumanCoInfection::GetInterventionsContextbyInfection(IInfection* infection) 
+    IIndividualHumanHIV* IndividualHumanCoInfection::GetIndividualHIV()
     {
-        return (IIndividualHumanInterventionsContext*)interventions;
+        return static_cast<IIndividualHumanHIV*>(this);
+    }
+
+    IIndividualHumanTB* IndividualHumanCoInfection::GetIndividualTB()
+    {
+        return static_cast<IIndividualHumanTB*>(this);
     }
 
     void IndividualHumanCoInfection::setupInterventionsContainer()
     {
         interventions = _new_ MasterInterventionsContainer();
-        //IIndividualHumanContext *indcontext = GetContextPointer();
         interventions->SetContextTo(this); //TODO: fix this when init pattern standardized <ERAD-291>  PE: See comment above
     }
 
@@ -1191,14 +1183,7 @@ namespace Kernel
             }
         }
     }
-#if 0
-    void IndividualHumanCoInfection::RegisterInfectionIncidenceObserver(
-        IInfectionIncidenceObserver * pObserver 
-    )
-    {
-        infectionIncidenceObservers.push_back(pObserver);
-    }
-#endif
+
     void IndividualHumanCoInfection::LifeCourseLatencyUpdateAll()
     {
         for (auto infection: infections)
@@ -1349,27 +1334,7 @@ namespace Kernel
             ;
         return me.str();
     }
-#if 0
-    void IndividualHumanCoInfection::UnRegisterAllObservers(
-        IInfectionIncidenceObserver * pObserver 
-    )
-    {
 
-        // -----------------------------------------------------------------------------------
-        // --- infectionIncidenceObservers used to be a std::set but in TB tests 29, 31, & 32
-        // --- switching to a vector was much faster.
-        // -----------------------------------------------------------------------------------
-        for (int i = 0; i < infectionIncidenceObservers.size(); ++i)
-        {
-            if (infectionIncidenceObservers[i] == pObserver)
-            {
-                infectionIncidenceObservers[i] = infectionIncidenceObservers.back();
-                infectionIncidenceObservers.pop_back();
-                return;
-            }
-        }
-    } 
-#endif
     bool IndividualHumanCoInfection::InfectionExistsForThisStrain(IStrainIdentity* check_strain_id)
     {
         IInfectionTB* pTB = nullptr;
@@ -1564,4 +1529,3 @@ namespace Kernel
         return ret;
     }
 }
-

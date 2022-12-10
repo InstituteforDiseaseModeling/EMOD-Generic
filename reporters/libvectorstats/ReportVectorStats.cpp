@@ -76,12 +76,6 @@ namespace Kernel
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
-        // Manually push required events into the eventTriggerList
-        //eventTriggerList.push_back( EventTrigger::HIVNewlyDiagnosed );
-        
-        if( ret )
-        {
-        }
         return ret;
     }
 
@@ -148,12 +142,9 @@ namespace Kernel
         auto nodeId    = pNC->GetExternalID();
         auto node_suid = pNC->GetSuid();
         auto pop       = pNC->GetStatPop();
-        
-        INodeVector * pNodeVector = NULL;
-        if (s_OK != pNC->QueryInterface(GET_IID(INodeVector), (void**)&pNodeVector) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pNC", "INodeVector", "INodeContext");
-        }
+
+        INodeVector* pNodeVector = pNC->GetNodeVector();
+        release_assert(pNodeVector);
 
         uint32_t adult_count = 0 ;
         uint32_t infected_count = 0 ;
@@ -298,17 +289,6 @@ namespace Kernel
     bool ReportVectorStats::notifyOnEvent( IIndividualHumanEventContext *context, 
                                             const EventTrigger::Enum& trigger )
     {
-        //// iindividual context for suid
-        //IIndividualHumanContext * iindividual = NULL;
-        //if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanContext), (void**)&iindividual) )
-        //{
-        //    throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanContext", "IIndividualHumanEventContext");
-        //}
-
-        //float mc_weight = context->GetMonteCarloWeight();
-
-        //    NonDiseaseDeaths[cd4_stage][care_stage] += mc_weight;
-
         return true;
     }
 
@@ -317,11 +297,7 @@ namespace Kernel
                                                 const suids::suid& nodeSuid, 
                                                 IVectorCohort* pvc )
     {
-        IMigrate * pim = NULL;
-        if (s_OK != pvc->QueryInterface(GET_IID(IMigrate), (void**)&pim) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pvc", "IMigrate", "IVectorCohort");
-        }
+        IMigrate* pim = pvc->GetIMigrate();
 
         int mig_type = pim->GetMigrationType();
         const std::string& species = pvc->GetSpecies();

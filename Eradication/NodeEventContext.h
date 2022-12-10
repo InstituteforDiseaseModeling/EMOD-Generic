@@ -70,7 +70,6 @@ namespace Kernel
 
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name) = 0;
         virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name) = 0;
-        virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid ) = 0;
         virtual void PurgeExisting( const std::string& iv_name ) = 0;
         virtual void PurgeExistingByName( const std::string& iv_name ) = 0;
         virtual bool ContainsExisting( const std::string& iv_name ) = 0;

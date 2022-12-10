@@ -52,6 +52,7 @@ namespace Kernel
         virtual IInfectionHIV* GetHIVInfection() const override;
         virtual ISusceptibilityHIV* GetHIVSusceptibility() const override;
         virtual IHIVInterventionsContainer* GetHIVInterventionsContainer() const override;
+        virtual IIndividualHumanHIV* GetIndividualHIV() override;
         virtual bool UpdatePregnancy(float dt=1) override;
         virtual ProbabilityNumber getProbMaternalTransmission() const override;
 

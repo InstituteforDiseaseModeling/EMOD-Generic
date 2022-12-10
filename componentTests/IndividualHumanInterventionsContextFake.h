@@ -53,10 +53,13 @@ public:
         return m_Parent ;
     }
 
-    IInterventionConsumer* GetInterventionConsumer()
+    virtual IInterventionConsumer* GetInterventionConsumer()
     {
         return static_cast<IInterventionConsumer*>(this);
     }
+
+    virtual ISTIInterventionsContainer* GetContainerSTI() { return nullptr; }
+    virtual IHIVInterventionsContainer* GetContainerHIV() { return nullptr; }
 
     virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string &type_name)
     {

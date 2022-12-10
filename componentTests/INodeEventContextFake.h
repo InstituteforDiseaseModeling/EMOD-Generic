@@ -186,7 +186,6 @@ public:
 
     virtual std::list<INodeDistributableIntervention*> GetInterventionsByType(const std::string& type_name)           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual std::list<INodeDistributableIntervention*> GetInterventionsByName(const std::string& intervention_name)   { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-    virtual std::list<void*>                       GetInterventionsByInterface( iid_t iid )                           { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void PurgeExisting( const std::string& iv_name )                                                          { /* Gets called by component tests; must do nothing and not throw an exception to work correctly */                          }
     virtual void PurgeExistingByName( const std::string& iv_name )                                                    { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual bool ContainsExisting( const std::string& iv_name )                                                       { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }

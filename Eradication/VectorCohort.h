@@ -61,6 +61,8 @@ namespace Kernel
         virtual void SetAge( float ageDays ) override;
         virtual void IncreaseAge( float dt ) override;
 
+        virtual IVectorCohortIndividual* GetCohortIndividual() override { return nullptr; }
+
     protected:
         VectorCohortAbstract();
         VectorCohortAbstract( const VectorCohortAbstract& rThat );

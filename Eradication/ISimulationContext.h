@@ -16,8 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ExternalNodeId.h"
 #include "EventTrigger.h"
 
-//class RANDOMBASE;
-
 namespace Kernel
 {
     class IReport;
@@ -29,24 +27,7 @@ namespace Kernel
     struct ISimulationEventContext;
     struct SimParams;
 
-    ////////////////////////////////////////////////////////////////////////
-    /* Design pattern for allowing access of child objects to methods of Simulation
-    ISimulationContext:
-    interface to common simulation-context services
-    provides ability for child objects to access common resources
-    such as distributed uuids and shared class configurations (flags)
-    */
-
-    ////////////////////////////////////////////////////////////////////////
-    // The design of IGlobalContext is following Encapsulated Context which has two purposes: 
-    // 1. Delink the complex dependence of various components in DTK coming from report, intervention, and disease
-    // 2. Provide the common instances and variables that are needed for those components
-    struct IDMAPI IGlobalContext : public ISupports
-    {
-        virtual const IInterventionFactory* GetInterventionFactory() const = 0;
-    };
-
-    struct IDMAPI ISimulationContext : public IGlobalContext
+    struct IDMAPI ISimulationContext : public ISupports
     {
         // demographics
         virtual const DemographicsContext* GetDemographicsContext() const = 0;

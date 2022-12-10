@@ -26,13 +26,13 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(VectorCohortIndividual, VectorCohortAbstract)
 
     VectorCohortIndividual::VectorCohortIndividual() 
-    : VectorCohortAbstract()
-    , m_ID( VCI_COUNTER++ )
-    , additional_mortality(0.0f)
-    , oviposition_timer(-0.1f)
-    , parity(0)
-    , neweggs(0)
-    , m_strain(0, 0)
+        : VectorCohortAbstract()
+        , m_ID( VCI_COUNTER++ )
+        , additional_mortality(0.0f)
+        , oviposition_timer(-0.1f)
+        , parity(0)
+        , neweggs(0)
+        , m_strain(0, 0)
     {
     }
 
@@ -42,13 +42,13 @@ namespace Kernel
                                                     uint32_t _initial_population,
                                                     const VectorMatingStructure& _vector_genetics,
                                                     const std::string* _vector_species_name )
-    : VectorCohortAbstract( _state, _age, _progress, _initial_population, _vector_genetics, _vector_species_name )
-    , m_ID( VCI_COUNTER++ )
-    , additional_mortality(0.0f)
-    , oviposition_timer(-0.1f) // newly-mated mosquitoes feed on first cycle
-    , parity(0)
-    , neweggs(0)
-    , m_strain(0, 0)
+        : VectorCohortAbstract( _state, _age, _progress, _initial_population, _vector_genetics, _vector_species_name )
+        , m_ID( VCI_COUNTER++ )
+        , additional_mortality(0.0f)
+        , oviposition_timer(-0.1f) // newly-mated mosquitoes feed on first cycle
+        , parity(0)
+        , neweggs(0)
+        , m_strain(0, 0)
     {
     }
 
@@ -102,6 +102,11 @@ namespace Kernel
 
     VectorCohortIndividual::~VectorCohortIndividual()
     {
+    }
+
+    IVectorCohortIndividual* VectorCohortIndividual::GetCohortIndividual()
+    {
+        return static_cast<IVectorCohortIndividual*>(this);
     }
 
     std::vector<VectorCohortIndividual*>* VectorCohortIndividual::_supply = nullptr;

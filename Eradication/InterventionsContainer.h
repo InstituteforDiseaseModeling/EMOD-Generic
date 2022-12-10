@@ -15,9 +15,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    struct IDrug;
-
-    struct IVaccineConsumer : public ISupports
+    struct IVaccineConsumer
+        : public ISupports
     {
         virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true ) = 0;
         virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true ) = 0;
@@ -28,9 +27,10 @@ namespace Kernel
         virtual float GetInterventionReducedMortality() const = 0;
     };
 
-    class InterventionsContainer : public IIndividualHumanInterventionsContext, 
-                                   public IVaccineConsumer,
-                                   public IInterventionConsumer
+    class InterventionsContainer
+        : public IIndividualHumanInterventionsContext
+        , public IVaccineConsumer
+        , public IInterventionConsumer
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
@@ -52,7 +52,9 @@ namespace Kernel
 
         virtual void ChangeProperty( const char *property, const char* new_value ) override;
 
-        virtual IInterventionConsumer* GetInterventionConsumer() override;
+        virtual IInterventionConsumer*        GetInterventionConsumer()  override;
+        virtual ISTIInterventionsContainer*   GetContainerSTI()          override { return nullptr; }
+        virtual IHIVInterventionsContainer*   GetContainerHIV()          override { return nullptr; }
 
         // IUnknown
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;

@@ -456,10 +456,8 @@ namespace Kernel
         release_assert( p_nec );
         if  (!node_vector)
         {
-            if( p_nec->GetNodeContext()->QueryInterface( GET_IID( INodeVector ), (void**) & node_vector ) != s_OK )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "p_nec->GetNodeContext()", "INodeVector", "INodeContext" );
-            }
+            node_vector = p_nec->GetNodeContext()->GetNodeVector();
+            release_assert(node_vector);
         }
         m_has_data = true ;
 
@@ -493,11 +491,7 @@ namespace Kernel
         LOG_DEBUG_F( "MalariaSummaryReport notified of event by %d-year old individual.\n", (int) (context->GetAge() / DAYSPERYEAR) );
 
         // individual context for suid
-        IIndividualHumanContext * iindividual = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanContext), (void**)&iindividual) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanContext", "IIndividualHumanEventContext");
-        }
+        IIndividualHumanContext* iindividual = context->GetIndividual()->GetIndividualContext();
         m_has_data = true ;
 
         int id           = iindividual->GetSuid().data;
@@ -514,11 +508,8 @@ namespace Kernel
         m_pReportData->sum_population_by_agebin.at(agebin) += mc_weight;
 
         // get malaria contexts
-        IMalariaHumanContext * individual_malaria = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IMalariaHumanContext), (void**)&individual_malaria) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IMalariaHumanContext", "IIndividualHumanEventContext");
-        }
+        IMalariaHumanContext* individual_malaria = iindividual->GetIndividualMalaria();
+        release_assert(individual_malaria);
         IMalariaSusceptibility* susceptibility_malaria = individual_malaria->GetMalariaSusceptibilityContext();
 
         // push back today's disease variables for infected individuals

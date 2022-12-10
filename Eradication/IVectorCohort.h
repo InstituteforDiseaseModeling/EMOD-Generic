@@ -17,6 +17,7 @@ namespace Kernel
     class VectorMatingStructure;
     struct IMigrate;
     struct IStrainIdentity;
+    struct IVectorCohortIndividual;
 
     struct IVectorCohort : ISerializable
     {
@@ -41,6 +42,8 @@ namespace Kernel
         virtual void Merge( IVectorCohort* pCohortToAdd ) = 0;
         virtual IVectorCohort* Split( uint32_t numLeaving ) = 0;
         virtual const std::vector<uint32_t>& GetNewEggs() const = 0;
+
+        virtual IVectorCohortIndividual* GetCohortIndividual() = 0;
     };
 
     typedef std::vector<IVectorCohort*> VectorCohortVector_t;

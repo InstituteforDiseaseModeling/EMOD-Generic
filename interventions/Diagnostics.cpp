@@ -278,18 +278,6 @@ namespace Kernel
         // third alternative is that we were configured to use an actual config, not broadcast an event.
         else if( positive_diagnosis_config._json.Type() != ElementType::NULL_ELEMENT )
         {
-            // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-            IGlobalContext *pGC = nullptr;
-            const IInterventionFactory* ifobj = nullptr;
-            if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-            {
-                ifobj = pGC->GetInterventionFactory();
-            }
-            if (!ifobj)
-            {
-                throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionFactoryObj()", "IInterventionFactory" );
-            }
-
             // Distribute the test-positive intervention
             IDistributableIntervention* di = InterventionFactory::getInstance()->CreateIntervention( positive_diagnosis_config._json, "", "campaign");
             

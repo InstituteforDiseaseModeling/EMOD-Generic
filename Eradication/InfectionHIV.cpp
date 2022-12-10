@@ -337,8 +337,7 @@ namespace Kernel
         release_assert( StateChange != InfectionStateChange::Cleared );
     }
 
-    float
-    InfectionHIV::GetInfectiousness() const
+    float InfectionHIV::GetInfectiousness() const
     {
         float retInf = InfectionSTI::GetInfectiousness();
         LOG_DEBUG_F( "infectiousness from STI = %f\n", retInf );
@@ -356,27 +355,24 @@ namespace Kernel
         // Prefer instead to apply the _effects_ of art, and prefer to keep all ART knowledge encapsulated inside
         // the HIVInterventionsContainer.
         // TBD: Use QI instead of cast
-        IHIVInterventionsContainer * pHIC = nullptr;
-        if ( s_OK == parent->GetInterventionsContext()->QueryInterface(GET_IID(IHIVInterventionsContainer), (void**)&pHIC) )
+        IHIVInterventionsContainer* pHIC = parent->GetInterventionsContext()->GetContainerHIV();
+        if (pHIC)
         {
             retInf *= pHIC->GetInfectivitySuppression();
         }
 
         retInf *= m_hetero_infectivity_multiplier;
-        
+
         LOG_DEBUG_F( "infectiousness from HIV = %f\n", retInf );
         return retInf;
     }
 
-    NaturalNumber InfectionHIV::GetViralLoad()
-    const
+    NaturalNumber InfectionHIV::GetViralLoad() const
     {
         return ViralLoad;
     }
 
-    float
-    InfectionHIV::GetPrognosis()
-    const
+    float InfectionHIV::GetPrognosis() const
     {
         // These may be the WRONG tests. Timers can be sub-zero but really one should die immediately after that update occurs.
         // Works now but possibly very sensitive to code flow that could change.
@@ -393,7 +389,6 @@ namespace Kernel
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "No valid mortality timers!" );
         }
     }
-
 
     float InfectionHIV::GetTimeInfected() const
     {
@@ -422,26 +417,11 @@ namespace Kernel
         }
 
         // Query for drug effects
-        IIndividualHumanContext *patient = GetParent();
-        IHIVDrugEffects *ihivde = nullptr;
+        IIndividualHumanContext*    patient         = GetParent();
+        IHIVInterventionsContainer* p_hiv_container = patient->GetInterventionsContext()->GetContainerHIV();
+        IHIVDrugEffectsApply*       ihivde          = p_hiv_container->GetHIVDrugEffectApply();;
 
-        if (!patient->GetInterventionsContext()) 
-        {
-            if ( s_OK != patient->GetInterventionsContextbyInfection(this)->QueryInterface(GET_IID(IHIVDrugEffects), (void**)&ihivde) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionsContextbyInfection()", "IHIVDrugEffects", "IIndividualHumanInterventionsContext" );
-            }
-        }
-        else
-        {
-            if ( s_OK != patient->GetInterventionsContext()->QueryInterface(GET_IID(IHIVDrugEffects), (void **)&ihivde) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionsContext()", "IHIVDrugEffects", "IIndividualHumanInterventionsContext" );
-            }
-        }
-
-        // float HIV_drug_inactivation_rate = ihivde->GetDrugInactivationRate(); //no action for Drug Inactivation for now
-        float HIV_drug_clearance_rate    = ihivde->GetDrugClearanceRate();
+        float HIV_drug_clearance_rate = ihivde->GetDrugClearanceRate();
 
         if( parent->GetRng()->SmartDraw( dt * HIV_drug_clearance_rate ) )
         {
@@ -455,7 +435,9 @@ namespace Kernel
         return false;
     }
 
-    InfectionHIV::~InfectionHIV(void) { }
+    InfectionHIV::~InfectionHIV(void)
+    { }
+
     InfectionHIV::InfectionHIV()
         : ViralLoad(0)
         , HIV_duration_until_mortality_without_TB(INACTIVE_DURATION )
@@ -466,7 +448,7 @@ namespace Kernel
     {
     }
 
-    InfectionHIV::InfectionHIV(IIndividualHumanContext *context)
+    InfectionHIV::InfectionHIV(IIndividualHumanContext* context)
         : InfectionSTI(context)
         , HIV_duration_until_mortality_without_TB(INACTIVE_DURATION )
         , HIV_natural_duration_until_mortality(INACTIVE_DURATION ) // need some value that says Ignore-Me
@@ -474,12 +456,7 @@ namespace Kernel
         , hiv_parent( nullptr )
     {
         // TODO: Consider moving m_time_infected to Infection layer.  Alternatively, track only in reporters.
-        IIndividualHuman *human_parent;
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHuman), (void**)&human_parent) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHuman", "IIndividualHumanContext" );
-        }
-        m_time_infected = human_parent->GetParent()->GetTime().time;
+        m_time_infected = context->GetParent()->GetTime().time;
     }
 
     float InfectionHIV::GetWHOStage() const

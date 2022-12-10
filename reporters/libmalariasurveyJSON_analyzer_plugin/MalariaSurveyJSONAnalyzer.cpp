@@ -345,16 +345,11 @@ namespace Kernel
         LOG_DEBUG_F( "MalariaSurveyAnalyzer notified of event by %d-year old individual.\n", (int) (context->GetAge() / DAYSPERYEAR) );
 
         // individual context for suid
-        IIndividualHumanContext * iindividual = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanContext), (void**)&iindividual) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanContext", "IIndividualHumanEventContext");
-        }
+        IIndividualHumanContext* iindividual = context->GetIndividual()->GetIndividualContext();
 
         int id           = iindividual->GetSuid().data;
         double mc_weight = context->GetMonteCarloWeight();
         double age       = context->GetAge();
-
 
         std::string ip_info;
         IPKeyValueContainer* p_props = iindividual->GetEventContext()->GetProperties();
@@ -368,11 +363,8 @@ namespace Kernel
         }
 
         // get malaria contexts
-        IMalariaHumanContext * individual_malaria = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IMalariaHumanContext), (void**)&individual_malaria) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IMalariaHumanContext", "IIndividualHumanEventContext");
-        }
+        IMalariaHumanContext* individual_malaria = iindividual->GetIndividualMalaria();
+        release_assert(individual_malaria);
         IMalariaSusceptibility* susceptibility_malaria = individual_malaria->GetMalariaSusceptibilityContext();
 
         // get the correct existing patient or insert a new one

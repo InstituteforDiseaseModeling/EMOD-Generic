@@ -30,6 +30,8 @@ namespace Kernel
     struct IIndividualHumanEventContext;
     struct IIndividualHumanInterventionsContext;
     struct IInterventionConsumer;
+    struct ISTIInterventionsContainer;
+    struct IHIVInterventionsContainer;
     struct IDrug;
     struct IHealthSeekingBehavior;
     struct INodeEventContext;
@@ -66,6 +68,7 @@ namespace Kernel
     };
 #pragma warning(pop)
 
+    // Interface for an individual's intervention container
     struct IIndividualHumanInterventionsContext : ISerializable // ISupports
     {
         // specific helpers for interoperating with the interventions container might go here
@@ -82,7 +85,10 @@ namespace Kernel
 
         virtual void ChangeProperty( const char *property, const char* new_value ) = 0;
 
-        virtual IInterventionConsumer* GetInterventionConsumer() = 0;
+        virtual IInterventionConsumer*        GetInterventionConsumer()   = 0;
+        virtual ISTIInterventionsContainer*   GetContainerSTI()           = 0;
+        virtual IHIVInterventionsContainer*   GetContainerHIV()           = 0;
+
 
         virtual ~IIndividualHumanInterventionsContext() {}
     };

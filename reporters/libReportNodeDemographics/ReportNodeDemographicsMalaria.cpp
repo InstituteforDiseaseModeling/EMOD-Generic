@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "NodeEventContext.h"
 #include "IIndividualHuman.h"
+#include "IIndividualHumanContext.h"
 #include "ReportUtilities.h"
 #include "Properties.h"
 #include "NodeProperties.h"
@@ -135,11 +136,8 @@ namespace Kernel
     {
         if( individual->IsInfected() )
         {
-            IMalariaHumanContext* p_human_malaria = nullptr;
-            if( s_OK != individual->QueryInterface( GET_IID( IMalariaHumanContext ), (void**)&p_human_malaria ) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IMalariaHumanContext", "IIndividualHuman" );
-            }
+            IMalariaHumanContext* p_human_malaria = individual->GetIndividualContext()->GetIndividualMalaria();
+            release_assert(p_human_malaria);
 
             std::vector<std::pair<uint32_t,uint64_t>> all_strains = p_human_malaria->GetInfectingStrainIds();
 

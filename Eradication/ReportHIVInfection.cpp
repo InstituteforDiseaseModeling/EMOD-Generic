@@ -103,10 +103,7 @@ namespace Kernel
     }
 
 
-    void
-    ReportHIVInfection::LogIndividualData(
-        IIndividualHuman* individual
-    )
+    void ReportHIVInfection::LogIndividualData(IIndividualHuman* individual)
     {
         IIndividualHumanHIV* hiv_individual = nullptr;
         if( individual->QueryInterface( GET_IID( IIndividualHumanHIV ), (void**)&hiv_individual ) != s_OK )

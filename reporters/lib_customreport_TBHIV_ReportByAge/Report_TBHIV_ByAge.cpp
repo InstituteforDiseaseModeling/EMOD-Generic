@@ -498,16 +498,17 @@ namespace Kernel
             return;
 
         float mc_weight = individual->GetMonteCarloWeight();
-        IIndividualHumanHIV * iptrhiv = NULL;
-        if (s_OK != individual->GetEventContext()->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&iptrhiv))
+
+        IIndividualHumanHIV* iptrhiv = individual->GetIndividualContext()->GetIndividualHIV();
+        if (!iptrhiv)
         {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "GetEventContext", "IIndividualHumanHIV", "IIndividualHumanEventContext");
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "iptrhiv", "IIndividualHumanHIV");
         }
 
-        IIndividualHumanTB * iptrtb = NULL;
-        if (s_OK != individual->GetEventContext()->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&iptrtb))
+        IIndividualHumanTB* iptrtb = individual->GetIndividualContext()->GetIndividualTB();
+        if (!iptrtb)
         {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "GetEventContext", "IIndividualHumanTB", "IIndividualHumanEventContext");
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "iptrtb", "IIndividualHumanTB");
         }
 
         auto age_group = ComputeAgeBin(  (float) individual->GetAge() ); //age in days
@@ -555,35 +556,26 @@ namespace Kernel
 
     }
 
-    bool Report_TBHIV_ByAge::notifyOnEvent( IIndividualHumanEventContext *context, 
-                                            const EventTrigger::Enum& trigger )
+    bool Report_TBHIV_ByAge::notifyOnEvent( IIndividualHumanEventContext* context, const EventTrigger::Enum& trigger )
     {
         if( context->GetAge() < min_age_yrs * DAYSPERYEAR || context->GetAge() > max_age_yrs * DAYSPERYEAR)
             return true;
 
-        // iindividual context for suid
-        IIndividualHumanContext * iindividual = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanContext), (void**)&iindividual) )
+        IIndividualHumanHIV* iptrhiv = context->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        if (!iptrhiv)
         {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanContext", "IIndividualHumanEventContext");
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "iptrhiv", "IIndividualHumanHIV");
         }
 
-        IIndividualHumanHIV * iptrhiv = NULL;
-        if (s_OK != iindividual->GetEventContext()->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&iptrhiv))
+        IIndividualHumanTB* iptrtb = context->GetIndividual()->GetIndividualContext()->GetIndividualTB();;
+        if (!iptrtb)
         {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "GetEventContext", "IIndividualHumanHIV", "IIndividualHumanEventContext");
-        }
-
-        IIndividualHumanTB * iptrtb = NULL;
-        if (s_OK != iindividual->GetEventContext()->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&iptrtb))
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "GetEventContext", "IIndividualHumanTB", "IIndividualHumanEventContext");
+            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "iptrtb", "IIndividualHumanTB");
         }
 
         float mc_weight = context->GetMonteCarloWeight();
 
         auto age_group = ComputeAgeBin((float)context->GetAge());
-
 
         if( trigger == EventTrigger::TBActivation )
         {
@@ -662,7 +654,6 @@ namespace Kernel
             }
             
         }
-
         return true;
     }
 

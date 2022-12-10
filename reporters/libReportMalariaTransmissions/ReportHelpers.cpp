@@ -25,13 +25,8 @@ namespace Kernel
     {
         id = infection->GetSuid().data;
 
-        IInfectionMalaria* infection_malaria = NULL;
-        if (s_OK != infection->QueryInterface(GET_IID(IInfectionMalaria), (void**)&infection_malaria) )
-        {
-            throw QueryInterfaceException(
-                __FILE__, __LINE__, __FUNCTION__,
-                "infection", "IInfectionMalaria", "IInfection");
-        }
+        IInfectionMalaria* infection_malaria = infection->GetInfectionMalaria();
+        release_assert(infection_malaria);
 
         asexual_density = infection_malaria->get_asexual_density();
         gametocyte_density = infection_malaria->get_mature_gametocyte_density();
@@ -45,13 +40,7 @@ namespace Kernel
 
     MalariaIndividualInfo::MalariaIndividualInfo(IIndividualHumanEventContext* context)
     {
-        IIndividualHuman * individual = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHuman), (void**)&individual) )
-        {
-            throw QueryInterfaceException(
-                __FILE__, __LINE__, __FUNCTION__,
-                "context", "IIndividualHuman", "IIndividualHumanEventContext");
-        }
+        IIndividualHuman* individual = context->GetIndividual();
 
         SetProperties(individual);
     }

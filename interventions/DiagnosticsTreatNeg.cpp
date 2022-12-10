@@ -64,7 +64,6 @@ namespace Kernel
     : SimpleDiagnostic( master )
     , negative_diagnosis_config(master.negative_diagnosis_config)
     , negative_diagnosis_event(master.negative_diagnosis_event)
-    //, defaulters_config(master.defaulters_config)
     , defaulters_event(master.defaulters_event)
     , m_gets_positive_test_intervention(master.m_gets_positive_test_intervention)
     {
@@ -181,17 +180,6 @@ namespace Kernel
     {
 
         LOG_DEBUG_F( "Individual %d tested 'negative', receiving negative intervention.\n", parent->GetSuid().data );
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        IGlobalContext *pGC = nullptr;
-        const IInterventionFactory* ifobj = nullptr;
-        if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            ifobj = pGC->GetInterventionFactory();
-        }
-        if (!ifobj)
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionFactoryObj()", "IInterventionFactory" );
-        }
 
         if( use_event_or_config == EventOrConfig::Event )
         {
@@ -226,19 +214,6 @@ namespace Kernel
     DiagnosticTreatNeg::onPatientDefault()
     {
         LOG_DEBUG_F( "Individual %d got the test but defaulted, receiving Defaulters intervention without waiting for days_to_diagnosis (actually means days_to_intervention) \n", parent->GetSuid().data );
-
-        // Important: Use the instance method to obtain the intervention factory obj instead of static method to cross the DLL boundary
-        IGlobalContext *pGC = nullptr;
-        const IInterventionFactory* ifobj = nullptr;
-        if (s_OK == parent->QueryInterface(GET_IID(IGlobalContext), (void**)&pGC))
-        {
-            ifobj = pGC->GetInterventionFactory();
-        }
-        if (!ifobj)
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "parent->GetInterventionFactoryObj()", "IInterventionFactory" );
-        }
-
 
         if( use_event_or_config == EventOrConfig::Event )
         {

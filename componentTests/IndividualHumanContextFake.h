@@ -25,7 +25,6 @@ using namespace Kernel;
 
 class IndividualHumanContextFake : public IIndividualHumanContext,
                                    public IIndividualHumanHIV,
-                                   public IGlobalContext,
                                    public IIndividualHumanEventContext,
                                    public IInfectionHIV,
                                    public IIndividualHumanSTI,
@@ -77,8 +76,6 @@ public:
         *ppvObject = nullptr ;
         if ( iid == GET_IID(IIndividualHumanHIV)) 
             *ppvObject = static_cast<IIndividualHumanHIV*>(this);
-        else if ( iid == GET_IID(IGlobalContext)) 
-            *ppvObject = static_cast<IGlobalContext*>(this);
         else if ( iid == GET_IID(IIndividualHumanEventContext)) 
             *ppvObject = static_cast<IIndividualHumanEventContext*>(this);
         else if ( iid == GET_IID(IIndividualHumanSTI)) 
@@ -116,7 +113,7 @@ public:
         return m_Id ;
     }
 
-    virtual IIndividualHumanInterventionsContext *GetInterventionsContext() const override
+    virtual IIndividualHumanInterventionsContext* GetInterventionsContext() const override
     {
         return m_pInterventionsContext ;
     }
@@ -124,6 +121,21 @@ public:
     virtual IIndividualHuman* GetIndividual() override
     {
         return static_cast<IIndividualHuman*>(this);
+    }
+
+    virtual IIndividualHumanSTI* GetIndividualSTI() override
+    {
+        return static_cast<IIndividualHumanSTI*>(this);
+    }
+
+    virtual IIndividualHumanHIV* GetIndividualHIV() override
+    {
+        return static_cast<IIndividualHumanHIV*>(this);
+    }
+
+    virtual IMalariaHumanContext* GetIndividualMalaria() override
+    {
+        return static_cast<IMalariaHumanContext*>(this);
     }
 
     virtual IIndividualHumanEventContext* GetEventContext() override
@@ -143,10 +155,7 @@ public:
         }
     }
 
-    virtual const AgentParams* GetParams() const override
-    {
-        throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented.");
-    }
+    virtual const AgentParams* GetParams()                    const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual suids::suid   GetNextInfectionSuid()                    override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void          UpdateGroupMembership()                   override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
@@ -154,13 +163,8 @@ public:
 
     virtual ISusceptibilityContext* GetSusceptibilityContext() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual IVaccineConsumer* GetVaccineContext()              const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-
-    virtual IIndividualHumanInterventionsContext* GetInterventionsContextbyInfection(IInfection* infection)       override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-
-    virtual IIndividualHumanSTI* GetIndividualSTI() override
-    {
-        return static_cast<IIndividualHumanSTI*>(this);
-    }
+    virtual IIndividualHumanTB* GetIndividualTB()                    override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual IIndividualHumanPolio* GetIndividualPolio()              override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual const std::string& GetPropertyReportString() const     override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void SetPropertyReportString( const std::string& str ) override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
@@ -168,15 +172,14 @@ public:
     // --------------------------------
     // --- IIndividualHuman Methods
     // --------------------------------
-    //virtual suids::suid GetSuid() const = 0;
-    //virtual double GetAge() const  = 0 ;
-    //virtual int GetGender() const = 0;
-    //virtual bool IsInfected() const = 0;
-    //virtual HumanStateChange GetStateChange() const = 0;
-    //virtual IIndividualHumanInterventionsContext* GetInterventionsContext() const = 0;
     virtual NewInfectionState::_enum GetNewInfectionState() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual void Update(float current_time, float dt)             override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual IMigrate* GetIMigrate()                               override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__,  "The method or operation is not implemented." ); }
+
+    virtual IIndividualHumanContext* GetIndividualContext() override
+    {
+        return static_cast<IIndividualHumanContext*>(this);
+    }
 
     virtual INodeContext* GetParent() const override
     {
@@ -261,11 +264,6 @@ public:
     }
 
     virtual std::string toString() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
-
-    // --------------------------
-    // --- IGlobalContext Methods
-    // --------------------------
-    virtual const IInterventionFactory* GetInterventionFactory() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     // -----------------------------------------
     // --- IIndividualHumanEventContext Methods

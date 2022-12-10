@@ -16,6 +16,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ISimulationContext.h"
 #include "NodeEventContext.h"
 #include "IIndividualHuman.h"
+#include "IIndividualHumanContext.h"
 #include "VectorContexts.h"
 #include "VectorPopulation.h"
 #include "IMigrationInfo.h"
@@ -150,22 +151,14 @@ namespace Kernel
     bool ReportRelationshipMigrationTracking::notifyOnEvent( IIndividualHumanEventContext *context, 
                                                              const EventTrigger::Enum& trigger )
     {
-        IIndividualHuman* p_ih = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_ih) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHuman", "IIndividualHumanEventContext");
-        }
-        IMigrate * im = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IMigrate), (void**)&im) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IMigrate", "IIndividualHumanEventContext");
-        }
+        IIndividualHuman* p_ih = context->GetIndividual();
+        release_assert(p_ih);
 
-        IIndividualHumanSTI* p_hsti = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanSTI), (void**)&p_hsti) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanSTI", "IndividualHuman");
-        }
+        IMigrate* im = p_ih->GetIMigrate();
+        release_assert(im);
+
+        IIndividualHumanSTI* p_hsti = p_ih->GetIndividualContext()->GetIndividualSTI();
+        release_assert(p_hsti);
 
         ISimulationContext* p_sim = context->GetNodeEventContext()->GetNodeContext()->GetParent();
 

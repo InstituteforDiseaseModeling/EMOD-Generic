@@ -109,13 +109,8 @@ namespace Kernel
             return;
         }
 
-        IMigrate * pim = NULL;
-        if (s_OK != pvc->QueryInterface(GET_IID(IMigrate), (void**)&pim) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pvc", "IMigrate", "IVectorCohort");
-        }
+        IMigrate* pim = pvc->GetIMigrate();
 
-        //uint64_t vci_id = pivci->GetID();
         uint64_t vci_id = 0;
         int from_node_id = pSim->GetNodeExternalID( nodeSuid ) ;
         int to_node_id = pSim->GetNodeExternalID( pim->GetMigrationDestination() ) ;

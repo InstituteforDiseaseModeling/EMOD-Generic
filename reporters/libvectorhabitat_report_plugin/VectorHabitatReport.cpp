@@ -203,11 +203,8 @@ void VectorHabitatReport::LogNodeData( INodeContext * pNC )
     LOG_DEBUG( "LogNodeData\n" );
     bool empty_idx_map = species_habitat_idx_map.empty();
 
-    INodeVector* p_node_vector = nullptr ;
-    if( pNC->QueryInterface( GET_IID( INodeVector ), (void**) & p_node_vector ) != s_OK )
-    {
-        throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pNC->GetNodeContext()", "INodeVector", "INodeContext" );
-    }
+    INodeVector* p_node_vector = pNC->GetNodeVector();
+    release_assert(p_node_vector);
 
     const VectorPopulationReportingList_t& vectorPopulations = p_node_vector->GetVectorPopulationReporting();
 

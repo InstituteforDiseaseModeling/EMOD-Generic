@@ -39,6 +39,8 @@ namespace Kernel
         virtual ~NodeVector();
 
         // INodeContext methods
+        virtual INodeVector*         GetNodeVector() override;
+
         // IVectorNodeContext methods
         virtual VectorProbabilities* GetVectorLifecycleProbabilities() override;
         virtual IVectorHabitat*      GetVectorHabitatBySpeciesAndType( std::string& species, VectorHabitatType::Enum type, const Configuration* inputJson) override;

@@ -227,12 +227,8 @@ namespace Kernel
     {
         CD4_Stage::Enum cd4_stage = CD4_Stage::HIV_NEGATIVE;
 
-        IIndividualHumanHIV* hiv_individual = NULL;
-        if( context->QueryInterface( GET_IID( IIndividualHumanHIV ), (void**)&hiv_individual ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman" );
-        }
-
+        IIndividualHumanHIV* hiv_individual = context->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        release_assert(hiv_individual);
 
         // CD4 Stage
         if( hiv_individual->HasHIV() ) {
@@ -254,11 +250,8 @@ namespace Kernel
     {
         ARTStatusLocal::Enum art_status = ARTStatusLocal::NA;
 
-        IIndividualHumanHIV* hiv_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&hiv_individual) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
-        }
+        IIndividualHumanHIV* hiv_individual = context->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        release_assert(hiv_individual);
 
         if (hiv_individual->HasHIV())
         {
@@ -281,26 +274,8 @@ namespace Kernel
     {
         TB_State::Enum tb_state = TB_State::Negative;
 
-        IIndividualHumanHIV* hiv_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&hiv_individual) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
-        }
-
-        IIndividualHumanCoInfection* coinf_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanCoInfection), (void**)&coinf_individual) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
-        }
-
-        IIndividualHumanTB* tb_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&tb_individual) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
-        }
-
-        if (!coinf_individual->HasTB())
-            return tb_state;     // Care_Stage::Enum::NA
+        IIndividualHumanTB* tb_individual = context->GetIndividual()->GetIndividualContext()->GetIndividualTB();
+        release_assert(tb_individual);
 
         if (tb_individual->HasLatentInfection())
         {
@@ -325,46 +300,33 @@ namespace Kernel
             {
                 tb_state = TB_State::ActiveSmearNeg;
             }
-
         }
+
         return tb_state;
     }
-      
+
     MDR_State::Enum Report_TBHIV_Basic::ComputeMDRState(IIndividualHumanEventContext *context)
     {
         MDR_State::Enum mdr_state = MDR_State::NA;
 
+        IIndividualHumanTB* tb_individual = context->GetIndividual()->GetIndividualContext()->GetIndividualTB();
+        release_assert(tb_individual);
 
-        IIndividualHumanCoInfection* coinf_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanCoInfection), (void**)&coinf_individual) != s_OK)
+        if(tb_individual->HasLatentInfection() || tb_individual->HasActiveInfection())
         {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
+            if (tb_individual->IsMDR())
+            {
+                mdr_state = MDR_State::MDR;
+            }
+            else
+            {
+                mdr_state = MDR_State::Negative;
+            }
         }
 
-        IIndividualHumanTB* tb_individual = NULL;
-        if (context->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&tb_individual) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHIV", "IndividualHuman");
-        }
-
-        if (!coinf_individual->HasTB())
-        {
-            return mdr_state;     // mdr state NA
-        }
-        else if (tb_individual->IsMDR())
-        {
-            mdr_state = MDR_State::MDR;
-        }
-        else
-        {
-            mdr_state = MDR_State::Negative;
-        }
-        
          return mdr_state;
-    
     }
 
-    
     std::string Report_TBHIV_Basic::GetHeader() const
     {
         std::stringstream header ;
@@ -466,12 +428,7 @@ namespace Kernel
             return true;
 
         // iindividual context for suid
-        IIndividualHumanContext * iindividual = NULL;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanContext), (void**)&iindividual) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanContext", "IIndividualHumanEventContext");
-        }
-
+        IIndividualHumanContext* iindividual = context->GetIndividual()->GetIndividualContext();
         float mc_weight = context->GetMonteCarloWeight();
 
         CD4_Stage::Enum cd4_stage = ComputeCD4Stage(context);

@@ -16,13 +16,13 @@ namespace Kernel
 {
     struct IIndividualHumanHIV ;
 
-    class HIVInterventionsContainer : public STIInterventionsContainer,
-        public IHIVCampaignSemaphores,
-        public IHIVMedicalHistory,
-        public IHIVDrugEffects,
-        public IHIVDrugEffectsApply,
-        public IHIVInterventionsContainer,
-        public IHIVMTCTEffects
+    class HIVInterventionsContainer
+        : public STIInterventionsContainer
+        , public IHIVInterventionsContainer
+        , public IHIVCampaignSemaphores
+        , public IHIVMedicalHistory
+        , public IHIVDrugEffectsApply
+        , public IHIVMTCTEffects
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
@@ -35,6 +35,7 @@ namespace Kernel
 
         // IIndividualHumanInterventionsContext
         virtual void SetContextTo(IIndividualHumanContext* context) override;
+        virtual IHIVInterventionsContainer* GetContainerHIV() override;
 
         // IHIVDrugEffectsApply
         virtual void ApplyDrugConcentrationAction( std::string , float current_concentration ) override;
@@ -48,6 +49,9 @@ namespace Kernel
 
         virtual void GoOnART( bool viralSupression, float daysToAchieveSuppression ) override;
         virtual void GoOffART() override;
+
+        virtual float GetDrugInactivationRate() override;
+        virtual float GetDrugClearanceRate() override;
 
         // IHIVMedicalHistory
         // updates medical chart
@@ -98,13 +102,11 @@ namespace Kernel
         virtual float GetDurationSinceLastStartingART() const override;
         virtual const ProbabilityNumber& GetProbMaternalTransmissionModifier() const override;
         virtual void BroadcastNewHIVInfection() override;
+        virtual IHIVDrugEffectsApply* GetHIVDrugEffectApply() override;
+        virtual IHIVMedicalHistory*   GetHIVMedicalHistory()  override;
 
         // Update parameters in this container before the infections are updated
         virtual void InfectiousLoopUpdate( float dt ) override;
-
-        // IHIVDrugEffects
-        virtual float GetDrugInactivationRate() override;
-        virtual float GetDrugClearanceRate() override;
 
     protected:
 
