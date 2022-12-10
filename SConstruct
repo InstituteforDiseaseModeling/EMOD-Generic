@@ -1,6 +1,6 @@
 # -*- mode: python; -*-
 # This Python script, SConstruct, requires
-# 1. python V2.4 or above. you can get from http://www.python.org
+# 1. python V3.6 or above. you can get from http://www.python.org
 # 2. scons V2.1 or above. you can get from  http://www.scons.org
 #
 # This file configures the build environment, and then delegates to
@@ -314,8 +314,11 @@ if os.sys.platform.startswith("linux"):
     elif(sys.version_info.minor == 10):
         env.Append( LIBS=["python3.10"] )
         env.Append( EXTRACPPPATH=["/usr/include/python3.10"] )
+    elif(sys.version_info.minor == 11):
+        env.Append( LIBS=["python3.11"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.11"] )
     else:
-        raise RuntimeError("Only supports python 3.6, 3.7, 3.8, 3.9, and 3.10")
+        raise RuntimeError("Unsupported python version")
 
     env.Append( LIBS=["pthread", "dl" ] )
     env.Append( EXTRALIBPATH=[ "/usr/local/lib", "/usr/lib64/mpich/lib" ] )
