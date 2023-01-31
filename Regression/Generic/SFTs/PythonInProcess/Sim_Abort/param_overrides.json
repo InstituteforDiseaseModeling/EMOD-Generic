@@ -1,0 +1,14 @@
+{
+    "parameters": {
+        "Default_Config_Path": "defaults/generic_science_default_config.json",
+        "Enable_Demographics_Builtin": 1,
+        "Enable_Log_Throttling": 1,
+        "Enable_Initial_Prevalence": 0,
+        "Enable_Vital_Dynamics": 0,
+        "Geography": "NONE",
+        "Config_Name": "PythonInProcess_SimAbort",
+        "Simulation_Duration": 100,
+        "logLevel_Individual": "INFO",
+        "logLevel_Susceptibility": "INFO"
+    }
+}

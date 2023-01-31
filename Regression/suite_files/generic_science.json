@@ -91,6 +91,7 @@
         { "path": "Generic/SFTs/Overdispersion/MultiNodes" },
         { "path": "Generic/SFTs/Overdispersion/SingleNode" },
         { "path": "Generic/SFTs/PythonInProcess/Honors_Timestep" },
+        { "path": "Generic/SFTs/PythonInProcess/Sim_Abort" },
         { "path": "Generic/SFTs/Serialization/01_write_file_singlenode" },
         { "path": "Generic/SFTs/Serialization/02_read_file_singlenode" },
         { "path": "Generic/SFTs/Serialization/03_infections_remain" },

@@ -13,7 +13,7 @@ def application( json_config_path, debug=False ):
     if debug:
         print(f"campaign build day modulo timestep: {campaign_build_day % simulation_timestep}")
     if campaign_build_day % simulation_timestep != 0:
-        campaign_build_day += campaign_build_day%simulation_timestep
+        campaign_build_day += (simulation_timestep-campaign_build_day%simulation_timestep)
         pass
     if debug:
         print(f'Specified build day: {campaign_build_day}')

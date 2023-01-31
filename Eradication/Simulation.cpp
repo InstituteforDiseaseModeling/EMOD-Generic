@@ -115,6 +115,7 @@ namespace Kernel
         , node_ipop_vec()
         , node_dist_mat()
         , node_info_mat()
+        , m_abort_sim(false)
     {
         LOG_DEBUG( "CTOR\n" );
 
@@ -238,6 +239,12 @@ namespace Kernel
                 LOG_INFO("Total wall time duration at current time-step exceeds maximum; simulation aborting.\n");
                 abortSim = true;
             }
+        }
+
+        if(m_abort_sim)
+        {
+            LOG_INFO("Received termination signal; simulation aborting.\n");
+            abortSim = true;
         }
 
         return abortSim;
@@ -977,8 +984,16 @@ namespace Kernel
         // In-process call returns input string if no python, empty string if no new campaign;
         if( new_campaign_filename != py_input_string && !new_campaign_filename.empty() )
         {
-            const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
-            loadCampaignFromFile(new_campaign_filename, nodeIDs);
+            if(new_campaign_filename == PY_ABORT_STRING)
+            {
+                LOG_INFO("Request from in-process to end simulation.\n");
+                m_abort_sim = true;
+            }
+            else
+            {
+                const vector<ExternalNodeId_t>& nodeIDs = demographics_factory->GetNodeIDs();
+                loadCampaignFromFile(new_campaign_filename, nodeIDs);
+            }
         }
 
         // ----------------

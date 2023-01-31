@@ -41,7 +41,6 @@ def application(output_folder="output", config_filename="config.json",
     start_day = config_params['Build_Campaign_Event_At']
     last_timestep = config_params['Simulation_Duration']
     timestep_size = config_params['Simulation_Timestep']
-    start_day_index = start_day // timestep_size
 
     import os.path as path
 
@@ -54,18 +53,21 @@ def application(output_folder="output", config_filename="config.json",
     total_days = len(infected_channel)
     messages = []
     it_works = False
-    first_infection_day = start_day//timestep_size + 1 + 1
-    messages.append(f"TEST: this should all add up to zero: {infected_channel[0:first_infection_day]}\n")
-    if sum(infected_channel[0:first_infection_day]) == 0:
+    first_infection_ts  = start_day//timestep_size + 1
+    if start_day % timestep_size != 0:
+        first_infection_ts += 1
+    first_infection_day = first_infection_ts * timestep_size
+    messages.append(f"TEST: this should all add up to zero: {infected_channel[0:first_infection_ts]}\n")
+    if sum(infected_channel[0:first_infection_ts]) == 0:
         it_works = True  # should be no infections
         pass
     messages.append(f"Expected 0 infections until day {first_infection_day}. This worked: {it_works}.\n")
-    outbreak_day_infected = infected_channel[first_infection_day]
+    outbreak_day_infected = infected_channel[first_infection_ts]
     got_infections = False
     if outbreak_day_infected> 0:
         got_infections = True
         pass
-    messages.append(f"Expected infections on day {start_day + 1 + timestep_size}. Infected channel had {outbreak_day_infected}.\n")
+    messages.append(f"Expected infections on day {first_infection_day}. Infected channel had {outbreak_day_infected}.\n")
     if not got_infections:
         it_works = False
         pass

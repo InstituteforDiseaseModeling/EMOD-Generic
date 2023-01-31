@@ -30,6 +30,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "SerializedPopulation.h"
 
+#define PY_ABORT_STRING         "ABORT"
 #define ENABLE_DEBUG_MPI_TIMING 0  // TODO: could make this an environment setting so we don't have to recompile
 
 namespace Kernel
@@ -224,6 +225,8 @@ namespace Kernel
 #pragma warning( pop )
 
     private:
+        bool m_abort_sim;
+
         typedef std::unordered_map< std::string, report_instantiator_function_t > ReportInstantiatorMap ;
         void Reports_ConfigureBuiltIn();
         void Reports_FindReportsCollectingIndividualData();
