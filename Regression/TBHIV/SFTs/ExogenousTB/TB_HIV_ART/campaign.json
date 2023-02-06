@@ -11,7 +11,7 @@
                         "Box_Duration": 1000,
                         "Decay_Rate_Factor": 3650,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBoxExponential"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },

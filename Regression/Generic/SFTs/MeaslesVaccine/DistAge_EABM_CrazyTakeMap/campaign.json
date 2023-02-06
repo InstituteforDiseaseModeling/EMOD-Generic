@@ -9,7 +9,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 10, 
                         "Initial_Effect": 0.5, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Take_By_Age_Multiplier":
                     {

@@ -24,7 +24,7 @@
                         "Cost_To_Consumer": 1,
                         "Vaccine_Take": 1.0,
                         "Acquire_Config": {
-                            "class": "WaningEffectConstant",
+                            "class": "WaningEffect",
                             "Initial_Effect" : 1.0
                         },
                         "Event_Trigger_Distributed" : "Vaccinated"

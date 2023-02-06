@@ -47,11 +47,11 @@ namespace Kernel
         , m_pEffectBlocking( nullptr )
         , m_pConsumer( nullptr )
     {
-        if( master.m_pEffectKilling != nullptr )
+        if(master.m_pEffectKilling)
         {
             m_pEffectKilling = master.m_pEffectKilling->Clone();
         }
-        if( master.m_pEffectBlocking != nullptr )
+        if(master.m_pEffectBlocking)
         {
             m_pEffectBlocking = master.m_pEffectBlocking->Clone();
         }
@@ -61,9 +61,12 @@ namespace Kernel
     {
         delete m_pEffectKilling;
         delete m_pEffectBlocking;
+
+        m_pEffectKilling = nullptr;
+        m_pEffectBlocking = nullptr;
     }
 
-    bool AbstractBednet::Configure( const Configuration * inputJson )
+    bool AbstractBednet::Configure(const Configuration* inputJson)
     {
         bool configured = true;
 
@@ -85,34 +88,19 @@ namespace Kernel
         return configured;
     }
 
-    bool AbstractBednet::ConfigureBlockingAndKilling( const Configuration * inputJson )
+    bool AbstractBednet::ConfigureBlockingAndKilling(const Configuration* inputJson)
     {
-        WaningConfig killing_config;
-        WaningConfig blocking_config;
-        initConfigComplexType( "Killing_Config", &killing_config, SB_Killing_Config_DESC_TEXT );
-        initConfigComplexType( "Blocking_Config", &blocking_config, SB_Blocking_Config_DESC_TEXT );
+        m_pEffectKilling  = WaningEffectFactory::CreateInstance();
+        m_pEffectBlocking = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",    m_pEffectKilling->GetConfigurable(),    SB_Killing_Config_DESC_TEXT);
+        initConfigTypeMap("Blocking_Config",   m_pEffectBlocking->GetConfigurable(),   SB_Blocking_Config_DESC_TEXT);
 
         bool configured = BaseIntervention::Configure( inputJson );
-
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            if( (killing_config._json.Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(killing_config._json).Empty() )
-            {
-                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Killing_Config' must be defined.");
-            }
-            if( (blocking_config._json.Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(blocking_config._json).Empty() )
-            {
-                throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Blocking_Config' must be defined.");
-            }
-            m_pEffectKilling  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,  inputJson->GetDataLocation(), "Killing_Config" );
-            m_pEffectBlocking = WaningEffectFactory::getInstance()->CreateInstance( blocking_config._json, inputJson->GetDataLocation(), "Blocking_Config" );
-        }
 
         return configured;
     }
 
-    bool AbstractBednet::Distribute( IIndividualHumanInterventionsContext *context,
-                                     ICampaignCostObserver * const pCCO )
+    bool AbstractBednet::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO )
     {
         if( AbortDueToDisqualifyingInterventionStatus( context->GetParent() ) )
         {
@@ -155,38 +143,76 @@ namespace Kernel
 
     float AbstractBednet::GetEffectKilling() const
     {
-        return m_pEffectKilling->Current();
+        float effect = 0.0f;
+        if(m_pEffectKilling)
+        {
+            effect = m_pEffectKilling->Current();
+        }
+        return effect;
     }
 
     float AbstractBednet::GetEffectBlocking() const
     {
-        return m_pEffectBlocking->Current();
+        float effect = 0.0f;
+        if(m_pEffectBlocking)
+        {
+            effect = m_pEffectBlocking->Current();
+        }
+        return effect;
     }
 
     void AbstractBednet::UseBednet()
     {
-        float current_killingrate  = GetEffectKilling();
-        float current_blockingrate = GetEffectBlocking();
+        if(m_pEffectKilling)
+        {
+            m_pConsumer->UpdateProbabilityOfKilling( GetEffectKilling() );
+        }
 
-        m_pConsumer->UpdateProbabilityOfKilling( current_killingrate );
-        m_pConsumer->UpdateProbabilityOfBlocking( current_blockingrate  );
+        if(m_pEffectBlocking)
+        {
+            m_pConsumer->UpdateProbabilityOfBlocking( GetEffectBlocking()  );
+        }
     }
 
     void AbstractBednet::UpdateBlockingAndKilling( float dt )
     {
-        m_pEffectKilling->Update( dt );
-        m_pEffectBlocking->Update( dt );
+        if(m_pEffectKilling)
+        {
+            m_pEffectKilling->Update( dt );
+            if(m_pEffectKilling->Expired())
+            {
+                delete m_pEffectKilling;
+                m_pEffectKilling = nullptr;
+            }
+        }
+        if(m_pEffectBlocking)
+        {
+            m_pEffectBlocking->Update( dt );
+            if(m_pEffectBlocking->Expired())
+            {
+                delete m_pEffectBlocking;
+                m_pEffectBlocking = nullptr;
+            }
+        }
     }
 
     void AbstractBednet::SetContextTo( IIndividualHumanContext *context )
     {
         BaseIntervention::SetContextTo( context );
+
+        if(m_pEffectKilling)
+        {
+            m_pEffectKilling->SetContextTo( context );
+        }
+        if(m_pEffectBlocking)
+        {
+            m_pEffectBlocking->SetContextTo( context );
+        }
+
         if( s_OK != context->GetInterventionsContext()->QueryInterface( GET_IID( IBednetConsumer ), (void**)&m_pConsumer ) )
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "IBednetConsumer", "IIndividualHumanContext" );
         }
-        m_pEffectKilling->SetContextTo( context );
-        m_pEffectBlocking->SetContextTo( context );
     }
 
     void AbstractBednet::BroadcastEvent( const EventTrigger::Enum& trigger ) const
@@ -215,16 +241,16 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(SimpleBednet)
     
     SimpleBednet::SimpleBednet()
-    : AbstractBednet()
-    , m_pEffectUsage( nullptr )
+        : AbstractBednet()
+        , m_pEffectUsage( nullptr )
     {
     }
 
     SimpleBednet::SimpleBednet( const SimpleBednet& master )
-    : AbstractBednet( master )
-    , m_pEffectUsage( nullptr )
+        : AbstractBednet( master )
+        , m_pEffectUsage( nullptr )
     {
-        if( master.m_pEffectUsage != nullptr )
+        if(master.m_pEffectUsage)
         {
             m_pEffectUsage = master.m_pEffectUsage->Clone();
         }
@@ -233,21 +259,15 @@ namespace Kernel
     SimpleBednet::~SimpleBednet()
     {
         delete m_pEffectUsage;
+        m_pEffectUsage = nullptr;
     }
 
     bool SimpleBednet::ConfigureUsage( const Configuration * inputJson )
     {
-        WaningConfig usage_config;
-        initConfigComplexType( "Usage_Config", &usage_config, SB_Usage_Config_DESC_TEXT );
+        m_pEffectUsage = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Usage_Config",  m_pEffectUsage->GetConfigurable(),  SB_Usage_Config_DESC_TEXT);
 
         bool configured = JsonConfigurable::Configure( inputJson ); // AbstractBednet is responsible for calling BaseIntervention::Configure()
-
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            m_pEffectUsage = WaningEffectFactory::getInstance()->CreateInstance( usage_config._json,
-                                                                                 inputJson->GetDataLocation(),
-                                                                                 "Usage_Config" );
-        }
 
         return configured;
     }
@@ -262,7 +282,15 @@ namespace Kernel
 
     void SimpleBednet::UpdateUsage( float dt )
     {
-        m_pEffectUsage->Update( dt );
+        if(m_pEffectUsage)
+        {
+            m_pEffectUsage->Update( dt );
+            if(m_pEffectUsage->Expired())
+            {
+                delete m_pEffectUsage;
+                m_pEffectUsage = nullptr;
+            }
+        }
     }
 
     float SimpleBednet::GetEffectKilling() const
@@ -277,20 +305,33 @@ namespace Kernel
 
     float SimpleBednet::GetEffectUsage() const
     {
-        return m_pEffectUsage->Current();
+        float effect = 0.0f;
+        if(m_pEffectUsage)
+        {
+            effect = m_pEffectUsage->Current();
+        }
+        return effect;
     }
 
     bool SimpleBednet::CheckExpiration( float dt )
     {
-        return m_pEffectUsage->Expired();
+        bool is_expired = true;
+        if(m_pEffectUsage)
+        {
+            is_expired = m_pEffectUsage->Expired();
+        }
+        return is_expired;
     }
 
     void SimpleBednet::SetContextTo( IIndividualHumanContext *context )
     {
         AbstractBednet::SetContextTo( context );
-        m_pEffectUsage->SetContextTo( context );
-    }
 
+        if(m_pEffectUsage)
+        {
+            m_pEffectUsage->SetContextTo( context );
+        }
+    }
 
     REGISTER_SERIALIZABLE(SimpleBednet);
 

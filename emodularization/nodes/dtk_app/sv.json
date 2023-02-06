@@ -1,6 +1,6 @@
 {
     "Acquire_Config": {
-        "class": "WaningEffectBox",
+        "class": "WaningEffect",
         "Initial_Effect" : 0.9,
         "Box_Duration" : 100
     },

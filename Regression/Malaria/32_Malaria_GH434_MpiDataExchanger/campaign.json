@@ -10,17 +10,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -80,17 +80,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -150,17 +150,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -220,17 +220,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -290,17 +290,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -360,17 +360,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -430,17 +430,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -545,17 +545,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -660,17 +660,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -775,17 +775,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -890,17 +890,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1005,17 +1005,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1120,17 +1120,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1226,17 +1226,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1332,17 +1332,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1438,17 +1438,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1544,17 +1544,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1650,17 +1650,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1756,17 +1756,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1863,17 +1863,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -1970,17 +1970,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2077,17 +2077,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2184,17 +2184,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2291,17 +2291,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2398,17 +2398,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2566,17 +2566,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2734,17 +2734,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -2902,17 +2902,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3070,17 +3070,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3238,17 +3238,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3406,17 +3406,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3518,17 +3518,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3630,17 +3630,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3742,17 +3742,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3854,17 +3854,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -3966,17 +3966,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4078,17 +4078,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4171,17 +4171,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4264,17 +4264,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4357,17 +4357,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4450,17 +4450,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4543,17 +4543,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4636,17 +4636,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4740,17 +4740,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4844,17 +4844,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -4948,17 +4948,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -5052,17 +5052,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -5156,17 +5156,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -5260,17 +5260,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -5727,17 +5727,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -6194,17 +6194,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -6661,17 +6661,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -7128,17 +7128,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -7595,17 +7595,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8062,17 +8062,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8176,17 +8176,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8290,17 +8290,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8404,17 +8404,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8502,17 +8502,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8600,17 +8600,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8698,17 +8698,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -8872,17 +8872,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -9046,17 +9046,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -9220,17 +9220,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -9477,17 +9477,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -9734,17 +9734,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -9991,17 +9991,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10119,17 +10119,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10247,17 +10247,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10375,17 +10375,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10570,17 +10570,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10765,17 +10765,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -10960,17 +10960,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -11306,17 +11306,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -11652,17 +11652,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -11998,17 +11998,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12112,17 +12112,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12226,17 +12226,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12340,17 +12340,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12454,17 +12454,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12552,17 +12552,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12650,17 +12650,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12748,17 +12748,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -12846,17 +12846,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -13020,17 +13020,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -13194,17 +13194,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -13368,17 +13368,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -13542,17 +13542,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -13799,17 +13799,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14056,17 +14056,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14313,17 +14313,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14570,17 +14570,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14698,17 +14698,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14826,17 +14826,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -14954,17 +14954,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -15082,17 +15082,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -15277,17 +15277,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -15472,17 +15472,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -15667,17 +15667,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -15862,17 +15862,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -16208,17 +16208,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -16554,17 +16554,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -16900,17 +16900,17 @@
                             "Blocking_Config": {
                                 "Decay_Time_Constant": 730,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 3.75,
                             "Killing_Config": {
                                 "Decay_Time_Constant": 1460,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Usage_Config": {
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "SimpleBednet"
                         },
@@ -17245,12 +17245,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -17351,12 +17351,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -17887,12 +17887,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18379,12 +18379,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18441,12 +18441,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18478,12 +18478,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18525,12 +18525,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18555,12 +18555,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18604,12 +18604,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18674,12 +18674,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18706,12 +18706,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18786,12 +18786,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18876,12 +18876,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18906,12 +18906,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18940,12 +18940,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -18982,12 +18982,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19012,12 +19012,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19042,12 +19042,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19074,12 +19074,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19106,12 +19106,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19136,12 +19136,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19172,12 +19172,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19215,12 +19215,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19280,12 +19280,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19339,12 +19339,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19455,12 +19455,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"
@@ -19488,12 +19488,12 @@
                     "Killing_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Reduction_Config": {
                         "Box_Duration": 365,
                         "Initial_Effect": 0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Spray_Kill_Target": "SpaceSpray_FemalesAndMales",
                     "class": "SpaceSpraying"

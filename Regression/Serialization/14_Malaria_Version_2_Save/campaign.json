@@ -9,17 +9,17 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 3.13, 
                     "Intervention_Name": "Bednet", 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }, 
                     "class": "SimpleBednet"
@@ -40,13 +40,13 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 8, 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1.0, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "IRSHousingModification"
                 }, 
@@ -69,7 +69,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "Vaccine"
                 }, 
@@ -91,7 +91,7 @@
                     "Transmit_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "Vaccine"
                 }, 

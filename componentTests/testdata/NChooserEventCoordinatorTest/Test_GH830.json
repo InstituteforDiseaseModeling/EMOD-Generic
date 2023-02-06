@@ -20,9 +20,8 @@
         "Cost_To_Consumer": 10, 
         "Vaccine_Take": 1.0, 
         "Acquire_Config": {
-            "class": "WaningEffectMapLinear", 
+            "class": "WaningEffect", 
             "Initial_Effect": 1.0, 
-            "Expire_At_Durability_Map_End": 1, 
             "Durability_Map": {
                 "Times": [ 0, 50, 100, 150 ], 
                 "Values": [ 1.0, 1.0, 1.0, 0.0 ]

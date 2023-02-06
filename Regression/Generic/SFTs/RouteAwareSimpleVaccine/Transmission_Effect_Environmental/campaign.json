@@ -90,7 +90,7 @@
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "__Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.2,
                         "Box_Duration": 300
                     }
@@ -115,7 +115,7 @@
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "__Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.7,
                         "Box_Duration": 300
                     }
@@ -140,7 +140,7 @@
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "__Vaccine_Route": "TRANSMISSIONROUTE_CONTACT",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1,
                         "Box_Duration": 300
                     }

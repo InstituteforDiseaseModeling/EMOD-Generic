@@ -34,7 +34,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect": 0.59,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -68,7 +68,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect": 0.29,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -102,7 +102,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -136,7 +136,7 @@
                         "Box_Duration": 1095,
                         "Initial_Effect": 0.49,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -170,7 +170,7 @@
                         "Box_Duration": 1095,
                         "Initial_Effect": 0.44,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -204,7 +204,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -238,7 +238,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -272,7 +272,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -306,7 +306,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.62,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -340,7 +340,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.78,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -374,7 +374,7 @@
                         "Box_Duration": 2555,
                         "Initial_Effect": 0.78,
                         "Initial_Effect__KP_Efficacy": "<-- MARKER",
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -441,9 +441,8 @@
                                 1
                             ]
                         },
-                        "Expire_At_Durability_Map_End": 0,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapLinear"
+                        "class": "WaningEffect"
                     },
                     "Effect": 1.0,
                     "Mode": "Dose",
@@ -482,10 +481,9 @@
                                     1
                                 ]
                             },
-                            "Expire_At_Durability_Map_End": 0,
                             "Initial_Effect": 1.0,
                             "Reference_Timer": 9125.0,
-                            "class": "WaningEffectMapLinear"
+                            "class": "WaningEffect"
                         },
                         "Effect": 1.0,
                         "Mode": "Dose",

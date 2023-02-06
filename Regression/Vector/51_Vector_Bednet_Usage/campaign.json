@@ -16,16 +16,18 @@
                     "class": "SimpleBednet",
                     "Cost_To_Consumer": 5, 
                     "Usage_Config": {
-                        "class": "WaningEffectRandomBox",
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 60,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "Expected_Discard_Time" : 60
+                        "class": "WaningEffect"
                     },
                     "Blocking_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }, 
                     "Killing_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }
                 }

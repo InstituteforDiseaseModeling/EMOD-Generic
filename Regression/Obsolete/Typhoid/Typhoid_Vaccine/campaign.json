@@ -27,9 +27,8 @@
                     "Mode": "Dose",
                     "Effect": 1.0,
                     "Changing_Effect": {
-                        "class": "WaningEffectMapLinear",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
-                        "Expire_At_Durability_Map_End": 1,
                         "Durability_Map": {
                             "Times": [
                                 0,
@@ -70,9 +69,7 @@
                         "Mode": "Dose",
                         "Changing_Effect": {
                             "Initial_Effect": 1.0,
-                            "class": "WaningEffectMapLinear",
-                            "Expire_At_Durability_Map_End": 1,
-                            "Reference_Timer": 1,
+                            "class": "WaningEffect",
                             "Durability_Map": {
                                 "Times": [
                                     0,
@@ -107,7 +104,7 @@
                 "Demographic_Coverage": 1.0,
                 "Intervention_Config": {
                     "Acquire_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
                         "Box_Duration": 10000
                     },
@@ -133,7 +130,7 @@
                     "class": "NodeLevelHealthTriggeredIV",
                     "Actual_IndividualIntervention_Config": {
                         "Acquire_Config": {
-                            "class": "WaningEffectBox",
+                            "class": "WaningEffect",
                             "Initial_Effect": 1.0,
                             "Box_Duration": 10000
                         },

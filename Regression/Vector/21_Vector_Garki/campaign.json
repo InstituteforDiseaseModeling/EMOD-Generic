@@ -10,16 +10,16 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 3.75, 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.7, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }, 
                     "class": "SimpleBednet"
@@ -43,16 +43,11 @@
                 "Include_Arrivals": 0, 
                 "Include_Departures": 0, 
                 "Intervention_Config": {
-                    "Blocking_Config": {
-                        "Box_Duration": 3650, 
-                        "Initial_Effect": 0, 
-                        "class": "WaningEffectBox"
-                    }, 
                     "Cost_To_Consumer": 8, 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.6, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "IRSHousingModification"
                 }, 
@@ -82,7 +77,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 1.0, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     } 
                 }, 
                 "Number_Repetitions": 1, 
@@ -110,7 +105,7 @@
                     "Transmit_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.7, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     } 
                 }, 
                 "Number_Repetitions": 1, 

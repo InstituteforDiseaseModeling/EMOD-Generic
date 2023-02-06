@@ -32,19 +32,25 @@
                     "Vaccine_Take": 1,
                     "Vaccine_Type": "Generic",
                     "Acquire_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Mortality_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -68,19 +74,25 @@
                     "Efficacy_Is_Multiplicative": 1,
                     "Vaccine_Take": 1,
                     "Acquire_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Mortality_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -104,19 +116,25 @@
                     "Efficacy_Is_Multiplicative": 1,
                     "Vaccine_Take": 1,
                     "Acquire_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Mortality_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -140,19 +158,25 @@
                     "Efficacy_Is_Multiplicative": 1,
                     "Vaccine_Take": 1,
                     "Acquire_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "Mortality_Config": {
-                        "Expected_Discard_Time": 200,
+                        "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",
+                        "Box_Duration_Exponential": 200,
+                        "Enable_Box_Duration_Distribution": 1,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectRandomBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },

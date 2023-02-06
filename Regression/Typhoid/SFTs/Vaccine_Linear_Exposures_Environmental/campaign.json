@@ -24,11 +24,10 @@
                     "class": "TyphoidWASH",
                     "Mode": "Exposures",
                     "Effect": 1.0,
-					"Use_Property_Targeting":0,
+                    "Use_Property_Targeting":0,
                     "Changing_Effect": {
-                        "class": "WaningEffectMapLinear",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
-                        "Expire_At_Durability_Map_End": 1,
                         "Durability_Map": {
                             "Times": [ 0, 10, 11, 20, 21, 26, 27, 33, 34, 40 ],
                             "Values": [0,  0, 1,  1 , 0,  0,   1,  1 , 0, 0]

@@ -4,17 +4,12 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 0.5,
                 "Intervention_Config": {
-                    "Blocking_Config": {
-                        "Box_Duration": 3650,
-                        "Initial_Effect": 0.0,
-                        "class": "WaningEffectBox"
-                    },
                     "Cost_To_Consumer": 8,
                     "Intervention_Name": "HousingModification",
                     "Killing_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 0.6,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "IRSHousingModification"
                 },
@@ -34,16 +29,16 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 3.75,
                     "Killing_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 0.7,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     },
                     "class": "SimpleBednet"
@@ -66,7 +61,7 @@
                     "Vaccine_Take": 1,
                     "class": "Vaccine",
                     "Acquire_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
                         "Box_Duration": 3650
                     }
@@ -89,7 +84,7 @@
                     "Vaccine_Take": 1,
                     "class": "Vaccine",
                     "Transmit_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.7,
                         "Box_Duration": 3650
                     }

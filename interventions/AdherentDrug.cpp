@@ -37,29 +37,38 @@ namespace Kernel
         , m_TookDoseEvent()
         , m_MaxDuration( FLT_MAX )
         , m_CurrentDuration(0.0)
+        , m_CurrentDose(0)
         , m_TotalDoses(0)
+        , m_DoseEffects(1.0f,FLT_MAX,0.0f,1.0f)
     {
     }
 
     AdherentDrug::AdherentDrug( const AdherentDrug& rOrig )
         : AntimalarialDrug( rOrig )
-        , m_pAdherenceEffect( rOrig.m_pAdherenceEffect->Clone() )
+        , m_pAdherenceEffect( nullptr )
         , m_NonAdherenceOptions( rOrig.m_NonAdherenceOptions )
         , m_NonAdherenceCdf( rOrig.m_NonAdherenceCdf )
         , m_TookDoseEvent( rOrig.m_TookDoseEvent )
         , m_MaxDuration( rOrig.m_MaxDuration )
         , m_CurrentDuration( rOrig.m_CurrentDuration )
+        , m_CurrentDose( rOrig.m_CurrentDose )
         , m_TotalDoses( rOrig.m_TotalDoses )
+        , m_DoseEffects( rOrig.m_DoseEffects )
     {
+        if(rOrig.m_pAdherenceEffect)
+        {
+            m_pAdherenceEffect = rOrig.m_pAdherenceEffect->Clone();
+        }
     }
 
     AdherentDrug::~AdherentDrug()
     {
+        delete m_pAdherenceEffect;
+        m_pAdherenceEffect = nullptr;
     }
 
     bool AdherentDrug::Configure( const Configuration * inputJson )
     {
-        WaningConfig adherence_config;
         std::vector<float> non_adherence_probability;
 
         initVectorConfig( "Non_Adherence_Options",
@@ -70,43 +79,26 @@ namespace Kernel
         initConfigTypeMap(     "Non_Adherence_Distribution",      &non_adherence_probability, AD_Non_Adherence_Distribution_DESC_TEXT, 0.0f, 1.0f ); 
         initConfigTypeMap(     "Max_Dose_Consideration_Duration", &m_MaxDuration,             AD_Max_Dose_Consideration_Duration_DESC_TEXT, (1.0f/24.0f), FLT_MAX, FLT_MAX ); // 1-hour=1/24
         initConfig( "Took_Dose_Event", m_TookDoseEvent, inputJson, MetadataDescriptor::Enum("Non_Adherence_Options", AD_Took_Dose_Event_DESC_TEXT, MDD_ENUM_ARGS( EventTrigger ) ) ); 
-                          
-        initConfigComplexType( "Adherence_Config",                &adherence_config,          AD_Adherence_Config_DESC_TEXT );
+
+        m_pAdherenceEffect = WaningEffectFactory::CreateInstance();
+
+        initConfigTypeMap( "Adherence_Config",    m_pAdherenceEffect->GetConfigurable(),  AD_Adherence_Config_DESC_TEXT);
+        initConfigTypeMap( "Adherence_By_Dose",  &m_DoseEffects,                          AD_Adherence_By_Dose_DESC_TEXT);
+
 
         bool ret = AntimalarialDrug::Configure( inputJson );
+
         if( ret && !JsonConfigurable::_dryrun )
         {
-            // ---------------------------------------------
-            // --- The user must define the Adherence_Config
-            // ---------------------------------------------
-            if( (adherence_config._json.Type() == json::ElementType::NULL_ELEMENT) ||
-                !json::QuickInterpreter( adherence_config._json ).Exist( "class") )
+            int num_doses = GetNumDoses();
+            if( m_DoseEffects.size() && m_DoseEffects.rbegin()->first < num_doses )
             {
-                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                     "The Adherence_Config must be defined with a valid WaningEffect.");
-            }
-            m_pAdherenceEffect = WaningEffectFactory::getInstance()->CreateInstance( adherence_config._json,
-                                                                                     inputJson->GetDataLocation(),
-                                                                                     "Adherence_Config" );
-
-            // --------------------------------------------------------------
-            // --- Check to see if IWaningEffectCount type is being used.
-            // --- If there is, then make sure that it is configure properly
-            // --- for the number of doses.
-            // --------------------------------------------------------------
-            IWaningEffectCount* p_count_effect = m_pAdherenceEffect->GetEffectCount();
-            if(p_count_effect)
-            {
-                int num_doses = GetNumDoses();
-                if( !p_count_effect->IsValidConfiguration( num_doses ) )
-                {
-                    std::stringstream ss;
-                    ss << "'Adherence_Config' is not configured correctly." << std::endl;
-                    ss << "'Drug_Type'=" << drug_name << " is configured for " << num_doses << " dose(s)" << std::endl;
-                    ss << "but the IWaningEffectCount does not support that number of doses." << std::endl;
-                    ss << "There should probably be one entry for each dose.";
-                    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-                }
+                std::stringstream ss;
+                ss << "'Adherence_By_Dose' is not configured correctly." << std::endl;
+                ss << "'Drug_Type'=" << drug_name << " is configured for " << num_doses << " dose(s)" << std::endl;
+                ss << "but the Adherence_By_Dose does not support that number of doses." << std::endl;
+                ss << "There should probably be one entry for each dose.";
+                throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
             }
 
             // ----------------------------------------------------
@@ -219,23 +211,29 @@ namespace Kernel
 
     void AdherentDrug::SetContextTo( IIndividualHumanContext *context )
     {
-        m_pAdherenceEffect->SetContextTo( context );
+        if(m_pAdherenceEffect)
+        {
+            m_pAdherenceEffect->SetContextTo( context );
+        }
         AntimalarialDrug::SetContextTo( context );
     }
 
     void AdherentDrug::Update( float dt )
     {
-        m_pAdherenceEffect->Update( dt );
-
-        IWaningEffectCount* p_count_effect = m_pAdherenceEffect->GetEffectCount();
-        if(p_count_effect)
+        if(m_pAdherenceEffect)
         {
-            int current_dose = 1; // m_TotalDoses = -1 implies infinte doses so always the first dose
-            if( m_TotalDoses > 0 )
+            m_pAdherenceEffect->Update( dt );
+            if(m_pAdherenceEffect->Expired())
             {
-                current_dose = m_TotalDoses - remaining_doses + 1;
+                delete m_pAdherenceEffect;
+                m_pAdherenceEffect = nullptr;
             }
-            p_count_effect->SetCount( current_dose );
+        }
+
+        m_CurrentDose = 1; // m_TotalDoses = -1 implies infinte doses so always the first dose
+        if( m_TotalDoses > 0 )
+        {
+            m_CurrentDose = m_TotalDoses - remaining_doses + 1;
         }
 
         m_CurrentDuration += dt;
@@ -254,9 +252,16 @@ namespace Kernel
         bool is_taking_dose = false;
         if( m_CurrentDuration <= m_MaxDuration )
         {
-            float current = m_pAdherenceEffect->Current();
-            float ran = -1.0;
-            is_taking_dose = parent->GetRng()->SmartDraw( current );
+            float prob_adhere = 1.0f;
+            if(m_pAdherenceEffect)
+            {
+                prob_adhere *= m_pAdherenceEffect->Current();
+            }
+            if(m_DoseEffects.size())
+            {
+                prob_adhere *= m_DoseEffects.getValuePiecewiseConstant(m_CurrentDose);
+            }
+            is_taking_dose = parent->GetRng()->SmartDraw( prob_adhere );
         }
 
         if( !is_taking_dose )
@@ -350,9 +355,12 @@ namespace Kernel
         ar.labelElement( "m_pAdherenceEffect"    ) & drug.m_pAdherenceEffect;
         ar.labelElement( "m_NonAdherenceOptions" ); 
         Kernel::serialize( ar, drug.m_NonAdherenceOptions );
+
         ar.labelElement( "m_NonAdherenceCdf"     ) & drug.m_NonAdherenceCdf;
         ar.labelElement( "m_MaxDuration"         ) & drug.m_MaxDuration;
         ar.labelElement( "m_CurrentDuration"     ) & drug.m_CurrentDuration;
+        ar.labelElement( "m_CurrentDose"         ) & drug.m_CurrentDose;
         ar.labelElement( "m_TotalDoses"          ) & drug.m_TotalDoses;
+        ar.labelElement( "m_DoseEffects"         ) & drug.m_DoseEffects;
     }
 }

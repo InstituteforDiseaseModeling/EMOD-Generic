@@ -7,13 +7,13 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.0, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 8.0, 
                     "Killing_Config": {
                         "Box_Duration": 365, 
                         "Initial_Effect": 0.7, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "IRSHousingModification"
                 }, 

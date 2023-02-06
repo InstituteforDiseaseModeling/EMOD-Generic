@@ -1,0 +1,42 @@
+{
+    "Use_Defaults": 1,
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "Vaccine_Take": 1.0,
+                    "Acquire_Config": {
+                        "Enable_Initial_Effect_Distribution": 1,
+                        "Initial_Effect_Distribution_Alpha": 20.0,
+                        "Initial_Effect_Distribution_Beta": 4.0
+                    },
+                    "class": "Vaccine"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 0,
+            "class": "CampaignEvent"
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator"
+            },
+            "Event_Name": "Outbreak",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "Start_Day": 1,
+            "class": "CampaignEvent"
+        }
+    ]
+}

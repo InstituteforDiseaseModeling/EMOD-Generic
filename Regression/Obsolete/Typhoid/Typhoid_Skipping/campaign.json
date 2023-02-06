@@ -40,7 +40,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -74,7 +74,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -108,7 +108,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -142,7 +142,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -176,7 +176,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -210,7 +210,7 @@
                         "Box_Duration": 720,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -245,7 +245,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -280,7 +280,7 @@
                         "Box_Duration": 2745.587459435645,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -315,7 +315,7 @@
                         "Box_Duration": 2745.587459435645,
                         "Initial_Effect__KP_Efficacy1": "<-- MARKER",
                         "Initial_Effect": 0.7104022874331254,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -350,7 +350,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -385,7 +385,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -420,7 +420,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -455,7 +455,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -490,7 +490,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -525,7 +525,7 @@
                         "Box_Duration": 3064.05203230583,
                         "Initial_Effect__KP_Efficacy2": "<-- MARKER",
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }
                 },
                 "Number_Repetitions": 1,
@@ -581,9 +581,8 @@
                                 1
                             ]
                         },
-                        "Expire_At_Durability_Map_End": 0,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapLinear"
+                        "class": "WaningEffect"
                     },
                     "Effect": 1.0,
                     "Mode": "Dose",

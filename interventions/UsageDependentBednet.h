@@ -15,9 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-
-    struct IBednetConsumer;
-
     class UsageDependentBednet : public AbstractBednet
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, UsageDependentBednet, IDistributableIntervention)
@@ -44,7 +41,8 @@ namespace Kernel
 
         virtual void Callback( float dt );
 
-        std::vector<IWaningEffect*> m_UsageEffectList;
+        IWaningEffect* m_pEffectUsage;
+
         EventTrigger::Enum m_TriggerReceived;
         EventTrigger::Enum m_TriggerUsing;
         EventTrigger::Enum m_TriggerDiscard;

@@ -26,9 +26,8 @@
                 "Effect": 1.0,
                 "Use_Property_Targeting": 0,
                 "Changing_Effect": {
-                    "class": "WaningEffectConstant",
-                    "Initial_Effect": 1.0,
-                    "Expire_At_Durability_Map_End": 1
+                    "class": "WaningEffect",
+                    "Initial_Effect": 1.0
                 },
                 "class": "TyphoidWASH"
             },

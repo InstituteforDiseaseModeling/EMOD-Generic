@@ -8,15 +8,15 @@
                     "Killing_Config": {
                         "Initial_Effect": 0.6,
                         "Decay_Time_Constant": 1460,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Blocking_Config": {
                         "Initial_Effect": 0.9,
                         "Decay_Time_Constant": 730,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }, 
                     "class": "SimpleBednet"

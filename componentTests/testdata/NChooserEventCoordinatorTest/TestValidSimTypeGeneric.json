@@ -74,9 +74,8 @@
                     0.0
                 ]
             },
-            "Expire_At_Durability_Map_End": 1,
             "Initial_Effect": 1.0,
-            "class": "WaningEffectMapLinear"
+            "class": "WaningEffect"
         },
         "Event_Trigger_Distributed" : "GP_EVENT_000",
         "Event_TriggerExpired"     : "GP_EVENT_001",

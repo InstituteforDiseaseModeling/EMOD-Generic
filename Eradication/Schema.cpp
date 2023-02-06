@@ -27,7 +27,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SimulationConfig.h"
 #include "CampaignEvent.h"
 #include "EventCoordinator.h"
-#include "IWaningEffect.h"
 #include "PythonSupport.h"
 #include "Memory.h"
 #include "FileSystem.h"
@@ -174,7 +173,6 @@ void IDMAPI writeInputSchemas(
     json::QuickBuilder ecs_schema = Kernel::EventCoordinatorFactory::getInstance()->GetSchema();
     json::QuickBuilder ivs_schema = Kernel::InterventionFactory::getInstance()->GetSchema();
     json::QuickBuilder ns_schema  = Kernel::NodeSetFactory::getInstance()->GetSchema();
-    json::QuickBuilder we_schema  = Kernel::WaningEffectFactory::getInstance()->GetSchema();
 
     json::Object objRoot;
     json::QuickBuilder camp_schema( objRoot );
@@ -192,7 +190,6 @@ void IDMAPI writeInputSchemas(
     camp_schema[ "idmTypes" ][ "idmType:EventCoordinator"       ] = ecs_schema.As<json::Object>();
     camp_schema[ "idmTypes" ][ "idmType:Intervention"           ] = ivs_schema.As<json::Object>();
     camp_schema[ "idmTypes" ][ "idmType:NodeSet"                ] = ns_schema.As<json::Object>();
-    camp_schema[ "idmTypes" ][ "idmType:WaningEffect"           ] = we_schema.As<json::Object>();
 
     total_schema[ "interventions" ] = camp_schema.As< json::Object> ();
     schema_ostream << std::setprecision(10);

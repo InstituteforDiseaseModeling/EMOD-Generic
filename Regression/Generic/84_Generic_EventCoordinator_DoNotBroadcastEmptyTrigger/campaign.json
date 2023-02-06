@@ -36,7 +36,7 @@
                    "Cost_To_Consumer": 1,
                    "Vaccine_Take": 1,
                    "Acquire_Config": {
-                      "class": "WaningEffectBox",
+                      "class": "WaningEffect",
                       "Initial_Effect": 0.59,
                       "Box_Duration": 20
                    }

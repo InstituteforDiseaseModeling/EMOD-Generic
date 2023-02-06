@@ -915,19 +915,6 @@ namespace Kernel
             json::Element _json;
     };
 
-    class WaningConfig : public JsonConfigurable, public IComplexJsonConfigurable
-    {
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-        virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) { return e_NOINTERFACE; }
-        public:
-            WaningConfig();
-            WaningConfig(json::QuickInterpreter* qi);
-            json::QuickBuilder GetSchema() override;
-            virtual void ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key ) override;
-            virtual bool HasValidDefault() const override { return true; }
-            json::Element _json;
-    };
-
     #define GET_SCHEMA_STATIC_WRAPPER(x)\
     static json::QuickBuilder GetSchemaImpl() \
     { \

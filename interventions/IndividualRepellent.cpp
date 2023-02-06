@@ -28,17 +28,17 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(SimpleIndividualRepellent)
 
     SimpleIndividualRepellent::SimpleIndividualRepellent()
-    : BaseIntervention()
-    , blocking_effect(nullptr)
-    , m_pIRC(nullptr)
+        : BaseIntervention()
+        , blocking_effect(nullptr)
+        , m_pIRC(nullptr)
     {
         initSimTypes( 2, "VECTOR_SIM", "MALARIA_SIM" );
     }
 
     SimpleIndividualRepellent::SimpleIndividualRepellent( const SimpleIndividualRepellent& master )
-    : BaseIntervention( master )
-    , blocking_effect( nullptr )
-    , m_pIRC( nullptr )
+        : BaseIntervention( master )
+        , blocking_effect( nullptr )
+        , m_pIRC( nullptr )
     {
         if( master.blocking_effect != nullptr )
         {
@@ -49,32 +49,22 @@ namespace Kernel
     SimpleIndividualRepellent::~SimpleIndividualRepellent()
     {
         delete blocking_effect;
+        blocking_effect = nullptr;
     }
 
-    bool
-    SimpleIndividualRepellent::Configure(
-        const Configuration * inputJson
-    )
+    bool SimpleIndividualRepellent::Configure(const Configuration* inputJson)
     {
-        WaningConfig   blocking_config;
-
         initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, SIR_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
-        initConfigComplexType("Blocking_Config", &blocking_config, SIR_Blocking_Config_DESC_TEXT );
+
+        blocking_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Blocking_Config",  blocking_effect->GetConfigurable(),  SIR_Blocking_Config_DESC_TEXT);
 
         bool configured = BaseIntervention::Configure( inputJson );
 
-        if( !JsonConfigurable::_dryrun  && configured )
-        {
-            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance(blocking_config._json, inputJson->GetDataLocation(), "Blocking_Config");
-        }
         return configured;
     }
 
-    bool
-    SimpleIndividualRepellent::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool SimpleIndividualRepellent::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO)
     {
         if (s_OK != context->QueryInterface(GET_IID(IIndividualRepellentConsumer), (void**)&m_pIRC) )
         {
@@ -84,12 +74,14 @@ namespace Kernel
         return BaseIntervention::Distribute( context, pCCO );
     }
 
-    void SimpleIndividualRepellent::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void SimpleIndividualRepellent::SetContextTo(IIndividualHumanContext* context)
     {
         BaseIntervention::SetContextTo( context );
-        blocking_effect->SetContextTo( context );
+
+        if(blocking_effect)
+        {
+            blocking_effect->SetContextTo( context );
+        }
 
         LOG_DEBUG("SimpleIndividualRepellent::SetContextTo (probably deserializing)\n");
         if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IIndividualRepellentConsumer), (void**)&m_pIRC) )
@@ -103,11 +95,20 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        blocking_effect->Update(dt);
-        float current_blockingrate = blocking_effect->Current();
-
-        release_assert( m_pIRC != nullptr );
-        m_pIRC->UpdateProbabilityOfIndRepBlocking( current_blockingrate );
+        if(blocking_effect)
+        {
+            blocking_effect->Update(dt);
+            if(blocking_effect->Expired())
+            {
+                delete blocking_effect;
+                blocking_effect = nullptr;
+            }
+            else
+            {
+                release_assert(m_pIRC);
+                m_pIRC->UpdateProbabilityOfIndRepBlocking( blocking_effect->Current() );
+            }
+        }
     }
 
     REGISTER_SERIALIZABLE(SimpleIndividualRepellent);

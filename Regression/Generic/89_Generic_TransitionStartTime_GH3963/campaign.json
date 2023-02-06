@@ -30,7 +30,7 @@
                      {
                         "Acquire_Config": {
                            "Initial_Effect": 0.9999,
-                           "class": "WaningEffectConstant"
+                           "class": "WaningEffect"
                         },
                         "class": "Vaccine"
                      }
@@ -68,7 +68,7 @@
                   {
                      "Acquire_Config": {
                         "Initial_Effect": 0.999999,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                      },
                      "Cost_To_Consumer": 1,
                      "Take_Reduced_By_Acquire_Immunity": 0.6,

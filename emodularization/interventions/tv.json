@@ -2,7 +2,7 @@
     "Mode": "Shedding",
     "Effect": 0.5,
     "Changing_Effect": {
-        "class": "WaningEffectBox",
+        "class": "WaningEffect",
         "Box_Duration": 60, 
         "Initial_Effect": 0.75
     },

@@ -42,12 +42,12 @@
                             "Killing_Config": {
                                 "Decay_Time_Constant": 90,
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Reduction_Config": {
                                 "Decay_Time_Constant": 90,
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Spray_Kill_Target": "SpaceSpray_Indoor",
                             "class": "SpaceSpraying"

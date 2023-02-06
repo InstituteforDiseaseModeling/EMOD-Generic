@@ -30,20 +30,19 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(Ivermectin)
 
     Ivermectin::Ivermectin()
-    : BaseIntervention()
-    , killing_effect(nullptr)
-    , m_pIVIES(nullptr)
+        : BaseIntervention()
+        , killing_effect(nullptr)
+        , m_pIVIES(nullptr)
     {
         initSimTypes( 2, "VECTOR_SIM", "MALARIA_SIM" );
-        initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, IVM_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
     }
 
     Ivermectin::Ivermectin( const Ivermectin& master )
-    : BaseIntervention( master )
-    , killing_effect( nullptr )
-    , m_pIVIES( nullptr )
+        : BaseIntervention( master )
+        , killing_effect( nullptr )
+        , m_pIVIES( nullptr )
     {
-        if( master.killing_effect != nullptr )
+        if(master.killing_effect)
         {
             killing_effect = master.killing_effect->Clone();
         }
@@ -52,18 +51,18 @@ namespace Kernel
     Ivermectin::~Ivermectin()
     {
         delete killing_effect;
+        killing_effect = nullptr;
     }
+
     bool Ivermectin::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
+        initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, IVM_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
 
-        initConfigComplexType("Killing_Config",  &killing_config, IVM_Killing_Config_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  IVM_Killing_Config_DESC_TEXT);
 
         bool configured = BaseIntervention::Configure( inputJson );
-        if( !JsonConfigurable::_dryrun && configured )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json, inputJson->GetDataLocation(), "Killing_Config" );
-        }
+
         return configured;
     }
 
@@ -93,7 +92,11 @@ namespace Kernel
     void Ivermectin::SetContextTo( IIndividualHumanContext *context )
     {
         BaseIntervention::SetContextTo( context );
-        killing_effect->SetContextTo( context );
+
+        if(killing_effect)
+        {
+            killing_effect->SetContextTo( context );
+        }
 
         LOG_DEBUG("Ivermectin::SetContextTo (probably deserializing)\n");
         if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IVectorInterventionEffectsSetter), (void**)&m_pIVIES) )
@@ -109,9 +112,20 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        killing_effect->Update(dt);
-
-        float killing = killing_effect->Current();
+        float killing = 0.0f;
+        if(killing_effect)
+        {
+            killing_effect->Update(dt);
+            if(killing_effect->Expired())
+            {
+                delete killing_effect;
+                killing_effect = nullptr;
+            }
+            else
+            {
+                killing = killing_effect->Current();
+            }
+        }
 
         m_pIVIES->UpdateInsecticidalDrugKillingProbability( killing );
 
@@ -121,8 +135,6 @@ namespace Kernel
             expired = true;
         }
     }
-
-
 
     REGISTER_SERIALIZABLE(Ivermectin);
 

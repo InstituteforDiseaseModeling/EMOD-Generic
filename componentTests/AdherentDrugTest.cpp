@@ -67,10 +67,6 @@ SUITE( AdherentDrugTest )
 
             IPFactory::DeleteFactory();
 
-            //json::Object fakeConfigJson;
-            //Configuration * fakeConfigValid = Environment::CopyFromElement( fakeConfigJson );
-            ////EventTriggerFactoryGetInstance()->Configure( fakeConfigValid );
-
             m_NEC.Initialize();
         }
 
@@ -103,31 +99,18 @@ SUITE( AdherentDrugTest )
                 }
             }
         }
-
     };
-
-    TEST_FIXTURE( AdherentDrugFixture, TestCountAndEntryMismatch )
-    {
-        TestHelper_ConfigureException( __LINE__, "testdata/AdherentDrugTest/TestCountAndEntryMismatch.json",
-                                       "'Adherence_Config' is not configured correctly.\n'Drug_Type'=TestDrug is configured for 3 dose(s)\nbut the IWaningEffectCount does not support that number of doses.\nThere should probably be one entry for each dose." );
-    }
 
     TEST_FIXTURE( AdherentDrugFixture, TestCountAndNumDoseMismatch )
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AdherentDrugTest/TestCountAndNumDoseMismatch.json",
-                                       "'Adherence_Config' is not configured correctly.\n'Drug_Type'=TestDrug is configured for 3 dose(s)\nbut the IWaningEffectCount does not support that number of doses.\nThere should probably be one entry for each dose." );
+                                       "'Adherence_By_Dose' is not configured correctly.\n'Drug_Type'=TestDrug is configured for 3 dose(s)\nbut the Adherence_By_Dose does not support that number of doses.\nThere should probably be one entry for each dose." );
     }
 
     TEST_FIXTURE( AdherentDrugFixture, TestMissingDrugType )
     {
         TestHelper_ConfigureException( __LINE__, "testdata/AdherentDrugTest/TestMissingDrugType.json",
                                        "'Drug_Type' was not defined and it is a required parameter." );
-    }
-
-    TEST_FIXTURE( AdherentDrugFixture, TestEmptyAdherenceConfig )
-    {
-        TestHelper_ConfigureException( __LINE__, "testdata/AdherentDrugTest/TestEmptyAdherenceConfig.json",
-                                       "The Adherence_Config must be defined with a valid WaningEffect." );
     }
 
     TEST_FIXTURE( AdherentDrugFixture, TestNonAdherenceOptionsUnknown )

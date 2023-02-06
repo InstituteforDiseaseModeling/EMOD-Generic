@@ -45,11 +45,7 @@ namespace Kernel
         IWaningEffect* changing_effect;
 
     protected:
-        void getUpdatePointer();
         std::string targeted_individual_properties;
         bool use_property_targeting;
-        // context for this intervention--does not need to be reset upon migration, it is just for GiveVaccine()
-
-        //DECLARE_SERIALIZABLE(TyphoidWASH );
     };
 }

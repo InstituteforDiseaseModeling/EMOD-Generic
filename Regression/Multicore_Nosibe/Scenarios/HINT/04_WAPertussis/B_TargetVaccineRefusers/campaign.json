@@ -14,7 +14,7 @@
                                     "Acquire_Config": {
                                         "Decay_Time_Constant": 2525,
                                         "Initial_Effect": 0.9,
-                                        "class": "WaningEffectExponential"
+                                        "class": "WaningEffect"
                                     },
                                     "class": "Vaccine"
                                 },
@@ -24,7 +24,7 @@
                                     "Transmit_Config": {
                                         "Decay_Time_Constant": 2525,
                                         "Initial_Effect": 0.6,
-                                        "class": "WaningEffectExponential"
+                                        "class": "WaningEffect"
                                     },
                                     "class": "Vaccine"
                                 },
@@ -34,7 +34,7 @@
                                     "Mortality_Config": {
                                         "Decay_Time_Constant": 2525,
                                         "Initial_Effect": 1.0,
-                                        "class": "WaningEffectExponential"
+                                        "class": "WaningEffect"
                                     },
                                     "class": "Vaccine"
                                 }
@@ -97,7 +97,7 @@
                             "Acquire_Config": {
                                 "Decay_Time_Constant": 7300,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         },
@@ -107,7 +107,7 @@
                             "Transmit_Config": {
                                 "Decay_Time_Constant": 7300,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         },
@@ -117,7 +117,7 @@
                             "Mortality_Config": {
                                 "Decay_Time_Constant": 7300,
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         }
@@ -151,7 +151,7 @@
                                 "Acquire_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 0.9,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "class": "Vaccine"
                             },
@@ -161,7 +161,7 @@
                                 "Transmit_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 0.6,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "class": "Vaccine"
                             },
@@ -171,7 +171,7 @@
                                 "Mortality_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 1.0,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "class": "Vaccine"
                             }
@@ -211,7 +211,7 @@
                                         "Acquire_Config": {
                                             "Decay_Time_Constant": 2525,
                                             "Initial_Effect": 0.9,
-                                            "class": "WaningEffectExponential"
+                                            "class": "WaningEffect"
                                         },
                                         "class": "Vaccine"
                                     },
@@ -221,7 +221,7 @@
                                         "Transmit_Config": {
                                             "Decay_Time_Constant": 2525,
                                             "Initial_Effect": 0.6,
-                                            "class": "WaningEffectExponential"
+                                            "class": "WaningEffect"
                                         },
                                         "class": "Vaccine"
                                     },
@@ -231,7 +231,7 @@
                                         "Mortality_Config": {
                                             "Decay_Time_Constant": 2525,
                                             "Initial_Effect": 1.0,
-                                            "class": "WaningEffectExponential"
+                                            "class": "WaningEffect"
                                         },
                                         "class": "Vaccine"
                                     }
@@ -346,7 +346,7 @@
                             "Acquire_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         },
@@ -356,7 +356,7 @@
                             "Transmit_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         },
@@ -366,7 +366,7 @@
                             "Mortality_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         }

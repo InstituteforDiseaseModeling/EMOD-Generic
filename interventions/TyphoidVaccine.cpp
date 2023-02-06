@@ -29,42 +29,20 @@ namespace Kernel
 
     IMPLEMENT_FACTORY_REGISTERED(TyphoidVaccine)
 
-    bool
-    TyphoidVaccine::Configure(
-        const Configuration * inputJson
-    )
-    {
-        WaningConfig changing_config;
-
-        initConfig( "Mode", vaccine_mode, inputJson, MetadataDescriptor::Enum("Mode", TW_Mode_DESC_TEXT, MDD_ENUM_ARGS(TyphoidVaccineMode)) );
-        initConfigTypeMap("Effect", &effect, TW_Effect_DESC_TEXT, 0.0, 1.0, 1.0 ); 
-        initConfigComplexType("Changing_Effect", &changing_config, TW_CE_DESC_TEXT );
-
-        bool configured = BaseIntervention::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            changing_effect = WaningEffectFactory::getInstance()->CreateInstance( changing_config._json,
-                                                                                    inputJson->GetDataLocation(),
-                                                                                    "Changing_Effect" );
-        }
-        LOG_DEBUG_F( "Vaccine configured with type %d and effect %f.\n", vaccine_mode, effect );
-        return configured;
-    }
-
     TyphoidVaccine::TyphoidVaccine() 
-    : changing_effect( nullptr )
-    , effect( 1.0f )
-    , vaccine_mode( TyphoidVaccineMode::Shedding )
+        : changing_effect( nullptr )
+        , effect( 1.0f )
+        , vaccine_mode( TyphoidVaccineMode::Shedding )
     {
         initSimTypes( 1, "TYPHOID_SIM" );
     }
 
     TyphoidVaccine::TyphoidVaccine( const TyphoidVaccine& master )
-    : changing_effect( nullptr )
-    , effect( master.effect )
-    , vaccine_mode( master.vaccine_mode )
+        : changing_effect( nullptr )
+        , effect( master.effect )
+        , vaccine_mode( master.vaccine_mode )
     {
-        if( master.changing_effect != nullptr )
+        if(master.changing_effect)
         {
             changing_effect = master.changing_effect->Clone();
         }
@@ -80,27 +58,45 @@ namespace Kernel
         changing_effect = nullptr;
     }
 
-    bool
-    TyphoidVaccine::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * pCCO
-    )
+    bool TyphoidVaccine::Configure(const Configuration* inputJson)
     {
+        initConfig( "Mode", vaccine_mode, inputJson, MetadataDescriptor::Enum("Mode", TW_Mode_DESC_TEXT, MDD_ENUM_ARGS(TyphoidVaccineMode)) );
+
+        initConfigTypeMap("Effect",           &effect,                             TW_Effect_DESC_TEXT, 0.0, 1.0, 1.0 );
+
+        changing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Changing_Effect",  changing_effect->GetConfigurable(),  TW_CE_DESC_TEXT);
+
+        bool configured = BaseIntervention::Configure( inputJson );
+
+        LOG_DEBUG_F( "Vaccine configured with type %d and effect %f.\n", vaccine_mode, effect );
+        return configured;
+    }
+
+    bool TyphoidVaccine::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* pCCO)
+    {
+        // Call base distribute first to check eligibility conditions and call SetContextTo
+        bool distribute =  BaseIntervention::Distribute( context, pCCO );
+
+        return distribute;
+    }
+
+    void TyphoidVaccine::SetContextTo(IIndividualHumanContext* context)
+    {
+        // Sets parent to context
+        BaseIntervention::SetContextTo(context);
+
+        if(changing_effect)
+        {
+            changing_effect->SetContextTo(context);
+        }
+
         // store itvc for apply
         LOG_DEBUG("Distributing TyphoidVaccine.\n");
-        if (s_OK != context->QueryInterface(GET_IID(ITyphoidVaccineEffectsApply), (void**)&itvc) )
+        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(ITyphoidVaccineEffectsApply), (void**)&itvc) )
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITyphoidVaccineEffectsApply", "IIndividualHumanInterventionsContext" );
         }
-
-        /*auto iface = static_cast<InterventionsContainer*>(context);
-        auto iface2 = static_cast<TyphoidInterventionsContainer*>(iface);
-        itvc = static_cast<ITyphoidVaccineEffectsApply*>(iface2);*/
-
-        bool distribute =  BaseIntervention::Distribute( context, pCCO );
-        
-        changing_effect->SetCurrentTime( ((IndividualHuman*)(context->GetParent()))->GetParent()->GetTime().time );
-        return distribute;
     }
 
     void TyphoidVaccine::Update( float dt )
@@ -110,8 +106,17 @@ namespace Kernel
         if( changing_effect )
         {
             changing_effect->Update( dt );
-            _effect = changing_effect->Current();
+            if(changing_effect->Expired())
+            {
+                delete changing_effect;
+                changing_effect = nullptr;
+            }
+            else
+            {
+                _effect = changing_effect->Current();
+            }
         }
+
         auto multiplier = 1.0f-_effect;
         switch( vaccine_mode )
         {
@@ -132,28 +137,11 @@ namespace Kernel
         }
     }
 
-    void TyphoidVaccine::SetContextTo(
-        IIndividualHumanContext *context
-    )
-    {
-        parent = context;
-        if (s_OK != parent->GetInterventionsContext()->QueryInterface(GET_IID(ITyphoidVaccineEffectsApply), (void**)&itvc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context->GetInterventionsContext()", "ITyphoidVaccineEffectsApply", "IIndividualHumanInterventionsContext" );
-        }
-        release_assert( parent );
-        release_assert( parent->GetEventContext() );
-        release_assert( parent->GetEventContext()->GetNodeEventContext() );
-        changing_effect->SetCurrentTime( parent->GetEventContext()->GetNodeEventContext()->GetTime().time );
-        //LOG_DEBUG_F( "Vaccine configured with type %d and take %f for individual %d\n", vaccine_type, vaccine_take, parent->GetSuid().data );
-    } // needed for VaccineTake
-
     REGISTER_SERIALIZABLE(TyphoidVaccine);
 
     void TyphoidVaccine::serialize(IArchive& ar, TyphoidVaccine* obj)
     {
         BaseIntervention::serialize( ar, obj );
         TyphoidVaccine& vaccine = *obj;
-        //ar.labelElement("acquire_effect")                 & vaccine.acquire_effect;
     }
 }

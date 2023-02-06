@@ -34,21 +34,21 @@ namespace Kernel
         virtual bool Configure( const Configuration * config ) override;
 
         // IDistributableIntervention
-        virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver  * const pCCO ) override;
+        virtual bool Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO ) override;
         virtual QueryResult QueryInterface(iid_t iid, void **ppvObject) override;
         virtual void SetContextTo(IIndividualHumanContext *context) override;
         virtual void Update(float dt) override;
 
 
     protected:
-        virtual void initConfigRepelling( WaningConfig* pRepellingConfig );
-        virtual void initConfigKilling( WaningConfig* pKillingConfig );
+        virtual void initConfigRepelling();
+        virtual void initConfigKilling();
         virtual void ApplyEffectsRepelling( float dt );
         virtual void ApplyEffectsKilling( float dt );
 
         IWaningEffect* killing_effect;
         IWaningEffect* blocking_effect;
-        IHousingModificationConsumer *m_pIHMC; // aka individual or individual vector interventions container
+        IHousingModificationConsumer* m_pIHMC; // aka individual or individual vector interventions container
 
         DECLARE_SERIALIZABLE(SimpleHousingModification);
     };
@@ -74,7 +74,7 @@ namespace Kernel
         DECLARE_SERIALIZABLE(SpatialRepellentHousingModification);
 
     protected:
-        virtual void initConfigKilling( WaningConfig* pKillingConfig );
+        virtual void initConfigKilling();
         virtual void ApplyEffectsKilling( float dt ) override;
     };
 }

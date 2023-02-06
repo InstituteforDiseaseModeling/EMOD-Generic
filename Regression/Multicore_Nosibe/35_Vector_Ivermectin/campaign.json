@@ -8,13 +8,13 @@
                     "Killing_Config": {
                         "Box_Duration": 3,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Ivermectin"
                 },
                 "Target_Demographic": "Everyone",
-				"Number_Repetitions": 5,
-				"Timesteps_Between_Repetitions": 3,
+                "Number_Repetitions": 5,
+                "Timesteps_Between_Repetitions": 3,
                 "class": "StandardInterventionDistributionEventCoordinator"
             },
             "Nodeset_Config": {

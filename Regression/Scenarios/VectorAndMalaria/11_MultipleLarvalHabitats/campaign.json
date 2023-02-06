@@ -8,7 +8,7 @@
                     "Killing_Config": {
                         "Decay_Time_Constant": 2190, 
                         "Initial_Effect": 0.95, 
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     }, 
                     "Reduction": 0, 
                     "class": "OvipositionTrap"

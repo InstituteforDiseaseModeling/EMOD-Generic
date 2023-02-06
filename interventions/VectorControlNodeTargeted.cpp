@@ -28,7 +28,6 @@ namespace Kernel
         HANDLE_ISUPPORTS_VIA(INodeDistributableIntervention)
     END_QUERY_INTERFACE_BODY(SimpleVectorControlNode)
 
-    //IMPLEMENT_FACTORY_REGISTERED(SimpleVectorControlNode) // don't register unusable base class
     IMPLEMENT_FACTORY_REGISTERED(Larvicides)
     IMPLEMENT_FACTORY_REGISTERED(SpaceSpraying)
     IMPLEMENT_FACTORY_REGISTERED(MultiInsecticideSpaceSpraying)
@@ -48,9 +47,6 @@ namespace Kernel
         , m_HabitatTarget(VectorHabitatType::ALL_HABITATS)
         , killing_effect( nullptr )
         , blocking_effect( nullptr ) 
-        , m_LarvalKillingConfig()
-        , m_RepellingConfig()
-        , m_KillingConfig()
         , m_pINVIC(nullptr)
     {
         initSimTypes( 3, "VECTOR_SIM", "MALARIA_SIM", "DENGUE_SIM" );
@@ -63,16 +59,13 @@ namespace Kernel
         , m_HabitatTarget( master.m_HabitatTarget )
         , killing_effect( nullptr )
         , blocking_effect( nullptr )
-        , m_LarvalKillingConfig() //shouldn't need to copy
-        , m_RepellingConfig()     //shouldn't need to copy
-        , m_KillingConfig()       //shouldn't need to copy
         , m_pINVIC( nullptr )
     {
-        if( master.blocking_effect != nullptr )
+        if(master.blocking_effect)
         {
             blocking_effect = master.blocking_effect->Clone();
         }
-        if( master.killing_effect != nullptr )
+        if(master.killing_effect)
         {
             killing_effect = master.killing_effect->Clone();
         }
@@ -82,6 +75,9 @@ namespace Kernel
     {
         delete killing_effect;
         delete blocking_effect;
+
+        killing_effect  = nullptr;
+        blocking_effect = nullptr;
     }
 
     bool SimpleVectorControlNode::Configure( const Configuration * inputJson )
@@ -109,15 +105,6 @@ namespace Kernel
     {
         bool configured = BaseNodeIntervention::Configure( config );
 
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            WaningConfig empty_config;
-
-            // try to get rid of memory no longer needed
-            m_LarvalKillingConfig = empty_config;
-            m_RepellingConfig     = empty_config;
-            m_KillingConfig       = empty_config;
-        }
         return configured;
     }
 
@@ -125,8 +112,14 @@ namespace Kernel
     {
         BaseNodeIntervention::SetContextTo( context );
 
-        // NOTE: Can't use WaningEffects that need SetConextTo() - i.e. aging.  Should be able to use calendar ones.
-        //m_pInsecticideWaningEffect->SetContextTo( context );
+        if(killing_effect)
+        {
+            killing_effect->SetContextTo( context );
+        }
+        if(blocking_effect)
+        {
+            blocking_effect->SetContextTo( context );
+        }
 
         if (s_OK != context->QueryInterface(GET_IID(INodeVectorInterventionEffectsApply), (void**)&m_pINVIC) )
         {
@@ -160,17 +153,34 @@ namespace Kernel
     {
         if( !BaseNodeIntervention::UpdateNodesInterventionStatus() ) return;
 
-        if( killing_effect != nullptr )
+        if(killing_effect)
         {
             killing_effect->Update(dt);
-            killing  = killing_effect->Current();
+            if(killing_effect->Expired())
+            {
+                delete killing_effect;
+                killing_effect = nullptr;
+            }
+            else
+            {
+                killing = killing_effect->Current();
+            }
         }
-        if( blocking_effect != nullptr )
+
+        if(blocking_effect)
         {
             blocking_effect->Update(dt);
-            reduction = blocking_effect->Current();
+            if(blocking_effect->Expired())
+            {
+                delete blocking_effect;
+                blocking_effect = nullptr;
+            }
+            else
+            {
+                reduction = blocking_effect->Current();
+            }
         }
-        
+
         ApplyEffects( dt );
     }
 
@@ -195,28 +205,6 @@ namespace Kernel
 
             std::stringstream ss_config_habitats;
             bool found = false;
-            //for( int i = 0; !found && (i < p_vp->vector_species.Size()); ++i )
-            //{
-            //    VectorSpeciesParameters* p_vsp = p_vp->vector_species[ i ];
-            //    const std::vector<IVectorHabitat*>& r_habitats = p_vsp->habitat_params.GetHabitats();
-            //    for( int j = 0; !found && (j < r_habitats.size()); ++j )
-            //    {
-            //        const char* p_habitat_name = VectorHabitatType::pairs::lookup_key( r_habitats[ j ]->GetVectorHabitatType() );
-            //        ss_config_habitats << p_vsp->name << " : " << p_habitat_name << "\n";
-            //        found |= (r_habitats[ j ]->GetVectorHabitatType() == habitatType);
-            //    }
-            //}
-            //if( !found )
-            //{
-            //    const char* p_habitat_name = VectorHabitatType::pairs::lookup_key( habitatType );
-
-            //    std::stringstream ss;
-            //    ss << "Invalid parameter value: '" << pParameterName << "' = '" << p_habitat_name << "'\n";
-            //    ss << "This habitat type is not configured as a type in 'Vector_Species_Params.Habitats'.\n";
-            //    ss << "Please select from one of the configured types:\n";
-            //    ss << ss_config_habitats.str();
-            //    throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-            //}
         }
     }
 
@@ -242,19 +230,15 @@ namespace Kernel
 
     bool Larvicides::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
-        WaningConfig blocking_config;
-
         initConfig( "Habitat_Target", m_HabitatTarget, inputJson, MetadataDescriptor::Enum("Habitat_Target", LV_Habitat_Target_DESC_TEXT, MDD_ENUM_ARGS(VectorHabitatType)) );
-        initConfigComplexType("Killing_Config",  &killing_config,  LV_Killing_Config_DESC_TEXT );
-        initConfigComplexType("Blocking_Config", &blocking_config, LV_Blocking_Config_DESC_TEXT );
+
+        killing_effect   = WaningEffectFactory::CreateInstance();
+        blocking_effect  = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",    killing_effect->GetConfigurable(),    LV_Killing_Config_DESC_TEXT);
+        initConfigTypeMap("Blocking_Config",   blocking_effect->GetConfigurable(),   LV_Blocking_Config_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,  inputJson->GetDataLocation(), "Killing_Config" );
-            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance( blocking_config._json, inputJson->GetDataLocation(), "Blocking_Config" );
-        }
+
         return configured;
     }
 
@@ -264,7 +248,7 @@ namespace Kernel
 
     void Larvicides::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
 
         m_pINVIC->UpdateLarvalKilling( GetHabitatTarget(), GetKilling() );
         m_pINVIC->UpdateLarvalHabitatReduction( GetHabitatTarget(), GetReduction() );
@@ -294,27 +278,22 @@ namespace Kernel
 
     bool SpaceSpraying::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
-        WaningConfig blocking_config;
-
         initConfig( "Habitat_Target", m_HabitatTarget, inputJson, MetadataDescriptor::Enum("Habitat_Target", SS_Habitat_Target_DESC_TEXT, MDD_ENUM_ARGS(VectorHabitatType)) );
         initConfig( "Spray_Kill_Target", kill_target, inputJson, MetadataDescriptor::Enum("Spray_Kill_Target", SS_Kill_Target_DESC_TEXT, MDD_ENUM_ARGS(SpaceSprayTarget)) );
-        initConfigComplexType( "Killing_Config",   &killing_config,  SS_Killing_Config_DESC_TEXT   );
-        initConfigComplexType( "Reduction_Config", &blocking_config, SS_Reduction_Config_DESC_TEXT );
+
+        killing_effect  = WaningEffectFactory::CreateInstance();
+        blocking_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",    killing_effect->GetConfigurable(),    SS_Killing_Config_DESC_TEXT);
+        initConfigTypeMap("Reduction_Config",  blocking_effect->GetConfigurable(),   SS_Reduction_Config_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
 
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,  inputJson->GetDataLocation(), "Killing_Config" );
-            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance( blocking_config._json, inputJson->GetDataLocation(), "Blocking_Config" );
-        }
         return configured;
     }
 
     void SpaceSpraying::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
 
         // TODO - consider spatial (node-wide) indoor spraying as a separate intervention?
         if ( GetKillTarget() != SpaceSprayTarget::SpaceSpray_Indoor )
@@ -409,7 +388,7 @@ namespace Kernel
 
     void IndoorSpaceSpraying::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
 
         m_pINVIC->UpdateIndoorKilling( killing );
     }
@@ -462,16 +441,12 @@ namespace Kernel
     }
 
     bool SpatialRepellent::Configure( const Configuration * inputJson )
-    { 
-        WaningConfig blocking_config;
-
-        initConfigComplexType("Repellency_Config", &blocking_config, SR_Repellency_Config_DESC_TEXT );
+    {
+        blocking_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Repellency_Config",   blocking_effect->GetConfigurable(),   SR_Repellency_Config_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance( blocking_config._json, inputJson->GetDataLocation(), "Repellency_Config" );
-        }
+
         return configured;
     }
 
@@ -485,7 +460,7 @@ namespace Kernel
 
     void SpatialRepellent::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
 
         m_pINVIC->UpdateVillageSpatialRepellent( GetReduction() );
     }
@@ -497,40 +472,28 @@ namespace Kernel
     ArtificialDiet::ArtificialDiet()
         : SimpleVectorControlNode()
         , m_AttractionTarget( ArtificialDietTarget::AD_OutsideVillage )
-        , m_pAttractionEffect( nullptr )
     {
     }
 
     ArtificialDiet::ArtificialDiet( const ArtificialDiet& rMaster )
         : SimpleVectorControlNode( rMaster )
         , m_AttractionTarget( rMaster.m_AttractionTarget )
-        , m_pAttractionEffect( nullptr )
     {
-        if( rMaster.m_pAttractionEffect != nullptr )
-        {
-            this->m_pAttractionEffect = rMaster.m_pAttractionEffect->Clone();
-        }
     }
 
     ArtificialDiet::~ArtificialDiet()
     {
-        delete m_pAttractionEffect;
     }
 
     bool ArtificialDiet::Configure( const Configuration * inputJson )
     {
-        WaningConfig attraction_config;
-
         initConfig( "Artificial_Diet_Target", m_AttractionTarget, inputJson, MetadataDescriptor::Enum("Artificial_Diet_Target", AD_Target_DESC_TEXT, MDD_ENUM_ARGS(ArtificialDietTarget)) );
-        initConfigComplexType("Attraction_Config", &attraction_config, AD_Attraction_Config_DESC_TEXT );
+
+        blocking_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Attraction_Config",  blocking_effect->GetConfigurable(),  AD_Attraction_Config_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            blocking_effect     = WaningEffectFactory::getInstance()->CreateInstance( attraction_config._json,
-                                                                                      inputJson->GetDataLocation(),
-                                                                                      "Attraction_Config" );
-        }
+
         return configured;
     }
 
@@ -542,7 +505,7 @@ namespace Kernel
 
     void ArtificialDiet::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
 
         switch( m_AttractionTarget )
         {
@@ -595,33 +558,11 @@ namespace Kernel
 
     bool SugarTrap::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
-        initConfigComplexType("Killing_Config",  &killing_config, VCN_Killing_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  VCN_Killing_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json, inputJson->GetDataLocation(), "Killing_Config" );
-            bool found = false;
-            VectorParameters* p_vp = GET_CONFIGURABLE( SimulationConfig )->vector_params;
-            //for( int i = 0; !found && (i < p_vp->vector_species.Size()); ++i )
-            //{
-            //    found |= (p_vp->vector_species[ i ]->vector_sugar_feeding != VectorSugarFeeding::VECTOR_SUGAR_FEEDING_NONE);
-            //}
-            //if( !found )
-            //{
-            //    std::stringstream ss;
-            //    ss << "Using 'SugarTrap' intervention but 'Vector_Sugar_Feeding_Frequency' set to 'VECTOR_SUGAR_FEEDING_NONE'\n";
-            //    ss << "for all the species.  'Vector_Sugar_Feeding_Frequency' must be set to something besides\n";
-            //    ss << "'VECTOR_SUGAR_FEEDING_NONE' for at least one specie when using 'SugarTrap'.\n";
-            //    ss << "Options are:\n";
-            //    for( int i = 0; i < VectorSugarFeeding::pairs::count(); ++i )
-            //    {
-            //        ss << VectorSugarFeeding::pairs::get_keys()[ i ] << "\n";
-            //    }
-            //    throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-            //}
-        }
+
         return configured;
     }
 
@@ -638,15 +579,32 @@ namespace Kernel
     {
         if( !BaseNodeIntervention::UpdateNodesInterventionStatus() ) return;
 
-        if( killing_effect != nullptr )
+        if(killing_effect)
         {
             killing_effect->Update(dt);
-            killing  = killing_effect->Current();
+            if(killing_effect->Expired())
+            {
+                delete killing_effect;
+                killing_effect = nullptr;
+            }
+            else
+            {
+                killing = killing_effect->Current();
+            }
         }
-        if( blocking_effect != nullptr )
+
+        if(blocking_effect)
         {
             blocking_effect->Update(dt);
-            reduction = blocking_effect->Current();
+            if(blocking_effect->Expired())
+            {
+                delete blocking_effect;
+                blocking_effect = nullptr;
+            }
+            else
+            {
+                reduction = blocking_effect->Current();
+            }
         }
 
         ApplyEffects( dt );
@@ -655,7 +613,7 @@ namespace Kernel
 
     void SugarTrap::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
         m_pINVIC->UpdateSugarFeedKilling( GetKilling() );
     }
 
@@ -675,16 +633,13 @@ namespace Kernel
             throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Explicit oviposition only implemented in individual-mosquito model, not in cohort model." );
         }
 
-        WaningConfig killing_config;
-
         initConfig( "Habitat_Target", m_HabitatTarget, inputJson, MetadataDescriptor::Enum("Habitat_Target", OT_Habitat_Target_DESC_TEXT, MDD_ENUM_ARGS(VectorHabitatType)) );
-        initConfigComplexType("Killing_Config",  &killing_config, OT_Killing_DESC_TEXT  );
+
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  OT_Killing_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json, inputJson->GetDataLocation(), "Killing_Config" );
-        }
+
         return configured;
     }
 
@@ -696,7 +651,7 @@ namespace Kernel
 
     void OvipositionTrap::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
         m_pINVIC->UpdateOviTrapKilling( GetHabitatTarget(), GetKilling() );
     }
 
@@ -706,21 +661,17 @@ namespace Kernel
 
     bool OutdoorRestKill::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
-
-        initConfigComplexType("Killing_Config",  &killing_config, VCN_Killing_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  VCN_Killing_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json, inputJson->GetDataLocation(), "Killing_Config" );
-        }
+
         return configured;
     }
 
     void OutdoorRestKill::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
         m_pINVIC->UpdateOutdoorRestKilling( GetKilling() );
     }
 
@@ -730,21 +681,17 @@ namespace Kernel
 
     bool AnimalFeedKill::Configure( const Configuration * inputJson )
     {
-        WaningConfig killing_config;
-
-        initConfigComplexType("Killing_Config",  &killing_config, AFK_Killing_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  AFK_Killing_DESC_TEXT);
 
         bool configured = SimpleVectorControlNode::Configure( inputJson );
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json, inputJson->GetDataLocation(), "Killing_Config" );
-        }
+
         return configured;
     }
 
     void AnimalFeedKill::ApplyEffects( float dt )
     {
-        release_assert( m_pINVIC != nullptr );
+        release_assert(m_pINVIC);
         m_pINVIC->UpdateAnimalFeedKilling( GetKilling() );
     }
 }

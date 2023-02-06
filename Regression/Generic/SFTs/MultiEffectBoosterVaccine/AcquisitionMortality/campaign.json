@@ -9,7 +9,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 100,
                         "Initial_Effect": 0.1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
                         "Times": [0.0,1e-4],
@@ -27,12 +27,12 @@
                     "Mortality_Config": {
                         "Box_Duration": 100,
                         "Initial_Effect": 0.3,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
                         "Box_Duration": 100,
                         "Initial_Effect": 0.0,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Vaccine_Take": 1,
                     "class": "Vaccine" 

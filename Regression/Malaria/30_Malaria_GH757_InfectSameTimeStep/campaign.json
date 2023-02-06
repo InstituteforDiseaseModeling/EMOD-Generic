@@ -79,20 +79,20 @@
             "Event_Coordinator_Config": {
                 "Intervention_Config": {
                     "Blocking_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     },
                     "Cost_To_Consumer": 1,
                     "Killing_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     },
                     "Repelling_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.0
                     },
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     },
                     "class": "SimpleBednet"

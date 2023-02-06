@@ -27,17 +27,17 @@
                     "Blocking_Config": {
                         "Box_Duration": 1460,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 3.75,
                     "Killing_Config": {
                         "Box_Duration": 1460,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Usage_Config": {
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "class": "SimpleBednet"
                 },

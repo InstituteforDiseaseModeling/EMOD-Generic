@@ -43,26 +43,25 @@ namespace Kernel
     // ------------------------------------------------------------------------
 
     SimpleHousingModification::SimpleHousingModification()
-    : BaseIntervention()
-    , blocking_effect(nullptr)
-    , killing_effect(nullptr)
-    , m_pIHMC(nullptr)
+        : BaseIntervention()
+        , blocking_effect(nullptr)
+        , killing_effect(nullptr)
+        , m_pIHMC(nullptr)
     {
         initSimTypes( 2, "VECTOR_SIM", "MALARIA_SIM" );
-        initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, HM_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
     }
 
     SimpleHousingModification::SimpleHousingModification( const SimpleHousingModification& master )
-    : BaseIntervention( master )
-    , blocking_effect( nullptr )
-    , killing_effect( nullptr )
-    , m_pIHMC( nullptr )
+        : BaseIntervention( master )
+        , blocking_effect( nullptr )
+        , killing_effect( nullptr )
+        , m_pIHMC( nullptr )
     {
-        if( master.blocking_effect != nullptr )
+        if(master.blocking_effect)
         {
             blocking_effect = master.blocking_effect->Clone();
         }
-        if( master.killing_effect != nullptr )
+        if(master.killing_effect)
         {
             killing_effect = master.killing_effect->Clone();
         }
@@ -72,41 +71,36 @@ namespace Kernel
     {
         delete blocking_effect;
         delete killing_effect;
+
+        blocking_effect = nullptr;
+        killing_effect  = nullptr;
     }
 
     bool SimpleHousingModification::Configure( const Configuration * inputJson )
     {
-        WaningConfig repelling_config;
-        WaningConfig killing_config;
+        initConfigTypeMap("Cost_To_Consumer", &cost_per_unit, HM_Cost_To_Consumer_DESC_TEXT, 0, 999999, 8.0);
 
-        initConfigRepelling( &repelling_config );
-        initConfigKilling( &killing_config );
+        initConfigRepelling();
+        initConfigKilling();
+
         bool configured = BaseIntervention::Configure( inputJson );
-        if( !JsonConfigurable::_dryrun && configured )
-        {
-            blocking_effect = WaningEffectFactory::getInstance()->CreateInstance( repelling_config._json, inputJson->GetDataLocation(), "Blocking_Config");
-            killing_effect  = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,   inputJson->GetDataLocation(), "Killing_Config");
-        }
+
         return configured;
     }
 
-
-
-    void SimpleHousingModification::initConfigRepelling( WaningConfig* pRepellingConfig )
+    void SimpleHousingModification::initConfigRepelling()
     {
-        initConfigComplexType( "Blocking_Config", pRepellingConfig, HM_Blocking_Config_DESC_TEXT );
+        blocking_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Blocking_Config",  blocking_effect->GetConfigurable(),  HM_Blocking_Config_DESC_TEXT);
     }
 
-    void SimpleHousingModification::initConfigKilling( WaningConfig* pKillingConfig )
+    void SimpleHousingModification::initConfigKilling()
     {
-        initConfigComplexType( "Killing_Config", pKillingConfig, HM_Killing_Config_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",   killing_effect->GetConfigurable(),   HM_Killing_Config_DESC_TEXT);
     }
 
-    bool
-    SimpleHousingModification::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool SimpleHousingModification::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO)
     {
         if( AbortDueToDisqualifyingInterventionStatus( context->GetParent() ) )
         {
@@ -123,16 +117,15 @@ namespace Kernel
         return BaseIntervention::Distribute( context, pCCO );
     }
 
-    void SimpleHousingModification::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void SimpleHousingModification::SetContextTo(IIndividualHumanContext* context)
     {
         BaseIntervention::SetContextTo( context );
-        if( blocking_effect != nullptr )
+
+        if(blocking_effect)
         {
             blocking_effect->SetContextTo( context );
         }
-        if( killing_effect != nullptr )
+        if(killing_effect)
         {
             killing_effect->SetContextTo( context );
         }
@@ -148,30 +141,49 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        blocking_effect->Update(dt);
-        killing_effect->Update(dt);
+        if(blocking_effect)
+        {
+            blocking_effect->Update(dt);
+            if(blocking_effect->Expired())
+            {
+                delete blocking_effect;
+                blocking_effect = nullptr;
+            }
+            else
+            {
+                ApplyEffectsRepelling( dt );
+            }
+        }
 
-        ApplyEffectsRepelling( dt );
-        ApplyEffectsKilling( dt );
+        if(killing_effect)
+        {
+            killing_effect->Update(dt);
+            if(killing_effect->Expired())
+            {
+                delete killing_effect;
+                killing_effect = nullptr;
+            }
+            else
+            {
+                ApplyEffectsKilling( dt );
+            }
+        }
     }
 
     void SimpleHousingModification::ApplyEffectsRepelling( float dt )
     {
-        float current_repellingrate = blocking_effect->Current();
-
-        release_assert( m_pIHMC != nullptr );
-
-        m_pIHMC->ApplyHouseBlockingProbability( current_repellingrate );
+        release_assert(m_pIHMC);
+        release_assert(blocking_effect);
+        m_pIHMC->ApplyHouseBlockingProbability( blocking_effect->Current() );
     }
 
     void SimpleHousingModification::ApplyEffectsKilling( float dt )
     {
-        float current_killingrate = killing_effect->Current();
-
-        release_assert( m_pIHMC != nullptr );
-
-        m_pIHMC->UpdateProbabilityOfScreenKilling( current_killingrate );
+        release_assert(m_pIHMC);
+        release_assert(killing_effect);
+        m_pIHMC->UpdateProbabilityOfScreenKilling( killing_effect->Current() );
     }
+
     void SimpleHousingModification::serialize(IArchive& ar, SimpleHousingModification* obj)
     {
         BaseIntervention::serialize( ar, obj );
@@ -202,7 +214,7 @@ namespace Kernel
     // --- SpatialRepellentHousingModification
     // ------------------------------------------------------------------------
 
-    void SpatialRepellentHousingModification::initConfigKilling( WaningConfig* pKillingConfig )
+    void SpatialRepellentHousingModification::initConfigKilling()
     {
         // do not include killing
     }

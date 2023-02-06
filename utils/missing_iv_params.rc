@@ -26,10 +26,10 @@
 #define VAC_Mortality_Config_DESC_TEXT                                "Waning effect configuration for vaccine mortality."
 #define VAC_Transmit_Config_DESC_TEXT                                 "Waning effect configuration for vaccine transmission."
 #define VAC_Take_Reduced_By_Acquire_Immunity_DESC_TEXT                "Fraction of current acquision immunity applied to vaccine take reduction."
-#define VAC_Take_By_Age_Multiplier_DESC_TEXT                          "Multiplier for take probability based on indvidual age in days; use interpolated value map."
-#define VAC_Initial_Acquire_By_Current_Effect_Multiplier_DESC_TEXT    "Multiplier for initial acquire effect based on current total acquire effect; use interpolated value map."
-#define VAC_Initial_Transmit_By_Current_Effect_Multiplier_DESC_TEXT   "Multiplier for initial transmit effect based on current total transmit effect; use interpolated value map."
-#define VAC_Initial_Mortality_By_Current_Effect_Multiplier_DESC_TEXT  "Multiplier for initial mortality effect based on current total mortality effect; use interpolated value map."
+#define VAC_Take_By_Age_Multiplier_DESC_TEXT                          "Multiplier for take probability based on indvidual age in days; uses interpolated value map."
+#define VAC_Initial_Acquire_By_Current_Effect_Multiplier_DESC_TEXT    "Multiplier for initial acquire effect based on current total acquire effect; uses interpolated value map."
+#define VAC_Initial_Transmit_By_Current_Effect_Multiplier_DESC_TEXT   "Multiplier for initial transmit effect based on current total transmit effect; uses interpolated value map."
+#define VAC_Initial_Mortality_By_Current_Effect_Multiplier_DESC_TEXT  "Multiplier for initial mortality effect based on current total mortality effect; uses interpolated value map."
 
 #define DR_ID_List_DESC_TEXT                                          "List of individual IDs for intervention. Usually used in conjunction with event DB and embedded Python in-processing."
 
@@ -47,3 +47,24 @@
 #define IV_Cost_To_Consumer_DESC_TEXT                                 "Cost per individual receiving the intervention."
 
 #define ISS_Spray_Coverage_DESC_TEXT                                  "The portion of the node that has been sprayed.  This value is multiplied by the current efficacy of the WaningEffect"
+
+#define WE_Age_Multiplier_DESC_TEXT                                   "Multiplier for current effect based on age in years; uses interpolated value map."
+#define WE_Box_Duration_DESC_TEXT                                     "Time before decay or expiration of effect."
+#define WE_Box_Duration_Distribution_DESC_TEXT                        "Distribution to use when assigning box duration to each instance of the effect."
+#define WE_Decay_Time_Constant_DESC_TEXT                              "Time constant used for exponential decay of effect."
+#define WE_Durability_Map_DESC_TEXT                                   "Multiplier for current effect based on time in days; uses interpolated value map."
+#define WE_Enable_Box_Duration_Distribution_DESC_TEXT                 "Indicates if each instance should draw a box duration from a distribution; otherwise, box duration is the same for all instances."
+#define WE_Enable_Initial_Effect_Distribution_DESC_TEXT               "Indicates if each instance should draw an initial value from a beta distribution; otherwise, initial value is the same for all instances."
+#define WE_Initial_Effect_DESC_TEXT                                   "Initial value for effect. Value is the same for all agents."
+#define WE_Initial_Effect_Distribution_Alpha_DESC_TEXT                "Alpha parameter in beta distribution used to determine initial value for effect."
+#define WE_Initial_Effect_Distribution_Beta_DESC_TEXT                 "Beta parameter in beta distribution used to determine initial value for effect."
+
+#define AD_Adherence_Config_DESC_TEXT                                 "Waning effect configuration for probability of drug adherence."
+#define AD_Adherence_By_Dose_DESC_TEXT                                "Interpolated value map for probability of drug adherence by dose."
+
+#define NodeHTI_Coverage_vs_Time_Map_DESC_TEXT                        "Interpolated value map for coverage as a function of time."
+
+#define ICE_Count_Events_For_Num_Timesteps_DESC_TEXT                  "TBD"
+
+#define UDBednet_Usage_Config_List_DESC_TEXT                          "Waning effect configuration for bednet usage."
+

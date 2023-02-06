@@ -19,7 +19,7 @@
                         "Cost_To_Consumer":1.0,
                         "Bednet_Type": "ITN",
                         "Killing_Config": {
-                            "class": "WaningEffectExponential",
+                            "class": "WaningEffect",
                             "Initial_Effect": 0.6,
                             "Decay_Time_Constant": 1460
                         }

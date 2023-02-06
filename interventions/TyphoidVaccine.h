@@ -48,8 +48,6 @@ namespace Kernel
         IWaningEffect* changing_effect;
 
     protected:
-        // context for this intervention--does not need to be reset upon migration, it is just for GiveVaccine()
-
         DECLARE_SERIALIZABLE(TyphoidVaccine);
     };
 }

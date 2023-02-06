@@ -1,1 +1,75 @@
-{"Use_Defaults": 1, "Events": [{"Event_Coordinator_Config": {"Demographic_Coverage": 1.0, "Intervention_Config": {"class": "OutbreakIndividual"}, "Target_Demographic": "Everyone", "class": "StandardInterventionDistributionEventCoordinator", "Property_Restrictions": ["QualityOfCare:1_Seed_Control"], "Timesteps_Between_Repetitions": 10, "Number_Repetitions": 2}, "Event_Name": "Event #1", "Nodeset_Config": {"class": "NodeSetAll"}, "class": "CampaignEvent", "Start_Day": 1}, {"Event_Coordinator_Config": {"Demographic_Coverage": 1.0, "Intervention_Config": {"class": "OutbreakIndividual"}, "Target_Demographic": "Everyone", "class": "StandardInterventionDistributionEventCoordinator", "Property_Restrictions": ["QualityOfCare:2_Seed_Test"], "Timesteps_Between_Repetitions": 10, "Number_Repetitions": 2}, "Event_Name": "Event #2", "Nodeset_Config": {"class": "NodeSetAll"}, "class": "CampaignEvent", "Start_Day": 1}, {"Event_Coordinator_Config": {"Demographic_Coverage": 1.0, "Intervention_Config": {"class": "SimpleBoosterVaccine", "Vaccine_Type": "TransmissionBlocking", "Prime_Effect": 0.2, "Boost_Effect": 0.6, "Boost_Threshold": 0.0, "Waning_Config": {"class": "WaningEffectBox", "Initial_Effect": 1.0, "Box_Duration": 10}}, "Target_Demographic": "Everyone", "class": "StandardInterventionDistributionEventCoordinator", "Property_Restrictions": ["QualityOfCare:2_Seed_Test"]}, "Event_Name": "Event #3", "Nodeset_Config": {"class": "NodeSetAll"}, "class": "CampaignEvent", "Start_Day": 3}]}
+{
+    "Events": [
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator",
+                "Property_Restrictions": [
+                    "QualityOfCare:1_Seed_Control"
+                ],
+                "Timesteps_Between_Repetitions": 10,
+                "Number_Repetitions": 2
+            },
+            "Event_Name": "Event #1",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "class": "CampaignEvent",
+            "Start_Day": 1
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "class": "OutbreakIndividual"
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator",
+                "Property_Restrictions": [
+                    "QualityOfCare:2_Seed_Test"
+                ],
+                "Timesteps_Between_Repetitions": 10,
+                "Number_Repetitions": 2
+            },
+            "Event_Name": "Event #2",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "class": "CampaignEvent",
+            "Start_Day": 1
+        },
+        {
+            "Event_Coordinator_Config": {
+                "Demographic_Coverage": 1.0,
+                "Intervention_Config": {
+                    "class": "SimpleBoosterVaccine",
+                    "Vaccine_Type": "TransmissionBlocking",
+                    "Prime_Effect": 0.2,
+                    "Boost_Effect": 0.6,
+                    "Boost_Threshold": 0.0,
+                    "Waning_Config": {
+                        "class": "WaningEffect",
+                        "Initial_Effect": 1.0,
+                        "Box_Duration": 10
+                    }
+                },
+                "Target_Demographic": "Everyone",
+                "class": "StandardInterventionDistributionEventCoordinator",
+                "Property_Restrictions": [
+                    "QualityOfCare:2_Seed_Test"
+                ]
+            },
+            "Event_Name": "Event #3",
+            "Nodeset_Config": {
+                "class": "NodeSetAll"
+            },
+            "class": "CampaignEvent",
+            "Start_Day": 3
+        }
+    ],
+    "Use_Defaults": 1
+}

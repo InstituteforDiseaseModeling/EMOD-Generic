@@ -16,7 +16,7 @@
                             "Vaccine_Take": 1,
                             "Acquire_Config": {
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectConstant"
+                                "class": "WaningEffect"
                             },
                             "class": "Vaccine"
                         },

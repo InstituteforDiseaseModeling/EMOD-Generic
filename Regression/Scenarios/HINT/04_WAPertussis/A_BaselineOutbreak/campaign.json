@@ -10,18 +10,18 @@
                             "Acquire_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 0.9,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Cost_To_Consumer": 20,
                             "Mortality_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 1.0,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Transmit_Config": {
                                 "Decay_Time_Constant": 2525,
                                 "Initial_Effect": 0.6,
-                                "class": "WaningEffectExponential"
+                                "class": "WaningEffect"
                             },
                             "Vaccine_Take": 0.95,
                             "Vaccine_Type": "Generic",
@@ -79,18 +79,18 @@
                     "Acquire_Config": {
                         "Decay_Time_Constant": 7300,
                         "Initial_Effect": 0.9,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 20,
                     "Mortality_Config": {
                         "Decay_Time_Constant": 7300,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
                         "Decay_Time_Constant": 7300,
                         "Initial_Effect": 0.9,
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     },
                     "Vaccine_Take": 1,
                     "Vaccine_Type": "Generic",
@@ -119,18 +119,18 @@
                         "Acquire_Config": {
                             "Decay_Time_Constant": 2525,
                             "Initial_Effect": 0.9,
-                            "class": "WaningEffectExponential"
+                            "class": "WaningEffect"
                         },
                         "Cost_To_Consumer": 20,
                         "Mortality_Config": {
                             "Decay_Time_Constant": 2525,
                             "Initial_Effect": 1.0,
-                            "class": "WaningEffectExponential"
+                            "class": "WaningEffect"
                         },
                         "Transmit_Config": {
                             "Decay_Time_Constant": 2525,
                             "Initial_Effect": 0.6,
-                            "class": "WaningEffectExponential"
+                            "class": "WaningEffect"
                         },
                         "Vaccine_Take": 0.95,
                         "Vaccine_Type": "Generic",
@@ -165,18 +165,18 @@
                                 "Acquire_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 0.9,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "Cost_To_Consumer": 20,
                                 "Mortality_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 1.0,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "Transmit_Config": {
                                     "Decay_Time_Constant": 2525,
                                     "Initial_Effect": 0.6,
-                                    "class": "WaningEffectExponential"
+                                    "class": "WaningEffect"
                                 },
                                 "Vaccine_Take": 0.95,
                                 "Vaccine_Type": "Generic",

@@ -11,14 +11,14 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Configure.h"
 #include "IdmApi.h"
 #include "ISerializable.h"
-#include "MathFunctions.h"
+#include "SimulationEnums.h"
 #include "InterpolatedValueMap.h"
 #include "IPiecewiseDistribution.h"
 
 namespace Kernel
 {
     class RANDOMBASE;
-    
+
     struct IDistribution : public ISerializable
     {
         IMPLEMENT_NO_REFERENCE_COUNTING()

@@ -8,22 +8,20 @@
                 "Intervention_Config": {
                     "Blocking_Config": {
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 5,
                     "Discard_Event": "Bednet_Discarded",
                     "Expiration_Period_Distribution": "CONSTANT_DISTRIBUTION",
                     "Killing_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Received_Event": "Bednet_Got_New_One",
-                    "Usage_Config_List": [
-                        {
-                            "Initial_Effect": 1.0,
-                            "class": "WaningEffectConstant"
-                        }
-                    ],
+                    "Usage_Config": {
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffect"
+                    },
                     "Using_Event": "Bednet_Using",
                     "class": "UsageDependentBednet",
                     "Expiration_Period_Constant": 50
@@ -48,26 +46,20 @@
                 "Intervention_Config": {
                     "Blocking_Config": {
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 5,
                     "Discard_Event": "Bednet_Discarded",
                     "Expiration_Period_Distribution": "CONSTANT_DISTRIBUTION",
                     "Killing_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Received_Event": "Bednet_Got_New_One",
-                    "Usage_Config_List": [
-                        {
-                            "Initial_Effect": 0.707107,
-                            "class": "WaningEffectConstant"
-                        },
-                        {
-                            "Initial_Effect": 0.707107,
-                            "class": "WaningEffectConstant"
-                        }
-                    ],
+                    "Usage_Config": {
+                       "Initial_Effect": 0.500000309,
+                       "class": "WaningEffect"
+                    },
                     "Using_Event": "Bednet_Using",
                     "class": "UsageDependentBednet",
                     "Expiration_Period_Constant": 50
@@ -91,22 +83,20 @@
                 "Intervention_Config": {
                     "Blocking_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 5,
                     "Discard_Event": "Bednet_Discarded",
                     "Expiration_Period_Distribution": "CONSTANT_DISTRIBUTION",
                     "Killing_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Received_Event": "Bednet_Got_New_One",
-                    "Usage_Config_List": [
-                        {
-                            "Initial_Effect": 1.0,
-                            "class": "WaningEffectConstant"
-                        }
-                    ],
+                    "Usage_Config": {
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffect"
+                    },
                     "Using_Event": "Bednet_Using",
                     "class": "UsageDependentBednet",
                     "Expiration_Period_Constant": 50
@@ -130,22 +120,20 @@
                 "Intervention_Config": {
                     "Blocking_Config": {
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 5,
                     "Discard_Event": "Bednet_Discarded",
                     "Expiration_Period_Distribution": "CONSTANT_DISTRIBUTION",
                     "Killing_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Received_Event": "Bednet_Got_New_One",
-                    "Usage_Config_List": [
-                        {
-                            "Initial_Effect": 1.0,
-                            "class": "WaningEffectConstant"
-                        }
-                    ],
+                    "Usage_Config": {
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffect"
+                    },
                     "Using_Event": "Bednet_Using_Num_2",
                     "class": "UsageDependentBednet",
                     "Expiration_Period_Constant": 20
@@ -173,58 +161,52 @@
                 "Intervention_Config": {
                     "Blocking_Config": {
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Cost_To_Consumer": 5,
                     "Discard_Event": "Bednet_Discarded",
                     "Expiration_Period_Distribution": "DUAL_EXPONENTIAL_DISTRIBUTION",
                     "Killing_Config": {
                         "Initial_Effect": 0.5,
-                        "class": "WaningEffectConstant"
+                        "class": "WaningEffect"
                     },
                     "Received_Event": "Bednet_Got_New_One",
-                    "Usage_Config_List": [
-                        {
-                            "Durability_Map": {
-                                "Times": [
-                                    0.0,
-                                    12.99999,
-                                    13.0,
-                                    125.0
-                                ],
-                                "Values": [
-                                    0.0,
-                                    0.0,
-                                    1.0,
-                                    1.0
-                                ]
-                            },
-                            "Initial_Effect": 1.0,
-                            "class": "WaningEffectMapLinearAge"
+                    "Usage_Config": {
+                        "Age_Multiplier": {
+                            "Times": [
+                                0.0,
+                               12.99999,
+                               13.0,
+                              125.0
+                            ],
+                            "Values": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0
+                            ]
                         },
-                        {
-                            "Durability_Map": {
-                                "Times": [
-                                    0.0,
-                                    20.0,
-                                    21.0,
-                                    30.0,
-                                    31.0,
-                                    365.0
-                                ],
-                                "Values": [
-                                    1.0,
-                                    1.0,
-                                    0.0,
-                                    0.0,
-                                    1.0,
-                                    1.0
-                                ]
-                            },
-                            "Initial_Effect": 1.0,
-                            "class": "WaningEffectMapLinearSeasonal"
-                        }
-                    ],
+                        "Durability_Map": {
+                            "Times": [
+                                0.0,
+                               20.0,
+                               21.0,
+                               30.0,
+                               31.0,
+                              365.0
+                            ],
+                            "Values": [
+                                1.0,
+                                1.0,
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffect"
+                    },
                     "Using_Event": "Bednet_Using",
                     "class": "UsageDependentBednet",
                     "Expiration_Period_Mean_1": 150,

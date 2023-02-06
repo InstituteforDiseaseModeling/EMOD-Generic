@@ -30,69 +30,54 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED(HumanHostSeekingTrap)
 
     HumanHostSeekingTrap::HumanHostSeekingTrap()
-    : BaseIntervention()
-    , killing_effect(nullptr)
-    , attract_effect(nullptr)
-    , ivies(nullptr)
+        : BaseIntervention()
+        , killing_effect(nullptr)
+        , attract_effect(nullptr)
+        , ivies(nullptr)
     {
         initSimTypes( 2, "VECTOR_SIM", "MALARIA_SIM" );
-        initConfigTypeMap( "Cost_To_Consumer", &cost_per_unit, HST_Cost_To_Consumer_DESC_TEXT, 0, 999999, 3.75 );
-        
+    }
+
+    HumanHostSeekingTrap::HumanHostSeekingTrap( const HumanHostSeekingTrap& master )
+        : BaseIntervention( master )
+        , killing_effect( nullptr )
+        , attract_effect( nullptr )
+        , ivies( nullptr )
+    {
+        if(master.killing_effect)
+        {
+            killing_effect = master.killing_effect->Clone();
+        }
+        if(master.attract_effect)
+        {
+            attract_effect = master.attract_effect->Clone();
+        }
     }
 
     HumanHostSeekingTrap::~HumanHostSeekingTrap()
     {
         delete killing_effect;
         delete attract_effect;
+
+        killing_effect = nullptr;
+        attract_effect = nullptr;
     }
 
-    HumanHostSeekingTrap::HumanHostSeekingTrap( const HumanHostSeekingTrap& master )
-    : BaseIntervention( master )
-    , killing_effect( nullptr )
-    , attract_effect( nullptr )
-    , ivies( nullptr )
+    bool HumanHostSeekingTrap::Configure(const Configuration* inputJson)
     {
-        if( master.killing_effect != nullptr )
-        {
-            killing_effect = master.killing_effect->Clone();
-        }
-        if( master.attract_effect != nullptr )
-        {
-            attract_effect = master.attract_effect->Clone();
-        }
-    }
+        initConfigTypeMap( "Cost_To_Consumer", &cost_per_unit, HST_Cost_To_Consumer_DESC_TEXT, 0, 999999, 3.75 );
 
-    bool
-    HumanHostSeekingTrap::Configure(
-        const Configuration * inputJson
-    )
-    {
-        WaningConfig   killing_config;
-        WaningConfig   attract_config;
-
-        initConfigComplexType("Killing_Config",  &killing_config, HST_Killing_Config_DESC_TEXT );
-        initConfigComplexType("Attract_Config",  &attract_config, HST_Attract_Config_DESC_TEXT );
+        killing_effect = WaningEffectFactory::CreateInstance();
+        attract_effect = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Killing_Config",  killing_effect->GetConfigurable(),  HST_Killing_Config_DESC_TEXT);
+        initConfigTypeMap("Attract_Config",  attract_effect->GetConfigurable(),  HST_Attract_Config_DESC_TEXT);
 
         bool configured = BaseIntervention::Configure( inputJson );
 
-        if( !JsonConfigurable::_dryrun && configured )
-        {
-            killing_effect = WaningEffectFactory::getInstance()->CreateInstance( killing_config._json,
-                                                                                 inputJson->GetDataLocation(),
-                                                                                 "Killing_Config" );
-
-            attract_effect = WaningEffectFactory::getInstance()->CreateInstance( attract_config._json,
-                                                                                 inputJson->GetDataLocation(),
-                                                                                 "Attract_Config" );
-        }
         return configured;
     }
 
-    bool
-    HumanHostSeekingTrap::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool HumanHostSeekingTrap::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO)
     {
         if( AbortDueToDisqualifyingInterventionStatus( context->GetParent() ) )
         {
@@ -115,24 +100,49 @@ namespace Kernel
     {
         if( !BaseIntervention::UpdateIndividualsInterventionStatus() ) return;
 
-        killing_effect->Update(dt);
-        attract_effect->Update(dt);
-        float current_killingrate = killing_effect->Current();
-        float current_attractrate = attract_effect->Current();
-
         // Effects of human host-seeking trap are updated with indoor-home artificial-diet interfaces in VectorInterventionsContainer::Update.
         // Attraction rate diverts indoor feeding attempts from humans to trap; killing rate kills a fraction of diverted feeding attempts.
-        ivies->UpdateArtificialDietAttractionRate( current_attractrate );
-        ivies->UpdateArtificialDietKillingRate( current_killingrate );
+        if(killing_effect)
+        {
+            killing_effect->Update(dt);
+            if(killing_effect->Expired())
+            {
+                delete killing_effect;
+                killing_effect = nullptr;
+            }
+            else
+            {
+                ivies->UpdateArtificialDietKillingRate( killing_effect->Current() );
+            }
+        }
+
+        if(attract_effect)
+        {
+            attract_effect->Update(dt);
+            if(attract_effect->Expired())
+            {
+                delete attract_effect;
+                attract_effect = nullptr;
+            }
+            else
+            {
+                ivies->UpdateArtificialDietAttractionRate( attract_effect->Current() );
+            }
+        }
     }
 
-    void HumanHostSeekingTrap::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void HumanHostSeekingTrap::SetContextTo(IIndividualHumanContext *context)
     {
         BaseIntervention::SetContextTo( context );
-        killing_effect->SetContextTo( context );
-        attract_effect->SetContextTo( context );
+
+        if(killing_effect)
+        {
+            killing_effect->SetContextTo( context );
+        }
+        if(attract_effect)
+        {
+            attract_effect->SetContextTo( context );
+        }
 
         if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(IVectorInterventionEffectsSetter), (void**)&ivies) )
         {

@@ -139,7 +139,7 @@ Time,Node_ID,Event_Name,Individual_ID,Age,Gender,Infected,Infectiousness
 268,340461476,Bednet_Using,2,8557.31,M,0,0
 269,340461476,Bednet_Using,2,8558.31,M,0,0
 270,340461476,Bednet_Using,2,8559.31,M,0,0
-271,340461476,Bednet_Using,2,8560.31,M,0,0
+281,340461476,Bednet_Using,2,8570.31,M,0,0
 282,340461476,Bednet_Using,2,8571.31,M,0,0
 283,340461476,Bednet_Using,2,8572.31,M,0,0
 284,340461476,Bednet_Using,2,8573.31,M,0,0

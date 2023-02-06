@@ -28,7 +28,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 730,
                         "Initial_Effect": 0.59,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },
@@ -129,7 +129,7 @@
                     "Acquire_Config": {
                         "Box_Duration": 730,
                         "Initial_Effect": 0.59,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },

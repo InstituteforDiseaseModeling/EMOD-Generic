@@ -114,50 +114,6 @@
                 "drug_gametocyteM"          : 0.5,
                 "m_pAdherenceEffect" : 
                 {
-                    "__class__":"WaningEffectCombo",
-                    "m_IsAdditive" : false,
-                    "m_IsExpiringWhenAllExpire" : true,
-                    "m_EffectCollection" : 
-                    [
-                        {
-                            "__class__":"WaningEffectMapLinear",
-                            "currentEffect"            : 0.5,
-                            "m_Expired"                : false,
-                            "m_EffectOriginal"         : 1.0,
-                            "m_ExpireAtDurationMapEnd" : true,
-                            "m_TimeSinceStart"         :
-                            {
-                                "_value"     : 123,
-                                "_min_value" : 0,
-                                "_max_value" : 3.4e+038
-                            },
-                            "m_DurationMap"            :
-                            [
-                                { "key": 1990, "value" : 0.1 },
-                                { "key": 1995, "value" : 0.2 },
-                                { "key": 2000, "value" : 0.3 }
-                            ]
-                        },
-                        {
-                            "__class__":"WaningEffectMapCount",
-                            "currentEffect"            : 0.4,
-                            "m_Expired"                : false,
-                            "m_EffectOriginal"         : 0.5,
-                            "m_ExpireAtDurationMapEnd" : false,
-                            "m_TimeSinceStart"         :
-                            {
-                                "_value"     : 1,
-                                "_min_value" : 0,
-                                "_max_value" : 3.4e+038
-                            },
-                            "m_DurationMap"            :
-                            [
-                                { "key": 1991, "value" : 0.31 },
-                                { "key": 1992, "value" : 0.22 },
-                                { "key": 1993, "value" : 0.13 }
-                            ]
-                        }
-                    ]
                 },
                 "m_NonAdherenceOptions" : [   1,   2,   3,   4 ],
                 "m_NonAdherenceCdf"     : [ 0.4, 0.7, 0.9, 1.0 ],
@@ -208,129 +164,14 @@
         {
             "Test" :
             {
-                "__class__":"WaningEffectCombo",
-                "m_IsAdditive" : false,
-                "m_IsExpiringWhenAllExpire" : true,
-                "m_EffectCollection" : 
-                [
-                    {
-                        "__class__":"WaningEffectMapLinear",
-                        "currentEffect"            : 0.5,
-                        "m_Expired"                : false,
-                        "m_EffectOriginal"         : 1.0,
-                        "m_ExpireAtDurationMapEnd" : true,
-                        "m_TimeSinceStart"         :
-                        {
-                            "_value"     : 123,
-                            "_min_value" : 0,
-                            "_max_value" : 3.4e+038
-                        },
-                        "m_DurationMap"            :
-                        [
-                            { "key": 1990, "value" : 0.1 },
-                            { "key": 1995, "value" : 0.2 },
-                            { "key": 2000, "value" : 0.3 }
-                        ]
-                    },
-                    {
-                        "__class__":"WaningEffectMapCount",
-                        "currentEffect"            : 0.4,
-                        "m_Expired"                : false,
-                        "m_EffectOriginal"         : 0.5,
-                        "m_ExpireAtDurationMapEnd" : false,
-                        "m_TimeSinceStart"         :
-                        {
-                            "_value"     : 1,
-                            "_min_value" : 0,
-                            "_max_value" : 3.4e+038
-                        },
-                        "m_DurationMap"            :
-                        [
-                            { "key": 1991, "value" : 0.31 },
-                            { "key": 1992, "value" : 0.22 },
-                            { "key": 1993, "value" : 0.13 }
-                        ]
-                    }
-                ]
-            }
-        },
-        {
-            "Test" :
-            {
-                "__class__":"WaningEffectMapCount",
-                "currentEffect"            : 0.4,
-                "m_Expired"                : false,
-                "m_EffectOriginal"         : 0.5,
-                "m_ExpireAtDurationMapEnd" : false,
-                "m_TimeSinceStart"         :
-                {
-                    "_value"     : 1,
-                    "_min_value" : 0,
-                    "_max_value" : 3.4e+038
-                },
-                "m_DurationMap"            :
-                [
-                    { "key": 1991, "value" : 0.31 },
-                    { "key": 1992, "value" : 0.22 },
-                    { "key": 1993, "value" : 0.13 }
-                ]
-            }
-        },
-        {
-            "Test" :
-            {
-                "__class__":"WaningEffectMapPiecewise",
-                "currentEffect"            : 0.4,
-                "m_Expired"                : false,
-                "m_EffectOriginal"         : 0.5,
-                "m_ExpireAtDurationMapEnd" : false,
-                "m_TimeSinceStart"         :
-                {
-                    "_value"     : 1,
-                    "_min_value" : 0,
-                    "_max_value" : 3.4e+038
-                },
-                "m_DurationMap"            :
-                [
-                    { "key": 1991, "value" : 0.31 },
-                    { "key": 1992, "value" : 0.22 },
-                    { "key": 1993, "value" : 0.13 }
-                ]
-            }
-        },
-        {
-            "Test" :
-            {
-                "__class__":"WaningEffectMapLinear",
-                "currentEffect"            : 0.5,
-                "m_Expired"                : false,
-                "m_EffectOriginal"         : 1.0,
-                "m_ExpireAtDurationMapEnd" : true,
-                "m_TimeSinceStart"         :
-                {
-                    "_value"     : 123,
-                    "_min_value" : 0,
-                    "_max_value" : 3.4e+038
-                },
-                "m_DurationMap"            :
-                [
-                    { "key": 1990, "value" : 0.1 },
-                    { "key": 1995, "value" : 0.2 },
-                    { "key": 2000, "value" : 0.3 }
-                ]
-            }
-        },
-        {
-            "Test" :
-            {
-                "__class__":"WaningEffectConstant",
+                "__class__":"WaningEffect",
                 "currentEffect" : 0.1
             }
         },
         {
             "Test" :
             {
-                "__class__":"WaningEffectExponential",
+                "__class__":"WaningEffect",
                 "currentEffect"     : 0.1,
                 "decayTimeConstant" : 0.2
             }
@@ -338,7 +179,7 @@
         {
             "Test" :
             {
-                "__class__":"WaningEffectBox",
+                "__class__":"WaningEffect",
                 "currentEffect" : 0.1,
                 "boxDuration"   : 0.2
             }
@@ -346,7 +187,7 @@
         {
             "Test" :
             {
-                "__class__":"WaningEffectBoxExponential",
+                "__class__":"WaningEffect",
                 "currentEffect"     : 0.1,
                 "boxDuration"       : 0.2,
                 "decayTimeConstant" : 0.3
@@ -1023,7 +864,7 @@
                 "efficacy_is_multiplicative"    : false,
                 "effect_transmit" :
                 {
-                    "__class__":"WaningEffectBoxExponential",
+                    "__class__":"WaningEffect",
                     "currentEffect"     : 0.1,
                     "boxDuration"       : 0.2,
                     "decayTimeConstant" : 0.3

@@ -8,16 +8,16 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.9, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 3.75, 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.6, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Usage_Config": {
-                        "class": "WaningEffectConstant",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0
                     }, 
                     "class": "SimpleBednet"
@@ -38,18 +38,18 @@
                     "Actual_IndividualIntervention_Config": {
                         "Blocking_Rate": 0.9, 
                         "Cost_To_Consumer": 3.75, 
-			"Blocking_Config": {
-				"Box_Duration": 3650, 
-				"Initial_Effect": 0.9, 
-				"class": "WaningEffectBox"
-			}, 
-			"Killing_Config": {
-				"Box_Duration": 3650, 
-				"Initial_Effect": 0.6, 
-				"class": "WaningEffectBox"
-			},
+            "Blocking_Config": {
+                "Box_Duration": 3650, 
+                "Initial_Effect": 0.9, 
+                "class": "WaningEffect"
+            }, 
+            "Killing_Config": {
+                "Box_Duration": 3650, 
+                "Initial_Effect": 0.6, 
+                "class": "WaningEffect"
+            },
                         "Usage_Config": {
-                            "class": "WaningEffectConstant",
+                            "class": "WaningEffect",
                             "Initial_Effect": 1.0
                         }, 
                         "class": "SimpleBednet"

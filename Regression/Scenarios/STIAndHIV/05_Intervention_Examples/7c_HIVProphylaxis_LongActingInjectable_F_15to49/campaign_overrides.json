@@ -9,7 +9,7 @@
                             "Box_Duration": 183,
                             "Decay_Time_Constant": 0.001899,
                             "Initial_Effect": 0.6,
-                            "class": "WaningEffectBoxExponential"
+                            "class": "WaningEffect"
                         },
                         "class": "Vaccine"
                     },

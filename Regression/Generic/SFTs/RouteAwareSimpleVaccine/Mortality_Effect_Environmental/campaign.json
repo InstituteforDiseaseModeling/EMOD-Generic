@@ -29,7 +29,7 @@
                     "Vaccine_Type": "MortalityBlocking",
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.4,
                         "Box_Duration": 300
                     }
@@ -53,7 +53,7 @@
                     "Vaccine_Type": "MortalityBlocking",
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 0.9,
                         "Box_Duration": 300
                     }
@@ -77,7 +77,7 @@
                     "Vaccine_Type": "MortalityBlocking",
                     "Vaccine_Route": "TRANSMISSIONROUTE_ENVIRONMENTAL",
                     "Waning_Config": {
-                        "class": "WaningEffectBox",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1,
                         "Box_Duration": 300
                     }

@@ -116,18 +116,7 @@ else:
                             "../interventions/PropertyValueChanger.cpp",
                             "../interventions/TravelRestriction.cpp",
                             "../interventions/Vaccine.cpp",
-                            "../interventions/WaningEffectBox.cpp",
-                            "../interventions/WaningEffectBoxExponential.cpp",
-                            "../interventions/WaningEffectCombo.cpp",
-                            "../interventions/WaningEffectConstant.cpp",
-                            "../interventions/WaningEffectExponential.cpp",
-                            "../interventions/WaningEffectFactory.cpp",
-                            "../interventions/WaningEffectMap.cpp",
-                            "../interventions/WaningEffectMapAge.cpp",
-                            "../interventions/WaningEffectMapCount.cpp",
-                            "../interventions/WaningEffectMapSeasonal.cpp",
-                            "../interventions/WaningEffectNull.cpp",
-                            "../interventions/WaningEffectRandomBox.cpp",
+                            "../interventions/WaningEffect.cpp",
     ]
 
     vectorSrcFiles = [

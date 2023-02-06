@@ -20,74 +20,6 @@ SETUP_LOGGING( "UsageDependentBednet" )
 
 namespace Kernel
 {
-    class WaningConfigList : public JsonConfigurable, public IComplexJsonConfigurable
-    {
-        IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
-    public:
-        WaningConfigList();
-
-        virtual QueryResult QueryInterface( iid_t iid, void **ppvObject ) { return e_NOINTERFACE; }
-        json::QuickBuilder GetSchema() override;
-        virtual void ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key ) override;
-        virtual bool HasValidDefault() const override { return true; }
-
-        const std::vector<WaningConfig*>& GetList() const
-        {
-            return m_ConfigList;
-        }
-
-    protected:
-        std::vector<WaningConfig*> m_ConfigList;
-    };
-
-    WaningConfigList::WaningConfigList()
-        : JsonConfigurable()
-        , m_ConfigList()
-    {
-    }
-
-    json::QuickBuilder WaningConfigList::GetSchema()
-    {
-        json::QuickBuilder schema( GetSchemaBase() );
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-        schema[ tn ] = json::String( "idmType:WaningConfigList" );
-
-        WaningConfig config;
-
-        schema[ ts ] = json::Array();
-        schema[ ts ][ 0 ] = config.GetSchema();
-
-        schema["default"] = json::Array();
-
-        return schema;
-    }
-
-    void WaningConfigList::ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key )
-    {
-        json::QuickInterpreter qi( (*inputJson)[ key ] );
-        try
-        {
-            json::Array config_array_json( qi.As<json::Array>() );
-            for( int i = 0; i < config_array_json.Size(); i++ )
-            {
-                if( (config_array_json[ i ].Type() == json::NULL_ELEMENT) || json_cast<const json::Object&>(config_array_json[ i ]).Empty() )
-                {
-                    throw InvalidInputDataException( __FILE__, __LINE__, __FUNCTION__, "'Usage_Config_List' element cannot be empty.");
-                }
-
-                json::QuickInterpreter config_qi( config_array_json[ i ] );
-                WaningConfig* p_config = new WaningConfig( &config_qi );
-                m_ConfigList.push_back( p_config );
-            }
-        }
-        catch( const json::Exception & )
-        {
-            throw Kernel::JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, key.c_str(), qi, "Expected ARRAY" );
-        }
-    }
-
-
     // ------------------------------------------------------------------------
     // --- UsageDependentBednet
     // ------------------------------------------------------------------------
@@ -97,67 +29,54 @@ namespace Kernel
     IMPLEMENT_FACTORY_REGISTERED( UsageDependentBednet )
 
     UsageDependentBednet::UsageDependentBednet()
-    : AbstractBednet()
-    , m_UsageEffectList()
-    , m_TriggerReceived()
-    , m_TriggerUsing()
-    , m_TriggerDiscard()
-    , m_ExpirationDuration( nullptr )
-    , m_ExpirationTimer(0.0)
-    , m_TimerHasExpired(false)
+        : AbstractBednet()
+        , m_pEffectUsage(nullptr)
+        , m_TriggerReceived()
+        , m_TriggerUsing()
+        , m_TriggerDiscard()
+        , m_ExpirationDuration(nullptr)
+        , m_ExpirationTimer(0.0)
+        , m_TimerHasExpired(false)
     {
         m_ExpirationTimer.handle = std::bind( &UsageDependentBednet::Callback, this, std::placeholders::_1 );
     }
 
     UsageDependentBednet::UsageDependentBednet( const UsageDependentBednet& master )
-    : AbstractBednet( master )
-    , m_UsageEffectList()
-    , m_TriggerReceived( master.m_TriggerReceived )
-    , m_TriggerUsing( master.m_TriggerUsing )
-    , m_TriggerDiscard( master.m_TriggerDiscard )
-    , m_ExpirationDuration( master.m_ExpirationDuration->Clone() )
-    , m_ExpirationTimer(master.m_ExpirationTimer)
-    , m_TimerHasExpired(master.m_TimerHasExpired)
+        : AbstractBednet( master )
+        , m_pEffectUsage(nullptr)
+        , m_TriggerReceived( master.m_TriggerReceived )
+        , m_TriggerUsing( master.m_TriggerUsing )
+        , m_TriggerDiscard( master.m_TriggerDiscard )
+        , m_ExpirationDuration(nullptr)
+        , m_ExpirationTimer(master.m_ExpirationTimer)
+        , m_TimerHasExpired(master.m_TimerHasExpired)
     {
-        for( auto p_effect : master.m_UsageEffectList )
+        if(master.m_pEffectUsage)
         {
-            m_UsageEffectList.push_back( p_effect->Clone() );
+            m_pEffectUsage = master.m_pEffectUsage->Clone();
+        }
+        if(master.m_ExpirationDuration)
+        {
+            m_ExpirationDuration = master.m_ExpirationDuration->Clone();
         }
         m_ExpirationTimer.handle = std::bind( &UsageDependentBednet::Callback, this, std::placeholders::_1 );
     }
 
     UsageDependentBednet::~UsageDependentBednet()
     {
-        for( auto p_effect : m_UsageEffectList )
-        {
-            delete p_effect;
-        }
-        m_UsageEffectList.clear();
+        delete m_pEffectUsage;
         delete m_ExpirationDuration;
+
+        m_pEffectUsage       = nullptr;
+        m_ExpirationDuration = nullptr;
     }
 
     bool UsageDependentBednet::ConfigureUsage( const Configuration * inputJson )
     {
-        WaningConfigList usage_config_list;
-        initConfigComplexType( "Usage_Config_List", &usage_config_list, UDBednet_Usage_Config_List_DESC_TEXT );
+        m_pEffectUsage = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Usage_Config",  m_pEffectUsage->GetConfigurable(),  UDBednet_Usage_Config_List_DESC_TEXT);
 
         bool configured = JsonConfigurable::Configure( inputJson ); // AbstractBednet is responsible for calling BaseIntervention::Configure()
-
-        if( configured && !JsonConfigurable::_dryrun )
-        {
-            int i = 0;
-            for( auto p_config : usage_config_list.GetList() )
-            {
-                std::stringstream param_name;
-                param_name << "Usage_Config_List[" << i << "]";
-
-                IWaningEffect* p_effect = WaningEffectFactory::getInstance()->CreateInstance( p_config->_json,
-                                                                                              inputJson->GetDataLocation(),
-                                                                                              param_name.str().c_str() );
-                m_UsageEffectList.push_back( p_effect );
-                ++i;
-            }
-        }
 
         return configured;
     }
@@ -175,8 +94,7 @@ namespace Kernel
         return JsonConfigurable::Configure( inputJson ); // AbstractBednet is responsible for calling BaseIntervention::Configure()
     }
 
-    bool UsageDependentBednet::Distribute( IIndividualHumanInterventionsContext *context,
-                                           ICampaignCostObserver * const pCCO )
+    bool UsageDependentBednet::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO)
     {
         bool distributed = AbstractBednet::Distribute( context, pCCO );
         if( distributed )
@@ -212,20 +130,25 @@ namespace Kernel
 
     void UsageDependentBednet::UpdateUsage( float dt )
     {
-        for( auto p_effect : m_UsageEffectList )
+        if(m_pEffectUsage)
         {
-            p_effect->Update( dt );
+            m_pEffectUsage->Update( dt );
+            if(m_pEffectUsage->Expired())
+            {
+                delete m_pEffectUsage;
+                m_pEffectUsage = nullptr;
+            }
         }
     }
 
     float UsageDependentBednet::GetEffectUsage() const
     {
-        float usage_effect = 1.0;
-        for( auto p_effect : m_UsageEffectList )
+        float effect = 0.0f;
+        if(m_pEffectUsage)
         {
-            usage_effect *= p_effect->Current();
+            effect = m_pEffectUsage->Current();
         }
-        return usage_effect;
+        return effect;
     }
 
     bool UsageDependentBednet::CheckExpiration( float dt )
@@ -252,12 +175,11 @@ namespace Kernel
     void UsageDependentBednet::SetContextTo( IIndividualHumanContext *context )
     {
         AbstractBednet::SetContextTo( context );
-        for( auto p_effect : m_UsageEffectList )
+        if(m_pEffectUsage)
         {
-            p_effect->SetContextTo( context );
+            m_pEffectUsage->SetContextTo( context );
         }
     }
-
 
     REGISTER_SERIALIZABLE( UsageDependentBednet );
 
@@ -266,7 +188,7 @@ namespace Kernel
         AbstractBednet::serialize( ar, obj );
         UsageDependentBednet& bednet = *obj;
 
-        ar.labelElement( "m_UsageEffectList" ) & bednet.m_UsageEffectList;
+        ar.labelElement( "m_pEffectUsage" ) & bednet.m_pEffectUsage;
         LOG_ERR( "TBD: Serialize enum." );
         ar.labelElement( "m_TriggerReceived" ) & (uint32_t&)bednet.m_TriggerReceived;
         ar.labelElement( "m_TriggerUsing"    ) & (uint32_t&)bednet.m_TriggerUsing;

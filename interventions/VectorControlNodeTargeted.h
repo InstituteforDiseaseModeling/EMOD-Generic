@@ -40,8 +40,6 @@ namespace Kernel
 
     class SimpleVectorControlNode : public BaseNodeIntervention
     {
-        //DECLARE_FACTORY_REGISTERED(InterventionFactory, SimpleVectorControlNode, INodeDistributableIntervention) 
-
     public:        
         SimpleVectorControlNode();
         SimpleVectorControlNode( const SimpleVectorControlNode& );
@@ -70,12 +68,7 @@ namespace Kernel
         VectorHabitatType::Enum m_HabitatTarget;
         IWaningEffect* killing_effect;
         IWaningEffect* blocking_effect;
-        // I hate to put these into the object but there shouldn't be too many
-        // since there will be at most one per node.  DON'T DO THIS FOR INDIVIDUALS
-        WaningConfig m_LarvalKillingConfig;
-        WaningConfig m_RepellingConfig;
-        WaningConfig m_KillingConfig;
-         
+
         INodeVectorInterventionEffectsApply *m_pINVIC;
     };
 
@@ -198,7 +191,6 @@ namespace Kernel
         virtual void ApplyEffects( float dt ) override;
 
         ArtificialDietTarget::Enum m_AttractionTarget;
-        IWaningEffect* m_pAttractionEffect;
     };
 
     class SugarTrap : public SimpleVectorControlNode

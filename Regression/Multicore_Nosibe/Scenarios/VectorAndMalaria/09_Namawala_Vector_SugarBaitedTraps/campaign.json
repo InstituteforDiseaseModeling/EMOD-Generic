@@ -7,7 +7,7 @@
                     "Killing_Config": {
                         "Decay_Time_Constant": 2190, 
                         "Initial_Effect": 0.1, 
-                        "class": "WaningEffectExponential"
+                        "class": "WaningEffect"
                     }, 
                     "class": "SugarTrap"
                 }, 

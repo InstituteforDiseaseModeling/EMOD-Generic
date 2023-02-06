@@ -24,9 +24,8 @@
                                 1.0
                             ]
                         },
-                        "Expire_At_Durability_Map_End": 0,
                         "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapLinear"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },

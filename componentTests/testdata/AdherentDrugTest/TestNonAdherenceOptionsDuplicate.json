@@ -4,7 +4,7 @@
     "Drug_Type": "TestDrug",
     "Dosing_Type": "FullTreatmentCourse",
     "Adherence_Config" : {
-        "class": "WaningEffectMapLinear",
+        "class": "WaningEffect",
         "Initial_Effect" : 1.0,
         "Durability_Map" :
         {

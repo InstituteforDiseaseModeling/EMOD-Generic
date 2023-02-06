@@ -1312,6 +1312,152 @@ def test_gamma(dist, p1, p2, report_file: Union[list, TextIOWrapper, None] = Non
     return succeed
 
 
+def test_dual_exponential(dist, m1, m2, p1, report_file=None, plot=False, plot_name="plot_data_exponential"):
+    """
+    kstest for dual exponential distribution
+
+    Args:
+        dist: The distribution to be tested
+        m1: mean of the first exponential distribution, mean = decay length = 1 / rate, 1 / lambda, >0
+        m2: mean of the second exponential distribution, > 0
+        p1: proportion of the first exponential distribution, 0 < p1 < 1
+        report_file: report file to write the error if such exists
+        plot: plot the test and scipy/numpy data if True
+        plot_name: plot name
+
+    Returns: True / False
+
+    """
+
+    size = len(dist)
+    size1 = round(size * p1)
+    size2 = size - size1
+    dist_exponential_np1 = np.random.exponential(m1, size1)
+    dist_exponential_np2 = np.random.exponential(m2, size2)
+
+    dist_np = np.concatenate((dist_exponential_np1, dist_exponential_np2), axis=None)
+
+    result = stats.ks_2samp(dist_np, list(dist))
+    # ?? result = stats.kstest(dist, "exponential", args=(p1))
+
+    if plot:
+        plot_data(dist, dist2=dist_np, label1="test data", label2="numpy_exponential",
+                  title="Test data vs. numpy exponential", category=plot_name, sort=True)
+
+    p = get_p_s_from_ksresult(result)['p']
+    s = get_p_s_from_ksresult(result)['s']
+    critical_value_s = calc_ks_critical_value(size)
+
+    msg = f"{m1}_{m2}_{p1}: ks test return statistic={s}, pvalue={p}, expected s less than {critical_value_s} and p " \
+          f"larger than 0.05.\n"
+    if p >= 5e-2 or s <= critical_value_s:
+        if report_file is not None:
+            report_file.write(f"GOOD: {msg}")
+        return True
+    else:
+        if report_file is not None:
+            report_file.write(f"BAD: {msg}")
+        return False
+
+
+def test_standard_beta_distribution(dist, alpha, beta, report_file=None, plot=False,
+                                    plot_name="plot_data_standard_beta_distribution"):
+    """
+    kstest for a standard beta distribution
+
+    Args:
+        dist: The distribution to be tested
+        alpha: alpha parameter for the beta distribution
+        beta: beta parameter for the beta distribution
+        report_file: report file to write the error if such exists
+        plot: plot the test and scipy/numpy data if True
+        plot_name: plot name
+
+    Returns: True / False
+
+    """
+
+    result = stats.kstest(dist, cdf='beta', args=(alpha, beta))
+
+    if plot:
+        fig01 = plt.figure(figsize=(19.2, 9.6))
+        axs01 = fig01.add_subplot(1, 1, 1, label=None)
+        plt.sca(axs01)
+        axs01.grid(visible=True, which='major', ls='-', lw=0.5, label='')
+        axs01.grid(visible=True, which='minor', ls=':', lw=0.1)
+        axs01.set_axisbelow(True)
+        axs01.set_xlabel('Initial Effect')
+        axs01.set_ylabel('Probability')
+        xvals = np.arange(0, 1.01, 0.01)
+        axs01.hist(dist, bins=xvals[::2], density=True)
+        axs01.plot(xvals, stats.beta.pdf(xvals, alpha, beta), color='C3')
+        plt.tight_layout()
+        plt.savefig('pdf_beta_distribution_data.png')
+
+    size = len(dist)
+    p = get_p_s_from_ksresult(result)['p']
+    s = get_p_s_from_ksresult(result)['s']
+    critical_value_s = calc_ks_critical_value(size)
+
+    msg = f"alpha = {alpha}; beta = {beta} : ks test return statistic={s}, pvalue={p}, expected s " \
+          f"less than {critical_value_s} and p larger than 0.05.\n"
+    if p >= 5e-2 or s <= critical_value_s:
+        if report_file is not None:
+            report_file.write(f"GOOD: {msg}")
+        return True
+    else:
+        if report_file is not None:
+            report_file.write(f"BAD: {msg}")
+        return False
+
+
+def test_eGaussNonNeg(dist, p1, p2, round=False, report_file=None, plot=False, plot_name='plot_data_gaussian',
+                      msg=None):
+    """
+    Kstest for truncated normal distribution(with the lower bound is hard-coded to zero and upper bound is max float
+    number.)
+    Args:
+        dist: The distribution to be tested
+        p1: Mean, loc
+        p2: Width(standard deviation), scale, sig
+        round: True to round the theoretical distribution to 7 significant digits.
+        report_file: Report file to write the kstest result detail.
+        plot: True to plot the test data vs. scipy data or cdf function
+        plot_name:
+        msg: a list to append the test message
+    Returns: True, False
+    """
+    size = len(dist)
+    a = -p1 / p2
+    b = np.inf
+    dist_gaussian_scipy = stats.truncnorm.rvs(a, b, p1, p2, size)
+    if round:
+        dist_gaussian_scipy2 = []
+        for n in dist_gaussian_scipy:
+            dist_gaussian_scipy2.append(round_to_n_digit(n, 7))
+        dist_gaussian_scipy = dist_gaussian_scipy2
+    result = stats.ks_2samp(dist_gaussian_scipy, dist)
+
+    if plot:
+        plot_data(dist, dist2=dist_gaussian_scipy, label1="test data", label2="scipy_gaussian",
+                  title="Test data vs. scipy gaussian", category=plot_name, sort=True)
+
+    p = get_p_s_from_ksresult(result)['p']
+    s = get_p_s_from_ksresult(result)['s']
+    critical_value_s = calc_ks_critical_value(size)
+
+    if p >= 5e-2 or s <= critical_value_s:
+        return True
+    else:
+        message = f"BAD: (mean = {p1}, sigma = {p2})failed with statistic={s}, p_value={p}, " \
+                  f"expected s less than {critical_value_s} and p larger than 0.05.\n"
+        if report_file is not None:
+            report_file.write(message)
+        if isinstance(msg, list):
+            msg.append(message)
+        return False
+
+
 def is_stats_test_pass(fail_count, pass_count, report_file=None):
     """
     -------------------------------------------------------
@@ -1514,53 +1660,6 @@ def cal_tolerance_binomial(expected_value, binomial_p, prob=0.05):
         return tolerance
 
 
-def test_eGaussNonNeg(dist, p1, p2, round=False, report_file=None, plot=False, plot_name='plot_data_gaussian',
-                      msg=None):
-    """
-    Kstest for truncated normal distribution(with the lower bound is hard-coded to zero and upper bound is max float
-    number.)
-    Args:
-        dist: The distribution to be tested
-        p1: Mean, loc
-        p2: Width(standard deviation), scale, sig
-        round: True to round the theoretical distribution to 7 significant digits.
-        report_file: Report file to write the kstest result detail.
-        plot: True to plot the test data vs. scipy data or cdf function
-        plot_name:
-        msg: a list to append the test message
-    Returns: True, False
-    """
-    size = len(dist)
-    a = -p1 / p2
-    b = np.inf
-    dist_gaussian_scipy = stats.truncnorm.rvs(a, b, p1, p2, size)
-    if round:
-        dist_gaussian_scipy2 = []
-        for n in dist_gaussian_scipy:
-            dist_gaussian_scipy2.append(round_to_n_digit(n, 7))
-        dist_gaussian_scipy = dist_gaussian_scipy2
-    result = stats.ks_2samp(dist_gaussian_scipy, dist)
-
-    if plot:
-        plot_data(dist, dist2=dist_gaussian_scipy, label1="test data", label2="scipy_gaussian",
-                  title="Test data vs. scipy gaussian", category=plot_name, sort=True)
-
-    p = get_p_s_from_ksresult(result)['p']
-    s = get_p_s_from_ksresult(result)['s']
-    critical_value_s = calc_ks_critical_value(size)
-
-    if p >= 5e-2 or s <= critical_value_s:
-        return True
-    else:
-        message = f"BAD: (mean = {p1}, sigma = {p2})failed with statistic={s}, p_value={p}, " \
-                  f"expected s less than {critical_value_s} and p larger than 0.05.\n"
-        if report_file is not None:
-            report_file.write(message)
-        if isinstance(msg, list):
-            msg.append(message)
-        return False
-
-
 def get_config_parameter(config_filename="config.json", parameters: Union[list, str]="Config_Name"):
     with open(config_filename, 'r') as config_file:
         cf = json.load(config_file)["parameters"]
@@ -1635,54 +1734,6 @@ def autolabel(ax, rects, num_decimal=1):
         ax.text(rect.get_x() + rect.get_width()/2., 1.005*height,
                 f'%.{num_decimal}f' % float(height),
                 ha='center', va='center',rotation=45)
-
-
-def test_dual_exponential(dist, m1, m2, p1, report_file=None, plot=False, plot_name="plot_data_exponential"):
-    """
-    kstest for dual exponential distribution
-
-    Args:
-        dist: The distribution to be tested
-        m1: mean of the first exponential distribution, mean = decay length = 1 / rate, 1 / lambda, >0
-        m2: mean of the second exponential distribution, > 0
-        p1: proportion of the first exponential distribution, 0 < p1 < 1
-        report_file: report file to write the error if such exists
-        plot: plot the test and scipy/numpy data if True
-        plot_name: plot name
-
-    Returns: True / False
-
-    """
-
-    size = len(dist)
-    size1 = round(size * p1)
-    size2 = size - size1
-    dist_exponential_np1 = np.random.exponential(m1, size1)
-    dist_exponential_np2 = np.random.exponential(m2, size2)
-
-    dist_np = np.concatenate((dist_exponential_np1, dist_exponential_np2), axis=None)
-
-    result = stats.ks_2samp(dist_np, list(dist))
-    # ?? result = stats.kstest(dist, "exponential", args=(p1))
-
-    if plot:
-        plot_data(dist, dist2=dist_np, label1="test data", label2="numpy_exponential",
-                  title="Test data vs. numpy exponential", category=plot_name, sort=True)
-
-    p = get_p_s_from_ksresult(result)['p']
-    s = get_p_s_from_ksresult(result)['s']
-    critical_value_s = calc_ks_critical_value(size)
-
-    msg = f"{m1}_{m2}_{p1}: ks test return statistic={s}, pvalue={p}, expected s less than {critical_value_s} and p " \
-          f"larger than 0.05.\n"
-    if p >= 5e-2 or s <= critical_value_s:
-        if report_file is not None:
-            report_file.write(f"GOOD: {msg}")
-        return True
-    else:
-        if report_file is not None:
-            report_file.write(f"BAD: {msg}")
-        return False
 
 
 def plot_cdf_w_fun(data, name="cdf", cdf_function=None, args=(), show=False):

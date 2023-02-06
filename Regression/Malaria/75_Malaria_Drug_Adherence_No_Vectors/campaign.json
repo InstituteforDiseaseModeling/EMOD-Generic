@@ -55,23 +55,19 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Adherence_Config": {
-                        "Durability_Map": {
-                            "Times": [
-                                1.0,
-                                2.0,
-                                3.0,
-                                4.0
-                            ],
-                            "Values": [
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.1
-                            ]
-                        },
-                        "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapCount"
+                    "Adherence_By_Dose": {
+                        "Times": [
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0
+                        ],
+                        "Values": [
+                            0.1,
+                            0.1,
+                            0.1,
+                            0.1
+                        ]
                     },
                     "Cost_To_Consumer": 1,
                     "Dont_Allow_Duplicates": 1,
@@ -104,23 +100,19 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Adherence_Config": {
-                        "Durability_Map": {
-                            "Times": [
-                                1.0,
-                                2.0,
-                                3.0,
-                                4.0
-                            ],
-                            "Values": [
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.1
-                            ]
-                        },
-                        "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapCount"
+                    "Adherence_By_Dose": {
+                        "Times": [
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0
+                        ],
+                        "Values": [
+                            0.1,
+                            0.1,
+                            0.1,
+                            0.1
+                        ]
                     },
                     "Cost_To_Consumer": 1,
                     "Dont_Allow_Duplicates": 1,
@@ -153,23 +145,19 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Adherence_Config": {
-                        "Durability_Map": {
-                            "Times": [
-                                1.0,
-                                2.0,
-                                3.0,
-                                4.0
-                            ],
-                            "Values": [
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.1
-                            ]
-                        },
-                        "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapCount"
+                    "Adherence_By_Dose": {
+                        "Times": [
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0
+                        ],
+                        "Values": [
+                            0.1,
+                            0.1,
+                            0.1,
+                            0.1
+                        ]
                     },
                     "Cost_To_Consumer": 1,
                     "Dont_Allow_Duplicates": 1,
@@ -202,23 +190,19 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Adherence_Config": {
-                        "Durability_Map": {
-                            "Times": [
-                                1.0,
-                                2.0,
-                                3.0,
-                                4.0
-                            ],
-                            "Values": [
-                                0.1,
-                                0.1,
-                                0.1,
-                                0.1
-                            ]
-                        },
-                        "Initial_Effect": 1.0,
-                        "class": "WaningEffectMapCount"
+                    "Adherence_By_Dose": {
+                        "Times": [
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0
+                        ],
+                        "Values": [
+                            0.1,
+                            0.1,
+                            0.1,
+                            0.1
+                        ]
                     },
                     "Cost_To_Consumer": 1,
                     "Dont_Allow_Duplicates": 1,
@@ -252,47 +236,36 @@
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
                     "Adherence_Config": {
-                        "Add_Effects": 0,
-                        "Effect_List": [
-                            {
-                                "Durability_Map": {
-                                    "Times": [
-                                        0.0,
-                                        12.99999,
-                                        13.0,
-                                        125.0
-                                    ],
-                                    "Values": [
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        1.0
-                                    ]
-                                },
-                                "Initial_Effect": 1.0,
-                                "class": "WaningEffectMapLinearAge"
-                            },
-                            {
-                                "Durability_Map": {
-                                    "Times": [
-                                        1.0,
-                                        2.0,
-                                        3.0,
-                                        4.0
-                                    ],
-                                    "Values": [
-                                        0.1,
-                                        0.2,
-                                        0.3,
-                                        0.4
-                                    ]
-                                },
-                                "Initial_Effect": 1.0,
-                                "class": "WaningEffectMapCount"
-                            }
+                        "Age_Multiplier": {
+                            "Times": [
+                                0.0,
+                               12.99999,
+                               13.0,
+                              125.0
+                            ],
+                            "Values": [
+                                0.0,
+                                0.0,
+                                1.0,
+                                1.0
+                            ]
+                        },
+                        "Initial_Effect": 1.0,
+                        "class": "WaningEffect"
+                    },
+                    "Adherence_By_Dose": {
+                        "Times": [
+                            1.0,
+                            2.0,
+                            3.0,
+                            4.0
                         ],
-                        "Expires_When_All_Expire": 0,
-                        "class": "WaningEffectCombo"
+                        "Values": [
+                            0.1,
+                            0.2,
+                            0.3,
+                            0.4
+                        ]
                     },
                     "Cost_To_Consumer": 1,
                     "Dont_Allow_Duplicates": 1,

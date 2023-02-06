@@ -394,46 +394,6 @@ namespace Kernel
     /// END OF InterventionConfig
 
 
-    /// WaningConfig
-    WaningConfig::WaningConfig()
-    : _json()
-    {
-        json::Object default_config;
-        default_config["class"] = json::String("WaningEffectNull");
-        _json = default_config;
-    }
-
-    WaningConfig::WaningConfig(json::QuickInterpreter* qi)
-    : _json(*qi)
-    { }
-
-    json::QuickBuilder WaningConfig::GetSchema()
-    {
-        json::QuickBuilder schema(jsonSchemaBase);
-        auto tn = JsonConfigurable::_typename_label();
-        auto ts = JsonConfigurable::_typeschema_label();
-        schema[tn] = json::String("idmType:WaningEffect");
-
-        schema[ts] = json::Object();
-        schema[ts]["base"] = json::String("interventions.idmType.WaningEffect");
-
-        WaningConfig waning_obj;
-        schema["default"] = waning_obj._json;
-
-
-        return schema;
-    }
-
-    void WaningConfig::ConfigureFromJsonAndKey(const Configuration* inputJson, const std::string& key)
-    {
-        if(!inputJson->Exist(key))
-        {
-            throw MissingParameterFromConfigurationException(__FILE__, __LINE__, __FUNCTION__, inputJson->GetDataLocation().c_str(), key.c_str());
-        }
-        _json = (*inputJson)[key];
-    }
-    /// END WaningConfig
-
     namespace jsonConfigurable
     {
         ConstrainedString::ConstrainedString()

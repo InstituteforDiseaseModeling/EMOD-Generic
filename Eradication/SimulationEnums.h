@@ -13,7 +13,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-
     // ENUM defs for Gender_Type
     ENUM_DEFINE(Gender,
         ENUM_VALUE_SPEC(MALE                                                , 0)        // previously: #define MALE 1
@@ -149,6 +148,29 @@ namespace Kernel
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_AGE_AND_GENDER              , 0)
         ENUM_VALUE_SPEC(NONDISEASE_MORTALITY_BY_YEAR_AND_AGE_FOR_EACH_GENDER, 1))
 
+    // ENUM defs for INCUBATION_DISTRIBUTION, INFECTIOUS_DISTRIBUTION, BASE_INFECTIVITY_DISTRIBUTION
+    ENUM_DEFINE(DistributionFunction, 
+        ENUM_VALUE_SPEC( NOT_INITIALIZED                                    ,-1)
+        ENUM_VALUE_SPEC( CONSTANT_DISTRIBUTION                              , 0)
+        ENUM_VALUE_SPEC( UNIFORM_DISTRIBUTION                               , 1)
+        ENUM_VALUE_SPEC( GAUSSIAN_DISTRIBUTION                              , 2)
+        ENUM_VALUE_SPEC( EXPONENTIAL_DISTRIBUTION                           , 3)
+        ENUM_VALUE_SPEC( POISSON_DISTRIBUTION                               , 4)
+        ENUM_VALUE_SPEC( LOG_NORMAL_DISTRIBUTION                            , 5)
+        ENUM_VALUE_SPEC( DUAL_CONSTANT_DISTRIBUTION                         , 6)
+//      ENUM_VALUE_SPEC( PIECEWISE_CONSTANT                                 , 7)    // Disable these distributions, but leave index as is (see demographics)
+//      ENUM_VALUE_SPEC( PIECEWISE_LINEAR                                   , 8)
+        ENUM_VALUE_SPEC( WEIBULL_DISTRIBUTION                               , 9)
+        ENUM_VALUE_SPEC( DUAL_EXPONENTIAL_DISTRIBUTION                      ,10)
+        ENUM_VALUE_SPEC( GAMMA_DISTRIBUTION                                 ,11))
+
+    // ENUM defs for Box_Duration of WaningEffect; subset of DistributionFunction
+    ENUM_DEFINE(WEBoxDist,
+        ENUM_VALUE_SPEC( NOT_INITIALIZED                                    , 0)
+        ENUM_VALUE_SPEC( GAUSSIAN_DISTRIBUTION                              , 1)
+        ENUM_VALUE_SPEC( EXPONENTIAL_DISTRIBUTION                           , 2)
+        ENUM_VALUE_SPEC( GAMMA_DISTRIBUTION                                 , 3))
+
     ENUM_DEFINE(PolioSerotypes,
         ENUM_VALUE_SPEC(PV1                                                 , 0)
         ENUM_VALUE_SPEC(PV2                                                 , 1)
@@ -168,7 +190,7 @@ namespace Kernel
         ENUM_VALUE_SPEC(MOPV1                                               , 2)
         ENUM_VALUE_SPEC(MOPV2                                               , 3)
         ENUM_VALUE_SPEC(MOPV3                                               , 4)
-        ENUM_VALUE_SPEC(IPV                                                 , 5)) 
+        ENUM_VALUE_SPEC(IPV                                                 , 5))
 
     ENUM_DEFINE(EvolutionPolioClockType, 
         ENUM_VALUE_SPEC(POLIO_EVOCLOCK_NONE                                 , 0)

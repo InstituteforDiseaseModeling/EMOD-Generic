@@ -17,12 +17,12 @@
         "Habitat_Target": "ALL_HABITATS",
         "Spray_Kill_Target": "SpaceSpray_Indoor",
         "Killing_Config": {
-            "class": "WaningEffectExponential",
+            "class": "WaningEffect",
             "Initial_Effect": 0.7,
             "Box_Duration": 365
         },
         "Reduction_Config": {
-            "class": "WaningEffectExponential",
+            "class": "WaningEffect",
             "Initial_Effect": 0,
             "Box_Duration": 365
         }

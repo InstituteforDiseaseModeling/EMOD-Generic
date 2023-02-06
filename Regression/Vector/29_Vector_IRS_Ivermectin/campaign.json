@@ -8,14 +8,14 @@
                         "Box_Duration": 183, 
                         "Decay_Time_Constant": 183, 
                         "Initial_Effect": 0, 
-                        "class": "WaningEffectBoxExponential"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 8, 
                     "Killing_Config": {
                         "Box_Duration": 183, 
                         "Decay_Time_Constant": 183, 
                         "Initial_Effect": 0.53429, 
-                        "class": "WaningEffectBoxExponential"
+                        "class": "WaningEffect"
                     }, 
                     "class": "IRSHousingModification"
                 }, 
@@ -38,7 +38,7 @@
                         "Box_Duration": 1, 
                         "Decay_Time_Constant": 0.5, 
                         "Initial_Effect": 0.95, 
-                        "class": "WaningEffectBoxExponential"
+                        "class": "WaningEffect"
                     }, 
                     "class": "Ivermectin"
                 }, 

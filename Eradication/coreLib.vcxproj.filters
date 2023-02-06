@@ -2087,12 +2087,6 @@
     <ClCompile Include="..\interventions\AdherentDrug.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted\Vector\Malaria</Filter>
     </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectCombo.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectMapCount.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
     <ClCompile Include="NodeTyphoidEventContext.cpp">
       <Filter>Source Files\Campaign\EventCoordinator\Typhoid</Filter>
     </ClCompile>
@@ -2174,9 +2168,6 @@
     <ClCompile Include="RandomSerializable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectNull.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
     <ClCompile Include="..\interventions\Vaccine.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClCompile>
@@ -2203,6 +2194,9 @@
     </ClCompile>
     <ClCompile Include="..\interventions\NodeBirthRateMult.cpp">
       <Filter>Source Files\Campaign\NodeTargeted</Filter>
+    </ClCompile>
+    <ClCompile Include="..\interventions\WaningEffect.cpp">
+      <Filter>Source Files\Campaign\WaningEffects</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

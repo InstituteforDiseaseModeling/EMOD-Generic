@@ -30,9 +30,8 @@
                     "Mode": "Shedding",
                     "Effect": 1.0,
                     "Changing_Effect": {
-                        "class": "WaningEffectMapLinear",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
-                        "Expire_At_Durability_Map_End": 1,
                         "Durability_Map": {
                             "Times": [ 0, 200, 201, 800, 801, 3500],
                             "Values": [0,0, 1, 1 , 0,0]
@@ -57,9 +56,8 @@
                     "Mode": "Shedding",
                     "Effect": 1.0,
                     "Changing_Effect": {
-                        "class": "WaningEffectMapLinear",
+                        "class": "WaningEffect",
                         "Initial_Effect": 1.0,
-                        "Expire_At_Durability_Map_End": 1,
                         "Durability_Map": {
                             "Times": [ 0, 200, 201, 800, 801, 3500],
                             "Values": [0,0, 1, 1 , 0,0]

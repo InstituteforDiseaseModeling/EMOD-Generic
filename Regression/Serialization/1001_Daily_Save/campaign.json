@@ -21,17 +21,17 @@
                     "Acquire_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Transmit_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "Mortality_Config": {
                         "Box_Duration": 3650,
                         "Initial_Effect": 1,
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     },
                     "class": "Vaccine"
                 },

@@ -46,7 +46,8 @@ namespace Kernel
         , effect_transmit(nullptr)
         , effect_mortality(nullptr)
         , ivc(nullptr)
-    { }
+    {
+    }
 
     Vaccine::Vaccine(const Vaccine& existing_instance)
         : BaseIntervention(existing_instance)
@@ -90,10 +91,6 @@ namespace Kernel
 
     bool Vaccine::Configure(const Configuration* inputJson)
     {
-        WaningConfig waning_config_acqr;
-        WaningConfig waning_config_trns;
-        WaningConfig waning_config_mort;
-
         initConfigTypeMap("Efficacy_Is_Multiplicative",  &efficacy_is_multiplicative,   VAC_Efficacy_Is_Multiplicative_DESC_TEXT,   true);
 
         initConfigTypeMap("Vaccine_Take",                &vaccine_take,                 VAC_Vaccine_Take_DESC_TEXT,                      0.0f,     1.0f,  1.0f);
@@ -105,15 +102,14 @@ namespace Kernel
         initConfigTypeMap("Initial_Transmit_By_Current_Effect_Multiplier",   &init_trn_by_effect_map,  VAC_Initial_Transmit_By_Current_Effect_Multiplier_DESC_TEXT);
         initConfigTypeMap("Initial_Mortality_By_Current_Effect_Multiplier",  &init_mor_by_effect_map,  VAC_Initial_Mortality_By_Current_Effect_Multiplier_DESC_TEXT);
 
-        initConfigComplexType("Acquire_Config",    &waning_config_acqr,  VAC_Acquire_Config_DESC_TEXT);
-        initConfigComplexType("Transmit_Config",   &waning_config_trns,  VAC_Mortality_Config_DESC_TEXT);
-        initConfigComplexType("Mortality_Config",  &waning_config_mort,  VAC_Transmit_Config_DESC_TEXT);
+        effect_acquire   = WaningEffectFactory::CreateInstance();
+        effect_transmit  = WaningEffectFactory::CreateInstance();
+        effect_mortality = WaningEffectFactory::CreateInstance();
+        initConfigTypeMap("Acquire_Config",    effect_acquire->GetConfigurable(),    VAC_Acquire_Config_DESC_TEXT);
+        initConfigTypeMap("Transmit_Config",   effect_transmit->GetConfigurable(),   VAC_Mortality_Config_DESC_TEXT);
+        initConfigTypeMap("Mortality_Config",  effect_mortality->GetConfigurable(),  VAC_Transmit_Config_DESC_TEXT);
 
         bool retVal = BaseIntervention::Configure(inputJson);
-
-        effect_acquire   = WaningEffectFactory::getInstance()->CreateInstance(waning_config_acqr._json, inputJson->GetDataLocation(), "Acquire_Config");
-        effect_transmit  = WaningEffectFactory::getInstance()->CreateInstance(waning_config_trns._json, inputJson->GetDataLocation(), "Transmit_Config");
-        effect_mortality = WaningEffectFactory::getInstance()->CreateInstance(waning_config_mort._json, inputJson->GetDataLocation(), "Mortality_Config");
 
         return retVal;
     }
@@ -145,9 +141,8 @@ namespace Kernel
                              (vaccine_took?"":"not "), parent->GetSuid(), parent->GetAge());
 
             // Vaccine effect multipliers
-            if(init_acq_by_effect_map.size())
+            if(init_acq_by_effect_map.size() && effect_acquire && !effect_acquire->Expired())
             {
-                release_assert(effect_acquire);
                 float acq_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedAcquire()*
                                            parent->GetSusceptibilityContext()->getModAcquire();
                 float acq_mult    = init_acq_by_effect_map.getValueLinearInterpolation(acq_current, -1.0f);
@@ -156,11 +151,10 @@ namespace Kernel
                     throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__,
                         "Current effect less than minimum in Initial_Acquire_By_Current_Effect_Multiplier.");
                 }
-                effect_acquire->SetInitial(acq_mult*effect_acquire->Current());
+                effect_acquire->SetInitial(acq_mult*effect_acquire->GetInitial());
             }
-            if(init_trn_by_effect_map.size())
+            if(init_trn_by_effect_map.size() && effect_transmit && !effect_transmit->Expired())
             {
-                release_assert(effect_transmit);
                 float trn_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedTransmit()*
                                            parent->GetSusceptibilityContext()->getModTransmit();
                 float trn_mult    = init_trn_by_effect_map.getValueLinearInterpolation(trn_current, -1.0f);
@@ -169,11 +163,10 @@ namespace Kernel
                     throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__,
                         "Current effect less than minimum in Initial_Transmit_By_Current_Effect_Multiplier.");
                 }
-                effect_transmit->SetInitial(trn_mult*effect_transmit->Current());
+                effect_transmit->SetInitial(trn_mult*effect_transmit->GetInitial());
             }
-            if(init_mor_by_effect_map.size())
+            if(init_mor_by_effect_map.size() && effect_mortality && !effect_mortality->Expired())
             {
-                release_assert(effect_mortality);
                 float mor_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedMortality()*
                                            parent->GetSusceptibilityContext()->getModMortality();
                 float mor_mult    = init_mor_by_effect_map.getValueLinearInterpolation(mor_current, -1.0f);
@@ -182,7 +175,7 @@ namespace Kernel
                     throw GeneralConfigurationException(__FILE__, __LINE__, __FUNCTION__,
                              "Current effect less than minimum in Initial_Mortality_By_Current_Effect_Multiplier.");
                 }
-                effect_mortality->SetInitial(mor_mult*effect_mortality->Current());
+                effect_mortality->SetInitial(mor_mult*effect_mortality->GetInitial());
             }
         }
 
@@ -219,43 +212,44 @@ namespace Kernel
         if(effect_acquire)
         {
             effect_acquire->Update(dt);
-            if(vaccine_took)
-            {
-                ivc->UpdateVaccineAcquireRate(effect_acquire->Current(), efficacy_is_multiplicative);
-            }
             if(effect_acquire->Expired())
             {
                 delete effect_acquire;
                 effect_acquire = nullptr;
+            }
+            else if(vaccine_took)
+            {
+                ivc->UpdateVaccineAcquireRate(effect_acquire->Current(), efficacy_is_multiplicative);
             }
         }
 
         if(effect_transmit)
         {
             effect_transmit->Update(dt);
-            if(vaccine_took)
-            {
-                ivc->UpdateVaccineTransmitRate(effect_transmit->Current(), efficacy_is_multiplicative);
-            }
             if(effect_transmit->Expired())
             {
                 delete effect_transmit;
                 effect_transmit = nullptr;
+            }
+            else if(vaccine_took)
+            {
+                ivc->UpdateVaccineTransmitRate(effect_transmit->Current(), efficacy_is_multiplicative);
             }
         }
 
         if(effect_mortality)
         {
             effect_mortality->Update(dt);
-            if(vaccine_took)
-            {
-                ivc->UpdateVaccineMortalityRate(effect_mortality->Current(), efficacy_is_multiplicative);
-            }
             if(effect_mortality->Expired())
             {
                 delete effect_mortality;
                 effect_mortality = nullptr;
             }
+            else if(vaccine_took)
+            {
+                ivc->UpdateVaccineMortalityRate(effect_mortality->Current(), efficacy_is_multiplicative);
+            }
+
         }
 
         // Expire if no vaccine effects

@@ -8,12 +8,12 @@
                     "Attract_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.6, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.9, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "HumanHostSeekingTrap"
                 }, 
@@ -32,14 +32,14 @@
                     "Blocking_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.8, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "Cost_To_Consumer": 3.75, 
                     "Habitat_Target": "ALL_HABITATS", 
                     "Killing_Config": {
                         "Box_Duration": 3650, 
                         "Initial_Effect": 0.0, 
-                        "class": "WaningEffectBox"
+                        "class": "WaningEffect"
                     }, 
                     "class": "Larvicides"
                 }, 

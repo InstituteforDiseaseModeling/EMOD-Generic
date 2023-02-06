@@ -13,48 +13,32 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <map>
 
 #include "ISerializable.h"
-#include "Configuration.h"
 #include "Configure.h"
-#include "FactorySupport.h"
-#include "ObjectFactory.h"
 
 namespace Kernel
 {
     struct IIndividualHumanContext;
-    struct IWaningEffectCount;
+    struct INodeEventContext;
 
-    struct IDMAPI IWaningEffect : ISerializable
+    struct IWaningEffect : ISerializable
     {
-        virtual IWaningEffect* Clone() = 0;
-        virtual void  Update(float dt) = 0;
-        virtual float Current() const  = 0;
-        virtual bool  Expired() const  = 0;
-        virtual void  SetContextTo( IIndividualHumanContext *context ) = 0;
-        virtual void  SetInitial(float newVal) = 0;
-        virtual void  SetCurrentTime(float dt) = 0;
-        virtual IWaningEffectCount* GetEffectCount() = 0;
+        virtual IWaningEffect* Clone()                               = 0;
+
+        virtual bool  Configure(const Configuration*)                = 0;
+        virtual void  Update(float)                                  = 0;
+        virtual float Current()                               const  = 0;
+        virtual bool  Expired()                               const  = 0;
+        virtual void  SetContextTo(IIndividualHumanContext*)         = 0;
+        virtual void  SetContextTo(INodeEventContext*)               = 0;
+        virtual float GetInitial()                            const  = 0;
+        virtual void  SetInitial(float)                              = 0;
+
+        virtual JsonConfigurable* GetConfigurable()                  = 0;
     };
 
-    // WaningEffect classes implement this interface if their WaningEffect is not really
-    // updated via time but a counter instead.  For example, a WaningEffect that is count
-    // based might be used to model the probability an individual takes a particular dose
-    // of a medication.
-    struct IWaningEffectCount : ISupports
+    class WaningEffectFactory
     {
-        // Unlike Update( float dt ), this method sets the count before the current
-        // effect is updated.  The effect does not increment or add this value.
-        // It just sets it.
-        virtual void SetCount( uint32_t numCounts ) = 0;
-
-        // Return true if this effect is configured correctly given
-        // the maximum number counted.
-        virtual bool IsValidConfiguration( uint32_t maxCount ) const = 0;
-    };
-
-    typedef std::map<std::string, IWaningEffect*> waning_effects_t;
-
-    // --------------------------- WaningEffectFactory ---------------------------
-    class WaningEffectFactory : public ObjectFactory<IWaningEffect,WaningEffectFactory>
-    {
+    public:
+        static IWaningEffect* CreateInstance();
     };
 }

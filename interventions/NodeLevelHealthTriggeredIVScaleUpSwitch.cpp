@@ -43,7 +43,7 @@ namespace Kernel
         initConfigTypeMap("Initial_Demographic_Coverage", &initial_demographic_coverage, NodeHTI_Initial_Demographic_Coverage_DESC_TEXT,    0.0f,    1.0f,  0.0f, "Demographic_Coverage_Time_Profile", "Linear");
         initConfigTypeMap("Primary_Time_Constant",        &primary_time_constant,        NodeHTI_Primary_Time_Constant_DESC_TEXT,        FLT_MIN, FLT_MAX,  1.0f, "Demographic_Coverage_Time_Profile", "Linear");
 
-        initConfigTypeMap("Coverage_vs_Time_Interpolation_Map", &coverage_vs_time_map, WEM_Durability_Map_End_DESC_TEXT, "Demographic_Coverage_Time_Profile", "InterpolationMap");
+        initConfigTypeMap("Coverage_vs_Time_Interpolation_Map", &coverage_vs_time_map,   NodeHTI_Coverage_vs_Time_Map_DESC_TEXT,                                  "Demographic_Coverage_Time_Profile", "InterpolationMap");
 
         //this has to be an array rather than a single intervention json so that it can be empty if you don't want to phase anything out
         initConfigComplexType("Not_Covered_IndividualIntervention_Configs", &not_covered_intervention_configs, NodeHTI_Not_Covered_IndividualIntervention_Configs_DESC_TEXT);

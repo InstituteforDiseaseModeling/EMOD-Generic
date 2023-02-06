@@ -26,9 +26,8 @@
                 "Effect": 1.0,
                 "Use_Property_Targeting": 1,
                 "Changing_Effect": {
-                    "class": "WaningEffectMapLinear",
+                    "class": "WaningEffect",
                     "Initial_Effect": 1.0,
-                    "Expire_At_Durability_Map_End": 1,
                     "Durability_Map": {
                         "Times":  [ 0, 100, 200, 300, 400, 500],
                         "Values": [ 0,   1,   1 ,  1,   0,   1]

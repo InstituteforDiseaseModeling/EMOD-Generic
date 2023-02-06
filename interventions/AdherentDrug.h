@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "AntiMalarialDrug.h"
 #include "EventTrigger.h"
+#include "InterpolatedValueMap.h"
 
 namespace Kernel
 {
@@ -48,6 +49,7 @@ namespace Kernel
         NonAdherenceOptionsType::Enum AdherentDrug::SelectNonAdherenceOption();
 
         IWaningEffect* m_pAdherenceEffect;
+        InterpolatedValueMap m_DoseEffects;
 
         std::vector<NonAdherenceOptionsType::Enum> m_NonAdherenceOptions;
         std::vector<float>                         m_NonAdherenceCdf;
@@ -55,6 +57,7 @@ namespace Kernel
         EventTrigger::Enum m_TookDoseEvent;
         float m_MaxDuration;
         float m_CurrentDuration;
+        int m_CurrentDose;
         int m_TotalDoses;
 
         DECLARE_SERIALIZABLE( AdherentDrug );
