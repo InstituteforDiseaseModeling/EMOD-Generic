@@ -2,6 +2,7 @@
     "Default_Config_Path": "defaults/sti_scenario_default_config.json",
     "parameters": {
         "Config_Name": "01A_Welcome_to_STI_SIM",
+        "Enable_Binned_Report": 1,
         "Enable_Demographics_Reporting": 1,
         "Enable_Strain_Tracking": 0,
         "Enable_Termination_On_Zero_Total_Infectivity": 0,

@@ -23,7 +23,10 @@ def application( output_folder="output", stdout_filename="test.txt", insetchart_
     demo_obj = IRMAM_support.load_demo_overlay_file(param_obj[IRMAM_support.Config.demo_filenames], debug)
     stdout_df = IRMAM_support.parse_stdout_file(stdout_filename, param_obj[IRMAM_support.Config.simulation_timestep],debug)
     insetchart_df = IRMAM_support.parse_insetchart_json(insetchart_name, output_folder, debug)
-    IRMAM_support.create_report_file(param_obj, campaign_obj, demo_obj, stdout_df, insetchart_df, report_name, debug)
+    enabled_param = [IRMAM_support.Config.enable_infectivity_scaling,
+                     IRMAM_support.Config.enable_infectivity_reservoir,
+                     IRMAM_support.Config.enable_infectivity_exp]
+    IRMAM_support.create_report_file(enabled_param, param_obj, campaign_obj, demo_obj, stdout_df, insetchart_df, report_name, debug)
 
 
 if __name__ == "__main__":

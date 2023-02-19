@@ -122,6 +122,7 @@
         },
         "REPORTING": {
             "Custom_Reports_Filename": "",
+            "Enable_Binned_Report": 1,
             "Enable_Default_Reporting": 1,
             "Enable_Demographics_Reporting": 1,
             "Enable_Event_DB": 0,

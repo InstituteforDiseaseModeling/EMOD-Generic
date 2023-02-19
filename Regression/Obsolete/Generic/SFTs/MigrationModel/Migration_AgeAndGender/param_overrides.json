@@ -1,10 +1,12 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Age_Initialization_Distribution_Type": "DISTRIBUTION_COMPLEX",
             "Demographics_Filenames": [
                 "3x3_demographics.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1
         },
         "MIGRATION": {
@@ -13,15 +15,15 @@
             "Migration_Model": "FIXED_RATE_MIGRATION"
         },
         "OUTPUT": {
-        "logLevel_Individual": "INFO",
-        "logLevel_Susceptibility": "INFO",
-            "Custom_Reports_Filename": "custom_reports.json"
+            "Custom_Reports_Filename": "custom_reports.json",
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO"
         },
         "PRIMARY": {
             "Config_Name": "SFT_Generic_MigrationByAgeAndGender",
             "Geography": "NONE",
-            "Simulation_Duration": 400,
-            "Python_Script_Path": "LOCAL"
+            "Python_Script_Path": "LOCAL",
+            "Simulation_Duration": 400
         },
         "Temporary_MigrationModel": {
             "Spatial_Output_Channels": [
@@ -29,6 +31,5 @@
                 "Prevalence"
             ]
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

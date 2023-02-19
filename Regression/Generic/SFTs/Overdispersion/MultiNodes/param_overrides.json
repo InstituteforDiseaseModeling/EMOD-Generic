@@ -33,7 +33,6 @@
             "logLevel_Susceptibility": "INFO"
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "NewInfection"

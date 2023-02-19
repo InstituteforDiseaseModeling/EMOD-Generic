@@ -326,6 +326,7 @@ namespace Kernel
     SimParams::SimParams()
         : sim_type(SimType::GENERIC_SIM)
         , campaign_filename()
+        , custom_reports_filename()
         , loadbalance_filename()
         , enable_coordinator_event_report(false)
         , enable_default_report(false)
@@ -891,15 +892,18 @@ namespace Kernel
         const std::map<std::string, std::string> dset_iv01      {{"Enable_Interventions","1"}};
         const std::map<std::string, std::string> dset_netinf01  {{"Simulation_Type","GENERIC_SIM"}};
         const std::map<std::string, std::string> dset_netinf02  {{"Simulation_Type","GENERIC_SIM"},{"Enable_Network_Infectivity","1"}};
+        const std::map<std::string, std::string> dset_report01  {{"Enable_Demographics_Reporting","1"}};
         const std::map<std::string, std::string> dset_time01    {{"Simulation_Type","STI_SIM,HIV_SIM,TYPHOID_SIM"}};
 
 
         // Sim parameters
         initConfig("Simulation_Type",   sim_params.sim_type, config, MetadataDescriptor::Enum("Simulation_Type", Simulation_Type_DESC_TEXT, MDD_ENUM_ARGS(SimType)));
 
-        initConfigTypeMap("Campaign_Filename",                &sim_params.campaign_filename,      Campaign_Filename_DESC_TEXT,      "",  nullptr,  nullptr,  &dset_iv01);
-        initConfigTypeMap("Load_Balance_Filename",            &sim_params.loadbalance_filename,   Load_Balance_Filename_DESC_TEXT,  "");
+        initConfigTypeMap("Campaign_Filename",                &sim_params.campaign_filename,         Campaign_Filename_DESC_TEXT,        "",  nullptr,  nullptr,  &dset_iv01);
+        initConfigTypeMap("Custom_Reports_Filename",          &sim_params.custom_reports_filename,   Custom_Reports_Filename_DESC_TEXT,  "");
+        initConfigTypeMap("Load_Balance_Filename",            &sim_params.loadbalance_filename,      Load_Balance_Filename_DESC_TEXT,    "");
 
+        initConfigTypeMap("Enable_Binned_Report",                             &sim_params.enable_binned_report,                             Enable_Binned_Reporting_DESC_TEXT,                         false,  nullptr,  nullptr,  &dset_report01);
         initConfigTypeMap("Enable_Default_Reporting",                         &sim_params.enable_default_report,                            Enable_Default_Reporting_DESC_TEXT,                        true);
         initConfigTypeMap("Enable_Demographics_Reporting",                    &sim_params.enable_demographic_tracking,                      Enable_Demographics_Reporting_DESC_TEXT,                   false);
         initConfigTypeMap("Enable_Event_DB",                                  &sim_params.enable_event_db,                                  Enable_Event_DB_DESC_TEXT,                                 false);

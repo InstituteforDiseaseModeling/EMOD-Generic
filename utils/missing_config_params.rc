@@ -56,3 +56,6 @@
 #define Shedding_Distribution_Beta_DESC_TEXT                      "Beta parameter for the beta distribution probability density function describing the time course of infectivity shedding by an infected individual."
 
 #define Enable_Environmental_Route_DESC_TEXT                      "Indicates if a transmission group for environmental contagion should be used."
+
+#define Enable_Demographics_Reporting_DESC_TEXT                   "Indicates if demographic summary data are output to file."
+#define Enable_Binned_Reporting_DESC_TEXT                         "Indicates if age-binned demographic reports are output to file."

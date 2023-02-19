@@ -3,6 +3,7 @@
     "parameters": {
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Builtin": 0,
             "Enable_Demographics_Reporting": 1,
             "Enable_Strain_Tracking": 0,

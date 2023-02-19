@@ -16,14 +16,12 @@
                 "Infectious_Period_Exponential": 4
             }
         },
-        "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports"
-        },
+        "OUTPUT": {},
         "PRIMARY": {
             "Config_Name": "ImmunityRespectingOutbreakIndividual",
             "Geography": "",
-            "Simulation_Duration": 10,
-            "Python_Script_Path": "LOCAL"
+            "Python_Script_Path": "LOCAL",
+            "Simulation_Duration": 10
         }
     }
 }

@@ -6,6 +6,7 @@
             "Demographics_Filenames": [
                 "../00_Generic_Default/demographics.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,

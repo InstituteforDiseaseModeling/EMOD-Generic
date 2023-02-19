@@ -7,6 +7,7 @@
                 "../../Demographics/demographics_2groups_trans_wi_overlay.json",
                 "../../Demographics/demographics_10000_overlay.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 1,
@@ -35,14 +36,13 @@
             "Enable_Heterogeneous_Intranode_Transmission": 1
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Property_Output": 1
         },
         "PRIMARY": {
             "Config_Name": "HINT_Single_Route_Single_Property_Within_Group",
             "Geography": "SamplesInput",
-            "Simulation_Duration": 60,
-            "Python_Script_Path": "SHARED"
+            "Python_Script_Path": "SHARED",
+            "Simulation_Duration": 60
         },
         "Temporary_MigrationModel": {
             "Roundtrip_Waypoints": 5

@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -6,6 +7,7 @@
                 "demographics_household_overlay.json",
                 "../../Demographics/demographics_1000_overlay.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "IMMUNITY": {
                 "Enable_Immune_Decay": 1,
@@ -44,7 +46,6 @@
             "logLevel_Individual": "INFO"
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Event_DB": 1,
             "Enable_Property_Output": 1,
             "Enable_Report_Event_Recorder": 1,
@@ -67,6 +68,5 @@
             "Geography": "SamplesInput",
             "Simulation_Duration": 60
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

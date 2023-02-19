@@ -18,15 +18,13 @@
                 "Infectious_Period_Exponential": 4
             }
         },
-        "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports"
-        },
+        "OUTPUT": {},
         "PRIMARY": {
             "Campaign_Filename": "campaign.json",
             "Config_Name": "Immune Initialization Simple Uniform Immunity",
             "Geography": "",
-            "Simulation_Duration": 10,
-            "Python_Script_Path": "LOCAL"
+            "Python_Script_Path": "LOCAL",
+            "Simulation_Duration": 10
         }
     }
 }

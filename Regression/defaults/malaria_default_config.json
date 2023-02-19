@@ -49,6 +49,7 @@
         "Default_Geography_Initial_Node_Population": 1000,
         "Default_Geography_Torus_Size": 10,
         "Enable_Aging": 1,
+        "Enable_Binned_Report": 1,
         "Enable_Birth": 0,
         "Enable_Demographics_Birth": 0,
         "Enable_Demographics_Builtin": 0,

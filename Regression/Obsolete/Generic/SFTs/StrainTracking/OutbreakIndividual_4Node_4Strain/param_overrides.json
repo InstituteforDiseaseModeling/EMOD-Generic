@@ -1,10 +1,12 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "POPULATION_DEP_RATE",
             "Demographics_Filenames": [
                 "../../g_s_properties_4node_demographics.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Birth": 0,
             "Enable_Demographics_Reporting": 1,
             "Enable_Strain_Tracking": 1,
@@ -21,11 +23,12 @@
                 "Incubation_Period_Constant": 2
             },
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.5,
+                "Base_Infectivity_Constant": 0.5,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 3
             },
-            "Number_of_Clades": 2,
-            "Log2_Number_of_Genomes_per_Clade": 3
+            "Log2_Number_of_Genomes_per_Clade": 3,
+            "Number_of_Clades": 2
         },
         "HPC": {
             "Num_Cores": 2
@@ -37,10 +40,9 @@
         "PRIMARY": {
             "Config_Name": "StrainTracking_OutbreakIndividual_4node_2Strain",
             "Geography": "SamplesInput",
-            "logLevel_Infection": "VALID",
             "Run_Number": 1,
-            "Simulation_Duration": 50
+            "Simulation_Duration": 50,
+            "logLevel_Infection": "VALID"
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

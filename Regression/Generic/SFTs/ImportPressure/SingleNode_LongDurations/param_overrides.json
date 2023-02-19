@@ -6,6 +6,7 @@
                 "../../Demographics/demographics.json",
                 "../../Demographics/demographics_100_overlay.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1
         },
         "DISEASE": {
@@ -18,8 +19,8 @@
         "PRIMARY": {
             "Config_Name": "ImportPressure/SingleNode_LongDurations",
             "Geography": "",
-            "Simulation_Duration": 1000,
-            "Python_Script_Path": "SHARED"
+            "Python_Script_Path": "SHARED",
+            "Simulation_Duration": 1000
         }
     }
 }

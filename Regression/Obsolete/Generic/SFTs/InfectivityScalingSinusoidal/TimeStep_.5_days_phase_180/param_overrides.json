@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -12,22 +13,22 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.2,
+                "Base_Infectivity_Constant": 0.2,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 1825,
                 "Infectivity_Scale_Type": "SINUSOIDAL_FUNCTION_OF_TIME"
             }
         },
         "PRIMARY": {
-            "Config_Name": "InfectivityScalingSinusoidal/TimeStep_.5_days_phase_180",
             "Campaign_Filename": "campaign.w5ml",
+            "Config_Name": "InfectivityScalingSinusoidal/TimeStep_.5_days_phase_180",
             "Geography": "",
             "Simulation_Duration": 1825,
             "Simulation_Timestep": 0.5
         },
-        "logLevel_Individual": "DEBUG",
         "Temporary_Infectivity_Sinusoidal": {
             "Infectivity_Sinusoidal_Forcing_Phase": 180
-        }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+        },
+        "logLevel_Individual": "DEBUG"
+    }
 }

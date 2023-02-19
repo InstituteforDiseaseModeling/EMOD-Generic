@@ -17,7 +17,6 @@
         "PRIMARY": {
             "Config_Name": "59_Vector_CohortMigration_local_3_nodes_one_way_GH1870",
             "Custom_Individual_Events": [],
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Strain_Tracking": 0,
             "Enable_Termination_On_Zero_Total_Infectivity": 0,
             "Geography": "MigrationTest",

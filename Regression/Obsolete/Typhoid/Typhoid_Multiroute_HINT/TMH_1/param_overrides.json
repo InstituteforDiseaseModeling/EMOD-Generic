@@ -4,7 +4,6 @@
         "Base_Individual_Sample_Rate": 0.25,
         "Base_Year": 1875,
         "Config_Name": "Typhoid_Multiroute_HINT_AllZeros",
-        "Custom_Reports_Filename": "NoCustomReports",
         "Demographics_Filenames": [
             "TestDemographics_V2_HINT.json"
         ],

@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -23,9 +24,9 @@
         "DISEASE": {
             "INFECTIOUSNESS": {
                 "Base_Infectivity_Constant": 5,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 2,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION"
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "LOGLEVEL": {
@@ -34,21 +35,27 @@
             "logLevel_Susceptibility": "INFO"
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Report_Event_Recorder": 1,
-            "Report_Event_Recorder_Events": ["EveryUpdate"]
+            "Report_Event_Recorder_Events": [
+                "EveryUpdate"
+            ]
         },
         "PRIMARY": {
             "Config_Name": "test_Genome_Dependent_Infectivity_transmission",
-            "Simulation_Duration": 10,
-            "Enable_Strain_Tracking": 1,
-            "Enable_Label_By_Infector": 0,
             "Enable_Genome_Dependent_Infectivity": 1,
             "Enable_Genome_Mutation": 0,
-            "Genome_Infectivity_Multipliers": [0.1, 0.2, 0.3, 0.4, 0.5],
+            "Enable_Label_By_Infector": 0,
+            "Enable_Strain_Tracking": 1,
+            "Genome_Infectivity_Multipliers": [
+                0.1,
+                0.2,
+                0.3,
+                0.4,
+                0.5
+            ],
+            "Log2_Number_of_Genomes_per_Clade": 3,
             "Number_of_Clades": 2,
-            "Log2_Number_of_Genomes_per_Clade": 3
+            "Simulation_Duration": 10
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

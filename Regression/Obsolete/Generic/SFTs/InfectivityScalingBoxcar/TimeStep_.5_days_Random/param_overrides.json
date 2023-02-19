@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -18,17 +19,14 @@
                 "Infectivity_Scale_Type": "ANNUAL_BOXCAR_FUNCTION"
             }
         },
-        "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports"
-        },
+        "OUTPUT": {},
         "PRIMARY": {
-            "Config_Name": "InfectivityScalingBoxcar/TimeStep_.5_days_Random",
             "Campaign_Filename": "campaign.w5ml",
+            "Config_Name": "InfectivityScalingBoxcar/TimeStep_.5_days_Random",
             "Geography": "",
             "Simulation_Duration": 1095,
             "Simulation_Timestep": 0.5
         },
         "logLevel_Individual": "DEBUG"
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

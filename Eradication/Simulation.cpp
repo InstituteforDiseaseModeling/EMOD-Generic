@@ -61,9 +61,6 @@ using namespace std;
 SETUP_LOGGING( "Simulation" )
 
 
-#define RUN_ALL_CUSTOM_REPORTS "RunAllCustomReports"
-#define NO_CUSTOM_REPORTS "NoCustomReports"
-
 namespace Kernel
 {
     // Enable querying of interfaces from Simulation objects
@@ -107,7 +104,6 @@ namespace Kernel
         , campaign_events()
         , event_context_host(nullptr)
         , currentTime()
-        , custom_reports_filename( RUN_ALL_CUSTOM_REPORTS )
         , demographics_factory(nullptr)
         , m_pRngFactory( new RandomNumberGeneratorFactory() )
         , new_node_observers()
@@ -180,11 +176,6 @@ namespace Kernel
     bool Simulation::Configure( const Configuration * inputJson )
     {
         LOG_DEBUG("Configure\n");
-
-        if( JsonConfigurable::_dryrun || EnvPtr->Config->Exist( "Custom_Reports_Filename" ) )
-        {
-            initConfigTypeMap( "Custom_Reports_Filename", &custom_reports_filename, Custom_Reports_Filename_DESC_TEXT, RUN_ALL_CUSTOM_REPORTS );
-        }
 
         bool ret = JsonConfigurable::Configure( inputJson );
 
@@ -497,13 +488,16 @@ namespace Kernel
 
         if(GetParams()->enable_demographic_tracking)
         {
-            IReport * binned_report = (*binnedReportClassCreator)();
-            release_assert(binned_report);
-            reports.push_back(binned_report);
-
             IReport* demo_report = (*demographicsReportClassCreator)();
             release_assert(demo_report);
             reports.push_back(demo_report);
+        }
+
+        if(GetParams()->enable_binned_report)
+        {
+            IReport* binned_report = (*binnedReportClassCreator)();
+            release_assert(binned_report);
+            reports.push_back(binned_report);
         }
     }
 
@@ -608,7 +602,7 @@ namespace Kernel
         // --- Allow the user to indicate that they do not want to use
         // --- any custom reports even if DLL's are present.
         // -------------------------------------------------------------
-        if( custom_reports_filename.empty() || (custom_reports_filename == NO_CUSTOM_REPORTS) )
+        if( (GetParams()->custom_reports_filename).empty() )
         {
             return ;
         }
@@ -641,31 +635,25 @@ namespace Kernel
 
     Configuration* Simulation::Reports_GetCustomReportConfiguration()
     {
-        Configuration* p_cr_config = nullptr ;
+        Configuration* p_cr_config = nullptr;
+        std::string    cr_file     = GetParams()->custom_reports_filename;
 
-        // ------------------------------------------------------------------------------
-        // --- If the user does not define the custom_reports_filename input parameter,
-        // --- then they want to run all reports.  Returning null will do this.
-        // ------------------------------------------------------------------------------
-        if( !custom_reports_filename.empty() && (custom_reports_filename != RUN_ALL_CUSTOM_REPORTS) )
+        LOG_INFO_F("Looking for custom reports file = %s\n", cr_file.c_str());
+        if( FileSystem::FileExists(cr_file) )
         {
-            LOG_INFO_F("Looking for custom reports file = %s\n", custom_reports_filename.c_str());
-            if( FileSystem::FileExists( custom_reports_filename ) )
+            LOG_INFO_F("Found custom reports file = %s\n", cr_file.c_str());
+            // it is extremely unlikely that this will return null.  It will throw an exception if an error occurs.
+            Configuration* p_config = Configuration::Load(cr_file);
+            if( !p_config ) 
             {
-                LOG_INFO_F("Found custom reports file = %s\n", custom_reports_filename.c_str());
-                // it is extremely unlikely that this will return null.  It will throw an exception if an error occurs.
-                Configuration* p_config = Configuration::Load( custom_reports_filename );
-                if( !p_config ) 
-                {
-                    throw Kernel::InitializationException( __FILE__, __LINE__, __FUNCTION__, custom_reports_filename.c_str() );
-                }
-                p_cr_config = Configuration::CopyFromElement( (*p_config)["Custom_Reports"], p_config->GetDataLocation() );
-                delete p_config ;
+                throw Kernel::InitializationException( __FILE__, __LINE__, __FUNCTION__, cr_file.c_str() );
             }
-            else
-            {
-                throw Kernel::FileNotFoundException(__FILE__, __LINE__, __FUNCTION__, custom_reports_filename.c_str());
-            }
+            p_cr_config = Configuration::CopyFromElement( (*p_config)["Custom_Reports"], p_config->GetDataLocation() );
+            delete p_config ;
+        }
+        else
+        {
+            throw Kernel::FileNotFoundException(__FILE__, __LINE__, __FUNCTION__, cr_file.c_str());
         }
 
         return p_cr_config ;
@@ -675,13 +663,10 @@ namespace Kernel
     {
         auto cachedValue = JsonConfigurable::_useDefaults;
         JsonConfigurable::_useDefaults = true;
+
         Configuration* p_cr_config = Reports_GetCustomReportConfiguration();
 
-        bool load_all_reports = (p_cr_config == nullptr) ||
-                                !p_cr_config->Exist( "Use_Explicit_Dlls" ) ||
-                                (int(p_cr_config->operator[]( "Use_Explicit_Dlls" ).As<json::Number>()) != 1) ;
-
-        LOG_INFO_F("Found %d Custom Report DLL's to consider loading, load_all_reports=%d\n", rReportInstantiatorMap.size(), load_all_reports );
+        LOG_INFO_F("Found %d Custom Report DLL's to consider loading\n", rReportInstantiatorMap.size());
 
         // Verify that a DLL exists for each report defined in the custom reports file
         if( p_cr_config )
@@ -700,7 +685,7 @@ namespace Kernel
                         std::stringstream ss;
                         ss << reportname << " (dll)";
                         throw Kernel::FileNotFoundException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
-                    }                    
+                    }
                 }
             }
         }
@@ -730,18 +715,9 @@ namespace Kernel
                         }
                     }
                 }
-                else if( load_all_reports )
+                else
                 {
-                    LOG_WARN_F("Did not find report configuration for report DLL %s.  Creating report with defaults.\n", class_name.c_str());
-
-                    json::Object empty_json_obj ;
-                    Configuration* p_cfg = Configuration::CopyFromElement( empty_json_obj, "no file" );
-
-                    IReport* p_cr = ri_entry.second();  // creates report object
-                    p_cr->Configure( p_cfg );
-                    reports.push_back( p_cr );
-                    delete p_cfg ;
-                    p_cfg = nullptr;
+                    LOG_WARN_F("Did not find report configuration for report DLL %s.\n", class_name.c_str());
                 }
             }
             catch( json::Exception& e )
@@ -751,6 +727,7 @@ namespace Kernel
                 throw InitializationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
             }
         }
+
         delete p_cr_config;
         p_cr_config = nullptr;
         JsonConfigurable::_useDefaults = cachedValue;

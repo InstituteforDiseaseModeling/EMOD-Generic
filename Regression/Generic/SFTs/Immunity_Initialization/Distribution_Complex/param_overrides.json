@@ -21,15 +21,13 @@
                 "Infectious_Period_Exponential": 4
             }
         },
-        "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports"
-        },
+        "OUTPUT": {},
         "PRIMARY": {
             "Campaign_Filename": "campaign.json",
             "Config_Name": "Immune Initialization Distribution Complex",
             "Geography": "",
-            "Simulation_Duration": 1,
-            "Python_Script_Path": "LOCAL"
+            "Python_Script_Path": "LOCAL",
+            "Simulation_Duration": 1
         },
         "Temporary_MaternalProtection": {
             "logLevel_Susceptibility": "VALID"

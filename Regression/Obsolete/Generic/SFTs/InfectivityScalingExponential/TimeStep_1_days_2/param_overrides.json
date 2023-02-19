@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -13,7 +14,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.9,
+                "Base_Infectivity_Constant": 0.9,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 90,
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectivity_Exponential_Baseline": 0.01,
@@ -23,12 +25,11 @@
             }
         },
         "PRIMARY": {
-            "Config_Name": "InfectivityScalingExponential/TimeStep_1_days_2",
             "Campaign_Filename": "campaign.w5ml",
+            "Config_Name": "InfectivityScalingExponential/TimeStep_1_days_2",
             "Geography": "",
             "Simulation_Duration": 40
         },
         "logLevel_Individual": "VALID"
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

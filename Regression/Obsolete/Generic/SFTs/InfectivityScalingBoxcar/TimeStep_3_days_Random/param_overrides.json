@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -11,7 +12,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 0.039877448830760276,
+                "Base_Infectivity_Constant": 0.039877448830760276,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Exponential": 1825,
                 "Infectivity_Boxcar_Forcing_Amplitude": 1.6209899850032912,
                 "Infectivity_Boxcar_Forcing_End_Time": 138,
@@ -19,17 +21,14 @@
                 "Infectivity_Scale_Type": "ANNUAL_BOXCAR_FUNCTION"
             }
         },
-        "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports"
-        },
+        "OUTPUT": {},
         "PRIMARY": {
-            "Config_Name": "InfectivityScalingBoxcar/TimeStep_3_days_Random",
             "Campaign_Filename": "campaign.w5ml",
+            "Config_Name": "InfectivityScalingBoxcar/TimeStep_3_days_Random",
             "Geography": "",
             "Simulation_Duration": 1095,
             "Simulation_Timestep": 3
         },
         "logLevel_Individual": "DEBUG"
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

@@ -35,6 +35,7 @@
             "Run_Number": 11
         },
         "____________REPORTING___________": {
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "Report_Event_Recorder_Events": [
                 "HCTTestingLoop0",

@@ -22,6 +22,7 @@
             "../../Santiago_Demographics.json",
             "1k_35_year_olds_overlay.json"
         ],
+        "Enable_Binned_Report": 1,
         "Enable_Birth": 0,
         "Enable_Climate_Stochasticity": 1,
         "Enable_Demographics_Reporting": 1,

@@ -1,9 +1,11 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
                 "demographics_multinode.json"
             ],
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "Enable_Initial_Prevalence": 0,
             "IMMUNITY": {
@@ -35,6 +37,5 @@
             "logLevel_Individual": "INFO",
             "logLevel_Susceptibility": "INFO"
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

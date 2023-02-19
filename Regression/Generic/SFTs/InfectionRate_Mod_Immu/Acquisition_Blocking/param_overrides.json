@@ -15,7 +15,6 @@
         "Campaign_Filename": "campaign.json",
         "Climate_Update_Resolution": "CLIMATE_UPDATE_DAY",
         "Config_Name": "test_infection_rate_acquisition_blocking",
-        "Custom_Reports_Filename": "NoCustomReports",
         "Death_Rate_Dependence": "NONDISEASE_MORTALITY_BY_AGE_AND_GENDER",
         "Demographics_Filenames": [
             "../../Demographics/demographics.json",

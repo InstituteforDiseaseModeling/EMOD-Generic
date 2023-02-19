@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -20,15 +21,15 @@
             "Enable_Infection_Rate_Overdispersion": 1,
             "INFECTIOUSNESS": {
                 "Base_Infectivity_Constant": 2.0,
-                "Infectious_Period_Constant": 0.9,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
                 "Enable_Infectivity_Reservoir": 1,
                 "Enable_Infectivity_Scaling": 1,
                 "Enable_Infectivity_Scaling_Boxcar": 0,
                 "Enable_Infectivity_Scaling_Climate": 0,
                 "Enable_Infectivity_Scaling_Density": 0,
                 "Enable_Infectivity_Scaling_Exponential": 0,
-                "Enable_Infectivity_Scaling_Sinusoid": 0
+                "Enable_Infectivity_Scaling_Sinusoid": 0,
+                "Infectious_Period_Constant": 0.9,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "INTRANODE_TRANSMISSION": {
@@ -38,7 +39,6 @@
             "logLevel_Susceptibility": "INFO"
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Property_Output": 1
         },
         "PRIMARY": {
@@ -47,6 +47,5 @@
             "Run_Number": 7,
             "Simulation_Duration": 1000
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

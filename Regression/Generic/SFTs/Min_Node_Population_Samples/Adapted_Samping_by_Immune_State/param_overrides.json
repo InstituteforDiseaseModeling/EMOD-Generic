@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Demographics_Filenames": [
@@ -11,21 +12,21 @@
                 "Enable_Natural_Mortality": 1
             },
             "SAMPLING": {
-                "Individual_Sampling_Type": "ADAPTED_SAMPLING_BY_IMMUNE_STATE",
-                "Min_Node_Population_Samples": 200,
                 "Base_Individual_Sample_Rate": 0.7,
-                "Relative_Sample_Rate_Immune": 0.4,
                 "Immune_Downsample_Min_Age": 0,
                 "Immune_Threshold_For_Downsampling": 0.1,
+                "Individual_Sampling_Type": "ADAPTED_SAMPLING_BY_IMMUNE_STATE",
+                "Min_Node_Population_Samples": 200,
+                "Relative_Sample_Rate_Immune": 0.4,
                 "x_Base_Population": 1
             }
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
                 "Base_Infectivity_Constant": 0.001,
+                "Enable_Vital_Dynamics": 0,
                 "Infectious_Period_Constant": 0.9,
-                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION",
-                "Enable_Vital_Dynamics": 0
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
         },
         "INTRANODE_TRANSMISSION": {
@@ -35,7 +36,6 @@
             "logLevel_Susceptibility": "INFO"
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Report_Event_Recorder": 1,
             "Report_Event_Recorder_Events": [
                 "NewInfection"
@@ -47,6 +47,5 @@
             "Run_Number": 7,
             "Simulation_Duration": 10
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

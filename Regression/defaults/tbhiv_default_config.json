@@ -49,6 +49,7 @@
         "Custom_Coordinator_Events": [],
         "Custom_Individual_Events": [],
         "Custom_Node_Events": [],
+        "Custom_Reports_Filename": "",
         "Days_Between_Symptomatic_And_Death_Weibull_Heterogeneity": 0.2756,
         "Days_Between_Symptomatic_And_Death_Weibull_Scale": 1.0,
         "Demographics_Filenames": [

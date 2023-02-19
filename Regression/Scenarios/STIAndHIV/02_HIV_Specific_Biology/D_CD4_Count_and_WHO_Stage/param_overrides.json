@@ -32,6 +32,7 @@
             "Config_Name": "02D_CD4_Count_and_WHO_Stage"
         },
         "____________REPORTING___________": {
+            "Enable_Binned_Report": 1,
             "Enable_Demographics_Reporting": 1,
             "Report_Event_Recorder_Events": [
                 "HCTTestingLoop0",

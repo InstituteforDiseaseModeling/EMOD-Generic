@@ -22,6 +22,7 @@
             ],
             "Enable_Acquisition_Heterogeneity": 0,
             "Enable_Aging": 1,
+            "Enable_Binned_Report": 1,
             "Enable_Birth": 1,
             "Enable_Demographics_Birth": 0,
             "Enable_Demographics_Builtin": 0,

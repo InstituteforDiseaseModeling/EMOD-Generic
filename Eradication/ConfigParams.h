@@ -322,8 +322,10 @@ namespace Kernel
         SimType::Enum sim_type;
 
         std::string campaign_filename;
+        std::string custom_reports_filename;
         std::string loadbalance_filename;
 
+        bool enable_binned_report;
         bool enable_coordinator_event_report;
         bool enable_default_report;
         bool enable_demographic_tracking;

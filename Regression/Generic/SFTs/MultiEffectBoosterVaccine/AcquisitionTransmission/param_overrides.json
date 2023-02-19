@@ -10,7 +10,6 @@
         "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
         "Campaign_Filename": "campaign.json",
         "Config_Name": "MultiEffectBoosterVaccine/AcquisitionTransmission",
-        "Custom_Reports_Filename": "NoCustomReports",
         "Demographics_Filenames": [
             "../../Demographics/demographics.json",
             "../../Demographics/demographics_4groups_2seed_overlay.json"

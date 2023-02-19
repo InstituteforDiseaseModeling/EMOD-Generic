@@ -1,4 +1,5 @@
 {
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
     "parameters": {
         "DEMOGRAPHICS": {
             "Birth_Rate_Dependence": "DEMOGRAPHIC_DEP_RATE",
@@ -18,7 +19,8 @@
         },
         "DISEASE": {
             "INFECTIOUSNESS": {
-                "Base_Infectivity": 1e-07,
+                "Base_Infectivity_Constant": 1e-07,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
                 "Infectious_Period_Constant": 2,
                 "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
             }
@@ -27,15 +29,14 @@
             "Enable_Heterogeneous_Intranode_Transmission": 1
         },
         "OUTPUT": {
-            "Custom_Reports_Filename": "NoCustomReports",
             "Enable_Property_Output": 1
         },
         "PRIMARY": {
-            "Config_Name": "SimpleBoosterVaccine/Acquisition",
             "Campaign_Filename": "campaign.w5ml",
+            "Config_Name": "SimpleBoosterVaccine/Acquisition",
             "Geography": "Namawala",
+            "Python_Script_Path": "LOCAL",
             "Simulation_Duration": 50
         }
-    },
-    "Default_Config_Path": "defaults/generic_science_default_config.json"
+    }
 }

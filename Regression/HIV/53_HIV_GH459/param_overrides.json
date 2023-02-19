@@ -53,6 +53,7 @@
         ],
         "Enable_Aging": 1,
         "Enable_Air_Migration": 0,
+        "Enable_Binned_Report": 1,
         "Enable_Birth": 1,
         "Enable_Coital_Dilution": 1,
         "Enable_Continuous_Log_Flushing": 0,

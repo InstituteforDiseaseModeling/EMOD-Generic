@@ -1,10 +1,10 @@
 {
+    "Default_Config_Path": "defaults/typhoid_science_default_config.json",
     "parameters": {
         "Config_Name": "SFT:Typhoid:Report_Insert_Chart_Total_Chr",
         "Custom_Individual_Events": [
             "Chronic_Carrier"
         ],
-        "Custom_Reports_Filename": "NoCustomReports",
         "Demographics_Filenames": [
             "../../Santiago_Demographics.json",
             "../../Santiago_1K_overlay.json"
@@ -15,6 +15,5 @@
         "Typhoid_Symptomatic_Fraction": 0.55,
         "logLevel_InfectionTyphoid": "VALID",
         "logLevel_TyphoidCarrierDiagnostic": "VALID"
-    },
-    "Default_Config_Path": "defaults/typhoid_science_default_config.json"
+    }
 }

@@ -27,6 +27,7 @@
             "NChooser_demographics.json",
             "pfa_overlay.json"
         ],
+        "Enable_Binned_Report": 1,
         "Enable_Coital_Dilution": 0,
         "Enable_Demographics_Reporting": 1,
         "Enable_Report_Event_Recorder": 1,
