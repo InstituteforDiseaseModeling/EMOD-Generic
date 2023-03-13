@@ -137,7 +137,7 @@ namespace Kernel {
                     EventTrigger::Enum trig = EventTrigger::Enum( event_idx );
                     if( (trig != EventTrigger::EveryUpdate) && (trig != EventTrigger::EveryTimeStep && trig != EventTrigger::ExposureComplete ) )
                     {
-                        LOG_INFO_F( "Adding %s to eventTriggerList.\n", EventTrigger::pairs::lookup_key( trig ) );
+                        LOG_INFO_F( "Adding %s to eventTriggerList.\n", EventTrigger::pairs::lookup_key( trig ).c_str() );
                         eventTriggerList.push_back( trig );
                     }
                 }
@@ -167,7 +167,7 @@ namespace Kernel {
 
             for( auto trig : eventTriggerList )
             {
-                LOG_INFO_F( "ReportHIV is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trig ) ); 
+                LOG_INFO_F( "ReportHIV is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trig ).c_str() ); 
                 //pNTIC->RegisterNodeEventObserver( this, trig );
                 broadcaster->RegisterObserver( this, trig );
             }
@@ -310,7 +310,7 @@ namespace Kernel {
     bool ReportHIV::notifyOnEvent( IIndividualHumanEventContext *context, 
                                    const EventTrigger::Enum& trigger )
     {
-        LOG_DEBUG_F( "notifyOnEvent: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+        LOG_DEBUG_F( "notifyOnEvent: %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
         // no elements in the map implies that we are counting all of the events.
         if( counting_all_events )
         {

@@ -74,6 +74,7 @@ namespace Kernel
         virtual void  WriteReportsData() override;
 
         virtual const SimParams* GetParams() const;
+        virtual const std::vector<std::string> GetRelationshipTypes() const;
 
         virtual const DemographicsContext* GetDemographicsContext() const override;
 

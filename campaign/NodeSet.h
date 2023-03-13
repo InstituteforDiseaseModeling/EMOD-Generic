@@ -16,17 +16,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ExternalNodeId.h"
 #include "FactorySupport.h"
 #include "Configure.h"
-#include "InterventionEnums.h"
 #include "ISerializable.h"
 #include "ObjectFactory.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(PolygonFormatType,
-        ENUM_VALUE_SPEC(SHAPE      , 1) 
-        //ENUM_VALUE_SPEC(GEOJSON    , 2)
-        )
-
     struct INodeEventContext;
 
     struct IDMAPI INodeSet : public ISerializable
@@ -77,22 +71,10 @@ namespace Kernel
 
 #pragma warning( push )
 #pragma warning( disable: 4251 ) // See IdmApi.h for details
-        PolygonFormatType::Enum polygon_format;
         float * points_array;
         size_t num_points;
         std::string vertices_raw;
 #pragma warning( pop )
-
-#if 0
-    private:
-        template<class Archive>
-        void serialize(Archive &ar, NodeSetPolygon& nodeset, const unsigned int v)
-        {
-            ar & vertices_raw;
-            ar & num_points;
-            ar & polygon_format;
-        }
-#endif
     };
 
     class IDMAPI NodeListConfig : public JsonConfigurable, public IComplexJsonConfigurable

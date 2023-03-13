@@ -189,12 +189,12 @@ namespace Kernel
         for( EventTriggerCoordinator& etc : m_StartTriggerConditionList)
         {
             m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, etc );
-            LOG_INFO_F( "%s: registered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
+            LOG_INFO_F( "%s: registered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ).c_str() );
         }
         for( EventTriggerCoordinator& etc : m_StopTriggerConditionList)
         {
             m_Parent->GetCoordinatorEventBroadcaster()->RegisterObserver( this, etc );
-            LOG_INFO_F( "%s: registered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
+            LOG_INFO_F( "%s: registered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ).c_str() );
         }
     }
 
@@ -203,12 +203,12 @@ namespace Kernel
         auto it_start = find( m_StartTriggerConditionList.begin(), m_StartTriggerConditionList.end(), trigger );
         if ( it_start != m_StartTriggerConditionList.end() )
         {
-            LOG_INFO_F( "%s: notifyOnEvent received Start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_INFO_F( "%s: notifyOnEvent received Start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ).c_str() );
             m_IsStarting = true;           
         }
         else
         {
-            LOG_INFO_F( "%s: notifyOnEvent received Stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_INFO_F( "%s: notifyOnEvent received Stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ).c_str() );
             m_IsStopping = true;
         }
         return true;
@@ -219,12 +219,12 @@ namespace Kernel
         for ( EventTriggerCoordinator& etc : m_StartTriggerConditionList )
         {
             m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, etc );
-            LOG_INFO_F( "%s: Unregistered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
+            LOG_INFO_F( "%s: Unregistered Start_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ).c_str() );
         }
         for ( EventTriggerCoordinator& etc : m_StopTriggerConditionList )
         {
             m_Parent->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, etc );
-            LOG_INFO_F( "%s: Unregistered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ) );
+            LOG_INFO_F( "%s: Unregistered Stop_Trigger: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( etc ).c_str() );
         }
     }
 

@@ -606,10 +606,10 @@ namespace Kernel {
             __FUNCTION__,
             GetSuid().data,
             this, 
-            RelationshipState::pairs::lookup_key( state ),
+            RelationshipState::pairs::lookup_key( state ).c_str(),
             MALE_PARTNER_ID().data, 
             FEMALE_PARTNER_ID().data,
-            RelationshipTerminationReason::pairs::lookup_key( reason ));
+            RelationshipTerminationReason::pairs::lookup_key( reason ).c_str());
 
         // -----------------------------------------------------------------------
         // --- Migrating would have set these values so we want to clear them to

@@ -844,7 +844,7 @@ namespace Kernel
 
         for( auto& route : routes )
         {
-            LOG_DEBUG_F( "Updating for Route %s.\n", TransmissionRoute::pairs::lookup_key(route) );
+            LOG_DEBUG_F( "Updating for Route %s.\n", TransmissionRoute::pairs::lookup_key(route).c_str() );
             parent->GetGroupMembershipForIndividual( route, properties, transmissionGroupMembershipByRoute[route] );
         }
     }
@@ -980,7 +980,7 @@ namespace Kernel
 
         if( acquire ) 
         {
-            LOG_VALID_F( "Individual %d is acquiring a new infection on route %s.\n", GetSuid().data, TransmissionRoute::pairs::lookup_key( tx_route ) );
+            LOG_VALID_F( "Individual %d is acquiring a new infection on route %s.\n", GetSuid().data, TransmissionRoute::pairs::lookup_key( tx_route ).c_str() );
             AcquireNewInfection( (IStrainIdentity*)cp, tx_route, -1.0f );
         }
     }
@@ -1042,11 +1042,11 @@ namespace Kernel
 
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
-                LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first));
+                LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first).c_str());
                 float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousnessByRoute(entry.first) * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
                 if (tmp_infectiousness > 0.0f)
                 {
-                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
+                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first).c_str(), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
                     parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second, entry.first );
                     infectiousness += infection->GetInfectiousnessByRoute(entry.first);
                 }

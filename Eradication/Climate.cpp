@@ -335,7 +335,7 @@ namespace Kernel {
             if(md_updateres == -1 || (GetParams()->climate_update_resolution != ClimateUpdateResolution::Enum(md_updateres)))
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Update_Resolution", 
-                                                        ClimateUpdateResolution::pairs::lookup_key(GetParams()->climate_update_resolution),
+                                                        ClimateUpdateResolution::pairs::lookup_key(GetParams()->climate_update_resolution).c_str(),
                                                         (std::string("metadata from ") + metadata_filepath).c_str(), str_clim_res.c_str() );
             }
         }

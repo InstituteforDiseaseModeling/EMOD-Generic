@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "EventCoordinator.h"
 #include "SimulationEventContext.h"
-#include "EventTriggerCoordinator.h"
 #include "ISurveillanceReporting.h"
 
 SETUP_LOGGING( "ReportSurveillanceEventRecorder" )

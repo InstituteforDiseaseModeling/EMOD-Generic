@@ -19,7 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "StrainIdentity.h"
 #include "IIndividualHumanContext.h"
 #include "IDistribution.h"
-#include "DistributionFactory.h"
 #include "IndividualEventContext.h"
 #include "INodeContext.h"
 #include "NodeEventContext.h"
@@ -29,10 +28,6 @@ SETUP_LOGGING( "Infection" )
 namespace Kernel
 {
     // static initializers for config base class
-    MortalityTimeCourse::Enum  InfectionConfig::mortality_time_course   =  MortalityTimeCourse::DAILY_MORTALITY;
-    IDistribution* InfectionConfig::infectious_distribution = nullptr;
-    IDistribution* InfectionConfig::incubation_distribution = nullptr;
-    IDistribution* InfectionConfig::infectivity_distribution = nullptr;
     float InfectionConfig::base_mortality = 1.0f;
     bool  InfectionConfig::enable_disease_mortality = false;
 
@@ -46,32 +41,7 @@ namespace Kernel
         LOG_DEBUG("Configure\n");
 
         initConfigTypeMap("Enable_Disease_Mortality", &enable_disease_mortality, Enable_Disease_Mortality_DESC_TEXT, true, "Simulation_Type", "GENERIC_SIM,VECTOR_SIM,STI_SIM,ENVIRONMENTAL_SIM,MALARIA_SIM,TBHIV_SIM,TYPHOID_SIM,PY_SIM,HIV_SIM");
-        initConfig( "Mortality_Time_Course", mortality_time_course, config, MetadataDescriptor::Enum("mortality_time_course", Mortality_Time_Course_DESC_TEXT, MDD_ENUM_ARGS(MortalityTimeCourse)), "Enable_Disease_Mortality" );
         initConfigTypeMap("Base_Mortality", &base_mortality, Base_Mortality_DESC_TEXT, 0.0f, 1000.0f, 0.001f, "Enable_Disease_Mortality"); // should default change depending on disease?
-
-        // Configure incubation duration
-        DistributionFunction::Enum incubation_period_function( DistributionFunction::NOT_INITIALIZED );
-        initConfig("Incubation_Period_Distribution", incubation_period_function, config, MetadataDescriptor::Enum("Incubation_Period_Distribution", Incubation_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)), "Simulation_Type", "GENERIC_SIM,STI_SIM,VECTOR_SIM,DENGUE_SIM,MALARIA_SIM,AIRBORNE_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM,PY_SIM");
-        if( incubation_period_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun )
-        {
-            incubation_distribution = DistributionFactory::CreateDistribution( this, incubation_period_function, "Incubation_Period", config );
-        }
-
-        // Configure infectious duration
-        DistributionFunction::Enum infectious_distribution_function( DistributionFunction::NOT_INITIALIZED );
-        initConfig("Infectious_Period_Distribution", infectious_distribution_function, config, MetadataDescriptor::Enum("Infectious_Period_Distribution", Infectious_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)), "Simulation_Type", "GENERIC_SIM,STI_SIM,VECTOR_SIM,AIRBORNE_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,PY_SIM");
-        if( infectious_distribution_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun )
-        {
-            infectious_distribution = DistributionFactory::CreateDistribution( this, infectious_distribution_function, "Infectious_Period", config );
-        } 
-
-        // Configure infectivity
-        DistributionFunction::Enum infectivity_distribution_function( DistributionFunction::NOT_INITIALIZED );
-        initConfig("Base_Infectivity_Distribution", infectivity_distribution_function, config, MetadataDescriptor::Enum("Base_Infectivity_Distribution", Base_Infectivity_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)), "Simulation_Type", "GENERIC_SIM,STI_SIM,HIV_SIM,VECTOR_SIM,AIRBORNE_SIM,TBHIV_SIM,ENVIRONMENTAL_SIM,PY_SIM");
-        if( infectivity_distribution_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun )
-        {
-            infectivity_distribution = DistributionFactory::CreateDistribution( this, infectivity_distribution_function, "Base_Infectivity", config );
-        }
 
         // Evaluate configuration
         bool bRet = JsonConfigurable::Configure( config );
@@ -150,9 +120,9 @@ namespace Kernel
         {
             incubation_timer = incubation_period_override - FLT_MIN;
         }
-        else if(InfectionConfig::incubation_distribution)
+        else if(parent->GetParams()->incubation_distribution)
         {
-            incubation_timer = InfectionConfig::incubation_distribution->Calculate( GetParent()->GetRng() ) - FLT_MIN;
+            incubation_timer = parent->GetParams()->incubation_distribution->Calculate( GetParent()->GetRng() ) - FLT_MIN;
         }
         else
         {
@@ -162,9 +132,9 @@ namespace Kernel
         LOG_DEBUG_F( "incubation_timer initialized to %f for individual %d\n", incubation_timer, GetParent()->GetSuid().data );
 
         // Infection duration
-        if(InfectionConfig::infectious_distribution)
+        if(parent->GetParams()->infectious_distribution)
         {
-            infectious_timer = InfectionConfig::infectious_distribution->Calculate( GetParent()->GetRng() );
+            infectious_timer = parent->GetParams()->infectious_distribution->Calculate( GetParent()->GetRng() );
         }
         else
         {
@@ -174,9 +144,9 @@ namespace Kernel
         LOG_DEBUG_F( "infectious_timer = %f\n", infectious_timer );
 
         // Infectiousness
-        if(InfectionConfig::infectivity_distribution)
+        if(parent->GetParams()->infectivity_distribution)
         {
-            infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() );
+            infectiousness = parent->GetParams()->infectivity_distribution->Calculate( GetParent()->GetRng() );
 
             // Apply correlation modifier
             infectiousness *= 1 + (parent->GetParams()->correlation_acq_trans)*
@@ -205,7 +175,7 @@ namespace Kernel
         duration += dt;
 
         // if disease has a daily mortality rate, and disease mortality is on, then check for death. mortality_time_course depends-on enable_disease_mortality BUT DAILY_MORTALITY is default
-        if (InfectionConfig::enable_disease_mortality && (InfectionConfig::mortality_time_course == MortalityTimeCourse::DAILY_MORTALITY) && (duration > incubation_timer))
+        if (InfectionConfig::enable_disease_mortality && (parent->GetParams()->mortality_time_course == MortalityTimeCourse::DAILY_MORTALITY) && (duration > incubation_timer))
         {
             float prob = InfectionConfig::base_mortality * dt * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
             if( GetParent()->GetRng()->SmartDraw( prob ) )
@@ -217,7 +187,7 @@ namespace Kernel
         if (duration > total_duration)
         {
             // disease mortality active and is accounted for at end of infectious period. mortality_time_course depends-on enable_disease_mortality
-            if (InfectionConfig::enable_disease_mortality && InfectionConfig::mortality_time_course == MortalityTimeCourse::MORTALITY_AFTER_INFECTIOUS )
+            if (InfectionConfig::enable_disease_mortality && parent->GetParams()->mortality_time_course == MortalityTimeCourse::MORTALITY_AFTER_INFECTIOUS )
             {
                 float prob = InfectionConfig::base_mortality * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
                 if( GetParent()->GetRng()->SmartDraw( prob ) )

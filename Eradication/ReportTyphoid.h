@@ -10,11 +10,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "Report.h"
-#include "TyphoidDefs.h" // for N_TYPHOID_SEROTYPES
-#include "SimulationEnums.h" // for TyphoidVirusTypes
 #include "TransmissionGroupMembership.h"
 #include "ISimulationContext.h"
-#include <map>
 
 namespace Kernel {
 

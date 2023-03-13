@@ -10,62 +10,64 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "BaseTextReportEvents.h"
-#include "SimulationEnums.h"
+#include "EnumSupport.h"
 #include "Properties.h"
 #include "Configuration.h"
 
-
 namespace Kernel
 {
-  
-	ENUM_DEFINE(ARTStatusLocal,
-	    ENUM_VALUE_SPEC(NA  ,       0)
-		ENUM_VALUE_SPEC(OFFART  ,      1)
-		ENUM_VALUE_SPEC(ONART   ,       2)
-		ENUM_VALUE_SPEC(COUNT   ,    3))
+    #define IDM_ENUMSPEC_ARTStatusLocal                                                  \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(OFFART                                              , 1)         \
+        ENUM_VALUE_SPEC(ONART                                               , 2)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 3)
+    ENUM_DECLARE(ARTStatusLocal, IDM_ENUMSPEC_ARTStatusLocal)
 
-   ENUM_DEFINE(TB_State, 
-	   ENUM_VALUE_SPEC(NA                     ,0)
-	   ENUM_VALUE_SPEC(Negative               ,1)
-	   ENUM_VALUE_SPEC(Latent                 ,2)
-	   ENUM_VALUE_SPEC(ActivePreSymptomatic   ,3)
-	   ENUM_VALUE_SPEC(ActiveSmearPos         , 4)
-	   ENUM_VALUE_SPEC(ActiveSmearNeg         , 5)
-	   ENUM_VALUE_SPEC(ActiveExtraPulm        , 6)
-       ENUM_VALUE_SPEC(COUNT                  , 7))
 
-   ENUM_DEFINE(MDR_State, 
-	   ENUM_VALUE_SPEC(NA                     , 0)
-	   ENUM_VALUE_SPEC(Negative               , 1)
-	   ENUM_VALUE_SPEC(MDR                    , 2)
-	   ENUM_VALUE_SPEC(COUNT                  , 3)
-   )
+    #define IDM_ENUMSPEC_TB_State                                                        \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(Negative                                            , 1)         \
+        ENUM_VALUE_SPEC(Latent                                              , 2)         \
+        ENUM_VALUE_SPEC(ActivePreSymptomatic                                , 3)         \
+        ENUM_VALUE_SPEC(ActiveSmearPos                                      , 4)         \
+        ENUM_VALUE_SPEC(ActiveSmearNeg                                      , 5)         \
+        ENUM_VALUE_SPEC(ActiveExtraPulm                                     , 6)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 7)
+    ENUM_DECLARE(TB_State, IDM_ENUMSPEC_TB_State)
 
-   //Note naming is short for less than stated year and greater than previous cateogory ( ie LESS_5 is 1 yr <= age <5 yrs) 
-   
-      ENUM_DEFINE(Report_Age,     
-            ENUM_VALUE_SPEC(LESS_1, 0)  
-            ENUM_VALUE_SPEC(LESS_5, 1)
-            ENUM_VALUE_SPEC(LESS_10, 2)
-            ENUM_VALUE_SPEC(LESS_15, 3)
-            ENUM_VALUE_SPEC(LESS_20, 4)
-            ENUM_VALUE_SPEC(LESS_25, 5)
-            ENUM_VALUE_SPEC(LESS_30, 6)
-            ENUM_VALUE_SPEC(LESS_35, 7)
-            ENUM_VALUE_SPEC(LESS_40, 8)
-            ENUM_VALUE_SPEC(LESS_45, 9)
-            ENUM_VALUE_SPEC(LESS_50, 10)
-            ENUM_VALUE_SPEC(LESS_55, 11)
-            ENUM_VALUE_SPEC(LESS_60, 12)
-            ENUM_VALUE_SPEC(LESS_65, 13)
-            ENUM_VALUE_SPEC(LESS_70, 14)
-            ENUM_VALUE_SPEC(LESS_75, 15)
-            ENUM_VALUE_SPEC(LESS_80, 16)
-            ENUM_VALUE_SPEC(LESS_85, 17)
-            ENUM_VALUE_SPEC(LESS_90, 18)
-            ENUM_VALUE_SPEC(LESS_95, 19)
-            ENUM_VALUE_SPEC(GREAT_95, 20)
-            ENUM_VALUE_SPEC(COUNT, 21      )  )   // Needed for array initialization below
+
+    #define IDM_ENUMSPEC_MDR_State                                                       \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(Negative                                            , 1)         \
+        ENUM_VALUE_SPEC(MDR                                                 , 2)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 3)
+    ENUM_DECLARE(MDR_State, IDM_ENUMSPEC_MDR_State)
+
+
+    #define IDM_ENUMSPEC_Report_Age                                                      \
+        ENUM_VALUE_SPEC(LESS_1                                              , 0)         \
+        ENUM_VALUE_SPEC(LESS_5                                              , 1)         \
+        ENUM_VALUE_SPEC(LESS_10                                             , 2)         \
+        ENUM_VALUE_SPEC(LESS_15                                             , 3)         \
+        ENUM_VALUE_SPEC(LESS_20                                             , 4)         \
+        ENUM_VALUE_SPEC(LESS_25                                             , 5)         \
+        ENUM_VALUE_SPEC(LESS_30                                             , 6)         \
+        ENUM_VALUE_SPEC(LESS_35                                             , 7)         \
+        ENUM_VALUE_SPEC(LESS_40                                             , 8)         \
+        ENUM_VALUE_SPEC(LESS_45                                             , 9)         \
+        ENUM_VALUE_SPEC(LESS_50                                             , 10)        \
+        ENUM_VALUE_SPEC(LESS_55                                             , 11)        \
+        ENUM_VALUE_SPEC(LESS_60                                             , 12)        \
+        ENUM_VALUE_SPEC(LESS_65                                             , 13)        \
+        ENUM_VALUE_SPEC(LESS_70                                             , 14)        \
+        ENUM_VALUE_SPEC(LESS_75                                             , 15)        \
+        ENUM_VALUE_SPEC(LESS_80                                             , 16)        \
+        ENUM_VALUE_SPEC(LESS_85                                             , 17)        \
+        ENUM_VALUE_SPEC(LESS_90                                             , 18)        \
+        ENUM_VALUE_SPEC(LESS_95                                             , 19)        \
+        ENUM_VALUE_SPEC(GREAT_95                                            , 20)        \
+        ENUM_VALUE_SPEC(COUNT                                               , 21)
+    ENUM_DECLARE(Report_Age, IDM_ENUMSPEC_Report_Age)
 
 
     class Report_TBHIV_ByAge : public BaseTextReportEvents

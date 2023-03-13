@@ -16,14 +16,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterpolatedValueMap.h"
 #include "Sigmoid.h"
 
-namespace Kernel {
-
-    ENUM_DEFINE(FormationRateType,
-        ENUM_VALUE_SPEC(CONSTANT                     , 0)
-        ENUM_VALUE_SPEC(SIGMOID_VARIABLE_WIDTH_HEIGHT, 1)
-        ENUM_VALUE_SPEC(INTERPOLATED_VALUES          , 2))
-
-
+namespace Kernel
+{
     class IDMAPI PairFormationParametersImpl : public IPairFormationParameters,
                                                public JsonConfigurable
     {

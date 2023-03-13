@@ -623,7 +623,7 @@ namespace Kernel
                     else if ( rand < ( prob_severe * ( anemiaSevereFraction + parasiteSevereFraction + feverSevereFraction ) ) ) { severetype = SevereCaseTypesEnum::FEVER; }
                     else { LOG_WARN("This new severe case cannot be attributed to a cause (e.g. fever) because the sum of the partial fractions by cause exceed unity!\n"); }
 
-                    LOG_DEBUG_F("New SEVERE case in %0.1f-year old: type = %s (Hg=%0.1f, parasites=%3.2e, fever=%0.1f C)\n", GetParent()->GetAge()/DAYSPERYEAR, SevereCaseTypesEnum::pairs::lookup_key(severetype), GetHemoglobin(), m_parasite_density, 37+current_fever);
+                    LOG_DEBUG_F("New SEVERE case in %0.1f-year old: type = %s (Hg=%0.1f, parasites=%3.2e, fever=%0.1f C)\n", GetParent()->GetAge()/DAYSPERYEAR, SevereCaseTypesEnum::pairs::lookup_key(severetype).c_str(), GetHemoglobin(), m_parasite_density, 37+current_fever);
                 }
                 cumulative_days_of_severe_incident += dt;
             }

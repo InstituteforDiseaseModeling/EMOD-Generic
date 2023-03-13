@@ -61,7 +61,7 @@ namespace Kernel
                                  "Intervention_Config.*.iv_type", 
                                  "IndividualTargeted"*/);
         }
-        LOG_DEBUG_F( "Target_Demographic configured as = %s\n", TargetDemographicType::pairs::lookup_key( target_demographic ) );
+        LOG_DEBUG_F( "Target_Demographic configured as = %s\n", TargetDemographicType::pairs::lookup_key( target_demographic ).c_str() );
         
         if( (target_demographic == TargetDemographicType::ExplicitAgeRanges         ) || 
             (target_demographic == TargetDemographicType::ExplicitAgeRangesAndGender) ||

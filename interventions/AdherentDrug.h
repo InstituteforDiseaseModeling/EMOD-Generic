@@ -12,17 +12,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "AntiMalarialDrug.h"
 #include "EventTrigger.h"
 #include "InterpolatedValueMap.h"
+#include "InterventionEnums.h"
 
 namespace Kernel
 {
-
-    ENUM_DEFINE( NonAdherenceOptionsType,
-        ENUM_VALUE_SPEC( NEXT_UPDATE,      1 )
-        ENUM_VALUE_SPEC( NEXT_DOSAGE_TIME, 2 )
-        ENUM_VALUE_SPEC( LOST_TAKE_NEXT,   3 )
-        ENUM_VALUE_SPEC( STOP,             4 ) )
-
-
     struct IWaningEffect;
 
     class AdherentDrug : public AntimalarialDrug

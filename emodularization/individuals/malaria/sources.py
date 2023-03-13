@@ -3,6 +3,7 @@
 sources =  [
             'dtk_malariaindividual_module.cpp',
             '../../../utils/Configure.cpp',
+            '../../../utils/Exceptions.cpp',
             '../../../Eradication/ConfigParams.cpp',
             '../../../Eradication/Individual.cpp',
             '../../../Eradication/IndividualVector.cpp',
@@ -18,6 +19,9 @@ sources =  [
             '../../../Eradication/VectorInterventionsContainer.cpp',
             '../../../Eradication/MalariaInterventionsContainer.cpp',
             '../../../Eradication/StrainIdentity.cpp',
+            '../../../Eradication/SimulationEnums.cpp',
+            '../../../Eradication/VectorEnums.cpp',
+            '../../../Eradication/MalariaEnums.cpp',
             '../../../Eradication/TBHIVDrugTypeParameters.cpp',
             '../../../Eradication/TBDrugTypeParameters.cpp',
             '../../../Eradication/MalariaAntibody.cpp',

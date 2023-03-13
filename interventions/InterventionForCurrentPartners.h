@@ -20,17 +20,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    ENUM_DEFINE( PartnerPrioritizationType,
-                 ENUM_VALUE_SPEC( NO_PRIORITIZATION,            0 )   // All partners are contacted
-                 ENUM_VALUE_SPEC( CHOSEN_AT_RANDOM,             1 )   // Partners are randomly selected until Maximum_Partners have received the intervention
-                 ENUM_VALUE_SPEC( LONGER_TIME_IN_RELATIONSHIP,  2 )   // Partners are sorted in descending order of the duration of the relationship. 
-                                                                      // Partners are contacted from the beginning of this list until Maximum_Partners have received the intervention.
-                 ENUM_VALUE_SPEC( SHORTER_TIME_IN_RELATIONSHIP, 3 )   // Same thing but ascending order.
-                 ENUM_VALUE_SPEC( OLDER_AGE,                    4 )   // Same thing but descending order based on age.
-                 ENUM_VALUE_SPEC( YOUNGER_AGE,                  5 )   // Same thing but ascending order based on age.
-                 ENUM_VALUE_SPEC( RELATIONSHIP_TYPE,            6 ) ) // In this case, the partners are sorted based on the order of the relationship types defined in the Relationship_Types parameter. 
-                                                                      // For example, "Relationship_Types":["MARITAL", "INFORMAL","TRANSITORY","COMMERCIAL"], will prioritize marital > informal > transitory > commercial, selecting at random between multiple partners of the same type.
-
     class InterventionForCurrentPartners : public BaseIntervention
     {
         DECLARE_FACTORY_REGISTERED( InterventionFactory, InterventionForCurrentPartners, IDistributableIntervention )

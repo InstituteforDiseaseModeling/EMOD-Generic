@@ -45,6 +45,7 @@ namespace Kernel
         virtual const VectorPopulationReportingList_t& GetVectorPopulationReporting() const = 0;
         virtual void AddVectors( const std::string& releasedSpecies, const VectorMatingStructure& _vector_genetics, uint32_t releasedNumber ) = 0;
         virtual void processImmigratingVector( IVectorCohort* immigrant ) = 0;
+        virtual std::string GetHabitatName(int) = 0;
     };
 
     struct IIndividualHumanVectorContext : public ISupports

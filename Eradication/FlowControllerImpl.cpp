@@ -133,7 +133,7 @@ namespace Kernel
 
             if (LOG_LEVEL(INFO))
             {
-                LOG_INFO_F( "%s: eligible population for %s risk group:\n", __FUNCTION__, RiskGroup::pairs::lookup_key(risk_group) );
+                LOG_INFO_F( "%s: eligible population for %s risk group:\n", __FUNCTION__, RiskGroup::pairs::lookup_key(risk_group).c_str() );
                 for (auto& entry : eligible_population) {
                     cout << "{ " << entry.first << ", [ ";
                     for (int count : entry.second) {

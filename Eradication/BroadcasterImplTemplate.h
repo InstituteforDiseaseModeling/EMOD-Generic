@@ -58,7 +58,7 @@ namespace Kernel
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
-        LOG_DEBUG_F( "Observer is registering for event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
+        LOG_DEBUG_F( "Observer is registering for event %s.\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
         event_observer_list.push_back( pObserver );
         pObserver->AddRef();
     }
@@ -81,7 +81,7 @@ namespace Kernel
         std::vector<Observer*>& observer_list = observers[ trigger ];
         std::vector<Observer*>& disposed_list = disposed_observers[ trigger ];
 
-        LOG_DEBUG_F( "We have %d observers of event %s.\n", observer_list.size(), EventTrigger::pairs::lookup_key( trigger ) );
+        LOG_DEBUG_F( "We have %d observers of event %s.\n", observer_list.size(), EventTrigger::pairs::lookup_key( trigger ).c_str() );
         for( auto observer : observer_list )
         {
             // ---------------------------------------------------------------------

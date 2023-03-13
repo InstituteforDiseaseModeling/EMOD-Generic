@@ -46,8 +46,8 @@ namespace Kernel
     {
         if( m_habitat_type != VectorHabitatType::LINEAR_SPLINE )
         {
-            const char* type_str = VectorHabitatType::pairs::lookup_key( m_habitat_type );
-            initConfigTypeMap( type_str, &m_max_larval_capacity, Max_Larval_Capacity_DESC_TEXT, 0.0f, FLT_MAX, 1E10 );
+            std::string type_str = VectorHabitatType::pairs::lookup_key(m_habitat_type);
+            initConfigTypeMap( type_str.c_str(), &m_max_larval_capacity, Max_Larval_Capacity_DESC_TEXT, 0.0f, FLT_MAX, 1E10 );
 
         }
         return JsonConfigurable::Configure( inputJson );
@@ -66,8 +66,8 @@ namespace Kernel
         Configuration* sub_element = nullptr;
         if( inputJson != nullptr )
         {
-            const char* type_str = VectorHabitatType::pairs::lookup_key( VectorHabitatType::LINEAR_SPLINE );
-            sub_element = Configuration::CopyFromElement( (*inputJson)[type_str], inputJson->GetDataLocation() );
+            std::string type_str = VectorHabitatType::pairs::lookup_key(VectorHabitatType::LINEAR_SPLINE);
+            sub_element = Configuration::CopyFromElement( (*inputJson)[type_str.c_str()], inputJson->GetDataLocation() );
         }
         bool ret = VectorHabitat::Configure( sub_element );
         if( ret && !JsonConfigurable::_dryrun )
@@ -203,7 +203,7 @@ namespace Kernel
         }
         LOG_VALID_F( "m_egg_crowding_correction calculated as %f based on enum value %s, larval_habitat = %f, total_larval_count = %f, m_new_egg_count = %d\n",
                              m_egg_crowding_correction,
-                             EggSaturation::pairs::lookup_key(params()->vector_params->egg_saturation),
+                             EggSaturation::pairs::lookup_key(params()->vector_params->egg_saturation).c_str(),
                              larvalhabitat,
                              total_larva_count,
                              m_new_egg_count

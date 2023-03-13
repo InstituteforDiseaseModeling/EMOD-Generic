@@ -154,7 +154,7 @@ namespace Kernel
             release_assert( broadcaster );
             for (auto &trigger : m_trigger_conditions)
             {
-                LOG_DEBUG_F( "Registering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
+                LOG_DEBUG_F( "Registering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
                 broadcaster->RegisterObserver((INodeEventObserver*)this, trigger);
             }
         }
@@ -183,7 +183,7 @@ namespace Kernel
         // the trigger event
         LOG_DEBUG_F("Node %d experienced event %s, check to see if it passes the conditions before distributing actual_intervention \n",
                     pNode->GetNodeContext()->GetSuid().data,
-                    EventTrigger::pairs::lookup_key( trigger )
+                    EventTrigger::pairs::lookup_key( trigger ).c_str()
                    );
 
         assert( parent );
@@ -227,7 +227,7 @@ namespace Kernel
         release_assert( broadcaster );
         for (auto &trigger : m_trigger_conditions)
         {
-            LOG_DEBUG_F( "Unregistering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_DEBUG_F( "Unregistering as observer of event %s.\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
             broadcaster->UnregisterObserver( (INodeEventObserver*)this, trigger );
         }
         SetExpired( true );

@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FactorySupport.h"
 
 #include "ISimulationContext.h"
+#include "INodeSTI.h"
 #include "NodeEventContext.h"
 #include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
@@ -160,6 +161,9 @@ namespace Kernel
         IIndividualHumanSTI* p_hsti = p_ih->GetIndividualContext()->GetIndividualSTI();
         release_assert(p_hsti);
 
+        INodeSTI* p_node_sti = context->GetNodeEventContext()->GetNodeContext()->GetNodeSTI();
+        release_assert(p_node_sti);
+
         ISimulationContext* p_sim = context->GetNodeEventContext()->GetNodeContext()->GetParent();
 
         bool is_emigrating  = (trigger == EventTrigger::STIPreEmigrating);
@@ -205,8 +209,8 @@ namespace Kernel
             unsigned int num_acts = prel->GetNumCoitalActs();
             bool is_discordant = prel->IsDiscordant();
             bool has_migrated = prel->HasMigrated();
-            const char* rel_type_str  = RelationshipType::pairs::lookup_key( prel->GetType() );
-            const char* rel_state_str = RelationshipState::pairs::lookup_key( prel->GetState() );
+            std::string rel_type_str  = p_node_sti->GetRelationshipName( prel->GetType() );
+            std::string rel_state_str = p_node_sti->GetRelationshipStateName( prel->GetState() );
             unsigned int male_node_id = 0;
             if( prel->MalePartner() != nullptr )
             {

@@ -141,7 +141,7 @@ namespace Kernel
         }
         if( qualifies )
         {
-            LOG_INFO_F("broadcast %s, %d -> %d\n", EventTrigger::pairs::lookup_key( event_trigger ),p_node_context->GetExternalID(),rni.GetExternalID());
+            LOG_INFO_F("broadcast %s, %d -> %d\n", EventTrigger::pairs::lookup_key( event_trigger ).c_str(), p_node_context->GetExternalID(), rni.GetExternalID());
         }
 
         return qualifies ;

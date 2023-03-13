@@ -67,8 +67,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <chrono>
 #include "EventTrigger.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 #include "RandomNumberGeneratorFactory.h"
 #include "SerializationParameters.h"
 

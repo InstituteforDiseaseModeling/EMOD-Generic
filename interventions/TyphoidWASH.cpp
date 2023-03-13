@@ -136,7 +136,7 @@ namespace Kernel
         }
 
         float multiplier = 1.0f-_effect;
-        LOG_VALID_F( "multiplier = %f, mode = %s.\n", multiplier, TyphoidVaccineMode::pairs::lookup_key( vaccine_mode ) );
+        LOG_VALID_F( "multiplier = %f, mode = %s.\n", multiplier, TyphoidVaccineMode::pairs::lookup_key( vaccine_mode ).c_str() );
         switch( vaccine_mode )
         {
             case TyphoidVaccineMode::Shedding:

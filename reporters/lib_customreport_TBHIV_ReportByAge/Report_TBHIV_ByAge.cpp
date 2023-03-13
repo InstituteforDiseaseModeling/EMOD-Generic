@@ -93,10 +93,10 @@ __cdecl GetReportInstantiator()
 
 namespace Kernel
 {
-
-// ----------------------------------------
-// --- Report_HIV_WHO2015 Methods
-// ----------------------------------------
+    ENUM_INITIALIZE(ARTStatusLocal, IDM_ENUMSPEC_ARTStatusLocal)
+    ENUM_INITIALIZE(TB_State,       IDM_ENUMSPEC_TB_State)
+    ENUM_INITIALIZE(MDR_State,      IDM_ENUMSPEC_MDR_State)
+    ENUM_INITIALIZE(Report_Age,     IDM_ENUMSPEC_Report_Age)
 
     Report_TBHIV_ByAge::Report_TBHIV_ByAge()
         : BaseTextReportEvents( "Report_TBHIV_ByAge.csv" )

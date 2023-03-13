@@ -170,7 +170,7 @@ namespace Kernel
 
         int               id           = context->GetSuid().data;
         ExternalNodeId_t  node_id      = context->GetNodeEventContext()->GetExternalId();
-        const char*       event_name   = EventTrigger::pairs::lookup_key(trigger);
+        std::string       event_name   = EventTrigger::pairs::lookup_key(trigger);
 
         record.time          = GetTime( context );
         record.node_id       = node_id;

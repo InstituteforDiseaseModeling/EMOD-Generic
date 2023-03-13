@@ -24,6 +24,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SusceptibilityTB.h"
 #include "RANDOM.h"
 #include "Exceptions.h"
+#include "ConfigParams.h"
 #include "config_params.rc"
 #include "IndividualCoInfection.h"
 #include "StrainIdentity.h"
@@ -32,6 +33,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "TBContexts.h"
 
 SETUP_LOGGING( "InfectionTB" )
+
+// Internal only indexing for drug resistance;
+#define  DrugSensitive       (0)
+#define  FirstLineResistant  (1)
 
 
 namespace Kernel
@@ -71,15 +76,6 @@ namespace Kernel
     bool InfectionTBConfig::Configure(const Configuration * config)
     {
         LOG_DEBUG("Configure\n");
-
-        // TB infections re-assign infectiousness from Base Infectivity at the start of both active pre-symptomatic and active phases;
-        // Need to verify if value can be different before enabling Base Infectivity from a distribution.
-        if( JsonConfigurable::_dryrun == false && InfectionConfig::infectivity_distribution->GetType() != DistributionFunction::CONSTANT_DISTRIBUTION )
-        {
-            std::ostringstream msg;
-            msg << "Base_Infectivity_Distribution other than CONSTANT_DISTRIBUTION not currently supported for TB infections.";
-            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
 
         initConfigTypeMap("TB_Latent_Cure_Rate", &TB_latent_cure_rate, TB_Latent_Cure_Rate_DESC_TEXT, 0.0f, 1.0f, 0.0005479f); // tb
         initConfigTypeMap("TB_Fast_Progressor_Rate", &TB_fast_progressor_rate, TB_Fast_Progressor_Rate_DESC_TEXT, 0.0f, 1.0f, 0.000041096f); // tb
@@ -451,10 +447,10 @@ namespace Kernel
         duration = 0.0f;
 
         // Set infectiousness
-        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() ) * InfectionTBConfig::TB_active_presymptomatic_infectivity_multiplier * immunityTB->GetCoughInfectiousness();
+        infectiousness = parent->GetParams()->infectivity_distribution->Calculate( GetParent()->GetRng() ) * InfectionTBConfig::TB_active_presymptomatic_infectivity_multiplier * immunityTB->GetCoughInfectiousness();
 
         //fitness penalty for MDR
-        if ( infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant ) 
+        if ( infection_strain->GetGeneticID() == FirstLineResistant ) 
         {
             infectiousness *= InfectionTBConfig::TB_MDR_Fitness_Multiplier;
             LOG_DEBUG("Infectiousness lowered because the drug is FirstLineCombo and I have a resistant strain \n");
@@ -498,7 +494,7 @@ namespace Kernel
             throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "immunity", "ISusceptibilityTB", "Susceptibility");
         }
 
-        if (infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant)
+        if (infection_strain->GetGeneticID() == FirstLineResistant)
         {            
             //onInfectionMDRIncidence
             IndividualHumanCoInfection* indiv_coInf = dynamic_cast<IndividualHumanCoInfection*>( parent );
@@ -532,10 +528,10 @@ namespace Kernel
         //       so that we aren't picking the death rate based on the efficacy of a vaccine at the beginning of the infection alone.
         float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
 
-        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() ) * immunityTB->GetCoughInfectiousness();
+        infectiousness = parent->GetParams()->infectivity_distribution->Calculate( GetParent()->GetRng() ) * immunityTB->GetCoughInfectiousness();
 
         //fitness penalty for MDR
-        if ( infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant ) 
+        if ( infection_strain->GetGeneticID() == FirstLineResistant ) 
         {
             infectiousness *= InfectionTBConfig::TB_MDR_Fitness_Multiplier;
             LOG_DEBUG("Infectiousness lowered because I have a resistant strain \n");
@@ -633,7 +629,7 @@ namespace Kernel
                 //modulate the clearance rate and inactivation rate by the drug_strain_multiplier, which accounts for mismatch between FirstLineCombo and FirstLineResistant strain
                 float drug_strain_multiplier = 1.0f; 
 
-                if (infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant ) //could add this drug_effect.first == TBDrugType::FirstLineCombo if wanted to be specific to getting FirstLineCombo
+                if (infection_strain->GetGeneticID() == FirstLineResistant ) //could add this drug_effect.first == TBDrugType::FirstLineCombo if wanted to be specific to getting FirstLineCombo
                 {
                     LOG_DEBUG( "Received a drug (does not have to be FirstLineCombo), but have DR strain. TB drug clearance/inactivation rate adjusted\n" );
                     drug_strain_multiplier = InfectionTBConfig::TB_Drug_Efficacy_Multiplier_MDR;
@@ -691,7 +687,7 @@ namespace Kernel
         // later can add new types of resistance here, back evolution from resistant to sensitive strain etc
         
         //only evolve if you are DS, if already resistant, skip all
-        if (infection_strain->GetGeneticID() == TBInfectionDrugResistance::DrugSensitive ) 
+        if (infection_strain->GetGeneticID() == DrugSensitive ) 
         {
             TBDrugEffects_t total_drug_effects = GetTotalDrugEffectsForThisInfection();
 
@@ -701,7 +697,7 @@ namespace Kernel
             {
                 if( parent->GetRng()->SmartDraw( NTimeStepProbability(total_drug_effects.resistance_rate, dt) ) )
                 {
-                    infection_strain->SetGeneticID(TBInfectionDrugResistance::FirstLineResistant);
+                    infection_strain->SetGeneticID(FirstLineResistant);
                     m_evolved_resistance = true;
 
                     IndividualHumanCoInfection* indiv_coInf = dynamic_cast<IndividualHumanCoInfection*>( parent );
@@ -930,7 +926,7 @@ namespace Kernel
     
     bool InfectionTB::IsMDR() const 
     { 
-        return infection_strain->GetGeneticID() == TBInfectionDrugResistance::FirstLineResistant; 
+        return infection_strain->GetGeneticID() == FirstLineResistant; 
     }
     
     bool InfectionTB::EvolvedResistance() const 

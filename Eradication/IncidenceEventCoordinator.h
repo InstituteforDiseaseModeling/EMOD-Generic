@@ -10,28 +10,20 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "EventTrigger.h"
-#include "BaseEventTrigger.h"
 #include "EventCoordinator.h"
 #include "Configure.h"
 #include "DemographicRestrictions.h"
 #include "Interventions.h"
-#include "EventTrigger.h"
 #include "NodeEventContext.h"
 #include "JsonConfigurableCollection.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 #include "ReportStatsByIP.h"
+#include "SimulationEnums.h"
 
 
 namespace Kernel
 {
     struct INodeEventContext;
     struct IIndividualHumanEventContext;
-
-    ENUM_DEFINE( ThresholdType,
-        ENUM_VALUE_SPEC( COUNT,             1 )
-        ENUM_VALUE_SPEC( PERCENTAGE,        2 )
-        ENUM_VALUE_SPEC( PERCENTAGE_EVENTS, 3 ) )
 
     // ------------------------------------------------------------------------
     // --- Action

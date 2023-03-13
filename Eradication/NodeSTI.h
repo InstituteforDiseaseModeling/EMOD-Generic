@@ -46,6 +46,8 @@ namespace Kernel
         // INodeSTI
         virtual /*const?*/ IRelationshipManager* GetRelationshipManager() /*const?*/ override;
         virtual ISociety* GetSociety() override;
+        virtual std::string GetRelationshipName(int rel_enum_val) override;
+        virtual std::string GetRelationshipStateName(int rel_state_enum_val) override;
 
         virtual void SetupIntranodeTransmission() override;
         virtual void Update( float dt ) override;

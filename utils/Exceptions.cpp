@@ -189,7 +189,6 @@ static const char* default_varname = "variable name";
 static const char* default_description = "description";
 static const char* nullptr_str = "nullptr";
 #define GET_VAR_NAME(v) ( (v) ? (v) : default_varname )
-#define GET_DES_STR(s)  ( (s) ? (s) : default_description )
 #define GET_STR(s)      ( (s) ? (s) : nullptr_str )
 
 namespace Kernel {
@@ -230,7 +229,7 @@ namespace Kernel {
     }
 
     // This is to be used in the default section of most switch statements. 
-    BadEnumInSwitchStatementException::BadEnumInSwitchStatementException( const char* file_name, int line_num, const char* function_name, const char* var_name, int bad_value, const char* as_string )
+    BadEnumInSwitchStatementException::BadEnumInSwitchStatementException( const char* file_name, int line_num, const char* function_name, const char* var_name, int bad_value, std::string as_string )
     : DetailedException( file_name, line_num, function_name )
     {
         std::ostringstream _tmp_msg;
@@ -239,7 +238,7 @@ namespace Kernel {
                  << "Value "
                  << bad_value 
                  << "("
-                 << GET_DES_STR(as_string)
+                 << as_string
                  << ")"
                  << " of variable "
                  << GET_VAR_NAME(var_name)

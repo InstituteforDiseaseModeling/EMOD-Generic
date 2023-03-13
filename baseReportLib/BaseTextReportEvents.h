@@ -9,8 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <vector>
-
 #include "BaseTextReport.h"
 #include "BroadcasterObserver.h"
 #include "EventTrigger.h"

@@ -163,6 +163,16 @@ namespace Kernel
         return society;
     }
 
+    std::string NodeSTI::GetRelationshipName(int rel_enum_val)
+    {
+        return RelationshipType::pairs::lookup_key(rel_enum_val);
+    }
+
+    std::string NodeSTI::GetRelationshipStateName(int rel_state_enum_val)
+    {
+        return RelationshipState::pairs::lookup_key(rel_state_enum_val);
+    }
+
     INodeSTI* NodeSTI::GetNodeSTI()
     {
         return static_cast<INodeSTI*>(this);

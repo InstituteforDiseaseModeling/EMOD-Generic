@@ -107,7 +107,7 @@ namespace Kernel
         auto it_start = find( m_StartTriggerConditionList.begin(), m_StartTriggerConditionList.end(), trigger );
         if( it_start != m_StartTriggerConditionList.end() )
         {
-            LOG_INFO_F( "%s: notifyOnEvent received start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_INFO_F( "%s: notifyOnEvent received start: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ).c_str() );
 
             // ---------------------------------------------------------------------
             // --- Not sure this is the best solution, but always using the RNG from
@@ -121,7 +121,7 @@ namespace Kernel
         }
         else
         {
-            LOG_INFO_F( "%s: notifyOnEvent received stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_INFO_F( "%s: notifyOnEvent received stop: %s\n", m_CoordinatorName.c_str(), EventTrigger::pairs::lookup_key( trigger ).c_str() );
             m_IsActive = false;
         }
         return true;

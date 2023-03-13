@@ -28,25 +28,6 @@ namespace Kernel
 
 #define MAX_SLOTS (63)
 
-    ENUM_DEFINE(RelationshipState,
-        ENUM_VALUE_SPEC( NORMAL      , 0)
-        ENUM_VALUE_SPEC( PAUSED      , 1)
-        ENUM_VALUE_SPEC( MIGRATING   , 2)
-        ENUM_VALUE_SPEC( TERMINATED  , 3))
-
-    ENUM_DEFINE(RelationshipMigrationAction,
-        ENUM_VALUE_SPEC( PAUSE     , 0)
-        ENUM_VALUE_SPEC( MIGRATE   , 1)
-        ENUM_VALUE_SPEC( TERMINATE , 2))
-
-    ENUM_DEFINE(RelationshipTerminationReason,
-        ENUM_VALUE_SPEC( NOT_TERMINATING    , 0)
-        ENUM_VALUE_SPEC( BROKEUP            , 1)
-        ENUM_VALUE_SPEC( SELF_DIED          , 2)
-        ENUM_VALUE_SPEC( SELF_MIGRATING     , 3)
-        ENUM_VALUE_SPEC( PARTNER_TERMINATED , 4)
-        ENUM_VALUE_SPEC( PARTNER_MIGRATING  , 5))
-
     struct IDMAPI IRelationship : ISerializable
     {
         virtual RelationshipState::Enum GetState() const = 0;

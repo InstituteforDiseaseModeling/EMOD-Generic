@@ -2018,38 +2018,11 @@
     <ClCompile Include="..\interventions\MalariaChallenge.cpp">
       <Filter>Source Files\Campaign\NodeTargeted\Vector\Malaria</Filter>
     </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectBox.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectBoxExponential.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectExponential.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectConstant.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectFactory.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectMap.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
     <ClCompile Include="SerializedPopulation.cpp">
       <Filter>Source Files\Kernel</Filter>
     </ClCompile>
     <ClCompile Include="..\interventions\UsageDependentBednet.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted\Vector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectMapAge.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectMapSeasonal.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffectRandomBox.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
     </ClCompile>
     <ClCompile Include="CommunityHealthWorkerEventCoordinator.cpp">
       <Filter>Source Files\Campaign\EventCoordinator</Filter>
@@ -2197,6 +2170,18 @@
     </ClCompile>
     <ClCompile Include="..\interventions\WaningEffect.cpp">
       <Filter>Source Files\Campaign\WaningEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="VectorEnums.cpp">
+      <Filter>Source Files\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="MalariaEnums.cpp">
+      <Filter>Source Files\Vector\Malaria</Filter>
+    </ClCompile>
+    <ClCompile Include="HIVEnums.cpp">
+      <Filter>Source Files\STI\HIV</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulationEnums.cpp">
+      <Filter>Source Files\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

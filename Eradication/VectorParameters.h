@@ -29,6 +29,7 @@ namespace Kernel
         HEGModel::Enum                          heg_model;                           // HEGModel
         TemperatureDependentFeedingCycle::Enum  temperature_dependent_feeding_cycle; // Temperature_Dependent_Feeding_Cycle
         EggHatchDensityDependence::Enum         egg_hatch_density_dependence;        // Egg_Hatch_Density_Dependence 
+        VectorSamplingType::Enum                vector_sampling_type;
 
         bool  vector_aging;
         bool  temperature_dependent_egg_hatching;
@@ -70,6 +71,7 @@ namespace Kernel
         , heg_model(HEGModel::OFF)
         , temperature_dependent_feeding_cycle(TemperatureDependentFeedingCycle::NO_TEMPERATURE_DEPENDENCE)
         , egg_hatch_density_dependence( EggHatchDensityDependence::NO_DENSITY_DEPENDENCE )
+        , vector_sampling_type(VectorSamplingType::TRACK_ALL_VECTORS)
         , vector_aging(false)
         , temperature_dependent_egg_hatching(false)
         , egg_mortality(false)

@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "SusceptibilityEnvironmental.h"
 #include "StrainIdentity.h"
-#include "TyphoidDefs.h"
 
 #ifdef ENABLE_TYPHOID
 
@@ -32,14 +31,10 @@ namespace Kernel
     class ISusceptibilityTyphoid : public ISupports
     {
     public:
-        //virtual void SetNewInfectionByStrain(StrainIdentity* infection_strain) = 0;
-        //immunity
    };
 
     class ISusceptibilityTyphoidReportable : public ISupports
     {
-        public:
-        //virtual void GetSheddingTiter(float sheddingTiters[])               const = 0; 
     };
 
     class SusceptibilityTyphoid :

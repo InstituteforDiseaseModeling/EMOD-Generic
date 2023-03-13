@@ -59,7 +59,7 @@ namespace Kernel
 
     uint64_t NodeTB::GetTotalGenomes() const
     {
-        // TB infections use genome for drug resistance with the TBInfectionDrugResistance ENUM type.
+        // TB infections use genome for drug resistance indicator
         return 2;
     }
 

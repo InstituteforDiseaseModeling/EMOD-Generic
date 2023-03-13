@@ -183,7 +183,7 @@ namespace Kernel
 
         for( auto trigger : eventTriggerList )
         {
-            LOG_DEBUG_F( "BaseEventReport is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_DEBUG_F( "BaseEventReport is registering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
             broadcaster->RegisterObserver( this, trigger );
         }
         nodeEventContextList.push_back( pNEC );
@@ -196,7 +196,7 @@ namespace Kernel
 
         for( auto trigger : eventTriggerList )
         { 
-            LOG_DEBUG_F( "BaseEventReport is unregistering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+            LOG_DEBUG_F( "BaseEventReport is unregistering to listen to event %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
             broadcaster->UnregisterObserver( this, trigger );
         }
         events_unregistered = true ;

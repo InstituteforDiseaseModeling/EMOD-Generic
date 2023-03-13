@@ -213,7 +213,7 @@ void VectorHabitatReport::LogNodeData( INodeContext * pNC )
         std::string species_name = vp->get_SpeciesID();
         for ( auto hab : vp->GetHabitats() )
         {
-            std::string habitat_name = VectorHabitatType::pairs::lookup_key( hab->GetVectorHabitatType() );
+            std::string habitat_name = p_node_vector->GetHabitatName( hab->GetVectorHabitatType() );
             std::string species_habitat = species_name + ':' + habitat_name;
 
             if (empty_idx_map)

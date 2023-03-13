@@ -493,7 +493,7 @@ namespace Kernel
                 static PyObject * vars = PyTuple_New(2);
                 PyObject* py_existing_id = PyLong_FromLong( GetSuid().data );
                 PyTuple_SetItem( vars, 0, py_existing_id );
-                PyObject* py_route_str = PyString_FromFormat( "%s", TransmissionRoute::pairs::lookup_key(route) );
+                PyObject* py_route_str = PyString_FromFormat( "%s", TransmissionRoute::pairs::lookup_key(route).c_str() );
                 PyTuple_SetItem( vars, 1, py_route_str );
                 PyObject * retVal = PyObject_CallObject( pFunc, vars );
                 PyErr_Print();
@@ -532,7 +532,7 @@ namespace Kernel
                     if (tmp_infectiousnessOral > 0.0f)
                     {
                         LOG_VALID_F("Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s. Intervention factor %f.\n",
-                                    GetSuid().data, tmp_infectiousnessOral, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time), state_to_report.c_str(), cda
+                                    GetSuid().data, tmp_infectiousnessOral, TransmissionRoute::pairs::lookup_key(entry.first).c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time), state_to_report.c_str(), cda
                                    );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessOral, entry.second, TransmissionRoute::CONTACT );
                     }
@@ -546,13 +546,13 @@ namespace Kernel
                         auto eda = typhoid_node_event->GetEnviroDepositAttenuation( GetProperties() ); 
                         tmp_infectiousnessFecal *= eda;
                         LOG_VALID_F( "Individual %d depositing %f to route %s: (clade=%d, genome=%d) at time %f in state %s..\n",
-                                     GetSuid().data, tmp_infectiousnessFecal, TransmissionRoute::pairs::lookup_key(entry.first), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time) );
+                                     GetSuid().data, tmp_infectiousnessFecal, TransmissionRoute::pairs::lookup_key(entry.first).c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID(), float(parent->GetTime().time) );
                         parent->DepositFromIndividual( tmp_strainID, tmp_infectiousnessFecal, entry.second, TransmissionRoute::ENVIRONMENTAL );
                     }
                 }
                 else
                 {
-                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", TransmissionRoute::pairs::lookup_key(entry.first));
+                    LOG_WARN_F("unknown route %s, do not deposit anything.\n", TransmissionRoute::pairs::lookup_key(entry.first).c_str());
                 }
             }
         }

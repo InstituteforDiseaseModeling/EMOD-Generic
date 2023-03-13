@@ -41,7 +41,7 @@ namespace Kernel
             // convenience macro to save typing of these args
 #define MDD_ENUM_ARGS(enum_name) enum_name::pairs::count(), enum_name::pairs::get_keys(), enum_name::pairs::get_values()
 
-            Enum(std::string _name, std::string _desc, int count, const char ** strings, const int *values) : Base(_name, _desc)
+            Enum(std::string _name, std::string _desc, int count, const std::vector<std::string> strings, const std::vector<int> values) : Base(_name, _desc)
             {
                 for (int k = 0; k < count; k++)
                 {
@@ -76,7 +76,7 @@ namespace Kernel
 
         struct VectorOfEnum : public Enum
         {
-            VectorOfEnum(std::string _name, std::string _desc, int count, const char ** strings, const int *values) :
+            VectorOfEnum(std::string _name, std::string _desc, int count, const std::vector<std::string> strings, const std::vector<int> values) :
                 Enum(_name, _desc, count, strings, values)
             {
             }

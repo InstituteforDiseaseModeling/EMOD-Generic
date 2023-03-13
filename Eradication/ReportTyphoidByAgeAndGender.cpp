@@ -345,7 +345,7 @@ namespace Kernel
     {
         LOG_DEBUG_F( "Individual %d experienced event %s\n",
                      context->GetSuid().data,
-                     EventTrigger::pairs::lookup_key( StateChange )
+                     EventTrigger::pairs::lookup_key( StateChange ).c_str()
                    );
 
         float mc_weight = context->GetMonteCarloWeight();

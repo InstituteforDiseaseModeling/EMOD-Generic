@@ -13,17 +13,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionFactory.h"
 #include "Environment.h"
 #include "RANDOM.h"
-#include "EventTrigger.h"
-#include "NodeEventContext.h"
 #include "INodeContext.h"
 #include "ISimulationContext.h"
 #include "SimulationEventContext.h"
 #include "IndividualEventContext.h"
 #include "IIndividualHumanContext.h"
 #include "IIndividualHuman.h"
-#include "BaseEventTrigger.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 
 SETUP_LOGGING( "IncidenceEventCoordinator" )
 

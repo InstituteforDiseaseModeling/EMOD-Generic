@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "IncidenceEventCoordinator.h"
 #include "BroadcasterObserver.h"
-#include "EventTriggerCoordinator.h"
 #include "ISurveillanceReporting.h"
 
 namespace Kernel

@@ -11,10 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "ConcurrencyParameters.h"
 #include "Log.h"
-//#include "Debug.h"
-//#include "Environment.h"
-//#include "RANDOM.h"
-//#include "Properties.h"
 
 SETUP_LOGGING( "RelationshipType" )
 

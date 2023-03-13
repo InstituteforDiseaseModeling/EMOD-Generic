@@ -171,7 +171,7 @@ namespace Kernel
         for( int irel = 0 ; irel < RelationshipType::COUNT ; irel++ )
         {
             RelationshipType::Enum rel_type = (RelationshipType::Enum)irel ;
-            const char* p_rel_type_str = RelationshipType::pairs::lookup_key( irel );
+            std::string p_rel_type_str = p_node_sti->GetRelationshipName( irel );
 
             std::stringstream line_before ;
             line_before << pNC->GetTime().time  << ","

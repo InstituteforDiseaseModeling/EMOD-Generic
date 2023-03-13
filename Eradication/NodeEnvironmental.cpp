@@ -20,7 +20,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContextHost.h"
 #include "ISimulationContext.h"
 #include "SimulationEventContext.h"
-#include "EventTriggerNode.h"
 #include "Infection.h"
 
 SETUP_LOGGING( "NodeEnvironmental" )

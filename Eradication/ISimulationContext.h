@@ -34,6 +34,7 @@ namespace Kernel
 
         // parameters
         virtual const SimParams* GetParams() const = 0;
+        virtual const std::vector<std::string> GetRelationshipTypes() const = 0;
 
         // time services
         virtual const IdmDateTime& GetSimulationTime() const = 0;

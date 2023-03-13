@@ -10,10 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 #include "NodeEnvironmental.h"
 #include "IndividualTyphoid.h"
-#include "TyphoidDefs.h"
 #include "TyphoidInterventionsContainer.h"
-#include <iostream>
-#include <list>
 
 class ReportTyphoid;
 

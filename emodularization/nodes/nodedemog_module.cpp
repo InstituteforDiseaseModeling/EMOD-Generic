@@ -169,6 +169,7 @@ namespace Test {
 
             virtual const DemographicsContext* GetDemographicsContext() const override { return demographics_factory->CreateDemographicsContext(); }
             virtual const SimParams* GetParams() const override { return nullptr; }
+            virtual const std::vector<std::string> GetRelationshipTypes() const override { return std::vector<std::string>(); }
 
             // time services
             virtual const IdmDateTime& GetSimulationTime() const override

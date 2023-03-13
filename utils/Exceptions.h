@@ -78,7 +78,7 @@ namespace Kernel {
     class IDMAPI BadEnumInSwitchStatementException: public DetailedException
     {
     public:
-        BadEnumInSwitchStatementException( const char* file_name, int line_num, const char* function_name, const char* var_name, int bad_value, const char* as_string );
+        BadEnumInSwitchStatementException( const char* file_name, int line_num, const char* function_name, const char* var_name, int bad_value, std::string as_string );
     };
 
     // This is to be used when a map is searched for a key that is believed

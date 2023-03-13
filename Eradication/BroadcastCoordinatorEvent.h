@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "EventCoordinator.h"
 #include "Configure.h"
-#include "EventTriggerCoordinator.h"
 
 namespace Kernel
 {

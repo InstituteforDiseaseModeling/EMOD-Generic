@@ -23,7 +23,6 @@ namespace Kernel
         : IncidenceCounter()
         , m_CounterPeriod( 0 ) 
         , m_CounterPeriod_current( 0 )
-        , m_CounterType( CounterType::PERIODIC )
         , m_CounterEventType( EventType::INDIVIDUAL )
         , m_TriggerConditionListIndividual()
         , m_TriggerConditionListNode()
@@ -61,7 +60,6 @@ namespace Kernel
     bool IncidenceCounterSurveillance::Configure( const Configuration * inputJson )
     {
         initConfig( "Counter_Event_Type", m_CounterEventType, inputJson, MetadataDescriptor::Enum("Counter_Event_Type", ICS_Counter_Event_Type_DESC_TEXT, MDD_ENUM_ARGS(EventType)) );
-        initConfig( "Counter_Type", m_CounterType, inputJson, MetadataDescriptor::Enum("Counter_Type", ICS_Counter_Type_DESC_TEXT, MDD_ENUM_ARGS(CounterType) ) ) ;
         initConfigTypeMap( "Counter_Period", &m_CounterPeriod, ICS_Counter_Period_DESC_TEXT, 1.0f, 1000.0f, 1.0f );        
 
         bool retValue = IncidenceCounter::Configure( inputJson );
@@ -156,7 +154,7 @@ namespace Kernel
             if( std::find( m_TriggerConditionListIndividual.begin(), m_TriggerConditionListIndividual.end(), ect ) != m_TriggerConditionList.end() )
             {
                 pNEC->GetIndividualEventBroadcaster()->RegisterObserver( this, ect );
-                LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", eventAsString  );
+                LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", eventAsString.c_str()  );
             }
         }
     }
@@ -170,7 +168,7 @@ namespace Kernel
             if( std::find( m_TriggerConditionListIndividual.begin(), m_TriggerConditionListIndividual.end(), ect ) != m_TriggerConditionList.end() )
             {
                 pNEC->GetIndividualEventBroadcaster()->UnregisterObserver( this, ect );
-                LOG_INFO_F( "Unregistered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                LOG_INFO_F( "Unregistered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
             }
         }
     }
@@ -184,14 +182,14 @@ namespace Kernel
                 for( EventTrigger::Enum& ect : m_TriggerConditionListNode )
                 {
                     context->GetNodeEventBroadcaster()->RegisterObserver( this, ect );
-                    LOG_INFO_F( "Registered Start_Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                    LOG_INFO_F( "Registered Start_Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                 }
                 for( EventTrigger::Enum& ect : m_PercentageEventsToCountNode )
                 {
                     if( !Find( m_TriggerConditionListNode, ect ) )
                     {
                         context->GetNodeEventBroadcaster()->RegisterObserver( this, ect );
-                        LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                        LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                     }
                 }
                 break;
@@ -201,14 +199,14 @@ namespace Kernel
                 for( EventTriggerCoordinator& ect : m_TriggerConditionListCoordinator )
                 {
                     context->GetCoordinatorEventBroadcaster()->RegisterObserver( this, ect );
-                    LOG_INFO_F( "Registered Start_Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                    LOG_INFO_F( "Registered Start_Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                 }
                 for( EventTriggerCoordinator& ect : m_PercentageEventsToCountCoordinator )
                 {
                     if( !Find( m_TriggerConditionListCoordinator, ect ) )
                     {
                         context->GetCoordinatorEventBroadcaster()->RegisterObserver( this, ect );
-                        LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                        LOG_INFO_F( "Registered Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                     }
                 }
                 break;
@@ -226,14 +224,14 @@ namespace Kernel
                 for( EventTriggerNode& ect : m_TriggerConditionListNode )
                 {
                     context->GetNodeEventBroadcaster()->UnregisterObserver( this, ect );
-                    LOG_INFO_F( "Unregister Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                    LOG_INFO_F( "Unregister Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                 }
                 for( EventTriggerNode& ect : m_PercentageEventsToCountNode )
                 {
                     if( !Find( m_TriggerConditionListNode, ect ) )
                     {
                         context->GetNodeEventBroadcaster()->UnregisterObserver( this, ect );
-                        LOG_INFO_F( "Unregister Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                        LOG_INFO_F( "Unregister Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                     }
                 }
                 break;
@@ -244,14 +242,14 @@ namespace Kernel
                 {
                     context->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, ect );
                     //LOG_INFO_F( "Unregister Trigger: %s\n", ect.c_str() );
-                    LOG_INFO_F( "Unregister Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                    LOG_INFO_F( "Unregister Trigger: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                 }
                 for( EventTriggerCoordinator& ect : m_PercentageEventsToCountCoordinator )
                 {
                     if( !Find( m_TriggerConditionListCoordinator, ect ) )
                     {
                         context->GetCoordinatorEventBroadcaster()->UnregisterObserver( this, ect );
-                        LOG_INFO_F( "Unregister Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ) );
+                        LOG_INFO_F( "Unregister Percentage_Events_To_Count: %s\n", EventTrigger::pairs::lookup_key( ect ).c_str() );
                     }
                 }
                 break;
@@ -262,7 +260,7 @@ namespace Kernel
 
     bool IncidenceCounterSurveillance::notifyOnEvent( IIndividualHumanEventContext *pEntity, const EventTrigger::Enum& trigger )
     {
-        LOG_INFO_F( "notifyOnEvent received: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+        LOG_INFO_F( "notifyOnEvent received: %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
         if ( m_NodePropertyRestrictions.Qualifies(pEntity->GetNodeEventContext()->GetNodeContext()->GetNodeProperties() ) &&
             m_DemographicRestrictions.IsQualified(pEntity) &&
             !IsDoneCounting() )
@@ -275,7 +273,7 @@ namespace Kernel
             if( std::find( m_TriggerConditionList.begin(), m_TriggerConditionList.end(), trigger ) != m_TriggerConditionList.end() )
             {
                 ++m_Count;
-                LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", eventAsStr, m_Count );
+                LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", eventAsStr.c_str(), m_Count );
             }
         }
         return true;
@@ -283,7 +281,7 @@ namespace Kernel
 
     bool IncidenceCounterSurveillance::notifyOnEvent( INodeEventContext *pEntity, const EventTrigger::Enum& trigger )
     {
-        LOG_INFO_F( "notifyOnEvent received: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+        LOG_INFO_F( "notifyOnEvent received: %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
         if ( m_NodePropertyRestrictions.Qualifies( pEntity->GetNodeContext()->GetNodeProperties() ) &&
             !IsDoneCounting() )
         {
@@ -294,7 +292,7 @@ namespace Kernel
             if( Find( m_TriggerConditionListNode, trigger ) )
             {
                 ++m_Count;
-                LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", EventTrigger::pairs::lookup_key( trigger ), m_Count );
+                LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", EventTrigger::pairs::lookup_key( trigger ).c_str(), m_Count );
             }
         }
         return true;
@@ -302,7 +300,7 @@ namespace Kernel
 
     bool IncidenceCounterSurveillance::notifyOnEvent( IEventCoordinatorEventContext *pEntity, const EventTrigger::Enum& trigger )
     {
-        LOG_INFO_F(" notifyOnEvent received: %s,  %s\n", pEntity->GetName().c_str(), EventTrigger::pairs::lookup_key( trigger ));
+        LOG_INFO_F(" notifyOnEvent received: %s,  %s\n", pEntity->GetName().c_str(), EventTrigger::pairs::lookup_key( trigger ).c_str());
         if( Find( m_PercentageEventsToCountCoordinator, trigger ) )
         {
             ++m_PercentageEventsCounted;
@@ -310,7 +308,7 @@ namespace Kernel
         if( Find( m_TriggerConditionListCoordinator, trigger ) )
         {
             ++m_Count;
-            LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", EventTrigger::pairs::lookup_key( trigger ), m_Count );
+            LOG_INFO_F( "notifyOnEvent received: %s   m_Count: %d\n", EventTrigger::pairs::lookup_key( trigger ).c_str(), m_Count );
         }
         return true;
     }

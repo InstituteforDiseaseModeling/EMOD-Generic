@@ -743,7 +743,7 @@ namespace Kernel
                 }
                 release_assert(type < RelationshipType::COUNT);
 
-                LOG_DEBUG_F( "%s: individual %d joining %s PFA.\n", __FUNCTION__, suid.data, RelationshipType::pairs::lookup_key(type) );
+                LOG_DEBUG_F( "%s: individual %d joining %s PFA.\n", __FUNCTION__, suid.data, RelationshipType::pairs::lookup_key(type).c_str() );
 
                 society->GetPFA(RelationshipType::Enum(type))->AddIndividual(this);
                 ++queued_relationships[type] ;
@@ -1251,7 +1251,7 @@ namespace Kernel
         {
             if (queued_relationships[type] > 0)
             {
-                LOG_DEBUG_F( "%s: individual %lu is in %s PFA - removing.\n", __FUNCTION__, suid.data, RelationshipType::pairs::lookup_key(type) );
+                LOG_DEBUG_F( "%s: individual %lu is in %s PFA - removing.\n", __FUNCTION__, suid.data, RelationshipType::pairs::lookup_key(type).c_str() );
                 society->GetPFA(RelationshipType::Enum(type))->RemoveIndividual(this);
                 queued_relationships[type] = 0;
             }

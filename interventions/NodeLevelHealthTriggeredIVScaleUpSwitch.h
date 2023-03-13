@@ -9,20 +9,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <string>
-#include <list>
-#include <vector>
-
 #include "NodeLevelHealthTriggeredIV.h"
 #include "InterpolatedValueMap.h"
+#include "InterventionEnums.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(ScaleUpProfile,
-        ENUM_VALUE_SPEC(Immediate       , 1)
-        ENUM_VALUE_SPEC(Linear          , 2)
-        ENUM_VALUE_SPEC(InterpolationMap, 3))
-
     class NodeLevelHealthTriggeredIVScaleUpSwitch : public NodeLevelHealthTriggeredIV
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, NodeLevelHealthTriggeredIVScaleUpSwitch, INodeDistributableIntervention)

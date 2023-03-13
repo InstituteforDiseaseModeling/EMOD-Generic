@@ -95,7 +95,7 @@ namespace Kernel
 
         CalculateDelay();
 
-        LOG_DEBUG_F("Drew %0.2f remaining delay days in %s.\n", float(remaining_delay_days), DistributionFunction::pairs::lookup_key(delay_distribution->GetType()));
+        LOG_DEBUG_F("Drew %0.2f remaining delay days in %s.\n", float(remaining_delay_days), DistributionFunction::pairs::lookup_key(delay_distribution->GetType()).c_str());
         return true;
     }
 
@@ -103,7 +103,7 @@ namespace Kernel
     DelayedIntervention::CalculateDelay()
     {
         remaining_delay_days = delay_distribution->Calculate( parent->GetRng() );
-        LOG_DEBUG_F("Drew %0.2f remaining delay days in %s.\n", float(remaining_delay_days), DistributionFunction::pairs::lookup_key(delay_distribution->GetType()));
+        LOG_DEBUG_F("Drew %0.2f remaining delay days in %s.\n", float(remaining_delay_days), DistributionFunction::pairs::lookup_key(delay_distribution->GetType()).c_str());
     }
 
     DelayedIntervention::DelayedIntervention()

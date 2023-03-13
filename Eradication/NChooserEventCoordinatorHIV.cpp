@@ -77,7 +77,7 @@ namespace Kernel
                       (state == TargetedDiseaseState::Not_Have_Intervention)  ) &&
                     (m_HasInterventionName == "") )
                 {
-                    const char* state_name = TargetedDiseaseState::pairs::lookup_key( state );
+                    const char* state_name = TargetedDiseaseState::pairs::lookup_key(state).c_str();
                     throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
                         "Target_Disease_State", state_name,
                         "Target_Disease_State_Has_Intervention_Name", "<empty>", 

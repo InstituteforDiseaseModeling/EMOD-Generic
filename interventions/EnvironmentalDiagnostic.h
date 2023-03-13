@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionFactory.h"
 #include "Interventions.h"
 #include "INodeContext.h"
-#include "EventTriggerNode.h"
 
 namespace Kernel
 {

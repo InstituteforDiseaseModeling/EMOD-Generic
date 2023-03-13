@@ -150,7 +150,7 @@ namespace Kernel
             if( pFunc )
             {
                 // pass individual id ONLY
-                PyObject* vars   = Py_BuildValue( "ls", GetSuid().data, TransmissionRoute::pairs::lookup_key(route) );
+                PyObject* vars   = Py_BuildValue( "ls", GetSuid().data, TransmissionRoute::pairs::lookup_key(route).c_str() );
                 PyObject* retVal = PyObject_CallObject( pFunc, vars );
 
                 if( retVal == nullptr )
@@ -166,7 +166,7 @@ namespace Kernel
                 release_assert( transmissionGroupMembershipByRoute.find( route ) != transmissionGroupMembershipByRoute.end() );
                 if( val > 0 )
                 {
-                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, TransmissionRoute::pairs::lookup_key(route), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
+                    LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", val, TransmissionRoute::pairs::lookup_key(route).c_str(), tmp_strainID.GetCladeID(), tmp_strainID.GetGeneticID());
                     parent->DepositFromIndividual( tmp_strainID, (float) val, transmissionGroupMembershipByRoute.at( route ) );
                 }
 

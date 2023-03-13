@@ -208,7 +208,7 @@ namespace Kernel
 
         LOG_DEBUG("groups added.\n");
 
-        VectorSamplingType::Enum vector_sampling_type = GetParams()->vector_sampling_type;
+        VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_sampling_type;
         if ( (vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_NUMBER || vector_sampling_type == VectorSamplingType::VECTOR_COMPARTMENTS_PERCENT) &&
               GetParams()->number_clades > 1 && GetTotalGenomes() > 1 )
         {
@@ -227,7 +227,7 @@ namespace Kernel
                 "number_clades > 1 and number_genomes > 1",
                 err_msg.str().c_str(),
                 "vector_sampling_type",
-                VectorSamplingType::pairs::lookup_key( vector_sampling_type )
+                VectorSamplingType::pairs::lookup_key(vector_sampling_type).c_str()
             );
         }
 
@@ -394,7 +394,7 @@ namespace Kernel
             LOG_WARN_F("Node suid value is %d\n", _id); // EAW: throw exception?
             return;
         }
-        VectorSamplingType::Enum vector_sampling_type = GetParams()->vector_sampling_type;
+        VectorSamplingType::Enum vector_sampling_type = GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_sampling_type;
 
         for( auto& vector_species_name : GET_CONFIGURABLE( SimulationConfig )->vector_params->vector_species_names )
         {
@@ -547,14 +547,14 @@ namespace Kernel
         VectorHabitatList_t::iterator it = std::find_if( habitats.begin(), habitats.end(), [type](IVectorHabitat* entry){ return entry->GetVectorHabitatType() == type; } );
         if ( it != habitats.end() )
         { 
-            LOG_DEBUG_F( "%s: Found larval habitat with type = %s\n", __FUNCTION__, VectorHabitatType::pairs::lookup_key( type ) );
+            LOG_DEBUG_F( "%s: Found larval habitat with type = %s\n", __FUNCTION__, VectorHabitatType::pairs::lookup_key( type ).c_str() );
             habitat = *it;
         }
         else
         {
             release_assert( inputJson != nullptr );
 
-            LOG_DEBUG_F( "%s: Creating new larval habitat with type %s for species %s.\n", __FUNCTION__, VectorHabitatType::pairs::lookup_key( type ), species.c_str() );
+            LOG_DEBUG_F( "%s: Creating new larval habitat with type %s for species %s.\n", __FUNCTION__, VectorHabitatType::pairs::lookup_key( type ).c_str(), species.c_str() );
             habitat = VectorHabitat::CreateHabitat( type, inputJson );
             // Previous code used push_front() but the habitats were updated in VectorPopulation which kept a list
             // populated with push_back() so we'll use push_back() to maintain the same order of update.
@@ -667,6 +667,11 @@ namespace Kernel
     INodeVector* NodeVector::GetNodeVector()
     {
         return static_cast<INodeVector*>(this);
+    }
+
+    std::string NodeVector::GetHabitatName(int habitat_enum_val)
+    {
+        return VectorHabitatType::pairs::lookup_key(habitat_enum_val);
     }
 
     float NodeVector::GetTotalContagion( void )

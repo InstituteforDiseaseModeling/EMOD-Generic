@@ -107,7 +107,7 @@ namespace Kernel
     {
         if ( ClimateConfig::GetClimateParams()->climate_structure == ClimateStructure::CLIMATE_OFF )
         {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", SimType::pairs::lookup_key(GetParams()->sim_type) );
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Climate_Model", "ClimateStructure::CLIMATE_OFF", "Simulation_Type", SimType::pairs::lookup_key(GetParams()->sim_type).c_str() );
         }
 
         return Simulation::ValidateConfiguration(config);

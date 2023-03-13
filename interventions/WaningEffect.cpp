@@ -126,7 +126,7 @@ namespace Kernel
         // User specifing NOT_INITIALIZED after requesting distribution is an error
         if(m_enable_box_dist && box_dist_funct==WEBoxDist::NOT_INITIALIZED)
         {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Enable_Box_Duration_Distribution", static_cast<float>(m_enable_box_dist), "Box_Duration_Distribution", WEBoxDist::pairs::lookup_key(box_dist_funct));
+            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Enable_Box_Duration_Distribution", static_cast<float>(m_enable_box_dist), "Box_Duration_Distribution", WEBoxDist::pairs::lookup_key(box_dist_funct).c_str());
         }
 
         // Initial_Effect is always consumed (for backward compatability); not used with distribution, so non-default (non-zero) value is an error

@@ -10,18 +10,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "AntiTBDrug.h"
+#include "InterventionEnums.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(TBHIVConfigurabeDrugState,
-        ENUM_VALUE_SPEC(ActiveMDR, 0)
-        ENUM_VALUE_SPEC(LatentMDR, 1)
-        ENUM_VALUE_SPEC(ActiveHIVPosOffART, 2)
-        ENUM_VALUE_SPEC(LatentHIVPosOffART, 3)
-        ENUM_VALUE_SPEC(ActiveHIVNegorPosOnART, 4)
-        ENUM_VALUE_SPEC(LatentHIVNegorPosOnART, 5)
-        ENUM_VALUE_SPEC(TBHIVCONFIGURABLEDRUGSTATECOUNT, 6))
-
     class TBHIVConfigurableTBdrug : public AntiTBDrug
     {
         DECLARE_FACTORY_REGISTERED(InterventionFactory, TBHIVConfigurableTBdrug, IDistributableIntervention);

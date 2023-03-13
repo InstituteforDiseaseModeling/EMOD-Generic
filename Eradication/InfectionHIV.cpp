@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Interventions.h"
 #include "RANDOM.h"
 #include "Exceptions.h"
+#include "ConfigParams.h"
 #include "IndividualEventContext.h"
 #include "IIndividualHumanHIV.h"
 #include "HIVInterventionsContainer.h"
@@ -54,15 +55,6 @@ namespace Kernel
     bool InfectionHIVConfig::Configure( const Configuration * config )
     {
         LOG_DEBUG("Configure\n");
-
-        // HIV infections use Base Infectivity as the mean of a log normal distribution with Heterogeneous_Infectiousness_LogNormal_Scale as the sigma parameter.
-        // Use of m_hetero_infectivity_multiplier should be removed before enabling Base Infectivity from a distribution.
-        if( JsonConfigurable::_dryrun == false && InfectionConfig::infectivity_distribution->GetType() != DistributionFunction::CONSTANT_DISTRIBUTION )
-        {
-            std::ostringstream msg;
-            msg << "Base_Infectivity_Distribution other than CONSTANT_DISTRIBUTION not currently supported for HIV infections.";
-            throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, msg.str().c_str() );
-        }
 
         //read in configs here   
         initConfigTypeMap( "Acute_Duration_In_Months", &acute_duration_in_months, Acute_Duration_In_Months_DESC_TEXT, 0.0f, 5.0f, 2.9f, "Simulation_Type", "HIV_SIM, TBHIV_SIM");
@@ -252,7 +244,7 @@ namespace Kernel
 
         total_duration = HIV_duration_until_mortality_without_TB;
         // now we have 3 variables doing the same thing?
-        infectiousness = InfectionConfig::infectivity_distribution->Calculate( GetParent()->GetRng() );
+        infectiousness = parent->GetParams()->infectivity_distribution->Calculate( GetParent()->GetRng() );
         StateChange    = InfectionStateChange::None;
     }
 
@@ -272,7 +264,7 @@ namespace Kernel
         if (duration >= GetPrognosis() )
         {
             StateChange = InfectionStateChange::Fatal;
-            LOG_DEBUG_F( "Individual %d just died of HIV in stage %s with CD4 count of %f.\n", parent->GetSuid().data, HIVInfectionStage::pairs::lookup_key(m_infection_stage), hiv_parent->GetHIVSusceptibility()->GetCD4count() );
+            LOG_DEBUG_F( "Individual %d just died of HIV in stage %s with CD4 count of %f.\n", parent->GetSuid().data, HIVInfectionStage::pairs::lookup_key(m_infection_stage).c_str(), hiv_parent->GetHIVSusceptibility()->GetCD4count() );
         }
         else if ( ( m_infection_stage == HIVInfectionStage::ACUTE || m_infection_stage == HIVInfectionStage::LATENT ) && duration >= m_acute_duration+m_latent_duration )
         {

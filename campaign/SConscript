@@ -6,6 +6,7 @@
 Import("env")
 
 campaignSrcFiles = ["EventCoordinator.cpp",
+                    'InterventionEnums.cpp',
                     "InterventionFactory.cpp",
                     "Interventions.cpp",
                     "NodeSetAll.cpp",

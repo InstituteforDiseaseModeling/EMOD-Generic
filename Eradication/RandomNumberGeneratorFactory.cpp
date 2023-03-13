@@ -70,8 +70,8 @@ namespace Kernel
                 (m_RngType == RandomNumberGeneratorType::USE_LINEAR_CONGRUENTIAL) )
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                        "Random_Number_Generator_Type", RandomNumberGeneratorType::pairs::lookup_key( m_RngType ),
-                                                        "Random_Number_Generator_Policy", RandomNumberGeneratorPolicy::pairs::lookup_key( m_Policy ),
+                                                        "Random_Number_Generator_Type", RandomNumberGeneratorType::pairs::lookup_key(m_RngType).c_str(),
+                                                        "Random_Number_Generator_Policy", RandomNumberGeneratorPolicy::pairs::lookup_key(m_Policy).c_str(),
                                                         "\n'Random_Number_Generator_Policy' must be 'ONE_PER_CORE' when using 'Random_Number_Generator_Type' = 'USE_LINEAR_CONGRUENTIAL'." );
             }
 
@@ -81,7 +81,7 @@ namespace Kernel
             {
                 throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
                                                         "Allow_NodeID_Zero", 1,
-                                                        "Random_Number_Generator_Policy", RandomNumberGeneratorPolicy::pairs::lookup_key( m_Policy ),
+                                                        "Random_Number_Generator_Policy", RandomNumberGeneratorPolicy::pairs::lookup_key(m_Policy).c_str(),
                                                         "\n'Random_Number_Generator_Policy' must be 'ONE_PER_CORE' when using 'Allow_NodeID_Zero' = 1." );
             }
 
@@ -141,7 +141,7 @@ namespace Kernel
             default:
                 throw BadEnumInSwitchStatementException( __FILE__, __LINE__, __FUNCTION__, "m_RngType", m_RngType, "RandomNumberGeneratorType" );
         }
-        LOG_INFO_F( "Using %s random number generator.\n", RandomNumberGeneratorType::pairs::lookup_key( m_RngType ) );
+        LOG_INFO_F( "Using %s random number generator.\n", RandomNumberGeneratorType::pairs::lookup_key( m_RngType ).c_str() );
         return p_rng;
     }
 

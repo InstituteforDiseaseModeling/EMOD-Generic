@@ -10,11 +10,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "NodeTyphoidEventContext.h"
-#include "TyphoidDefs.h"
 #include "IWaningEffect.h"
 #include "Interventions.h"
 #include "InterventionFactory.h"
-#include "SimulationEnums.h"
 
 namespace Kernel
 {

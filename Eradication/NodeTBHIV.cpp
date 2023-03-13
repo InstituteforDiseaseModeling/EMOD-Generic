@@ -113,7 +113,7 @@ namespace Kernel
             if (p_human_co->HasLatentInfection())
             {
                 // order of logging matters (for SFTs). Keep this before function call.
-                LOG_VALID_F( "%s: Individual %lu has event %s.\n", __FUNCTION__, context->GetSuid().data, EventTrigger::pairs::lookup_key( trigger ) );
+                LOG_VALID_F( "%s: Individual %lu has event %s.\n", __FUNCTION__, context->GetSuid().data, EventTrigger::pairs::lookup_key( trigger ).c_str() );
                 p_human_co->LifeCourseLatencyUpdateAll();
             }
         }

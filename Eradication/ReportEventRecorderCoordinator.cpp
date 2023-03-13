@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IdmDateTime.h"
 #include "EventCoordinator.h"
 #include "SimulationEventContext.h"
-#include "EventTriggerCoordinator.h"
 
 SETUP_LOGGING( "ReportEventRecorderCoordinator" )
 

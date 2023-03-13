@@ -14,20 +14,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     class TargetedDistributionHIV;
-    //struct IIndividualHumanEventContext;
     struct IIndividualHumanSTI;
     struct IIndividualHumanHIV;
     struct IHIVMedicalHistory;
-
-    ENUM_DEFINE(TargetedDiseaseState,
-        ENUM_VALUE_SPEC( HIV_Positive               , 1) 
-        ENUM_VALUE_SPEC( HIV_Negative               , 2) 
-        ENUM_VALUE_SPEC( Tested_Positive            , 3) 
-        ENUM_VALUE_SPEC( Tested_Negative            , 4)
-        ENUM_VALUE_SPEC( Male_Circumcision_Positive , 5)
-        ENUM_VALUE_SPEC( Male_Circumcision_Negative , 6)
-        ENUM_VALUE_SPEC( Has_Intervention           , 7)
-        ENUM_VALUE_SPEC( Not_Have_Intervention      , 8))
 
     // ------------------------------------------------------------------------
     // --- DiseaseQualificationsHIV

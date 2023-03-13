@@ -89,7 +89,7 @@ namespace Kernel
         
         if( negative_diagnosis_event != EventTrigger::NoTrigger )
         {
-            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ), iid );
+            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ).c_str(), iid );
             broadcastEvent( negative_diagnosis_event );
         }
         else

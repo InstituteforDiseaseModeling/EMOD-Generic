@@ -119,8 +119,8 @@ namespace Kernel
             stiCoInfection_B = sti_B->HasSTICoInfection();
         }
 
-        const char* gender_A = Gender::pairs::lookup_key( ih_A->GetGender() );
-        const char* gender_B = Gender::pairs::lookup_key( ih_B->GetGender() );
+        std::string gender_A = Gender::pairs::lookup_key( ih_A->GetGender() );
+        std::string gender_B = Gender::pairs::lookup_key( ih_B->GetGender() );
 
         line << time << ','                             // Time
              << node_id << ','                          // Node_ID

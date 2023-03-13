@@ -9,16 +9,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 #include "Configure.h"
-#include "EnumSupport.h"
+#include "SimulationEnums.h"
 #include <deque>
 #include <vector>
 
 using namespace Kernel;
-
-ENUM_DEFINE(SerializationType,
-    ENUM_VALUE_SPEC(NONE, 0)
-    ENUM_VALUE_SPEC(TIME, 1)
-    ENUM_VALUE_SPEC(TIMESTEP, 2))
 
 class SerializationTimeCalc : public JsonConfigurable
 {

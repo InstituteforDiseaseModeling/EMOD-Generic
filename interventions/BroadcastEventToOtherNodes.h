@@ -14,15 +14,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Interventions.h"
 #include "EventTrigger.h"
 #include "INodeInfo.h"
-#include "EnumSupport.h"
+#include "InterventionEnums.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(NodeSelectionType,                   // Select the nodes to send the event to based on:
-        ENUM_VALUE_SPEC(DISTANCE_ONLY, 0)            // - the distance between the nodes - uses latitude and longitude of the nodes
-        ENUM_VALUE_SPEC(MIGRATION_NODES_ONLY, 1)     // - whether the node of interest is reachable via LOCAL or REGIONAL human migration (i.e. in the files)
-        ENUM_VALUE_SPEC(DISTANCE_AND_MIGRATION, 2))  // - the node must be reachable and within the given distance
-
     // This intervention is used to broadcast an event to all of the individuals in other nodes.
     // For example, if an individual in the current node is detected to have malaria, one could use
     // this intervention to send the event to the surrounding nodes so that the people in those

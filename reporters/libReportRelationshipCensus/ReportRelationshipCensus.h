@@ -22,6 +22,7 @@ namespace Kernel
 
         // BaseEventReport
         virtual bool Configure( const Configuration* ) override;
+        virtual bool Validate(const ISimulationContext*) override;
 
         virtual void UpdateEventRegistration( float currentTime, 
                                               float dt, 
@@ -45,5 +46,6 @@ namespace Kernel
         float m_IntervalTimerDays;
         bool m_IsCollectingData;
         bool m_FirstDataCollection;
+        std::vector<std::string> m_RelationshipTypes;
     };
 }

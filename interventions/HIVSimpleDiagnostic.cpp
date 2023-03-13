@@ -125,7 +125,7 @@ namespace Kernel
 
         if( negative_diagnosis_event != EventTrigger::NoTrigger )
         {
-            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ), iid );
+            LOG_DEBUG_F( "Broadcasting event %s as negative diagnosis event for individual %d.\n", EventTrigger::pairs::lookup_key( negative_diagnosis_event ).c_str(), iid );
             broadcastEvent( negative_diagnosis_event );
         }
         else
@@ -183,10 +183,10 @@ namespace Kernel
 
         // True positive (sensitivity), or False positive (1-specificity)
 
-        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
+        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ).c_str() );
         return applySensitivityAndSpecificity(infected);
 #else
-        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
+        LOG_DEBUG_F( "HIVSimpleDiagnostic is broadcasting +ve event: %s.\n", EventTrigger::pairs::lookup_key( positive_diagnosis_event ).c_str() );
         return SimpleDiagnostic::positiveTestResult();
 #endif
 

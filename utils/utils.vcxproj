@@ -106,6 +106,7 @@
     <ClCompile Include="Distributions.cpp" />
     <ClCompile Include="DistributionsConfigurable.cpp" />
     <ClCompile Include="Environment.cpp" />
+    <ClCompile Include="EventTrigger.cpp" />
     <ClCompile Include="Exceptions.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="IArchive.cpp" />
@@ -160,8 +161,6 @@
     <ClInclude Include="..\rapidjson\include\rapidjson\reader.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\stringbuffer.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\writer.h" />
-    <ClInclude Include="BaseEventTrigger.h" />
-    <ClInclude Include="BaseEventTriggerTemplates.h" />
     <ClInclude Include="BasePropertiesTemplates.h" />
     <ClInclude Include="BinaryArchiveReader.h" />
     <ClInclude Include="BinaryArchiveWriter.h" />
@@ -175,8 +174,6 @@
     <ClInclude Include="EnumSupport.h" />
     <ClInclude Include="Environment.h" />
     <ClInclude Include="EventTrigger.h" />
-    <ClInclude Include="EventTriggerCoordinator.h" />
-    <ClInclude Include="EventTriggerNode.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="ExternalNodeId.h" />
     <ClInclude Include="FactorySupport.h" />

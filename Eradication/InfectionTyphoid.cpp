@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "SusceptibilityTyphoid.h"
 #include "IndividualTyphoid.h"
 #include "InterventionsContainer.h"
-#include "TyphoidDefs.h"
 #include "Environment.h"
 #include "Debug.h"
 

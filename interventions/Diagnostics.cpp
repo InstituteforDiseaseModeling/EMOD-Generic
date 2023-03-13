@@ -165,7 +165,7 @@ namespace Kernel
         }
 
         parent = context->GetParent();
-        LOG_DEBUG_F( "Individual %d is getting tested and positive_diagnosis_event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
+        LOG_DEBUG_F( "Individual %d is getting tested and positive_diagnosis_event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ).c_str() );
 
         // Positive test result and distribute immediately if days_to_diagnosis <=0
         if ( positiveTestResult() )
@@ -254,7 +254,7 @@ namespace Kernel
         if( event != EventTrigger::NoTrigger )
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
-            LOG_DEBUG_F( "SimpleDiagnostic broadcasting event = %s.\n", EventTrigger::pairs::lookup_key( event ) );
+            LOG_DEBUG_F( "SimpleDiagnostic broadcasting event = %s.\n", EventTrigger::pairs::lookup_key( event ).c_str() );
             broadcaster->TriggerObservers( parent->GetEventContext(), event );
         }
     }
@@ -267,7 +267,7 @@ namespace Kernel
     void SimpleDiagnostic::positiveTestDistribute()
     {
         release_assert( parent );
-        LOG_DEBUG_F( "Individual %d tested 'positive' in SimpleDiagnostic, receiving actual intervention: event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ) );
+        LOG_DEBUG_F( "Individual %d tested 'positive' in SimpleDiagnostic, receiving actual intervention: event = %s.\n", parent->GetSuid().data, EventTrigger::pairs::lookup_key( positive_diagnosis_event ).c_str() );
 
         // Next alternative is that we were configured to broadcast a raw event string. In which case the value will not
         // the "uninitialized" value.

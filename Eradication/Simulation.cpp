@@ -280,7 +280,7 @@ namespace Kernel
                                                                  && cp->climate_structure != ClimateStructure::CLIMATE_CONSTANT )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Enable_Demographics_Builtin", demographics_factory->GetEnableDemographicsBuiltin(),
-                                                                                      "Climate_Model", ClimateStructure::pairs::lookup_key(cp->climate_structure));
+                                                                                      "Climate_Model", ClimateStructure::pairs::lookup_key(cp->climate_structure).c_str());
         }
 
         if( mp->enable_mig_family && !CanSupportFamilyTrips() )
@@ -301,8 +301,8 @@ namespace Kernel
             (np->ind_sampling_type != IndSamplingType::FIXED_SAMPLING) )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
-                                                    "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(np->ind_sampling_type),
-                                                    "Simulation_Type", SimType::pairs::lookup_key(sp->sim_type),
+                                                    "Individual_Sampling_Type", IndSamplingType::pairs::lookup_key(np->ind_sampling_type).c_str(),
+                                                    "Simulation_Type", SimType::pairs::lookup_key(sp->sim_type).c_str(),
                                                     "Relationship-based transmission network only works with 100% sampling.");
         }
 
@@ -608,10 +608,10 @@ namespace Kernel
         }
 
         ReportInstantiatorMap report_instantiator_map ;
-        DllLoader dllLoader(SimType::pairs::lookup_key(GetParams()->sim_type));
+        DllLoader dllLoader(SimType::pairs::lookup_key(GetParams()->sim_type).c_str());
         if( !dllLoader.LoadReportDlls( report_instantiator_map ) )
         {
-            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(GetParams()->sim_type), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
+            LOG_WARN_F("Failed to load reporter emodules for SimType: %s from path: %s\n" , SimType::pairs::lookup_key(GetParams()->sim_type).c_str(), dllLoader.GetEModulePath(REPORTER_EMODULES).c_str());
         }
         Reports_Instantiate( report_instantiator_map );
     }
@@ -1125,7 +1125,7 @@ namespace Kernel
             DllLoader dllLoader;
             if (!dllLoader.LoadInterventionDlls())
             {
-                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(GetParams()->sim_type), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
+                LOG_WARN_F("Failed to load intervention emodules for SimType: %s from path: %s\n", SimType::pairs::lookup_key(GetParams()->sim_type).c_str(), dllLoader.GetEModulePath(INTERVENTION_EMODULES).c_str());
             }
 #endif
 
@@ -1428,6 +1428,11 @@ namespace Kernel
     const SimParams* Simulation::GetParams() const
     {
         return SimConfig::GetSimParams();
+    }
+
+    const std::vector<std::string> Simulation::GetRelationshipTypes() const
+    {
+        return RelationshipType::pairs::get_keys();
     }
 
     const DemographicsContext* Simulation::GetDemographicsContext() const

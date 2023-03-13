@@ -9,13 +9,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <string>
-#include <map>
-
 #include "ISupports.h"
 #include "NodeEventContext.h"
 #include "NodeEventContextHost.h"
-#include "TyphoidDefs.h"
 #include "TyphoidInterventionsContainer.h"
 #include "Types.h"
 

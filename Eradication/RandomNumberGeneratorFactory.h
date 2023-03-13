@@ -10,21 +10,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "Configure.h"
+#include "SimulationEnums.h"
 #include "ExternalNodeId.h"
 
 namespace Kernel
 {
     class RANDOMBASE;
-
-    ENUM_DEFINE(RandomNumberGeneratorType, 
-        ENUM_VALUE_SPEC(USE_PSEUDO_DES          , 0)
-        ENUM_VALUE_SPEC(USE_LINEAR_CONGRUENTIAL , 1)
-        ENUM_VALUE_SPEC(USE_AES_COUNTER         , 2))
-
-    ENUM_DEFINE(RandomNumberGeneratorPolicy, 
-        ENUM_VALUE_SPEC(ONE_PER_CORE       , 0)
-        ENUM_VALUE_SPEC(ONE_PER_NODE       , 1))
-      //ENUM_VALUE_SPEC(ONE_PER_INDIVIDUAL , 2))
 
     class RandomNumberGeneratorFactory : public JsonConfigurable, public ISerializable
     {

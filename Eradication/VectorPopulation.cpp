@@ -1047,13 +1047,13 @@ namespace Kernel
         else
         {
             LOG_DEBUG_F("Creating new '%s' VectorCohort with population %d for type: %s, %s, %s, pesticide-resistance: %s-%s, HEG: %s-%s. \n", species_ID.c_str(), pvc->GetPopulation(),
-                VectorGender::pairs::lookup_key(    pvc->GetVectorGenetics().GetGender() ),
-                VectorSterility::pairs::lookup_key( pvc->GetVectorGenetics().GetSterility() ),
-                VectorWolbachia::pairs::lookup_key( pvc->GetVectorGenetics().GetWolbachia() ),
-                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetPesticideResistance().first ),
-                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetPesticideResistance().second ),
-                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetHEG().first ),
-                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetHEG().second ) );
+                VectorGender::pairs::lookup_key(    pvc->GetVectorGenetics().GetGender() ).c_str(),
+                VectorSterility::pairs::lookup_key( pvc->GetVectorGenetics().GetSterility() ).c_str(),
+                VectorWolbachia::pairs::lookup_key( pvc->GetVectorGenetics().GetWolbachia() ).c_str(),
+                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetPesticideResistance().first ).c_str(),
+                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetPesticideResistance().second ).c_str(),
+                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetHEG().first ).c_str(),
+                VectorAllele::pairs::lookup_key(    pvc->GetVectorGenetics().GetHEG().second ).c_str() );
 
             queues.push_back( pvc );
         }
@@ -1088,13 +1088,13 @@ namespace Kernel
         else
         {
             LOG_DEBUG_F( "Creating new '%s' VectorCohort with population %d for type: %s, %s, %s, pesticide-resistance: %s-%s, HEG: %s-%s. \n", species_ID.c_str(), pvc->GetPopulation(),
-                         VectorGender::pairs::lookup_key( pvc->GetVectorGenetics().GetGender() ),
-                         VectorSterility::pairs::lookup_key( pvc->GetVectorGenetics().GetSterility() ),
-                         VectorWolbachia::pairs::lookup_key( pvc->GetVectorGenetics().GetWolbachia() ),
-                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetPesticideResistance().first ),
-                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetPesticideResistance().second ),
-                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetHEG().first ),
-                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetHEG().second ) );
+                         VectorGender::pairs::lookup_key( pvc->GetVectorGenetics().GetGender() ).c_str(),
+                         VectorSterility::pairs::lookup_key( pvc->GetVectorGenetics().GetSterility() ).c_str(),
+                         VectorWolbachia::pairs::lookup_key( pvc->GetVectorGenetics().GetWolbachia() ).c_str(),
+                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetPesticideResistance().first ).c_str(),
+                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetPesticideResistance().second ).c_str(),
+                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetHEG().first ).c_str(),
+                         VectorAllele::pairs::lookup_key( pvc->GetVectorGenetics().GetHEG().second ).c_str() );
 
             queues.push_back( pvc );
         }
@@ -1298,12 +1298,12 @@ namespace Kernel
         if ( itEggs != EggQueues.end() ) 
         { 
             (*itEggs)->SetPopulation( (*itEggs)->GetPopulation() + eggs_to_lay ); 
-            LOG_VALID_F( "Laying %d eggs into existing egg queue (index=%d, habitat=%s).\n", eggs_to_lay, vms_egg.GetIndex(), VectorHabitatType::pairs::lookup_key( habitat->GetVectorHabitatType() ) );
+            LOG_VALID_F( "Laying %d eggs into existing egg queue (index=%d, habitat=%s).\n", eggs_to_lay, vms_egg.GetIndex(), VectorHabitatType::pairs::lookup_key( habitat->GetVectorHabitatType() ).c_str() );
         }
         else
         {
             EggQueues.push_back( VectorCohortWithHabitat::CreateCohort( habitat, VectorStateEnum::STATE_EGG, 0, eggs_to_lay, vms_egg, &species_ID ) );
-            LOG_VALID_F( "Laying %d eggs and pushing into new egg queue (index=%d, habitat=%s).\n", eggs_to_lay, vms_egg.GetIndex(), VectorHabitatType::pairs::lookup_key( habitat->GetVectorHabitatType() ) );
+            LOG_VALID_F( "Laying %d eggs and pushing into new egg queue (index=%d, habitat=%s).\n", eggs_to_lay, vms_egg.GetIndex(), VectorHabitatType::pairs::lookup_key( habitat->GetVectorHabitatType() ).c_str() );
         }
 
         // Males larvae are produced in Update_Egg_Hatching in equal proportion to female hatching eggs
@@ -1546,7 +1546,7 @@ namespace Kernel
                     }
                     LOG_VALID_F( "localdensdephatchmod set to %f due to egg_hatch_density_dependence = %s, larval CC = %f, larval growth mod = %f, and configurable dought egg hatch delay factor = %f.\n",
                                  float( localdensdephatchmod ),
-                                 EggHatchDensityDependence::pairs::lookup_key( params()->vector_params->egg_hatch_density_dependence ),
+                                 EggHatchDensityDependence::pairs::lookup_key( params()->vector_params->egg_hatch_density_dependence ).c_str(),
                                  float( habitat->GetCurrentLarvalCapacity() ),
                                  float( habitat->GetLocalLarvalGrowthModifier() ),
                                  params()->vector_params->droughtEggHatchDelay
@@ -1692,13 +1692,13 @@ namespace Kernel
         }
 
         LOG_INFO_F( "We added %lu '%s' mosquitoes of type: %s, %s, %s, pesticide-resistance: %s-%s, HEG: %s-%s. \n", releasedNumber, species_ID.c_str(), 
-                    VectorGender::pairs::lookup_key(_vector_genetics.GetGender()), 
-                    VectorSterility::pairs::lookup_key(_vector_genetics.GetSterility()), 
-                    VectorWolbachia::pairs::lookup_key(_vector_genetics.GetWolbachia()), 
-                    VectorAllele::pairs::lookup_key(_vector_genetics.GetPesticideResistance().first), 
-                    VectorAllele::pairs::lookup_key(_vector_genetics.GetPesticideResistance().second), 
-                    VectorAllele::pairs::lookup_key(_vector_genetics.GetHEG().first), 
-                    VectorAllele::pairs::lookup_key(_vector_genetics.GetHEG().second) );
+                    VectorGender::pairs::lookup_key(_vector_genetics.GetGender()).c_str(), 
+                    VectorSterility::pairs::lookup_key(_vector_genetics.GetSterility()).c_str(), 
+                    VectorWolbachia::pairs::lookup_key(_vector_genetics.GetWolbachia()).c_str(), 
+                    VectorAllele::pairs::lookup_key(_vector_genetics.GetPesticideResistance().first).c_str(), 
+                    VectorAllele::pairs::lookup_key(_vector_genetics.GetPesticideResistance().second).c_str(), 
+                    VectorAllele::pairs::lookup_key(_vector_genetics.GetHEG().first).c_str(), 
+                    VectorAllele::pairs::lookup_key(_vector_genetics.GetHEG().second).c_str() );
     }
 
     void VectorPopulation::AddVectors_Adults( const VectorMatingStructure& _vector_genetics, uint32_t releasedNumber )

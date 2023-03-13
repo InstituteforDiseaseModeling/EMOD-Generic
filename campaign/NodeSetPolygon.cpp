@@ -27,7 +27,6 @@ namespace Kernel
     NodeSetPolygon::Configure(const Configuration * inputJson)
     {
         initConfigTypeMap( "Vertices", &vertices_raw, Node_Polygon_Vertices_DESC_TEXT );
-        initConfig( "Polygon_Format", polygon_format, inputJson, MetadataDescriptor::Enum("polygon_format", Node_Polygon_Format_DESC_TEXT, MDD_ENUM_ARGS(PolygonFormatType) ) );
         return JsonConfigurable::Configure( inputJson );
     }
 
@@ -104,25 +103,16 @@ namespace Kernel
         {
             // haven't parsed raw list yet.
             // Go through list and parse out.
-            if( polygon_format == PolygonFormatType::SHAPE )
-            {
-                parseEmodFormat();
-            }
-            // don't need else here because enum parser already catches such errors
+            parseEmodFormat();
         }
 
-        if( polygon_format == PolygonFormatType::SHAPE && nec->IsInPolygon( points_array, int(num_points) ) )
+        if(nec->IsInPolygon( points_array, int(num_points) ) )
         {
             LOG_INFO_F( "Node ID = %d is contained within intervention polygon\n", nec->GetId().data );
             return true;
         }
 
         LOG_DEBUG("Polygon apparently does not contain this node.\n");
-
-        /*else if( polygon_format == PolygonFormatType::GEOJSON && nec->IsInPolygon( poly ) )
-        {
-            return true;
-        }*/
         return false;
     }
 
@@ -132,16 +122,3 @@ namespace Kernel
         return dummy;
     }
 }
-
-#if 0
-namespace Kernel {
-    template<class Archive>
-    void serialize(Archive &ar, NodeSetPolygon& nodeset, const unsigned int v)
-    {
-        ar & vertices_raw;
-        //ar & points_array;
-        ar & num_points;
-        ar & polygon_format;
-    }
-}
-#endif

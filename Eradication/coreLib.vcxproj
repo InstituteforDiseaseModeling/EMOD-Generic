@@ -654,6 +654,7 @@
     <ClCompile Include="GenomeMarkers.cpp" />
     <ClCompile Include="GroupEventCoordinator.cpp" />
     <ClCompile Include="GroupEventCoordinatorHIV.cpp" />
+    <ClCompile Include="HIVEnums.cpp" />
     <ClCompile Include="HIVInterventionsContainer.cpp" />
     <ClCompile Include="HivObjectFactory.cpp" />
     <ClCompile Include="HIVRelationshipStartReporter.cpp" />
@@ -688,6 +689,7 @@
     <ClCompile Include="LoadBalanceScheme.cpp" />
     <ClCompile Include="MalariaAntibody.cpp" />
     <ClCompile Include="MalariaDrugTypeParameters.cpp" />
+    <ClCompile Include="MalariaEnums.cpp" />
     <ClCompile Include="MalariaInterventionsContainer.cpp" />
     <ClCompile Include="MasterInterventionsContainer.cpp" />
     <ClCompile Include="Migration.cpp" />
@@ -767,6 +769,7 @@
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="SimulationAirborne.cpp" />
     <ClCompile Include="SimulationConfig.cpp" />
+    <ClCompile Include="SimulationEnums.cpp" />
     <ClCompile Include="SimulationEnvironmental.cpp" />
     <ClCompile Include="SimulationEventContext.cpp" />
     <ClCompile Include="SimulationFactory.cpp" />
@@ -823,6 +826,7 @@
     <ClCompile Include="VectorCohort.cpp" />
     <ClCompile Include="VectorCohortIndividual.cpp" />
     <ClCompile Include="VectorCohortWithHabitat.cpp" />
+    <ClCompile Include="VectorEnums.cpp" />
     <ClCompile Include="VectorHabitat.cpp" />
     <ClCompile Include="VectorInterventionsContainer.cpp" />
     <ClCompile Include="VectorMatingStructure.cpp" />

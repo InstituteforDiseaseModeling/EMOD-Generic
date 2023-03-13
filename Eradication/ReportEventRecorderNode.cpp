@@ -14,7 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "NodeEventContext.h"
 #include "SimulationEventContext.h"
-#include "EventTriggerNode.h"
 #include "NodeProperties.h"
 #include "Properties.h"
 #include "IdmDateTime.h"

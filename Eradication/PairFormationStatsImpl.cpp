@@ -35,7 +35,7 @@ namespace Kernel
 
     void PairFormationStatsImpl::UpdateEligible( float age_in_days, int sex, RiskGroup::Enum risk_group, int delta )
     {
-        LOG_DEBUG_F("%s( %f, %d, %s, %d )\n", __FUNCTION__, age_in_days, sex, RiskGroup::pairs::lookup_key(risk_group), delta);
+        LOG_DEBUG_F("%s( %f, %d, %s, %d )\n", __FUNCTION__, age_in_days, sex, RiskGroup::pairs::lookup_key(risk_group).c_str(), delta);
         int agebin_index = parameters->BinIndexForAgeAndSex(age_in_days, sex);
         release_assert( (eligible_population.at(risk_group).at(sex)[agebin_index] + delta) >= 0 );
         eligible_population.at(risk_group).at(sex)[agebin_index] += delta;

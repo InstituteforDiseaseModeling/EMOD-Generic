@@ -37,14 +37,6 @@ namespace std
 
 namespace Kernel
 {
-    ENUM_DEFINE(GenderDataType,
-        ENUM_VALUE_SPEC(SAME_FOR_BOTH_GENDERS , 0)  // The one set of the data is used for both genders
-        ENUM_VALUE_SPEC(ONE_FOR_EACH_GENDER   , 1)) // There are two sets of data - one for each gender
-
-    ENUM_DEFINE(InterpolationType,
-        ENUM_VALUE_SPEC(LINEAR_INTERPOLATION , 0)  // Interpolate between ages - no extrapolation
-        ENUM_VALUE_SPEC(PIECEWISE_CONSTANT   , 1)) // Use the value if the age is greater than the current and less than the next
-
     // ---------------------------
     // --- MigrationRateData
     // ---------------------------

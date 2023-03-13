@@ -14,11 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    ENUM_DEFINE(ExtraRelationalFlagType,
-        ENUM_VALUE_SPEC(Independent , 0)
-        ENUM_VALUE_SPEC(Correlated  , 1)
-        ENUM_VALUE_SPEC(COUNT       , 2))
-
     class IDMAPI ConcurrencyByProperty : public JsonConfigurable
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()

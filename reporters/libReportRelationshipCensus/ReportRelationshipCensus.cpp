@@ -17,6 +17,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
 #include "IIndividualHumanSTI.h"
+#include "ISimulationContext.h"
 #include "IdmDateTime.h"
 #include "INodeContext.h"
 
@@ -90,6 +91,7 @@ namespace Kernel
         , m_IntervalTimerDays(0.0f)
         , m_IsCollectingData(false)
         , m_FirstDataCollection(true)
+        , m_RelationshipTypes()
     {
         // ------------------------------------------------------------------------------------------------
         // --- Since this report will be listening for events, it needs to increment its reference count
@@ -125,10 +127,13 @@ namespace Kernel
             }
         }
 
-        // Add events that you want to collect incidence data on
-        //eventTriggerList.push_back( IndividualEventTriggerType::pairs::lookup_key( IndividualEventTriggerType::Emigrating      ) );
-        
         return ret;
+    }
+
+    bool ReportRelationshipCensus::Validate(const ISimulationContext* parent_sim)
+    {
+        m_RelationshipTypes = parent_sim->GetRelationshipTypes();
+        return true;
     }
 
     void ReportRelationshipCensus::UpdateEventRegistration( float currentTime, 
@@ -176,19 +181,19 @@ namespace Kernel
         // last 6 months by type
         for( int i = 0; i < RelationshipType::COUNT; ++i )
         {
-            header << ',' << "NumRels_Last6Months_" << RelationshipType::pairs::get_keys()[ i ];
+            header << ',' << "NumRels_Last6Months_" << m_RelationshipTypes[ i ];
         }
 
         // active by type
         for( int i = 0; i < RelationshipType::COUNT; ++i )
         {
-            header << ',' << "NumRels_Active_" << RelationshipType::pairs::get_keys()[ i ];
+            header << ',' << "NumRels_Active_" << m_RelationshipTypes[ i ];
         }
 
         // last 12 months by type
         for( int i = 0; i < RelationshipType::COUNT; ++i )
         {
-            header << ',' << "NumRels_Last12Months_" << RelationshipType::pairs::get_keys()[ i ];
+            header << ',' << "NumRels_Last12Months_" << m_RelationshipTypes[ i ];
         }
 
         for( int itp = 0; itp < UNIQUE_PARTNER_TIME_PERIODS.size(); ++itp )
@@ -196,7 +201,7 @@ namespace Kernel
             for( int irel = 0; irel < RelationshipType::COUNT; ++irel )
             {
                 int num_months = int( UNIQUE_PARTNER_TIME_PERIODS[itp] / IDEALDAYSPERMONTH );
-                header << ',' << "NumUniquePartners_Last-" << num_months << "-Months_" << RelationshipType::pairs::get_keys()[ irel ];
+                header << ',' << "NumUniquePartners_Last-" << num_months << "-Months_" << m_RelationshipTypes[ irel ];
             }
         }
 

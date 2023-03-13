@@ -45,7 +45,7 @@ namespace Kernel
             //throw JsonTypeConfigurationException( __FILE__, __LINE__, __FUNCTION__, "HEG", (*inputJson)[key], e.GetMsg() );
             throw GeneralConfigurationException( __FILE__, __LINE__, __FUNCTION__, e.GetMsg() );
         }
-        LOG_INFO_F( "pesticideResistance = %s, HEG = %s\n", VectorAllele::pairs::lookup_key(pesticideResistance), VectorAllele::pairs::lookup_key(HEG) );
+        LOG_INFO_F( "pesticideResistance = %s, HEG = %s\n", VectorAllele::pairs::lookup_key(pesticideResistance).c_str(), VectorAllele::pairs::lookup_key(HEG).c_str() );
         delete pJson;
     }
 

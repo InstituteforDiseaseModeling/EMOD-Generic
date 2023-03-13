@@ -9,25 +9,12 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 #include "Configure.h"
-#include "EnumSupport.h"
+#include "SimulationEnums.h"
 #include <deque>
 #include <vector>
 #include <bitset>
 
 using namespace Kernel;
-
-ENUM_DEFINE( SerializationTypeRead,
-    ENUM_VALUE_SPEC( NONE, 0 )
-    ENUM_VALUE_SPEC( READ, 1 ) )
-
-ENUM_DEFINE( SerializationTypeWrite,
-    ENUM_VALUE_SPEC( NONE, 0 )
-    ENUM_VALUE_SPEC( TIME, 1 )
-    ENUM_VALUE_SPEC( TIMESTEP, 2 ) )
-
-ENUM_DEFINE( SerializationPrecision,
-    ENUM_VALUE_SPEC( REDUCED, 0 )
-    ENUM_VALUE_SPEC( FULL, 1 ) )
 
 typedef std::bitset<32> SerializationBitMask_t;
 

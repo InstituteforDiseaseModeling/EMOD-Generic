@@ -24,5 +24,7 @@ namespace Kernel
         virtual /*const?*/ IRelationshipManager* GetRelationshipManager() /*const?*/ = 0;
         virtual void GetGroupMembershipForIndividual_STI( const std::map<std::string, uint32_t>& properties, std::map< int, TransmissionGroupMembership_t>& membershipOut ) = 0;
         virtual ISociety* GetSociety() = 0;
+        virtual std::string GetRelationshipName(int) = 0;
+        virtual std::string GetRelationshipStateName(int) = 0;
     };
 }

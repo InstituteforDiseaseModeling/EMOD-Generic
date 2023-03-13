@@ -9,53 +9,133 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include "BoostLibWrapper.h"
-#include <string.h>
+#include <string>
+#include <vector>
+#include <algorithm>
 
-// (the ee_ prefix stands for "evil enum")
-#define ee_TO_STR(unused,data,elem) BOOST_PP_STRINGIZE(BOOST_PP_SEQ_ELEM(0,elem)) ,
-#define ee_ASSIGN_EXPLICIT_VALUE(unused, data, elem) BOOST_PP_SEQ_ELEM(0,elem) = BOOST_PP_SEQ_ELEM(1,elem) ,
-#define ee_GET_EXPLICIT_VALUE(unused, data, elem) BOOST_PP_SEQ_ELEM(1,elem) ,
 
-#define ENUM_DEFINE(enum_,elements)          \
-    namespace enum_ {\
-    enum Enum { BOOST_PP_SEQ_FOR_EACH(ee_ASSIGN_EXPLICIT_VALUE, ~, elements) };         \
-    struct pairs\
-    {\
-        static int count() { return BOOST_PP_SEQ_SIZE(elements); }\
-        \
-        static int lookup_value(const char * char_val) { return EnumSupport::lookup_enum_value(char_val, count(), get_values(), get_keys()); } \
-        static const int* get_values() { static const int values[] = { BOOST_PP_SEQ_FOR_EACH(ee_GET_EXPLICIT_VALUE,~,elements)}; return values; } \
-        \
-        static const char * lookup_key(int enum_val) { return EnumSupport::lookup_enum_name(int(enum_val), count(), get_values(), get_keys()); }   \
-        static const char ** get_keys() { static const char* strings[] = { BOOST_PP_SEQ_FOR_EACH(ee_TO_STR,~,elements) }; return strings; }\
-    };\
+// Substitution into declaration syntax
+#define ENUM_VALUE_SPEC(name, value)    name=value,
+
+// Declaration of enum and supporting functions for enum; goes in header
+#define ENUM_DECLARE(enum_name, elements)                                                          \
+    namespace enum_name                                                                            \
+    {                                                                                              \
+        enum Enum : int32_t                                                                        \
+        {                                                                                          \
+            elements                                                                               \
+        };                                                                                         \
+                                                                                                   \
+        class pairs                                                                                \
+        {                                                                                          \
+            private:                                                                               \
+                static bool                            enum_init;                                  \
+                static std::string                     arg_str;                                    \
+                                                                                                   \
+                static std::vector<std::string>        key_vec;                                    \
+                static std::vector<int>                val_vec;                                    \
+                                                                                                   \
+                static void                            pre_proc_enum();                            \
+                                                                                                   \
+            public:                                                                                \
+                static       int                       count();                                    \
+                static const std::vector<std::string>  get_keys();                                 \
+                static const std::vector<int>          get_values();                               \
+                static       std::string               lookup_key(int);                            \
+                static       int                       lookup_value(std::string);                  \
+        };                                                                                         \
     };
 
-    struct EnumSupport
-    {   
-        static const char* lookup_enum_name(int int_value, int total, const int *values, const char** strings)
-        {
-            for (int k = 0; k < total; k++)
-            {
-                if (values[k]==int_value)
-                    return strings[k];
-            }
+// Required 1 level of pass-through for correct pre-processor substitution; goes in object code
+#define ENUM_INITIALIZE(enum_name, elements)  ENUM_INITIALIZE_INTERNAL(enum_name, elements)
 
-            return nullptr;
-        }
-
-        static int lookup_enum_value(const char* char_value, int total, const int *values, const char** strings)
-        {
-            for (int k = 0; k < total; k++)
-            {
-                if (strcmp(strings[k], char_value) == 0)
-                    return values[k];
-            }
-
-            return -1;
-        }
+// Implementation of supporting functions for enum
+#define ENUM_INITIALIZE_INTERNAL(enum_name, ...)                                                   \
+    namespace enum_name                                                                            \
+    {                                                                                              \
+        bool         pairs::enum_init = false;                                                     \
+        std::string  pairs::arg_str(#__VA_ARGS__);                                                 \
+                                                                                                   \
+        std::vector<std::string>  pairs::key_vec;                                                  \
+        std::vector<int>          pairs::val_vec;                                                  \
+                                                                                                   \
+        void pairs::pre_proc_enum()                                                                \
+        {                                                                                          \
+            size_t pos      = 0;                                                                   \
+            auto   lamb_fun = [](unsigned char const c) { return std::isspace(c); };               \
+                                                                                                   \
+            while((pos = arg_str.find("=")) != std::string::npos)                                  \
+            {                                                                                      \
+                std::string kstr = arg_str.substr(0, pos);                                         \
+                kstr.erase(std::remove_if(kstr.begin(), kstr.end(), lamb_fun), kstr.end());        \
+                arg_str.erase(0, pos+1);                                                           \
+                key_vec.push_back(kstr);                                                           \
+                                                                                                   \
+                pos = arg_str.find(",");                                                           \
+                std::string val_str = arg_str.substr(0, pos);                                      \
+                arg_str.erase(0, pos+1);                                                           \
+                val_vec.push_back(std::stoi(val_str));                                             \
+            }                                                                                      \
+            enum_init = true;                                                                      \
+            return;                                                                                \
+        }                                                                                          \
+                                                                                                   \
+        int pairs::count()                                                                         \
+        {                                                                                          \
+            if(!enum_init)                                                                         \
+            {                                                                                      \
+                pre_proc_enum();                                                                   \
+            }                                                                                      \
+            return static_cast<int>(key_vec.size());                                               \
+        }                                                                                          \
+                                                                                                   \
+        const std::vector<std::string> pairs::get_keys()                                           \
+        {                                                                                          \
+            if(!enum_init)                                                                         \
+            {                                                                                      \
+                pre_proc_enum();                                                                   \
+            }                                                                                      \
+            return key_vec;                                                                        \
+        }                                                                                          \
+                                                                                                   \
+        const std::vector<int> pairs::get_values()                                                 \
+        {                                                                                          \
+            if(!enum_init)                                                                         \
+            {                                                                                      \
+                pre_proc_enum();                                                                   \
+            }                                                                                      \
+            return val_vec;                                                                        \
+        }                                                                                          \
+                                                                                                   \
+        std::string pairs::lookup_key(int enum_val)                                                \
+        {                                                                                          \
+            if(!enum_init)                                                                         \
+            {                                                                                      \
+                pre_proc_enum();                                                                   \
+            }                                                                                      \
+            for(size_t k1 = 0; k1 < key_vec.size(); k1++)                                          \
+            {                                                                                      \
+                if (val_vec[k1] == enum_val)                                                       \
+                {                                                                                  \
+                    return key_vec[k1];                                                            \
+                }                                                                                  \
+            }                                                                                      \
+            return "";                                                                             \
+        }                                                                                          \
+                                                                                                   \
+        int pairs::lookup_value(std::string enum_key)                                              \
+        {                                                                                          \
+            if(!enum_init)                                                                         \
+            {                                                                                      \
+                pre_proc_enum();                                                                   \
+            }                                                                                      \
+            for(size_t k1 = 0; k1 < key_vec.size(); k1++)                                          \
+            {                                                                                      \
+                if (key_vec[k1] == enum_key)                                                       \
+                {                                                                                  \
+                    return val_vec[k1];                                                            \
+                }                                                                                  \
+            }                                                                                      \
+            return -1;                                                                             \
+        }                                                                                          \
     };
-
-#define ENUM_VALUE(name) (name)
-#define ENUM_VALUE_SPEC(name, value) ((name)(value))

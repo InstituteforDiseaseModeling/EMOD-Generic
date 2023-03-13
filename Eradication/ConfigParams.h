@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Common.h"
 #include "Configure.h"
 #include "SimulationEnums.h"
+#include "IDistribution.h"
 #include "StrainIdentity.h"
 #include "TBHIVDrugTypeParameters.h"
 #include "VectorEnums.h"
@@ -34,6 +35,12 @@ namespace Kernel
     {
     public:
         AgentParams();
+
+        MortalityTimeCourse::Enum     mortality_time_course;
+
+        IDistribution*   infectious_distribution;
+        IDistribution*   incubation_distribution;
+        IDistribution*   infectivity_distribution;
 
         bool  enable_genome_dependent_infectivity;
         bool  enable_genome_mutation;
@@ -147,7 +154,6 @@ namespace Kernel
         DistributionType::Enum       age_init_dist_type;
         IndSamplingType::Enum        ind_sampling_type;
         DistributionType::Enum       initial_sus_dist_type;
-        VectorSamplingType::Enum     vector_sampling_type;
         VitalBirthDependence::Enum   vital_birth_dependence;
         VitalDeathDependence::Enum   vital_death_dependence;
 

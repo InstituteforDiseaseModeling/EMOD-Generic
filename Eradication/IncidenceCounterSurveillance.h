@@ -14,9 +14,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    ENUM_DEFINE(CounterType,
-        ENUM_VALUE_SPEC(PERIODIC, 1))
-
     class IncidenceCounterSurveillance 
         : public IncidenceCounter, public ICoordinatorEventObserver, public INodeEventObserver
     {
@@ -50,7 +47,6 @@ namespace Kernel
     private:
         float m_CounterPeriod;
         float m_CounterPeriod_current;
-        CounterType::Enum     m_CounterType;
         EventType::Enum       m_CounterEventType;
 
         std::vector<EventTrigger::Enum>             m_TriggerConditionListIndividual;

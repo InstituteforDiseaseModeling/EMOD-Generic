@@ -11,8 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "BroadcasterImpl.h"
 #include "EventTrigger.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 #include "Log.h"
 
 SETUP_LOGGING( "BroadcasterImpl" )

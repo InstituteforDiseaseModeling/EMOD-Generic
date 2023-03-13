@@ -37,12 +37,7 @@ namespace Kernel
     protected:
         friend class Infection;
 
-        static IDistribution* infectious_distribution;
-        static IDistribution* incubation_distribution;
-        static IDistribution* infectivity_distribution;
-
         static float base_mortality;
-        static MortalityTimeCourse::Enum                          mortality_time_course;                            // MORTALITY_TIME_COURSE
 
         GET_SCHEMA_STATIC_WRAPPER(InfectionConfig)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()

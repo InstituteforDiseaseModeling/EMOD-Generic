@@ -10,39 +10,48 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "BaseTextReportEvents.h"
+#include "EnumSupport.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(CD4_Stage,
-		ENUM_VALUE_SPEC(NA             , 0)  
-        ENUM_VALUE_SPEC(HIV_NEGATIVE   , 1) 
-        ENUM_VALUE_SPEC(CD4_UNDER_200  , 2) 
-        ENUM_VALUE_SPEC(CD4_200_TO_350 , 3) 
-        ENUM_VALUE_SPEC(CD4_350_TO_500 , 4)
-        ENUM_VALUE_SPEC(CD4_ABOVE_500  , 5)
-        ENUM_VALUE_SPEC(COUNT          , 6) )   // Needed for array initialization below
+    #define IDM_ENUMSPEC_CD4_Stage                                                       \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(HIV_NEGATIVE                                        , 1)         \
+        ENUM_VALUE_SPEC(CD4_UNDER_200                                       , 2)         \
+        ENUM_VALUE_SPEC(CD4_200_TO_350                                      , 3)         \
+        ENUM_VALUE_SPEC(CD4_350_TO_500                                      , 4)         \
+        ENUM_VALUE_SPEC(CD4_ABOVE_500                                       , 5)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 6)
+    ENUM_DECLARE(CD4_Stage, IDM_ENUMSPEC_CD4_Stage)
 
-	ENUM_DEFINE(ARTStatusLocal,
-	    ENUM_VALUE_SPEC(NA      ,    0)
-		ENUM_VALUE_SPEC(OFFART  ,    1)
-		ENUM_VALUE_SPEC(ONART   ,    2)
-		ENUM_VALUE_SPEC(COUNT   ,    3))
 
-     ENUM_DEFINE(TB_State, 
-	     ENUM_VALUE_SPEC(NA                     , 0)
-	     ENUM_VALUE_SPEC(Negative               , 1)
-	     ENUM_VALUE_SPEC(Latent                 , 2)
-	     ENUM_VALUE_SPEC(ActivePreSymptomatic   , 3)
-	     ENUM_VALUE_SPEC(ActiveSmearPos         , 4)
-	     ENUM_VALUE_SPEC(ActiveSmearNeg         , 5)
-	     ENUM_VALUE_SPEC(ActiveExtraPulm        , 6)
-         ENUM_VALUE_SPEC(COUNT                  , 7))
+    #define IDM_ENUMSPEC_ARTStatusLocal                                                  \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(OFFART                                              , 1)         \
+        ENUM_VALUE_SPEC(ONART                                               , 2)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 3)
+    ENUM_DECLARE(ARTStatusLocal, IDM_ENUMSPEC_ARTStatusLocal)
 
-     ENUM_DEFINE(MDR_State, 
-	     ENUM_VALUE_SPEC(NA                     , 0)
-	     ENUM_VALUE_SPEC(Negative               , 1)
-	     ENUM_VALUE_SPEC(MDR                    , 2)
-	     ENUM_VALUE_SPEC(COUNT                  , 3) )
+
+    #define IDM_ENUMSPEC_TB_State                                                        \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(Negative                                            , 1)         \
+        ENUM_VALUE_SPEC(Latent                                              , 2)         \
+        ENUM_VALUE_SPEC(ActivePreSymptomatic                                , 3)         \
+        ENUM_VALUE_SPEC(ActiveSmearPos                                      , 4)         \
+        ENUM_VALUE_SPEC(ActiveSmearNeg                                      , 5)         \
+        ENUM_VALUE_SPEC(ActiveExtraPulm                                     , 6)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 7)
+    ENUM_DECLARE(TB_State, IDM_ENUMSPEC_TB_State)
+
+
+    #define IDM_ENUMSPEC_MDR_State                                                       \
+        ENUM_VALUE_SPEC(NA                                                  , 0)         \
+        ENUM_VALUE_SPEC(Negative                                            , 1)         \
+        ENUM_VALUE_SPEC(MDR                                                 , 2)         \
+        ENUM_VALUE_SPEC(COUNT                                               , 3)
+    ENUM_DECLARE(MDR_State, IDM_ENUMSPEC_MDR_State)
+
 
     class Report_TBHIV_Basic : public BaseTextReportEvents
     {
@@ -77,21 +86,18 @@ namespace Kernel
         bool is_collecting_data;
 
         CD4_Stage::Enum ComputeCD4Stage(IIndividualHumanEventContext *context);
-		TB_State::Enum ComputeTBState(IIndividualHumanEventContext *context);
-		MDR_State::Enum ComputeMDRState(IIndividualHumanEventContext* context);
-		ARTStatusLocal::Enum ComputeARTStatus(IIndividualHumanEventContext* context);
+        TB_State::Enum ComputeTBState(IIndividualHumanEventContext *context);
+        MDR_State::Enum ComputeMDRState(IIndividualHumanEventContext* context);
+        ARTStatusLocal::Enum ComputeARTStatus(IIndividualHumanEventContext* context);
 
         //Care_Stage::Enum ComputeCareStage(IIndividualHumanEventContext *context);
 
         float Population[TB_State::Enum::COUNT][CD4_Stage::Enum::COUNT][MDR_State::COUNT][ARTStatusLocal::COUNT];      // CD4_Stage, Care_Stage --> Population
-		float DiseaseDeaths[TB_State::Enum::COUNT][CD4_Stage::Enum::COUNT][MDR_State::COUNT][ARTStatusLocal::COUNT];   
+        float DiseaseDeaths[TB_State::Enum::COUNT][CD4_Stage::Enum::COUNT][MDR_State::COUNT][ARTStatusLocal::COUNT];   
         float NonDiseaseDeaths;
-		float ARTDropouts[CD4_Stage::Enum::COUNT];
+        float ARTDropouts[CD4_Stage::Enum::COUNT];
         float ART_Initiations[CD4_Stage::Enum::COUNT];                          // CD4_Stage             --> ART initiations
         float New_Activations[CD4_Stage::Enum::COUNT][MDR_State::COUNT][ARTStatusLocal::COUNT];                                                  //                       --> Infections
         float New_TBDiagnoses[CD4_Stage::Enum::COUNT][MDR_State::COUNT][ARTStatusLocal::COUNT];  
-		//Treatment Initiations
-		//Treatment Prevalence
-	                                                                           
     };
 }

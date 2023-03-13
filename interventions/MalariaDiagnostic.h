@@ -9,19 +9,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <string>
-#include <list>
-#include <vector>
-
 #include "Diagnostics.h"
+#include "InterventionEnums.h"
 
 namespace Kernel
 {
-    ENUM_DEFINE(MalariaDiagnosticType,
-        ENUM_VALUE_SPEC(Microscopy       , 1)
-        ENUM_VALUE_SPEC(NewDetectionTech , 2)
-        ENUM_VALUE_SPEC(Other            , 3))
-
     class MalariaDiagnostic : public SimpleDiagnostic 
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()

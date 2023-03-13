@@ -17,11 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    // find a home for these...  TBEnums.h?
-    ENUM_DEFINE(TBInfectionDrugResistance,
-        ENUM_VALUE_SPEC(DrugSensitive           , 0)
-        ENUM_VALUE_SPEC(FirstLineResistant      , 1))
-
     class IIndividualHumanCoInfection;
 
     class IInfectionTB : public ISupports

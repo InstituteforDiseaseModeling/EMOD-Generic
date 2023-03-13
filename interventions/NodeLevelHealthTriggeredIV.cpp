@@ -301,7 +301,7 @@ namespace Kernel
 
         LOG_DEBUG_F("Individual %d experienced event %s, check to see if they pass the conditions before distributing actual_intervention \n",
                     pIndiv->GetInterventionsContext()->GetParent()->GetSuid().data,
-                    EventTrigger::pairs::lookup_key( trigger )
+                    EventTrigger::pairs::lookup_key( trigger ).c_str()
                    );
 
         bool distributed = false;

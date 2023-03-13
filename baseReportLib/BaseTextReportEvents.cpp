@@ -12,7 +12,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <string>
 #include "BaseTextReportEvents.h"
 #include "NodeEventContext.h"
-#include "EventTriggerCoordinator.h"
 
 SETUP_LOGGING( "BaseTextReportEvents" )
 

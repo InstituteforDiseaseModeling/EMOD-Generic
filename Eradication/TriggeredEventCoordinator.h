@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "StandardEventCoordinator.h"
 #include "BroadcasterObserver.h"
-#include "EventTriggerCoordinator.h"
 
 namespace Kernel
 {

@@ -78,6 +78,7 @@ utilsSrcFiles = [
     "DistributionFactory.cpp",
     "Distributions.cpp",
     "Environment.cpp",
+    "EventTrigger.cpp",
     "Exceptions.cpp",
     "FileSystem.cpp",
     "IArchive.cpp",

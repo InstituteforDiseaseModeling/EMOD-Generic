@@ -14,6 +14,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Common.h"
 #include "Sugar.h"
+#include "ConfigParams.h"
 #include "Environment.h"
 #include "Exceptions.h"
 #include "Log.h"
@@ -842,7 +843,7 @@ namespace Kernel
             // --- development of parasitologic and clinical immunity during primary infection." Am J Trop Med Hyg 61(1 Suppl): 4-19.
             // --- process start of asexual phase if the incubation period is over and there are still hepatocytes
             // ----------------------------------------------------------------------------------------------------------------------
-            float incubation_period = InfectionConfig::incubation_distribution->GetParam1();
+            float incubation_period = parent->GetParams()->incubation_distribution->GetParam1();
             if (m_asexual_phase == AsexualCycleStatus::NoAsexualCycle && duration >= incubation_period)
             {
                 m_IRBC_count.assign(CLONAL_PfEMP1_VARIANTS, 0);

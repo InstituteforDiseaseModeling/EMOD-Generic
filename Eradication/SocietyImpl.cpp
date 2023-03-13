@@ -211,7 +211,7 @@ namespace Kernel {
         {
             for( int irel = 0; irel < RelationshipType::COUNT; irel++ )
             {
-                pfa[ irel ]->Print( RelationshipType::pairs::lookup_key(irel) );
+                pfa[ irel ]->Print( RelationshipType::pairs::lookup_key(irel).c_str() );
             }
         }
     }

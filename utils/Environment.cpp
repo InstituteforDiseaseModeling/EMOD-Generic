@@ -19,8 +19,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "IdmMpi.h"
 #include "EventTrigger.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 #include "IdmString.h"
 
 #include <iso646.h>

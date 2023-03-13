@@ -9,8 +9,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 #include "InfectionEnvironmental.h"
-#include "TyphoidDefs.h" // for N_TYPHOID_SEROTYPES
-#include "Timers.h" // for N_TYPHOID_SEROTYPES
+#include "Timers.h"
 
 namespace Kernel
 {

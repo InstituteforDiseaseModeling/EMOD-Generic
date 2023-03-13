@@ -33,7 +33,7 @@ namespace Kernel
                 auto tvcs = inputJson->As< json::Object >()[ key ];
 
                 auto habitat_type_string = data->name;
-                VectorHabitatType::Enum habitat_type = (VectorHabitatType::Enum) VectorHabitatType::pairs::lookup_value( habitat_type_string.c_str() );
+                VectorHabitatType::Enum habitat_type = (VectorHabitatType::Enum) VectorHabitatType::pairs::lookup_value( habitat_type_string );
                 if( habitat_type == -1 )
                 {
                     std::stringstream msg;

@@ -9,13 +9,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <string>
-#include <list>
-#include <vector>
-
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
+#include "InterventionEnums.h"
 #include "VectorEnums.h"
 #include "Configure.h"
 #include "IWaningEffect.h"
@@ -24,18 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 namespace Kernel
 {
     struct IDistribution;
-
-    ENUM_DEFINE(SpaceSprayTarget,
-        ENUM_VALUE_SPEC(SpaceSpray_FemalesOnly       , 11)
-        ENUM_VALUE_SPEC(SpaceSpray_MalesOnly         , 12)
-        ENUM_VALUE_SPEC(SpaceSpray_FemalesAndMales   , 13)
-        ENUM_VALUE_SPEC(SpaceSpray_Indoor            , 14))
-
-    ENUM_DEFINE(ArtificialDietTarget,
-        //ENUM_VALUE_SPEC(AD_WithinHouse             , 20) // to be handled as individual rather than node-targeted intervention
-        ENUM_VALUE_SPEC(AD_WithinVillage             , 21)
-        ENUM_VALUE_SPEC(AD_OutsideVillage            , 22))
-
     class INodeVectorInterventionEffectsApply;
 
     class SimpleVectorControlNode : public BaseNodeIntervention

@@ -230,7 +230,7 @@ namespace Kernel
         }
         float ret = larval_reduction.GetMultiplier( vht, species );
 
-        LOG_DEBUG_F( "%s returning %f (habitat_query = %s)\n", __FUNCTION__, ret, VectorHabitatType::pairs::lookup_key( habitat_query ) );
+        LOG_DEBUG_F( "%s returning %f (habitat_query = %s)\n", __FUNCTION__, ret, VectorHabitatType::pairs::lookup_key( habitat_query ).c_str() );
         return ret;
     }
 

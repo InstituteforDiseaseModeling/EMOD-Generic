@@ -92,6 +92,7 @@
     <ClCompile Include="EventCoordinator.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
     </ClCompile>
+    <ClCompile Include="InterventionEnums.cpp" />
     <ClCompile Include="InterventionFactory.cpp" />
     <ClCompile Include="Interventions.cpp" />
     <ClCompile Include="NodeSetAll.cpp" />

@@ -144,7 +144,7 @@ namespace Kernel {
     {
         LOG_DEBUG_F( "Individual %d experienced event %s\n",
                      context->GetSuid().data,
-                     EventTrigger::pairs::lookup_key( trigger )
+                     EventTrigger::pairs::lookup_key( trigger ).c_str()
                    );
         IIndividualHumanHIV* hiv_individual = nullptr;
         if ( context->QueryInterface( GET_IID(IIndividualHumanHIV), (void**)&hiv_individual ) != s_OK )
@@ -235,7 +235,7 @@ namespace Kernel {
             }
             else
             {
-                LOG_DEBUG_F( "Un-handled event: %s\n", EventTrigger::pairs::lookup_key( trigger ) );
+                LOG_DEBUG_F( "Un-handled event: %s\n", EventTrigger::pairs::lookup_key( trigger ).c_str() );
             }
         }
 

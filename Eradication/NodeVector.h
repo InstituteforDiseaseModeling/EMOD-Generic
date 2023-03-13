@@ -64,6 +64,7 @@ namespace Kernel
         virtual void SetupMigration( IMigrationInfoFactory * migration_factory ) override;
         virtual void processImmigratingVector( IVectorCohort* immigrant ) override;
         void processEmigratingVectors( float dt );
+        virtual std::string GetHabitatName(int habitat_enum_val) override;
 
         virtual const VectorPopulationReportingList_t& GetVectorPopulationReporting() const override;
 

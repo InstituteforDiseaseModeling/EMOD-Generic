@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "stdafx.h"
 #include "ConfigParams.h"
+#include "DistributionFactory.h"
 
 
 
@@ -87,7 +88,11 @@ namespace Kernel
 
 
     AgentParams::AgentParams()
-        : enable_genome_dependent_infectivity(false)
+        : mortality_time_course(MortalityTimeCourse::DAILY_MORTALITY)
+        , infectious_distribution(nullptr)
+        , incubation_distribution(nullptr)
+        , infectivity_distribution(nullptr)
+        , enable_genome_dependent_infectivity(false)
         , enable_genome_mutation(false)
         , enable_label_infector(false)
         , enable_label_mutator(false)
@@ -171,7 +176,6 @@ namespace Kernel
         : age_init_dist_type(DistributionType::DISTRIBUTION_OFF)
         , ind_sampling_type(IndSamplingType::TRACK_ALL)
         , initial_sus_dist_type(DistributionType::DISTRIBUTION_OFF)
-        , vector_sampling_type(VectorSamplingType::TRACK_ALL_VECTORS)
         , vital_birth_dependence(VitalBirthDependence::FIXED_BIRTH_RATE)
         , vital_death_dependence(VitalDeathDependence::NONDISEASE_MORTALITY_BY_AGE_AND_GENDER)
         , enable_acquisition_heterogeneity(false)
@@ -371,6 +375,12 @@ namespace Kernel
 
     bool AgentConfig::Configure(const Configuration* config)
     {
+        // Local variables
+        DistributionFunction::Enum  incubation_period_function(DistributionFunction::NOT_INITIALIZED);
+        DistributionFunction::Enum  infectious_distribution_function(DistributionFunction::NOT_INITIALIZED);
+        DistributionFunction::Enum  infectivity_distribution_function(DistributionFunction::NOT_INITIALIZED);
+
+
         // Agent parameter dependencies
         const std::map<std::string, std::string> dset_agent00  {{"Simulation_Type","GENERIC_SIM"}};
         const std::map<std::string, std::string> dset_agent01  {{"Simulation_Type","GENERIC_SIM"},{"Enable_Strain_Tracking","1"}};
@@ -380,8 +390,19 @@ namespace Kernel
         const std::map<std::string, std::string> dset_agent05  {{"Simulation_Type","GENERIC_SIM"},{"Enable_Strain_Tracking","1"},{"Enable_Genome_Mutation","1"},{"Enable_Label_By_Mutator","1"}};
         const std::map<std::string, std::string> dset_agent06  {{"Simulation_Type","GENERIC_SIM"},{"Enable_Nonuniform_Shedding","1"}};
 
+        const std::map<std::string, std::string> dset_enums01  {{"Simulation_Type","GENERIC_SIM,STI_SIM,HIV_SIM,VECTOR_SIM,AIRBORNE_SIM,TBHIV_SIM,ENVIRONMENTAL_SIM,PY_SIM"}};
+        const std::map<std::string, std::string> dset_enums02  {{"Simulation_Type","GENERIC_SIM,STI_SIM,VECTOR_SIM,DENGUE_SIM,MALARIA_SIM,AIRBORNE_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,TYPHOID_SIM,PY_SIM"}};
+        const std::map<std::string, std::string> dset_enums03  {{"Simulation_Type","GENERIC_SIM,STI_SIM,VECTOR_SIM,AIRBORNE_SIM,ENVIRONMENTAL_SIM,POLIO_SIM,PY_SIM"}};
+        const std::map<std::string, std::string> dset_enums04  {{"Enable_Disease_Mortality","1"}};
+
 
         // Agent parameters
+        initConfig("Base_Infectivity_Distribution",   infectivity_distribution_function,    config,  MetadataDescriptor::Enum("Base_Infectivity_Distribution", Base_Infectivity_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),    nullptr, nullptr, &dset_enums01);
+        initConfig("Incubation_Period_Distribution",  incubation_period_function,           config,  MetadataDescriptor::Enum("Incubation_Period_Distribution", Incubation_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),  nullptr, nullptr, &dset_enums02);
+        initConfig("Infectious_Period_Distribution",  infectious_distribution_function,     config,  MetadataDescriptor::Enum("Infectious_Period_Distribution", Infectious_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),  nullptr, nullptr, &dset_enums03);
+
+        initConfig("Mortality_Time_Course",           agent_params.mortality_time_course,   config,  MetadataDescriptor::Enum("Mortality_Time_Course", Mortality_Time_Course_DESC_TEXT, MDD_ENUM_ARGS(MortalityTimeCourse)),                     nullptr, nullptr, &dset_enums04);
+
         initConfigTypeMap("Enable_Genome_Dependent_Infectivity",   &agent_params.enable_genome_dependent_infectivity,  Enable_Genome_Dependent_Infectivity_DESC_TEXT,     false,                    nullptr, nullptr, &dset_agent01);
         initConfigTypeMap("Enable_Genome_Mutation",                &agent_params.enable_genome_mutation,               Enable_Genome_Mutation_DESC_TEXT ,                 false,                    nullptr, nullptr, &dset_agent01);
         initConfigTypeMap("Enable_Label_By_Infector",              &agent_params.enable_label_infector,                Enable_Label_By_Infector_DESC_TEXT,                false,                    nullptr, nullptr, &dset_agent01);
@@ -398,6 +419,21 @@ namespace Kernel
 
         initConfigTypeMap("Genome_Infectivity_Multipliers",        &agent_params.genome_infectivity_multipliers,       Genome_Infectivity_Multipliers_DESC_TEXT,           0.0f,  FLT_MAX,  false,  nullptr, nullptr, &dset_agent03);
         initConfigTypeMap("Genome_Mutation_Rates",                 &agent_params.genome_mutation_rates,                Genome_Mutation_Rates_DESC_TEXT,                    0.0f,  FLT_MAX,  false,  nullptr, nullptr, &dset_agent04);
+
+
+        // Enums available before call to configure; distribution factory will add more parameters to configure
+        if(incubation_period_function        != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
+        {
+            agent_params.incubation_distribution  = DistributionFactory::CreateDistribution(this,  incubation_period_function,       "Incubation_Period", config);
+        }
+        if(infectious_distribution_function  != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
+        {
+            agent_params.infectious_distribution  = DistributionFactory::CreateDistribution(this,  infectious_distribution_function, "Infectious_Period", config);
+        } 
+        if(infectivity_distribution_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
+        {
+            agent_params.infectivity_distribution = DistributionFactory::CreateDistribution(this,  infectivity_distribution_function, "Base_Infectivity", config);
+        }
 
 
         // Process configuration
@@ -674,7 +710,6 @@ namespace Kernel
         initConfig("Death_Rate_Dependence",                            node_params.vital_death_dependence, config,  MetadataDescriptor::Enum("Death_Rate_Dependence",                           Death_Rate_Dependence_DESC_TEXT,                           MDD_ENUM_ARGS(VitalDeathDependence)),  nullptr,  nullptr,  &dset_death02);
         initConfig("Individual_Sampling_Type",                         node_params.ind_sampling_type,      config,  MetadataDescriptor::Enum("Individual_Sampling_Type",                        Individual_Sampling_Type_DESC_TEXT,                        MDD_ENUM_ARGS(IndSamplingType)));
         initConfig("Susceptibility_Initialization_Distribution_Type",  node_params.initial_sus_dist_type,  config,  MetadataDescriptor::Enum("Susceptibility_Initialization_Distribution_Type", Susceptibility_Initialization_Distribution_Type_DESC_TEXT, MDD_ENUM_ARGS(DistributionType)),      nullptr,  nullptr,  &dset_isus02);
-        initConfig("Vector_Sampling_Type",                             node_params.vector_sampling_type,   config,  MetadataDescriptor::Enum("Vector_Sampling_Type",                            Vector_Sampling_Type_DESC_TEXT,                            MDD_ENUM_ARGS(VectorSamplingType)),    nullptr,  nullptr,  &dset_vec01);
 
         initConfigTypeMap("Enable_Acquisition_Heterogeneity",             &node_params.enable_acquisition_heterogeneity,  Enable_Acquisition_Heterogeneity_DESC_TEXT,             false,  nullptr,  nullptr,  &dset_risk01);
         initConfigTypeMap("Enable_Birth",                                 &node_params.enable_birth,                      Enable_Birth_DESC_TEXT,                                 true,   nullptr,  nullptr,  &dset_birth01);

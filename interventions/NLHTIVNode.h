@@ -9,10 +9,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #pragma once
 
-#include <string>
-#include <list>
-#include <vector>
-
 #include "Interventions.h"
 #include "Configuration.h"
 #include "InterventionFactory.h"
@@ -20,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "NodeEventContext.h"
 #include "Configure.h"
 #include "PropertyRestrictions.h"
-#include "EventTriggerNode.h"
 
 namespace Kernel
 {

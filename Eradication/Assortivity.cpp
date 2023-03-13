@@ -119,7 +119,7 @@ namespace Kernel
                     std::stringstream ss ;
                     ss << RelationshipType::pairs::lookup_key( GetRelationshipType() ) << ":Group"; 
                     throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                                                            ss.str().c_str(), AssortivityGroup::pairs::lookup_key( GetGroup() ), 
+                                                            ss.str().c_str(), AssortivityGroup::pairs::lookup_key(GetGroup()).c_str(), 
                                                             "Simulation_Type", "other than STI_SIM",
                                                             "STI_INFECTION_STATUS is only valid with STI_SIM." );
                 }
@@ -146,7 +146,7 @@ namespace Kernel
                     detail << AssortivityGroup::pairs::lookup_key( GetGroup() ) << " is only valid with HIV_SIM.";
 
                     throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                                                            ss.str().c_str(), AssortivityGroup::pairs::lookup_key( GetGroup() ),
+                                                            ss.str().c_str(), AssortivityGroup::pairs::lookup_key(GetGroup()).c_str(),
                                                             "Simulation_Type", "other than HIV_SIM",
                                                             detail.str().c_str() );
                 }

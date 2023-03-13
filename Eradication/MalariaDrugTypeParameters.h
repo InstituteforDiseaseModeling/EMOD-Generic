@@ -16,17 +16,6 @@ namespace Kernel
     struct IStrainIdentity;
     struct IGenomeMarkers;
 
-    ENUM_DEFINE(MalariaDrugType,
-        ENUM_VALUE_SPEC(Artemisinin             , 1)
-        ENUM_VALUE_SPEC(Chloroquine             , 2)
-        ENUM_VALUE_SPEC(Quinine                 , 3)
-        ENUM_VALUE_SPEC(SP                      , 4)
-        ENUM_VALUE_SPEC(Primaquine              , 5)
-        ENUM_VALUE_SPEC(Artemether_Lumefantrine , 6)
-        ENUM_VALUE_SPEC(GenTransBlocking        , 7)
-        ENUM_VALUE_SPEC(GenPreerythrocytic      , 8)
-        ENUM_VALUE_SPEC(Tafenoquine             , 9))
-
     class DoseMap : public JsonConfigurable, public IComplexJsonConfigurable
     {
         // We need the following two lines because we inherit from JsonConfigurable

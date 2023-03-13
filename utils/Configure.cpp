@@ -17,8 +17,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Properties.h"
 #include "NodeProperties.h"
 #include "EventTrigger.h"
-#include "EventTriggerNode.h"
-#include "EventTriggerCoordinator.h"
 
 #ifndef WIN32
 #include <cxxabi.h>

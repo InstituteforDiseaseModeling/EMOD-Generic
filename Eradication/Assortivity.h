@@ -12,24 +12,11 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <vector>
 #include "IAssortivity.h"
 #include "IRelationship.h"
-#include "EnumSupport.h"
 #include "Properties.h"
 
 namespace Kernel 
 {
     class RANDOMBASE;
-
-    // The AssortivityGroup is used to specify the group of people that a person
-    // might have an affinity for or against.
-    ENUM_DEFINE(AssortivityGroup,
-        ENUM_VALUE_SPEC(NO_GROUP                   , 0)  // pair with the first person in the list
-        ENUM_VALUE_SPEC(STI_INFECTION_STATUS       , 1)  // pair with someone who is/isn't STI positive
-        ENUM_VALUE_SPEC(INDIVIDUAL_PROPERTY        , 2)  // pair with someone who has an individual property that you like
-        ENUM_VALUE_SPEC(STI_COINFECTION_STATUS     , 3)  // pair with someone who is/isn't STI Co-infected (only applies to HIV model)
-        ENUM_VALUE_SPEC(HIV_INFECTION_STATUS       , 4)  // pair with someone who is/isn't HIV positive (based on infectivity) (only applies to HIV model)
-        ENUM_VALUE_SPEC(HIV_TESTED_POSITIVE_STATUS , 5)  // pair with someone who is/isn't tested positive for HIV (only applies to HIV model)
-        ENUM_VALUE_SPEC(HIV_RECEIVED_RESULTS_STATUS, 6)) // pair with someone who has received similar HIV test results (only applies to HIV model)
-
 
     class IDMAPI Assortivity : public IAssortivity
     {
