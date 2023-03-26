@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include "IdmApi.h"
+#include "Debug.h"
 #include <string>
 #include <list>
 #include <vector>
@@ -165,42 +166,6 @@ protected:
         virtual int32_t AddRef() { return 1; }\
         virtual int32_t Release() { return 1; }
 
-    /*
-    // reference implementation, adapted from https://developer.mozilla.org/en/Implementing_QueryInterface#The_NS_GET_IID_macro
-
-    QueryResult
-        MyImplementation::QueryInterface( iid_t iid, void** ppinstance )
-    {
-        assert(ppinstance); // todo: add a real message: "QueryInterface requires a non-NULL destination!");
-
-        if ( !ppinstance )
-            return QueryResult.E_NULL_POINTER;
-
-        IUnknown* foundInterface;
-
-        if ( iid == TypeInfo<IX>::GetIID()) 
-            foundInterface = static_cast<IX*>(this);
-        else if ( iid == TypeInfo<IY>::GetIID()) )
-            foundInterface = static_cast<IY*>(this);
-         else if ( iid == TypeInfo<IUnknown>::GetIID()) )
-            foundInterface = static_cast<IUnknown*>(static_cast<IX*>(this));
-        else
-            foundInterface = 0;
-
-        QueryResult status;
-        if ( !foundInterface )
-            status = QueryResult.E_NOINTERFACE;
-        else
-        {
-            //foundInterface->AddRef();           // not implementing this yet!
-            status = QueryResult.S_OK;
-        }
-
-        *ppinstance = foundInterface;
-        return status;
-    }
-    */    
-
 
 ///////////////////////////////////////////////////////////////
 // testing out some nice ISupports helper macros 
@@ -209,7 +174,7 @@ protected:
 #define BEGIN_QUERY_INTERFACE_BODY(classname)\
     QueryResult classname::QueryInterface( iid_t iid, void** ppinstance )\
 {\
-    assert(ppinstance); /* TODO: add a real message: "QueryInterface requires a non-NULL destination!");*/\
+    release_assert(ppinstance); /* TODO: add a real message: "QueryInterface requires a non-NULL destination!");*/\
     \
     if ( !ppinstance )\
     return e_NULL_POINTER;\

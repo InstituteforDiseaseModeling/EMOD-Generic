@@ -8,6 +8,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
+#include <memory>
 #include "UnitTest++.h"
 #include "BaseEventReport.h"
 #include "NodeEventContext.h"

@@ -27,7 +27,6 @@ namespace Kernel
     ENUM_INITIALIZE(ModiferEquationType, IDM_ENUMSPEC_ModiferEquationType)
     ENUM_INITIALIZE(MortalityTimeCourse, IDM_ENUMSPEC_MortalityTimeCourse)
     ENUM_INITIALIZE(PKPDModel, IDM_ENUMSPEC_PKPDModel)
-    ENUM_INITIALIZE(RandomType, IDM_ENUMSPEC_RandomType)
     ENUM_INITIALIZE(RandomNumberGeneratorType, IDM_ENUMSPEC_RandomNumberGeneratorType)
     ENUM_INITIALIZE(RandomNumberGeneratorPolicy, IDM_ENUMSPEC_RandomNumberGeneratorPolicy)
     ENUM_INITIALIZE(MaternalProtectionType, IDM_ENUMSPEC_MaternalProtectionType)

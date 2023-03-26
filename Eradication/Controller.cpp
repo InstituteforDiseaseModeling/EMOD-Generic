@@ -14,8 +14,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <algorithm>
 #include <deque>
 #include <functional>
+#include <memory>
 
-#include "BoostLibWrapper.h"
 #include "FileSystem.h"
 #include "Debug.h"
 #include "Log.h"
@@ -47,14 +47,6 @@ using namespace Kernel;
 
 SETUP_LOGGING( "Controller" )
 
-typedef enum {
-    paused,
-    stepping,
-    stepping_and_reloading,
-    playing
-} tPlayback;
-
-tPlayback playback = playing;
 
 void CheckMissingParameters()
 {
@@ -71,9 +63,9 @@ void CheckMissingParameters()
     }
 }
 
+
 // Basic simulation main loop with reporting
-template <class SimulationT> 
-void RunSimulation(SimulationT &sim, int steps)
+template <class SimulationT> void RunSimulation(SimulationT &sim, int steps)
 {
     LOG_DEBUG( "RunSimulation\n" );
 
@@ -115,164 +107,9 @@ void RunSimulation(SimulationT &sim, int steps)
     }
 }
 
-// note: this version passes a branch_duration that counts only timesteps taken within itself
-// if branches have more complicated logic, we may want to put some of that outside.
-template <class SimulationT>
-void RunSimulation(SimulationT &sim, std::function<bool(SimulationT &, float)> termination_predicate)
-{
-    LOG_DEBUG( "RunSimulation\n" );
-
-    float branch_begin = sim.GetSimulationTime().time;
-
-    while(!termination_predicate(sim, (sim.GetSimulationTime().time-branch_begin)))
-    {
-        sim.Update();
-        EnvPtr->Log->Flush();
-
-        if(sim.TimeToStop())
-        {
-            break;
-        }
-    }
-}
-
-// ******** WARNING *********
-// ENTERING MASSIVE HACK ZONE 
-
-// this class mimics the interface of scoped_ptr but actually does nothing. 
-// its a quick hack to try ducking very expensive and unnecessary object cleanup associated 
-// runs that only instantiate one simulation and then exit...while keeping the code formally 
-// similar to a 'proper' implementation
-// this would all go away with more thoughtful use of allocators, and perhaps custom allocators
-// - in particular, scoping the allocation blocks for boost pool allocators around the simulation lifetimes would help
-
-template<class T>
-class MassivelyHackedLeakyPointer
-{
-public:
-    MassivelyHackedLeakyPointer(T* _ptr) : px(_ptr) {}
-
-    void reset(T * p = nullptr) // never throws
-    {
-        BOOST_ASSERT( p == nullptr || p != px ); // catch self-reset errors
-        px = p;
-    }
-
-    T & operator*() const // never throws
-    {
-        BOOST_ASSERT( px != nullptr );
-        return *px;
-    }
-
-    T * operator->() const // never throws
-    {
-        BOOST_ASSERT( px != nullptr );
-        return px;
-    }
-
-    T * get() const // never throws
-    {
-        return px;
-    }
-
-    bool operator==( MassivelyHackedLeakyPointer<T> const& o ) const { return o->px == px; }
-    bool operator==( T* const& o ) const { return o == px; }
-
-protected:
-    T * px;
-};
-
-template <class SimulationT>
-bool DefaultController::execute_internal()
-{
-    using namespace Kernel;
-    list<string> serialization_test_state_filenames;
-    //typedef Simulation SimulationT ;
-
-    LOG_INFO("DefaultController::Execute<>()...\n");
-
-    JsonConfigurable::_useDefaults = false;
-    JsonConfigurable::_track_missing = true;
-    SerializationParameters::GetInstance()->Configure(EnvPtr->Config);  // Has to be configured before CreateSimulation()
-    CheckMissingParameters();
-
-
-    // NB: BIG INTENTIONAL HACK
-    // the exact nature of pool allocators substantially helps communication performance BUT unwinding them all at the end can double the simulation runtime for a real production scenario.
-    // for processes that dont need to have more than one simulation in memory, its faster to just leak the whole object
-
-#ifdef _DEBUG
-    boost::scoped_ptr<SimulationT> sim(dynamic_cast<SimulationT*>(SimulationFactory::CreateSimulation())); // 30+ minutes to unwind a ~2gb simulation state if we do this. unacceptable for real work!
-#else
-#ifdef _DLLS_
-    ISimulation * sim = SimulationFactory::CreateSimulation(); 
-    release_assert(sim);
-#else
-    MassivelyHackedLeakyPointer<SimulationT> sim(dynamic_cast<SimulationT*>(SimulationFactory::CreateSimulation())); 
-
-    if (nullptr == sim.get())
-    {
-        throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "sim.get() returned NULL after call to CreateSimulation." );
-    }
-#endif
-#endif
-
-    if (EnvPtr->MPI.Rank==0) { ostringstream oss; oss << "Beginning Simulation...";  EnvPtr->getStatusReporter()->ReportStatus(oss.str()); }
-
-    // populate it
-    LOG_INFO("DefaultController populate simulation...\n");
-    if(sim->Populate())
-    {
-        CheckMissingParameters();
-        // now try to run it
-        // divide the simulation into stages according to requesting number of serialization test cycles
-        int simulation_steps = static_cast<int>( sim->GetParams()->sim_time_total / sim->GetParams()->sim_time_delta );
-
-#ifndef _DLLS_
-        int remaining_steps = simulation_steps;
-
-        for (int k= 0; remaining_steps > 0; k++)
-        {
-            int cycle_steps = min(remaining_steps, max(1, simulation_steps));
-            if (cycle_steps > 0)
-                RunSimulation(*sim, cycle_steps);
-
-            remaining_steps -= cycle_steps;
-        }
-#else
-        LOG_INFO( "Execute<> Calling RunSimulation.\n" );
-        RunSimulation(*sim, simulation_steps);
-#endif
-        sim->WriteReportsData();
-
-        if (EnvPtr->MPI.Rank==0)
-        {
-            LogTimeInfo lti;
-            EnvPtr->Log->GetLogInfo(lti);
-
-            ostringstream oss;
-            oss << "Done - " << lti.hours << ":" << setw(2) << setfill('0') << lti.mins << ":" << setw(2) << setfill('0') << lti.secs;
-            EnvPtr->getStatusReporter()->ReportStatus(oss.str());
-        }
-
-        // cleanup serialization test state files
-        for (auto& filename : serialization_test_state_filenames)
-        {
-            if( FileSystem::FileExists( filename ) )
-                FileSystem::RemoveFile( filename );
-        }
-
-        LOG_INFO_F( "Exiting %s\n", __FUNCTION__ );
-
-        return true;
-    }
-    
-    return false;
-}
 
 bool DefaultController::execute_internal()
 {
-
     using namespace Kernel;
     list<string> serialization_test_state_filenames;
 
@@ -284,17 +121,14 @@ bool DefaultController::execute_internal()
     CheckMissingParameters();
 
 #ifdef _DLLS_
-    ISimulation * sim = SimulationFactory::CreateSimulation(); 
+    ISimulation* sim = SimulationFactory::CreateSimulation(); 
     release_assert(sim);
 #else
-
-    boost::scoped_ptr<ISimulation> sim((SimulationFactory::CreateSimulation()));
-
-    if (nullptr == sim.get())
+    std::unique_ptr<ISimulation> sim(SimulationFactory::CreateSimulation());
+    if(!sim.get())
     {
         throw InitializationException( __FILE__, __LINE__, __FUNCTION__, "sim.get() returned NULL after call to CreateSimulation.\n" );
     }
-
 #endif // End of _DLLS_
 
     if (EnvPtr->MPI.Rank==0) { ostringstream oss; oss << "Beginning Simulation...";  EnvPtr->getStatusReporter()->ReportStatus(oss.str()); }
@@ -353,6 +187,7 @@ bool DefaultController::execute_internal()
     }
     return false;
 }
+
 
 bool DefaultController::Execute()
 {

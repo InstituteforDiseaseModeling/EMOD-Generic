@@ -7,6 +7,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
+#include <memory>
 #include "stdafx.h"
 #include "MpiDataExchanger.h"
 #include "BinaryArchiveWriter.h"

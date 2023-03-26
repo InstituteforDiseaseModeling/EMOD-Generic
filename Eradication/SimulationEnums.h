@@ -121,14 +121,6 @@ namespace Kernel
     ENUM_DECLARE(PKPDModel, IDM_ENUMSPEC_PKPDModel)
 
 
-    // ENUM defs for RANDOM_TYPE
-    #define IDM_ENUMSPEC_RandomType                                                      \
-        ENUM_VALUE_SPEC(USE_PSEUDO_DES                                      , 0)         \
-        ENUM_VALUE_SPEC(USE_LINEAR_CONGRUENTIAL                             , 1)         \
-        ENUM_VALUE_SPEC(USE_AES_COUNTER                                     , 2)
-    ENUM_DECLARE(RandomType, IDM_ENUMSPEC_RandomType)
-
-
     #define IDM_ENUMSPEC_RandomNumberGeneratorType                                       \
         ENUM_VALUE_SPEC(USE_PSEUDO_DES                                      , 0)         \
         ENUM_VALUE_SPEC(USE_LINEAR_CONGRUENTIAL                             , 1)         \
