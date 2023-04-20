@@ -215,7 +215,7 @@ void Report::postProcessAccumulatedData()
         normalizeChannel("Relative Humidity", float(_nrmSize));
         normalizeChannel("Rainfall", float(_nrmSize) * (1 / 1000.0f)); // multiply by 1000 to get result in mm/day
     }
-    normalizeChannel( _hum_infectious_res_label, float(_nrmSize) );
+
     normalizeChannel( _infection_rate_label, float(_nrmSize) );
 
     // add derived channels
