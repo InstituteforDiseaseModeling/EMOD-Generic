@@ -209,6 +209,7 @@ void SimulationConfig::VectorInitConfig( const Configuration* inputJson )
 
     // Value of lloffset is one-half of Node_Grid_Size ; store directly in lloffset and correct after configuration
     initConfigTypeMap( "Node_Grid_Size",                      &(vector_params->lloffset),                            Node_Grid_Size_DESC_TEXT, 0.004167f, 90.0f, 0.004167f );
+    initConfigTypeMap( "Mosquito_Weight",                     &(vector_params->mosquito_weight),                     Mosquito_Weight_DESC_TEXT,        1, 10000,         1, "Vector_Sampling_Type", "SAMPLE_IND_VECTORS");
 
     initConfigTypeMap( "Enable_Vector_Aging",                 &(vector_params->vector_aging),                        Enable_Vector_Aging_DESC_TEXT, false );
     initConfig( "Temperature_Dependent_Feeding_Cycle", vector_params->temperature_dependent_feeding_cycle, inputJson, MetadataDescriptor::Enum(Temperature_Dependent_Feeding_Cycle_DESC_TEXT, Temperature_Dependent_Feeding_Cycle_DESC_TEXT, MDD_ENUM_ARGS(TemperatureDependentFeedingCycle)) ); // vector pop only

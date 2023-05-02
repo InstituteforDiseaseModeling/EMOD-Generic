@@ -20,11 +20,7 @@ using namespace std;
 
 SETUP_LOGGING("FakeLogger")
 
-void
-FakeLogger::Log(
-    Logger::tLevel log_level,
-    const char* module,
-    const char* msg, ...)
+void FakeLogger::Log( Logger::tLevel log_level, const char* module, const char* msg, ...)
 {
     // Translate this variadically-constructed message into a single string for storage
     // Magic courtesy of http://www.cplusplus.com/forum/general/133535/

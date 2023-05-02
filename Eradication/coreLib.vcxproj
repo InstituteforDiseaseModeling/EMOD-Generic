@@ -290,7 +290,6 @@
     <ClInclude Include="ClimateKoppen.h" />
     <ClInclude Include="CommunityHealthWorkerEventCoordinator.h" />
     <ClInclude Include="ConcurrencyParameters.h" />
-    <ClInclude Include="ConfigParams.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="ControllerFactory.h" />
     <ClInclude Include="CoverageByNodeEventCoordinator.h" />
@@ -469,7 +468,6 @@
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="SimulationAirborne.h" />
     <ClInclude Include="SimulationConfig.h" />
-    <ClInclude Include="SimulationEnums.h" />
     <ClInclude Include="SimulationEnvironmental.h" />
     <ClInclude Include="SimulationEventContext.h" />
     <ClInclude Include="SimulationFactory.h" />
@@ -513,8 +511,6 @@
     <ClInclude Include="SusceptibilityTyphoid.h" />
     <ClInclude Include="SusceptibilityVector.h" />
     <ClInclude Include="TBContexts.h" />
-    <ClInclude Include="TBDrugTypeParameters.h" />
-    <ClInclude Include="TBHIVDrugTypeParameters.h" />
     <ClInclude Include="TBInterventionsContainer.h" />
     <ClInclude Include="TransmissionGroupMembership.h" />
     <ClInclude Include="TransmissionGroupsBase.h" />
@@ -639,7 +635,6 @@
     <ClCompile Include="ClimateKoppen.cpp" />
     <ClCompile Include="CommunityHealthWorkerEventCoordinator.cpp" />
     <ClCompile Include="ConcurrencyParameters.cpp" />
-    <ClCompile Include="ConfigParams.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="ControllerFactory.cpp" />
     <ClCompile Include="CoverageByNodeEventCoordinator.cpp" />
@@ -769,7 +764,6 @@
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="SimulationAirborne.cpp" />
     <ClCompile Include="SimulationConfig.cpp" />
-    <ClCompile Include="SimulationEnums.cpp" />
     <ClCompile Include="SimulationEnvironmental.cpp" />
     <ClCompile Include="SimulationEventContext.cpp" />
     <ClCompile Include="SimulationFactory.cpp" />
@@ -815,8 +809,6 @@
     <ClCompile Include="SusceptibilityTB.cpp" />
     <ClCompile Include="SusceptibilityTyphoid.cpp" />
     <ClCompile Include="SusceptibilityVector.cpp" />
-    <ClCompile Include="TBDrugTypeParameters.cpp" />
-    <ClCompile Include="TBHIVDrugTypeParameters.cpp" />
     <ClCompile Include="TBInterventionsContainer.cpp" />
     <ClCompile Include="TransmissionGroupsBase.cpp" />
     <ClCompile Include="TransmissionGroupsFactory.cpp" />

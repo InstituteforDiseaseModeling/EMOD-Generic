@@ -21,14 +21,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "INodeContext.h"
 #include "IdmDateTime.h"
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!! CREATING NEW REPORTS
-// !!! If you are creating a new report by copying this one, you will need to modify 
-// !!! the values below indicated by "<<<"
-
-// Name for logging, CustomReport.json, and DLL GetType()
-SETUP_LOGGING( "ReportVectorStats" ) // <<< Name of this file
-
 namespace Kernel
 {
 // ----------------------------------------

@@ -108,9 +108,6 @@
     <ClInclude Include="..\rapidjson\include\rapidjson\reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Eradication\SimulationEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\rapidjson\include\rapidjson\internal\stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -223,6 +220,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SparseContagion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigParams.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TBDrugTypeParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TBHIVDrugTypeParameters.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SimulationEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -339,6 +348,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EventTrigger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigParams.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TBDrugTypeParameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TBHIVDrugTypeParameters.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimulationEnums.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

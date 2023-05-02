@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include <functional>
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 #include "UnitTest++.h"
 #include "ChiSquare.h"
 

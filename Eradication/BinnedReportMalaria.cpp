@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "BinnedReportMalaria.h"
 
 #include <map>
+#include <cmath>
 
 #include "Environment.h"
 #include "Exceptions.h"

@@ -205,7 +205,7 @@ namespace Kernel
     ENUM_DECLARE(VitalDeathDependence, IDM_ENUMSPEC_VitalDeathDependence)
 
 
-    // ENUM defs for INCUBATION_DISTRIBUTION, INFECTIOUS_DISTRIBUTION, BASE_INFECTIVITY_DISTRIBUTION
+    // ENUM defs for INCUBATION_DISTRIBUTION, INFECTIOUS_DISTRIBUTION
     #define IDM_ENUMSPEC_DistributionFunction                                            \
         ENUM_VALUE_SPEC(NOT_INITIALIZED                                     ,-1)         \
         ENUM_VALUE_SPEC(CONSTANT_DISTRIBUTION                               , 0)         \
@@ -221,6 +221,17 @@ namespace Kernel
 //      ENUM_VALUE_SPEC(PIECEWISE_CONSTANT                                  , 7)    // Disable these distributions, but leave index as is (see demographics)
 //      ENUM_VALUE_SPEC(PIECEWISE_LINEAR                                    , 8)
     ENUM_DECLARE(DistributionFunction, IDM_ENUMSPEC_DistributionFunction)
+
+
+    // ENUM defs for Base_Infectivity_Distribution; subset of DistributionFunction
+    #define IDM_ENUMSPEC_BaseInfectDist                                                  \
+        ENUM_VALUE_SPEC(NOT_INITIALIZED                                     , 0)         \
+        ENUM_VALUE_SPEC(CONSTANT_DISTRIBUTION                               , 1)         \
+        ENUM_VALUE_SPEC(UNIFORM_DISTRIBUTION                                , 2)         \
+        ENUM_VALUE_SPEC(EXPONENTIAL_DISTRIBUTION                            , 3)         \
+        ENUM_VALUE_SPEC(GAMMA_DISTRIBUTION                                  , 4)         \
+        ENUM_VALUE_SPEC(LOG_NORMAL_DISTRIBUTION                             , 5)
+    ENUM_DECLARE(BaseInfectDist, IDM_ENUMSPEC_BaseInfectDist)
 
 
     // ENUM defs for Box_Duration of WaningEffect; subset of DistributionFunction

@@ -20,6 +20,7 @@ namespace Kernel
     // Static param structures
     AgentParams      AgentConfig::agent_params;
     ClimateParams    ClimateConfig::climate_params;
+    LoggingParams    LoggingConfig::logging_params;
     MigrationParams  MigrationConfig::migration_params;
     NodeParams       NodeConfig::node_params;
     PolioParams      PolioConfig::polio_params;
@@ -34,6 +35,7 @@ namespace Kernel
         // Configs with static param structures
         AgentConfig        agent_config_obj;
         ClimateConfig      climate_config_obj;
+        LoggingConfig      logging_config_obj;
         MigrationConfig    migration_config_obj;
         NodeConfig         node_config_obj;
         PolioConfig        polio_config_obj;
@@ -76,6 +78,7 @@ namespace Kernel
 
         bRet &= agent_config_obj.Configure(config);
         bRet &= climate_config_obj.Configure(config);
+        bRet &= logging_config_obj.Configure(config);
         bRet &= migration_config_obj.Configure(config);
         bRet &= node_config_obj.Configure(config);
         bRet &= polio_config_obj.Configure(config);
@@ -129,6 +132,13 @@ namespace Kernel
         , landtemperature_offset(0.0f)
         , landtemperature_variance(0.0f)
         , rainfall_scale_factor(0.0f)
+    {}
+
+    LoggingParams::LoggingParams()
+        : enable_continuous_log_flushing(false)
+        , enable_log_throttling(false)
+        , enable_warnings_are_fatal(false)
+        , log_levels()
     {}
 
     MigrationParams::MigrationParams()
@@ -213,7 +223,6 @@ namespace Kernel
         , susceptibility_scaling_rate(0.0f)
         , x_birth(0.0f)
         , x_othermortality(0.0f)
-        , mosquito_weight(0)
         , number_clades(1)
         , number_genomes(1)
     {}
@@ -322,9 +331,6 @@ namespace Kernel
         , vaccine_genome_OPV1(0)
         , vaccine_genome_OPV2(0)
         , vaccine_genome_OPV3(0)
-        , vaccine_strain1()
-        , vaccine_strain2()
-        , vaccine_strain3()
     {}
 
     SimParams::SimParams()
@@ -378,7 +384,7 @@ namespace Kernel
         // Local variables
         DistributionFunction::Enum  incubation_period_function(DistributionFunction::NOT_INITIALIZED);
         DistributionFunction::Enum  infectious_distribution_function(DistributionFunction::NOT_INITIALIZED);
-        DistributionFunction::Enum  infectivity_distribution_function(DistributionFunction::NOT_INITIALIZED);
+        BaseInfectDist::Enum        infect_dist_func(BaseInfectDist::NOT_INITIALIZED);
 
 
         // Agent parameter dependencies
@@ -397,7 +403,7 @@ namespace Kernel
 
 
         // Agent parameters
-        initConfig("Base_Infectivity_Distribution",   infectivity_distribution_function,    config,  MetadataDescriptor::Enum("Base_Infectivity_Distribution", Base_Infectivity_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),    nullptr, nullptr, &dset_enums01);
+        initConfig("Base_Infectivity_Distribution",   infect_dist_func,                     config,  MetadataDescriptor::Enum("Base_Infectivity_Distribution",  Base_Infectivity_Distribution_DESC_TEXT,  MDD_ENUM_ARGS(BaseInfectDist)),        nullptr, nullptr, &dset_enums01);
         initConfig("Incubation_Period_Distribution",  incubation_period_function,           config,  MetadataDescriptor::Enum("Incubation_Period_Distribution", Incubation_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),  nullptr, nullptr, &dset_enums02);
         initConfig("Infectious_Period_Distribution",  infectious_distribution_function,     config,  MetadataDescriptor::Enum("Infectious_Period_Distribution", Infectious_Period_Distribution_DESC_TEXT, MDD_ENUM_ARGS(DistributionFunction)),  nullptr, nullptr, &dset_enums03);
 
@@ -421,19 +427,10 @@ namespace Kernel
         initConfigTypeMap("Genome_Mutation_Rates",                 &agent_params.genome_mutation_rates,                Genome_Mutation_Rates_DESC_TEXT,                    0.0f,  FLT_MAX,  false,  nullptr, nullptr, &dset_agent04);
 
 
-        // Enums available before call to configure; distribution factory will add more parameters to configure
-        if(incubation_period_function        != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
-        {
-            agent_params.incubation_distribution  = DistributionFactory::CreateDistribution(this,  incubation_period_function,       "Incubation_Period", config);
-        }
-        if(infectious_distribution_function  != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
-        {
-            agent_params.infectious_distribution  = DistributionFactory::CreateDistribution(this,  infectious_distribution_function, "Infectious_Period", config);
-        } 
-        if(infectivity_distribution_function != DistributionFunction::NOT_INITIALIZED || JsonConfigurable::_dryrun)
-        {
-            agent_params.infectivity_distribution = DistributionFactory::CreateDistribution(this,  infectivity_distribution_function, "Base_Infectivity", config);
-        }
+        // Enums configure immediately; distribution factory will add more parameters to configure
+        agent_params.incubation_distribution  = DistributionFactory::CreateDistribution(this,  incubation_period_function,        "Incubation_Period", config);
+        agent_params.infectious_distribution  = DistributionFactory::CreateDistribution(this,  infectious_distribution_function,  "Infectious_Period", config);
+        agent_params.infectivity_distribution = DistributionFactory::CreateDistribution(this, config, "Base_Infectivity", BaseInfectDist::pairs::lookup_key(infect_dist_func), BaseInfectDist::pairs::get_keys());
 
 
         // Process configuration
@@ -537,6 +534,63 @@ namespace Kernel
     const ClimateParams* ClimateConfig::GetClimateParams()
     {
         return &climate_params;
+    }
+
+
+
+    // LoggingConfig Methods
+    GET_SCHEMA_STATIC_WRAPPER_IMPL(LoggingConfig,LoggingConfig)
+    BEGIN_QUERY_INTERFACE_BODY(LoggingConfig)
+    END_QUERY_INTERFACE_BODY(LoggingConfig)
+
+    bool LoggingConfig::Configure(const Configuration* config)
+    {
+        //Enable defaults
+        JsonConfigurable::_useDefaults = true;
+
+
+        // Logging parameters
+        initConfigTypeMap("Enable_Continuous_Log_Flushing",  &logging_params.enable_continuous_log_flushing,  Enable_Continuous_Log_Flushing_DESC_TEXT,  false);
+        initConfigTypeMap("Enable_Log_Throttling",           &logging_params.enable_log_throttling,           Enable_Log_Throttling_DESC_TEXT,           false);
+        initConfigTypeMap("Enable_Warnings_Are_Fatal",       &logging_params.enable_warnings_are_fatal,       Enable_Warnings_Are_Fatal_DESC_TEXT,       false);
+
+
+        // Process configuration
+        bool bRet = JsonConfigurable::Configure(config);
+
+
+        // Logging levels; constrained string because "ERROR" cannot be enumerated
+        jsonConfigurable::ConstrainedString  log_config_str("INFO");
+        jsonConfigurable::tStringSet         log_opt_set{"ERROR","WARNING","INFO","DEBUG","VALID"};
+        std::string                          log_default_val("INFO");
+
+        log_config_str.constraints           = "ERROR,WARNING,INFO,DEBUG,VALID";
+        log_config_str.constraint_param      = &log_opt_set;
+
+        // Configure default logging
+        std::string default_log_name(DEFAULT_LOG_NAME);
+        std::string log_name_param(LOG_NAME_PREFIX+default_log_name);
+        initConfigTypeMap(log_name_param.c_str(), &log_config_str, logLevel_default_DESC_TEXT, log_default_val);
+        bRet &= JsonConfigurable::Configure(config);
+        log_default_val = static_cast<std::string>(log_config_str);
+        logging_params.log_levels[default_log_name] = log_default_val;
+
+        for (auto& mod_name : SimpleLogger::GetModuleNames())
+        {
+            log_name_param = LOG_NAME_PREFIX+mod_name;
+            initConfigTypeMap(log_name_param.c_str(), &log_config_str, logLevel_MODULE_DESC_TEXT, log_default_val);
+            bRet &= JsonConfigurable::Configure(config);
+            logging_params.log_levels[mod_name] = static_cast<std::string>(log_config_str);
+        }
+
+
+        JsonConfigurable::_useDefaults = false;
+        return bRet;
+    }
+
+    const LoggingParams* LoggingConfig::GetLoggingParams()
+    {
+        return &logging_params;
     }
 
 
@@ -693,7 +747,6 @@ namespace Kernel
         const std::map<std::string, std::string> dset_strain02 {{"Simulation_Type","GENERIC_SIM,VECTOR_SIM,STI_SIM,HIV_SIM,AIRBORNE_SIM,PY_SIM,DENGUE_SIM"},{"Enable_Strain_Tracking","1"}};
 
         const std::map<std::string, std::string> dset_vec01    {{"Simulation_Type","VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"}};
-        const std::map<std::string, std::string> dset_vec02    {{"Simulation_Type","VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"},{"Vector_Sampling_Type", "SAMPLE_IND_VECTORS"}};
         const std::map<std::string, std::string> dset_vec03    {{"Enable_Demographics_Builtin","0"},{"Simulation_Type","VECTOR_SIM,MALARIA_SIM,DENGUE_SIM"}};
 
         const std::map<std::string, std::string> dset_birth01  {{"Enable_Vital_Dynamics","1"}};
@@ -749,7 +802,6 @@ namespace Kernel
         initConfigTypeMap("x_Other_Mortality",                            &node_params.x_othermortality,                  x_Other_Mortality_DESC_TEXT,                               0.0f,         FLT_MAX,     1.0f,  nullptr,  nullptr,  &dset_death02);
 
         initConfigTypeMap("Log2_Number_of_Genomes_per_Clade",  &log2genomes,                  Log2_Number_of_Genomes_per_Clade_DESC_TEXT,   0, SHIFT_BIT,     0,  nullptr,  nullptr,  &dset_strain02);
-        initConfigTypeMap("Mosquito_Weight",                   &node_params.mosquito_weight,  Mosquito_Weight_DESC_TEXT,                    1,     10000,     1,  nullptr,  nullptr,  &dset_vec02);
         initConfigTypeMap("Number_of_Clades",                  &node_params.number_clades,    Number_of_Clades_DESC_TEXT,                   1,        10,     1,  nullptr,  nullptr,  &dset_strain01);
 
 
@@ -895,13 +947,6 @@ namespace Kernel
 
         // Set fixed values; Ogra 1968, Warren 1964, Dexiang1956, Plotkin 1959
         polio_params.decayRatePassiveImmunity = log(2.0f)/(polio_params.maternalAbHalfLife+FLT_MIN);
-
-        polio_params.vaccine_strain1.SetCladeID(PolioVirusTypes::VRPV1);
-        polio_params.vaccine_strain2.SetCladeID(PolioVirusTypes::VRPV2);
-        polio_params.vaccine_strain3.SetCladeID(PolioVirusTypes::VRPV3);
-        polio_params.vaccine_strain1.SetGeneticID(polio_params.vaccine_genome_OPV1);
-        polio_params.vaccine_strain2.SetGeneticID(polio_params.vaccine_genome_OPV2);
-        polio_params.vaccine_strain3.SetGeneticID(polio_params.vaccine_genome_OPV3);
 
 
         return bRet;

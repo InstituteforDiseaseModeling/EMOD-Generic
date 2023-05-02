@@ -1761,7 +1761,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (int)schema["default"].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else // not in config, not using defaults, no depends-on, just plain missing
@@ -1809,7 +1809,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (uint32_t)schema[ "default" ].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else // not in config, not using defaults, no depends-on, just plain missing
@@ -1857,7 +1857,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (uint64_t)schema[ "default" ].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %d ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else // not in config, not using defaults, no depends-on, just plain missing
@@ -1897,7 +1897,7 @@ namespace Kernel
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
                     EnforceParameterRange<float>( key, val, schema );
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else // not in config, not using defaults, no depends-on, just plain missing
@@ -1935,7 +1935,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = schema["default"].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else 
@@ -1975,7 +1975,7 @@ namespace Kernel
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
                     EnforceParameterRange<float>( key, val, schema );
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else 
@@ -2015,7 +2015,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (float)schema["default"].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else 
@@ -2054,7 +2054,7 @@ namespace Kernel
                 {
                     // using the default value
                     val = (int)schema["default"].As<json::Number>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : %f ) for unspecified parameter.\n", key.c_str(), val );
                     *(entry.second) = val;
                 }
                 else 
@@ -2087,7 +2087,7 @@ namespace Kernel
                 if( _useDefaults )
                 {
                     val = (std::string)schema["default"].As<json::String>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", key.c_str(), val.c_str() );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", key.c_str(), val.c_str() );
                     *(entry.second) = val;
                 }
                 else
@@ -2117,7 +2117,7 @@ namespace Kernel
                 if( _useDefaults )
                 {
                     val = (std::string)schema["default"].As<json::String>();
-                    LOG_INFO_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", key.c_str(), val.c_str() );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : \"%s\" ) for unspecified parameter.\n", key.c_str(), val.c_str() );
                     *(entry.second) = val;
                 }
                 else
@@ -2146,7 +2146,7 @@ namespace Kernel
                 if( _useDefaults )
                 {
                     //auto val = schema["default"].As<json::Array>();
-                    //LOG_INFO_F( "Using the default value ( \"%s\" : <empty string set> ) for unspecified string set parameter.\n", key.c_str() );
+                    //LOG_DEBUG_F( "Using the default value ( \"%s\" : <empty string set> ) for unspecified string set parameter.\n", key.c_str() );
                     //*(entry.second) = val;
                 }
                 else
@@ -2175,7 +2175,7 @@ namespace Kernel
                 if( _useDefaults )
                 {
                     // using the default value
-                    LOG_INFO_F( "Using the default value ( \"%s\" : <empty string vector> ) for unspecified string vector parameter.\n", key.c_str() );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : <empty string vector> ) for unspecified string vector parameter.\n", key.c_str() );
                 }
 
                 handleMissingParam( key, inputJson->GetDataLocation() );
@@ -2218,7 +2218,7 @@ namespace Kernel
                 if( _useDefaults )
                 {
                     // using the default value
-                    LOG_INFO_F( "Using the default value ( \"%s\" : <empty string Vector2D> ) for unspecified string Vector2D parameter.\n", key.c_str() );
+                    LOG_DEBUG_F( "Using the default value ( \"%s\" : <empty string Vector2D> ) for unspecified string Vector2D parameter.\n", key.c_str() );
                 }
 
                 handleMissingParam( key, inputJson->GetDataLocation() );

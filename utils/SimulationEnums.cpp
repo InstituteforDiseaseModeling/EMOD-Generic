@@ -37,6 +37,7 @@ namespace Kernel
     ENUM_INITIALIZE(VitalBirthDependence, IDM_ENUMSPEC_VitalBirthDependence)
     ENUM_INITIALIZE(VitalDeathDependence, IDM_ENUMSPEC_VitalDeathDependence)
     ENUM_INITIALIZE(DistributionFunction, IDM_ENUMSPEC_DistributionFunction)
+    ENUM_INITIALIZE(BaseInfectDist, IDM_ENUMSPEC_BaseInfectDist)
     ENUM_INITIALIZE(WEBoxDist, IDM_ENUMSPEC_WEBoxDist)
     ENUM_INITIALIZE(ThresholdType, IDM_ENUMSPEC_ThresholdType)
     ENUM_INITIALIZE(SerializationType, IDM_ENUMSPEC_SerializationType)

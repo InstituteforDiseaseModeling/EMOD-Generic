@@ -18,9 +18,10 @@ SETUP_LOGGING( "DistributionFactory" )
 
 namespace Kernel
 {
-    IDistribution* DistributionFactory::CreateDistribution( DistributionFunction::Enum infectious_distribution_function )
+
+    IDistribution* DistributionFactory::CreateDistribution( DistributionFunction::Enum dist_val )
     {
-        switch( infectious_distribution_function )
+        switch( dist_val )
         {
         case DistributionFunction::CONSTANT_DISTRIBUTION:
             return new DistributionConstant();
@@ -47,114 +48,206 @@ namespace Kernel
         }
     }
 
-    IDistribution* DistributionFactory::CreateDistribution( JsonConfigurable* pParent, DistributionFunction::Enum distribution_function, std::string base_parameter_name, const Configuration* config )
+
+    // Factory that configures distribution assuming all distributions are valid options
+    IDistribution* DistributionFactory::CreateDistribution( JsonConfigurable* pParent, DistributionFunction::Enum dist_val, std::string base_name, const Configuration* config )
     {
         if( JsonConfigurable::_dryrun )
         {
-            AddToSchema( pParent, distribution_function, base_parameter_name, config );
+            for(auto dist_int : DistributionFunction::pairs::get_values())
+            {
+                AddToSchema( pParent, config, base_name, DistributionFunction::Enum(dist_int) );
+            }
             return nullptr;
         }
 
-        switch( distribution_function )
+        return MakeDistPtr( pParent, config, base_name, dist_val );
+    }
+
+
+    // Factory that configures distribution using strings and look-up for valid options
+    IDistribution* DistributionFactory::CreateDistribution( JsonConfigurable* pParent, const Configuration* config, std::string base_name, std::string dist_name, std::vector<std::string> dist_opts )
+    {
+        if( JsonConfigurable::_dryrun )
         {
+            for(auto dist_str : dist_opts)
+            {
+                int dist_int = DistributionFunction::pairs::lookup_value(dist_str);
+                AddToSchema( pParent, config, base_name, DistributionFunction::Enum(dist_int) );
+            }
+            return nullptr;
+        }
+
+        int dist_int = DistributionFunction::pairs::lookup_value(dist_name);
+        return MakeDistPtr( pParent, config, base_name, DistributionFunction::Enum(dist_int) );
+    }
+
+
+    void DistributionFactory::AddToSchema( JsonConfigurable* pParent, const Configuration* config, std::string base_name, DistributionFunction::Enum dist_val )
+    {
+        switch( dist_val )
+        {
+            case DistributionFunction::NOT_INITIALIZED:
+            {
+                break;
+            }
             case DistributionFunction::CONSTANT_DISTRIBUTION:
             {
-                DistributionConstantConfigurable* distribution = new DistributionConstantConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionConstantConfigurable distribution_constant;
+                distribution_constant.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::GAUSSIAN_DISTRIBUTION:
             {
-                DistributionGaussianConfigurable* distribution = new DistributionGaussianConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionGaussianConfigurable distribution_gaussian;
+                distribution_gaussian.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::POISSON_DISTRIBUTION:
             {
-                DistributionPoissonConfigurable* distribution = new DistributionPoissonConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionPoissonConfigurable distribution_poisson;
+                distribution_poisson.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::EXPONENTIAL_DISTRIBUTION:
             {
-                DistributionExponentialConfigurable* distribution = new DistributionExponentialConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionExponentialConfigurable distribution_exponential;
+                distribution_exponential.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::GAMMA_DISTRIBUTION:
             {
-                DistributionGammaConfigurable* distribution = new DistributionGammaConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionGammaConfigurable distribution_gamma;
+                distribution_gamma.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::LOG_NORMAL_DISTRIBUTION:
             {
-                DistributionLogNormalConfigurable* distribution = new DistributionLogNormalConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionLogNormalConfigurable distribution_log_normal;
+                distribution_log_normal.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION:
             {
-                DistributionDualExponentialConfigurable* distribution = new DistributionDualExponentialConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionDualExponentialConfigurable distribution_dual_exponential;
+                distribution_dual_exponential.Configure(pParent, base_name, config);
+                break;
             }
             case DistributionFunction::WEIBULL_DISTRIBUTION:
             {
-                DistributionWeibullConfigurable* distribution = new DistributionWeibullConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionWeibullConfigurable distribution_weibull;
+                distribution_weibull.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::DUAL_CONSTANT_DISTRIBUTION:
             {
-                DistributionDualConstantConfigurable* distribution = new DistributionDualConstantConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionDualConstantConfigurable distribution_dual_constant;
+                distribution_dual_constant.Configure( pParent, base_name, config );
+                break;
             }
             case DistributionFunction::UNIFORM_DISTRIBUTION:
             {
-                DistributionUniformConfigurable* distribution = new DistributionUniformConfigurable();
-                distribution->Configure( pParent, base_parameter_name, config );
-                return distribution;
+                DistributionUniformConfigurable distribution_uniform;
+                distribution_uniform.Configure( pParent, base_name, config );
+                break;
             }
             default:
-                std::stringstream ss;
-                ss << "Error while creating distribution: " << base_parameter_name.c_str() << "_Distribution. Distribution does not exist or is not initialized.";
-                throw Kernel::IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
+            {
+                release_assert(false);
+            }
         }
+
+        return;
     }
 
 
-    void DistributionFactory::AddToSchema( JsonConfigurable* pParent, DistributionFunction::Enum distribution_function, std::string base_parameter_name, const Configuration* config )
+    IDistribution* DistributionFactory::MakeDistPtr( JsonConfigurable* pParent, const Configuration* config, std::string base_name, DistributionFunction::Enum dist_val )
     {
-        DistributionConstantConfigurable distribution_constant;
-        distribution_constant.Configure( pParent, base_parameter_name, config );
+        IDistribution* idist_ptr = nullptr;
 
-        DistributionGaussianConfigurable distribution_gaussian;
-        distribution_gaussian.Configure( pParent, base_parameter_name, config );
+        switch( dist_val )
+        {
+            case DistributionFunction::NOT_INITIALIZED:
+            {
+                break;
+            }
+            case DistributionFunction::CONSTANT_DISTRIBUTION:
+            {
+                DistributionConstantConfigurable* dist_ptr = new DistributionConstantConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::GAUSSIAN_DISTRIBUTION:
+            {
+                DistributionGaussianConfigurable* dist_ptr = new DistributionGaussianConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::POISSON_DISTRIBUTION:
+            {
+                DistributionPoissonConfigurable* dist_ptr = new DistributionPoissonConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::EXPONENTIAL_DISTRIBUTION:
+            {
+                DistributionExponentialConfigurable* dist_ptr = new DistributionExponentialConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::GAMMA_DISTRIBUTION:
+            {
+                DistributionGammaConfigurable* dist_ptr = new DistributionGammaConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::LOG_NORMAL_DISTRIBUTION:
+            {
+                DistributionLogNormalConfigurable* dist_ptr = new DistributionLogNormalConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::DUAL_EXPONENTIAL_DISTRIBUTION:
+            {
+                DistributionDualExponentialConfigurable* dist_ptr = new DistributionDualExponentialConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::WEIBULL_DISTRIBUTION:
+            {
+                DistributionWeibullConfigurable* dist_ptr = new DistributionWeibullConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::DUAL_CONSTANT_DISTRIBUTION:
+            {
+                DistributionDualConstantConfigurable* dist_ptr = new DistributionDualConstantConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            case DistributionFunction::UNIFORM_DISTRIBUTION:
+            {
+                DistributionUniformConfigurable* dist_ptr = new DistributionUniformConfigurable();
+                dist_ptr->Configure( pParent, base_name, config );
+                idist_ptr = static_cast<IDistribution*>(dist_ptr);
+                break;
+            }
+            default:
+            {
+                release_assert(false);
+            }
+        }
 
-        DistributionPoissonConfigurable distribution_poisson;
-        distribution_poisson.Configure( pParent, base_parameter_name, config );
-
-        DistributionExponentialConfigurable distribution_exponential;
-        distribution_exponential.Configure( pParent, base_parameter_name, config );
-
-        DistributionGammaConfigurable distribution_gamma;
-        distribution_gamma.Configure( pParent, base_parameter_name, config );
-
-        DistributionLogNormalConfigurable distribution_log_normal;
-        distribution_log_normal.Configure( pParent, base_parameter_name, config );
-
-        DistributionDualExponentialConfigurable distribution_dual_exponential;
-        distribution_dual_exponential.Configure(pParent, base_parameter_name, config);
-
-        DistributionWeibullConfigurable distribution_weibull;
-        distribution_weibull.Configure( pParent, base_parameter_name, config );
-
-        DistributionDualConstantConfigurable distribution_dual_constant;
-        distribution_dual_constant.Configure( pParent, base_parameter_name, config );
-
-        DistributionUniformConfigurable distribution_uniform;
-        distribution_uniform.Configure( pParent, base_parameter_name, config );
+        return idist_ptr;
     }
+
 }

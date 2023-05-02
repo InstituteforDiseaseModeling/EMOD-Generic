@@ -1,7 +1,6 @@
 {
     "science": [
         { "path": "Generic/SFTs/Acquisition_Transmission_Correlation/NonZero_Correlation_Constant_Infectivity_Distribution" },
-        { "path": "Generic/SFTs/Acquisition_Transmission_Correlation/NonZero_Correlation_Gaussian_Infectivity_Distribution" },
         { "path": "Generic/SFTs/Acquisition_Transmission_Correlation/Zero_Correlation_Constant_Infectivity_Distribution" },
         { "path": "Generic/SFTs/Acquisition_Transmission_Correlation/AcquisitionHeterogeneityVariance" },
         { "path": "Generic/SFTs/Contagion/Contact_Route" },
@@ -24,7 +23,6 @@
         { "path": "Generic/SFTs/Genome/Genome_Dependent_Infectivity/Outbreak" },
         { "path": "Generic/SFTs/Genome/Genome_Dependent_Infectivity/OutbreakIndividual" },
         { "path": "Generic/SFTs/Genome/Genome_Dependent_Infectivity/Transmission" },
-        { "path": "Generic/SFTs/Genome/Genome_Dependent_Infectivity/Gaussian_Infectivity_Distribution" },
         { "path": "Generic/SFTs/Genome/Genome_Mutation/Mutation_Rate" },
         { "path": "Generic/SFTs/Genome/Genome_Mutation/Mutation_Order" },
         { "path": "Generic/SFTs/HINT/Multiple_Properties_Between_Groups" },
@@ -45,7 +43,6 @@
         { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT_Close_to_0" },
         { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_CONSTANT_Equal_to_1" },
         { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_EXPONENTIAL" },
-        { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_GAUSSIAN" },
         { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/Basic_UNIFORM" },
         { "path": "Generic/SFTs/InfectionRate_Basic_Calculation/SampleRate" },
         { "path": "Generic/SFTs/InfectionRate_Mod_Additive_Multiplicative/Infectivity_Reservoir" },

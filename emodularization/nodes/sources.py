@@ -2,10 +2,6 @@
 
 sources =  [
             'nodedemog_module.cpp',
-            '../../utils/Configure.cpp',
-            '../../utils/EventTrigger.cpp',
-            '../../utils/Exceptions.cpp',
-            '../../Eradication/ConfigParams.cpp',
             '../../Eradication/BroadcasterImpl.cpp',
             '../../Eradication/Node.cpp',
             '../../Eradication/NodeDemographics.cpp',
@@ -16,9 +12,6 @@ sources =  [
             '../../Eradication/InterventionsContainer.cpp',
             '../../Eradication/SerializationParameters.cpp',
             '../../Eradication/StrainIdentity.cpp',
-            '../../Eradication/SimulationEnums.cpp',
-            '../../Eradication/TBHIVDrugTypeParameters.cpp',
-            '../../Eradication/TBDrugTypeParameters.cpp',
             '../../Eradication/Instrumentation.cpp',
             '../../Eradication/TransmissionGroupsBase.cpp',
             '../../Eradication/StrainAwareTransmissionGroups.cpp',

@@ -810,9 +810,6 @@
     <ClInclude Include="SimulationConfig.h">
       <Filter>Source Files\Kernel</Filter>
     </ClInclude>
-    <ClInclude Include="SimulationEnums.h">
-      <Filter>Source Files\Kernel</Filter>
-    </ClInclude>
     <ClInclude Include="SimulationFactory.h">
       <Filter>Source Files\Kernel</Filter>
     </ClInclude>
@@ -917,9 +914,6 @@
     </ClInclude>
     <ClInclude Include="MalariaDrugTypeParameters.h">
       <Filter>Source Files\Vector\Malaria</Filter>
-    </ClInclude>
-    <ClInclude Include="TBDrugTypeParameters.h">
-      <Filter>Source Files\Airborne\TB</Filter>
     </ClInclude>
     <ClInclude Include="Schema.h">
       <Filter>Source Files\Kernel</Filter>
@@ -1137,9 +1131,6 @@
     <ClInclude Include="..\interventions\TBHIVConfigurableTBdrug.h">
       <Filter>Source Files\TBHIV</Filter>
     </ClInclude>
-    <ClInclude Include="TBHIVDrugTypeParameters.h">
-      <Filter>Source Files\TBHIV</Filter>
-    </ClInclude>
     <ClInclude Include="IVectorPopulation.h">
       <Filter>Source Files\Vector</Filter>
     </ClInclude>
@@ -1267,9 +1258,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IVectorMigrationReporting.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ConfigParams.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandomNumberGeneratorFactory.h">
@@ -1835,9 +1823,6 @@
     <ClCompile Include="MalariaDrugTypeParameters.cpp">
       <Filter>Source Files\Vector\Malaria</Filter>
     </ClCompile>
-    <ClCompile Include="TBDrugTypeParameters.cpp">
-      <Filter>Source Files\Airborne\TB</Filter>
-    </ClCompile>
     <ClCompile Include="Schema.cpp">
       <Filter>Source Files\Kernel</Filter>
     </ClCompile>
@@ -2042,9 +2027,6 @@
     <ClCompile Include="..\interventions\TBHIVConfigurableTBdrug.cpp">
       <Filter>Source Files\TBHIV</Filter>
     </ClCompile>
-    <ClCompile Include="TBHIVDrugTypeParameters.cpp">
-      <Filter>Source Files\TBHIV</Filter>
-    </ClCompile>
     <ClCompile Include="..\interventions\BitingRisk.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted\Vector</Filter>
     </ClCompile>
@@ -2144,9 +2126,6 @@
     <ClCompile Include="..\interventions\Vaccine.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClCompile>
-    <ClCompile Include="ConfigParams.cpp">
-      <Filter>Source Files\Kernel</Filter>
-    </ClCompile>
     <ClCompile Include="SerializationParameters.cpp">
       <Filter>Source Files\Kernel</Filter>
     </ClCompile>
@@ -2179,9 +2158,6 @@
     </ClCompile>
     <ClCompile Include="HIVEnums.cpp">
       <Filter>Source Files\STI\HIV</Filter>
-    </ClCompile>
-    <ClCompile Include="SimulationEnums.cpp">
-      <Filter>Source Files\Kernel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

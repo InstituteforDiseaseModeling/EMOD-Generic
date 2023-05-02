@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="BinaryArchiveReader.cpp" />
     <ClCompile Include="BinaryArchiveWriter.cpp" />
+    <ClCompile Include="ConfigParams.cpp" />
     <ClCompile Include="Configuration.cpp">
       <PreprocessToFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PreprocessToFile>
     </ClCompile>
@@ -131,12 +132,15 @@
     <ClCompile Include="BaseProperties.cpp" />
     <ClCompile Include="RANDOM.cpp" />
     <ClCompile Include="Sigmoid.cpp" />
+    <ClCompile Include="SimulationEnums.cpp" />
     <ClCompile Include="StatusReporter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="suids.cpp" />
+    <ClCompile Include="TBDrugTypeParameters.cpp" />
+    <ClCompile Include="TBHIVDrugTypeParameters.cpp" />
     <ClCompile Include="Timers.cpp" />
     <ClCompile Include="Types.cpp" />
   </ItemGroup>
@@ -149,7 +153,6 @@
     <ClInclude Include="..\cajun\include\reader.h" />
     <ClInclude Include="..\cajun\include\visitor.h" />
     <ClInclude Include="..\cajun\include\writer.h" />
-    <ClInclude Include="..\Eradication\SimulationEnums.h" />
     <ClInclude Include="..\Eradication\stdafx.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\document.h" />
     <ClInclude Include="..\rapidjson\include\rapidjson\filestream.h" />
@@ -166,6 +169,7 @@
     <ClInclude Include="BinaryArchiveWriter.h" />
     <ClInclude Include="BoostLibWrapper.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="ConfigParams.h" />
     <ClInclude Include="Configuration.h" />
     <ClInclude Include="ConfigurationImpl.h" />
     <ClInclude Include="Configure.h" />
@@ -202,12 +206,15 @@
     <ClInclude Include="PropertiesString.h" />
     <ClInclude Include="RANDOM.h" />
     <ClInclude Include="Sigmoid.h" />
+    <ClInclude Include="SimulationEnums.h" />
     <ClInclude Include="SparseContagion.h" />
     <ClInclude Include="StatusReporter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Sugar.h" />
     <ClInclude Include="suids.hpp" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TBDrugTypeParameters.h" />
+    <ClInclude Include="TBHIVDrugTypeParameters.h" />
     <ClInclude Include="Timers.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="version_info.h" />

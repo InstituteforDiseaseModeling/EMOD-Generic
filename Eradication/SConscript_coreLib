@@ -18,7 +18,6 @@ else:
                             "NodeDemographics.cpp",
                             "Schema.cpp",
                             "Controller.cpp",
-                            "ConfigParams.cpp",
                             "ControllerFactory.cpp", 
                             "DllLoader.cpp",
                             "EventsForOtherNodes.cpp",
@@ -30,7 +29,6 @@ else:
                             "NodeInfo.cpp",
                             "PythonSupport.cpp",
                             "SimulationConfig.cpp",
-                            "SimulationEnums.cpp",
                             "SimulationFactory.cpp",
                             "StrainIdentity.cpp",
                             "SerializedPopulation.cpp",
@@ -38,8 +36,6 @@ else:
                             "SqlLogger.cpp",
                             "RandomSerializable.cpp",
                             "RandomNumberGeneratorFactory.cpp",
-                            "TBDrugTypeParameters.cpp",
-                            "TBHIVDrugTypeParameters.cpp",
                             "BroadcasterImpl.cpp",
                             
                             # Campaign

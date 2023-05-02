@@ -408,7 +408,7 @@ namespace Kernel
                 int32_t mosq_weight = 1;
                 if(vector_sampling_type == VectorSamplingType::SAMPLE_IND_VECTORS)
                 {
-                    mosq_weight = GetParams()->mosquito_weight;
+                    mosq_weight = GET_CONFIGURABLE(SimulationConfig)->vector_params->mosquito_weight;
                 }
 
                 // Individual mosquito model

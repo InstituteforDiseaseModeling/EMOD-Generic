@@ -173,9 +173,13 @@ DllLoader::LoadDiseaseDlls(
                     (dllName && !StringEquals(ffd.cFileName, dllName)) )
                 {
                     if (dllName)
+                    {
                         LOG_INFO_F( "%S is not a DLL or doesn't match %s\n", dllPath, dllName );
+                    }
                     else
+                    {
                         LOG_INFO_F( "%S is not a DLL\n", dllPath );
+                    }
                     continue;
                 }
                 LOG_INFO_F("Calling LoadLibrary for %S\n", dllPath.c_str());
@@ -319,9 +323,13 @@ bool DllLoader::LoadReportDlls( std::unordered_map< std::string, Kernel::report_
                     (dllName && !StringEquals(ffd.cFileName, dllName)) )
                 {
                     if (dllName)
+                    {
                         LOG_DEBUG_F( "%S is not a DLL or doesn't match %s\n", dllPath, dllName );
+                    }
                     else
+                    {
                         LOG_DEBUG_F( "%S is not a DLL\n", dllPath );
+                    }
                     continue;
                 }
 
@@ -642,9 +650,13 @@ bool DllLoader::LoadInterventionDlls(const char* dllName)
                     (dllName && !StringEquals(ffd.cFileName, dllName)) )
                 {
                     if (dllName)
+                    {
                         LOG_DEBUG_F( "%S is not a DLL or doesn't match %s\n", dllPath, dllName );
+                    }
                     else
+                    {
                         LOG_DEBUG_F( "%S is not a DLL\n", dllPath );
+                    }
                     continue;
                 }
 

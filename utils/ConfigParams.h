@@ -11,9 +11,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Common.h"
 #include "Configure.h"
-#include "SimulationEnums.h"
 #include "IDistribution.h"
-#include "StrainIdentity.h"
+#include "SimulationEnums.h"
 #include "TBHIVDrugTypeParameters.h"
 #include "VectorEnums.h"
 
@@ -91,6 +90,20 @@ namespace Kernel
         float landtemperature_offset;
         float landtemperature_variance;
         float rainfall_scale_factor;
+    };
+
+
+
+    struct LoggingParams
+    {
+    public:
+        LoggingParams();
+
+        bool enable_continuous_log_flushing;
+        bool enable_log_throttling;
+        bool enable_warnings_are_fatal;
+
+        std::map<std::string, std::string> log_levels;
     };
 
 
@@ -194,7 +207,6 @@ namespace Kernel
         float x_birth;
         float x_othermortality;
 
-         int32_t mosquito_weight;
         uint32_t number_clades;
         uint64_t number_genomes;
     };
@@ -312,10 +324,6 @@ namespace Kernel
         int vaccine_genome_OPV1;
         int vaccine_genome_OPV2;
         int vaccine_genome_OPV3;
-
-        StrainIdentity  vaccine_strain1;
-        StrainIdentity  vaccine_strain2;
-        StrainIdentity  vaccine_strain3;
     };
 
 
@@ -406,6 +414,23 @@ namespace Kernel
 
     protected:
         static       ClimateParams      climate_params;
+    };
+
+
+
+    class LoggingConfig : public JsonConfigurable
+    {
+        IMPLEMENT_NO_REFERENCE_COUNTING()
+        DECLARE_QUERY_INTERFACE()
+        GET_SCHEMA_STATIC_WRAPPER(LoggingConfig)
+
+    public:
+        virtual bool Configure(const Configuration* config) override;
+
+        static const LoggingParams*   GetLoggingParams();
+
+    protected:
+        static       LoggingParams    logging_params;
     };
 
 

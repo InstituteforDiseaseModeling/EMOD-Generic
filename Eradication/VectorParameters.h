@@ -46,6 +46,8 @@ namespace Kernel
         float eggarrhenius2;
         float lloffset;
 
+        int32_t mosquito_weight;
+
         // allows configuration of larval habitat decay time constants
         float tempHabitatDecayScalar;
         float semipermanentHabitatDecayRate;
@@ -95,6 +97,7 @@ namespace Kernel
         , x_LarvalHabitats(1.0f)
         , vector_species_names()
         , vspMap()
+        , mosquito_weight(0)
         { }
     };
 }

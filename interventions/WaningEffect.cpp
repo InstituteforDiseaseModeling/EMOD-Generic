@@ -102,11 +102,7 @@ namespace Kernel
 
         WEBoxDist::Enum box_dist_funct(WEBoxDist::NOT_INITIALIZED);
         initConfig("Box_Duration_Distribution", box_dist_funct, p_config, MetadataDescriptor::Enum("Box_Duration_Distribution", WE_Box_Duration_Distribution_DESC_TEXT, MDD_ENUM_ARGS(WEBoxDist)),  nullptr,  nullptr,  &dset_we01);
-        if(box_dist_funct != WEBoxDist::NOT_INITIALIZED || JsonConfigurable::_dryrun)
-        {
-            DistributionFunction::Enum actual_dist_enum = static_cast<DistributionFunction::Enum>(DistributionFunction::pairs::lookup_value(WEBoxDist::pairs::lookup_key(box_dist_funct)));
-            m_box_duration_dist = DistributionFactory::CreateDistribution(this, actual_dist_enum, "Box_Duration", p_config);
-        }
+        m_box_duration_dist = DistributionFactory::CreateDistribution(this, p_config, "Box_Duration", WEBoxDist::pairs::lookup_key(box_dist_funct), WEBoxDist::pairs::get_keys());
 
         initConfigTypeMap("Initial_Effect_Distribution_Alpha",   &m_init_effect_dist_a,    WE_Initial_Effect_Distribution_Alpha_DESC_TEXT,  FLT_MIN,  FLT_MAX,  -1.0f,  nullptr,  nullptr,  &dset_we02);
         initConfigTypeMap("Initial_Effect_Distribution_Beta",    &m_init_effect_dist_b,    WE_Initial_Effect_Distribution_Beta_DESC_TEXT,   FLT_MIN,  FLT_MAX,  -1.0f,  nullptr,  nullptr,  &dset_we02);

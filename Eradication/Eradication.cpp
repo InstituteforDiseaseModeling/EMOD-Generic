@@ -337,24 +337,40 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 
         //////////////////////////////////////////
         if( po.CommandLineHas( "config" ) )
+        {
             LOG_INFO_F( "Using config file: %s\n", po.GetCommandLineValueString( "config" ).c_str() );
-        else 
+        }
+        else
+        {
             LOG_WARN("No config file specified.\n");
+        }
 
         if( po.CommandLineHas( "input-path" ) )
+        {
             LOG_INFO_F( "Using input path: %s\n", po.GetCommandLineValueString( "input-path" ).c_str() );
-        else 
+        }
+        else
+        {
             LOG_WARN("Input path not specified, assuming current directory.\n"); // in reality these never happen since default values are supplied by the program options
+        }
 
         if( po.CommandLineHas( "output-path" ) )
+        {
             LOG_INFO_F( "Using output path: %s\n", po.GetCommandLineValueString( "output-path" ).c_str() );
-        else 
+        }
+        else
+        {
             LOG_WARN("Output path not specified, using current directory.\n");
+        }
 
         if( po.CommandLineHas( "dll-path" ) )
+        {
             LOG_INFO_F( "Using dll path: %s\n", po.GetCommandLineValueString( "dll-path" ).c_str() );
+        }
         else
+        {
             LOG_WARN("Dll path not specified.\n");
+        }
     }
     catch( std::exception& e) 
     {
@@ -452,6 +468,9 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
         // Process configuration file
         Kernel::ConfigParams config_obj;
         config_obj.Configure(EnvPtr->Config);
+
+        // Update logger with params from configuration file
+        EnvPtr->initLogger();
 
         // UDP-enabled StatusReporter needs host and sim unique id.
         if( po.GetCommandLineValueString( "monitor_host" ) != "none" )
