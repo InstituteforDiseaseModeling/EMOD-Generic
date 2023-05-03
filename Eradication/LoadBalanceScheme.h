@@ -10,6 +10,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 
 #include <string>
+#include <cstdint>
+
 #include "IdmApi.h"
 
 namespace Kernel

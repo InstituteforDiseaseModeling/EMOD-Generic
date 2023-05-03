@@ -11,6 +11,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <string>
 #include <vector>
+#include <cstdint>
+
 #include "IdmApi.h"
 
 namespace IdmMpi
