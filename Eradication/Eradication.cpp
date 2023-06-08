@@ -390,7 +390,7 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 
     // handle run modes
 
-    bool status = false;
+    bool ret_val = false;
     ostringstream exceptionErrorReport;
     try
     {
@@ -497,7 +497,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
 #endif 
 
 #ifdef WIN32
-
     #ifdef DEBUG_MEMORY_LEAKS
         _CrtMemState initial_state;
 
@@ -513,7 +512,6 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             //    _crtBreakAlloc = 106768; // break on this alloc number; get this from the object dump
             }
     #endif
-
 #endif
 
         LOG_INFO( "Loaded Configuration...\n" ); 
@@ -535,20 +533,16 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
         // override controller selection if unit tests requested on command line
         LOG_INFO("Initializing Controller...\n");
         EnvPtr->Log->Flush();
-        IController *controller = ControllerFactory::CreateController(EnvPtr->Config);
+        IController* controller = ControllerFactory::CreateController(EnvPtr->Config);
 
         if (controller)
         {
-            SetFloatingPointSignalHandler();    // Enable floating point signal handler while controller is running
-            status = controller->Execute();
+            SetFloatingPointSignalHandler();        // Enable floating point signal handler while controller is running
+            bool status = controller->Execute();
+            DisableFloatingPointSignalHandler();    // Prevent external programs from triggering fpe, e.g. Python dll
+
             if (status)
             {
-                DisableFloatingPointSignalHandler();	//prevent external programs from triggering fpe, e.g. Python dll
-                release_assert( EnvPtr );
-
-                // Run python post-process script; does nothing if no python.
-                Kernel::PythonSupport::RunPyFunction( EnvPtr->OutputPath, Kernel::PythonSupport::SCRIPT_POST_PROCESS );
-
                 LOG_INFO( "Controller executed successfully.\n" );
             }
             else
@@ -558,16 +552,19 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
             delete controller;
         }
 
-#ifdef WIN32
+        release_assert( EnvPtr );
+        // Run python post-process script; does nothing if no python.
+        Kernel::PythonSupport::RunPyFunction( EnvPtr->OutputPath, Kernel::PythonSupport::SCRIPT_POST_PROCESS );
 
+#ifdef WIN32
     #ifdef DEBUG_MEMORY_LEAKS
         if (run == 1)
             _CrtMemDumpAllObjectsSince(&initial_state);
     }
     #endif
-
 #endif
-
+        // Reaching this statement indicates successful completion
+        ret_val = true;
     }
     catch( Kernel::GeneralConfigurationException &e )
     {
@@ -632,5 +629,5 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
     }
 
     Environment::Finalize();
-    return status;
+    return ret_val;
 }
