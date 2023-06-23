@@ -22,6 +22,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "FileSystem.h"
 #include "Exceptions.h"
 #include "IIndividualHuman.h"
+#include "InterventionsContainer.h"
 #include "ProgVersion.h"
 #include "IdmMpi.h"
 
@@ -40,45 +41,44 @@ namespace Kernel {
 /////////////////////////
 // Initialization methods
 /////////////////////////
-IReport*
-SpatialReport::CreateReport()
+IReport* SpatialReport::CreateReport()
 {
     return new SpatialReport();
 }
 
 SpatialReport::SpatialReport()
-: BaseChannelReport( _report_name )
-, air_temperature_info(             "Air_Temperature",                  "degrees C")
-, births_info(                      "Births",                           "")
-, campaign_cost_info(               "Campaign_Cost",                    "US dollars")
-, disease_deaths_info(              "Disease_Deaths",                   "")
-, exposed_info(                     "Exposed Fraction",                 "")
-, infectious_info(                  "Infectious Fraction",              "")
-, immunized_info(                   "Immunized Fraction",                "")
-, human_infectious_reservoir_info(  "Human_Infectious_Reservoir",       "???")
-, infection_rate_info(              "Infection_Rate",                   "???")
-, land_temperature_info(            "Land_Temperature",                 "degrees C")
-, new_infections_info(              "New_Infections",                   "")
-, new_reported_infections_info(     "New_Reported_Infections",          "")
-, population_info(                  "Population",                       "")
-, prevalence_info(                  "Prevalence",                       "infected fraction")
-, rainfall_info(                    "Rainfall",                         "mm")
-, recovered_info(                   "Recovered Fraction",                "")
-, relative_humidity_info(           "Relative_Humidity",                "fraction")
-, susceptible_info(                 "Susceptible Fraction",             "")
-, new_infections(0.0f)
-, new_reported_infections(0.0f)
-, exposed(0.0f)
-, immunized(0.0f)
-, infectious(0.0f)
-, recovered(0.0f)
-, susceptible(0.0f)
-, disease_deaths(0.0f)
-, nodeid_index_map()
-, has_shuffled_nodes(false)
-, total_timesteps(0)
-, channel_file_map()
-, spatial_output_channels()
+    : BaseChannelReport( _report_name )
+    , air_temperature_info(             "Air_Temperature",                  "degrees C")
+    , births_info(                      "Births",                           "")
+    , campaign_cost_info(               "Campaign_Cost",                    "US dollars")
+    , disease_deaths_info(              "Disease_Deaths",                   "")
+    , exposed_info(                     "Exposed Fraction",                 "")
+    , infectious_info(                  "Infectious Fraction",              "")
+    , immunized_info(                   "Immunized Fraction",                "")
+    , human_infectious_reservoir_info(  "Human_Infectious_Reservoir",       "???")
+    , infection_rate_info(              "Infection_Rate",                   "???")
+    , land_temperature_info(            "Land_Temperature",                 "degrees C")
+    , new_infections_info(              "New_Infections",                   "")
+    , new_reported_infections_info(     "New_Reported_Infections",          "")
+    , population_info(                  "Population",                       "")
+    , prevalence_info(                  "Prevalence",                       "infected fraction")
+    , rainfall_info(                    "Rainfall",                         "mm")
+    , recovered_info(                   "Recovered Fraction",                "")
+    , relative_humidity_info(           "Relative_Humidity",                "fraction")
+    , susceptible_info(                 "Susceptible Fraction",             "")
+    , new_infections(0.0f)
+    , new_reported_infections(0.0f)
+    , exposed(0.0f)
+    , immunized(0.0f)
+    , infectious(0.0f)
+    , recovered(0.0f)
+    , susceptible(0.0f)
+    , disease_deaths(0.0f)
+    , nodeid_index_map()
+    , has_shuffled_nodes(false)
+    , total_timesteps(0)
+    , channel_file_map()
+    , spatial_output_channels()
 {
 }
 
@@ -104,8 +104,7 @@ void SpatialReport::populateChannelInfos(tChanInfoMap &channel_infos)
     channel_infos[susceptible_info.name] = &susceptible_info;
 }
 
-void
-SpatialReport::Initialize( unsigned int nrmSize )
+void SpatialReport::Initialize( unsigned int nrmSize )
 {
     _nrmSize = nrmSize;
     release_assert( _nrmSize );
@@ -139,9 +138,7 @@ SpatialReport::Initialize( unsigned int nrmSize )
     total_timesteps = 0;
 }
 
-bool SpatialReport::Configure(
-    const Configuration* config
-)
+bool SpatialReport::Configure(const Configuration* config)
 {
     tChanInfoMap channel_infos;
     populateChannelInfos(channel_infos);
@@ -163,19 +160,17 @@ void SpatialReport::BeginTimestep()
     }
 }
 
-void
-SpatialReport::LogIndividualData(
-    Kernel::IIndividualHuman* individual
-)
+void SpatialReport::LogIndividualData(Kernel::IIndividualHuman* individual)
 {
     LOG_DEBUG( "LogIndividualData\n" );
 
     float monte_carlo_weight = (float)individual->GetMonteCarloWeight();
-    
+
     if (!individual->IsInfected())  // Susceptible, Recovered or Vaccinated
     {
-        float immunityAcquisitionModifier = individual->GetImmunityReducedAcquire();
-        float interventionAcquisitionModifier = individual->GetInterventionReducedAcquire();
+        // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+        float immunityAcquisitionModifier = individual->GetSusceptibilityContext()->getModAcquire();
+        float interventionAcquisitionModifier = individual->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
         // To avoid double counting, if somebody has immunity from acquisition, they are recovered, not vaccinated.
         // Should normalize with Report.cpp to have a waning channel.  But would still like to keep natural and vaccine-derived immunity tracked separately.  
         if (immunityAcquisitionModifier < 1.0f)
@@ -215,10 +210,7 @@ SpatialReport::LogIndividualData(
         disease_deaths += monte_carlo_weight;
 }
 
-void
-SpatialReport::LogNodeData(
-    Kernel::INodeContext * pNC
-)
+void SpatialReport::LogNodeData(Kernel::INodeContext* pNC)
 {
     LOG_DEBUG( "LogNodeData\n" );
 
@@ -400,8 +392,7 @@ void SpatialReport::WriteHeaderParameters( std::ofstream* file )
 // Finalization methods
 /////////////////////////
 
-void
-SpatialReport::Finalize()
+void SpatialReport::Finalize()
 {
     // now that we know how many timesteps there were, go back and fill that in at the beginning
     // of the output files
@@ -423,8 +414,7 @@ SpatialReport::Finalize()
 }
 
 
-void
-SpatialReport::Accumulate( std::string channel_name, int nodeid, float value )
+void SpatialReport::Accumulate( std::string channel_name, int nodeid, float value )
 {
     std::map<int,int>::iterator it = nodeid_index_map.find(nodeid);
 
@@ -439,16 +429,12 @@ SpatialReport::Accumulate( std::string channel_name, int nodeid, float value )
     channelDataMap.Accumulate( channel_name, node_index, value );
 }
 
-void 
-SpatialReport::populateSummaryDataUnitsMap(
-    map<string, string> &units_map
-)
+void SpatialReport::populateSummaryDataUnitsMap(map<string, string> &units_map)
 {
     // not needed?
 }
 
-void
-SpatialReport::postProcessAccumulatedData()
+void SpatialReport::postProcessAccumulatedData()
 {
     LOG_DEBUG( "postProcessAccumulatedData\n" );
 

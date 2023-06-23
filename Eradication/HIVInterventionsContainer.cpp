@@ -207,37 +207,28 @@ namespace Kernel
         return true;
     }
 
-    void HIVInterventionsContainer::ApplyDrugVaccineReducedAcquireEffect(
-        float prob
-    )
+    void HIVInterventionsContainer::ApplyDrugVaccineReducedAcquireEffect(float prob)
     {
-        drugVaccineReducedAcquire  *= (1.0f-prob);
+        InterventionsContainer::UpdateIVAcquireRate(prob, IVRoute::ALL);
     }
 
-    void HIVInterventionsContainer::ApplyDrugVaccineReducedTransmitEffect(
-        float prob
-    )
+    void HIVInterventionsContainer::ApplyDrugVaccineReducedTransmitEffect(float prob)
     {
-        drugVaccineReducedTransmit *= (1.0f-prob);
+        InterventionsContainer::UpdateIVTransmitRate(prob, IVRoute::ALL);
     }
 
-    void HIVInterventionsContainer::ApplyDrugInactivationRateEffect(
-        float rate
-    )
+    void HIVInterventionsContainer::ApplyDrugInactivationRateEffect(float rate)
     {
         HIV_drug_inactivation_rate += rate;
     }
 
-    void HIVInterventionsContainer::ApplyDrugClearanceRateEffect(
-        float rate
-    )
+    void HIVInterventionsContainer::ApplyDrugClearanceRateEffect(float rate)
     {
         HIV_drug_clearance_rate    += rate;
     }
 
     void HIVInterventionsContainer::OnTestForHIV(bool test_result)
     {
-
         if( test_result && !ever_tested_HIV_positive)
         {
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();

@@ -550,7 +550,6 @@ namespace Kernel
         LOG_DEBUG_F( "Doing %s for individual %d and relationship %d/pool_index %d.\n",
                     __FUNCTION__, GetSuid().data, rel_id, transmissionGroupMembershipByRelationship[ rel_id ] );
 
-        //IndividualHuman::UpdateInfectiousness(dt);
         infectiousness = 0;
 
         if ( infections.size() == 0 ) 
@@ -558,14 +557,16 @@ namespace Kernel
         else if( infections.size() > 1 )
             throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "STI/HIV does not support superinfection yet." );
 
-        auto transmissionGroupMembership = transmissionGroupMembershipByRelationship[ rel_id ];
+        auto  transmissionGroupMembership = transmissionGroupMembershipByRelationship[ rel_id ];
+        float  mod_inf_val                = 0.0f;
         for (auto infection : infections)
         {
             // For STI/HIV, infectiousness should be the per-act probability of transmission
             // including intrahost factors like stage and ART, but excluding condoms
             // Also excluding STI because they're handled separately
-            infectiousness += infection->GetInfectiousness();
-            float prob_per_act =  m_mc_weight * infection->GetInfectiousness() * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
+            mod_inf_val        = infection->GetInfectiousness() * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit(infection->GetSourceRoute());
+            infectiousness    += mod_inf_val;
+            float prob_per_act = mod_inf_val * m_mc_weight;
             LOG_DEBUG_F( "prob_per_act based on infectiousness of %f = %f.\n", infection->GetInfectiousness(), prob_per_act );
 
             StrainIdentity tmp_strainIDs;
@@ -584,8 +585,6 @@ namespace Kernel
                 }
             }
         }
-
-        infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit(); 
     }
 
     void IndividualHumanSTI::UpdateInfectiousness(float dt)

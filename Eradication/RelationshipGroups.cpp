@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IndividualEventContext.h"
 #include "IIndividualHumanContext.h"
 #include "INodeContext.h"
+#include "InterventionsContainer.h"
 #include "Debug.h"
 #include <algorithm>
 
@@ -245,32 +246,28 @@ namespace Kernel {
         populationSize = 2; // how could this be otherwise? Also don't think this matters.
     }
 
-    void
-    RelationshipGroups::ExposeToContagion(
-        IInfectable* candidate,
-        TransmissionGroupMembership_t poolMembership,
-        float deltaTee,
-        TransmissionRoute::Enum tx_route
-    )
-    const
+    void RelationshipGroups::ExposeToContagion(IInfectable* candidate, TransmissionGroupMembership_t poolMembership, float deltaTee, TransmissionRoute::Enum tx_route) const
     {
         GroupIndex poolIndex = poolMembership.group;
 
         act_prob_vec_t act_prob_vec = infectionRate[poolIndex];
+        float acq_mod = 0.0f;
         for( auto &entry : act_prob_vec )
         {
-            entry.prob_per_act *= candidate->GetInterventionReducedAcquire();
-            LOG_DEBUG_F( "prob_per_act = %f after multiplying by %f\n", entry.prob_per_act, candidate->GetInterventionReducedAcquire() );
+            acq_mod = candidate->GetIndividual()->GetVaccineContext()->GetInterventionReducedAcquire(tx_route);
+            entry.prob_per_act *= acq_mod;
+            LOG_DEBUG_F( "prob_per_act = %f after multiplying by %f\n", entry.prob_per_act, acq_mod );
         } 
 
         if (act_prob_vec.size() > 0)
         {
             LOG_INFO_F( "act_prob_vec.size() = %d for index %d\n", act_prob_vec.size(), poolIndex );
-            if (candidate != nullptr)
+            if (candidate)
             {
-                IIndividualHumanSTI* sti_human = nullptr;
+                IIndividualHumanSTI* sti_human = candidate->GetIndividual()->GetIndividualContext()->GetIndividualSTI();
                 unsigned int receiver = ~0;
-                if (candidate->QueryInterface(GET_IID(IIndividualHumanSTI), (void**)&sti_human) == s_OK) {
+                if(sti_human)
+                {
                     receiver = sti_human->GetSuid().data;
                 }
                 release_assert( infectors.size() );
@@ -278,9 +275,8 @@ namespace Kernel {
                 {
                     throw BadMapKeyException( __FILE__, __LINE__, __FUNCTION__, "infectors", std::to_string(poolIndex).c_str() );
                 }
-                if( dynamic_cast<IIndividualHuman*>(candidate)->IsInfected() == false )
+                if(!candidate->GetIndividual()->IsInfected())
                 {
-                    //LOG_DEBUG_F( "Exposing (STI) individual to PROBABILITY set from depositor %d.\n", infectors.at( poolIndex ) );
                     DiscreteContagionPopulation contagionPopulation( act_prob_vec, infectors.at( poolIndex ) );
                     candidate->Expose( &contagionPopulation, deltaTee );
                 }

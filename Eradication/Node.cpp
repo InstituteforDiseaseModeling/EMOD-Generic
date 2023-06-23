@@ -784,13 +784,13 @@ namespace Kernel
                 {
                     break;
                 }
-                if( individual->GetMonteCarloWeight()           == rate_sampling_pre                     &&  // Not down-sampled
-                    individual->GetImmunityReducedAcquire()*
-                    individual->GetInterventionReducedAcquire() <= np->immune_threshold_for_downsampling &&  // Not susceptible
-                    individual->GetAge()                        >  individual->GetImmuneFailAgeAcquire() &&  // Not waning
-                    individual->GetAge()                        >= np->immune_downsample_min_age         &&  // Not too young
-                    individual->GetStateChange()                == HumanStateChange::None                &&  // Not killed or migrating
-                   !individual->IsInfected()                                                               ) // Not infected
+                float mod_acq_iv = individual->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
+                if( individual->GetMonteCarloWeight()                                    == rate_sampling_pre                     &&  // Not down-sampled
+                    individual->GetSusceptibilityContext()->getModAcquire()*mod_acq_iv   <= np->immune_threshold_for_downsampling &&  // Not susceptible
+                    individual->GetAge()                                                 >  individual->GetImmuneFailAgeAcquire() &&  // Not waning
+                    individual->GetAge()                                                 >= np->immune_downsample_min_age         &&  // Not too young
+                    individual->GetStateChange()                                         == HumanStateChange::None                &&  // Not killed or migrating
+                   !individual->IsInfected()                                                                                        ) // Not infected
                 {
                     if( GetRng()->SmartDraw(np->rel_sample_rate_immune) )
                     {

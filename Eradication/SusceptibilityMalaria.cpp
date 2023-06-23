@@ -639,8 +639,9 @@ namespace Kernel
             }
 
             // check for fatal case (even if disease mortality is off just for logging purposes)
-            // To query for mortality-reducing effects of drugs or vaccines
-            if ( rand < prob_fatal * parent->GetVaccineContext()->GetInterventionReducedMortality() )
+            // Adding route aware IVs required querying for reduced mortality based on route of infection
+            // Generic sims evaluate mortality for each infection; Malaria sims only use CONTACT route (default)
+            if ( rand < prob_fatal * parent->GetVaccineContext()->GetInterventionReducedMortality(TransmissionRoute::CONTACT) )
             {
                 if ( InfectionConfig::enable_disease_mortality )
                 { 

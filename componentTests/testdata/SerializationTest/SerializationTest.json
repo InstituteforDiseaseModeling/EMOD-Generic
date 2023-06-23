@@ -861,7 +861,6 @@
                 "status_property"               : "InterventionStatus:non_abort_state",
                 "vaccine_take"                  : 3.3,
                 "vaccine_took"                  : false,
-                "efficacy_is_multiplicative"    : false,
                 "effect_transmit" :
                 {
                     "__class__":"WaningEffect",

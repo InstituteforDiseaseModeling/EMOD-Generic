@@ -22,7 +22,6 @@ namespace Kernel
     {
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route=TransmissionRoute::CONTACT ) = 0;
         virtual const infection_list_t& GetInfections() const = 0;
-        virtual float GetInterventionReducedAcquire() const = 0;
 
         virtual IIndividualHuman* GetIndividual() = 0;
 

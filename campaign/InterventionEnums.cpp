@@ -28,6 +28,7 @@ namespace Kernel
     ENUM_INITIALIZE(ScaleUpProfile, IDM_ENUMSPEC_ScaleUpProfile)
     ENUM_INITIALIZE(TBHIVConfigurabeDrugState, IDM_ENUMSPEC_TBHIVConfigurabeDrugState)
     ENUM_INITIALIZE(TyphoidVaccineMode, IDM_ENUMSPEC_TyphoidVaccineMode)
+    ENUM_INITIALIZE(IVRoute, IDM_ENUMSPEC_IVRoute)
     ENUM_INITIALIZE(SpaceSprayTarget, IDM_ENUMSPEC_SpaceSprayTarget)
     ENUM_INITIALIZE(ArtificialDietTarget, IDM_ENUMSPEC_ArtificialDietTarget)
 }

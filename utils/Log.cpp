@@ -106,7 +106,7 @@ void SimpleLogger::Init()
     for(auto loglevelpair : _logLevelMap)
     {
         std::cout << "    " << loglevelpair.first << " -> " 
-                  << logLevelLookup[lp->log_levels.at(loglevelpair.first)] << std::endl;
+                  << lp->log_levels.at(loglevelpair.first) << std::endl;
     }
 
     _initialized = true;

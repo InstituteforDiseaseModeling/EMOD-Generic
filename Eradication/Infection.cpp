@@ -177,7 +177,7 @@ namespace Kernel
         // if disease has a daily mortality rate, and disease mortality is on, then check for death. mortality_time_course depends-on enable_disease_mortality BUT DAILY_MORTALITY is default
         if (InfectionConfig::enable_disease_mortality && (parent->GetParams()->mortality_time_course == MortalityTimeCourse::DAILY_MORTALITY) && (duration > incubation_timer))
         {
-            float prob = InfectionConfig::base_mortality * dt * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
+            float prob = InfectionConfig::base_mortality * dt * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality(m_source_route);
             if( GetParent()->GetRng()->SmartDraw( prob ) )
             { 
                 StateChange = InfectionStateChange::Fatal; 
@@ -189,7 +189,7 @@ namespace Kernel
             // disease mortality active and is accounted for at end of infectious period. mortality_time_course depends-on enable_disease_mortality
             if (InfectionConfig::enable_disease_mortality && parent->GetParams()->mortality_time_course == MortalityTimeCourse::MORTALITY_AFTER_INFECTIOUS )
             {
-                float prob = InfectionConfig::base_mortality * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
+                float prob = InfectionConfig::base_mortality * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality(m_source_route);
                 if( GetParent()->GetRng()->SmartDraw( prob ) )
                 {
                     StateChange = InfectionStateChange::Fatal;

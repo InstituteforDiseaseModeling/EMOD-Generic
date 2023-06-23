@@ -10,6 +10,7 @@
         "Config_Name": "SQLiteDB_Serialization",
         "Custom_Coordinator_Events": [],
         "Custom_Individual_Events": [],
+        "Custom_Reports_Filename": "",
         "Custom_Node_Events": [],
         "Demographics_Filenames": [
             "../../demographics.json",
@@ -17,10 +18,12 @@
             "../../demographics_1000_overlay.json"
         ],
         "Enable_Acquisition_Heterogeneity": 0,
+        "Enable_Binned_Report": 0,
         "Enable_Default_Reporting": 1,
         "Enable_Demographics_Builtin": 0,
         "Enable_Demographics_Reporting": 1,
         "Enable_Disease_Mortality": 0,
+        "Enable_Environmental_Route": 0,
         "Enable_Event_DB": 1,
         "Enable_Heterogeneous_Intranode_Transmission": 1,
         "Enable_Immunity": 0,

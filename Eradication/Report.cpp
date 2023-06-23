@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Report.h"
 #include "INodeContext.h"
 #include "IIndividualHuman.h"
+#include "InterventionsContainer.h"
 #include "SimulationEnums.h"
 #include "ConfigParams.h"
 #include "Climate.h"
@@ -227,7 +228,9 @@ void Report::UpdateSEIRW( const Kernel::IIndividualHuman* individual, float mont
 {
     if (!individual->IsInfected())  // Susceptible, Recovered (Immune), or Waning
     {
-        float acquisitionModifier = individual->GetImmunityReducedAcquire() * individual->GetInterventionReducedAcquire();
+        // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+        float acquisitionModifier = individual->GetSusceptibilityContext()->getModAcquire() *
+                                    individual->GetVaccineContext()->GetInterventionReducedAcquire(Kernel::TransmissionRoute::CONTACT);
         if (acquisitionModifier >= 1.0f)
         {
             countOfSusceptibles += monte_carlo_weight;

@@ -154,7 +154,7 @@ namespace Kernel
         }
 #endif
         release_assert( vector_interventions );
-        float acqmod = GetRelativeBitingRate() * susceptibility->getModAcquire() * interventions->GetInterventionReducedAcquire();
+        float acqmod = GetRelativeBitingRate() * susceptibility->getModAcquire() * interventions->GetInterventionReducedAcquire(tx_route);
 
         switch( tx_route )
         {
@@ -189,11 +189,10 @@ namespace Kernel
     void IndividualHumanVector::UpdateInfectiousness(float dt)
     {
         infectiousness = 0;
-        float tmp_infectiousness = 0;
+        float inf_mod_trans = 0.0f;
+        float tmp_inf, tmp_iv_mod;
 
-        typedef std::map< StrainIdentity, float >     strain_infectivity_map_t;
-        typedef strain_infectivity_map_t::value_type  strain_infectivity_t;
-        strain_infectivity_map_t infectivity_by_strain;
+        std::map<StrainIdentity, float> inf_mod_trans_by_strain;
         StrainIdentity tmp_strainIDs;
 
         // Loop once over all infections, caching strains and infectivity.
@@ -201,13 +200,18 @@ namespace Kernel
         for (auto infection : infections)
         {
             release_assert( infection );
-            tmp_infectiousness = infection->GetInfectiousness();
-            infectiousness += tmp_infectiousness;
+            release_assert( interventions );
 
-            if ( tmp_infectiousness > 0 )
+            tmp_inf    = infection->GetInfectiousness();
+            tmp_iv_mod = interventions->GetInterventionReducedTransmit(infection->GetSourceRoute());
+
+            infectiousness += tmp_inf;
+            inf_mod_trans  += tmp_inf * tmp_iv_mod;
+
+            if ( tmp_inf > 0 )
             {
                 infection->GetInfectiousStrainID(&tmp_strainIDs);
-                infectivity_by_strain[tmp_strainIDs] += tmp_infectiousness;
+                inf_mod_trans_by_strain[tmp_strainIDs] += tmp_inf * tmp_iv_mod;
             }
         }
 
@@ -217,14 +221,11 @@ namespace Kernel
             return;
         }
 
-        // Effects of transmission-reducing immunity.  N.B. interventions on vector success are not here, since they depend on vector-population-specific behavior
-        release_assert( susceptibility );
-        release_assert( interventions );
-        float modtransmit = susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
-
         // Maximum individual infectiousness is set here, capping the sum of unmodified infectivity at prob=1
+        release_assert( susceptibility );
         float truncate_infectious_mod = (infectiousness > 1 ) ? 1.0f/infectiousness : 1.0f;
-        infectiousness *= truncate_infectious_mod * modtransmit;
+        float tmp_sus_mod = susceptibility->getModTransmit();
+        infectiousness = inf_mod_trans * truncate_infectious_mod * tmp_sus_mod;
 
         // Host weight is the product of MC weighting and relative biting
         float host_vector_weight = float(GetMonteCarloWeight() * GetRelativeBitingRate());
@@ -237,15 +238,13 @@ namespace Kernel
         }
 
         // Loop again over infection strains, depositing (downscaled) infectivity modified by vector intervention effects etc. (indoor + outdoor)
-        for (auto& infectivity : infectivity_by_strain)
+        for (auto& infectivity : inf_mod_trans_by_strain)
         {
             const StrainIdentity *id = &(infectivity.first);
             LOG_DEBUG_F( "Depositing contagion from human to vector (indoor & outdoor) with biting-rate-driven weight of %f and combined modifiers of %f.\n",
-                         host_vector_weight,
-                         infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit()
-                       );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::HUMAN_TO_VECTOR_INDOOR );
-            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * modtransmit * ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR );
+                         host_vector_weight, infectivity.second * truncate_infectious_mod * susceptibility->getModTransmit() * ivie->GetblockIndoorVectorTransmit() );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * tmp_sus_mod * ivie->GetblockIndoorVectorTransmit(),  human_indoor,  TransmissionRoute::HUMAN_TO_VECTOR_INDOOR );
+            parent->DepositFromIndividual( *id, host_vector_weight * infectivity.second * truncate_infectious_mod * tmp_sus_mod * ivie->GetblockOutdoorVectorTransmit(), human_outdoor, TransmissionRoute::HUMAN_TO_VECTOR_OUTDOOR );
         }
     }
 

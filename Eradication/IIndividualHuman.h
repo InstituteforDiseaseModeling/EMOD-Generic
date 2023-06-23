@@ -87,8 +87,6 @@ namespace Kernel
         virtual bool IsMigrating() = 0;
         virtual void ClearNewInfectionState() = 0;
         virtual const infection_list_t& GetInfections() const = 0;
-        virtual float GetImmunityReducedAcquire() const = 0;
-        virtual float GetInterventionReducedAcquire() const = 0;
         virtual const suids::suid& GetMigrationDestination() = 0;
 
         // Migration

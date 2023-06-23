@@ -32,10 +32,10 @@ namespace Kernel
     END_QUERY_INTERFACE_DERIVED(STIInterventionsContainer, InterventionsContainer)
 
     STIInterventionsContainer::STIInterventionsContainer() 
-    : InterventionsContainer()
-    , is_circumcised(false)
-    , circumcision_reduced_require(0.0)
-    , STI_blocking_overrides()
+        : InterventionsContainer()
+        , is_circumcised(false)
+        , circumcision_reduced_require(0.0)
+        , STI_blocking_overrides()
     {
     }
 
@@ -43,20 +43,12 @@ namespace Kernel
     {
     }
     
-    void
-    STIInterventionsContainer::UpdateSTIBarrierProbabilitiesByType(
-        RelationshipType::Enum rel_type,
-        const Sigmoid& config_overrides
-    )
+    void STIInterventionsContainer::UpdateSTIBarrierProbabilitiesByType(RelationshipType::Enum rel_type, const Sigmoid& config_overrides)
     {
         STI_blocking_overrides[ rel_type ] = config_overrides;
     }
 
-    const Sigmoid&
-    STIInterventionsContainer::GetSTIBarrierProbabilitiesByRelType(
-        const IRelationshipParameters* pRelParams
-    )
-    const
+    const Sigmoid& STIInterventionsContainer::GetSTIBarrierProbabilitiesByRelType(const IRelationshipParameters* pRelParams) const
     {
         if( STI_blocking_overrides.find( pRelParams->GetType() ) != STI_blocking_overrides.end() )
         {
@@ -68,20 +60,6 @@ namespace Kernel
             LOG_DEBUG( "Using static (default/config.json) condom config values.\n" );
             return pRelParams->GetCondomUsage();
         }
-    }
-
-    float
-    STIInterventionsContainer::GetInterventionReducedAcquire()
-    const
-    {
-        return drugVaccineReducedAcquire;
-    }
-
-    float
-    STIInterventionsContainer::GetInterventionReducedTransmit()
-    const
-    {
-        return drugVaccineReducedTransmit;
     }
 
     bool STIInterventionsContainer::IsCircumcised( void ) const 
@@ -130,8 +108,7 @@ namespace Kernel
         InterventionsContainer::ChangeProperty( prop, new_value);
     }
 
-    void
-    STIInterventionsContainer::SpreadStiCoInfection()
+    void STIInterventionsContainer::SpreadStiCoInfection()
     {
         IIndividualHumanSTI *ihsti = nullptr;
         if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanSTI), (void**) &ihsti) )
@@ -141,8 +118,7 @@ namespace Kernel
         ihsti->SetStiCoInfectionState();
     }
 
-    void
-    STIInterventionsContainer::CureStiCoInfection()
+    void STIInterventionsContainer::CureStiCoInfection()
     {
         IIndividualHumanSTI *ihsti = nullptr;
         if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanSTI), (void**) &ihsti) )

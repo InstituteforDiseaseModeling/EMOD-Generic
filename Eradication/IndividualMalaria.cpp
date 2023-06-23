@@ -373,8 +373,8 @@ namespace Kernel
         LOG_DEBUG_F("Gametocytes: %lld (male) %lld (female).  Infectiousness=%0.2g\n", m_male_gametocytes, m_female_gametocytes, infectiousness);
 
         // Effects of transmission-reducing immunity.  N.B. interventions on vector success are not here, since they depend on vector-population-specific behavior
-        float modtransmit = susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
-        infectiousness *= modtransmit;
+        // Adding route aware IVs required querying based on route of infection; malaria sims only use CONTACT route (default)
+        infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit(TransmissionRoute::CONTACT);
 
         // Host weight is the product of MC weighting and relative biting
         float host_vector_weight = float(GetMonteCarloWeight() * GetRelativeBitingRate());

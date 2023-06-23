@@ -47,10 +47,11 @@ namespace Kernel
     protected:
 
         bool  vaccine_took;
-        bool  efficacy_is_multiplicative;
 
         float vaccine_take;
         float frac_acq_blocking_take;
+
+        IVRoute::Enum  vax_route;
 
         InterpolatedValueMap  take_by_age_map;
         InterpolatedValueMap  init_acq_by_effect_map;

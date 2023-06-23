@@ -51,13 +51,13 @@ namespace Kernel
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
         // IVaccineConsumer
-        virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true );
-        virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true );
-        virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true );
+        virtual void UpdateIVAcquireRate(  float acq,  IVRoute::Enum vax_route);
+        virtual void UpdateIVTransmitRate( float xmit, IVRoute::Enum vax_route);
+        virtual void UpdateIVMortalityRate(float mort, IVRoute::Enum vax_route);
 
-        virtual float GetInterventionReducedAcquire() const;
-        virtual float GetInterventionReducedTransmit()  const;
-        virtual float GetInterventionReducedMortality()  const;
+        virtual float GetInterventionReducedAcquire(TransmissionRoute::Enum)  const;
+        virtual float GetInterventionReducedTransmit(TransmissionRoute::Enum)  const;
+        virtual float GetInterventionReducedMortality(TransmissionRoute::Enum)  const;
  
         virtual bool GiveIntervention( IDistributableIntervention * pIV ) override;
 

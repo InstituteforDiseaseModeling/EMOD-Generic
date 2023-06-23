@@ -1,0 +1,32 @@
+{
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "../../Demographics/demographics.json",
+                "demographics_environmental_only_overlay.json",
+                "../../Demographics/demographics_10000_overlay.json"
+            ]
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 10.0,
+                "Infectious_Period_Constant": 60,
+                "Infectious_Period_Distribution": "CONSTANT_DISTRIBUTION"
+            },
+            "Node_Contagion_Decay_Rate": 1.0,
+            "Symptomatic_Infectious_Offset": 0
+        },
+        "OUTPUT": {
+            "Enable_Property_Output": 1,
+            "logLevel_Individual": "INFO",
+            "logLevel_Susceptibility": "INFO"
+        },
+        "PRIMARY": {
+            "Config_Name": "RouteAwareSimpleVaccine-Acquisition_Effect_Environmental",
+            "Enable_Environmental_Route": 1,
+            "Enable_Heterogeneous_Intranode_Transmission": 1,
+            "Simulation_Duration": 30
+        }
+    },
+    "Default_Config_Path": "defaults/generic_science_default_config.json"
+}

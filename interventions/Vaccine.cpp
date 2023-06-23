@@ -37,11 +37,11 @@ namespace Kernel
         , vaccine_take(0.0f)
         , vaccine_took(false)
         , frac_acq_blocking_take(0.0f)
+        , vax_route(IVRoute::ALL)
         , take_by_age_map(0.0f,FLT_MAX,0.0f,1.0f)
         , init_acq_by_effect_map(0.0f,1.0f,0.0f,1000.0f)
         , init_trn_by_effect_map(0.0f,1.0f,0.0f,1000.0f)
         , init_mor_by_effect_map(0.0f,1.0f,0.0f,1000.0f)
-        , efficacy_is_multiplicative(false)
         , effect_acquire(nullptr)
         , effect_transmit(nullptr)
         , effect_mortality(nullptr)
@@ -54,11 +54,11 @@ namespace Kernel
         , vaccine_take(existing_instance.vaccine_take)
         , vaccine_took(existing_instance.vaccine_took)
         , frac_acq_blocking_take(existing_instance.frac_acq_blocking_take)
+        , vax_route(existing_instance.vax_route)
         , take_by_age_map(existing_instance.take_by_age_map)
         , init_acq_by_effect_map(existing_instance.init_acq_by_effect_map)
         , init_trn_by_effect_map(existing_instance.init_trn_by_effect_map)
         , init_mor_by_effect_map(existing_instance.init_mor_by_effect_map)
-        , efficacy_is_multiplicative(existing_instance.efficacy_is_multiplicative)
         , effect_acquire(nullptr)
         , effect_transmit(nullptr)
         , effect_mortality(nullptr)
@@ -91,7 +91,7 @@ namespace Kernel
 
     bool Vaccine::Configure(const Configuration* inputJson)
     {
-        initConfigTypeMap("Efficacy_Is_Multiplicative",  &efficacy_is_multiplicative,   VAC_Efficacy_Is_Multiplicative_DESC_TEXT,   true);
+        initConfig("Vaccine_Route",  vax_route,  inputJson,  MetadataDescriptor::Enum("Vaccine_Route", VAC_Vaccine_Route_DESC_TEXT, MDD_ENUM_ARGS(IVRoute)));
 
         initConfigTypeMap("Vaccine_Take",                &vaccine_take,                 VAC_Vaccine_Take_DESC_TEXT,                      0.0f,     1.0f,  1.0f);
         initConfigTypeMap("Cost_To_Consumer",            &cost_per_unit,                VAC_Cost_To_Consumer_DESC_TEXT,                  0.0f,  FLT_MAX, 10.0f);
@@ -122,7 +122,7 @@ namespace Kernel
         if(was_distributed)
         {
             // Vaccine take
-            float acq_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedAcquire()*
+            float acq_current = 1.0f - parent->GetVaccineContext()->GetIVReducedAcquire(vax_route)*
                                        parent->GetSusceptibilityContext()->getModAcquire();
             float take_mult   = 1.0f - frac_acq_blocking_take*acq_current;
 
@@ -143,7 +143,7 @@ namespace Kernel
             // Vaccine effect multipliers
             if(init_acq_by_effect_map.size() && effect_acquire && !effect_acquire->Expired())
             {
-                float acq_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedAcquire()*
+                float acq_current = 1.0f - parent->GetVaccineContext()->GetIVReducedAcquire(vax_route)*
                                            parent->GetSusceptibilityContext()->getModAcquire();
                 float acq_mult    = init_acq_by_effect_map.getValueLinearInterpolation(acq_current, -1.0f);
                 if(acq_mult < 0.0f)
@@ -155,7 +155,7 @@ namespace Kernel
             }
             if(init_trn_by_effect_map.size() && effect_transmit && !effect_transmit->Expired())
             {
-                float trn_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedTransmit()*
+                float trn_current = 1.0f - parent->GetVaccineContext()->GetIVReducedTransmit(vax_route)*
                                            parent->GetSusceptibilityContext()->getModTransmit();
                 float trn_mult    = init_trn_by_effect_map.getValueLinearInterpolation(trn_current, -1.0f);
                 if(trn_mult < 0.0f)
@@ -167,7 +167,7 @@ namespace Kernel
             }
             if(init_mor_by_effect_map.size() && effect_mortality && !effect_mortality->Expired())
             {
-                float mor_current = 1.0f - parent->GetVaccineContext()->GetInterventionReducedMortality()*
+                float mor_current = 1.0f - parent->GetVaccineContext()->GetIVReducedMortality(vax_route)*
                                            parent->GetSusceptibilityContext()->getModMortality();
                 float mor_mult    = init_mor_by_effect_map.getValueLinearInterpolation(mor_current, -1.0f);
                 if(mor_mult < 0.0f)
@@ -219,7 +219,7 @@ namespace Kernel
             }
             else if(vaccine_took)
             {
-                ivc->UpdateVaccineAcquireRate(effect_acquire->Current(), efficacy_is_multiplicative);
+                ivc->UpdateIVAcquireRate(effect_acquire->Current(), vax_route);
             }
         }
 
@@ -233,7 +233,7 @@ namespace Kernel
             }
             else if(vaccine_took)
             {
-                ivc->UpdateVaccineTransmitRate(effect_transmit->Current(), efficacy_is_multiplicative);
+                ivc->UpdateIVTransmitRate(effect_transmit->Current(), vax_route);
             }
         }
 
@@ -247,7 +247,7 @@ namespace Kernel
             }
             else if(vaccine_took)
             {
-                ivc->UpdateVaccineMortalityRate(effect_mortality->Current(), efficacy_is_multiplicative);
+                ivc->UpdateIVMortalityRate(effect_mortality->Current(), vax_route);
             }
 
         }
@@ -278,7 +278,6 @@ namespace Kernel
         Vaccine& vaccine_obj = *obj;
 
         ar.labelElement("vaccine_took"              ) & vaccine_obj.vaccine_took;
-        ar.labelElement("efficacy_is_multiplicative") & vaccine_obj.efficacy_is_multiplicative;
 
         ar.labelElement("effect_acquire"            ) & vaccine_obj.effect_acquire;
         ar.labelElement("effect_transmit"           ) & vaccine_obj.effect_transmit;

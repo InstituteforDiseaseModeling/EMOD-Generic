@@ -12,7 +12,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -146,7 +145,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -309,7 +307,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -443,7 +440,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -607,7 +603,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -741,7 +736,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 0,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -905,7 +899,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -1039,7 +1032,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -1203,7 +1195,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -1337,7 +1328,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -1500,7 +1490,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -1634,7 +1623,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -1798,7 +1786,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -1932,7 +1919,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 0,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -2096,7 +2082,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -2230,7 +2215,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -2394,7 +2378,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -2528,7 +2511,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -2691,7 +2673,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -2825,7 +2806,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -2989,7 +2969,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -3123,7 +3102,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 0,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -3287,7 +3265,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -3421,7 +3398,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -3585,7 +3561,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -3719,7 +3694,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -3882,7 +3856,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -4016,7 +3989,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -4180,7 +4152,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -4314,7 +4285,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 0,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
@@ -4478,7 +4448,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 0,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",
                     "Initial_Acquire_By_Current_Effect_Multiplier": {
@@ -4612,7 +4581,6 @@
                     "Cost_To_Consumer": 10,
                     "Disqualifying_Properties": [],
                     "Dont_Allow_Duplicates": 1,
-                    "Efficacy_Is_Multiplicative": 1,
                     "Enable_Intervention_Replacement": 1,
                     "Event_Trigger_Distributed": "NoTrigger",
                     "Event_Trigger_Expired": "NoTrigger",

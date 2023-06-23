@@ -2017,11 +2017,6 @@ namespace Kernel
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );
     }
 
-    float VectorPopulation::GetInterventionReducedAcquire() const
-    {
-        throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );
-    }
-
     IIndividualHuman* VectorPopulation::GetIndividual()
     {
         throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "Only supported in individual vector model." );

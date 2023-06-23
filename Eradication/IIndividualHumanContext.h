@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #pragma once
 #include <list>
 #include <vector>
+
 #include "suids.hpp"
 #include "ISupports.h"
 #include "IdmApi.h"
@@ -51,9 +52,6 @@ namespace Kernel
         virtual IVaccineConsumer*                      GetVaccineContext()                                         const = 0;
         virtual IIndividualHumanEventContext*          GetEventContext()                                                 = 0; // access to specific attributes of the individual useful for events
         virtual ISusceptibilityContext*                GetSusceptibilityContext()                                  const = 0; // access to immune attributes useful for infection, interventions, reporting, etc.
-
-        virtual float GetImmunityReducedAcquire() const = 0;
-        virtual float GetInterventionReducedAcquire() const = 0;
 
         virtual INodeContext* GetParent() const = 0;
 

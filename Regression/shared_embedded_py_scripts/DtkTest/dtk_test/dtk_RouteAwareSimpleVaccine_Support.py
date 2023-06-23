@@ -23,13 +23,15 @@ Support library for RouteAwareSimpleVaccine SFTs
 class Columns:
     misc = "MISC"
     notes = "NOTES"
+    mcw = "MCW"
     individual = "INDIVIDUAL"
+    node = "NODE"
     event = "EVENT"
     time = "SIM_TIME"
 
 
 class Route:
-    environmental = "Environmental"
+    environment = "Environment"
     contact = "Contact"
 
 
@@ -40,9 +42,9 @@ class Group:
 
 
 class Transmission_Route:
-    environmental = "TRANSMISSIONROUTE_ENVIRONMENTAL"
-    contact = "TRANSMISSIONROUTE_CONTACT"
-    outbreak = "TRANSMISSIONROUTE_OUTBREAK"
+    environmental = "ENVIRONMENTAL"
+    contact = "CONTACT"
+    outbreak = "OUTBREAK"
 
 
 class Constant:
@@ -53,6 +55,7 @@ class Constant:
     normalized = "Normalized"
     expected = "Expected"
     disease_deaths = "Disease Deaths"
+    contagion = "Contagion"
 
 
 def convert_sqlite_to_csv(db_file, csv_filename='database.csv'):
@@ -74,73 +77,6 @@ def plot_test_data(df, plot_name=Constant.infected):
         plt.show()
     plt.close(fig)
 
-
-# Used in Acquisition_Vaccine_Route and Transmission_Vaccine_Route SFTs
-def create_report_file_vaccine_route(db_df, event_db_filename, config_filename, report_name):
-    with open(report_name, "w") as sft_report_file :
-        config_name = sft.get_config_name(config_filename)
-        sft_report_file.write("Config_name = {}\n".format(config_name))
-        success = True
-
-        sft_report_file.write(f"Testing with {event_db_filename}.\n")
-
-        for group in [Group.environmental, Group.contact, Group.control]:
-            db_df_group = db_df[db_df[Columns.notes].astype(str).str.contains(group)]
-            if db_df_group.empty:
-                success = False
-                sft_report_file.write(f"BAD: there is no NewInfection by Environmental or Contact route in group "
-                                      f"{group}.\n")
-            else:
-                db_df_group_e = db_df_group[db_df_group[Columns.notes].astype(str).str.contains(
-                    Transmission_Route.environmental)]
-                db_df_group_c = db_df_group[db_df_group[Columns.notes].astype(str).str.contains(
-                    Transmission_Route.contact)]
-
-                if Route.environmental in group:
-                    if len(db_df_group) != len(db_df_group_c):
-                        success = False
-                        sft_report_file.write(f"BAD: NewInfections in group {group} should be all from "
-                                              f"{Transmission_Route.contact}.\n")
-                        if not db_df_group_e.empty:
-                            sft_report_file.write(f"\tBAD: there are {len(db_df_group_e)} NewInfections from "
-                                                  f"{Transmission_Route.environmental} in group "
-                                                  f"{group}, it should be blocked.\n")
-                    else:
-                        sft_report_file.write(f"GOOD: NewInfections in group {group} are all from "
-                                              f"{Transmission_Route.contact}.\n")
-                elif Route.contact in group:
-                    if len(db_df_group) != len(db_df_group_e):
-                        success = False
-                        sft_report_file.write(f"BAD: NewInfections in group {group} should be all from "
-                            f"{Transmission_Route.environmental}.\n")
-                        if not db_df_group_c.empty:
-                            success = False
-                            sft_report_file.write(f"BAD: there are {len(db_df_group_c)} NewInfections from "
-                                                  f"{Transmission_Route.contact} "
-                                                  f"in group {group}, it should be blocked.\n")
-                    else:
-                        sft_report_file.write(f"GOOD: NewInfections in group {group} are all from "
-                                              f"{Transmission_Route.environmental}.\n")
-                else:
-                    # This is the Control group
-                    if (not db_df_group_e.empty) and (not db_df_group_c.empty):
-                        sft_report_file.write(
-                            f"GOOD: NewInfections in group {group} are from both {Transmission_Route.environmental} "
-                            f"and {Transmission_Route.contact}.\n")
-                    else:
-                        success = False
-                        if db_df_group_e.empty:
-                            sft_report_file.write(f"BAD: there is no NewInfection from "
-                                                  f"{Transmission_Route.environmental} in group "
-                                                  f"{group}, it should not be blocked.\n")
-                        if db_df_group_c.empty:
-                            sft_report_file.write(f"BAD: there is no NewInfection from "
-                                                  f"{Transmission_Route.contact} in group "
-                                                  f"{group}, it should not be blocked.\n")
-
-        sft_report_file.write(sft.format_success_msg(success))
-
-    return success
 
 
 # Used in Acquisition_Effect_Contact and Acquisition_Effect_Environmental SFTs
@@ -196,7 +132,7 @@ def create_report_file_acquisition_effect(df, property_report_name, config_filen
 
 
 # Used in Transmission_Effect_Contact and Transmission_Effect_Environmental SFTs
-def create_report_file_transmission_effect(df, property_report_name, config_filename, report_name):
+def create_report_file_transmission_effect(df, property_report_name, config_filename, report_name, env_targ):
     with open(report_name, "w") as sft_report_file :
         config_name = sft.get_config_name(config_filename)
         sft_report_file.write("Config_name = {}\n".format(config_name))
@@ -205,14 +141,20 @@ def create_report_file_transmission_effect(df, property_report_name, config_file
         sft_report_file.write(f"Testing with {property_report_name}.\n")
         # Skip time 0 since there is no infection caused by transmission
         df = df.drop(0)
-        df_infected = df.filter(regex=Constant.infected)
-        for column in df_infected.columns:
+        df_contagion  = df.filter(regex=Constant.contagion)
+        if(env_targ):
+            df_croute = df_contagion.filter(regex=Route.environment)
+        else:
+            df_croute = df_contagion.filter(regex=Route.contact)
+
+        for column in df_croute.columns:
             ip_group = column.split(":")[-1]
             if Constant.seed not in ip_group:
                 # Normalize by the infected individuals in the seed group
-                seed_column = [col for col in df_infected.columns if (Constant.seed in col) and (ip_group in col)][0]
-                df_infected[column+":"+ Constant.normalized] = df_infected[column] / df_infected[seed_column]
-        df_normalized = df_infected.filter(regex=Constant.normalized)
+                ref_column = [col for col in df_croute.columns if (Constant.control in col) and (Constant.seed not in col)][0]
+                df_croute[column+":"+ Constant.normalized] = df_croute[column] / df_croute[ref_column]
+        df_normalized = df_croute.filter(regex=Constant.normalized)
+
         # Get control group data and drop it from dataframe
         control_column = [col for col in df_normalized.columns if Constant.control in col][0]
         control_data = df_normalized[control_column]
@@ -226,27 +168,27 @@ def create_report_file_transmission_effect(df, property_report_name, config_file
             if vaccine_effect == 1:
                 if any(df_normalized[column] != 0.0):
                     success = False
-                    sft_report_file.write(f"\tBAD: for ip group {ip_group}, the {Constant.infected} channel should be "
+                    sft_report_file.write(f"\tBAD: for ip group {ip_group}, the {Constant.contagion} channel should be "
                                           f"all 0. Found non-zero value.\n")
                 else:
-                    sft_report_file.write(f"\tGOOD: for ip group {ip_group}, the {Constant.infected} channel contains "
+                    sft_report_file.write(f"\tGOOD: for ip group {ip_group}, the {Constant.contagion} channel contains "
                                           f"only zero.\n")
             else:
                 expected_infected = (1 - vaccine_effect)
                 mean_infected = df_normalized[column].mean()
                 if math.fabs(mean_infected - expected_infected) > 0.1:
                     success = False
-                    sft_report_file.write(f"\tBAD: for ip group {ip_group}, the expected infected portion after "
+                    sft_report_file.write(f"\tBAD: for ip group {ip_group}, the expected contagion after "
                                           f"normalization should be about {expected_infected}, got an average of "
                                           f"{mean_infected}.\n")
                 else:
-                    sft_report_file.write(f"\tGOOD: for ip group {ip_group}, the expected infected portion after "
+                    sft_report_file.write(f"\tGOOD: for ip group {ip_group}, the expected contagion after "
                                           f"normalization should be about {expected_infected}, got an average of "
                                           f"{mean_infected}.\n")
         sft_report_file.write(sft.format_success_msg(success))
 
     df_plot = df_normalized[[col for col in df_normalized.columns if Constant.vaccine in col]]
-    plot_test_data(df_plot)
+    plot_test_data(df_plot, plot_name=Constant.contagion)
 
     return success
 

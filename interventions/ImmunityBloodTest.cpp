@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ImmunityBloodTest.h"
 #include "IIndividualHumanContext.h"
 #include "IIndividualHuman.h"
+#include "InterventionsContainer.h"
 
 SETUP_LOGGING("ImmunityBloodTest")
 
@@ -74,16 +75,12 @@ namespace Kernel
 
     bool ImmunityBloodTest::positiveTestResult()
     {
-        IIndividualHuman* p_iih = nullptr;
-        if( parent->QueryInterface( GET_IID( IIndividualHuman ), (void**)&p_iih ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHuman", "IIndividualHumanContext" );
-        }
-
         // return true if individual has natural immunity or immunity aquired by intervention
-        float acquisitionSusceptibility = p_iih->GetImmunityReducedAcquire()*p_iih->GetInterventionReducedAcquire();
-        bool has_attribute = (acquisitionSusceptibility <= (1.0 - threshold_acquisitionImmunity));
-        LOG_DEBUG_F("acquisitionModifier = %f,  has_attribute = %d  threshold__AcquisitionImmunity = %f\n", acquisitionSusceptibility, has_attribute, threshold_acquisitionImmunity);
+        // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+        float acq_mod = parent->GetSusceptibilityContext()->getModAcquire()*
+                        parent->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
+        bool has_attribute = (acq_mod <= (1.0f - threshold_acquisitionImmunity));
+        LOG_DEBUG_F("acquisitionModifier = %f,  has_attribute = %d  threshold__AcquisitionImmunity = %f\n", acq_mod, has_attribute, threshold_acquisitionImmunity);
 
         return applySensitivityAndSpecificity(has_attribute);
     }

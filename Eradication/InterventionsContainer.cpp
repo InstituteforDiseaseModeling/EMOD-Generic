@@ -7,6 +7,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
+#include <typeinfo>
+#ifndef WIN32
+#include <cxxabi.h>
+#endif
 #include "stdafx.h"
 
 #include "Debug.h"
@@ -16,16 +20,13 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "InterventionsContainer.h"
 #include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
-#include <typeinfo>
-#ifndef WIN32
-#include <cxxabi.h>
-#endif
 #include "NodeEventContext.h"
 #include "INodeContext.h"
 #include "Properties.h"
 #include "EventTrigger.h"
 
 SETUP_LOGGING( "InterventionsContainer" )
+
 
 namespace Kernel
 {
@@ -198,9 +199,9 @@ namespace Kernel
         // --- per time step and affect the person's infections.  Drugs are typically interventions
         // --- that need to be in this loop.
         // --- ------------------------------------------------------------------------------------
-        drugVaccineReducedAcquire   = 1.0;
-        drugVaccineReducedTransmit  = 1.0;
-        drugVaccineReducedMortality = 1.0;
+        std::fill(reduced_acquire.begin(),   reduced_acquire.end(),   1.0f);
+        std::fill(reduced_transmit.begin(),  reduced_transmit.end(),  1.0f);
+        std::fill(reduced_mortality.begin(), reduced_mortality.end(), 1.0f);
 
         for( auto intervention : interventions )
         {
@@ -259,11 +260,11 @@ namespace Kernel
     }
 
     InterventionsContainer::InterventionsContainer()
-        : drugVaccineReducedAcquire(1.0f)
-        , drugVaccineReducedTransmit(1.0f)
-        , drugVaccineReducedMortality(1.0f)
+        : parent(nullptr)
+        , reduced_acquire(IVRoute::pairs::count(), 1.0f)
+        , reduced_transmit(IVRoute::pairs::count(), 1.0f)
+        , reduced_mortality(IVRoute::pairs::count(), 1.0f)
         , interventions()
-        , parent(nullptr)
     {
     }
 
@@ -279,97 +280,53 @@ namespace Kernel
         return true;
     }
 
-    void InterventionsContainer::UpdateVaccineAcquireRate(
-        float acquire,
-        bool isMultiplicative
-    )
+    void InterventionsContainer::UpdateIVAcquireRate(float acq, IVRoute::Enum vax_route)
     {
-        if( isMultiplicative )
+        if(vax_route == IVRoute::ALL)
         {
-            drugVaccineReducedAcquire *= (1.0f - acquire);
+            for(auto iv_route : IVRoute::pairs::get_values())
+            {
+                reduced_acquire[iv_route]   *= (1.0f - acq);
+            }
         }
         else
         {
-            drugVaccineReducedAcquire -= acquire;
-        }
-
-        if( drugVaccineReducedAcquire > 1.0 )
-        {
-            drugVaccineReducedAcquire = 1.0;
-        }
-        else if( drugVaccineReducedAcquire < 0.0 )
-        {
-            LOG_WARN_F("drugVaccineReducedAcquire(=%f) < 0, setting to zero\n",drugVaccineReducedAcquire);
-            drugVaccineReducedAcquire = 0.0;
+            reduced_acquire[vax_route] *= (1.0f - acq);
         }
     }
 
-    void InterventionsContainer::UpdateVaccineTransmitRate(
-        float xmit,
-        bool isMultiplicative
-    )
+    void InterventionsContainer::UpdateIVTransmitRate(float xmit, IVRoute::Enum vax_route)
     {
-        if( isMultiplicative )
+        if(vax_route == IVRoute::ALL)
         {
-            drugVaccineReducedTransmit *= (1.0f - xmit);
+            for(auto iv_route : IVRoute::pairs::get_values())
+            {
+                reduced_transmit[iv_route]  *= (1.0f - xmit);
+            }
         }
         else
         {
-            drugVaccineReducedTransmit -= xmit;
-        }
-
-        if( drugVaccineReducedTransmit > 1.0 )
-        {
-            drugVaccineReducedTransmit = 1.0;
-        }
-        else if( drugVaccineReducedTransmit < 0.0 )
-        {
-            LOG_WARN_F("drugVaccineReducedTransmit(=%f) < 0, setting to zero\n",drugVaccineReducedTransmit);
-            drugVaccineReducedTransmit = 0.0;
+            reduced_transmit[vax_route]  *= (1.0f - xmit);
         }
     }
 
-    void InterventionsContainer::UpdateVaccineMortalityRate(
-        float mort,
-        bool isMultiplicative
-    )
+    void InterventionsContainer::UpdateIVMortalityRate(float mort, IVRoute::Enum vax_route)
     {
-        if( isMultiplicative )
+        if(vax_route == IVRoute::ALL)
         {
-            drugVaccineReducedMortality *= (1.0f - mort);
+            for(auto iv_route : IVRoute::pairs::get_values())
+            {
+                reduced_mortality[iv_route] *= (1.0f - mort);
+            }
         }
         else
         {
-            drugVaccineReducedMortality -= mort;
-        }
-
-        if( drugVaccineReducedMortality > 1.0 )
-        {
-            drugVaccineReducedMortality = 1.0;
-        }
-        else if( drugVaccineReducedMortality < 0.0 )
-        {
-            LOG_WARN_F("drugVaccineReducedMortality(=%f) < 0, setting to zero\n",drugVaccineReducedMortality);
-            drugVaccineReducedMortality = 0.0;
+            reduced_mortality[vax_route] *= (1.0f - mort);
         }
     }
 
-    void InterventionsContainer::ChangeProperty(
-        const char * property,
-        const char * new_value
-    )
+    void InterventionsContainer::ChangeProperty(const char* property, const char* new_value)
     {
-/*
-        LOG_DEBUG_F( "ChangeProperty: property = %s, new_value = %s\n", property, new_value );
-        if( strlen( property ) == 0 )
-        {
-            throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ChangeProperty called with empty property string." );
-        }
-        if( strlen( new_value ) == 0 )
-        {
-            throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "ChangeProperty called with empty value string." );
-        }
-*/
         // Get parent property (remove need for casts)
         IPKeyValueContainer* pProps = parent->GetEventContext()->GetProperties();
 
@@ -419,19 +376,67 @@ namespace Kernel
         return static_cast<IInterventionConsumer*>(this);
     }
 
-    float InterventionsContainer::GetInterventionReducedAcquire() const
+    float InterventionsContainer::GetInterventionReducedAcquire(TransmissionRoute::Enum tx_route) const
     {
-        return drugVaccineReducedAcquire;
+        if(tx_route == TransmissionRoute::CONTACT)
+        {
+            return GetIVReducedAcquire(IVRoute::CONTACT);
+        }
+        else if(tx_route == TransmissionRoute::ENVIRONMENTAL)
+        {
+            return GetIVReducedAcquire(IVRoute::ENVIRONMENTAL);
+        }
+        else
+        {
+            return GetIVReducedAcquire(IVRoute::ALL);
+        }
     }
 
-    float InterventionsContainer::GetInterventionReducedTransmit() const
+    float InterventionsContainer::GetInterventionReducedTransmit(TransmissionRoute::Enum tx_route) const
+    {
+        if(tx_route == TransmissionRoute::CONTACT)
+        {
+            return GetIVReducedTransmit(IVRoute::CONTACT);
+        }
+        else if(tx_route == TransmissionRoute::ENVIRONMENTAL)
+        {
+            return GetIVReducedTransmit(IVRoute::ENVIRONMENTAL);
+        }
+        else
+        {
+            return GetIVReducedTransmit(IVRoute::ALL);
+        }
+    }
+
+    float InterventionsContainer::GetInterventionReducedMortality(TransmissionRoute::Enum tx_route) const
+    {
+        if(tx_route == TransmissionRoute::CONTACT)
+        {
+            return GetIVReducedMortality(IVRoute::CONTACT);
+        }
+        else if(tx_route == TransmissionRoute::ENVIRONMENTAL)
+        {
+            return GetIVReducedMortality(IVRoute::ENVIRONMENTAL);
+        }
+        else
+        {
+            return GetIVReducedMortality(IVRoute::ALL);
+        }
+    }
+
+    float InterventionsContainer::GetIVReducedAcquire(IVRoute::Enum iv_route) const
+    {
+        return reduced_acquire[iv_route];
+    }
+
+    float InterventionsContainer::GetIVReducedTransmit(IVRoute::Enum iv_route) const
     { 
-        return drugVaccineReducedTransmit;
+        return reduced_transmit[iv_route];
     }
 
-    float InterventionsContainer::GetInterventionReducedMortality() const
+    float InterventionsContainer::GetIVReducedMortality(IVRoute::Enum iv_route) const
     {
-        return drugVaccineReducedMortality; 
+        return reduced_mortality[iv_route];
     }
 
     REGISTER_SERIALIZABLE(InterventionsContainer);
@@ -439,9 +444,10 @@ namespace Kernel
     void InterventionsContainer::serialize(IArchive& ar, InterventionsContainer* obj)
     {
         InterventionsContainer& container = *obj;
-        ar.labelElement("drugVaccineReducedAcquire") & container.drugVaccineReducedAcquire;
-        ar.labelElement("drugVaccineReducedTransmit") & container.drugVaccineReducedTransmit;
-        ar.labelElement("drugVaccineReducedMortality") & container.drugVaccineReducedMortality;
         ar.labelElement("interventions") & container.interventions;
+
+        ar.labelElement("reduced_acquire" )     & container.reduced_acquire;
+        ar.labelElement("reduced_transmit" )    & container.reduced_transmit;
+        ar.labelElement("reduced_mortality" )   & container.reduced_mortality;
     }
 }

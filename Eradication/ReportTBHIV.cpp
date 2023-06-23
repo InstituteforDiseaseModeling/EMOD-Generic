@@ -42,49 +42,6 @@ namespace Kernel
         :ReportTB()
     {}
 
-    void ReportTBHIV::UpdateSEIRW(const IIndividualHuman * const individual, float monte_carlo_weight)
-    {
-        IIndividualHumanCoInfection* tbhiv_ind = NULL;
-        if ((const_cast<IIndividualHuman*>(individual))->QueryInterface(GET_IID(IIndividualHumanCoInfection), (void**)&tbhiv_ind) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualHumanCoInfection", "IndividualHuman");
-        }
-
-        if (!individual->IsInfected())  // Susceptible, Recovered (Immune), or Waning
-        {
-            NonNegativeFloat acquisitionModifier = tbhiv_ind->GetImmunityReducedAcquire() * individual->GetInterventionReducedAcquire(); //Line in Report TB
-            if (acquisitionModifier >= 1.0f)
-            {
-                countOfSusceptibles += monte_carlo_weight;
-            }
-            else if (acquisitionModifier > 0.0f)
-            {
-                countOfWaning += monte_carlo_weight;
-            }
-            else
-            {
-                countOfRecovered += monte_carlo_weight;
-            }
-        }
-        else // Exposed or Infectious
-        {
-            IIndividualHumanTB* ihtb = nullptr;
-            if ((const_cast<IIndividualHuman*>(individual))->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&ihtb) != s_OK)
-            {
-                LOG_ERR_F("%s: individual->QueryInterface(IIndividualHumanTB) failed.\n", __FUNCTION__);
-            }
-
-            if ((individual->GetInfectiousness() > 0.0f)  || (ihtb && ihtb->IsExtrapulmonary()) )
-            {
-                countOfInfectious += monte_carlo_weight;
-            }
-            else
-            {
-                countOfExposed += monte_carlo_weight;
-            }
-        }
-    }
-
     void ReportTBHIV::BeginTimestep()
     {
         ReportTB::BeginTimestep();

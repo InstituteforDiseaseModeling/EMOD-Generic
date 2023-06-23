@@ -53,9 +53,6 @@ namespace Kernel
         virtual void ChangeProperty( const char *property, const char* new_value) override;
         virtual ISTIInterventionsContainer* GetContainerSTI() override;
 
-        virtual float GetInterventionReducedAcquire() const override;
-        virtual float GetInterventionReducedTransmit() const override;
-
         // ISTICoInfectionStatusChangeApply 
         virtual void SpreadStiCoInfection() override;
         virtual void CureStiCoInfection() override;

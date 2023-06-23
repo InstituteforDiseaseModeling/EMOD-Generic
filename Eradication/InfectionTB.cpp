@@ -526,7 +526,7 @@ namespace Kernel
         // TODO: depending on the decay profile of a mortality-reducing vaccine,
         //       we may prefer to change "death as a compartmental transition" to "death as a daily update"
         //       so that we aren't picking the death rate based on the efficacy of a vaccine at the beginning of the infection alone.
-        float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality();
+        float death_rate = InfectionTBConfig::TB_active_mortality_rate * immunity->getModMortality() * parent->GetVaccineContext()->GetInterventionReducedMortality(m_source_route);
 
         infectiousness = parent->GetParams()->infectivity_distribution->Calculate( GetParent()->GetRng() ) * immunityTB->GetCoughInfectiousness();
 

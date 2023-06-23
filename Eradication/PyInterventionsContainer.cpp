@@ -10,7 +10,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #ifdef ENABLE_PYTHON
 
-//#include "SimpleTypemapRegistration.h"
 #include "Sugar.h"
 #include "Debug.h"
 #include "Environment.h"
@@ -22,9 +21,6 @@ SETUP_LOGGING( "PyInterventionsContainer" )
 namespace Kernel
 {
     BEGIN_QUERY_INTERFACE_DERIVED(PyInterventionsContainer, InterventionsContainer)
-        //HANDLE_INTERFACE(IPyVaccineEffects)
-        //HANDLE_INTERFACE(IPyDrugEffects)
-        HANDLE_INTERFACE(IPyDrugEffectsApply)
     END_QUERY_INTERFACE_DERIVED(PyInterventionsContainer, InterventionsContainer)
 
     PyInterventionsContainer::PyInterventionsContainer()
@@ -34,15 +30,6 @@ namespace Kernel
     PyInterventionsContainer::~PyInterventionsContainer()
     {
     }
-
-    void PyInterventionsContainer::ApplyDrugVaccineReducedAcquireEffect( float rate )
-    {
-    }
-    
-    void PyInterventionsContainer::ApplyDrugVaccineReducedTransmitEffect( float rate )
-    {
-    }
-
 }
 
 #endif // ENABLE_PYTHON

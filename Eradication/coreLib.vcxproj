@@ -227,7 +227,6 @@
     <ClInclude Include="..\interventions\IHealthSeekingBehavior.h" />
     <ClInclude Include="..\interventions\ImmunityBloodTest.h" />
     <ClInclude Include="..\interventions\ImportPressure.h" />
-    <ClInclude Include="..\interventions\IndividualImmunityChanger.h" />
     <ClInclude Include="..\interventions\IndividualRepellent.h" />
     <ClInclude Include="..\interventions\InputEIR.h" />
     <ClInclude Include="..\interventions\InterventionForCurrentPartners.h" />
@@ -574,7 +573,6 @@
     <ClCompile Include="..\interventions\HumanHostSeekingTrap.cpp" />
     <ClCompile Include="..\interventions\ImmunityBloodTest.cpp" />
     <ClCompile Include="..\interventions\ImportPressure.cpp" />
-    <ClCompile Include="..\interventions\IndividualImmunityChanger.cpp" />
     <ClCompile Include="..\interventions\IndividualRepellent.cpp" />
     <ClCompile Include="..\interventions\InputEIR.cpp" />
     <ClCompile Include="..\interventions\InterventionForCurrentPartners.cpp" />

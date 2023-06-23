@@ -198,31 +198,31 @@ namespace Kernel
         return p_ret;
     }
 
-    void MasterInterventionsContainer::UpdateVaccineAcquireRate( float acq, bool isMultiplicative )
+    void MasterInterventionsContainer::UpdateIVAcquireRate( float acq, IVRoute::Enum vax_route)
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineAcquireRate(acq, isMultiplicative);
+            container->UpdateIVAcquireRate(acq, vax_route);
         }    
     }
 
-    void MasterInterventionsContainer::UpdateVaccineTransmitRate( float xmit, bool isMultiplicative )
+    void MasterInterventionsContainer::UpdateIVTransmitRate( float xmit, IVRoute::Enum vax_route)
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineTransmitRate(xmit, isMultiplicative);
+            container->UpdateIVTransmitRate(xmit, vax_route);
         }    
     }
 
-    void MasterInterventionsContainer::UpdateVaccineMortalityRate( float mort, bool isMultiplicative )
+    void MasterInterventionsContainer::UpdateIVMortalityRate( float mort, IVRoute::Enum vax_route)
     {
         for (auto container : InterventionsContainerList)
         {
-            container->UpdateVaccineMortalityRate(mort, isMultiplicative);
+            container->UpdateIVMortalityRate(mort, vax_route);
         }    
     }
 
-    float MasterInterventionsContainer::GetInterventionReducedAcquire() const
+    float MasterInterventionsContainer::GetInterventionReducedAcquire(TransmissionRoute::Enum tx_route) const
     {
         for (auto container : InterventionsContainerList)
         {
@@ -230,14 +230,14 @@ namespace Kernel
             ISupports* tempInterface;
             if (container->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&tempInterface ) == s_OK)
             {
-                return container->GetInterventionReducedAcquire();
+                return container->GetInterventionReducedAcquire(tx_route);
             }
         }
 
         return 0.0f;
     }
 
-    float MasterInterventionsContainer::GetInterventionReducedTransmit() const
+    float MasterInterventionsContainer::GetInterventionReducedTransmit(TransmissionRoute::Enum tx_route) const
     {
         for (auto container : InterventionsContainerList)
         {
@@ -245,21 +245,21 @@ namespace Kernel
             ISupports* tempInterface;
             if (container->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&tempInterface ) == s_OK)
             {
-                return container->GetInterventionReducedTransmit();
+                return container->GetInterventionReducedTransmit(tx_route);
             }
         }
 
         return 1.0f;
     }
 
-    float MasterInterventionsContainer::GetInterventionReducedMortality() const
+    float MasterInterventionsContainer::GetInterventionReducedMortality(TransmissionRoute::Enum tx_route) const
     {
         for (auto container : InterventionsContainerList)
         {
             ISupports* tempInterface;
             if (container->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&tempInterface ) == s_OK)
             {
-                return container->GetInterventionReducedMortality();
+                return container->GetInterventionReducedMortality(tx_route);
             }
         }
 

@@ -73,7 +73,6 @@ namespace Kernel
         // ---------------
         virtual void Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum transmission_route ) override;
         virtual const infection_list_t& GetInfections() const override;
-        virtual float GetInterventionReducedAcquire() const override;
         virtual IIndividualHuman* GetIndividual() override;
 
         // -------------------------------

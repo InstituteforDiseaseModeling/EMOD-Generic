@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
 #include "ISimulationContext.h"
+#include "InterventionsContainer.h"
 #include "InterventionFactory.h"
 #include "NodeEventContext.h"
 #include "Exceptions.h"
@@ -56,16 +57,16 @@ namespace Kernel
         return BaseIntervention::Configure(inputJson);
     }
 
-    bool OutbreakIndividual::Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver * pCCO)
+    bool OutbreakIndividual::Distribute(IIndividualHumanInterventionsContext* context, ICampaignCostObserver* pCCO)
     {
         bool distributed = BaseIntervention::Distribute(context, pCCO);
 
         StrainIdentity outbreak_strain(clade,genome);
 
-        // TBD: Get individual from context, and infect
-        IIndividualHuman* individual = dynamic_cast<IIndividualHuman*>(context->GetParent()); // QI in new code
+        IIndividualHuman* individual = context->GetParent()->GetEventContext()->GetIndividual();
 
-        float mod_acq = individual->GetImmunityReducedAcquire()*individual->GetInterventionReducedAcquire();
+        float mod_acq = individual->GetSusceptibilityContext()->getModAcquire()*
+                        individual->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::OUTBREAK);
         LOG_DEBUG( "Infecting individual from Outbreak.\n" );
         if( ignoreImmunity || context->GetParent()->GetRng()->SmartDraw(mod_acq) )
         {

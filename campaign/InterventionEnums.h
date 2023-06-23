@@ -158,6 +158,14 @@ namespace Kernel
     ENUM_DECLARE(TyphoidVaccineMode, IDM_ENUMSPEC_TyphoidVaccineMode)
 
 
+    // Route aware intervention: Vaccine
+    #define IDM_ENUMSPEC_IVRoute                                                         \
+        ENUM_VALUE_SPEC(ALL                              ,  0)                           \
+        ENUM_VALUE_SPEC(CONTACT                          ,  1)                           \
+        ENUM_VALUE_SPEC(ENVIRONMENTAL                    ,  2)
+    ENUM_DECLARE(IVRoute, IDM_ENUMSPEC_IVRoute)
+
+
     // VectorControlNodeTargeted
     #define IDM_ENUMSPEC_SpaceSprayTarget                                                \
         ENUM_VALUE_SPEC(SpaceSpray_FemalesOnly           , 11)                           \

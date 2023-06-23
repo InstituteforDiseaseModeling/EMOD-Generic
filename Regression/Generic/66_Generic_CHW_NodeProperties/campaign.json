@@ -6,7 +6,6 @@
                 "Intervention_Config": {
                     "Actual_IndividualIntervention_Config": {
                         "Cost_To_Consumer": 10,
-                        "Efficacy_Is_Multiplicative": 1,
                         "Vaccine_Take": 1,
                         "Acquire_Config": {
                             "Box_Duration_Distribution": "EXPONENTIAL_DISTRIBUTION",

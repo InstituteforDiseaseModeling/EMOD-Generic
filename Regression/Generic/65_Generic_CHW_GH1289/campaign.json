@@ -12,7 +12,6 @@
                     "Intervention_List": [
                         {
                             "Cost_To_Consumer": 1,
-                            "Efficacy_Is_Multiplicative": 1,
                             "Vaccine_Take": 1,
                             "Acquire_Config": {
                                 "Initial_Effect": 0.9,

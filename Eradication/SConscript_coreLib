@@ -97,7 +97,6 @@ else:
                             "../interventions/HealthSeekingBehavior.cpp",
                             "../interventions/ImmunityBloodTest.cpp",
                             "../interventions/ImportPressure.cpp",
-                            "../interventions/IndividualImmunityChanger.cpp",
                             "../interventions/MigrateIndividuals.cpp",
                             "../interventions/MigrateFamily.cpp",
                             "../interventions/MultiInterventionDistributor.cpp",

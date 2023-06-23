@@ -48,7 +48,8 @@ namespace Kernel
             // GetRelativeBitingRate is already handled by the flexibility to pass in an age-risk function
             // Susceptibility::getModAcquire is only used in GENERIC and VECTOR immunity but not MALARIA
             // InterventionsContainer::GetInterventionReducedAcquire can be modified by a Vaccine intervention used in MALARIA_SIM
-            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire();
+            // Adding route aware IVs required querying based on route of infection; malaria sims only use CONTACT route (default)
+            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
 
             IMalariaHumanInfectable* imhi = nullptr;
             if ( s_OK !=  ihec->QueryInterface(GET_IID(IMalariaHumanInfectable), (void**)&imhi) )
@@ -85,7 +86,8 @@ namespace Kernel
             // GetRelativeBitingRate is already handled by the flexibility to pass in an age-risk function
             // Susceptibility::getModAcquire is only used in GENERIC and VECTOR immunity but not MALARIA
             // InterventionsContainer::GetInterventionReducedAcquire can be modified by a Vaccine intervention used in MALARIA_SIM
-            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire();
+            // Adding route aware IVs required querying based on route of infection; malaria sims only use CONTACT route (default)
+            relative_risk *= ihec->GetInterventionsContext()->GetParent()->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
 
             IMalariaHumanInfectable* imhi = nullptr;
             if ( s_OK !=  ihec->QueryInterface(GET_IID(IMalariaHumanInfectable), (void**)&imhi) )

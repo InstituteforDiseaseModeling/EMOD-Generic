@@ -1,0 +1,61 @@
+{
+    "Metadata": {
+        "DateCreated": "Mon Aug 20 13:40:55 2018", 
+        "Tool": "notepad++", 
+        "Author": "yechen", 
+        "IdReference": "Gridded world grump2.5arcmin", 
+        "NodeCount": 1
+    }, 
+    "Defaults":{
+                "IndividualProperties": [
+                {
+                    "Property": "Geographic",
+                    "Values": [
+                        "Seed_Control",
+                        "Seed_Vaccine_0.2",
+                        "Seed_Vaccine_0.7",
+                        "Seed_Vaccine_1",
+                        "Control",
+                        "Vaccine_0.2",
+                        "Vaccine_0.7",
+                        "Vaccine_1"
+                    ],
+                    "Initial_Distribution": [ 0.15, 0.15, 0.15, 0.15, 0.10, 0.10, 0.10, 0.10],
+                    "Transitions": [],
+                    "TransmissionMatrix": {
+                    "contact":  {
+                        "Matrix":
+                         [
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0]
+                         ]
+                     }
+                     ,
+                     "environmental" : {
+                         "Matrix":
+                         [
+                            [0, 0, 0, 0, 1, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 1, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 1, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 1],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0, 0, 0, 0, 0, 0, 0]
+                         ] }
+                    }
+                }
+            ]
+    },
+    "Nodes": [
+        {
+            "NodeID": 1
+        }
+    ]
+}

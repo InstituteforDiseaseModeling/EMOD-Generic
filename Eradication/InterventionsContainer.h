@@ -18,13 +18,17 @@ namespace Kernel
     struct IVaccineConsumer
         : public ISupports
     {
-        virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true ) = 0;
-        virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true ) = 0;
-        virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true ) = 0;
+        virtual void UpdateIVAcquireRate(  float acq,  IVRoute::Enum vax_route) = 0;
+        virtual void UpdateIVTransmitRate( float xmit, IVRoute::Enum vax_route) = 0;
+        virtual void UpdateIVMortalityRate(float mort, IVRoute::Enum vax_route) = 0;
 
-        virtual float GetInterventionReducedAcquire()   const = 0;
-        virtual float GetInterventionReducedTransmit()  const = 0;
-        virtual float GetInterventionReducedMortality() const = 0;
+        virtual float GetInterventionReducedAcquire(TransmissionRoute::Enum)   const = 0;
+        virtual float GetInterventionReducedTransmit(TransmissionRoute::Enum)  const = 0;
+        virtual float GetInterventionReducedMortality(TransmissionRoute::Enum) const = 0;
+
+        virtual float GetIVReducedAcquire(IVRoute::Enum)   const = 0;
+        virtual float GetIVReducedTransmit(IVRoute::Enum)  const = 0;
+        virtual float GetIVReducedMortality(IVRoute::Enum) const = 0;
     };
 
     class InterventionsContainer
@@ -60,13 +64,17 @@ namespace Kernel
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
         // IVaccineConsumer
-        virtual void UpdateVaccineAcquireRate(   float acq,  bool isMultiplicative = true ) override;
-        virtual void UpdateVaccineTransmitRate(  float xmit, bool isMultiplicative = true ) override;
-        virtual void UpdateVaccineMortalityRate( float mort, bool isMultiplicative = true ) override;
+        virtual void UpdateIVAcquireRate(  float acq,  IVRoute::Enum vax_route) override;
+        virtual void UpdateIVTransmitRate( float xmit, IVRoute::Enum vax_route) override;
+        virtual void UpdateIVMortalityRate(float mort, IVRoute::Enum vax_route) override;
 
-        virtual float GetInterventionReducedAcquire()   const override;
-        virtual float GetInterventionReducedTransmit()  const override;
-        virtual float GetInterventionReducedMortality() const override;
+        virtual float GetInterventionReducedAcquire(TransmissionRoute::Enum)   const override;
+        virtual float GetInterventionReducedTransmit(TransmissionRoute::Enum)  const override;
+        virtual float GetInterventionReducedMortality(TransmissionRoute::Enum) const override;
+
+        virtual float GetIVReducedAcquire(IVRoute::Enum)   const override;
+        virtual float GetIVReducedTransmit(IVRoute::Enum)  const override;
+        virtual float GetIVReducedMortality(IVRoute::Enum) const override;
 
         virtual bool GiveIntervention( IDistributableIntervention * pIV ) override;
 
@@ -75,14 +83,15 @@ namespace Kernel
         virtual void Update( float dt );                // update non-infectious loop update interventions once per time step
 
     protected:
-        float drugVaccineReducedAcquire;
-        float drugVaccineReducedTransmit;
-        float drugVaccineReducedMortality;
+        std::vector<float> reduced_acquire;
+        std::vector<float> reduced_transmit;
+        std::vector<float> reduced_mortality;
+
         std::list<IDistributableIntervention*> interventions;
 
         virtual void PropagateContextToDependents(); // pass context to interventions if they need it
 
-        IIndividualHumanContext *parent;    // context for this interventions container
+        IIndividualHumanContext* parent;    // context for this interventions container
 
     private:
         DECLARE_SERIALIZABLE(InterventionsContainer);

@@ -147,10 +147,10 @@ namespace Kernel
         normalizeChannel(_active_sx_label,               _stat_pop_label);
     }
 
-    void ReportTB::UpdateSEIRW( const IIndividualHuman * const individual, float monte_carlo_weight )
+    void ReportTB::UpdateSEIRW( const IIndividualHuman* const individual, float monte_carlo_weight )
     {
-        
-        IIndividualHumanCoInfection* tbhiv_ind = NULL;
+        IIndividualHumanCoInfection* tbhiv_ind = nullptr;
+
         if( ( const_cast<IIndividualHuman*>( individual ) )->QueryInterface( GET_IID( IIndividualHumanCoInfection ), (void**)&tbhiv_ind ) != s_OK )
         {
             throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualHumanCoInfection", "IndividualHuman" );
@@ -158,12 +158,14 @@ namespace Kernel
 
         if (!individual->IsInfected())  // Susceptible, Recovered (Immune), or Waning
         {
-            NonNegativeFloat acquisitionModifier = tbhiv_ind->GetImmunityReducedAcquire() * individual->GetInterventionReducedAcquire();
-            if (acquisitionModifier >= 1.0f)
+            // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+            float acq_mod = tbhiv_ind->GetImmunityReducedAcquire() * 
+                            individual->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
+            if (acq_mod >= 1.0f)
             {
                 countOfSusceptibles += monte_carlo_weight;
             }
-            else if (acquisitionModifier > 0.0f)
+            else if (acq_mod > 0.0f)
             {
                 countOfWaning += monte_carlo_weight;
             }
@@ -174,14 +176,6 @@ namespace Kernel
         }
         else // Exposed or Infectious
         {
-           
-            /*
-            IIndividualHumanTB* ihtb = nullptr;
-            if ((const_cast<IIndividualHuman*>(individual))->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&ihtb) != s_OK)
-            {
-                LOG_ERR_F("%s: individual->QueryInterface(IIndividualHumanTB) failed.\n", __FUNCTION__);
-            }*/
-
             if ((individual->GetInfectiousness() > 0.0f) || ( tbhiv_ind->IsExtrapulmonary()))
             {
                 countOfInfectious += monte_carlo_weight;
@@ -193,10 +187,7 @@ namespace Kernel
         }
     }
 
-    void
-    ReportTB::LogIndividualData(
-        Kernel::IIndividualHuman* individual
-    )
+    void ReportTB::LogIndividualData(Kernel::IIndividualHuman* individual)
     {
         ReportAirborne::LogIndividualData( individual );
 

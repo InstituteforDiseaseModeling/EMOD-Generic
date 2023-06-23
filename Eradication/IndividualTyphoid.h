@@ -91,7 +91,7 @@ namespace Kernel
         virtual void Update(float currenttime, float dt);
         virtual Infection* createInfection(suids::suid _suid);
         virtual void AcquireNewInfection( const IStrainIdentity* infstrain, TransmissionRoute::Enum tx_route, float incubation_period_override ) override;
-        virtual float GetImmunityReducedAcquire() const override;
+        virtual float GetImmunityReducedAcquire() const;
         virtual HumanStateChange GetStateChange() const;
         virtual void ForceClearInfection();
         

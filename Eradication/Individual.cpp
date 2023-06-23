@@ -582,16 +582,6 @@ namespace Kernel
     void IndividualHuman::applyNewInterventionEffects(float dt)
     { }
 
-    float IndividualHuman::GetImmunityReducedAcquire() const
-    {
-        return susceptibility->getModAcquire();
-    }
-
-    float IndividualHuman::GetInterventionReducedAcquire() const
-    {
-        return interventions->GetInterventionReducedAcquire();
-    }
-
     float IndividualHuman::GetImmuneFailAgeAcquire() const
     {
         return susceptibility->getImmuneFailAgeAcquire();
@@ -939,9 +929,9 @@ namespace Kernel
     // TODO: port normal exposure_to_infectivity logic to this pattern as well <ERAD-328>
     void IndividualHuman::Expose( const IContagionPopulation* cp, float dt, TransmissionRoute::Enum tx_route)
     {
-        ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*susceptibility->getModRisk()*interventions->GetInterventionReducedAcquire());
+        ProbabilityNumber prob = EXPCDF(-cp->GetTotalContagion()*dt*susceptibility->getModAcquire()*susceptibility->getModRisk()*interventions->GetInterventionReducedAcquire(tx_route));
         LOG_DEBUG_F( "id = %lu, group_id = %d, total contagion = %f, dt = %f, immunity factor = %f, interventions factor = %f, prob=%f, infectiousness=%f\n",
-                     GetSuid().data, transmissionGroupMembershipByRoute[tx_route].group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(), float(prob), infectiousness);
+                     GetSuid().data, transmissionGroupMembershipByRoute[tx_route].group, cp->GetTotalContagion(), dt, susceptibility->getModAcquire(), interventions->GetInterventionReducedAcquire(tx_route), float(prob), infectiousness);
         bool acquire = false; 
         if( IndividualHumanConfig::enable_skipping ) 
         {
@@ -1027,7 +1017,12 @@ namespace Kernel
         infectiousness = 0;
 
         if ( infections.size() == 0 )
+        {
             return;
+        }
+
+        float raw_inf    = 0.0f;
+        float inf_mod_iv = 0.0f;
 
         for (auto infection : infections)
         {
@@ -1043,20 +1038,21 @@ namespace Kernel
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
                 LOG_DEBUG_F("Found route:%s.\n", TransmissionRoute::pairs::lookup_key(entry.first).c_str());
-                float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousnessByRoute(entry.first) * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
+                float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousnessByRoute(entry.first) * susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit(entry.first);
                 if (tmp_infectiousness > 0.0f)
                 {
                     LOG_DEBUG_F("Depositing %f to route %s: (clade=%d, substain=%d)\n", tmp_infectiousness, TransmissionRoute::pairs::lookup_key(entry.first).c_str(), tmp_strainIDs.GetCladeID(), tmp_strainIDs.GetGeneticID());
                     parent->DepositFromIndividual( tmp_strainIDs, tmp_infectiousness, entry.second, entry.first );
-                    infectiousness += infection->GetInfectiousnessByRoute(entry.first);
+                    raw_inf    += infection->GetInfectiousnessByRoute(entry.first);
+                    inf_mod_iv += infection->GetInfectiousnessByRoute(entry.first) * interventions->GetInterventionReducedTransmit(entry.first);
                 }
            }
         }
 
-        float raw_inf = infectiousness;
-        infectiousness *= susceptibility->getModTransmit() * interventions->GetInterventionReducedTransmit();
+        infectiousness = inf_mod_iv * susceptibility->getModTransmit();
+        float iv_mod_ratio = (inf_mod_iv + FLT_EPSILON)/(raw_inf + FLT_EPSILON);
         LOG_VALID_F("Infectiousness for individual %d = %f (raw=%f, immunity modifier=%f, intervention modifier=%f, weight=%f).\n",
-            GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), interventions->GetInterventionReducedTransmit(), m_mc_weight);
+            GetSuid().data, infectiousness, raw_inf, susceptibility->getModTransmit(), iv_mod_ratio, m_mc_weight);
     }
 
     bool IndividualHuman::InfectionExistsForThisStrain(IStrainIdentity* check_strain_id)

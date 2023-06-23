@@ -149,15 +149,16 @@ namespace Kernel
             << "," << hiv_individual->GetHIVInterventionsContainer()->GetDurationSinceLastStartingART()
             << "," << hiv_individual->GetHIVInterventionsContainer()->GetProbMaternalTransmissionModifier()
             << "," << hiv_individual->GetHIVInterventionsContainer()->OnArtQuery()
-            
+
             << "," << sti_individual->GetCoInfectiveTransmissionFactor()
             << "," << sti_individual->GetCoInfectiveAcquisitionFactor()
             << "," << sti_individual->GetDebutAge()
             << "," << sti_individual->IsCircumcised()
-            
-            << "," << individual->GetVaccineContext()->GetInterventionReducedAcquire()
-            << "," << individual->GetVaccineContext()->GetInterventionReducedTransmit()
-            << "," << individual->GetVaccineContext()->GetInterventionReducedMortality()
+
+            // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+            << "," << individual->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT)
+            << "," << individual->GetVaccineContext()->GetInterventionReducedTransmit(TransmissionRoute::CONTACT)
+            << "," << individual->GetVaccineContext()->GetInterventionReducedMortality(TransmissionRoute::CONTACT)
 
             << endl;
     }

@@ -16,15 +16,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ReportAirborne::ReportAirborne()
 {}
 
-void
-ReportAirborne::populateSummaryDataUnitsMap(
-    std::map<std::string, std::string> &units_map
-)
+void ReportAirborne::populateSummaryDataUnitsMap(std::map<std::string, std::string> &units_map)
 {
     Report::populateSummaryDataUnitsMap(units_map);
-
-    // Additional vector channels
-    //units_map["Adult Airbornes"]         = "Airbornes";
 }
 
 #endif // DISABLE_AIRBORNE

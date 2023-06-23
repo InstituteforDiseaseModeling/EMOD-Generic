@@ -451,8 +451,8 @@ getImmunity(PyObject* self, PyObject* args)
     }
     else
     {
-        imm = population.at( id )->GetImmunityReducedAcquire()*
-              population.at( id )->GetInterventionReducedAcquire();
+        imm = population.at( id )->GetSusceptibilityContext()->getModAcquire()*
+              population.at( id )->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
     }
     return Py_BuildValue("f", imm );
 }

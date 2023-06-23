@@ -124,8 +124,6 @@ namespace Kernel
         virtual float             GetMonteCarloWeight()            const override { return m_mc_weight; }
         virtual bool              IsPossibleMother()               const override;
         virtual bool              IsInfected()                     const override { return m_is_infected; }
-        virtual float             GetImmunityReducedAcquire()      const override;
-        virtual float             GetInterventionReducedAcquire()  const override;
         virtual HumanStateChange  GetStateChange()                 const override { return StateChange; }
         virtual void              BroadcastDeath()                       override;
         virtual void              Die( HumanStateChange )                override;

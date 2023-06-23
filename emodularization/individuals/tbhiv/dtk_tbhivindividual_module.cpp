@@ -459,7 +459,16 @@ getImmunity(PyObject* self, PyObject* args)
     {
         std::cout << "Failed to parse id for getImmunity (as int)." << std::endl;
     }
-    float imm = population[ id ]->GetImmunityReducedAcquire();
+    float imm = 0.0f;
+    if( population.find( id ) == population.end() )
+    {
+        std::cout << "Id " << id << " not in our pymod population. Not a valid id." << std::endl;
+    }
+    else
+    {
+        imm = population.at( id )->GetSusceptibilityContext()->getModAcquire()*
+              population.at( id )->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT);
+    }
     return Py_BuildValue("f", imm );
 }
 

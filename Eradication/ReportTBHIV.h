@@ -27,7 +27,6 @@ public:
     virtual void LogNodeData( INodeContext * pNC ) override;
     virtual void LogIndividualData( IIndividualHuman* individual ) override;
     virtual void BeginTimestep();
-    virtual void UpdateSEIRW(const Kernel::IIndividualHuman * individual, float monte_carlo_weight) override;
 
 protected:
     virtual void populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map );

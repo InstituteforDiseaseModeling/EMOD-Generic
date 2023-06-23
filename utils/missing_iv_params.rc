@@ -19,8 +19,8 @@
 
 #define Enable_Intervention_Replacement_DESC_TEXT                     "When enabled, distributing intervention will remove all other interventions of the same name on targeted individual."
 
-#define VAC_Cost_To_Consumer_DESC_TEXT                                "Unit cost per vaccine (unamortized)."
-#define VAC_Efficacy_Is_Multiplicative_DESC_TEXT                      "Net vaccine effect when individuals receive multiple interventions. If true, effects are multiplied; otherwise, effects are additive."
+#define VAC_Vaccine_Route_DESC_TEXT                                   "Transmission route affected by vaccine."
+#define VAC_Cost_To_Consumer_DESC_TEXT                                "Unit cost per vaccine."
 #define VAC_Vaccine_Take_DESC_TEXT                                    "Probability vaccine will successfully be applied at the specified effect."
 #define VAC_Acquire_Config_DESC_TEXT                                  "Waning effect configuration for vaccine acquisition."
 #define VAC_Mortality_Config_DESC_TEXT                                "Waning effect configuration for vaccine mortality."

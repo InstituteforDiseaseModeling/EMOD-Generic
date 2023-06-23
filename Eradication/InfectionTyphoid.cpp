@@ -194,7 +194,7 @@ namespace Kernel
     {
         auto age = dynamic_cast<IIndividualHuman*>(parent)->GetAge() / DAYSPERYEAR;
         auto sex = dynamic_cast<IIndividualHuman*>(parent)->GetGender();
-        auto mort = parent->GetVaccineContext()->GetInterventionReducedMortality();
+        auto mort = parent->GetVaccineContext()->GetInterventionReducedMortality(m_source_route);
         //LOG_DEBUG_F("hasclin subclinical dur %d, pre %d\n", _subclinical_duration, prepatent_timer); 
         prepatent_timer=UNINIT_TIMER; 
         LOG_DEBUG_F( "Deciding post-prepatent tx using typhoid_symptomatic_fraction=%f.\n", IndividualHumanTyphoidConfig::typhoid_symptomatic_fraction );
@@ -435,7 +435,7 @@ namespace Kernel
     {
         float infectiousness = 0.0f;
         float base_infectiousness = IndividualHumanTyphoidConfig::typhoid_acute_infectiousness;
-        auto irt = parent->GetVaccineContext()->GetInterventionReducedTransmit();
+        auto irt = parent->GetVaccineContext()->GetInterventionReducedTransmit(m_source_route);
         if (acute_timer>0)
         {
             infectiousness = treatment_multiplier*base_infectiousness*irt;

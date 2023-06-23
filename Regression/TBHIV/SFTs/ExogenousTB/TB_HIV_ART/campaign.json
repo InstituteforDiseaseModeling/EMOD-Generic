@@ -5,7 +5,6 @@
             "Event_Coordinator_Config": {
                 "Demographic_Coverage": 1,
                 "Intervention_Config": {
-                    "Efficacy_Is_Multiplicative": 1,
                     "Vaccine_Take": 1,
                     "Transmit_Config": {
                         "Box_Duration": 1000,

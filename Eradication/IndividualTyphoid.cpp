@@ -355,7 +355,7 @@ namespace Kernel
                 ProbabilityNumber prob = 0;
                 if ( number_of_exposures > 0 )
                 {
-                    auto ira = interventions->GetInterventionReducedAcquire();
+                    auto ira = interventions->GetInterventionReducedAcquire(tx_route);
                     if ( ira < 1.0f )
                     {
                         LOG_VALID_F( "Vaccine modifier for individual %d (enviro route) = %f.\n", GetSuid().data, ira );
@@ -426,7 +426,7 @@ namespace Kernel
             ProbabilityNumber prob = 0;
             if (number_of_exposures > 0)
             {
-                auto ira = interventions->GetInterventionReducedAcquire();
+                auto ira = interventions->GetInterventionReducedAcquire(tx_route);
                 if( ira < 1.0f )
                 {
                     LOG_VALID_F( "Vaccine modifier for individual %d (contact route) = %f.\n", GetSuid().data, ira );
@@ -524,7 +524,7 @@ namespace Kernel
             for(auto& entry : transmissionGroupMembershipByRoute)
             {
                 auto tic = (TyphoidInterventionsContainer*)interventions;
-                auto irt = interventions->GetInterventionReducedTransmit(); // from regular vaccine
+                auto irt = interventions->GetInterventionReducedTransmit(infection->GetSourceRoute()); // from regular vaccine
                 if (entry.first==TransmissionRoute::CONTACT)
                 {
                     auto cda = tic->GetContactDepositAttenuation(); // from environmental intervention

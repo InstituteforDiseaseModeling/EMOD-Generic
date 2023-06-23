@@ -309,14 +309,6 @@ namespace Kernel
                     auto infection = (*it);
 
                     IInfectionTB* pinfTB = NULL;
-                    /*if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
-                    {    
-                        LOG_DEBUG("This infection is not TB\n");
-                    }
-                    if (s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
-                    {    
-                        LOG_DEBUG("This infection is  TB\n");
-                    }*/
 
                     // Update infection (both HIV and TB)
                     infection->Update(infection_timestep, infection2susceptibilitymap[infection] );
@@ -471,13 +463,7 @@ namespace Kernel
         return m_bool_exogenous;
     }
 
-    bool
-    IndividualHumanCoInfection::ShouldAcquire(
-        float contagion,
-        float dt,
-        float suscept_mod,
-        TransmissionRoute::Enum transmission_route
-    )
+    bool IndividualHumanCoInfection::ShouldAcquire(float contagion, float dt, float suscept_mod, TransmissionRoute::Enum tx_route)
     {
         if( suscept_mod == -1 )
         {
@@ -492,7 +478,7 @@ namespace Kernel
         //LOG_VALID_F( "%s: Individual %d with CD4count=%f has susceptibility CD4mod=%f.\n", __FUNCTION__, GetSuid().data, GetCD4(), suscept_mod );
 
         // multiple infections of the same type happen here
-        ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire()); // infection results from this strain?
+        ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire(tx_route)); // infection results from this strain?
         return( GetRng()->SmartDraw( prob ) ); // infection results from this strain? 
     }
 
@@ -521,7 +507,7 @@ namespace Kernel
                 !(GetTBInfection()->IsFastProgressor() || GetTBInfection()->IsPendingRelapse()) )
             {
                 float dt_true = parent->GetParent()->GetParams()->sim_time_delta;
-                float prob = EXPCDF( -cp->GetTotalContagion()*dt_true*suscept_mod*interventions->GetInterventionReducedAcquire() );
+                float prob = EXPCDF( -cp->GetTotalContagion()*dt_true*suscept_mod*interventions->GetInterventionReducedAcquire(tx_route) );
                 if ( GetRng()->SmartDraw( prob ) ) // infection results from this strain?
                 {
                     GetTBInfection()->ExogenousLatentSlowToFast();
@@ -548,6 +534,7 @@ namespace Kernel
         // Big simplification for now.  Just binary infectivity depending on latent/active state of infection
         infectiousness = 0;
 
+        float  mod_inf_val = 0.0f;
         for (auto infection : infections)
         {
             IInfectionTB* pinfTB = NULL;
@@ -556,8 +543,10 @@ namespace Kernel
                 //LOG_DEBUG("This infection is not TB, do not add to total infectiousness in IndividualCoInfection (assume HIV is not infectious now) \n");
                 continue;
             }
-            infectiousness += infection->GetInfectiousness();
-            float tmp_infectiousness =  m_mc_weight * infection->GetInfectiousness() * dynamic_cast <SusceptibilityTB*> (infection2susceptibilitymap[infection]) ->getModTransmit(this) * interventions->GetInterventionReducedTransmit();
+
+            mod_inf_val              = infection->GetInfectiousness() * dynamic_cast <SusceptibilityTB*> (infection2susceptibilitymap[infection]) ->getModTransmit(this) * interventions->GetInterventionReducedTransmit(infection->GetSourceRoute());
+            infectiousness          += mod_inf_val;
+            float tmp_infectiousness = mod_inf_val * m_mc_weight;
             string state = "Latent";
             if (GetTBInfection()->IsActive())
             {
@@ -572,7 +561,7 @@ namespace Kernel
             }
             LOG_VALID_F("%s Individual %d, has total_infectiousness= %f, weight= %f, orig_infectiousness= %f, CD4mod= %f, intervention reduced transmit= %f, CD4count= %f, state= %s , fast progressor=%d  \n",
                     __FUNCTION__, GetSuid().data, tmp_infectiousness, m_mc_weight, infection->GetInfectiousness(), dynamic_cast <SusceptibilityTB*> (infection2susceptibilitymap[infection])->getModTransmit(this),
-                    interventions->GetInterventionReducedTransmit(), GetCD4(), state.c_str(), GetTBInfection()->IsFastProgressor());
+                    interventions->GetInterventionReducedTransmit(infection->GetSourceRoute()), GetCD4(), state.c_str(), GetTBInfection()->IsFastProgressor());
 
             StrainIdentity tmp_strainIDs;
             infection->GetInfectiousStrainID(&tmp_strainIDs);
@@ -584,13 +573,6 @@ namespace Kernel
                 }
            }
             // TODO: in IndividualTB we only count FIRST active infection in container, here we comment that out? reconsider only counting FIRST active infection in container
-        }
-
-        // Effects of transmission-reducing immunity/interventions.  Can set a maximum individual infectiousness here
-        // TODO: if we want to actually truncate infectiousness at some maximum value, then QueueDepositContagion will have to be postponed as in IndividualVector
-        if (infectiousness > 0)
-        {
-            infectiousness *= dynamic_cast <SusceptibilityTB*>(susceptibility_tb) ->getModTransmit(this) * interventions->GetInterventionReducedTransmit();
         }
     }
 

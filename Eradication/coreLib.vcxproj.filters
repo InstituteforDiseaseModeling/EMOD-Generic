@@ -930,9 +930,6 @@
     <ClInclude Include="..\interventions\DelayedIntervention.h">
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClInclude>
-    <ClInclude Include="..\interventions\IndividualImmunityChanger.h">
-      <Filter>Source Files\Campaign\IndividualTargeted</Filter>
-    </ClInclude>
     <ClInclude Include="..\interventions\Diagnostics.h">
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClInclude>
@@ -1833,9 +1830,6 @@
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClCompile>
     <ClCompile Include="..\interventions\CalendarIV.cpp">
-      <Filter>Source Files\Campaign\IndividualTargeted</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\IndividualImmunityChanger.cpp">
       <Filter>Source Files\Campaign\IndividualTargeted</Filter>
     </ClCompile>
     <ClCompile Include="..\interventions\MigrateIndividuals.cpp">

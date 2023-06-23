@@ -85,23 +85,17 @@ namespace Kernel
         return num_tb_drugs_active;
     }
    
-    void TBInterventionsContainer::ApplyDrugVaccineReducedAcquireEffect(
-        float prob
-    )
+    void TBInterventionsContainer::ApplyDrugVaccineReducedAcquireEffect(float prob)
     {
-        drugVaccineReducedAcquire  *= (1.0f-prob);
+        InterventionsContainer::UpdateIVAcquireRate(prob, IVRoute::ALL);
     }
 
-    void TBInterventionsContainer::ApplyDrugVaccineReducedTransmitEffect(
-        float prob
-    )
+    void TBInterventionsContainer::ApplyDrugVaccineReducedTransmitEffect(float prob)
     {
-        drugVaccineReducedTransmit *= (1.0f-prob);
+        InterventionsContainer::UpdateIVTransmitRate(prob, IVRoute::ALL);
     }
 
-    void TBInterventionsContainer::ApplyTBDrugEffects(
-        TBDrugEffects_t effects, TBDrugType::Enum drug_type
-    )
+    void TBInterventionsContainer::ApplyTBDrugEffects(TBDrugEffects_t effects, TBDrugType::Enum drug_type)
     {
         TB_drug_effects[drug_type].clearance_rate    += effects.clearance_rate;
         TB_drug_effects[drug_type].inactivation_rate += effects.inactivation_rate;

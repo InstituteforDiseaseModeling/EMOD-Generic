@@ -16,6 +16,7 @@
 #include "IdmDateTime.h"
 #include "INodeContext.h"
 #include "IIndividualHuman.h"
+#include "InterventionsContainer.h"
 
 //******************************************************************************
 
@@ -167,7 +168,9 @@ namespace Kernel
             if(abin_id < m_age_bins.size())
             {
                 bin_tot[abin_id] += human->GetMonteCarloWeight();
-                if(human->GetImmunityReducedAcquire()*human->GetInterventionReducedAcquire() > m_sus_thresh)
+                // Adding route aware IVs required querying based on route of infection; CONTACT route is default
+                if(human->GetSusceptibilityContext()->getModAcquire() *
+                   human->GetVaccineContext()->GetInterventionReducedAcquire(TransmissionRoute::CONTACT) > m_sus_thresh)
                 {
                     bin_sus[abin_id] += human->GetMonteCarloWeight();
                 }
