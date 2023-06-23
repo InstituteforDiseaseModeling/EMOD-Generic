@@ -7,6 +7,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
+#include <algorithm>
+
 #include "stdafx.h"
 #include "PythonSupport.h"
 #include "Exceptions.h"
@@ -16,7 +18,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #define ENV_VAR_PYTHON              "IDM_PYTHON3X_PATH"
 #define PYTHON_DLL                  "python3.dll"
-#define PYTHON_SCRIPT_PATH_NOT_SET  ""
 
 SETUP_LOGGING("PythonSupport")
 
@@ -31,8 +32,8 @@ namespace Kernel
 
     std::string PythonSupport::FUNCTION_NAME              = "application";
 
-    bool PythonSupport::m_PythonInitialized               = false; 
-    std::string PythonSupport::m_PythonScriptPath         = PYTHON_SCRIPT_PATH_NOT_SET;
+    bool PythonSupport::m_PythonInitialized               = false;
+    std::vector<std::string> PythonSupport::m_python_paths{""};
 
     // PyObjectsMap[ModuleName][MemberName]
     std::map<std::string, std::map<std::string, void*>> 
@@ -56,19 +57,17 @@ namespace Kernel
         return m_PythonInitialized;
     }
 
-    void PythonSupport::SetupPython( const std::string& pythonScriptPath )
+    void PythonSupport::SetupPython( const std::string& python_script_paths )
     {
-        m_PythonScriptPath = pythonScriptPath;
-
 #ifdef ENABLE_PYTHON
-        if( m_PythonScriptPath == PYTHON_SCRIPT_PATH_NOT_SET )
+        if( !python_script_paths.size() )
         {
             LOG_INFO( "Python not initialized because --python-script-path (-P) not set.\n" );
             return;
         }
         else
         {
-            LOG_INFO_F( "Python script path: %s\n", m_PythonScriptPath.c_str() );
+            LOG_INFO_F( "Python script path: %s\n", python_script_paths.c_str() );
         }
 
 #ifdef WIN32
@@ -115,13 +114,25 @@ namespace Kernel
         PyObject* sys_path = PySys_GetObject("path");
         release_assert( sys_path );
 
-        PyObject* path_user = PyUnicode_FromString( m_PythonScriptPath.c_str() );
-        release_assert( path_user );
-        release_assert( !PyList_Insert(sys_path, 0, path_user) );
+        // Split python_script_paths into list based on sep_chars
+        std::size_t start_pos    = 0;
+        std::size_t end_pos      = 0;
+        std::string sep_chars    = ";,";
+        std::string path_list = FileSystem::RemoveTrailingChars(python_script_paths);
+        while((start_pos = path_list.find_first_not_of(sep_chars, end_pos)) != std::string::npos)
+        {
+            end_pos = path_list.find_first_of(sep_chars, start_pos);
+            m_python_paths.push_back(path_list.substr(start_pos, end_pos-start_pos));
+        }
 
-        PyObject* path_default = PyUnicode_FromString( "" );
-        release_assert( path_default );
-        release_assert( !PyList_Insert(sys_path, 0, path_default) );
+        // Reverse paths so emtpty string (CWD) is last; add all entries to sys path
+        std::reverse(m_python_paths.begin(),m_python_paths.end());
+        for (auto &path_val: m_python_paths)
+        {
+            PyObject* path_user = PyUnicode_FromString( path_val.c_str() );
+            release_assert( path_user );
+            release_assert( !PyList_Insert(sys_path, 0, path_user) );
+        }
 
         // Import all possible modules and module contents on setup; re-assign nullptr if script not present
         bool found_py_module = false;
@@ -273,10 +284,14 @@ namespace Kernel
     bool PythonSupport::ImportPyModule( const std::string& python_module_name )
     {
 #ifdef ENABLE_PYTHON
-        LOG_DEBUG_F( "Checking current working directory and python script path for embedded python script %s.\n", python_module_name.c_str() );
-        // Check for script on two paths: python-script-path and current directory
-        if( !FileSystem::FileExistsInPath( ".", python_module_name+".py" ) &&
-            !FileSystem::FileExistsInPath( m_PythonScriptPath, python_module_name+".py" ) )
+        LOG_DEBUG_F( "Checking python script paths for embedded python script %s.\n", python_module_name.c_str() );
+        bool found_py_module = false;
+        for (auto &path_val: m_python_paths)
+        {
+            found_py_module |= FileSystem::FileExistsInPath( path_val, python_module_name+".py" );
+        }
+
+        if(!found_py_module)
         {
             LOG_DEBUG("File not found.\n");
             return false;

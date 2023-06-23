@@ -13,6 +13,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include <string>
 #include <map>
+#include <vector>
 
 
 // This set of macros prevents the Python.h header from trying to use the _d.dll version of 
@@ -73,7 +74,7 @@ namespace Kernel
         ~PythonSupport();
 
         static bool          IsPythonInitialized();
-        static void          SetupPython( const std::string& pythonScriptPath );
+        static void          SetupPython( const std::string& python_script_paths );
         static std::string   RunPyFunction( const std::string& arg_string, const std::string& python_module_name, const std::string& python_function_name = FUNCTION_NAME );
 
         static bool          ImportPyModule( const std::string& python_module_name );
@@ -83,7 +84,7 @@ namespace Kernel
     private:
         static void         cleanPython();
 
-        static bool         m_PythonInitialized;
-        static std::string  m_PythonScriptPath;
+        static bool                      m_PythonInitialized;
+        static std::vector<std::string>  m_python_paths;
     };
 }
