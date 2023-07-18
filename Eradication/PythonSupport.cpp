@@ -33,6 +33,8 @@ namespace Kernel
     std::string PythonSupport::FUNCTION_NAME              = "application";
 
     bool PythonSupport::m_PythonInitialized               = false;
+
+    // Paths initialized with empty-string; interpreted as CWD by python interpreter
     std::vector<std::string> PythonSupport::m_python_paths{""};
 
     // PyObjectsMap[ModuleName][MemberName]
@@ -60,7 +62,7 @@ namespace Kernel
     void PythonSupport::SetupPython( const std::string& python_script_paths )
     {
 #ifdef ENABLE_PYTHON
-        if( !python_script_paths.size() )
+        if( python_script_paths.empty() )
         {
             LOG_INFO( "Python not initialized because --python-script-path (-P) not set.\n" );
             return;
@@ -73,7 +75,7 @@ namespace Kernel
 #ifdef WIN32
         // Get path to python installation
         size_t  path_len;
-        char*   c_python_path;
+        char*   c_python_path = nullptr;
         errno_t err_val = _dupenv_s( &c_python_path, &path_len, ENV_VAR_PYTHON );
         if(err_val || !c_python_path)
         {
