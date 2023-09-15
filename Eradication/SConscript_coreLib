@@ -112,7 +112,6 @@ else:
                             "../interventions/PropertyValueChanger.cpp",
                             "../interventions/TravelRestriction.cpp",
                             "../interventions/Vaccine.cpp",
-                            "../interventions/WaningEffect.cpp",
     ]
 
     vectorSrcFiles = [

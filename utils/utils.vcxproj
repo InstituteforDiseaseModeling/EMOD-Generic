@@ -143,6 +143,7 @@
     <ClCompile Include="TBHIVDrugTypeParameters.cpp" />
     <ClCompile Include="Timers.cpp" />
     <ClCompile Include="Types.cpp" />
+    <ClCompile Include="WaningEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\cajun\include\CajunIncludes.h" />
@@ -191,6 +192,7 @@
     <ClInclude Include="InterpolatedValueMap.h" />
     <ClInclude Include="ISerializable.h" />
     <ClInclude Include="ISupports.h" />
+    <ClInclude Include="IWaningEffect.h" />
     <ClInclude Include="JsonConfigurableCollection.h" />
     <ClInclude Include="JsonFullReader.h" />
     <ClInclude Include="JsonFullWriter.h" />
@@ -218,6 +220,7 @@
     <ClInclude Include="Timers.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="version_info.h" />
+    <ClInclude Include="WaningEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\cajun\include\cast.inl" />

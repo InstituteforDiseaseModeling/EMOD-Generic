@@ -92,6 +92,7 @@ namespace Kernel
 
     AgentParams::AgentParams()
         : mortality_time_course(MortalityTimeCourse::DAILY_MORTALITY)
+        , effect_mat_acquire(nullptr)
         , infectious_distribution(nullptr)
         , incubation_distribution(nullptr)
         , infectivity_distribution(nullptr)
@@ -409,6 +410,15 @@ namespace Kernel
 
         initConfig("Mortality_Time_Course",           agent_params.mortality_time_course,   config,  MetadataDescriptor::Enum("Mortality_Time_Course", Mortality_Time_Course_DESC_TEXT, MDD_ENUM_ARGS(MortalityTimeCourse)),                     nullptr, nullptr, &dset_enums04);
 
+        // Enums configure immediately; distribution factory adds more parameters to be configured
+        agent_params.incubation_distribution  = DistributionFactory::CreateDistribution(this,  incubation_period_function,        "Incubation_Period", config);
+        agent_params.infectious_distribution  = DistributionFactory::CreateDistribution(this,  infectious_distribution_function,  "Infectious_Period", config);
+        agent_params.infectivity_distribution = DistributionFactory::CreateDistribution(this, config, "Base_Infectivity", BaseInfectDist::pairs::lookup_key(infect_dist_func), BaseInfectDist::pairs::get_keys());
+
+        agent_params.effect_mat_acquire       = WaningEffectFactory::CreateInstance();
+
+        initConfigTypeMap("Maternal_Acquire_Config",               agent_params.effect_mat_acquire->GetConfigurable(), Maternal_Acquire_Config_DESC_TEXT,  nullptr, nullptr, &dset_agent00);
+
         initConfigTypeMap("Enable_Genome_Dependent_Infectivity",   &agent_params.enable_genome_dependent_infectivity,  Enable_Genome_Dependent_Infectivity_DESC_TEXT,     false,                    nullptr, nullptr, &dset_agent01);
         initConfigTypeMap("Enable_Genome_Mutation",                &agent_params.enable_genome_mutation,               Enable_Genome_Mutation_DESC_TEXT ,                 false,                    nullptr, nullptr, &dset_agent01);
         initConfigTypeMap("Enable_Label_By_Infector",              &agent_params.enable_label_infector,                Enable_Label_By_Infector_DESC_TEXT,                false,                    nullptr, nullptr, &dset_agent01);
@@ -425,12 +435,6 @@ namespace Kernel
 
         initConfigTypeMap("Genome_Infectivity_Multipliers",        &agent_params.genome_infectivity_multipliers,       Genome_Infectivity_Multipliers_DESC_TEXT,           0.0f,  FLT_MAX,  false,  nullptr, nullptr, &dset_agent03);
         initConfigTypeMap("Genome_Mutation_Rates",                 &agent_params.genome_mutation_rates,                Genome_Mutation_Rates_DESC_TEXT,                    0.0f,  FLT_MAX,  false,  nullptr, nullptr, &dset_agent04);
-
-
-        // Enums configure immediately; distribution factory will add more parameters to configure
-        agent_params.incubation_distribution  = DistributionFactory::CreateDistribution(this,  incubation_period_function,        "Incubation_Period", config);
-        agent_params.infectious_distribution  = DistributionFactory::CreateDistribution(this,  infectious_distribution_function,  "Infectious_Period", config);
-        agent_params.infectivity_distribution = DistributionFactory::CreateDistribution(this, config, "Base_Infectivity", BaseInfectDist::pairs::lookup_key(infect_dist_func), BaseInfectDist::pairs::get_keys());
 
 
         // Process configuration

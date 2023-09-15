@@ -134,20 +134,6 @@ namespace Kernel
     ENUM_DECLARE(RandomNumberGeneratorPolicy, IDM_ENUMSPEC_RandomNumberGeneratorPolicy)
 
 
-     // ENUM defs for Maternal_Protection_Type (Susceptibility variation with agent age)
-    #define IDM_ENUMSPEC_MaternalProtectionType                                          \
-        ENUM_VALUE_SPEC(SIGMOID                                             , 0)         \
-        ENUM_VALUE_SPEC(LINEAR                                              , 1)
-    ENUM_DECLARE(MaternalProtectionType, IDM_ENUMSPEC_MaternalProtectionType)
-
-
-     // ENUM defs for Susceptibility_Type
-    #define IDM_ENUMSPEC_SusceptibilityType                                              \
-        ENUM_VALUE_SPEC(FRACTIONAL                                          , 0)         \
-        ENUM_VALUE_SPEC(BINARY                                              , 1)
-    ENUM_DECLARE(SusceptibilityType, IDM_ENUMSPEC_SusceptibilityType)
-
-
     // ENUM defs for Sim_Type
     #define IDM_ENUMSPEC_SimType                                                         \
         ENUM_VALUE_SPEC(GENERIC_SIM                                         , 0)         \

@@ -1,0 +1,39 @@
+{
+    "Default_Config_Path": "defaults/generic_science_default_config.json",
+    "parameters": {
+        "DEMOGRAPHICS": {
+            "Demographics_Filenames": [
+                "demographics.json"
+            ],
+            "Enable_Initial_Prevalence": 0,
+            "Enable_Maternal_Protection": 1,
+            "Enable_Vital_Dynamics": 1,
+            "IMMUNITY": {
+                "Acquisition_Blocking_Immunity_Decay_Rate": 0.5
+            },
+            "MORTALITY": {
+                "Death_Rate_Dependence": "NONDISEASE_MORTALITY_OFF"
+            },
+            "SAMPLING": {
+                "Individual_Sampling_Type": "ADAPTED_SAMPLING_BY_IMMUNE_STATE"
+            }
+        },
+        "DISEASE": {
+            "INFECTIOUSNESS": {
+                "Base_Infectivity_Constant": 0.25,
+                "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
+                "Infectious_Period_Exponential": 6
+            }
+        },
+        "PRIMARY": {
+            "Campaign_Filename": "campaign.json",
+            "Config_Name": "Generic_SFT_MaternalProtection_LinearBinary",
+            "Geography": "",
+            "Simulation_Duration": 5,
+            "Python_Script_Path": "SHARED"
+        },
+        "Temporary_MaternalProtection": {
+            "logLevel_Susceptibility": "VALID"
+        }
+    }
+}

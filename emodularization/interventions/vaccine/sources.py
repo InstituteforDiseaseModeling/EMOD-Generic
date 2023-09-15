@@ -3,6 +3,5 @@
 sources =  [
             'dtk_vaccine_intervention.cpp',
             '../../../interventions/Vaccine.cpp',
-            '../../../interventions/WaningEffect.cpp'
            ]
 

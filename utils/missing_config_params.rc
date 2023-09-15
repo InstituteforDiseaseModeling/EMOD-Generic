@@ -66,3 +66,4 @@
 #define logLevel_default_DESC_TEXT                                "Default logging level for all modules unless otherwise specified."
 #define logLevel_MODULE_DESC_TEXT                                 "Logging level to be used for indicated module."
 
+#define Maternal_Acquire_Config_DESC_TEXT                         "Waning effect configuration for on-birth acquisition immunity."

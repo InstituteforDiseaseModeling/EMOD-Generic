@@ -118,7 +118,6 @@ namespace Kernel
         // IIndividualHumanEventContext methods
         virtual bool              IsPregnant()                     const override { return is_pregnant; };
         virtual float             GetAge()                         const override { return m_age; }
-        virtual float             GetImmuneFailAgeAcquire()        const override;
         inline  float             getAgeInYears()                  const          { return floor(GetAge()/DAYSPERYEAR);}
         virtual int               GetGender()                      const override { return m_gender; }
         virtual float             GetMonteCarloWeight()            const override { return m_mc_weight; }

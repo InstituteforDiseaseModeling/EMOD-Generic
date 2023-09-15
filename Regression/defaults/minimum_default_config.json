@@ -5,9 +5,6 @@
         "Base_Infectivity_Distribution": "CONSTANT_DISTRIBUTION",
         "Climate_Model": "CLIMATE_OFF",
         "Config_Name": "",
-        "Custom_Coordinator_Events": [],
-        "Custom_Individual_Events": [],
-        "Custom_Node_Events": [],
         "Custom_Reports_Filename": "",
         "Default_Geography_Initial_Node_Population": 100,
         "Default_Geography_Torus_Size": 3,
@@ -49,11 +46,24 @@
         "Infection_Updates_Per_Timestep": 1,
         "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
         "Infectious_Period_Exponential": 7,
-        "Infectivity_Scale_Type": "CONSTANT_INFECTIVITY",
         "Load_Balance_Filename": "",
+        "Maternal_Acquire_Config": {
+            "Age_Multiplier": {
+                "Times": [],
+                "Values": []
+            },
+            "Box_Duration": 3.402823466e38,
+            "Decay_Time_Constant": 0,
+            "Durability_Map": {
+                "Times": [],
+                "Values": []
+            },
+            "Enable_Box_Duration_Distribution": 0,
+            "Enable_Initial_Effect_Distribution": 0,
+            "Initial_Effect": 0
+        },
         "Maternal_Infection_Transmission_Probability": 0,
         "Migration_Model": "NO_MIGRATION",
-        "Node_Grid_Size": 0.042,
         "Num_Cores": 1,
         "Population_Density_Infectivity_Correction": "CONSTANT_INFECTIVITY",
         "Run_Number": 1,

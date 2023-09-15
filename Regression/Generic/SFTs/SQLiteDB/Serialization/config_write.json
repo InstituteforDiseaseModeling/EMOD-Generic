@@ -13,9 +13,9 @@
         "Custom_Reports_Filename": "",
         "Custom_Node_Events": [],
         "Demographics_Filenames": [
-            "../../demographics.json",
+            "../../Demographics/demographics.json",
             "demographics_mr_2groups_overlay.json",
-            "../../demographics_1000_overlay.json"
+            "../../Demographics/demographics_1000_overlay.json"
         ],
         "Enable_Acquisition_Heterogeneity": 0,
         "Enable_Binned_Report": 0,
@@ -55,6 +55,21 @@
         "Infectious_Period_Distribution": "EXPONENTIAL_DISTRIBUTION",
         "Infectious_Period_Exponential": 7,
         "Load_Balance_Filename": "",
+        "Maternal_Acquire_Config": {
+            "Age_Multiplier": {
+                "Times": [],
+                "Values": []
+            },
+            "Box_Duration": 3.402823466e38,
+            "Decay_Time_Constant": 0,
+            "Durability_Map": {
+                "Times": [],
+                "Values": []
+            },
+            "Enable_Box_Duration_Distribution": 0,
+            "Enable_Initial_Effect_Distribution": 0,
+            "Initial_Effect": 0
+        },
         "Max_Individual_Infections": 1,
         "Memory_Usage_Halting_Threshold_Working_Set_MB": 4000,
         "Memory_Usage_Warning_Threshold_Working_Set_MB": 3500,

@@ -137,9 +137,6 @@ bool Environment::Initialize(
 
     localEnv->Config = Configuration::CopyFromElement( (*config)["parameters"], config->GetDataLocation() );
 
-    if( localEnv->Config->CheckElementByName("Default_Config_Path") || config->CheckElementByName("Default_Config_Path") )
-        Kernel::JsonConfigurable::_possibleNonflatConfig = true;
-
     localEnv->Status_Reporter = StatusReporter::getInstance();
 
     return true;

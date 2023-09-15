@@ -23,9 +23,9 @@
                 "BirthRate": 0.0000548
             }, 
             "IndividualAttributes": {
-                "AgeDistributionFlag": 3, 
-                "AgeDistribution1": 0.000118, 
-                "AgeDistribution2": 0, 
+                "AgeDistributionFlag": 1, 
+                "AgeDistribution1": 0, 
+                "AgeDistribution2": 400, 
                 "PrevalenceDistributionFlag": 0, 
                 "PrevalenceDistribution1": 0.0, 
                 "PrevalenceDistribution2": 0.0, 

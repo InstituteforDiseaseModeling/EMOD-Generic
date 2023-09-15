@@ -234,6 +234,12 @@
     <ClInclude Include="SimulationEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IWaningEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WaningEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -360,6 +366,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SimulationEnums.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WaningEffect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

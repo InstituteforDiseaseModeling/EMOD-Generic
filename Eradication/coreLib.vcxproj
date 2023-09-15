@@ -231,7 +231,6 @@
     <ClInclude Include="..\interventions\InputEIR.h" />
     <ClInclude Include="..\interventions\InterventionForCurrentPartners.h" />
     <ClInclude Include="..\interventions\Ivermectin.h" />
-    <ClInclude Include="..\interventions\IWaningEffect.h" />
     <ClInclude Include="..\interventions\MalariaChallenge.h" />
     <ClInclude Include="..\interventions\MalariaDiagnostic.h" />
     <ClInclude Include="..\interventions\MaleCircumcision.h" />
@@ -265,7 +264,6 @@
     <ClInclude Include="..\interventions\UsageDependentBednet.h" />
     <ClInclude Include="..\interventions\Vaccine.h" />
     <ClInclude Include="..\interventions\VectorControlNodeTargeted.h" />
-    <ClInclude Include="..\interventions\WaningEffect.h" />
     <ClInclude Include="..\utils\Types.h" />
     <ClInclude Include="Assortivity.h" />
     <ClInclude Include="AssortivityFactory.h" />
@@ -613,7 +611,6 @@
     <ClCompile Include="..\interventions\UsageDependentBednet.cpp" />
     <ClCompile Include="..\interventions\Vaccine.cpp" />
     <ClCompile Include="..\interventions\VectorControlNodeTargeted.cpp" />
-    <ClCompile Include="..\interventions\WaningEffect.cpp" />
     <ClCompile Include="Assortivity.cpp" />
     <ClCompile Include="AssortivityFactory.cpp" />
     <ClCompile Include="AssortivityHIV.cpp" />

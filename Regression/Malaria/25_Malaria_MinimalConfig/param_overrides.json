@@ -33,6 +33,7 @@
         "Human_Feeding_Mortality": 0.1,
         "Larval_Density_Dependence": "UNIFORM_WHEN_OVERPOPULATION",
         "Mean_Egg_Hatch_Delay": 0,
+        "Node_Grid_Size": 0.042,
         "Temporary_Habitat_Decay_Factor": 0.05,
         "Semipermanent_Habitat_Decay_Rate": 0.01,
         "Rainfall_In_mm_To_Fill_Swamp": 1000,

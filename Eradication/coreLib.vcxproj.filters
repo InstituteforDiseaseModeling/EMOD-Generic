@@ -199,9 +199,6 @@
     <Filter Include="Source Files\Campaign\NodeTargeted\Polio">
       <UniqueIdentifier>{5f973881-d443-494a-b3bb-963ace4ee97a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Campaign\WaningEffects">
-      <UniqueIdentifier>{aee1ee48-535a-4eae-9557-5a647dd66cf9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Campaign\EventCoordinator\Typhoid">
       <UniqueIdentifier>{2ccaf698-8498-4914-8c0f-a865eaad225d}</UniqueIdentifier>
     </Filter>
@@ -2140,9 +2137,6 @@
     </ClCompile>
     <ClCompile Include="..\interventions\NodeBirthRateMult.cpp">
       <Filter>Source Files\Campaign\NodeTargeted</Filter>
-    </ClCompile>
-    <ClCompile Include="..\interventions\WaningEffect.cpp">
-      <Filter>Source Files\Campaign\WaningEffects</Filter>
     </ClCompile>
     <ClCompile Include="VectorEnums.cpp">
       <Filter>Source Files\Vector</Filter>

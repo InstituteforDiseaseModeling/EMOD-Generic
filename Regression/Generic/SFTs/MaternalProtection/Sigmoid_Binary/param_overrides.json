@@ -6,7 +6,6 @@
                 "demographics.json"
             ],
             "Enable_Initial_Prevalence": 0,
-            "Enable_Maternal_Protection": 1,
             "Enable_Vital_Dynamics": 1,
             "IMMUNITY": {
                 "Acquisition_Blocking_Immunity_Decay_Rate": 0.5
@@ -32,11 +31,26 @@
             "Simulation_Duration": 5,
             "Python_Script_Path": "SHARED"
         },
-        "Temporary_Maternal": {
-            "Maternal_Protection_Type": "SIGMOID"
-        },
         "Temporary_MaternalProtection": {
-            "logLevel_Susceptibility": "VALID"
+            "logLevel_Susceptibility": "VALID",
+            "Maternal_Acquire_Config": {
+                "Age_Multiplier": {
+                    "Times": [],
+                    "Values": []
+                },
+                "Box_Duration": 3.402823466e38,
+                "Box_Duration_Distribution": "GAUSSIAN_DISTRIBUTION",
+                "Box_Duration_Gaussian_Mean": 200.0,
+                "Box_Duration_Gaussian_Std_Dev": 45.0,
+                "Decay_Time_Constant": 0,
+                "Durability_Map": {
+                    "Times": [],
+                    "Values": []
+                },
+               "Enable_Box_Duration_Distribution": 1,
+               "Enable_Initial_Effect_Distribution": 0,
+               "Initial_Effect": 1.0
+            }
         }
     }
 }

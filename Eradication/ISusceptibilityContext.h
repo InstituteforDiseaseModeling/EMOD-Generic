@@ -18,14 +18,10 @@ namespace Kernel
         virtual float getModTransmit() const = 0;
         virtual float getModMortality() const = 0;
         virtual float getModRisk() const = 0;
-        virtual float getImmuneFailAgeAcquire() const = 0;
-        virtual void  updateModAcquire(float updateVal) = 0;
-        virtual void  updateModTransmit(float updateVal) = 0;
-        virtual void  updateModMortality(float updateVal) = 0;
-        virtual void  setImmuneFailAgeAcquire(float newFailAge) = 0;
+
+        virtual bool  HasMaternalImmunity() const = 0;
+
         virtual void  InitNewInfection() = 0;
         virtual bool  IsImmune() const = 0;
-
-        virtual ~ISusceptibilityContext() {}
     };
 }

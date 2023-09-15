@@ -12,6 +12,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Common.h"
 #include "Configure.h"
 #include "IDistribution.h"
+#include "IWaningEffect.h"
 #include "SimulationEnums.h"
 #include "TBHIVDrugTypeParameters.h"
 #include "VectorEnums.h"
@@ -40,6 +41,8 @@ namespace Kernel
         IDistribution*   infectious_distribution;
         IDistribution*   incubation_distribution;
         IDistribution*   infectivity_distribution;
+
+        IWaningEffect*   effect_mat_acquire;
 
         bool  enable_genome_dependent_infectivity;
         bool  enable_genome_mutation;

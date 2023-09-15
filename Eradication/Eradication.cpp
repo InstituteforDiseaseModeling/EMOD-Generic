@@ -569,46 +569,35 @@ bool ControllerInitWrapper( int argc, char *argv[], IdmMpi::MessageInterface* pM
     catch( Kernel::GeneralConfigurationException &e )
     {
         exceptionErrorReport << std::endl << std::endl;
-        exceptionErrorReport << e.GetMsg() << std::endl;
-
-        if(Kernel::JsonConfigurable::_possibleNonflatConfig && 
-            Kernel::JsonConfigurable::missing_parameters_set.size() != 0)
-        {
-            exceptionErrorReport << "Presence of \"Default_Config_Path\" detected in config-file may indicate a problem; make sure you're using a flattened config." << std::endl;
-        }
-        exceptionErrorReport<< std::endl << e.GetStackTrace() << std::endl ;
+        exceptionErrorReport << e.GetMsg() << std::endl << std::endl;
+        exceptionErrorReport << e.GetStackTrace() << std::endl;
     }
     catch( Kernel::DetailedException &e )
     {
         exceptionErrorReport << std::endl << std::endl;
         exceptionErrorReport << e.GetMsg() << std::endl << std::endl;
-        exceptionErrorReport << e.GetStackTrace() << std::endl ;
+        exceptionErrorReport << e.GetStackTrace() << std::endl;
     }
     catch (std::bad_alloc &e)
     {
         exceptionErrorReport << std::endl << std::endl;
-        exceptionErrorReport << e.what() << endl;
+        exceptionErrorReport << e.what() << std::endl;
         exceptionErrorReport << "Memory allocation failure: try reducing the memory footprint of your simulation or using more cores.\n"; 
     }
     catch (json::Exception &e)
     {
         exceptionErrorReport << std::endl << std::endl;
-        exceptionErrorReport << "Caught json::Exception: " << e.what() << endl;
-
-        if(Kernel::JsonConfigurable::_possibleNonflatConfig)
-        {
-            exceptionErrorReport << "Presence of \"Default_Config_Path\" detected in config-file may indicate a problem; make sure you're using a flattened config." << std::endl;
-        }
+        exceptionErrorReport << "Caught json::Exception: " << e.what() << std::endl;
     }
     catch (std::runtime_error &e)
     {
         exceptionErrorReport << std::endl << std::endl;
-        exceptionErrorReport << "Caught std::runtime_error: " << e.what() << endl;
+        exceptionErrorReport << "Caught std::runtime_error: " << e.what() << std::endl;
     }
     catch (std::exception &e)
     {
         exceptionErrorReport << std::endl << std::endl;
-        exceptionErrorReport << e.what() <<  endl;
+        exceptionErrorReport << e.what() << std::endl;
     } 
 
     // no finally in c++

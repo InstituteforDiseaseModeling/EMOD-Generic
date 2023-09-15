@@ -21,35 +21,38 @@ final_warnings = ""
 reg_threads = []
 version_string = None
 
+nested_config_objects = ["Vector_Species_Params",
+                         "Malaria_Drug_Params",
+                         "TB_Drug_Params",
+                         "HIV_Drug_Params",
+                         "STI_Network_Params_By_Property",
+                         "TBHIV_Drug_Params",
+                         "Maternal_Acquire_Config"]
+
 def recursive_json_overrider( ref_json, flat_input_json ):
-    for val in ref_json:
-        #if not leaf, call recursive_json_leaf_reader
-        if json.dumps( ref_json[val] ).startswith( "{" ) and val != "Vector_Species_Params" and val != "Malaria_Drug_Params" and val != "TB_Drug_Params" and val != "HIV_Drug_Params" and val != "STI_Network_Params_By_Property" and val != "TBHIV_Drug_Params":
-            recursive_json_overrider( ref_json[val], flat_input_json )
-        # do VSP and MDP as special case. Sigh sigh sigh. Also TBHIV params now, also sigh.
-        elif val == "Vector_Species_Params" or val == "Malaria_Drug_Params" or val == "TB_Drug_Params" or val == "HIV_Drug_Params" or val == "STI_Network_Params_By_Property" or val == "TBHIV_Drug_Params" :
-            # could "genericize" this if we need to... happens to work for now, since both VSP and MDP are 3-levels deep...
-            if val not in flat_input_json:
-                flat_input_json[val] = { }
-            elif val == "STI_Network_Params_By_Property" and not("NONE" in flat_input_json[val].keys()):
+
+    for key_str01 in ref_json:
+
+        if key_str01 in nested_config_objects:
+            if key_str01 not in flat_input_json:
+                flat_input_json[key_str01] = dict()
+            elif key_str01 == "STI_Network_Params_By_Property" and not("NONE" in flat_input_json[key_str01].keys()):
                 continue
+            for key_str02 in ref_json[key_str01]:
+                if isinstance(ref_json[key_str01][key_str02], dict):
+                    if key_str02 not in flat_input_json[key_str01]:
+                        flat_input_json[key_str01][key_str02] = dict()
+                    for key_str03 in ref_json[key_str01][key_str02]:
+                        if key_str03 not in flat_input_json[key_str01][key_str02]:
+                            flat_input_json[key_str01][key_str02][key_str03] = ref_json[key_str01][key_str02][key_str03]
+                elif key_str02 not in flat_input_json[key_str01]:
+                    flat_input_json[key_str01][key_str02] = ref_json[key_str01][key_str02]
 
-            #if val == "STI_Network_Params_By_Property" and "NONE" in ref_json[val].keys() and len( flat_input_json[val].keys() ) > 0:
-            #    ref_json[val].pop( "NONE" )
+        elif isinstance(ref_json[key_str01], dict):
+            recursive_json_overrider( ref_json[key_str01], flat_input_json )
 
-            for species in ref_json[val]:
-                if species not in flat_input_json[val]:
-                    if( isinstance( ref_json[val][species], dict ) ):
-                        flat_input_json[val][species] = { }
-                for param in ref_json[val][species]:
-                    if( isinstance( ref_json[val][species], dict ) ):
-                        if param not in flat_input_json[val][species]:
-                            flat_input_json[val][species][param] = ref_json[val][species][param]
-                    else:
-                        flat_input_json[val][species] = ref_json[val][species]
-        else:
-            if val not in flat_input_json:
-                flat_input_json[val] = ref_json[val]
+        elif key_str01 not in flat_input_json:
+            flat_input_json[key_str01] = ref_json[key_str01]
 
 
 def flattenConfig( configjson_path, new_config_name="config" ):
@@ -58,7 +61,6 @@ def flattenConfig( configjson_path, new_config_name="config" ):
         return None
 
     configjson_flat = {}
-    #print( "configjson_path = " + configjson_path )
     configjson = load_json(configjson_path)
 
     recursive_json_overrider( configjson, configjson_flat )
@@ -99,10 +101,6 @@ def flattenConfig( configjson_path, new_config_name="config" ):
     # messing with anything else downstream now that it is flattened
     if "Default_Config_Path" in configjson["parameters"]:
         configjson["parameters"].pop("Default_Config_Path")
-
-    # There are no custom reports for Linux so, check if dlls exist will fail
-    #if os.name == "posix":
-        #del configjson["parameters"]["Custom_Reports_Filename"]
 
     # let's write out a flat version in case someone wants
     # to use regression examples as configs for debug mode

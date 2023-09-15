@@ -582,11 +582,6 @@ namespace Kernel
     void IndividualHuman::applyNewInterventionEffects(float dt)
     { }
 
-    float IndividualHuman::GetImmuneFailAgeAcquire() const
-    {
-        return susceptibility->getImmuneFailAgeAcquire();
-    }
-
     bool IndividualHuman::UpdatePregnancy(float dt)
     {
         bool birth_this_timestep = false;

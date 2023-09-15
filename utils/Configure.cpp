@@ -445,7 +445,6 @@ namespace Kernel
     bool JsonConfigurable::_dryrun = false;
     bool JsonConfigurable::_useDefaults = false;
     bool JsonConfigurable::_track_missing = true;
-    bool JsonConfigurable::_possibleNonflatConfig = false;
     std::set< std::string > JsonConfigurable::empty_set;
 
     void updateSchemaWithCondition( json::Object& schema, const char* condition_key, const char* condition_value )
@@ -1389,42 +1388,34 @@ namespace Kernel
     )
     {
         LOG_DEBUG_F( "initConfigTypeMap<JsonConfigurable>: %s\n", paramName);
-
-        // --------------------------------------------------------
-        // --- Get the type of variable and declare it an "idmType"
-        // --------------------------------------------------------
-        std::string variable_type = pVariable->GetTypeName();
-        variable_type = std::string("idmType:") + variable_type ;
-
-        // ------------------------------------------------------
-        // --- Put the schema for the special type into map first
-        // --- so that its definition appears before it is used.
-        // ------------------------------------------------------
         GetConfigData()->jcTypeMap[ paramName ] = pVariable;
+        json::Object newParamSchema;
 
         if ( _dryrun )
         {
+            std::string variable_type = pVariable->GetTypeName();
+            variable_type = std::string("idmType:") + variable_type ;
+
             bool tmp = _dryrun ;
             _dryrun = true ;
             pVariable->Configure( nullptr );
             _dryrun = tmp ;
             jsonSchemaBase[ variable_type ] = pVariable->GetSchema();
 
-            json::Object newParamSchema;
             newParamSchema["description"] = json::String(defaultDesc);
             newParamSchema["type"] = json::String(variable_type);
-
-            updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
-            if(depends_list)
-            {
-                for(auto const pair: *depends_list)
-                {
-                    updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
-                }
-            }
-
-            jsonSchemaBase[paramName] = newParamSchema;
         }
+
+        updateSchemaWithCondition( newParamSchema, condition_key, condition_value );
+        if(depends_list)
+        {
+            for(auto const pair: *depends_list)
+            {
+                updateSchemaWithCondition(newParamSchema, (pair.first).c_str(), (pair.second).c_str());
+            }
+        }
+
+        jsonSchemaBase[paramName] = newParamSchema;
     }
 
     void JsonConfigurable::initConfigComplexType(
@@ -2425,13 +2416,19 @@ namespace Kernel
         // ---------------------------------- JsonConfigurable MAP ------------------------------------
         for (auto& entry : GetConfigData()->jcTypeMap)
         {
-            const auto & key = entry.first;
-            JsonConfigurable * pJc = entry.second;
+            const std::string& key = entry.first;
+            JsonConfigurable* pJc = entry.second;
+            json::QuickInterpreter schema = jsonSchemaBase[key];
 
-            if( inputJson->Exist( key ) )
+            if ( ignoreParameter( schema, inputJson ) )
             {
-                Configuration * p_config = Configuration::CopyFromElement( (*inputJson)[key], inputJson->GetDataLocation() );
+               // param is missing and that's okay
+               continue;
+            }
 
+            if( inputJson->Exist(key) )
+            {
+                Configuration* p_config = Configuration::CopyFromElement( (*inputJson)[key], inputJson->GetDataLocation() );
                 pJc->Configure( p_config );
 
                 delete p_config ;

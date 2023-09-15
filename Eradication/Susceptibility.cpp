@@ -8,26 +8,16 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 ***************************************************************************************************/
 
 #include "stdafx.h"
-#include <cmath>
 
 #include "Environment.h"
 #include "Susceptibility.h"
+#include "ConfigParams.h"
 #include "Common.h"
-#include "RANDOM.h"
 
 SETUP_LOGGING( "Susceptibility" )
 
 namespace Kernel
 {
-    // Maternal protection
-    MaternalProtectionType::Enum SusceptibilityConfig::maternal_protection_type = MaternalProtectionType::SIGMOID;
-    bool  SusceptibilityConfig::maternal_protection = false;
-    float SusceptibilityConfig::matlin_slope        = 1.0f;
-    float SusceptibilityConfig::matlin_suszero      = 1.0f;
-    float SusceptibilityConfig::matsig_steepfac     = 1.0f;
-    float SusceptibilityConfig::matsig_halfmax      = 1.0f;
-    float SusceptibilityConfig::matsig_susinit      = 1.0f;
-
     // Post-infection immunity
     float SusceptibilityConfig::baseacqupdate  = 1.0f;
     float SusceptibilityConfig::basetranupdate = 1.0f;
@@ -42,53 +32,12 @@ namespace Kernel
     float SusceptibilityConfig::basetranoffset     = 0.0f;
     float SusceptibilityConfig::basemortoffset     = 0.0f;
 
-    SusceptibilityType::Enum SusceptibilityConfig::susceptibility_type = SusceptibilityType::FRACTIONAL;
-
     GET_SCHEMA_STATIC_WRAPPER_IMPL(Susceptibility,SusceptibilityConfig)
     BEGIN_QUERY_INTERFACE_BODY(SusceptibilityConfig)
     END_QUERY_INTERFACE_BODY(SusceptibilityConfig)
 
-    // QI stuff in case we want to use it more extensively
-    BEGIN_QUERY_INTERFACE_BODY(Susceptibility)
-        HANDLE_INTERFACE(ISusceptibilityContext)
-        HANDLE_ISUPPORTS_VIA(ISusceptibilityContext)
-    END_QUERY_INTERFACE_BODY(Susceptibility)
-
-
-    Susceptibility::Susceptibility()
-        : mod_acquire( 0.0f )
-        , mod_transmit( 0.0f )
-        , mod_mortality( 0.0f )
-        , acqdecayoffset( 0.0f )
-        , trandecayoffset( 0.0f )
-        , mortdecayoffset( 0.0f )
-        , m_immune_failage_acquire( 0.0f )
-        , m_demographic_risk( 0.0f )
-        , parent( nullptr )
-    { }
-
-    Susceptibility::Susceptibility(IIndividualHumanContext *context) 
-        : mod_acquire( 0.0f )
-        , mod_transmit( 0.0f )
-        , mod_mortality( 0.0f )
-        , acqdecayoffset( 0.0f )
-        , trandecayoffset( 0.0f )
-        , mortdecayoffset( 0.0f )
-        , m_immune_failage_acquire( 0.0f )
-        , m_demographic_risk( 0.0f )
-        , parent(context)
-    { }
-
     void SusceptibilityConfig::LogConfigs() const
     {
-        LOG_DEBUG_F( "maternal_protection = %d.\n",     maternal_protection );
-        LOG_DEBUG_F( "maternal_protection_type = %d\n", maternal_protection_type );
-        LOG_DEBUG_F( "matlin_slope = %d\n",    matlin_slope );
-        LOG_DEBUG_F( "matlin_suszero = %d\n",  matlin_suszero );
-        LOG_DEBUG_F( "matsig_steepfac = %d\n", matsig_steepfac );
-        LOG_DEBUG_F( "matsig_halfmax = %d\n",  matsig_halfmax );
-        LOG_DEBUG_F( "matsig_susinit = %d\n",  matsig_susinit );
-
         LOG_DEBUG_F( "baseacqoffset = %f\n",  baseacqoffset );
         LOG_DEBUG_F( "basetranoffset = %f\n", basetranoffset );
         LOG_DEBUG_F( "basemortoffset = %f\n", basemortoffset );
@@ -100,8 +49,6 @@ namespace Kernel
         LOG_DEBUG_F( "baseacqupdate = %f\n",  baseacqupdate );
         LOG_DEBUG_F( "basetranupdate = %f\n", basetranupdate );
         LOG_DEBUG_F( "basemortupdate = %f\n", basemortupdate );
-
-        LOG_DEBUG_F( "susceptibility_type = %d\n", susceptibility_type );
     }
 
     bool SusceptibilityConfig::Configure(const Configuration* config)
@@ -128,29 +75,57 @@ namespace Kernel
         initConfigTypeMap( "Transmission_Blocking_Immunity_Duration_Before_Decay", &basetranoffset, Transmission_Blocking_Immunity_Duration_Before_Decay_DESC_TEXT, 0.0f, MAX_HUMAN_LIFETIME, 0.0f, nullptr, nullptr, &dset_immundecay02);
         initConfigTypeMap( "Mortality_Blocking_Immunity_Duration_Before_Decay",    &basemortoffset, Mortality_Blocking_Immunity_Duration_Before_Decay_DESC_TEXT,    0.0f, MAX_HUMAN_LIFETIME, 0.0f, nullptr, nullptr, &dset_immundecay02);
 
-        // Maternal protection options (does not require infection derived immunity; does not decay)
-        const std::map<std::string, std::string> dset_mprotect01  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM"}, {"Enable_Immunity", "1"}};
-        const std::map<std::string, std::string> dset_mprotect02  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM"}, {"Enable_Immunity", "1"}, {"Enable_Maternal_Protection", "1"}};
-        const std::map<std::string, std::string> dset_mprotect03  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM"}, {"Enable_Immunity", "1"}, {"Enable_Maternal_Protection", "1"}, {"Maternal_Protection_Type", "LINEAR"} };
-        const std::map<std::string, std::string> dset_mprotect04  {{"Simulation_Type", "GENERIC_SIM,ENVIRONMENTAL_SIM"}, {"Enable_Immunity", "1"}, {"Enable_Maternal_Protection", "1"}, {"Maternal_Protection_Type", "SIGMOID"}};
-
-        initConfigTypeMap("Enable_Maternal_Protection", &maternal_protection, Enable_Maternal_Protection_DESC_TEXT, false, nullptr, nullptr, &dset_mprotect01 );
-        initConfig("Maternal_Protection_Type", maternal_protection_type, config, MetadataDescriptor::Enum("Maternal_Protection_Type", Maternal_Protection_Type_DESC_TEXT, MDD_ENUM_ARGS(MaternalProtectionType)), nullptr, nullptr, &dset_mprotect02);
-        initConfigTypeMap("Maternal_Linear_Slope",       &matlin_slope,    Maternal_Linear_Slope_DESC_TEXT,          0.0001f, 1.0f,   0.01f, nullptr, nullptr, &dset_mprotect03);
-        initConfigTypeMap("Maternal_Linear_SusZero",     &matlin_suszero,  Maternal_Linear_SusZero_DESC_TEXT,        0.0f,    1.0f,   0.2f,  nullptr, nullptr, &dset_mprotect03);
-        initConfigTypeMap("Maternal_Sigmoid_SteepFac",   &matsig_steepfac, Maternal_Sigmoid_SteepFac_DESC_TEXT,      0.1f, 1000.0f,  30.0f,  nullptr, nullptr, &dset_mprotect04);
-        initConfigTypeMap("Maternal_Sigmoid_HalfMaxAge", &matsig_halfmax,  Maternal_Sigmoid_HalfMaxAge_DESC_TEXT, -270.0f, 3650.0f, 180.0f,  nullptr, nullptr, &dset_mprotect04);
-        initConfigTypeMap("Maternal_Sigmoid_SusInit",    &matsig_susinit,  Maternal_Sigmoid_SusInit_DESC_TEXT,       0.0f,    1.0f,   0.0f,  nullptr, nullptr, &dset_mprotect04);
-
-        // Implementation of an individual's susceptibility
-        // Currently (May2018) implemented for maternal protection only, but other functionality is expected to follow.
-        initConfig( "Susceptibility_Type", susceptibility_type, config, MetadataDescriptor::Enum("Susceptibility_Type", Susceptibility_Type_DESC_TEXT, MDD_ENUM_ARGS(SusceptibilityType)), nullptr, nullptr, &dset_mprotect02);
-
         bool bRet = JsonConfigurable::Configure( config );
 
         LogConfigs();
 
         return bRet;
+    }
+
+
+    // QI stuff in case we want to use it more extensively
+    BEGIN_QUERY_INTERFACE_BODY(Susceptibility)
+        HANDLE_INTERFACE(ISusceptibilityContext)
+        HANDLE_ISUPPORTS_VIA(ISusceptibilityContext)
+    END_QUERY_INTERFACE_BODY(Susceptibility)
+
+    Susceptibility::Susceptibility()
+        : mod_acquire( 0.0f )
+        , mod_transmit( 0.0f )
+        , mod_mortality( 0.0f )
+        , acqdecayoffset( 0.0f )
+        , trandecayoffset( 0.0f )
+        , mortdecayoffset( 0.0f )
+        , m_demographic_risk( 0.0f )
+        , effect_mat_acquire(nullptr)
+        , parent(nullptr)
+    { }
+
+    Susceptibility::Susceptibility(IIndividualHumanContext* context)
+        : mod_acquire( 0.0f )
+        , mod_transmit( 0.0f )
+        , mod_mortality( 0.0f )
+        , acqdecayoffset( 0.0f )
+        , trandecayoffset( 0.0f )
+        , mortdecayoffset( 0.0f )
+        , m_demographic_risk( 0.0f )
+        , effect_mat_acquire(nullptr)
+        , parent(context)
+    { }
+
+    Susceptibility::~Susceptibility()
+    {
+        delete effect_mat_acquire;
+
+        effect_mat_acquire = nullptr;
+    }
+
+    Susceptibility* Susceptibility::CreateSusceptibility(IIndividualHumanContext* context, float immmod, float riskmod)
+    {
+        Susceptibility* newsusceptibility = _new_ Susceptibility(context);
+        newsusceptibility->Initialize(immmod, riskmod);
+
+        return newsusceptibility;
     }
 
     void Susceptibility::Initialize(float immmod, float riskmod)
@@ -160,64 +135,27 @@ namespace Kernel
         mod_transmit  = 1.0f;
         mod_mortality = 1.0f;
 
-        // decay rates
-        acqdecayoffset  = 0.0f;
-        trandecayoffset = 0.0f;
-        mortdecayoffset = 0.0f;
-
         // risk modifier
-        m_demographic_risk = riskmod; 
+        m_demographic_risk = riskmod;
 
-        if(SusceptibilityConfig::maternal_protection && SusceptibilityConfig::susceptibility_type == SusceptibilityType::BINARY)
+        // Maternal immunity; waning effect is initialized by SetContextTo
+        effect_mat_acquire = parent->GetParams()->effect_mat_acquire->Clone();
+        effect_mat_acquire->SetContextTo(parent);
+        effect_mat_acquire->Update(parent->GetAge());
+        if(effect_mat_acquire->Expired())
         {
-            float rDraw = GetParent()->GetRng()->e();
-
-            if(SusceptibilityConfig::maternal_protection_type == MaternalProtectionType::LINEAR)
-            {
-                if (rDraw == 0.0f)
-                {
-                    m_immune_failage_acquire = 0.0f;
-                }
-                else
-                {
-                    m_immune_failage_acquire = (rDraw-SusceptibilityConfig::matlin_suszero)
-                                                     /SusceptibilityConfig::matlin_slope;
-                }
-            }
-
-            else if(SusceptibilityConfig::maternal_protection_type == MaternalProtectionType::SIGMOID)
-            {
-                if (rDraw <= SusceptibilityConfig::matsig_susinit)
-                {
-                    m_immune_failage_acquire = 0.0f;
-                }
-                else
-                {
-                    // The value 0.001f is a small positive constant that avoids division by zero.
-                    m_immune_failage_acquire = SusceptibilityConfig::matsig_halfmax -
-                                                 SusceptibilityConfig::matsig_steepfac*
-                                                 log(( 1.0f-SusceptibilityConfig::matsig_susinit)/
-                                                     (rDraw-SusceptibilityConfig::matsig_susinit)-1.0f+0.001f);
-                }
-            }
+            delete effect_mat_acquire;
+            effect_mat_acquire = nullptr;
         }
-    }
-
-    Susceptibility *Susceptibility::CreateSusceptibility(IIndividualHumanContext *context, float immmod, float riskmod)
-    {
-        Susceptibility *newsusceptibility = _new_ Susceptibility(context);
-        newsusceptibility->Initialize(immmod, riskmod);
-
-        return newsusceptibility;
-    }
-    
-    Susceptibility::~Susceptibility()
-    {
     }
 
     void Susceptibility::SetContextTo(IIndividualHumanContext* context)
     {
         parent = context;
+        if(effect_mat_acquire)
+        {
+            effect_mat_acquire->SetContextTo(context);
+        }
     }
 
     IIndividualHumanContext* Susceptibility::GetParent()
@@ -227,37 +165,15 @@ namespace Kernel
 
     float Susceptibility::getModAcquire() const
     {
-        float susceptibility_correction = 1.0f;
-        float age = parent->GetAge();
-
-        if(SusceptibilityConfig::maternal_protection && SusceptibilityConfig::susceptibility_type == SusceptibilityType::FRACTIONAL)
+        float acq_factor = mod_acquire;
+        if(effect_mat_acquire)
         {
-            if(SusceptibilityConfig::maternal_protection_type == MaternalProtectionType::LINEAR)
-            {
-                susceptibility_correction *= SusceptibilityConfig::matlin_slope*age +
-                                             SusceptibilityConfig::matlin_suszero;
-            }
-
-            else if(SusceptibilityConfig::maternal_protection_type == MaternalProtectionType::SIGMOID)
-            {
-                susceptibility_correction *= SusceptibilityConfig::matsig_susinit +
-                                             (1.0f - SusceptibilityConfig::matsig_susinit)/
-                                             (1.0f + exp((SusceptibilityConfig::matsig_halfmax-age)/
-                                                           SusceptibilityConfig::matsig_steepfac));
-            }
+            acq_factor *= (1.0f - effect_mat_acquire->Current());
         }
+ 
+        LOG_VALID_F("id = %d, age = %f, mod_acquire = %f\n", parent->GetSuid().data, parent->GetAge(), acq_factor);
 
-        // Reduces mod_acquire to zero if age is less than calculated immunity failure day.
-        if(age < m_immune_failage_acquire)
-        {
-            susceptibility_correction = 0.0f;
-        }
-
-        BOUND_RANGE(susceptibility_correction, 0.0f, 1.0f);
-
-        LOG_VALID_F("id = %d, age = %f, mod_acquire = %f, m_immune_failage_acquire = %f\n", parent->GetSuid().data, age, mod_acquire*susceptibility_correction, m_immune_failage_acquire);
-
-        return mod_acquire * susceptibility_correction;
+        return acq_factor;
     }
 
     float Susceptibility::getModTransmit() const
@@ -275,13 +191,18 @@ namespace Kernel
         return m_demographic_risk;
     }
 
-    float Susceptibility::getImmuneFailAgeAcquire() const
-    {
-        return m_immune_failage_acquire;
-    }
-
     void Susceptibility::Update( float dt )
     {
+        if(effect_mat_acquire)
+        {
+            effect_mat_acquire->Update(dt);
+            if(effect_mat_acquire->Expired())
+            {
+                delete effect_mat_acquire;
+                effect_mat_acquire = nullptr;
+            }
+        }
+
         // Immunity decay calculations
         // Logic was revised to eliminate oscillations and ensure decay works correctly even if
         // for mod_XX > 1.0. (As of Feb2018, no simulations are able to specify mod_XX > 1.0)
@@ -322,26 +243,6 @@ namespace Kernel
         }
     }
 
-    void Susceptibility::updateModAcquire(float updateVal)
-    {
-        mod_acquire *= updateVal;
-    }
-
-    void Susceptibility::updateModTransmit(float updateVal)
-    {
-        mod_transmit *= updateVal;
-    }
-
-    void Susceptibility::updateModMortality(float updateVal)
-    {
-        mod_mortality *= updateVal;
-    }
-
-    void Susceptibility::setImmuneFailAgeAcquire(float newFailAge)
-    {
-        m_immune_failage_acquire = newFailAge;
-    }
-    
     void Susceptibility::UpdateInfectionCleared()
     {
         mod_acquire   *= SusceptibilityConfig::baseacqupdate;
@@ -353,16 +254,23 @@ namespace Kernel
         mortdecayoffset = SusceptibilityConfig::basemortoffset;
     }
 
+    bool Susceptibility::HasMaternalImmunity() const
+    {
+        // Used in MC down-sampling logic
+        return (effect_mat_acquire ? true : false);
+    }
+
     bool Susceptibility::IsImmune() const
     {
-        LOG_WARN( "Placeholder functionality hard-coded to return false.\n" );
+        // Overriden as needed (used by TB)
+        release_assert(false);
         return false;
     }
 
     void Susceptibility::InitNewInfection()
     {
-        LOG_WARN( "Not implemented (but not throwing exception.\n" );
-        // no-op
+        // Overriden as needed (used by TB)
+        release_assert(false);
     }
 
     REGISTER_SERIALIZABLE(Susceptibility);
@@ -379,8 +287,8 @@ namespace Kernel
         ar.labelElement("trandecayoffset")            & susceptibility.trandecayoffset;
         ar.labelElement("mortdecayoffset")            & susceptibility.mortdecayoffset;
 
-        ar.labelElement("m_immune_failage_acquire")   & susceptibility.m_immune_failage_acquire;
-
         ar.labelElement("m_demographic_risk")         & susceptibility.m_demographic_risk;
+
+        ar.labelElement("effect_mat_acquire")         & susceptibility.effect_mat_acquire;
     }
-} // namespace Kernel
+}

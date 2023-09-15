@@ -29,8 +29,6 @@ namespace Kernel
     ENUM_INITIALIZE(PKPDModel, IDM_ENUMSPEC_PKPDModel)
     ENUM_INITIALIZE(RandomNumberGeneratorType, IDM_ENUMSPEC_RandomNumberGeneratorType)
     ENUM_INITIALIZE(RandomNumberGeneratorPolicy, IDM_ENUMSPEC_RandomNumberGeneratorPolicy)
-    ENUM_INITIALIZE(MaternalProtectionType, IDM_ENUMSPEC_MaternalProtectionType)
-    ENUM_INITIALIZE(SusceptibilityType, IDM_ENUMSPEC_SusceptibilityType)
     ENUM_INITIALIZE(SimType, IDM_ENUMSPEC_SimType)
     ENUM_INITIALIZE(TransmissionRoute, IDM_ENUMSPEC_TransmissionRoute)
     ENUM_INITIALIZE(TransmissionGroupType, IDM_ENUMSPEC_TransmissionGroupType)

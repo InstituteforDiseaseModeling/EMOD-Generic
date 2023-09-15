@@ -7,6 +7,7 @@ from subprocess import Popen, PIPE
 import pdb
 
 Import("env")
+
 if os.sys.platform != 'win32':
     # for getting commit/branch info either get the info directly (if we're building in a repo)
     git_rev_handle = Popen( "git rev-list HEAD --count".encode('utf-8').split(), stdout=PIPE )
@@ -109,35 +110,7 @@ utilsSrcFiles = [
     "TBHIVDrugTypeParameters.cpp",
     "Types.cpp",
     "Timers.cpp",
+    "WaningEffect.cpp",
 ]
-
-utilsIncFiles = [
-    'BaseProperties.h',
-    'BasePropertiesTemplates.h',
-    'BoostLibWrapper.h',
-    'ConfigParams.h',
-    'Configuration.h',
-    'ConfigurationImpl.h',
-    'Configure.h',
-    'EnumSupport.h',
-    'Environment.h',
-    'FactorySupport.h',
-    'InterpolatedValueMap.h',
-    'ISupports.h',
-    'Log.h',
-    'MathFunctions.h',
-    'Memory.h',
-    'ProgVersion.h',
-    'Properties.h',
-    'SimpleTypemapRegistration.h',
-    'SimulationEnums.h',
-    'StatusReporter.h',
-    'Sugar.h',
-    'TBDrugTypeParameters.h',
-    'TBHIVDrugTypeParameters.h',
-    'version_info.h'
-]
-
-utilsLocalInc = ['stdafx.h']
 
 utilsLib = env.StaticLibrary('utils', utilsSrcFiles)

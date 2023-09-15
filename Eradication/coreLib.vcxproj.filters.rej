@@ -1,0 +1,14 @@
+diff a/Eradication/coreLib.vcxproj.filters b/Eradication/coreLib.vcxproj.filters	(rejected hunks)
+@@ -1155,12 +1152,6 @@
+     <ClInclude Include="..\interventions\PolioNodeSurvey.h">
+       <Filter>Source Files\Campaign\NodeTargeted\Polio</Filter>
+     </ClInclude>
+-    <ClInclude Include="..\interventions\IWaningEffect.h">
+-      <Filter>Source Files\Campaign\WaningEffects</Filter>
+-    </ClInclude>
+-    <ClInclude Include="..\interventions\WaningEffect.h">
+-      <Filter>Source Files\Campaign\WaningEffects</Filter>
+-    </ClInclude>
+     <ClInclude Include="SerializedPopulation.h">
+       <Filter>Source Files\Kernel</Filter>
+     </ClInclude>
