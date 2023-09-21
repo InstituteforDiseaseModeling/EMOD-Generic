@@ -12,9 +12,9 @@ import dtk_test.dtk_migration as mig
 # DEVNOTE: add contact to point to input path, although we should probably interrogate the environment to get the
 # input_path passed to dtk
 if os.name == "nt":
-    INPUT_PATH = "\\\\bayesianfil01\\IDM\\home\\IDM_Bamboo_User\\input\\MigrationSFTs"
+    INPUT_PATH = "\\\\iazdvfil05.idmhpc.azr\\IDM\\home\\IDM_Bamboo_User\\input\\MigrationSFTs"
 else:
-    INPUT_PATH = "/mnt/bayesianfil01/public/input/TIP/MigrationSFTs"
+    INPUT_PATH = "/mnt/iazdvfil05/public/input/TIP/MigrationSFTs"
 
 # INPUT_PATH = "C:\\EMOD\\USER_input_data\\MigrationTest"
 

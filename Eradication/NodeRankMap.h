@@ -86,7 +86,7 @@ namespace Kernel
             virtual const char* what() const throw();
         };
 
-        struct map_merge : public std::binary_function<RankMap_t, RankMap_t, RankMap_t>
+        struct map_merge
         {
             RankMap_t operator()(const RankMap_t& x, const RankMap_t& y) const;
         };

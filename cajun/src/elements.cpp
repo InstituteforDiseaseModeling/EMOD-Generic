@@ -293,7 +293,7 @@ public:
    void Clear() { m_Members.clear(); }
 
 private:
-   class Finder : public std::unary_function<Object::Member, bool>
+   class Finder
    {
    public:
       Finder(const std::string& name) : m_name(name) {}
