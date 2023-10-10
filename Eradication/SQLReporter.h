@@ -25,6 +25,7 @@ namespace Kernel
         unsigned int individual_id;
         std::string  event;
         float        mcw;
+        float        age;
         uint64_t     label;
         std::string  IPs;
     };

@@ -35,6 +35,7 @@ namespace Kernel
         , individual_id(0)
         , event()
         , mcw(0.0f)
+        , age(0.0f)
         , label(0)
         , IPs()
     { }
@@ -95,6 +96,7 @@ namespace Kernel
                          "NODE           INT    NOT NULL,"     \
                          "INDIVIDUAL     INT    NOT NULL,"     \
                          "MCW            REAL   NOT NULL,"     \
+                         "AGE            REAL   NOT NULL,"     \
                          "LABEL          INT    NOT NULL,"     \
                          "IPS            TEXT   DEFAULT NULL " \
                                                           ");" ;
@@ -177,6 +179,7 @@ namespace Kernel
         record.individual_id = id;
         record.event         = event_name;
         record.mcw           = context->GetMonteCarloWeight();
+        record.age           = context->GetAge();
 
         if(sql_properties_to_report.size() == 0)
         {
@@ -229,13 +232,14 @@ namespace Kernel
         sql << "BEGIN TRANSACTION;";
         for( auto &rec : event_list )
         {
-            sql << "INSERT INTO SIM_EVENTS (SIM_TIME,EVENT,NODE,INDIVIDUAL,MCW,LABEL,IPS) "
+            sql << "INSERT INTO SIM_EVENTS (SIM_TIME,EVENT,NODE,INDIVIDUAL,MCW,AGE,LABEL,IPS) "
                 << "VALUES ("
                 <<        rec.time                   << ", "
                 << "'" << rec.event          << "'"  << ", "
                 <<        rec.node_id                << ", "
                 <<        rec.individual_id          << ", "
                 <<        rec.mcw                    << ", "
+                <<        rec.age                    << ", "
                 <<        rec.label                  << ", "
                 << "'" << rec.IPs            << "'"  << ");";
         }

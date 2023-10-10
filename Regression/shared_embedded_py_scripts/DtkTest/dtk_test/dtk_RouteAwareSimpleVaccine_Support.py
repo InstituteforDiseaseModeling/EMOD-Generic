@@ -24,6 +24,7 @@ class Columns:
     misc = "MISC"
     notes = "NOTES"
     mcw = "MCW"
+    mcw = "AGE"
     individual = "INDIVIDUAL"
     node = "NODE"
     event = "EVENT"
