@@ -20,109 +20,36 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 SETUP_LOGGING( "ReportTyphoid" )
 
 
-namespace Kernel {
-
-static const std::string _num_chronic_carriers_label     = "Number of Chronic Carriers";
-static const std::string _num_subclinic_infections_label = "Number of New Sub-Clinical Infections";
-static const std::string _num_acute_infections_label     = "Number of New Acute Infections";
-
-
+namespace Kernel
+{
 GET_SCHEMA_STATIC_WRAPPER_IMPL(ReportTyphoid,ReportTyphoid)
 
-
 ReportTyphoid::ReportTyphoid()
-    : recording( false )
-    , parent(nullptr)
-    , startYear(0.0f)
-    , stopYear(0.0f)
 {
-}
-
-bool ReportTyphoid::Configure( const Configuration * inputJson )
-{
-#define MIN_TYPH_YEAR (1850)
-    initConfigTypeMap( "Inset_Chart_Reporting_Start_Year", &startYear, Typhoid_Inset_Chart_Reporting_Start_Year_DESC_TEXT, MIN_TYPH_YEAR, MAX_YEAR, 0.0f );
-    initConfigTypeMap( "Inset_Chart_Reporting_Stop_Year", &stopYear, Typhoid_Inset_Chart_Reporting_Stop_Year_DESC_TEXT , MIN_TYPH_YEAR, MAX_YEAR, 0.0f );
-    bool ret = JsonConfigurable::Configure( inputJson );
-    if( ret && !JsonConfigurable::_dryrun )
-    {
-        LOG_DEBUG_F( "Read in Start_Year (%f) and Stop_Year(%f).\n", startYear, stopYear );
-        if( startYear >= stopYear )
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, "Inset_Chart_Reporting_Start_Year", startYear, "Inset_Chart_Reporting_Stop_Year", stopYear );
-        }
-        channelDataMap.SetStartStopYears( startYear, stopYear );
-    }
-    return ret ;
 }
 
 void ReportTyphoid::BeginTimestep()
 {
-    if( recording ) // not sure what BeginTimestep even does for us
-    {
-        return Report::BeginTimestep();
-    }
-}
+    chron_carriers_counter         = 0.0f;
+    subclinical_infections_counter = 0.0f;
+    acute_infections_counter       = 0.0f;
 
-void ReportTyphoid::setRecordingFlag()
-{
-    release_assert( parent );
-    
-    float currentYear = parent->GetSimulationTime().Year();
-    LOG_DEBUG_F( "currentYear = %f.\n", currentYear );
-    if( currentYear >= startYear && currentYear < stopYear )
-    {
-        recording = true;
-    }
-    else
-    {
-        recording = false;
-        Report::BeginTimestep(); // ??? can we clear anything accumulated in the first timestep that we no longer want?
-    }
-}
-
-void ReportTyphoid::EndTimestep( float currentTime, float dt )
-{
-    setRecordingFlag();
-    if( recording )
-    {
-        Report::EndTimestep( currentTime, dt );
-
-        // Make sure we push at least one zero per timestep
-        Accumulate( _num_chronic_carriers_label, 0 );
-        Accumulate( _num_subclinic_infections_label, 0 );
-        Accumulate( _num_acute_infections_label, 0 );
-    }
-
-    LOG_DEBUG_F( "recording = %d\n", recording );
-}
-
-void ReportTyphoid::postProcessAccumulatedData()
-{
-    // Don't call into base class -- too much stuff we don't want. Just copy-paste a couple into here.
-    LOG_DEBUG( "postProcessAccumulatedData\n" );
-    normalizeChannel("Infected", _stat_pop_label);
-    //addDerivedCumulativeSummaryChannel(_new_infections_label, "Cumulative Infections");
-}
-
-void ReportTyphoid::populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map )
-{
-    Report::populateSummaryDataUnitsMap(units_map);
+    return Report::BeginTimestep();
 }
 
 void ReportTyphoid::LogIndividualData( IIndividualHuman * individual )
 {
     Report::LogIndividualData( individual );
-    IIndividualHumanTyphoid* typhoid_individual = NULL;
+
+    IIndividualHumanTyphoid* typhoid_individual = nullptr;
     if( individual->QueryInterface( GET_IID( IIndividualHumanTyphoid ), (void**)&typhoid_individual ) != s_OK )
     {
         throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualTyphoid", "IndividualHuman" );
     }
 
-    auto mcw = individual->GetMonteCarloWeight();
+    float mcw = individual->GetMonteCarloWeight();
     if( typhoid_individual->IsChronicCarrier( false ) )
     {
-        //Accumulate( _num_chronic_carriers_label, mc_weight );
         chron_carriers_counter += mcw;
     }
 
@@ -141,29 +68,11 @@ void ReportTyphoid::LogIndividualData( IIndividualHuman * individual )
 
 void ReportTyphoid::LogNodeData( INodeContext * pNC )
 {
-    if( parent == nullptr )
-    {
-        parent = pNC->GetParent();
-        LOG_DEBUG_F( "Set parent to %x\n", parent );
-        setRecordingFlag();
-    }
-
-    if( recording == false ) 
-    {
-        return;
-    }
-
     Report::LogNodeData( pNC );
-    Accumulate( _num_chronic_carriers_label, chron_carriers_counter  );
-    Accumulate( _num_subclinic_infections_label, subclinical_infections_counter );
-    Accumulate( _num_acute_infections_label, acute_infections_counter );
-    chron_carriers_counter = 0;
-    subclinical_infections_counter = 0;
-    acute_infections_counter = 0;
-}
 
-void ReportTyphoid::AccumulateSEIRW()
-{
+    Accumulate( "Number of Chronic Carriers",            chron_carriers_counter  );
+    Accumulate( "Number of New Sub-Clinical Infections", subclinical_infections_counter );
+    Accumulate( "Number of New Acute Infections",        acute_infections_counter );
 }
 
 }

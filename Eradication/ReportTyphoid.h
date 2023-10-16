@@ -13,8 +13,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "TransmissionGroupMembership.h"
 #include "ISimulationContext.h"
 
-namespace Kernel {
-
+namespace Kernel
+{
     class ReportTyphoid : public Report
     {
         GET_SCHEMA_STATIC_WRAPPER(ReportTyphoid)
@@ -24,30 +24,14 @@ namespace Kernel {
 
             static IReport* ReportTyphoid::CreateReport() { return new ReportTyphoid(); }
 
-            virtual bool Configure( const Configuration * inputJson );
             virtual void BeginTimestep() override;
-            virtual void EndTimestep( float currentTime, float dt );
-            virtual void AccumulateSEIRW();
 
             virtual void LogIndividualData( IIndividualHuman * individual);
             virtual void LogNodeData( Kernel::INodeContext * pNC );
 
-        protected:
-            virtual void populateSummaryDataUnitsMap( std::map<std::string, std::string> &units_map );
-            virtual void postProcessAccumulatedData();
-            void setRecordingFlag();
-
         private:
-
-            TransmissionGroupMembership_t memberships;
-            ISimulationContext * parent;
-            float startYear;
-            float stopYear;
-            bool recording;
-
-            NonNegativeFloat chron_carriers_counter;
-            NonNegativeFloat subclinical_infections_counter;
-            NonNegativeFloat acute_infections_counter;
+            float chron_carriers_counter;
+            float subclinical_infections_counter;
+            float acute_infections_counter;
     };
-
 }
