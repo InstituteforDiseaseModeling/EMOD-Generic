@@ -10,7 +10,6 @@
 #
 #
 import datetime
-import imp
 import os
 import re
 import shutil
@@ -317,6 +316,9 @@ if os.sys.platform.startswith("linux"):
     elif(sys.version_info.minor == 11):
         env.Append( LIBS=["python3.11"] )
         env.Append( EXTRACPPPATH=["/usr/include/python3.11"] )
+    elif(sys.version_info.minor == 12):
+        env.Append( LIBS=["python3.12"] )
+        env.Append( EXTRACPPPATH=["/usr/include/python3.12"] )
     else:
         raise RuntimeError("Unsupported python version")
 
