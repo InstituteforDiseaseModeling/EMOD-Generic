@@ -328,12 +328,14 @@ namespace Kernel
     {
         transmissionGroups = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
         transmissionGroups->SetTag( "contact" );
+        AddRoute(TransmissionRoute::CONTACT);
 
         if(GetParams()->enable_environmental_route)
         {
             txEnvironment = TransmissionGroupsFactory::CreateNodeGroups( TransmissionGroupType::StrainAwareGroups, GetRng() );
             txEnvironment->SetTag( "environmental" );
             txEnvironment->UseGroupPopulationForNormalization();
+            AddRoute(TransmissionRoute::ENVIRONMENTAL);
         }
     }
 
@@ -366,7 +368,6 @@ namespace Kernel
                 if ( matrix.size() > 0 )
                 {
                     auto tx_route = hint.GetRouteName();
-                    AddRoute(tx_route);
                     switch(tx_route)
                     {
                         case TransmissionRoute::CONTACT:
@@ -393,7 +394,6 @@ namespace Kernel
                     {
                         auto tx_route = entry.first;
                         auto& matrix = entry.second;
-                        AddRoute(tx_route);
                         switch(tx_route)
                         {
                             case TransmissionRoute::CONTACT:
@@ -418,21 +418,12 @@ namespace Kernel
                 else //HINT is enabled, but no transmission matrix is detected
                 {
                     // This is okay. We don't need every IP to participate in HINT.
-                    AddRoute(TransmissionRoute::CONTACT);
-                    if(GetParams()->enable_environmental_route)
-                    {
-                        AddRoute(TransmissionRoute::ENVIRONMENTAL);
-                    }
                 }
             }
         }
         else //HINT is not enabled
         {
-            AddRoute(TransmissionRoute::CONTACT);
-            if(GetParams()->enable_environmental_route)
-            {
-                AddRoute(TransmissionRoute::ENVIRONMENTAL);
-            }
+            // Nothing to do.
         }
 
         event_context_host->SetupTxRoutes();

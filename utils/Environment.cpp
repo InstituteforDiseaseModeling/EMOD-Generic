@@ -70,15 +70,15 @@ bool Environment::Initialize(
     std::string sep_chars    = ";,";
     std::string in_path_list = FileSystem::RemoveTrailingChars( inputPath );
 
-    // Always check current working directory
-    inputPaths.push_back(".");
-
     // Split in_path_list into list based on sep_chars
     while((start_pos = in_path_list.find_first_not_of(sep_chars, end_pos)) != std::string::npos)
     {
         end_pos = in_path_list.find_first_of(sep_chars, start_pos);
         inputPaths.push_back(in_path_list.substr(start_pos, end_pos-start_pos));
     }
+
+    // Always check current working directory, but do it last
+    inputPaths.push_back(".");
 
     outputPath = FileSystem::RemoveTrailingChars( outputPath );
 

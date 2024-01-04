@@ -241,7 +241,7 @@ SUITE(NodeDemographicsTest)
         catch( FileNotFoundException& fnfe )
         {
             std::string msg = fnfe.GetMsg();
-            CHECK( msg.find( "Could not find file at any of 1 or more paths:\ntestdata/NodeDemographicsTest/unknown_demographics.json" ) != string::npos );
+            CHECK( msg.find( "Could not find file at any of 1 or more paths:\ntestdata/NodeDemographicsTest/unknown_demographics.json or here ./unknown_demographics.json or here " ) != string::npos );
         }
     }
 

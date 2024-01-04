@@ -1200,7 +1200,7 @@ SUITE(MigrationTest)
             "Household-Scenario-Small", 
             26,
             1,
-            "Could not find file at any of 1 or more paths:\ntestdata/MigrationTest/TestLocalMigrationFileNotFound.bin" );
+            "Could not find file at any of 1 or more paths:\ntestdata/MigrationTest/TestLocalMigrationFileNotFound.bin or here ./TestLocalMigrationFileNotFound.bin or here " );
     }
 
     TEST_FIXTURE(MigrationFixture, TestWrongSize)
