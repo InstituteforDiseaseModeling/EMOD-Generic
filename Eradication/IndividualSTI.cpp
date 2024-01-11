@@ -538,6 +538,8 @@ namespace Kernel
 
     void IndividualHumanSTI::UpdateGroupMembership()
     {
+        m_PropertyReportString = PropertiesToString( GetProperties()->GetOldVersion() );
+
         if( p_sti_node != nullptr )
         {
             p_sti_node->GetGroupMembershipForIndividual_STI( relationship_properties, transmissionGroupMembershipByRelationship );

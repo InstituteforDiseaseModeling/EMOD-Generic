@@ -27,6 +27,7 @@ namespace Kernel
     struct IIndividualHumanTB;
     struct IMalariaHumanContext;
     class  IIndividualHumanPolio;
+    class  IIndividualHumanTyphoid;
     struct ISusceptibilityContext;
     struct INodeContext;
     struct NodeDemographics;
@@ -49,6 +50,7 @@ namespace Kernel
         virtual IIndividualHumanTB*                    GetIndividualTB()                                                 = 0;
         virtual IMalariaHumanContext*                  GetIndividualMalaria()                                            = 0;
         virtual IIndividualHumanPolio*                 GetIndividualPolio()                                              = 0;
+        virtual IIndividualHumanTyphoid*               GetIndividualTyphoid()                                            = 0;
         virtual IVaccineConsumer*                      GetVaccineContext()                                         const = 0;
         virtual IIndividualHumanEventContext*          GetEventContext()                                                 = 0; // access to specific attributes of the individual useful for events
         virtual ISusceptibilityContext*                GetSusceptibilityContext()                                  const = 0; // access to immune attributes useful for infection, interventions, reporting, etc.
@@ -57,8 +59,5 @@ namespace Kernel
 
         virtual void UpdateGroupMembership() = 0;
         virtual void UpdateGroupPopulation( float size_changes ) = 0;
-
-        virtual const std::string& GetPropertyReportString() const = 0;
-        virtual void SetPropertyReportString( const std::string& str ) = 0;
     };
 }

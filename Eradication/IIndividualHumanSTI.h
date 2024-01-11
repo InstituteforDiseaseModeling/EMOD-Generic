@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Types.h"
 #include "suids.hpp"
 #include "IRelationship.h"
-#include "PropertiesString.h"
 
 namespace Kernel 
 {

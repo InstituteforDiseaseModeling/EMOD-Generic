@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ConfigParams.h"
 #include <iomanip> // setprecision
 #include <iostream> // defaultfloat
+#include <cmath>
 #include "Debug.h"
 #include "FileSystem.h"
 #include "ReportTyphoidByAgeAndGender.h"
@@ -29,17 +30,13 @@ namespace Kernel
 {
     GET_SCHEMA_STATIC_WRAPPER_IMPL(ReportTyphoidByAgeAndGender,ReportTyphoidByAgeAndGender)
 
-    ReportTyphoidByAgeAndGender::ReportTyphoidByAgeAndGender( const ISimulation * parent, float Period )
+    ReportTyphoidByAgeAndGender::ReportTyphoidByAgeAndGender( const ISimulation* parent )
         : BaseTextReportEvents("ReportTyphoidByAgeAndGender.csv")
-        , next_report_time(0)
         , doReport( false )
         , _parent( parent )
         , startYear(0.0)
-        , stopYear(FLT_MAX)
-        , is_collecting_data(false)
+        , stopYear(0.0)
     {
-        //eventTriggerList.push_back( IndividualEventTriggerType::DiseaseDeaths );
-        //eventTriggerList.push_back( IndividualEventTriggerType::NonDiseaseDeaths );
         if( !JsonConfigurable::_dryrun )
         { 
             eventTriggerList.push_back( EventTrigger::NewInfection );
@@ -70,18 +67,6 @@ namespace Kernel
 
     bool ReportTyphoidByAgeAndGender::Validate( const ISimulationContext* parent_sim )
     {
-        if( startYear < parent_sim->GetParams()->sim_time_base_year)
-        {
-            startYear = parent_sim->GetParams()->sim_time_base_year;
-        }
-
-        if( startYear >= stopYear )
-        {
-            throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__, 
-                    "Report_Typhoid_ByAgeAndGender_Start_Year", startYear, 
-                    "Report_Typhoid_ByAgeAndGender_Stop_Year", stopYear );
-        }
-
         if( IPFactory::GetInstance()->GetIPList().size() > 1 )
         {
             throw IncoherentConfigurationException( __FILE__, __LINE__, __FUNCTION__,
@@ -95,66 +80,38 @@ namespace Kernel
     void ReportTyphoidByAgeAndGender::Initialize( unsigned int nrmSize )
     {
         BaseTextReportEvents::Initialize( nrmSize );
-        auto permKeys = IPFactory::GetInstance()->GetKeysAsStringSet();
-        if( permutationsSet.size() == 0 )
-        {
-            // put all keys in set
-            PropertyReport::tKeyValuePair actualPerm;
-            PropertyReport::GenerateAllPermutationsOnce( permKeys, actualPerm, permutationsSet );
-        }
 
         // Get integer that represents reportingBucket
-        // Let's do map of reportingBucket strings to unique integer ids
-        for( auto property : permutationsSet )
+        if(IPFactory::GetInstance())
         {
-            std::string reportingBucket = PropertiesToString( property );
-            bucketToIdMap.insert( std::make_pair( reportingBucket, int(bucketToIdMap.size()) ) );
+            for( auto reportingBucket : IPFactory::GetInstance()->GetAllPossibleKeyValueCombinations<IPKeyValueContainer>() )
+            {
+                int id_val = static_cast<int>(bucketToIdMap.size());
+                bucketToIdMap.insert( std::make_pair(reportingBucket, id_val) );
+            }
+        }
+
+        if(bucketToIdMap.empty())
+        {
+            bucketToIdMap.insert( std::make_pair("", 0) );
         }
     }
 
-    void ReportTyphoidByAgeAndGender::UpdateEventRegistration( float currentTime, 
-                                                           float dt, 
-                                                           std::vector<INodeEventContext*>& rNodeEventContextList,
+    void ReportTyphoidByAgeAndGender::UpdateEventRegistration( float currentTime, float dt, 
+                                                               std::vector<INodeEventContext*>& rNodeEventContextList,
                                                                ISimulationEventContext* pSimEventContext )
     {
-        // not enforcing simulation to be not null in constructor so one can create schema with it null
-        release_assert( _parent );
+        auto sim_year = _parent->GetSimulationTime().Year();
+        doReport      = false;
 
-        float base_year    = _parent->GetParams()->sim_time_base_year;
-        float current_year = _parent->GetSimulationTime().Year() ;
-        if( !is_collecting_data && (startYear <= current_year) && (current_year < stopYear) )
+        if(sim_year > startYear && sim_year < stopYear)
         {
+            // Record events only between start year and stop year
             BaseTextReportEvents::UpdateEventRegistration( currentTime, dt, rNodeEventContextList, pSimEventContext );
-            is_collecting_data = true ;
 
-            release_assert(base_year > 0.0f);
-            next_report_time = DAYSPERYEAR*(startYear - base_year) + DAYSPERYEAR - dt; // / 2.0f ;
-            // e.g., Suppose we started sim in 1940, and want to report from 1943 through 1944. dt=1
-            //       nrt = DAYSPERYEAR * ( 1943.0 - 1940.0 ) +DAYSPERYEAR - 1
-            //           = DAYSPERYEAR * 4 - 0.5
-            //           = 1459.0 aka "Dec 31 of this year"
-            LOG_INFO_F( "Starting to collect data now, next_report_time = %f\n", (float) next_report_time );
-        }
-        else if( is_collecting_data && (_parent->GetSimulationTime().Year() > stopYear) )
-        {
-            UnregisterAllBroadcasters();
-            is_collecting_data = false ;
-        }
-
-        if( is_collecting_data )
-        {
-            // Figure out when to set doReport to true.  doReport is true for those
-            // timesteps where we take a snapshot, i.e., as a function of the
-            // half-year offset and full-year periodicity or whatever. In simplest case,
-            // it writes out the report (of data that's been collected) 1x per year.
-            doReport = false;
-            LOG_DEBUG_F( "%s: Setting doReport to false\n", __FUNCTION__ );
-
-            if( currentTime >= next_report_time ) 
+            // Generate report on last time step of each year
+            if((std::fmod(currentTime, DAYSPERYEAR) > std::fmod(currentTime+dt, DAYSPERYEAR)) || dt > DAYSPERYEAR)
             {
-                next_report_time += DAYSPERYEAR;
-
-                LOG_DEBUG_F( "Setting doReport to true .\n" );
                 doReport = true;
             }
         }
@@ -162,46 +119,43 @@ namespace Kernel
 
     bool ReportTyphoidByAgeAndGender::IsCollectingIndividualData( float currentTime, float dt ) const
     {
-        return is_collecting_data; //  && doReport; 
+        // Only collect individual data between start year and stop year
+        auto sim_year = _parent->GetSimulationTime().Year();
+
+        return ((sim_year > startYear) && (sim_year < stopYear));
     }
 
     std::string ReportTyphoidByAgeAndGender::GetHeader() const
     {
-        std::stringstream header ;
-        header << "Time Of Report (Year)"   << ", "
-               << "NodeId"           << ", "
-               << "Gender"           << ", "
-               << "Age"              << ", "
-               << "HINT Group"       << ", "
-               << "Population"       << ", "
-               << "Infected"         << ", "
-               << "Newly Infected"   << ", "
-               << "Chronic (Prev)"   << ", "
-               << "Sub-Clinical (Prev)" << ", "
-               << "Acute (Prev)"     << ", "
-               << "Pre-Patent (Prev)"     << ", "
-               << "Chronic (Inc) "   << ", "
-               << "Sub-Clinical (Inc)" << ", "
-               << "Acute (Inc)"      << ", "
-               << "Pre-Patent (Inc)"      << ", "
-               ;
+        std::stringstream header;
+        header << "Time Of Report (Year), "
+               << "NodeId, "
+               << "Gender, "
+               << "Age, "
+               << "HINT Group, "
+               << "Population, "
+               << "Infected, "
+               << "Newly Infected, "
+               << "Chronic (Prev), "
+               << "Sub-Clinical (Prev), "
+               << "Acute (Prev), "
+               << "Pre-Patent (Prev), "
+               << "Chronic (Inc) , "
+               << "Sub-Clinical (Inc), "
+               << "Acute (Inc), "
+               << "Pre-Patent (Inc), ";
 
         return header.str();
     }
 
     void ReportTyphoidByAgeAndGender::LogNodeData( INodeContext* pNC )
     {
-        if( (is_collecting_data == false) || (doReport == false) )
+        if(!doReport)
         {
             return;
         }
-        //LOG_DEBUG_F( "%s: doReport = %d\n", __FUNCTION__, doReport );
+
         LOG_INFO_F( "Writing accumulated data to disk for this reporting period.\n" );
-
-        float year = _parent->GetSimulationTime().Year();
-
-        int nodeId = pNC->GetExternalID();
-
         for( int gender = 0; gender < Gender::Enum::COUNT; gender++ ) 
         {
             for( int age_bin = 0; age_bin < MAX_AGE; age_bin++ ) 
@@ -213,11 +167,11 @@ namespace Kernel
                     // Following is for cross-platform correctness
                     GetOutputStream() 
                         << std::fixed << std::setprecision(3) 
-                        << year;
+                        << _parent->GetSimulationTime().Year();
                     GetOutputStream().unsetf(std::ios_base::floatfield);
                     GetOutputStream()
-                        << ","<< nodeId 
-                        << "," << gender    // Kernel::Gender::pairs::lookup_key(gender)
+                        << "," << pNC->GetExternalID()
+                        << "," << gender
                         << "," << age_bin
                         << "," << ip_entry.first
                         << "," << population[gender][age_bin][ip_idx]
@@ -251,108 +205,87 @@ namespace Kernel
         ZERO_ARRAY( prePatent_inc );
     }
 
-    void ReportTyphoidByAgeAndGender::LogIndividualData( IIndividualHuman* individual )
+    void ReportTyphoidByAgeAndGender::LogIndividualData( IIndividualHuman* p_iih )
     {
-        //LOG_DEBUG_F( "%s: doReport = %d\n", __FUNCTION__, doReport );
-        std::string reportingBucket = individual->GetPropertyReportString();
-        if( individual->GetPropertyReportString() == "" )
-        {
-            reportingBucket = PropertiesToString( individual->GetProperties()->GetOldVersion() );
-            individual->SetPropertyReportString( reportingBucket );
-        }
+        IIndividualHumanTyphoid* p_iiht = p_iih->GetIndividualContext()->GetIndividualTyphoid();
 
-        IIndividualHumanTyphoid* typhoid_individual = NULL;
-        if( individual->QueryInterface( GET_IID( IIndividualHumanTyphoid ), (void**)&typhoid_individual ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualTyphoid", "IndividualHuman" );
-        }
+        float mc_weight =  p_iih->GetMonteCarloWeight();
+        float age_yr     = p_iih->GetAge()/static_cast<float>(DAYSPERYEAR);
+        int   age_bin    = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, age_yr) ));
+        auto  gen_int    = p_iih->GetGender();
+        int   gender     = (gen_int == Gender::MALE) ? 0 : 1;
+        auto  rbi        = bucketToIdMap.at( p_iih->GetPropertyReportString() );
+        bool  is_infect  = p_iih->IsInfected();
+        auto  suid_dat   = p_iih->GetSuid().data;
 
-        float mc_weight = individual->GetMonteCarloWeight();
-        int age_bin = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, individual->GetAge()/static_cast<float>(DAYSPERYEAR)) ));
-
-        int gender = individual->GetGender() == Gender::MALE ? 0 : 1;
-
-        bool isInfected = individual->IsInfected();
-        bool isChronic = typhoid_individual->IsChronicCarrier();
-        bool isSub = typhoid_individual->IsSubClinical();
-        bool isAcute = typhoid_individual->IsAcute(); 
-        bool isPrePatent = typhoid_individual->IsPrePatent(); 
-
-        auto rbi = bucketToIdMap.at( reportingBucket );
+        bool  is_chronic = p_iiht->IsChronicCarrier();
+        bool  is_subclin = p_iiht->IsSubClinical();
+        bool  is_acute   = p_iiht->IsAcute(); 
+        bool  is_pre_pat = p_iiht->IsPrePatent(); 
 
         // We do the incidences throughout the reporting period
-        if( isChronic )
+        if(is_chronic)
         {
             chronic_inc[ gender ][ age_bin ][ rbi ] += mc_weight;
         }
-        if( isSub )
+        if(is_subclin)
         {
             subClinical_inc[ gender ][ age_bin ][ rbi ] += mc_weight;
         }
-        if( isAcute )
+        if(is_acute)
         {
             acute_inc[ gender ][ age_bin ][ rbi ] += mc_weight;
         }
-        /*if( isPrePatent )
-        {
-            prePatent_inc[ gender ][ age_bin ] += mc_weight;
-        }*/
+
         LOG_VALID_F( "[Inc] Individual %d (age=%f,sex=%d), infected = %d, isPrePatent = %d, isChronic = %d, isSub = %d, isAcute = %d\n",
-                     individual->GetSuid().data, individual->GetAge()/DAYSPERYEAR, individual->GetGender(), isInfected, isPrePatent, isChronic, isSub, isAcute
-                   );
+                     suid_dat, age_yr, gen_int, is_infect, is_pre_pat, is_chronic, is_subclin, is_acute);
 
         // We do the prevalences only in the snapshot timestep in which we are writing out the report.
         if( doReport )
         {
             LOG_VALID_F( "doReport = true.\n" );
-            bool isInfected = individual->IsInfected();
-            bool isPrePatent = typhoid_individual->IsPrePatent( false );
-            bool isChronic = typhoid_individual->IsChronicCarrier( false );
-            bool isSub = typhoid_individual->IsSubClinical( false );
-            bool isAcute = typhoid_individual->IsAcute( false );
-            //bool isNewlyInfected = false;
+            bool is_chronic_f = p_iiht->IsChronicCarrier( false );
+            bool is_subclin_f = p_iiht->IsSubClinical( false );
+            bool is_acute_f   = p_iiht->IsAcute( false );
+            bool is_pre_pat_f = p_iiht->IsPrePatent( false );
+
             population[ gender ][ age_bin ][ rbi ] += mc_weight;
 
-            if( isInfected )
+            if(is_infect)
             {
                 infected[ gender ][ age_bin ][ rbi ] += mc_weight;
             }
 
-            if( isChronic )
+            if(is_chronic_f)
             {
                 chronic[ gender ][ age_bin ][ rbi ] += mc_weight;
             }
-            if( isSub )
+            if(is_subclin_f)
             {
                 subClinical[ gender ][ age_bin ][ rbi ] += mc_weight;
             }
-            if( isAcute )
+            if(is_acute_f)
             {
                 acute[ gender ][ age_bin ][ rbi ] += mc_weight;
             }
-            if( isPrePatent )
+            if(is_pre_pat_f)
             {
                 prePatent[ gender ][ age_bin ][ rbi ] += mc_weight;
                 LOG_VALID_F( "prePatent[ %d ][ %d ][ %d ] = %f\n", gender, age_bin, prePatent[ gender ][ age_bin ][ rbi ] );
             }
             LOG_VALID_F( "[Prev] Individual %d (age=%f,sex=%d), infected = %d, isPrePatent = %d, isChronic = %d, isSub = %d, isAcute = %d\n",
-                         individual->GetSuid().data, individual->GetAge()/DAYSPERYEAR, individual->GetGender(), isInfected, isPrePatent, isChronic, isSub, isAcute
-                       );
+                         suid_dat, age_yr, gen_int, is_infect, is_pre_pat_f, is_chronic_f, is_subclin_f, is_acute_f);
         }
     }
 
-    bool ReportTyphoidByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext *context, const EventTrigger::Enum& StateChange)
+    bool ReportTyphoidByAgeAndGender::notifyOnEvent( IIndividualHumanEventContext* context, const EventTrigger::Enum& StateChange)
     {
-        LOG_DEBUG_F( "Individual %d experienced event %s\n",
-                     context->GetSuid().data,
-                     EventTrigger::pairs::lookup_key( StateChange ).c_str()
-                   );
+        LOG_DEBUG_F( "Individual %d experienced event %s\n", context->GetSuid().data, EventTrigger::pairs::lookup_key( StateChange ).c_str() );
 
-        float mc_weight = context->GetMonteCarloWeight();
-        int gender = context->GetGender() == Gender::MALE ? 0 : 1;
-        int age_bin = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, context->GetAge()/static_cast<float>(DAYSPERYEAR)) ));
-        std::string reportingBucket = dynamic_cast<IIndividualHumanContext*>(context)->GetPropertyReportString();
-        auto rbi = bucketToIdMap.at( reportingBucket );
+        float       mc_weight = context->GetMonteCarloWeight();
+        int         gender    = context->GetGender() == Gender::MALE ? 0 : 1;
+        int         age_bin   = static_cast<int>(floor( (std::min)(static_cast<float>(MAX_AGE)-1.0f, context->GetAge()/static_cast<float>(DAYSPERYEAR)) ));
+        auto        rbi       = bucketToIdMap.at( context->GetIndividual()->GetPropertyReportString() );
 
         if( StateChange == EventTrigger::NewInfection )
         {

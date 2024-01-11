@@ -348,7 +348,6 @@ namespace Kernel
             pProps->Set( new_kv );
             parent->UpdateGroupMembership();
             parent->UpdateGroupPopulation(1.0f);
-            parent->SetPropertyReportString("");
 
             //broadcast that the individual changed properties
             IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();

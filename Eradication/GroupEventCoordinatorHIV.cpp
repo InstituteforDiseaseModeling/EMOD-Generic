@@ -23,7 +23,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Log.h"
 #include "TBContexts.h"
 #include "IndividualCoInfection.h"
-#include "PropertiesString.h"
 #include "NodeTBHIV.h"
 #include "IdmDateTime.h"
 

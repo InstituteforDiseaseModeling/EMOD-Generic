@@ -25,7 +25,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Simulation.h"
 #include "IdmMpi.h"
 
-#include "Instrumentation.h"
 #include "StatusReporter.h"
 
 #ifndef _DLLS_

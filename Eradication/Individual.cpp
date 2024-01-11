@@ -827,6 +827,8 @@ namespace Kernel
         const RouteList_t& routes = parent->GetTransmissionRoutes();
         LOG_DEBUG_F( "Updating transmission group membership for individual %d for %d routes.\n", this->GetSuid().data, routes.size() );
 
+        m_PropertyReportString = PropertiesToString( properties );
+
         for( auto& route : routes )
         {
             LOG_DEBUG_F( "Updating for Route %s.\n", TransmissionRoute::pairs::lookup_key(route).c_str() );

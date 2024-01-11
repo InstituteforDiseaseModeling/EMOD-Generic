@@ -16,7 +16,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Common.h" // for HumanStateChange enum at least
 #include "suids.hpp"
-#include "PropertiesString.h"
 
 namespace Kernel
 {
@@ -47,7 +46,5 @@ namespace Kernel
         virtual IIndividualHuman*                      GetIndividual()                  = 0;
         virtual INodeEventContext*                     GetNodeEventContext()            = 0;
         virtual IPKeyValueContainer*                   GetProperties()                  = 0;
-
-        // TODO: add more methods here to extend programmatic capability of event coordinators w.r.t. to individual state!
     };
 }

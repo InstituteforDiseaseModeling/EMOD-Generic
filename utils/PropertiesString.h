@@ -16,5 +16,4 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 // !!! OLD - want to remove
 typedef std::map< std::string, std::string > tProperties;
 std::string PropertiesToString( const tProperties& properties );
-std::string PropertiesToStringCsvFriendly( const tProperties& properties );
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

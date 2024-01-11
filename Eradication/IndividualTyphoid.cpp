@@ -87,29 +87,6 @@ namespace Kernel
         return ret;
     }
 
-    class Stopwatch
-    {
-        public:
-            Stopwatch( const char* label )
-            {
-#ifndef WIN32
-                gettimeofday( &start_tv, nullptr );
-#endif
-                _label = label;
-            }
-            ~Stopwatch()
-            {
-#ifndef WIN32
-                struct timeval stop_tv;
-                gettimeofday( &stop_tv, nullptr );
-                float timespentinms = ( stop_tv.tv_sec - start_tv.tv_sec ) + 1e-06* ( stop_tv.tv_usec - start_tv.tv_usec );
-#endif
-            }
-#ifndef WIN32
-            struct timeval start_tv;
-#endif
-            std::string _label;
-    };
     const float IndividualHumanTyphoid::P5 = 0.05f; // probability of typhoid death
     const float IndividualHumanTyphoid::P7 = 0.0f; // probability of clinical immunity after acute infection
 
@@ -126,7 +103,6 @@ namespace Kernel
         IndividualHumanEnvironmental(_suid, monte_carlo_weight, initial_age, gender)
     {
 #ifdef ENABLE_PYTHOID
-        volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         // Call into python script to notify of new individual
         static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "create" ));
         if( pFunc )
@@ -146,7 +122,6 @@ namespace Kernel
 
             PyErr_Print();
         }
-        delete check;
 #else 
         _infection_count=0; // should not be necessary
         doseTracking = "Low";
@@ -156,7 +131,6 @@ namespace Kernel
     IndividualHumanTyphoid::~IndividualHumanTyphoid()
     {
 #ifdef ENABLE_PYTHOID
-        volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         // Call into python script to notify of new individual
         static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "destroy" ));
         if( pFunc )
@@ -167,7 +141,6 @@ namespace Kernel
             PyObject_CallObject( pFunc, vars );
             PyErr_Print();
         }
-        delete check;
 #endif
     }
 
@@ -198,6 +171,10 @@ namespace Kernel
         susceptibility = newsusceptibility;
     }
 
+    IIndividualHumanTyphoid* IndividualHumanTyphoid::GetIndividualTyphoid()
+    {
+        return static_cast<IIndividualHumanTyphoid*>(this);
+    }
 
 #define HIGH_ENVIRO_DOSE_THRESHOLD (275050000)
     void IndividualHumanTyphoid::quantizeEnvironmentalDoseTracking( float environment )
@@ -228,7 +205,6 @@ namespace Kernel
             return;
         }
 
-        volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "expose" ));
         if( pFunc )
         {
@@ -256,7 +232,6 @@ namespace Kernel
             }
             Py_DECREF( retVal );
         }
-        delete check;
         return;
 #else
         if ( IsInfected() )
@@ -483,7 +458,6 @@ namespace Kernel
     void IndividualHumanTyphoid::UpdateInfectiousness(float dt)
     {
 #ifdef ENABLE_PYTHOID
-        //volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         for( auto &route: parent->GetTransmissionRoutes() )
         {
             static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "update_and_return_infectiousness" ));
@@ -506,7 +480,6 @@ namespace Kernel
                 Py_DECREF( retVal );
             }
         }
-        //delete check;
         return;
 #else
         if( !IsInfected() && !IsChronicCarrier() )
@@ -572,7 +545,6 @@ namespace Kernel
     void IndividualHumanTyphoid::Update( float currenttime, float dt)
     {
 #ifdef ENABLE_PYTHOID
-        volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         static auto pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "update" ));
         if( pFunc )
         {
@@ -600,7 +572,6 @@ namespace Kernel
             }
             PyErr_Print();
         }
-        delete check;
         LOG_DEBUG_F( "state_to_report for individual %d = %s; Infected = %d.\n", GetSuid().data, state_to_report.c_str(), IsInfected() );
 
         if( state_to_report == "SUS" && state_changed && GetInfections().size() > 0 )
@@ -643,7 +614,6 @@ namespace Kernel
         // neither environmental nor contact source. probably from initial seeding
         IndividualHumanEnvironmental::AcquireNewInfection( infstrain, tx_route, incubation_period_override );
 #ifdef ENABLE_PYTHOID
-        volatile Stopwatch * check = new Stopwatch( __FUNCTION__ );
         static PyObject* pFunc = static_cast<PyObject*>(PythonSupport::GetPyFunction( PythonSupport::SCRIPT_TYPHOID, "acquire_infection" ));
         if( pFunc )
         {
@@ -653,7 +623,6 @@ namespace Kernel
             PyTuple_SetItem(vars, 0, py_existing_id );
             PyObject_CallObject( pFunc, vars );
         }
-        delete check;
 #else
         //LOG_INFO_F("Prepatent %d. dose %s \n", _prepatent_duration, doseTracking);
         _infection_count ++;

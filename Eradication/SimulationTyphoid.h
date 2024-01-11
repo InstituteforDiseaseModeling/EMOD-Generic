@@ -45,7 +45,6 @@ namespace Kernel
         virtual void resolveMigration();
 
     private:
-
         friend class Kernel::SimulationFactory; // allow them to create us
     };
 }

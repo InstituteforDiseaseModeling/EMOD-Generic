@@ -29,38 +29,20 @@ const char* IP_VALUES_KEY             = "Values";
 const char* IP_INIT_KEY               = "Initial_Distribution";
 
 
-std::string PropertiesToString( const tProperties& properties, 
-                                const char propValSeparator, 
-                                const char propSeparator )
+std::string PropertiesToString( const tProperties& properties )
 {
     std::string propertyString;
     for (const auto& entry : properties)
     {
-        const std::string& key   = entry.first;
-        const std::string& value = entry.second;
-        propertyString += key + propValSeparator + value + propSeparator;
+        propertyString += Kernel::BaseFactory::CreateKeyValueString(entry.first, entry.second) + PROP_SEPARATOR;
     }
 
     if( !propertyString.empty() )
     {
-#ifdef WIN32
         propertyString.pop_back();
-#else
-        propertyString.resize(propertyString.size() - 1);
-#endif
     }
 
     return propertyString;
-}
-
-std::string PropertiesToString( const tProperties& properties )
-{
-    return PropertiesToString( properties, ':', ',' );
-}
-
-std::string PropertiesToStringCsvFriendly( const tProperties& properties )
-{
-    return PropertiesToString( properties, '-', ';' );
 }
 
 namespace Kernel

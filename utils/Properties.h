@@ -304,13 +304,6 @@ namespace Kernel
         // The values will be set randomly.
         IPKeyValueContainer GetInitialValues( uint32_t externNodeId, RANDOMBASE* pRNG ) const;
 
-        // I'm really sure these must have local versions
-        // This is where I want this function but something weird happens when I do this. Have to push another
-        // version for now but not willing to give up completely on this yet.
-        //typedef std::map< std::string, std::string > tKeyValuePair; 
-        //typedef std::set< tKeyValuePair > tPermutations;
-        //static void GenerateAllPermutationsOnce( std::set< std::string > &keys, tKeyValuePair perm, tPermutations &perms );
-
     protected:
         friend class IPKeyValue;
         friend class IndividualProperty;

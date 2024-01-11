@@ -24,8 +24,7 @@ namespace Kernel
 /////////////////////////
 // Initialization methods
 /////////////////////////
-IReport*
-PropertyReportTB::CreateReport()
+IReport* PropertyReportTB::CreateReport()
 {
     return _new_ PropertyReportTB();
 }
@@ -35,22 +34,14 @@ PropertyReportTB::PropertyReportTB()
 {
 }
 
-
-
-void
-PropertyReportTB::LogIndividualData(
-    Kernel::IIndividualHuman* individual
-)
+void PropertyReportTB::LogIndividualData( IIndividualHuman* individual )
 {
     PropertyReport::LogIndividualData( individual );
 
-    // Try an optimized solution that constructs a reporting bucket string based entirely
-    // on the properties of the individual. But we need some rules. Let's start with simple
-    // alphabetical ordering of category names
     std::string reportingBucket = individual->GetPropertyReportString();
 
     float monte_carlo_weight = (float)individual->GetMonteCarloWeight();
-    const Kernel::IndividualHumanCoInfection* individual_tb = static_cast<const Kernel::IndividualHumanCoInfection*>(individual);
+    IIndividualHumanTB* individual_tb = individual->GetIndividualContext()->GetIndividualTB();
 
     if(individual->GetStateChange() == HumanStateChange::KilledByInfection)
     {
@@ -163,18 +154,13 @@ PropertyReportTB::LogIndividualData(
     }
 }
 
-void
-PropertyReportTB::LogNodeData(
-    Kernel::INodeContext * pNC
-)
+void PropertyReportTB::LogNodeData( INodeContext* pNC )
 {
     PropertyReport::LogNodeData(pNC);
 
     LOG_DEBUG( "LogNodeData in PropertyReportTB\n" );
-    for (const auto& entry : permutationsSet)
+    for (const auto& reportingBucket : permutationsSet)
     {
-        std::string reportingBucket = PropertiesToString( entry );
-
         Accumulate("Active TB Infections:" + reportingBucket,                            active_infections[reportingBucket] );
         active_infections[reportingBucket] = 0.0f;
         Accumulate("Active Naive TB Infections:" + reportingBucket,                        active_naive_infections[reportingBucket] );
@@ -225,22 +211,6 @@ PropertyReportTB::LogNodeData(
         Accumulate("New Active Infections:" + reportingBucket, new_active_TB_infections[reportingBucket] );
         new_active_TB_infections[reportingBucket] = 0.0f;
    }
-        
-}
-
-// normalize by time step and create derived channels
-void
-PropertyReportTB::postProcessAccumulatedData()
-{
-    LOG_DEBUG( "postProcessAccumulatedData in PropertyReportTB\n" );
-    PropertyReport::postProcessAccumulatedData();
-
-    // Normalize TB-specific summary data channels
-    //cycle through each property to add the reporting bucket to the channel title you want to normalize
-    for (const auto& entry : permutationsSet)
-    {
-        std::string reportingBucket = PropertiesToString( entry );
-    }
 }
 
 }

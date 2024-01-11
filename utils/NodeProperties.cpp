@@ -11,7 +11,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "NodeProperties.h"
 #include "BasePropertiesTemplates.h"
-#include "PropertiesString.h"
 #include "Log.h"
 #include "FileSystem.h"
 #include "NoCrtWarnings.h"

@@ -24,11 +24,8 @@ namespace Kernel {
 
         virtual void LogNodeData( Kernel::INodeContext * pNC ) override;
 
-
     protected:
         PropertyReportTB();
-
-        virtual void postProcessAccumulatedData() override;
 
         // counters
         std::map< std::string, float > active_infections;

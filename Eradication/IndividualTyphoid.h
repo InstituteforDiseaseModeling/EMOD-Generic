@@ -86,6 +86,7 @@ namespace Kernel
         IndividualHumanTyphoid(suids::suid id = suids::nil_suid(), float monte_carlo_weight = 1.0f, float initial_age = 0.0f, int gender = 0);
         virtual void setupInterventionsContainer();
         virtual void PropagateContextToDependents();
+        virtual IIndividualHumanTyphoid* GetIndividualTyphoid() override;
 
         virtual void UpdateInfectiousness(float dt);
         virtual void Update(float currenttime, float dt);

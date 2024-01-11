@@ -1226,34 +1226,6 @@ namespace Kernel
         return properties;
     }
 
-#if 0 // something not working here yet. function currently lives in PropertyReport as a static method.
-    void
-    IPFactory::GenerateAllPermutationsOnce(
-        std::set< std::string > &keys,
-        tKeyValuePair perm,
-        tPermutations &permutationsSet
-    )
-    {
-        if( keys.size() )
-        {
-            const std::string key = *keys.begin();
-            keys.erase( key );
-            const IndividualProperty * p_ip = IPFactory::GetInstance()->GetIP( key );
-            for( auto kv : p_ip->GetValues<IPKeyValueContainer>() )
-            {
-                std::string value = kv.GetValueAsString();
-                auto kvp = perm;
-                kvp.insert( make_pair( key, value ) );
-                GenerateAllPermutationsOnce( keys, kvp, permutationsSet );
-            }
-        }
-        else
-        { 
-            permutationsSet.insert( perm );
-        }
-    }
-#endif
-
     // -------------------------------------------------------------------------------
     // --- This defines the implementations for these templetes with these parameters.
     // --- If you comment these out, you will get unresolved externals when linking.

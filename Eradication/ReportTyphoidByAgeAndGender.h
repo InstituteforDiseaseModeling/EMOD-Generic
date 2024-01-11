@@ -23,8 +23,9 @@ namespace Kernel {
     {
         GET_SCHEMA_STATIC_WRAPPER(ReportTyphoidByAgeAndGender)
     public:
-        ReportTyphoidByAgeAndGender( const ISimulation *sim = nullptr, float period = 180.0 );
-        static IReport* ReportTyphoidByAgeAndGender::Create(const ISimulation * parent, float period) { return new ReportTyphoidByAgeAndGender( parent, period ); }
+        ReportTyphoidByAgeAndGender( const ISimulation* sim = nullptr );
+
+        static IReport* Create(const ISimulation* parent) { return new ReportTyphoidByAgeAndGender(parent); }
 
         // -----------------------------
         // --- BaseTextReportEvents
@@ -33,8 +34,7 @@ namespace Kernel {
         virtual bool Validate( const ISimulationContext* parent_sim ) override;
         virtual void Initialize( unsigned int nrmSize ) override;
 
-        virtual void UpdateEventRegistration( float currentTime, 
-                                              float dt, 
+        virtual void UpdateEventRegistration( float currentTime, float dt, 
                                               std::vector<INodeEventContext*>& rNodeEventContextList,
                                               ISimulationEventContext* pSimEventContext );
         virtual std::string GetHeader() const ;
@@ -44,17 +44,9 @@ namespace Kernel {
         virtual void LogIndividualData( IIndividualHuman* individual );
         virtual void LogNodeData( INodeContext* pNC );
 
-    protected:
-        //typedef std::map< std::string, std::string > tKeyValuePair; // pairs?
-        //typedef std::set< tKeyValuePair > tPermutations;
-        PropertyReport::tPermutations permutationsSet;
-        std::vector<std::string> permutationsList ;
-
     private:
-
-        //const float report_half_period;
-        NonNegativeFloat next_report_time;
         bool doReport;
+
 #define MAX_PROPS 10 // figure this out
         float population[Gender::Enum::COUNT][MAX_AGE][ MAX_PROPS ];         //Gender, Age --> Population
         float infected[Gender::Enum::COUNT][MAX_AGE][ MAX_PROPS ];           //Gender, Age --> Infected
@@ -70,10 +62,9 @@ namespace Kernel {
         float acute_inc[Gender::Enum::COUNT][MAX_AGE][ MAX_PROPS ];           
         float prePatent_inc[Gender::Enum::COUNT][MAX_AGE][ MAX_PROPS ];           
 
-        const ISimulation * _parent;
-        float startYear ;                                       // Year to start collecting data
-        float stopYear ;                                        // Year to stop  collecting data
-        bool is_collecting_data ;
+        float startYear;
+        float stopYear;
+        const ISimulation* _parent;
 
         std::map< std::string, int > bucketToIdMap;
     };

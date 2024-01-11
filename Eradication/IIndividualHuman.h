@@ -73,7 +73,6 @@ namespace Kernel
 
         virtual IPKeyValueContainer* GetProperties() = 0;
         virtual const std::string& GetPropertyReportString() const = 0;
-        virtual void SetPropertyReportString( const std::string& str ) = 0;
 
         virtual bool IsPossibleMother() const = 0;
         virtual void UpdateMCSamplingRate(float current_sampling_rate) = 0;

@@ -33,26 +33,21 @@ namespace Kernel {
         static IReport* CreateReport();
         virtual ~PropertyReport() { }
 
+        virtual void Initialize( unsigned int nrmSize ) override;
+
         virtual void EndTimestep( float currentTime, float dt ) override;
         virtual bool IsCollectingIndividualData( float currentTime, float dt ) const override { return true; };
         virtual void LogIndividualData( Kernel::IIndividualHuman* individual ) override;
         virtual void LogNodeData( Kernel::INodeContext * pNC ) override;
 
+        virtual void postProcessAccumulatedData() override;
+
     protected:
         PropertyReport( const std::string& rReportName );
 
+        std::vector<std::string> permutationsSet;
+
     public:
-        // new functions and members exclusive to this class
-        typedef std::map< std::string, std::string > tKeyValuePair; // pairs?
-        typedef std::set< tKeyValuePair > tPermutations;
-
-        tPermutations permutationsSet;
-        std::vector<std::string> permutationsList;
-
-        static void GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePair perm, tPermutations &permutationsSet );
-
-        virtual void postProcessAccumulatedData() override;
-
         // counters
         std::map< std::string, float > new_infections;
         std::map< std::string, float > new_reported_infections;

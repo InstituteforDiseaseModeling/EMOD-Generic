@@ -178,7 +178,7 @@ namespace Kernel
 
     void SimulationTyphoid::Reports_CreateBuiltIn()
     {
-        reports.push_back(ReportTyphoidByAgeAndGender::Create(this,DAYSPERYEAR));
+        reports.push_back(ReportTyphoidByAgeAndGender::Create(this));
         return SimulationEnvironmental::Reports_CreateBuiltIn();
     }
 }

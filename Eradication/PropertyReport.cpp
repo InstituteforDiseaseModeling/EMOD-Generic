@@ -36,7 +36,6 @@ IReport* PropertyReport::CreateReport()
 PropertyReport::PropertyReport( const std::string& rReportName )
     : Report( rReportName )
     , permutationsSet()
-    , permutationsList()
     , disease_deaths()
     , infected()
     , new_contact_infections()
@@ -47,94 +46,21 @@ PropertyReport::PropertyReport( const std::string& rReportName )
 {
 }
 
-// OK, so here's what we've got to do. Node has an unknown collection of key-value pairs.
-// E.g., QoC:Terrible->Great, Accessibility:Urban->Rural, LifeStage:Home->Retired. We need:
-// QoC:Terrible,Access:Urban,LifeStage:Home,
-// QoC:Terrible,Access:Urban,LifeStage:School,
-// QoC:Terrible,Access:Urban,LifeStage:Work,
-// etc.
-// This is a set of maps?
-void PropertyReport::GenerateAllPermutationsOnce( std::set< std::string > keys, tKeyValuePair perm, tPermutations &permsSet )
+void PropertyReport::Initialize( unsigned int nrmSize )
 {
-    if( keys.size() )
-    {
-        const std::string key = *keys.begin();
-        keys.erase( key );
-        const IndividualProperty* p_ip = IPFactory::GetInstance()->GetIP( key );
-        for( auto kv : p_ip->GetValues<IPKeyValueContainer>() )
-        {
-            std::string value = kv.GetValueAsString();
-            auto kvp = perm;
-            kvp.insert( make_pair( key, value ) );
-            GenerateAllPermutationsOnce( keys, kvp, permsSet );
-        }
-    }
-    else
-    {
-        permsSet.insert( perm );
-    }
-}
+    BaseChannelReport::Initialize( nrmSize );
 
-/////////////////////////
-// steady-state methods
-/////////////////////////
-
-template<typename T> static std::set< std::string > getKeys( const T &propMap )
-{
-    // put all keys in set
-    std::set< std::string > allKeys;
-    for (auto& entry : propMap)
+    if(IPFactory::GetInstance())
     {
-        allKeys.insert( entry.first );
+        permutationsSet = IPFactory::GetInstance()->GetAllPossibleKeyValueCombinations<IPKeyValueContainer>();
     }
-    return allKeys;
+
+    return;
 }
 
 void PropertyReport::LogIndividualData( Kernel::IIndividualHuman* individual )
 {
     std::string reportingBucket = individual->GetPropertyReportString();
-    if( reportingBucket.empty() )
-    {
-        auto permKeys = IPFactory::GetInstance()->GetKeysAsStringSet();
-        if( permutationsSet.size() == 0 )
-        {
-            // put all keys in set
-            tKeyValuePair actualPerm;
-            GenerateAllPermutationsOnce( permKeys, actualPerm, permutationsSet ); // call this just first time.
-        }
-
-        tProperties prop_map = individual->GetProperties()->GetOldVersion();
-        if( prop_map.size() == 0 )
-        {
-            LOG_WARN_F( "Individual %lu aged %f (years) had no properties in %s.\n", individual->GetSuid().data, individual->GetAge()/DAYSPERYEAR, __FUNCTION__ );
-            // This seems to be people reaching "old age" (i.e., over 125)
-            return;
-        }
-
-        // Copy all property keys from src to dest but only if present in permKeys
-        auto src = getKeys( prop_map );
-
-        // copy-if setup
-        std::vector<std::string> dest( src.size() );
-        auto it = std::copy_if (src.begin(), src.end(), dest.begin(), [&](std::string test)
-            {
-                return ( std::find( permKeys.begin(), permKeys.end(), test ) != permKeys.end() );
-            }
-        );
-        dest.resize(std::distance(dest.begin(),it));
-
-        // new map from those keys that make it through filter
-        tProperties permProps;
-        for( auto &entry : dest )
-        {
-            permProps.insert( std::make_pair( entry, prop_map.at(entry) ) );
-        }
-        // Try an optimized solution that constructs a reporting bucket string based entirely
-        // on the properties of the individual. But we need some rules. Let's start with simple
-        // alphabetical ordering of category names
-        reportingBucket = PropertiesToString( permProps );
-        individual->SetPropertyReportString( reportingBucket );
-    }
 
     auto mcw = individual->GetMonteCarloWeight();
     auto nis = individual->GetNewInfectionState();
@@ -179,10 +105,8 @@ void PropertyReport::LogIndividualData( Kernel::IIndividualHuman* individual )
 void PropertyReport::LogNodeData( Kernel::INodeContext * pNC) 
 {
     LOG_DEBUG( "LogNodeData\n" );
-    for (auto& kvp : permutationsSet)
+    for (auto& reportingBucket : permutationsSet)
     {
-        std::string reportingBucket = PropertiesToString( kvp );
-
         Accumulate("New Infections:" + reportingBucket, new_infections[reportingBucket]);
         new_infections[reportingBucket] = 0.0f;
 

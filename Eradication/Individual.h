@@ -114,6 +114,7 @@ namespace Kernel
         virtual IIndividualHumanTB*       GetIndividualTB()              override { return nullptr; }
         virtual IMalariaHumanContext*     GetIndividualMalaria()         override { return nullptr; }
         virtual IIndividualHumanPolio*    GetIndividualPolio()           override { return nullptr; }
+        virtual IIndividualHumanTyphoid*  GetIndividualTyphoid()         override { return nullptr; }
 
         // IIndividualHumanEventContext methods
         virtual bool              IsPregnant()                     const override { return is_pregnant; };
@@ -131,7 +132,6 @@ namespace Kernel
         virtual IPKeyValueContainer* GetProperties()                     override;
 
         virtual const std::string& GetPropertyReportString() const override { return m_PropertyReportString; }
-        virtual void SetPropertyReportString( const std::string& str ) override { m_PropertyReportString = str; }
         virtual bool AtHome() const override;
 
         virtual bool IsDead() const override;
