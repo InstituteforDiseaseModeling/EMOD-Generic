@@ -381,15 +381,9 @@ namespace Kernel
         IDistributableIntervention *di = m_pInterventionIndividual->Clone();
         release_assert(di);
 
-        ICampaignCostObserver* p_icco = nullptr;
-        if (s_OK != pIHEC->GetNodeEventContext()->QueryInterface(GET_IID(ICampaignCostObserver), (void**)&p_icco))
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIHEC->GetNodeEventContext()", "ICampaignCostObserver", "INodeEventContext" );
-        }
-
         di->AddRef();
 
-        bool distributed = di->Distribute( pIHEC->GetInterventionsContext(), p_icco );
+        bool distributed = di->Distribute( pIHEC->GetInterventionsContext(), pIHEC->GetNodeEventContext()->GetCampaignCostObserver() );
 
         if( distributed )
         {

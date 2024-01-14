@@ -77,6 +77,9 @@ namespace Kernel
         virtual bool StrainMatches( IStrainIdentity * pStrain );
 
         virtual IInfectionMalaria*        GetInfectionMalaria()           override { return nullptr; }
+        virtual IInfectionHIV*            GetInfectionHIV()               override { return nullptr; }
+        virtual IInfectionTB*             GetInfectionTB()                override { return nullptr; }
+
 
         virtual bool IsSymptomatic() const override;
 

@@ -10,6 +10,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #include "BehaviorPfa.h"
 #include "IIndividualHuman.h"
+#include "IndividualEventContext.h"
 #include "Exceptions.h"
 #include "SimulationEnums.h"    // Gender::
 #include "AssortivityFactory.h"
@@ -28,11 +29,7 @@ namespace Kernel
 
     void BehaviorPfa::AddIndividual( IIndividualHumanSTI* sti_person )
     {
-        IIndividualHuman* person = nullptr;
-        if (sti_person->QueryInterface(GET_IID(IIndividualHuman), (void**)&person) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "sti_person", "IIndividualHuman*", "IIndividualHumanSTI*");
-        }
+        IIndividualHuman* person = sti_person->GetEventContext()->GetIndividual();
         int agebin_index = parameters->BinIndexForAgeAndSex(person->GetAge(), person->GetGender());
 
         LOG_DEBUG_F("%s( [ %f, %c, %d ])\n", __FUNCTION__, person->GetAge(), person->GetGender() == Gender::MALE ? 'M' : 'F', person->GetSuid().data);
@@ -52,11 +49,7 @@ namespace Kernel
 
     void BehaviorPfa::RemoveIndividual( IIndividualHumanSTI* sti_person )
     {
-        IIndividualHuman* person = nullptr;
-        if (sti_person->QueryInterface(GET_IID(IIndividualHuman), (void**)&person) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "sti_person", "IIndividualHuman*", "IIndividualHumanSTI*");
-        }
+        IIndividualHuman* person = sti_person->GetEventContext()->GetIndividual();;
         int agebin_index = parameters->BinIndexForAgeAndSex(person->GetAge(), person->GetGender());
 
         LOG_DEBUG_F("%s( [ %f, %c, %d ])\n", __FUNCTION__, person->GetAge(), person->GetGender() == Gender::MALE ? 'M' : 'F', person->GetSuid().data);
@@ -103,11 +96,7 @@ namespace Kernel
             for (human_list_t::iterator it = m_all_males.begin(); it != m_all_males.end(); /*it++*/)
             {
                 IIndividualHumanSTI* sti_male = *it;
-                IIndividualHuman* male = nullptr;
-                if (sti_male->QueryInterface(GET_IID(IIndividualHuman), (void**)&male))
-                {
-                    throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "sti_male", "IIndividualHuman", "IIndividualHumanSTI" );
-                }
+                IIndividualHuman* male = sti_male->GetEventContext()->GetIndividual();;
                 int male_agebin_index = parameters->BinIndexForAgeAndSex(male->GetAge(), Gender::MALE);
 
                 total_male_queue_index++ ;

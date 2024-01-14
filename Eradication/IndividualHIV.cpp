@@ -111,24 +111,17 @@ namespace Kernel
         return ret;
     }
 
-    IInfectionHIV *
-    IndividualHumanHIV::GetHIVInfection()
-    const
+    IInfectionHIV* IndividualHumanHIV::GetHIVInfection() const
     {
-        IInfectionHIV* pinfHIV = nullptr;
         if( infections.size() == 0 )
         {
             return nullptr;
         }
-        else if (s_OK == (*infections.begin())->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfHIV) )
-        {
-            return pinfHIV;
-        }
-        else
-        {
-            // exception?
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "(*infections.begin())", "IInfectionHIV", "Infection" );
-        }
+
+        IInfectionHIV* pinfHIV = (*infections.begin())->GetInfectionHIV();
+        release_assert(pinfHIV);
+
+        return pinfHIV;
     }
 
     ISusceptibilityHIV* IndividualHumanHIV::GetHIVSusceptibility() const

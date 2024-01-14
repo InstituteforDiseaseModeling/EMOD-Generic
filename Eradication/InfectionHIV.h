@@ -78,6 +78,8 @@ namespace Kernel
         virtual const HIVInfectionStage::Enum& GetStage() const override;
         float GetWHOStage() const override;
 
+        virtual IInfectionHIV* GetInfectionHIV() override;
+
     protected:
         InfectionHIV();
         InfectionHIV(IIndividualHumanContext *context);

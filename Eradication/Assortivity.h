@@ -45,8 +45,8 @@ namespace Kernel
 
         virtual void SetParameters( RANDOMBASE* prng ) override;
     protected:
-        typedef std::function<int( const Assortivity*, const IIndividualHumanSTI* )> tGetIndexFunc;
-        typedef std::function<std::string( const Assortivity*, const IIndividualHumanSTI* )> tGetStringValueFunc;
+        typedef std::function<int( const Assortivity*, IIndividualHumanSTI* )> tGetIndexFunc;
+        typedef std::function<std::string( const Assortivity*, IIndividualHumanSTI* )> tGetStringValueFunc;
 
         IIndividualHumanSTI* FindPartner( IIndividualHumanSTI* pPartnerA,
                                           const list<IIndividualHumanSTI*>& potentialPartnerList,

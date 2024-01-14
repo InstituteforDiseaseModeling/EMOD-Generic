@@ -188,8 +188,8 @@ namespace Kernel
 
             for (auto newinf : newInfectionlist)
             {
-                IInfectionTB* pinfection = NULL;
-                if (s_OK == newinf->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfection) )
+                IInfectionTB* pinfection = newinf->GetInfectionTB();
+                if(pinfection)
                 { 
                     newinf->SetParameters(&newStrainId, incubation_period_override, tx_route);
 
@@ -234,9 +234,9 @@ namespace Kernel
 
         Infection* newinf = createInfection( parent->GetNextInfectionSuid()  );
 
-        IInfectionHIV* pinfectionHIV = nullptr;
+        IInfectionHIV* pinfectionHIV = newinf->GetInfectionHIV();
         //this should always be true, just use for debugging
-        if (s_OK == newinf->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfectionHIV) )
+        if(pinfectionHIV)
         {
             newinf->SetParameters(const_cast<IStrainIdentity*>(infstrain), incubation_period_override, tx_route);
             newinf->InitInfectionImmunology(susceptibility_hiv);
@@ -308,25 +308,18 @@ namespace Kernel
                 {
                     auto infection = (*it);
 
-                    IInfectionTB* pinfTB = NULL;
+                    IInfectionTB*  pinfTB  = infection->GetInfectionTB();
+                    IInfectionHIV* pinfHIV = infection->GetInfectionHIV();
 
                     // Update infection (both HIV and TB)
                     infection->Update(infection_timestep, infection2susceptibilitymap[infection] );
 
                     InfectionStateChange::_enum inf_state_change = infection->GetStateChange(); 
-                    if (inf_state_change != InfectionStateChange::None && s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) ) 
-                    {
-                        LOG_DEBUG("InfectionStateChange due to HIV infection \n");
-                    }
-                    else if (inf_state_change != InfectionStateChange::None && s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) ) 
-                    {
-                        LOG_DEBUG("InfectionStateChange due to TB infection \n");
-                    }
+
                     if (inf_state_change != InfectionStateChange::None) 
                     {
                         //Need to adjust this code when HIV is also using the InfectionStateChange
-                        IInfectionTB* pinfTB = NULL;
-                        if (s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+                        if (pinfTB)
                         {    
                             SetNewInfectionState(inf_state_change);  //this is ONLY used for REPORTING! so only report for TB
                         }
@@ -337,14 +330,12 @@ namespace Kernel
                             //if (immunity) { infection2susceptibilitymap[infection]->UpdateInfectionCleared(); } //Immunity update: survived infection, note the notification of Susceptibility HIV contains only a placeholder now
                             if (IndividualHumanConfig::enable_immunity) { static_cast<Susceptibility*>(infection2susceptibilitymap[infection])->UpdateInfectionCleared(); } //Immunity update: survived infection, note the notification of Susceptibility HIV contains only a placeholder now
 
-                            IInfectionTB* pinfTB = NULL;
-                            if (s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+                            if (pinfTB)
                             {    
                                 infectioncount_tb--;
                                 LOG_DEBUG("This deleted infection is TB\n");
                             }
-                            IInfectionHIV* pinfHIV = NULL;
-                            if (s_OK == infection->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfHIV) )
+                            if (pinfHIV)
                             {    
                                 infectioncount_hiv--;
                                 LOG_DEBUG("This deleted infection is HIV\n");
@@ -356,38 +347,38 @@ namespace Kernel
                             continue; 
                         }
                     }
+
                     // Set human state change and stop updating infections if the person has died
                     if ( inf_state_change == InfectionStateChange::Fatal ) 
                     {
-                        IInfectionTB* pinfTB2 = NULL;
-                        IInfectionHIV* pinfHIV2 = NULL;
-                        if (s_OK == infection->QueryInterface(GET_IID(IInfectionTB), (void**)&pinfTB2) )
+                        if (pinfTB)
                         {
-                            Die(HumanStateChange::KilledByInfection);  // was StateChange = HumanStateChange::KilledByInfection;
+                            Die(HumanStateChange::KilledByInfection);
                             break;
                         }
-                        else if (s_OK == infection->QueryInterface(GET_IID(IInfectionHIV), (void**) &pinfHIV2) )
+                        if (pinfHIV)
                         {
                             Die(HumanStateChange::KilledByOpportunisticInfection); 
                             break;
                         }
-                        else
-                        {
-
-                            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "pinfTB2 or pinfHIV2", "Infection", "IInfectionHIV or IInfectionTB");
-                        }
+                        // Infection is not TB or HIV; should not get here
+                        release_assert(false);
                     }
-                    //}
                     it++;
                 }
 
-                if (IndividualHumanConfig::enable_immunity) { 
+                if (IndividualHumanConfig::enable_immunity)
+                {
                     for (auto susceptibility : susceptibilitylist)
                     {
                         susceptibility->Update(infection_timestep); 
                     } 
                 }      // Immunity update: mainly decay of immunity
-                if (StateChange == HumanStateChange::KilledByInfection || StateChange == HumanStateChange::KilledByOpportunisticInfection) { break; } // If individual died, no need to keep simulating infections.
+                if (StateChange == HumanStateChange::KilledByInfection || StateChange == HumanStateChange::KilledByOpportunisticInfection)
+                {
+                    // If individual died, no need to keep simulating infections.
+                    break;
+                }
                 interventions->InfectiousLoopUpdate( infection_timestep );
             }
             if( StateChange != HumanStateChange::KilledByInfection || StateChange == HumanStateChange::KilledByOpportunisticInfection )
@@ -537,10 +528,9 @@ namespace Kernel
         float  mod_inf_val = 0.0f;
         for (auto infection : infections)
         {
-            IInfectionTB* pinfTB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+            IInfectionTB* pinfTB = infection->GetInfectionTB();
+            if(!pinfTB)
             {
-                //LOG_DEBUG("This infection is not TB, do not add to total infectiousness in IndividualCoInfection (assume HIV is not infectious now) \n");
                 continue;
             }
 
@@ -624,10 +614,9 @@ namespace Kernel
         bool ret = false;
         for (auto infection : infections)
         {
-            IInfectionTB* pinfTB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+            IInfectionTB* pinfTB = infection->GetInfectionTB();
+            if(!pinfTB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has active infection \n");
                 continue;
             }
 
@@ -758,10 +747,9 @@ namespace Kernel
         LOG_DEBUG_F( "%s: infections.size() = %d.\n", __FUNCTION__, infections.size() );
         for (auto infection : infections)
         {
-            IInfectionTB* pinfTB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+            IInfectionTB* pinfTB = infection->GetInfectionTB();
+            if(!pinfTB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -779,15 +767,14 @@ namespace Kernel
         LOG_DEBUG_F( "%s: infections.size() = %d.\n", __FUNCTION__, infections.size() );
         for (auto infection : infections)
         {
-            IInfectionTB* pinfTB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pinfTB) )
+            IInfectionTB* pinfTB = infection->GetInfectionTB();
+            if(!pinfTB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
+
             //must have tb infection to get down here
             return true;
-
         }
         return false;
     }
@@ -796,10 +783,9 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerITB) )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(!pointerITB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -815,10 +801,9 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerITB) )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(!pointerITB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -834,10 +819,9 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerITB) )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(!pointerITB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -853,10 +837,9 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerITB) )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(!pointerITB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -872,10 +855,9 @@ namespace Kernel
     {     
         for (auto infection : infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (s_OK != infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerITB) )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(!pointerITB)
             {
-                //LOG_DEBUG("This infection is not TB, so it cannot contribute to whether the individual has latent infection \n");
                 continue;
             }
 
@@ -926,14 +908,10 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB * pointerITB = NULL;
-
-            if (infection->QueryInterface(GET_IID(IInfectionTB), (void**)& pointerITB) == s_OK )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(pointerITB && pointerITB->IsFastProgressor())
             {
-                if ( pointerITB->IsFastProgressor() )
-                {
-                    return true;
-                }
+                return true;
             }
         }
 
@@ -981,14 +959,10 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB * pointerITB = NULL;
-
-            if (infection->QueryInterface(GET_IID(IInfectionTB), (void**) &pointerITB) == s_OK )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(pointerITB && pointerITB->IsMDR() && pointerITB->EvolvedResistance())
             {
-                if ( pointerITB->IsMDR() && pointerITB->EvolvedResistance() )
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;
@@ -996,26 +970,25 @@ namespace Kernel
 
     bool IndividualHumanCoInfection::HasHIV() const
     {
-        bool ret = false;
         for (auto infection : infections)
         {
-            IInfectionHIV* pinfHIV = NULL;
-            if (s_OK == infection->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfHIV) )
+            IInfectionHIV* pinfHIV = infection->GetInfectionHIV();
+            if(pinfHIV)
             {
-                ret = true;
-                break;
+                return true;
             }
         }
-        return ret;
+        return false;
     }
 
     float IndividualHumanCoInfection::GetDurationSinceInitInfection() const
     {
+        //note this functin only works with one infection, it will return the answer for the first infection only
         float ret = -1.0f;
-        for(auto infection: infections) //note this functin only works with one infection, it will return the answer for the first infection only
+        for(auto infection: infections)
         {
-            IInfectionTB* pointerITB = NULL;
-            if (infection->QueryInterface(GET_IID(IInfectionTB), (void**) &pointerITB) == s_OK )
+            IInfectionTB* pointerITB = infection->GetInfectionTB();
+            if(pointerITB)
             {
                 ret = pointerITB->GetDurationSinceInitialInfection();
             }
@@ -1024,7 +997,8 @@ namespace Kernel
     }
 
     float IndividualHumanCoInfection::GetCD4() const
-    {// return 1000 if healthy (this could be improved by introducing variability in CD4 among healthy individuals)
+    {
+        // return 1000 if healthy (this could be improved by introducing variability in CD4 among healthy individuals)
         float ret = 1000.00;
         for (auto susceptibility : susceptibilitylist)
         {
@@ -1058,11 +1032,10 @@ namespace Kernel
         NaturalNumber ret = 0;
         for (auto infection : infections)
         {
-            IInfectionHIV* pinfHIV = NULL;
-            if (s_OK == infection->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pinfHIV) )
+            IInfectionHIV* pinfHIV = infection->GetInfectionHIV();
+            if(pinfHIV)
             {
-                int vl = pinfHIV->GetViralLoad();
-                ret += vl;
+                ret += pinfHIV->GetViralLoad();
             }
         }
         return ret;
@@ -1170,14 +1143,11 @@ namespace Kernel
     {
         for (auto infection: infections)
         {
-            IInfectionTB* pITB= NULL;
-            if (s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pITB) )
+            IInfectionTB* pITB= infection->GetInfectionTB();
+            if(pITB && !pITB->IsActive() && !(pITB->IsFastProgressor() || pITB->IsPendingRelapse()))
             {
-                if (!pITB->IsActive() && !(pITB->IsFastProgressor() || pITB->IsPendingRelapse() ))
-                {
-                    LifeCourseLatencyTimerUpdate(pITB) ; //get sus
-                }
-            }  
+                LifeCourseLatencyTimerUpdate(pITB) ; //get sus
+            }
         }
     }
 
@@ -1187,26 +1157,17 @@ namespace Kernel
         infection->LifeCourseLatencyTimerUpdate();
     }
 
-    void
-        IndividualHumanCoInfection::SetTBActivationVector(
-        const std::vector<float>& vin
-        )
+    void IndividualHumanCoInfection::SetTBActivationVector(const std::vector<float>& vin)
     {
         TB_activation_vector = vin;
     }
 
-    const std::vector<float>&
-        IndividualHumanCoInfection::GetTBActivationVector()
-        const 
+    const std::vector<float>& IndividualHumanCoInfection::GetTBActivationVector() const 
     {
         return TB_activation_vector;
     }
 
-    float
-    IndividualHumanCoInfection::GetNextLatentActivation(
-        float time_incr
-    )
-    const
+    float IndividualHumanCoInfection::GetNextLatentActivation(float time_incr) const
     {
         vector <float> forward_act = GetTBActivationVector();
         int v_size = forward_act.size();
@@ -1221,16 +1182,13 @@ namespace Kernel
         }
     }
 
-    IInfectionHIV*
-    IndividualHumanCoInfection::GetHIVInfection()
-    const
+    IInfectionHIV* IndividualHumanCoInfection::GetHIVInfection() const
     {
         for (auto infection : infections)
         {
-            IInfectionHIV* pointerIInfHIV = NULL;
-            if (s_OK == infection->QueryInterface(GET_IID( IInfectionHIV ), (void**)&pointerIInfHIV) )
+            IInfectionHIV* pointerIInfHIV = infection->GetInfectionHIV();
+            if(pointerIInfHIV)
             {
-                //LOG_DEBUG("This is the HIV infection, get pointer ");
                 return pointerIInfHIV;
             }  
         }
@@ -1284,10 +1242,9 @@ namespace Kernel
     {
         for (auto infection : infections)
         {
-            IInfectionTB* pointerTB = NULL;
-            if (s_OK == infection->QueryInterface(GET_IID( IInfectionTB ), (void**)&pointerTB) )
+            IInfectionTB* pointerTB = infection->GetInfectionTB();
+            if(pointerTB)
             {
-                //LOG_DEBUG("This is the TB infection, get pointer ");
                 return pointerTB;
             }  
         }
@@ -1322,17 +1279,11 @@ namespace Kernel
         IInfectionTB* pTB = nullptr;
         for (auto infection : infections)
         {
-            if (s_OK == infection->QueryInterface(GET_IID(IInfectionTB), (void**)&pTB))
+            pTB = infection->GetInfectionTB();
+            if(pTB && infection->StrainMatches(check_strain_id))
             {
-                //LOG_DEBUG("This is the TB infection");
-
-                if (infection->StrainMatches(check_strain_id))
-                {
-                    return true;
-                }
-                
+                return true;
             }
-                
         }
 
         return false;
@@ -1343,20 +1294,15 @@ namespace Kernel
         IInfectionTB* pTB = nullptr;
         for (auto infection : infections)
         {
-            if (s_OK == infection->QueryInterface(GET_IID(IInfectionTB), (void**)&pTB))
+            pTB = infection->GetInfectionTB();
+            if(pTB && !pTB->IsActive() && !infection->StrainMatches(exog_strain_id))
             {
-                //LOG_DEBUG("This is the TB infection");
-
-                if (!pTB->IsActive() && !infection->StrainMatches(exog_strain_id )  )
-                {
-                    InfectionTB * inf = dynamic_cast <InfectionTB*> ( infection  );
-        
-                    inf->ModifyInfectionStrain(exog_strain_id);
-                    break;
-                } 
-            } 
-        } 
-    } 
+                InfectionTB* inf = dynamic_cast<InfectionTB*>(infection);
+                inf->ModifyInfectionStrain(exog_strain_id);
+                break;
+            }
+        }
+    }
 
     void IndividualHumanCoInfection::Die(HumanStateChange newState)
     {
@@ -1459,20 +1405,20 @@ namespace Kernel
         {
             infection->SetContextTo(context);
 
-            IInfectionTB* pinfection = nullptr;
-            IInfectionHIV* hinfection = nullptr;
-
-            if (s_OK == infection->QueryInterface(GET_IID(IInfectionTB), (void**)&pinfection))
+            if(infection->GetInfectionTB())
             {
                 infection2susceptibilitymap[infection] = susceptibility_tb;
             }
-            else if (s_OK == infection->QueryInterface(GET_IID(IInfectionHIV), (void**)&hinfection))
+            else if(infection->GetInfectionHIV())
             {
                 infection2susceptibilitymap[infection] = susceptibility_hiv;
             }
         }
 
-        if (interventions)  interventions->SetContextTo(context);
+        if(interventions)
+        {
+            interventions->SetContextTo(context);
+        }
     }
 
     void IndividualHumanCoInfection::ResetCounters( void )

@@ -280,17 +280,17 @@ namespace Kernel
             || (m_Group == AssortivityGroup::HIV_RECEIVED_RESULTS_STATUS);
     }
 
-    int GetIndexSTI( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    int GetIndexSTI( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
         return (pIndividual->IsInfected() ? 1 : 0) ; 
     }
 
-    int GetIndexStiCoInfection( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    int GetIndexStiCoInfection( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
         return (pIndividual->HasSTICoInfection() ? 1 : 0) ; 
     }
 
-    std::string GetStringValueIndividualProperty( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    std::string GetStringValueIndividualProperty( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
         IPKey key = pAssortivity->GetPropertyKey();
         return pIndividual->GetPropertiesConst().Get( key ).GetValueAsString() ;

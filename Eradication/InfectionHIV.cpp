@@ -127,6 +127,11 @@ namespace Kernel
         }
     }
 
+    IInfectionHIV* InfectionHIV::GetInfectionHIV()
+    {
+        return static_cast<IInfectionHIV*>(this);
+    }
+
 #define WHO_STAGE_KAPPA_0 (0.9664f)
 #define WHO_STAGE_KAPPA_1 (0.9916f)
 #define WHO_STAGE_KAPPA_2 (0.9356f)
@@ -134,8 +139,7 @@ namespace Kernel
 #define WHO_STAGE_LAMBDA_1 (0.19729f)
 #define WHO_STAGE_LAMBDA_2 (0.34721f)
 
-    void
-    InfectionHIV::SetupNonSuppressedDiseaseTimers()
+    void InfectionHIV::SetupNonSuppressedDiseaseTimers()
     {
         try
         {
@@ -197,8 +201,7 @@ namespace Kernel
         }
     }
 
-    void
-    InfectionHIV::SetupSuppressedDiseaseTimers()
+    void InfectionHIV::SetupSuppressedDiseaseTimers()
     {
         m_infection_stage = HIVInfectionStage::ON_ART;
         m_acute_duration  = INACTIVE_DURATION;
@@ -392,9 +395,7 @@ namespace Kernel
         return GetPrognosis() - duration;
     }
 
-    const HIVInfectionStage::Enum&
-    InfectionHIV::GetStage()
-    const
+    const HIVInfectionStage::Enum& InfectionHIV::GetStage() const
     {
         return m_infection_stage;
     }
@@ -493,10 +494,7 @@ namespace Kernel
     // static: doesn't use any member variables, just lives in this class for convenience.
     // Purpose: This function converts a WHO HIV stage (1-4 really, but 1.0-4.99 for us)
     // into a human body weight in kg. It does a linear interpolation on the hardcoded array.
-    float
-    InfectionHIV::GetWeightInKgFromWHOStage(
-        float whoStage
-    )
+    float InfectionHIV::GetWeightInKgFromWHOStage(float whoStage)
     {
         if( whoStage < MIN_WHO_HIV_STAGE || whoStage > MAX_WHO_HIV_STAGE)
         {
@@ -547,9 +545,7 @@ namespace Kernel
 
     // This is an implementation of the Cox Proportional Model (e.g., http://en.wikipedia.org/wiki/Cox_proportional_hazards_model)
     // The values are taken from the IeDEA website (http://www.iedea-sa.org/index.php?id=2856)
-    float
-    InfectionHIV::ComputeDurationFromEnrollmentToArtAidsDeath()
-    const
+    float InfectionHIV::ComputeDurationFromEnrollmentToArtAidsDeath() const
     {
         float whoStageContinuous = GetWHOStage();
         float weight = GetWeightInKgFromWHOStage(whoStageContinuous);

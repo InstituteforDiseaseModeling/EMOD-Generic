@@ -97,14 +97,9 @@ namespace Kernel
     {
         m_Parent->GetCoordinatorEventBroadcaster()->TriggerObservers( this, m_EventToBroadcast );
 
-        if( (m_pNodeForCampaignCost != nullptr) && (m_CampaignCost > 0.0f) )
+        if( m_pNodeForCampaignCost && m_CampaignCost )
         {
-            ICampaignCostObserver* pICCO;
-            if( m_pNodeForCampaignCost->QueryInterface( GET_IID( ICampaignCostObserver ), (void**)&pICCO ) != s_OK )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "m_pNodeForCampaignCost", "ICampaignCostObserver", "INodeEventContext" );
-            }
-            pICCO->notifyCampaignExpenseIncurred( m_CampaignCost, nullptr );
+            m_pNodeForCampaignCost->GetCampaignCostObserver()->notifyCampaignExpenseIncurred( m_CampaignCost, nullptr );
         }
     }
 

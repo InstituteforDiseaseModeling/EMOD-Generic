@@ -7,7 +7,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 ***************************************************************************************************/
 
-// put all contexts in one place to reduce clutter in includes
 #pragma once
 #include <list>
 #include <vector>
@@ -20,6 +19,7 @@ namespace Kernel
 {
     class RANDOMBASE;
     struct AgentParams;
+    struct IIndividualHuman;
     struct IIndividualHumanInterventionsContext;
     struct IIndividualHumanEventContext;
     struct IIndividualHumanSTI;
@@ -30,8 +30,6 @@ namespace Kernel
     class  IIndividualHumanTyphoid;
     struct ISusceptibilityContext;
     struct INodeContext;
-    struct NodeDemographics;
-    struct IInfection;
     struct IVaccineConsumer;
 
     struct IIndividualHumanContext : ISupports
@@ -40,24 +38,21 @@ namespace Kernel
 
         virtual suids::suid GetSuid() const = 0;
         virtual float GetAge() const = 0;
-
         virtual suids::suid GetNextInfectionSuid() = 0;
         virtual RANDOMBASE* GetRng() = 0;
 
-        virtual IIndividualHumanInterventionsContext*  GetInterventionsContext()                                   const = 0; // internal components of individuals interact with interventions via this interface
+        virtual IIndividualHuman*                      GetIndividual()                                                   = 0;
         virtual IIndividualHumanSTI*                   GetIndividualSTI()                                                = 0;
         virtual IIndividualHumanHIV*                   GetIndividualHIV()                                                = 0;
         virtual IIndividualHumanTB*                    GetIndividualTB()                                                 = 0;
         virtual IMalariaHumanContext*                  GetIndividualMalaria()                                            = 0;
         virtual IIndividualHumanPolio*                 GetIndividualPolio()                                              = 0;
         virtual IIndividualHumanTyphoid*               GetIndividualTyphoid()                                            = 0;
+        virtual IIndividualHumanInterventionsContext*  GetInterventionsContext()                                   const = 0; // internal components of individuals interact with interventions via this interface
         virtual IVaccineConsumer*                      GetVaccineContext()                                         const = 0;
         virtual IIndividualHumanEventContext*          GetEventContext()                                                 = 0; // access to specific attributes of the individual useful for events
         virtual ISusceptibilityContext*                GetSusceptibilityContext()                                  const = 0; // access to immune attributes useful for infection, interventions, reporting, etc.
 
         virtual INodeContext* GetParent() const = 0;
-
-        virtual void UpdateGroupMembership() = 0;
-        virtual void UpdateGroupPopulation( float size_changes ) = 0;
     };
 }

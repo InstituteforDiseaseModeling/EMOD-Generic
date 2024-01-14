@@ -97,6 +97,8 @@ namespace Kernel
         virtual void InitInfectionImmunology(ISusceptibilityContext* _immunity) override;
         virtual void SetContextTo(IIndividualHumanContext * context) override;
 
+        virtual IInfectionTB* GetInfectionTB() override;
+
        // Inherited from base class
         virtual bool IsActive() const override;
 

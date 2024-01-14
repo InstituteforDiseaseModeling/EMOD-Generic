@@ -141,9 +141,9 @@ namespace Kernel
         }
 
         // Subtract the last person's contribution to the group before re-adding it with the updated biting rate
-        parent->UpdateGroupPopulation(-1.0f);
+        parent->GetEventContext()->GetIndividual()->UpdateGroupPopulation(-1.0f);
         p_susc_vector->SetRelativeBitingRate( rate );
-        parent->UpdateGroupPopulation(1.0f);
+        parent->GetEventContext()->GetIndividual()->UpdateGroupPopulation(1.0f);
     }
 
     void VectorInterventionsContainer::InfectiousLoopUpdate( float dt )

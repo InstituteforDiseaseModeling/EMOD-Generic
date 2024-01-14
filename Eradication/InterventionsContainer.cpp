@@ -327,8 +327,8 @@ namespace Kernel
 
     void InterventionsContainer::ChangeProperty(const char* property, const char* new_value)
     {
-        // Get parent property (remove need for casts)
-        IPKeyValueContainer* pProps = parent->GetEventContext()->GetProperties();
+        auto p_iec  = parent->GetEventContext();
+        auto pProps = p_iec->GetProperties();
 
         // Check that property exists, except Age_Bins which are special case. We bootstrap individuals into age_bins at t=1,
         // with no prior existing age bin property.
@@ -344,15 +344,15 @@ namespace Kernel
         {
             IPKeyValue old_kv = pProps->Get( key );
             LOG_DEBUG_F( "Moving individual (%lu) property %s from %s to %s\n", parent->GetSuid().data, property, old_kv.GetValueAsString().c_str(), new_value );
-            parent->UpdateGroupPopulation(-1.0f);
+            p_iec->GetIndividual()->UpdateGroupPopulation(-1.0f);
             pProps->Set( new_kv );
-            parent->UpdateGroupMembership();
-            parent->UpdateGroupPopulation(1.0f);
+            p_iec->GetIndividual()->UpdateGroupMembership();
+            p_iec->GetIndividual()->UpdateGroupPopulation(1.0f);
 
             //broadcast that the individual changed properties
-            IIndividualEventBroadcaster* broadcaster = parent->GetEventContext()->GetNodeEventContext()->GetIndividualEventBroadcaster();
+            IIndividualEventBroadcaster* broadcaster = p_iec->GetNodeEventContext()->GetIndividualEventBroadcaster();
             LOG_DEBUG_F( "Individual %d changed property, broadcasting PropertyChange \n", parent->GetSuid().data );
-            broadcaster->TriggerObservers( parent->GetEventContext(), EventTrigger::PropertyChange );
+            broadcaster->TriggerObservers( p_iec, EventTrigger::PropertyChange );
         }
     }
 

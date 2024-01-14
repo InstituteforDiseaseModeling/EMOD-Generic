@@ -70,17 +70,8 @@ namespace Kernel
     // staged for ART via CD4 agnostic testing?
     bool HIVARTStagingAbstract::positiveTestResult()
     {
-        IIndividualHumanHIV * hiv_parent = nullptr;
-        if (parent->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&hiv_parent) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanHIV", "IIndividualHumanContext" );
-        }
-        
-        IHIVMedicalHistory * med_parent = nullptr;
-        if (parent->GetInterventionsContext()->QueryInterface(GET_IID(IHIVMedicalHistory), (void**)&med_parent) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IHIVMedicalChart", "IIndividualHumanContext" );
-        }
+        IIndividualHumanHIV* hiv_parent = parent->GetIndividualHIV();
+        IHIVMedicalHistory*  med_parent = hiv_parent->GetHIVInterventionsContainer()->GetHIVMedicalHistory();
 
         bool has_active_tb = false;
         if( ip_tb_value_expected.IsValid() )
@@ -90,7 +81,7 @@ namespace Kernel
 
         float year         = parent->GetEventContext()->GetNodeEventContext()->GetTime().Year();
         float CD4count     = med_parent->LowestRecordedCD4();
-        bool is_pregnant   = parent->GetEventContext()->IsPregnant() ;
+        bool is_pregnant   = parent->GetIndividual()->IsPregnant();
 
         bool result = positiveTestResult( hiv_parent, year, CD4count, has_active_tb, is_pregnant );
         return result;
@@ -99,13 +90,9 @@ namespace Kernel
     // runs on a positive test when in positive treatment fraction
     void HIVARTStagingAbstract::positiveTestDistribute()
     {
-        IHIVMedicalHistory * hiv_parent = nullptr;
-        if( parent->GetInterventionsContext()->QueryInterface( GET_IID(IHIVMedicalHistory), (void**)&hiv_parent ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IHIVInterventionsContainer", "IIndividualHumanContext" );
-        }
+        IHIVMedicalHistory* med_parent = parent->GetIndividualHIV()->GetHIVInterventionsContainer()->GetHIVMedicalHistory();
 
-        UpdateMedicalHistory( hiv_parent, true );
+        UpdateMedicalHistory( med_parent, true );
 
         // distribute the intervention
         HIVSimpleDiagnostic::positiveTestDistribute();
@@ -114,13 +101,9 @@ namespace Kernel
     // runs on a negative test when in negative treatment fraction
     void HIVARTStagingAbstract::onNegativeTestResult()
     {
-        IHIVMedicalHistory * hiv_parent = nullptr;
-        if( parent->GetInterventionsContext()->QueryInterface( GET_IID(IHIVMedicalHistory), (void**)&hiv_parent ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IHIVInterventionsContainer", "IIndividualHumanContext" );
-        }
+        IHIVMedicalHistory* med_parent = parent->GetIndividualHIV()->GetHIVInterventionsContainer()->GetHIVMedicalHistory();
 
-        UpdateMedicalHistory( hiv_parent, false );
+        UpdateMedicalHistory( med_parent, false );
 
         // distribute the intervention
         HIVSimpleDiagnostic::onNegativeTestResult();

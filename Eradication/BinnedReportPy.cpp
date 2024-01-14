@@ -76,19 +76,9 @@ void BinnedReportPy::EndTimestep( float currentTime, float dt )
     clearChannelsBins();
 }
 
-void BinnedReportPy::LogIndividualData( IIndividualHuman * individual )
+void BinnedReportPy::LogIndividualData( IIndividualHuman* individual )
 {
     LOG_DEBUG( "BinnedReportPy::LogIndividualData\n" );
-
-    // Look ma, I can copy-paste code...(from ReportPy.cpp, let's refactor)
-    Kernel::IIndividualHumanPy* typhoid_individual = NULL;
-    if( individual->QueryInterface( GET_IID( Kernel::IIndividualHumanPy ), (void**)&typhoid_individual ) != Kernel::s_OK )
-    {
-        throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndividualPy", "IndividualHuman" );
-    }
-
-    auto mc_weight = individual->GetMonteCarloWeight();
-    int bin_index = calcBinIndex(individual);
 
     BinnedReport::LogIndividualData(individual);
 }

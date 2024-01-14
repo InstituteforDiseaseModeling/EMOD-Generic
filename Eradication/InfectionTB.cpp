@@ -146,7 +146,7 @@ namespace Kernel
     {
         return CD4_map;
     }
-   
+
     InfectionTB *InfectionTB::CreateInfection(IIndividualHumanContext *context, suids::suid _suid)
     {
         InfectionTB *newinfection = _new_ InfectionTB(context);
@@ -176,6 +176,11 @@ namespace Kernel
             human_coinf = nullptr;
         }
         m_duration_since_init_infection = 0.0f;
+    }
+
+    IInfectionTB* InfectionTB::GetInfectionTB()
+    {
+        return static_cast<IInfectionTB*>(this);
     }
 
     void InfectionTB::SetParameters(IStrainIdentity* infstrain, float incubation_period_override, TransmissionRoute::Enum tx_route)

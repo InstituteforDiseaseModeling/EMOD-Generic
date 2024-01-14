@@ -18,7 +18,10 @@ namespace Kernel
 {
     struct IIndividualHumanContext;
     struct IStrainIdentity;
+
     class IInfectionMalaria;
+    class IInfectionHIV;
+    class IInfectionTB;
 
     struct IInfection : ISerializable
     {
@@ -34,6 +37,8 @@ namespace Kernel
         virtual const IStrainIdentity* GetStrain() const  = 0;
 
         virtual IInfectionMalaria*        GetInfectionMalaria()                 = 0;
+        virtual IInfectionHIV*            GetInfectionHIV()                     = 0;
+        virtual IInfectionTB*             GetInfectionTB()                      = 0;
 
         virtual bool IsActive() const = 0;
         virtual NonNegativeFloat GetDuration() const = 0;

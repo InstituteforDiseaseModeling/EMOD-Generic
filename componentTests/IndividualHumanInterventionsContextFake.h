@@ -18,6 +18,7 @@ using namespace Kernel;
 
 class IndividualHumanInterventionsContextFake : public IIndividualHumanInterventionsContext,
                                                 public IInterventionConsumer,
+                                                public IHIVInterventionsContainer,
                                                 public IHIVMedicalHistory,
                                                 public IMalariaDrugEffectsApply,
                                                 public IMalariaDrugEffects
@@ -59,7 +60,25 @@ public:
     }
 
     virtual ISTIInterventionsContainer* GetContainerSTI() { return nullptr; }
-    virtual IHIVInterventionsContainer* GetContainerHIV() { return nullptr; }
+
+    virtual IHIVInterventionsContainer* GetContainerHIV()
+    {
+        return static_cast<IHIVInterventionsContainer*>(this);
+    }
+
+    virtual IHIVMedicalHistory* GetHIVMedicalHistory()
+    {
+        return static_cast<IHIVMedicalHistory*>(this);
+    }
+
+    virtual bool                      OnArtQuery() const                           { release_assert(false); }
+    virtual const ARTStatus::Enum&    GetArtStatus() const                         { release_assert(false); }
+    virtual bool                      ShouldReconstituteCD4() const                { release_assert(false); }
+    virtual const ProbabilityNumber   GetInfectivitySuppression() const            { release_assert(false); }
+    virtual float                     GetDurationSinceLastStartingART() const      { release_assert(false); }
+    virtual const ProbabilityNumber&  GetProbMaternalTransmissionModifier() const  { release_assert(false); }
+    virtual void                      BroadcastNewHIVInfection()                   { release_assert(false); }
+    virtual IHIVDrugEffectsApply*     GetHIVDrugEffectApply()                      { release_assert(false); }
 
     virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string &type_name)
     {

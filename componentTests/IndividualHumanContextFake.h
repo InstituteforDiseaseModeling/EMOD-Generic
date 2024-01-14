@@ -257,7 +257,7 @@ public:
 
     virtual IHIVInterventionsContainer* GetHIVInterventionsContainer() const override
     {
-        return reinterpret_cast<IHIVInterventionsContainer*>(m_pInterventionsContext) ;
+        return m_pInterventionsContext->GetContainerHIV() ;
     }
 
     virtual std::string toString() const override { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }

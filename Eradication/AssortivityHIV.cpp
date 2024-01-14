@@ -10,6 +10,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "stdafx.h"
 #include "AssortivityHIV.h"
 #include "Exceptions.h"
+#include "IIndividualHuman.h"
+#include "IIndividualHumanContext.h"
 #include "IIndividualHumanHIV.h"
 #include "IHIVInterventionsContainer.h"
 #include "IndividualEventContext.h"
@@ -125,45 +127,27 @@ namespace Kernel
         }
     }
 
-    int GetIndexHIV( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    int GetIndexHIV( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
-        IIndividualHumanHIV * p_partner_hiv = nullptr;
-        if (s_OK != (const_cast<IIndividualHumanSTI*>(pIndividual))->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_partner_hiv) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "p_partner_hiv", "IIndividualHumanHIV", "IIndividualHumanSTI");
-        }
+        IIndividualHumanHIV* p_partner_hiv = pIndividual->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+
         return (p_partner_hiv->HasHIV() ? 1 : 0) ;
     }
 
-    int GetIndexHIVTestedPositive( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    int GetIndexHIVTestedPositive( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
-        IIndividualHumanHIV * p_partner_hiv = nullptr;
-        if (s_OK != (const_cast<IIndividualHumanSTI*>(pIndividual))->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_partner_hiv) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "p_partner_hiv", "IIndividualHumanHIV", "IIndividualHumanSTI");
-        }
-        IHIVMedicalHistory * p_med_history = nullptr;
-        if (p_partner_hiv->GetHIVInterventionsContainer()->QueryInterface(GET_IID(IHIVMedicalHistory), (void**)&p_med_history) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIndividual", "IHIVMedicalHistory", "IHIVInterventionsContainer" );
-        }
+        IIndividualHumanHIV* p_partner_hiv = pIndividual->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        IHIVMedicalHistory* p_med_history  = p_partner_hiv->GetHIVInterventionsContainer()->GetHIVMedicalHistory();
+
         return (p_med_history->EverTestedHIVPositive() ? 1 : 0) ;
     }
 
-    int GetIndexHIVReceivedResults( const Assortivity* pAssortivity, const IIndividualHumanSTI* pIndividual )
+    int GetIndexHIVReceivedResults( const Assortivity* pAssortivity, IIndividualHumanSTI* pIndividual )
     {
-        IIndividualHumanHIV * p_partner_hiv = nullptr;
-        if (s_OK != (const_cast<IIndividualHumanSTI*>(pIndividual))->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_partner_hiv) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "p_partner_hiv", "IIndividualHumanHIV", "IIndividualHumanSTI");
-        }
-        IHIVMedicalHistory * p_med_history = nullptr;
-        if (p_partner_hiv->GetHIVInterventionsContainer()->QueryInterface(GET_IID(IHIVMedicalHistory), (void**)&p_med_history) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "p_partner_hiv->GetHIVInterventionsContainer()", "IHIVMedicalHistory", "IHIVInterventionsContainer" );
-        }
-        ReceivedTestResultsType::Enum results_enum = p_med_history->ReceivedTestResultForHIV();
-        return int( results_enum );
+        IIndividualHumanHIV* p_partner_hiv    = pIndividual->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        ReceivedTestResultsType::Enum res_val = p_partner_hiv->GetHIVInterventionsContainer()->GetHIVMedicalHistory()->ReceivedTestResultForHIV();
+
+        return static_cast<int>(res_val);
     }
 
     IIndividualHumanSTI* AssortivityHIV::SelectPartnerForExtendedGroups( AssortivityGroup::Enum group,

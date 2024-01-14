@@ -99,7 +99,6 @@ SUITE(AssortivityTest)
             p_human->SetHasSTI( hasSTI );
             p_human->SetHasHIV( hasHIV );
             p_hic->OnTestForHIV( hasTestedPositiveForHIV );
-            //p_human->GetProperties()->operator[]( rPropertyName ) = rPropertyValue ;
             if( !rPropertyName.empty()  && !rPropertyValue.empty() )
             {
                 p_human->GetProperties()->Add( IPKeyValue( rPropertyName, rPropertyValue ) ) ;

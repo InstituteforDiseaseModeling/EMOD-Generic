@@ -18,6 +18,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Sugar.h"
 #include "Malaria.h"
 #include "MalariaContexts.h"
+#include "IIndividualHumanContext.h"
 
 using namespace std;
 using namespace json;
@@ -134,12 +135,7 @@ void BinnedReportMalaria::LogIndividualData( Kernel::IIndividualHuman* individua
     int bin_index = calcBinIndex(individual);
     LOG_DEBUG_F( "bin_index = %d\n", bin_index );
 
-    Kernel::IMalariaHumanContext* individual_malaria = nullptr;
-    if( individual->QueryInterface( GET_IID( Kernel::IMalariaHumanContext), (void**) &individual_malaria ) != Kernel::s_OK )
-    {
-        throw Kernel::QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IndividualHuman", "IMalariaHumanContext" );
-    }
-
+    Kernel::IMalariaHumanContext* individual_malaria = individual->GetIndividualContext()->GetIndividualMalaria();
     Kernel::IMalariaSusceptibility* susc_malaria = individual_malaria->GetMalariaSusceptibilityContext();
 
     float msp_frac     = susc_malaria->get_fraction_of_variants_with_antibodies(MalariaAntibodyType::MSP1);
