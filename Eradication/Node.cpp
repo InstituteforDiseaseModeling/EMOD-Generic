@@ -871,7 +871,7 @@ namespace Kernel
             if( GetTime().time >= infectivity_reservoir_start_time &&
                 GetTime().time <  infectivity_reservoir_end_time     )
             {
-                infectivity_addition += infectivity_reservoir_size * dt;
+                infectivity_addition += infectivity_reservoir_size;
             }
 
             // Current random number generation (Jun2021) only has precision at 2^-23
