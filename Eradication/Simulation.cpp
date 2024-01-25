@@ -1090,8 +1090,9 @@ namespace Kernel
         // So for now just bail...
         if(node_count <= 0)
         {
-            LOG_WARN_F("Rank %d wasn't assigned any nodes! (# of procs is too big for simulation?)\n", EnvPtr->MPI.Rank);
-            return false;
+            std::stringstream ss ;
+            ss << "Rank " << EnvPtr->MPI.Rank << " wasn't assigned any nodes! (# of procs is too big for simulation?)" << std::endl;
+            throw InitializationException( __FILE__, __LINE__, __FUNCTION__, ss.str().c_str() );
         }
 
         for (auto report : reports)
