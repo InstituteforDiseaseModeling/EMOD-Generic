@@ -80,6 +80,11 @@ namespace Kernel
         return newsusceptibility;
     }
 
+    ISusceptibilityTB* SusceptibilityTB::GetSusceptibilityTB()
+    {
+        return static_cast<ISusceptibilityTB*>(this);
+    }
+
     void SusceptibilityTB::Update(float dt)
     {
         // Immune-incompetent individuals without any current infections can lose protective immunity (as a step function) after the offset time

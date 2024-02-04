@@ -176,6 +176,7 @@ public:
 
     virtual INodeVector*             GetNodeVector()             override         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
     virtual INodeSTI*                GetNodeSTI()                override         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual INodeTBHIV*              GetNodeTBHIV()              override         { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
     virtual NPKeyValueContainer& GetNodeProperties() override
     {

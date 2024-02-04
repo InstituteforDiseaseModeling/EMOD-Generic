@@ -23,7 +23,7 @@ namespace Kernel
         ReferenceTrackingEventCoordinatorHIV();
         virtual ~ReferenceTrackingEventCoordinatorHIV() { } 
 
-        virtual bool qualifiesDemographically( const IIndividualHumanEventContext * pIndividual );
+        virtual bool qualifiesDemographically( IIndividualHumanEventContext* pIndividual );
 
     protected:
         TargetDiseaseStateType::Enum target_disease_state;

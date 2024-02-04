@@ -42,8 +42,6 @@ namespace Kernel
         static float basetranoffset;
         static float basemortoffset;
 
-        void LogConfigs() const;
-
         GET_SCHEMA_STATIC_WRAPPER(SusceptibilityConfig)
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
@@ -74,6 +72,9 @@ namespace Kernel
 
         virtual void  InitNewInfection() override;
         virtual bool  IsImmune() const override;
+
+        virtual ISusceptibilityHIV*   GetSusceptibilityHIV()     override { return nullptr; }
+        virtual ISusceptibilityTB*    GetSusceptibilityTB()      override { return nullptr; }
 
     protected:
         Susceptibility();

@@ -46,6 +46,7 @@ namespace Kernel
         virtual void PurgeExisting( const std::string& iv_name ) override;
 
         virtual IHIVInterventionsContainer* GetContainerHIV() override;
+        virtual ITBInterventionsContainer*  GetContainerTB()  override;
 
         // ISupports
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;

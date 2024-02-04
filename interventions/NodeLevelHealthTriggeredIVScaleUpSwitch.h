@@ -29,7 +29,7 @@ namespace Kernel
         ScaleUpProfile::Enum demographic_coverage_time_profile;
         float initial_demographic_coverage;
         float primary_time_constant;
-		InterpolatedValueMap coverage_vs_time_map;
+        InterpolatedValueMap coverage_vs_time_map;
 
         virtual float getDemographicCoverage() const override;
 

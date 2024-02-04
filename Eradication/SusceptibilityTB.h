@@ -79,6 +79,8 @@ namespace Kernel
         virtual float GetModAcquire(IndividualHumanCoInfection*) const;
         virtual float getModTransmit(IndividualHumanCoInfection*) const ;
 
+        virtual ISusceptibilityTB*    GetSusceptibilityTB()      override;
+
     protected:
         bool  Flag_use_CD4_for_act;
         SusceptibilityTB();

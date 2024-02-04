@@ -286,17 +286,13 @@ namespace Kernel
         }
     }
 
-    bool 
-    StandardInterventionDistributionEventCoordinator::IsFinished()
+    bool StandardInterventionDistributionEventCoordinator::IsFinished()
     {
         return distribution_complete;
     }
 
     // private/protected
-    bool
-    StandardInterventionDistributionEventCoordinator::qualifiesDemographically(
-        const IIndividualHumanEventContext* pIndividual
-    )
+    bool StandardInterventionDistributionEventCoordinator::qualifiesDemographically(IIndividualHumanEventContext* pIndividual)
     {
         return demographic_restrictions.IsQualified( pIndividual );
     }

@@ -31,9 +31,6 @@ namespace Kernel
 
     class NodeTBHIV : public NodeTB, public INodeTBHIV
     {
-        // TODO: Get rid of friending and provide accessors.
-        //friend class ::ReportTBHIV;
-        //friend class SpatialReportTBHIV;
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
         DECLARE_QUERY_INTERFACE()
 
@@ -41,6 +38,8 @@ namespace Kernel
         virtual ~NodeTBHIV(void); 
         static NodeTBHIV *CreateNode(ISimulationContext *_parent_sim, ExternalNodeId_t externalNodeId, suids::suid node_suid); 
         virtual void Initialize();
+
+        virtual INodeTBHIV* GetNodeTBHIV() override;
 
         virtual void SetNewInfectionState(InfectionStateChange::_enum inf_state_change, IndividualHuman *ih) override;
 

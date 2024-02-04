@@ -255,8 +255,8 @@ namespace Kernel
     {
         for (auto susceptibility : susceptibilitylist)
         {
-            ISusceptibilityTB* pTBsus = nullptr;
-            if (s_OK == susceptibility->QueryInterface(GET_IID( ISusceptibilityTB ), (void**)&pTBsus) && HasHIV())
+            ISusceptibilityTB* pTBsus = susceptibility->GetSusceptibilityTB();
+            if(pTBsus)
             {
                 SetTBActivationVector(vin);
                 pTBsus->SetCD4ActFlag(true);
@@ -458,15 +458,11 @@ namespace Kernel
     {
         if( suscept_mod == -1 )
         {
-            ISusceptibilityTB* pISTB = nullptr;
-            if (s_OK != susceptibility_tb->QueryInterface(GET_IID(ISusceptibilityTB), (void**) &pISTB) )
-            {
-                throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "susceptibility_tb", "Susceptibility", "ISusceptibilityTB");
-            }
+            ISusceptibilityTB* pISTB = susceptibility_tb->GetSusceptibilityTB();
+            release_assert(pISTB);
             suscept_mod = pISTB->GetModAcquire(this);
         }
         bool shouldAcquire = false;
-        //LOG_VALID_F( "%s: Individual %d with CD4count=%f has susceptibility CD4mod=%f.\n", __FUNCTION__, GetSuid().data, GetCD4(), suscept_mod );
 
         // multiple infections of the same type happen here
         ProbabilityNumber prob = EXPCDF(-contagion * dt * suscept_mod * interventions->GetInterventionReducedAcquire(tx_route)); // infection results from this strain?
@@ -479,13 +475,9 @@ namespace Kernel
 
         //GHH had to add contagionpopulation.h to header for this section to work 
         strainIDs.SetCladeID(cp->GetCladeID()); // find cladeID of the strain to get infectivity from, is the individual already infected by the contagion of this clade type?  
-        ISusceptibilityTB* pISTB = NULL;
-        if (s_OK != susceptibility_tb->QueryInterface(GET_IID(ISusceptibilityTB), (void**) &pISTB) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "susceptibility_tb", "Susceptibility", "ISusceptibilityTB");
-        }
+        ISusceptibilityTB* pISTB = susceptibility_tb->GetSusceptibilityTB();;
+        release_assert(pISTB);
 
-   
         //BGW use dt=0 for exogenous reinfection code will be called for the latent class (note we still need to fix this up for proper genetics)
         float suscept_mod = pISTB->GetModAcquire(this);
         LOG_VALID_F( "%s: Individual %d with CD4count=%f has susceptibility CD4mod=%f.\n", __FUNCTION__, GetSuid().data, GetCD4(), suscept_mod );
@@ -569,9 +561,9 @@ namespace Kernel
     bool IndividualHumanCoInfection::SetNewInfectionState(InfectionStateChange::_enum inf_state_change)
     {
         //trigger node level interventions
-        INodeTBHIV* pTBHIVParent = nullptr;
+        INodeTBHIV* pTBHIVParent = parent->GetNodeTBHIV();
         // Not finding this is not an exception anymore to support pymod/component-level operation.
-        if (s_OK == parent->QueryInterface(GET_IID( INodeTBHIV ), (void**)&pTBHIVParent ) )
+        if(pTBHIVParent)
         {
             pTBHIVParent->SetNewInfectionState(inf_state_change, this);
         }
@@ -593,7 +585,6 @@ namespace Kernel
         else if ( inf_state_change == InfectionStateChange::TBActivation || inf_state_change == InfectionStateChange::TBActivationExtrapulm || inf_state_change == InfectionStateChange::TBActivationSmearNeg || inf_state_change == InfectionStateChange::TBActivationSmearPos )   //  Latent infection that became active
         {
             m_new_infection_state = NewInfectionState::NewlyActive;
-
             LOG_VALID_F( " Individual %lu has infectionstatechange TBActivation \n", suid.data);
         }
         else if (inf_state_change == InfectionStateChange::TBInactivation || inf_state_change == InfectionStateChange::ClearedPendingRelapse) //  Active infection that became latent
@@ -871,32 +862,12 @@ namespace Kernel
 
     bool IndividualHumanCoInfection::HasEverRelapsedAfterTreatment() const
     {
-        // Query for intervention container
-        IIndividualHumanInterventionsContext *context = NULL;
-        ITBInterventionsContainer * itbivc = NULL;
-
-        context = GetInterventionsContext();
-        if (s_OK != context->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&itbivc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITBInterventionsContainer", "IIndividualHumanInterventionsContext" );
-        }
-
-        return itbivc->GetTxEverRelapsedStatus();
+        return GetTBInterventionsContainer()->GetTxEverRelapsedStatus();
     }
 
     bool IndividualHumanCoInfection::HasFailedTreatment() const
     {
-        // Query for intervention container
-        IIndividualHumanInterventionsContext *context = NULL;
-        ITBInterventionsContainer * itbivc = NULL;
-
-        context = GetInterventionsContext();
-        if (s_OK != context->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&itbivc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITBInterventionsContainer", "IIndividualHumanInterventionsContext" );
-        }
-
-        return itbivc->GetTxFailedStatus();
+        return GetTBInterventionsContainer()->GetTxFailedStatus();
     }
 
     int IndividualHumanCoInfection::GetTime() const
@@ -920,39 +891,12 @@ namespace Kernel
 
     bool IndividualHumanCoInfection::IsTreatmentNaive() const
     {
-        // Query for intervention container, in future cache TB Intervention container when we create it 
-        IIndividualHumanInterventionsContext *context = NULL;
-        ITBInterventionsContainer * itbivc = NULL;
-
-        context = GetInterventionsContext();
-        if (s_OK != context->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&itbivc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITBInterventionsContainer", "IIndividualHumanInterventionsContext" );
-        }
-
-        return itbivc->GetTxNaiveStatus();
+        return GetTBInterventionsContainer()->GetTxNaiveStatus();
     }
 
     bool IndividualHumanCoInfection::IsOnTreatment() const 
     { 
-        // Query for intervention container
-        IIndividualHumanInterventionsContext *context = NULL;
-        ITBInterventionsContainer * itbivc = NULL;
-
-        context = GetInterventionsContext();
-        if (s_OK != context->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&itbivc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITBInterventionsContainer", "IIndividualHumanInterventionsContext" );
-        }
-
-        if ( itbivc->GetNumTBDrugsActive() > 0 ) 
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return (GetTBInterventionsContainer()->GetNumTBDrugsActive() > 0);
     }
 
     bool IndividualHumanCoInfection::IsEvolvedMDR() const
@@ -1002,8 +946,8 @@ namespace Kernel
         float ret = 1000.00;
         for (auto susceptibility : susceptibilitylist)
         {
-            ISusceptibilityHIV* pointer_to_HIV_susceptibility = NULL;
-            if (s_OK == susceptibility->QueryInterface(GET_IID( ISusceptibilityHIV ), (void**)&pointer_to_HIV_susceptibility) )
+            ISusceptibilityHIV* pointer_to_HIV_susceptibility = susceptibility->GetSusceptibilityHIV();
+            if(pointer_to_HIV_susceptibility)
             {
                 ret = pointer_to_HIV_susceptibility->GetCD4count();
                 break;
@@ -1017,8 +961,8 @@ namespace Kernel
         /* clorton float current_CD4 = */ GetCD4();
         for (auto susceptibility : susceptibilitylist)
         {
-            ISusceptibilityHIV* pointer_to_HIV_susceptibility = NULL;
-            if (s_OK == susceptibility->QueryInterface(GET_IID( ISusceptibilityHIV ), (void**)&pointer_to_HIV_susceptibility) )
+            ISusceptibilityHIV* pointer_to_HIV_susceptibility = susceptibility->GetSusceptibilityHIV();;
+            if(pointer_to_HIV_susceptibility)
             {
                 throw NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "change CD4 trajectory not supported" ); //pointer_to_HIV_susceptibility->InitiateART(); // change CD4 trajectory
                 break;
@@ -1082,11 +1026,11 @@ namespace Kernel
     {
         for (auto susceptibility : susceptibilitylist)
         { 
-            ISusceptibilityHIV* pHIVsus = NULL;
-            if (s_OK == susceptibility->QueryInterface(GET_IID( ISusceptibilityHIV ), (void**)&pHIVsus) )
+            ISusceptibilityHIV* pHIVsus = susceptibility->GetSusceptibilityHIV();
+            if(pHIVsus)
             {
-                if (HasHIV() )
-                { 
+                if(HasHIV())
+                {
                     bool isonart = false;
                     if (GetHIVInterventionsContainer()->OnArtQuery() && GetHIVInterventionsContainer()->ShouldReconstituteCD4() )
                     {
@@ -1198,42 +1142,29 @@ namespace Kernel
 
     IHIVInterventionsContainer*  IndividualHumanCoInfection::GetHIVInterventionsContainer() const
     { 
-        MasterInterventionsContainer* test = dynamic_cast <MasterInterventionsContainer*> (interventions);
-        IHIVInterventionsContainer* pHIVIC = NULL;
-        for (auto interventions :test->InterventionsContainerList)
-        {
-            if ( interventions->QueryInterface(GET_IID(IHIVInterventionsContainer), (void**)&pHIVIC) == s_OK)
-            {
-                return pHIVIC;
-            }
-        }
-        throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "interventions", "IHIVInterventionsContainer" );
+        IHIVInterventionsContainer* pHIVIC = interventions->GetContainerHIV();
+        release_assert(pHIVIC);
+
+        return pHIVIC;
     }
 
     ITBInterventionsContainer*  IndividualHumanCoInfection::GetTBInterventionsContainer() const
     { 
-        MasterInterventionsContainer* test = dynamic_cast <MasterInterventionsContainer*> (interventions);
-        ITBInterventionsContainer* pTBIC = NULL;
-        for (auto interventions :test->InterventionsContainerList)
-        {
-            if ( interventions->QueryInterface(GET_IID(ITBInterventionsContainer), (void**)&pTBIC) == s_OK)
-            {
-                return pTBIC;
-            }
-        }
-        throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "interventions", "IHIVInterventionsContainer" );
+        ITBInterventionsContainer* pTBIC = interventions->GetContainerTB();
+        release_assert(pTBIC);
+
+        return pTBIC;
     }
 
     ISusceptibilityHIV* IndividualHumanCoInfection::GetHIVSusceptibility() const
     { 
         for (auto susceptibility : susceptibilitylist)
         {
-            ISusceptibilityHIV* pSusHIV = NULL;
-            if (s_OK == susceptibility->QueryInterface(GET_IID( ISusceptibilityHIV ), (void**)&pSusHIV) )
+            ISusceptibilityHIV* pSusHIV = susceptibility->GetSusceptibilityHIV();
+            if(pSusHIV)
             {
-                //LOG_DEBUG("This is the HIV infection, get pointer ");
                 return pSusHIV;
-            }  
+            }
         }
         return nullptr;
     }
@@ -1380,22 +1311,20 @@ namespace Kernel
 
     void IndividualHumanCoInfection::PropagateContextToDependents()
     {
-        IIndividualHumanContext *context = GetContextPointer();
-
-        // fix up child pointers
+        IIndividualHumanContext* context = GetContextPointer();
 
         for (auto suscept : susceptibilitylist)
         {
             suscept->SetContextTo(context);
-            ISusceptibilityTB* psustb = nullptr;
-            ISusceptibilityHIV* psushiv = nullptr;
+            ISusceptibilityTB*  psustb  = suscept->GetSusceptibilityTB();
+            ISusceptibilityHIV* psushiv = suscept->GetSusceptibilityHIV();
 
-            if (s_OK == suscept->QueryInterface(GET_IID(ISusceptibilityTB), (void**)&psustb))
+            if(psustb)
             {
                 susceptibility_tb = suscept;
                 susceptibility    = suscept;
             }
-            else if (s_OK == suscept->QueryInterface(GET_IID(ISusceptibilityHIV), (void**)&psushiv))
+            else if(psushiv)
             {
                 susceptibility_hiv = suscept;
             }

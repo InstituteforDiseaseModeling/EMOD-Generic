@@ -43,7 +43,12 @@ namespace Kernel
     TBInterventionsContainer::~TBInterventionsContainer()
     {
     }
-    
+
+    ITBInterventionsContainer* TBInterventionsContainer::GetContainerTB()
+    {
+        return static_cast<ITBInterventionsContainer*>(this);
+    }
+
     void TBInterventionsContainer::InfectiousLoopUpdate( float dt )
     {
         TB_drug_effects.clear();

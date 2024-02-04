@@ -415,10 +415,7 @@ namespace Kernel
         }
     }
 
-    bool
-    NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(
-        const IIndividualHumanEventContext* const pIndividual
-    )
+    bool NodeLevelHealthTriggeredIV::qualifiesToGetIntervention(IIndividualHumanEventContext* pIndividual)
     {
         bool retQualifies = demographic_restrictions.IsQualified( pIndividual );
 

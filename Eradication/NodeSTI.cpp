@@ -157,8 +157,7 @@ namespace Kernel
         return relMan;
     }
 
-    ISociety*
-    NodeSTI::GetSociety()
+    ISociety* NodeSTI::GetSociety()
     {
         return society;
     }

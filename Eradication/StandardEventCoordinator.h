@@ -59,7 +59,7 @@ namespace Kernel
         virtual float GetMinimumAge() const;
         virtual float GetMaximumAge() const;
 
-        virtual bool qualifiesDemographically( const IIndividualHumanEventContext * pIndividual );
+        virtual bool qualifiesDemographically( IIndividualHumanEventContext* pIndividual );
 
     protected:
         virtual void preDistribute(); 

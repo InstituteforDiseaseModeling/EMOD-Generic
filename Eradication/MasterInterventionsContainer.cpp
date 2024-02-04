@@ -198,6 +198,22 @@ namespace Kernel
         return p_ret;
     }
 
+    ITBInterventionsContainer* MasterInterventionsContainer::GetContainerTB()
+    {
+        ITBInterventionsContainer* p_ret = nullptr;
+
+        for (auto container : InterventionsContainerList)
+        {
+            p_ret = container->GetContainerTB();
+            if(p_ret)
+            {
+                break;
+            }
+        }
+
+        return p_ret;
+    }
+
     void MasterInterventionsContainer::UpdateIVAcquireRate( float acq, IVRoute::Enum vax_route)
     {
         for (auto container : InterventionsContainerList)

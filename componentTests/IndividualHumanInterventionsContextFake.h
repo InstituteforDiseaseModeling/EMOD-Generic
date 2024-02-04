@@ -60,6 +60,7 @@ public:
     }
 
     virtual ISTIInterventionsContainer* GetContainerSTI() { return nullptr; }
+    virtual ITBInterventionsContainer*  GetContainerTB()  { return nullptr; }
 
     virtual IHIVInterventionsContainer* GetContainerHIV()
     {

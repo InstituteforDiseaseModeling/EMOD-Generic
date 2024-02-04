@@ -59,6 +59,7 @@ namespace Kernel
         virtual IInterventionConsumer*        GetInterventionConsumer()  override;
         virtual ISTIInterventionsContainer*   GetContainerSTI()          override { return nullptr; }
         virtual IHIVInterventionsContainer*   GetContainerHIV()          override { return nullptr; }
+        virtual ITBInterventionsContainer*    GetContainerTB()           override { return nullptr; }
 
         // IUnknown
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;

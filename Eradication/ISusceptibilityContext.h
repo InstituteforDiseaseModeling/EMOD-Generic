@@ -12,6 +12,9 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
+    class ISusceptibilityHIV;
+    class ISusceptibilityTB;
+
     struct ISusceptibilityContext : ISerializable
     {
         virtual float getModAcquire() const = 0;
@@ -23,5 +26,8 @@ namespace Kernel
 
         virtual void  InitNewInfection() = 0;
         virtual bool  IsImmune() const = 0;
+
+        virtual ISusceptibilityHIV*   GetSusceptibilityHIV()     = 0;
+        virtual ISusceptibilityTB*    GetSusceptibilityTB()      = 0;
     };
 }

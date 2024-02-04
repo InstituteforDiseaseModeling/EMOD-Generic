@@ -65,7 +65,7 @@ namespace Kernel
         IDistributableIntervention *m_di;
         INodeDistributableIntervention *m_ndi;
 
-        virtual bool qualifiesToGetIntervention( const IIndividualHumanEventContext * pIndividual );
+        virtual bool qualifiesToGetIntervention( IIndividualHumanEventContext* pIndividual );
         virtual float getDemographicCoverage() const;
         virtual void onDisqualifiedByCoverage( IIndividualHumanEventContext *pIndiv );
         std::string GetInterventionClassName() const;

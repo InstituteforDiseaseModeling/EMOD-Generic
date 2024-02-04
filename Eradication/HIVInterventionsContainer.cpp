@@ -30,15 +30,6 @@ SETUP_LOGGING( "HIVInterventionsContainer" )
 
 namespace Kernel
 {
-
-    #define ON_ART() (  ART_status == ARTStatus::ON_ART_BUT_NOT_VL_SUPPRESSED   || \
-                        ART_status == ARTStatus::ON_VL_SUPPRESSED               || \
-                        ART_status == ARTStatus::ON_BUT_FAILING                 || \
-                        ART_status == ARTStatus::ON_BUT_ADHERENCE_POOR )
-
-    // DJK TODO:
-    #define LIFETIME (120*365.0f)
-
     BEGIN_QUERY_INTERFACE_DERIVED(HIVInterventionsContainer, STIInterventionsContainer)
         HANDLE_INTERFACE(IHIVDrugEffectsApply)
         HANDLE_INTERFACE(IHIVInterventionsContainer)
@@ -90,12 +81,10 @@ namespace Kernel
     void HIVInterventionsContainer::SetContextTo(IIndividualHumanContext* context)
     {
         STIInterventionsContainer::SetContextTo( context );
-        release_assert( parent );
+        hiv_parent = context->GetIndividualHIV();
 
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanHIV), (void**) &hiv_parent) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanHIV", "IIndividualHumanContext" );
-        }
+        release_assert( parent );
+        release_assert( hiv_parent );
     }
 
     IHIVInterventionsContainer* HIVInterventionsContainer::GetContainerHIV()
@@ -614,20 +603,27 @@ namespace Kernel
         return ret;
     }
 
-    float
-    HIVInterventionsContainer::GetDurationSinceLastStartingART()
-    const
+    float HIVInterventionsContainer::GetDurationSinceLastStartingART() const
     {
         return days_since_most_recent_ART_start;
     }
 
-    float HIVInterventionsContainer::GetDrugInactivationRate() { return HIV_drug_inactivation_rate; }
-    float HIVInterventionsContainer::GetDrugClearanceRate()    { return HIV_drug_clearance_rate; }
-
-    bool
-    HIVInterventionsContainer::OnArtQuery() const
+    float HIVInterventionsContainer::GetDrugInactivationRate()
     {
-        return ON_ART();
+        return HIV_drug_inactivation_rate;
+    }
+
+    float HIVInterventionsContainer::GetDrugClearanceRate()
+    {
+        return HIV_drug_clearance_rate;
+    }
+
+    bool HIVInterventionsContainer::OnArtQuery() const
+    {
+        return ( ART_status == ARTStatus::ON_ART_BUT_NOT_VL_SUPPRESSED   ||
+                 ART_status == ARTStatus::ON_VL_SUPPRESSED               ||
+                 ART_status == ARTStatus::ON_BUT_FAILING                 ||
+                 ART_status == ARTStatus::ON_BUT_ADHERENCE_POOR );
     }
 
     void

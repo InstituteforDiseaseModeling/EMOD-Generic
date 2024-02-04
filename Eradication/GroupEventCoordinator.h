@@ -29,7 +29,7 @@ namespace Kernel
         GroupInterventionDistributionEventCoordinator();
         // IEventCoordinator
 
-        virtual bool qualifiesDemographically( const IIndividualHumanEventContext * pIndividual ) override;
+        virtual bool qualifiesDemographically( IIndividualHumanEventContext* pIndividual ) override;
 
 
     protected:

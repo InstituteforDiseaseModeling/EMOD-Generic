@@ -12,6 +12,8 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "GroupEventCoordinator.h"
 #include "InterventionFactory.h"
+#include "IIndividualHuman.h"
+#include "IIndividualHumanContext.h"
 #include "TBContexts.h" //for querying to IIndividualHumanTB
 
 SETUP_LOGGING( "GroupEventCoordinator" )
@@ -31,10 +33,7 @@ namespace Kernel
         LOG_DEBUG("GroupInterventionDistributionEventCoordinator ctor\n");
     }
 
-    bool
-    GroupInterventionDistributionEventCoordinator::Configure(
-        const Configuration * inputJson
-    )
+    bool GroupInterventionDistributionEventCoordinator::Configure(const Configuration* inputJson)
     {
         bool ret = StandardInterventionDistributionEventCoordinator::Configure(inputJson);
         if( ret )
@@ -49,21 +48,15 @@ namespace Kernel
     }
 
  
-    bool
-    GroupInterventionDistributionEventCoordinator::qualifiesDemographically(
-        const IIndividualHumanEventContext * const pIndividual
-    )
+    bool GroupInterventionDistributionEventCoordinator::qualifiesDemographically(IIndividualHumanEventContext* pIndividual)
     {
         bool retQualifies = true;
 
         if( demographic_restrictions.GetTargetDemographic() == TargetDemographicType::ExplicitDiseaseState )
         {
             //TB SPECIFIC DISEASE STATES
-            IIndividualHumanTB* tb_ind = nullptr;
-            if(const_cast<IIndividualHumanEventContext*>(pIndividual)->QueryInterface( GET_IID( IIndividualHumanTB ), (void**)&tb_ind ) != s_OK)
-            { 
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIndividual", "IIndividualHumanTB", "IIndividualHumanEventContext" );
-            }
+            IIndividualHumanTB* tb_ind = pIndividual->GetIndividual()->GetIndividualContext()->GetIndividualTB();
+            release_assert(tb_ind);
 
             if ( target_disease_state == TargetGroupType::Infected )
             {
@@ -102,7 +95,4 @@ namespace Kernel
         return retQualifies;
     }
 
-
 }
-
-

@@ -21,15 +21,12 @@ namespace Kernel
     IMPL_QUERY_INTERFACE2(ReferenceTrackingEventCoordinatorHIV, IEventCoordinator, IConfigurable)
 
     ReferenceTrackingEventCoordinatorHIV::ReferenceTrackingEventCoordinatorHIV()
-    : ReferenceTrackingEventCoordinator()
-    , target_disease_state(TargetDiseaseStateType::Everyone)
+        : ReferenceTrackingEventCoordinator()
+        , target_disease_state(TargetDiseaseStateType::Everyone)
     {
     }
 
-    bool
-    ReferenceTrackingEventCoordinatorHIV::Configure(
-        const Configuration * inputJson
-    )
+    bool ReferenceTrackingEventCoordinatorHIV::Configure(const Configuration* inputJson)
     {
         initConfig("Target_Disease_State", target_disease_state, inputJson, MetadataDescriptor::Enum("Target_Disease_State", RTEC_HIV_Target_Disease_State_DESC_TEXT, MDD_ENUM_ARGS(TargetDiseaseStateType))) ;
 
@@ -37,7 +34,7 @@ namespace Kernel
         return ret;
     }
 
-    bool ReferenceTrackingEventCoordinatorHIV::qualifiesDemographically( const IIndividualHumanEventContext * pIndividual )
+    bool ReferenceTrackingEventCoordinatorHIV::qualifiesDemographically( IIndividualHumanEventContext* pIndividual )
     {
         bool qualifies = ReferenceTrackingEventCoordinator::qualifiesDemographically( pIndividual );
         if( qualifies )

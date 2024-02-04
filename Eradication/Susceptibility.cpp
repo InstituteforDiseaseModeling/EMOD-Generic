@@ -36,21 +36,6 @@ namespace Kernel
     BEGIN_QUERY_INTERFACE_BODY(SusceptibilityConfig)
     END_QUERY_INTERFACE_BODY(SusceptibilityConfig)
 
-    void SusceptibilityConfig::LogConfigs() const
-    {
-        LOG_DEBUG_F( "baseacqoffset = %f\n",  baseacqoffset );
-        LOG_DEBUG_F( "basetranoffset = %f\n", basetranoffset );
-        LOG_DEBUG_F( "basemortoffset = %f\n", basemortoffset );
-
-        LOG_DEBUG_F( "immune_decay = %d\n", enable_immune_decay );
-        LOG_DEBUG_F( "acqdecayrate= %f\n",   acqdecayrate );
-        LOG_DEBUG_F( "trandecayrate = %f\n", trandecayrate );
-        LOG_DEBUG_F( "mortdecayrate = %f\n", mortdecayrate );
-        LOG_DEBUG_F( "baseacqupdate = %f\n",  baseacqupdate );
-        LOG_DEBUG_F( "basetranupdate = %f\n", basetranupdate );
-        LOG_DEBUG_F( "basemortupdate = %f\n", basemortupdate );
-    }
-
     bool SusceptibilityConfig::Configure(const Configuration* config)
     {
         // Infection derived immunity
@@ -77,11 +62,20 @@ namespace Kernel
 
         bool bRet = JsonConfigurable::Configure( config );
 
-        LogConfigs();
+        LOG_DEBUG_F( "baseacqoffset = %f\n",  baseacqoffset );
+        LOG_DEBUG_F( "basetranoffset = %f\n", basetranoffset );
+        LOG_DEBUG_F( "basemortoffset = %f\n", basemortoffset );
+
+        LOG_DEBUG_F( "immune_decay = %d\n", enable_immune_decay );
+        LOG_DEBUG_F( "acqdecayrate= %f\n",   acqdecayrate );
+        LOG_DEBUG_F( "trandecayrate = %f\n", trandecayrate );
+        LOG_DEBUG_F( "mortdecayrate = %f\n", mortdecayrate );
+        LOG_DEBUG_F( "baseacqupdate = %f\n",  baseacqupdate );
+        LOG_DEBUG_F( "basetranupdate = %f\n", basetranupdate );
+        LOG_DEBUG_F( "basemortupdate = %f\n", basemortupdate );
 
         return bRet;
     }
-
 
     // QI stuff in case we want to use it more extensively
     BEGIN_QUERY_INTERFACE_BODY(Susceptibility)

@@ -32,7 +32,7 @@ namespace Kernel
         void ConfigureRestrictions( JsonConfigurable* pParent, const Configuration * inputJson );
         void CheckConfiguration();
         bool HasDefaultRestrictions() const;
-        bool IsQualified( const IIndividualHumanEventContext* pIndividual );
+        bool IsQualified( IIndividualHumanEventContext* pIndividual );
 
         void SetDemographicCoverage( float coverage );
         float GetDemographicCoverage() const;

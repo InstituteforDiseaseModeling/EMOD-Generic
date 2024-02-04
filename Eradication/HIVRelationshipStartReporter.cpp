@@ -13,8 +13,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "HIVRelationshipStartReporter.h"
 #include "Log.h"
 #include "Exceptions.h"
+#include "IIndividualHuman.h"
 #include "IIndividualHumanSTI.h"
 #include "IIndividualHumanHIV.h"
+#include "IndividualEventContext.h"
 #include "HIVEnums.h"
 #include "IHIVInterventionsContainer.h"
 #include "SusceptibilityHIV.h"
@@ -126,21 +128,13 @@ namespace Kernel
 
     IIndividualHumanHIV* HIVRelationshipStartReporter::GetIndividualHumanHIV( IIndividualHumanSTI* pPartner )
     {
-        IIndividualHumanHIV* p_hiv_individual = nullptr;
-        if( pPartner->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_hiv_individual) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pPartner", "IIndividualHumanHIV", "IIndividualHumanSTI*" );
-        }
+        IIndividualHumanHIV* p_hiv_individual = pPartner->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
         return p_hiv_individual ;
     }
 
     IHIVMedicalHistory* HIVRelationshipStartReporter::GetMedicalHistory( IIndividualHumanHIV* pPartner )
     {
-        IHIVMedicalHistory * p_med_history = nullptr;
-        if( pPartner->GetHIVInterventionsContainer()->QueryInterface(GET_IID(IHIVMedicalHistory), (void**)&p_med_history) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pPartner->GetHIVInterventionsContainer()", "IHIVMedicalHistory", "IHIVInterventionsContainer" );
-        }
+        IHIVMedicalHistory* p_med_history  = pPartner->GetHIVInterventionsContainer()->GetHIVMedicalHistory();
         return p_med_history ;
     }
 

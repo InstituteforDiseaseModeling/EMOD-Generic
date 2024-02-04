@@ -15,6 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "NodeEventContext.h"
 #include "IndividualEventContext.h"
+#include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
 #include "FileSystem.h"
 #include "IIndividualHumanHIV.h"
@@ -70,16 +71,11 @@ namespace Kernel
         return header;
     }
 
-    std::string HIVReportEventRecorder::GetOtherData( IIndividualHumanEventContext *context, 
-                                                      const EventTrigger::Enum& trigger )
+    std::string HIVReportEventRecorder::GetOtherData( IIndividualHumanEventContext* context, const EventTrigger::Enum& trigger )
     {
-        IIndividualHumanHIV * iindividual_hiv = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&iindividual_hiv) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IIndividualHumanHIV", "IIndividualHumanEventContext");
-        }
-        const char  has_hiv    = iindividual_hiv->HasHIV() ? 'Y' : 'N' ;
+        IIndividualHumanHIV* iindividual_hiv = context->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
 
+        const char  has_hiv    = iindividual_hiv->HasHIV() ? 'Y' : 'N' ;
         const char  on_ART = iindividual_hiv->GetHIVInterventionsContainer()->OnArtQuery() ? 'Y' : 'N' ;
 
         float cd4 = 1e6;

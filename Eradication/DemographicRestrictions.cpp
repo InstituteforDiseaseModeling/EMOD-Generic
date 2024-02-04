@@ -149,7 +149,7 @@ namespace Kernel
         return true;
     }
 
-    bool DemographicRestrictions::IsQualified( const IIndividualHumanEventContext* pIndividual )
+    bool DemographicRestrictions::IsQualified( IIndividualHumanEventContext* pIndividual )
     {
         bool retQualifies = true;
 
@@ -167,12 +167,7 @@ namespace Kernel
 
         if( target_residents_only )
         {
-            IIndividualHuman* p_human = nullptr;
-            if (s_OK != const_cast<IIndividualHumanEventContext*>(pIndividual)->QueryInterface(GET_IID(IIndividualHuman), (void**)&p_human) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIndividual", "IIndividualHuman", "IIndividualHumanEventContext" );
-            }
-            if( !p_human->AtHome() )
+            if( !pIndividual->GetIndividual()->AtHome() )
             {
                 return false ;
             }

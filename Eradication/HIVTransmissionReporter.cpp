@@ -11,8 +11,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "HIVTransmissionReporter.h"
 #include "Exceptions.h"
+#include "IIndividualHumanContext.h"
 #include "IIndividualHumanSTI.h"
 #include "IIndividualHumanHIV.h"
+#include "IndividualEventContext.h"
 #include "IRelationship.h"
 #include "InfectionHIV.h"
 #include "SusceptibilityHIV.h"
@@ -55,24 +57,16 @@ namespace Kernel
         hiv_report_data.clear();
     }
 
-    void HIVTransmissionReporter::CollectOtherData( unsigned int relationshipID,
-                                                    IIndividualHumanSTI* pPartnerSource,
-                                                    IIndividualHumanSTI* pPartnerDest )
+    void HIVTransmissionReporter::CollectOtherData( unsigned int relationshipID, IIndividualHumanSTI* pPartnerSource, IIndividualHumanSTI* pPartnerDest )
     {
         release_assert( pPartnerSource );
         release_assert( pPartnerDest );
 
-        IIndividualHumanHIV* p_hiv_source = nullptr;
-        if (pPartnerSource->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_hiv_source) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pPartnerSource", "IIndividualHumanHIV", "IIndividualHumanSTI*" );
-        }
+        IIndividualHumanHIV* p_hiv_source = pPartnerSource->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
+        IIndividualHumanHIV* p_hiv_dest   = pPartnerDest->GetEventContext()->GetIndividual()->GetIndividualContext()->GetIndividualHIV();
 
-        IIndividualHumanHIV* p_hiv_dest = nullptr;
-        if (pPartnerDest->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&p_hiv_dest) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pPartnerDest", "IIndividualHumanHIV", "IIndividualHumanSTI*" );
-        }
+        release_assert( p_hiv_source );
+        release_assert( p_hiv_dest );
 
         float source_cd4 = p_hiv_source->GetHIVSusceptibility()->GetCD4count();
         float dest_cd4   = p_hiv_dest->GetHIVSusceptibility()->GetCD4count();

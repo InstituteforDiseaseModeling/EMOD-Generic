@@ -36,8 +36,7 @@ namespace Kernel
 
     IMPL_QUERY_INTERFACE2(GroupInterventionDistributionEventCoordinatorHIV, IEventCoordinator, IConfigurable)
 
-    bool
-    GroupInterventionDistributionEventCoordinatorHIV::Configure( const Configuration * inputJson)
+    bool GroupInterventionDistributionEventCoordinatorHIV::Configure( const Configuration* inputJson)
     {
         initConfigTypeMap("Time_Offset", &time_offset, Time_Offset_DESC_TEXT, 0.0f, FLT_MAX, 0.0f);
         
@@ -53,35 +52,13 @@ namespace Kernel
         LOG_DEBUG("GroupInterventionDistributionEventCoordinatorHIV ctor\n"); 
     } 
    
-   bool
-    GroupInterventionDistributionEventCoordinatorHIV::visitIndividualCallback( 
-        IIndividualHumanEventContext *ihec,
-        float & incrementalCostOut,
-        ICampaignCostObserver * pICCO
-    )
+   bool GroupInterventionDistributionEventCoordinatorHIV::visitIndividualCallback( IIndividualHumanEventContext *ihec, float& incrementalCostOut, ICampaignCostObserver* pICCO )
    {
         bool retValue = true;
 
-        IIndividualHumanContext* pIndHu = nullptr;
-
-        if (const_cast<IIndividualHumanEventContext*>(ihec)->QueryInterface( GET_IID( IIndividualHumanContext ), (void**)&pIndHu ) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "pIndividual", "IIndividualHumanCoInfection", "IIndividualHumanEventContext" );
-        }
-
-        auto node = ((IndividualHuman*)pIndHu)->GetParent();
-        
-        NodeTBHIV* tbhiv_node = nullptr;
-        // arg, why doesn't this work!?!??
-        if (node->QueryInterface( GET_IID( INodeTBHIV ), (void**)&tbhiv_node ) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "node", "INodeTBHIV", "INodeContext" );
-        }
-
+        INodeTBHIV* tbhiv_node = ihec->GetIndividual()->GetParent()->GetNodeTBHIV();
         release_assert( tbhiv_node );
 
-        //tbhiv_node = (NodeTBHIV*)node; // this works
-        tbhiv_node = dynamic_cast<NodeTBHIV*>(node); // this works
         float dc = tbhiv_node->GetHIVCoinfectionDistribution()->DrawResultValue( ihec->GetGender() == Gender::FEMALE, (parent->GetSimulationTime().time - time_offset), ihec->GetAge() );
         LOG_DEBUG_F( "Demo coverage for individual sex %d, age %f, at time %f = %f.\n", ihec->GetGender(), ihec->GetAge(), parent->GetSimulationTime().time - time_offset, dc );
         

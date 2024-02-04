@@ -135,6 +135,11 @@ namespace Kernel
         return newsusceptibility;
     }
 
+    ISusceptibilityHIV* SusceptibilityHIV::GetSusceptibilityHIV()
+    {
+        return static_cast<ISusceptibilityHIV*>(this);
+    }
+
     void SusceptibilityHIV::SetContextTo(IIndividualHumanContext* context)
     {
         SusceptibilitySTI::SetContextTo( context );

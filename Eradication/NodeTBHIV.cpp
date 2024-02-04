@@ -139,6 +139,10 @@ namespace Kernel
         }
     }
 
+    INodeTBHIV* NodeTBHIV::GetNodeTBHIV()
+    {
+        return static_cast<INodeTBHIV*>(this);
+    }
 
     void NodeTBHIV::processEmigratingIndividual(IIndividualHuman* individual)
     {

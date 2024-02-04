@@ -71,6 +71,8 @@ namespace Kernel
         virtual void  TerminateSuppression(float days_till_death) override;
         virtual bool IsSymptomatic() const override;
 
+        virtual ISusceptibilityHIV*    GetSusceptibilityHIV()      override;
+
     protected:
         //disease specific params 
         // static float TB_immune_loss_fraction;

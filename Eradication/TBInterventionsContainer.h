@@ -72,6 +72,8 @@ namespace Kernel
         TBInterventionsContainer();
         virtual ~TBInterventionsContainer();
 
+        virtual ITBInterventionsContainer* GetContainerTB() override; 
+
         // ISupports
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 

@@ -32,6 +32,7 @@ namespace Kernel
     struct IInterventionConsumer;
     struct ISTIInterventionsContainer;
     struct IHIVInterventionsContainer;
+    struct ITBInterventionsContainer;
     struct IDrug;
     struct IHealthSeekingBehavior;
     struct INodeEventContext;
@@ -88,7 +89,7 @@ namespace Kernel
         virtual IInterventionConsumer*        GetInterventionConsumer()   = 0;
         virtual ISTIInterventionsContainer*   GetContainerSTI()           = 0;
         virtual IHIVInterventionsContainer*   GetContainerHIV()           = 0;
-
+        virtual ITBInterventionsContainer*    GetContainerTB()            = 0;
 
         virtual ~IIndividualHumanInterventionsContext() {}
     };
