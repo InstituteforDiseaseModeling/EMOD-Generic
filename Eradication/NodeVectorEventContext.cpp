@@ -21,21 +21,21 @@ SETUP_LOGGING( "NodeVectorEventContext" )
 namespace Kernel
 {
     NodeVectorEventContextHost::NodeVectorEventContextHost(Node* _node) 
-    : NodeEventContextHost(_node)
-    , larval_reduction( false, -FLT_MAX, FLT_MAX, 0.0f )
-    , pLarvalKilling(0)
-    , pLarvalHabitatReduction(0)
-    , pVillageSpatialRepellent(0)
-    , pADIVAttraction(0)
-    , pADOVAttraction(0)
-    , pPFVKill(0)
-    , pOutdoorKilling(0)
-    , pOutdoorKillingMale(0)
-    , pSugarFeedKilling(0)
-    , pOviTrapKilling(0)
-    , pAnimalFeedKilling(0)
-    , pOutdoorRestKilling(0)
-    , pIndoorKilling( 0.0f )
+        : NodeEventContextHost(_node)
+        , larval_reduction( false, -FLT_MAX, FLT_MAX, 0.0f )
+        , pLarvalKilling(0)
+        , pLarvalHabitatReduction(0)
+        , pVillageSpatialRepellent(0)
+        , pADIVAttraction(0)
+        , pADOVAttraction(0)
+        , pPFVKill(0)
+        , pOutdoorKilling(0)
+        , pOutdoorKillingMale(0)
+        , pSugarFeedKilling(0)
+        , pOviTrapKilling(0)
+        , pAnimalFeedKilling(0)
+        , pOutdoorRestKilling(0)
+        , pIndoorKilling( 0.0f )
     { 
     }
 
@@ -56,8 +56,6 @@ namespace Kernel
             foundInterface = static_cast<INodeVectorInterventionEffects*>(this);
         else if (iid == GET_IID(INodeVectorInterventionEffectsApply))
             foundInterface = static_cast<INodeVectorInterventionEffectsApply*>(this);
-        else if (iid == GET_IID(IMosquitoReleaseConsumer))
-            foundInterface = static_cast<IMosquitoReleaseConsumer*>(this);
 
         // -->> add support for other I*Consumer interfaces here <<--      
         else
@@ -79,114 +77,85 @@ namespace Kernel
         return status;
     }
 
+    INodeVectorInterventionEffects* NodeVectorEventContextHost::GetNodeVectorInterventionEffects()
+    {
+        return static_cast<INodeVectorInterventionEffects*>(this);
+    }
+
+    INodeVectorInterventionEffectsApply* NodeVectorEventContextHost::GetNodeVectorInterventionEffectsApply()
+    {
+        return static_cast<INodeVectorInterventionEffectsApply*>(this);
+    }
+
     //
     // INodeVectorInterventionEffects; (The Getters)
     // 
-    void
-    NodeVectorEventContextHost::UpdateLarvalKilling(
-        VectorHabitatType::Enum habitat,
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateLarvalKilling( VectorHabitatType::Enum habitat, float killing )
     {
         larval_killing_target = habitat;
         pLarvalKilling = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateLarvalHabitatReduction(
-        VectorHabitatType::Enum target,
-        float reduction
-    )
+    void NodeVectorEventContextHost::UpdateLarvalHabitatReduction( VectorHabitatType::Enum target, float reduction )
     {
         larval_reduction_target = target;
         larval_reduction.Initialize();
         larval_reduction.SetMultiplier( target, reduction );
     }
 
-    void
-    NodeVectorEventContextHost::UpdateLarvalHabitatReduction( const LarvalHabitatMultiplier& lhm )
+    void NodeVectorEventContextHost::UpdateLarvalHabitatReduction( const LarvalHabitatMultiplier& lhm )
     {
         larval_reduction.Initialize();
         larval_reduction.SetAsReduction( lhm );
     }
 
-    void
-    NodeVectorEventContextHost::UpdateOutdoorKilling(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateOutdoorKilling( float killing )
     {
         pOutdoorKilling = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateVillageSpatialRepellent(
-        float reduction)
+    void NodeVectorEventContextHost::UpdateVillageSpatialRepellent( float reduction )
     {
         pVillageSpatialRepellent = reduction;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateADIVAttraction(
-        float reduction
-    )
+    void NodeVectorEventContextHost::UpdateADIVAttraction( float reduction )
     {
         pADIVAttraction = reduction;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateADOVAttraction(
-        float reduction
-    )
+    void NodeVectorEventContextHost::UpdateADOVAttraction( float reduction )
     {
         pADOVAttraction = reduction;
     }
 
-    void
-    NodeVectorEventContextHost::UpdatePFVKill(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdatePFVKill( float killing )
     {
         pPFVKill = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateOutdoorKillingMale(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateOutdoorKillingMale( float killing )
     {
         pOutdoorKillingMale = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateSugarFeedKilling(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateSugarFeedKilling( float killing )
     {
         pSugarFeedKilling = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateOviTrapKilling(
-        VectorHabitatType::Enum habitat,
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateOviTrapKilling( VectorHabitatType::Enum habitat, float killing )
     {
         ovitrap_killing_target = habitat;
         pOviTrapKilling = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateAnimalFeedKilling(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateAnimalFeedKilling( float killing )
     {
         pAnimalFeedKilling = killing;
     }
 
-    void
-    NodeVectorEventContextHost::UpdateOutdoorRestKilling(
-        float killing
-    )
+    void NodeVectorEventContextHost::UpdateOutdoorRestKilling( float killing )
     {
         pOutdoorRestKilling = killing;
     }
@@ -283,10 +252,12 @@ namespace Kernel
             return 0;
         }
     }
+
     float NodeVectorEventContextHost::GetAnimalFeedKilling()
     {
         return pAnimalFeedKilling;
     }
+
     float NodeVectorEventContextHost::GetOutdoorRestKilling()
     {
         return pOutdoorRestKilling;

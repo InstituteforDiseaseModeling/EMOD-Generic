@@ -47,13 +47,17 @@ namespace Kernel
         virtual bool IsInPolygon( const json::Array &poly ) override;
         virtual bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist ) override;
         virtual RANDOMBASE* GetRng() override;
-        virtual INodeContext* GetNodeContext() override;
         virtual int GetIndividualHumanCount() const override;
         virtual ExternalNodeId_t GetExternalId() const override;
 
+        virtual INodeContext*                GetNodeContext()                override;
         virtual INodeInterventionConsumer*   GetNodeInterventionConsumer()   override;
         virtual ICampaignCostObserver*       GetCampaignCostObserver()       override;
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() override;
+
+        virtual INodeTyphoidInterventionEffects*     GetNodeTyphoidInterventionEffects()      override  { return nullptr; }
+        virtual INodeVectorInterventionEffects*      GetNodeVectorInterventionEffects()       override  { return nullptr; }
+        virtual INodeVectorInterventionEffectsApply* GetNodeVectorInterventionEffectsApply()  override  { return nullptr; }
 
         virtual void IncrementCampaignCost(float cost) override;
 
@@ -63,9 +67,9 @@ namespace Kernel
         virtual void  UpdateConnectionModifiers(float inbound, float outbound)                       override;
         virtual void  UpdateInfectivityMultiplier(float mult_val, TransmissionRoute::Enum tx_route)  override;
 
-        virtual float GetBirthRateMultiplier()                                    const override;
-        virtual float GetInboundConnectionModifier()                              const override;
-        virtual float GetOutboundConnectionModifier()                             const override;
+        virtual float GetBirthRateMultiplier()                                     const override;
+        virtual float GetInboundConnectionModifier()                               const override;
+        virtual float GetOutboundConnectionModifier()                              const override;
         virtual float GetInfectivityMultiplier(TransmissionRoute::Enum tx_route)   const override;
 
         // TODO: methods to install hooks for birth and other things...can follow similar pattern presumably
@@ -90,13 +94,11 @@ namespace Kernel
         // INodeInterventionConsumer
         virtual bool GiveIntervention( INodeDistributableIntervention * pIV ) override;
 
-        // IIndividualTriggeredInterventionConsumer
+        // IIndividualEventBroadcaster
         virtual void RegisterObserver( IIndividualEventObserver *pIEO, const EventTrigger::Enum& trigger ) override;
         virtual void UnregisterObserver( IIndividualEventObserver *pIEO, const EventTrigger::Enum& trigger ) override;
         virtual void TriggerObservers( IIndividualHumanEventContext *ihec, const EventTrigger::Enum& trigger ) override;
 
-        //////////////////////////////////////////////////////////////////////////
-         
         void ProcessArrivingIndividual( IIndividualHuman* );
         void ProcessDepartingIndividual( IIndividualHuman * );
 

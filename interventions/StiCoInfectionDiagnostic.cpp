@@ -23,9 +23,7 @@ namespace Kernel
 
     IMPLEMENT_FACTORY_REGISTERED(StiCoInfectionDiagnostic)
 
-    bool StiCoInfectionDiagnostic::Configure(
-        const Configuration * inputJson
-    )
+    bool StiCoInfectionDiagnostic::Configure( const Configuration* inputJson )
     {
         ConfigurePositiveEventOrConfig( inputJson );
         bool ret = SimpleDiagnostic::Configure(inputJson); 
@@ -42,10 +40,10 @@ namespace Kernel
     }
 
     StiCoInfectionDiagnostic::StiCoInfectionDiagnostic( const StiCoInfectionDiagnostic& master )
-    : SimpleDiagnostic( master )
+        : SimpleDiagnostic( master )
     {
     }
-        
+
     StiCoInfectionDiagnostic::~StiCoInfectionDiagnostic()
     { 
         LOG_DEBUG("Destructing Active Diagnostic \n");
@@ -55,19 +53,15 @@ namespace Kernel
     {
         LOG_DEBUG("Positive test Result function\n");
 
-        IIndividualHumanSTI* sti_ind = nullptr;
-        if(parent->QueryInterface( GET_IID( IIndividualHumanSTI ), (void**)&sti_ind ) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanSTI", "IIndividualHuman" );
-        }
+        IIndividualHumanSTI* sti_ind = parent->GetIndividualSTI();
+        release_assert(sti_ind);
+
         bool activeinf = sti_ind->HasSTICoInfection();
 
         // always return negative if the person is not infected, intended to be used with GroupEventCoordinator
         // TODO: allow to distribute Smear diagnostic to non-infected individuals?
-
         bool positiveTest = applySensitivityAndSpecificity( activeinf );
         return positiveTest;
-
     }
 
     REGISTER_SERIALIZABLE(StiCoInfectionDiagnostic);

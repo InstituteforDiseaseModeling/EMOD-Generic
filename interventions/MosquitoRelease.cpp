@@ -13,18 +13,14 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "Exceptions.h"
 #include "InterventionFactory.h"
 #include "SimulationConfig.h"
-#include "NodeVectorEventContext.h"  // for IMosquitoReleaseConsumer methods
+#include "NodeVectorEventContext.h"
 #include "VectorParameters.h"
 
 SETUP_LOGGING( "MosquitoRelease" )
 
 namespace Kernel
 {
-    void
-    ResistanceHegGenetics::ConfigureFromJsonAndKey(
-        const Configuration * inputJson,
-        const std::string& key
-    )
+    void ResistanceHegGenetics::ConfigureFromJsonAndKey( const Configuration* inputJson, const std::string& key )
     {
         const Configuration* pJson = Configuration::CopyFromElement((*inputJson)[key], inputJson->GetDataLocation());
         try
@@ -49,8 +45,7 @@ namespace Kernel
         delete pJson;
     }
 
-    json::QuickBuilder
-    ResistanceHegGenetics::GetSchema()
+    json::QuickBuilder ResistanceHegGenetics::GetSchema()
     {
         json::QuickBuilder schema( GetSchemaBase() );
         auto tn = JsonConfigurable::_typename_label();
@@ -80,39 +75,34 @@ namespace Kernel
 
     BEGIN_QUERY_INTERFACE_BODY(MosquitoRelease)
         HANDLE_INTERFACE(IConfigurable)
-        //HANDLE_INTERFACE(IDistributableIntervention)
         HANDLE_INTERFACE(IBaseIntervention)
         HANDLE_INTERFACE(INodeDistributableIntervention)
-        //HANDLE_INTERFACE(IMosquitoRelease)
         HANDLE_ISUPPORTS_VIA(INodeDistributableIntervention)
     END_QUERY_INTERFACE_BODY(MosquitoRelease)
 
     IMPLEMENT_FACTORY_REGISTERED(MosquitoRelease)
 
     MosquitoRelease::MosquitoRelease()
-    : BaseNodeIntervention()
-    , releasedSpecies()
-    , vector_genetics()
-    , self()
-    , mate()
-    , releasedNumber(10000)
+        : BaseNodeIntervention()
+        , releasedSpecies()
+        , vector_genetics()
+        , self()
+        , mate()
+        , releasedNumber(10000)
     {
     }
 
     MosquitoRelease::MosquitoRelease( const MosquitoRelease& master )
-    : BaseNodeIntervention( master )
-    , releasedSpecies( master.releasedSpecies )
-    , vector_genetics( master.vector_genetics )
-    , self( master.self )
-    , mate( master.mate )
-    , releasedNumber( master.releasedNumber )
+        : BaseNodeIntervention( master )
+        , releasedSpecies( master.releasedSpecies )
+        , vector_genetics( master.vector_genetics )
+        , self( master.self )
+        , mate( master.mate )
+        , releasedNumber( master.releasedNumber )
     {
     }
 
-    bool
-    MosquitoRelease::Configure(
-        const Configuration * inputJson
-    )
+    bool MosquitoRelease::Configure( const Configuration* inputJson )
     {
         releasedSpecies.constraints = "<configuration>:Vector_Species_Params.*";
         if( GET_CONFIGURABLE(SimulationConfig) != nullptr )
@@ -161,7 +151,7 @@ namespace Kernel
         return true;
     }
 
-    bool MosquitoRelease::Distribute(INodeEventContext *context, IEventCoordinator2* pEC)
+    bool MosquitoRelease::Distribute(INodeEventContext* context, IEventCoordinator2* pEC)
     {
         parent = context;
 
@@ -170,15 +160,12 @@ namespace Kernel
             return false;
         }
 
-        IMosquitoReleaseConsumer *imrc;
-        if (s_OK != context->QueryInterface(GET_IID(IMosquitoReleaseConsumer), (void**)&imrc))
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "context", "IMosquitoReleaseConsumer", "INodeEventContext");
-        }
+        INodeVectorInterventionEffectsApply* imrc = context->GetNodeVectorInterventionEffectsApply();
 
         bool wasDistributed = false;
         if( getNumber() > 0)
         {
+            release_assert(imrc);
             imrc->ReleaseMosquitoes( cost_per_unit, getSpecies(), getVectorGenetics(), getNumber() );
             wasDistributed = true;
         }

@@ -200,9 +200,7 @@ namespace Kernel
         }
     }
 
-    const suids::suid &
-    NodeEventContextHost::GetId()
-    const
+    const suids::suid& NodeEventContextHost::GetId() const
     {
         return node->suid;
     }

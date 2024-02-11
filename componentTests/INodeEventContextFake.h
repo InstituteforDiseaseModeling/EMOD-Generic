@@ -218,6 +218,10 @@ public:
     virtual int GetIndividualHumanCount() const { return m_HumanList.size(); }
     virtual ExternalNodeId_t GetExternalId()  const { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
 
+    virtual INodeTyphoidInterventionEffects*     GetNodeTyphoidInterventionEffects()      override  { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual INodeVectorInterventionEffects*      GetNodeVectorInterventionEffects()       override  { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+    virtual INodeVectorInterventionEffectsApply* GetNodeVectorInterventionEffectsApply()  override  { throw Kernel::NotYetImplementedException( __FILE__, __LINE__, __FUNCTION__, "The method or operation is not implemented."); }
+
     // --------------------------------------
     // --- INodeInterventionConsumer methods
     // --------------------------------------

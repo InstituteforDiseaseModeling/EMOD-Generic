@@ -110,11 +110,7 @@ namespace Kernel
         }
 
         // store itvc for apply
-        release_assert( parent );
-        if (s_OK != parent->QueryInterface(GET_IID(INodeTyphoidInterventionEffectsApply), (void**)&itvc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context->GetInterventionsContext()", "INodeTyphoidInterventionEffectsApply", "INodeContext" );
-        }
+        itvc = context->GetNodeTyphoidInterventionEffects();
     }
 
     void TyphoidWASH::Update( float dt )

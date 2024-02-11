@@ -11,6 +11,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "ConfigParams.h"
 #include "MigrateIndividuals.h"
 #include "IMigrate.h"
+#include "IIndividualHuman.h"
 #include "IIndividualHumanContext.h"
 #include "NodeEventContext.h"  // for INodeEventContext (ICampaignCostObserver)
 #include "IMigrationInfo.h"
@@ -97,11 +98,7 @@ namespace Kernel
         float duration_before = duration_before_leaving->Calculate( parent->GetRng() );
         float duration_at = duration_at_node->Calculate( parent->GetRng() );
 
-        IMigrate * im = NULL;
-        if (s_OK != parent->QueryInterface(GET_IID(IMigrate), (void**)&im) )
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "parent", "IMigrate", "IIndividualHumanContext");
-        }
+        IMigrate* im = parent->GetIndividual()->GetIMigrate();
         im->SetMigrating( destination_id, MigrationType::INTERVENTION_MIGRATION, duration_before, duration_at, is_moving );
     }
 

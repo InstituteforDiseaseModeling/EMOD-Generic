@@ -92,11 +92,7 @@ namespace Kernel
         }
 
         // store itvc for apply
-        LOG_DEBUG("Distributing TyphoidVaccine.\n");
-        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(ITyphoidVaccineEffectsApply), (void**)&itvc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ITyphoidVaccineEffectsApply", "IIndividualHumanInterventionsContext" );
-        }
+        itvc = context->GetInterventionsContext()->GetContainerTyphoid();
     }
 
     void TyphoidVaccine::Update( float dt )

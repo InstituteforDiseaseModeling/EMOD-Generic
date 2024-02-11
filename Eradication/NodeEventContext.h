@@ -25,15 +25,22 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
+    class  Simulation;
+    struct IBTNTI;      // BasicTestNodeTargetedIntervention
+
     struct INodeContext;
     struct IIndividualEventBroadcaster;
     struct NodeDemographics;
-    class Node;
-    class StrainIdentity;
-    
-    class IndividualHuman;
-    class RANDOMBASE;
+    class  Node;
+    class  StrainIdentity;
+
+    class  IndividualHuman;
+    class  RANDOMBASE;
     struct IdmDateTime;
+
+    struct INodeTyphoidInterventionEffects;
+    struct INodeVectorInterventionEffects;
+    class  INodeVectorInterventionEffectsApply;
 
     struct ITravelLinkedDistributionSource : ISupports
     {
@@ -50,7 +57,7 @@ namespace Kernel
     struct IDMAPI INodeEventContext : public ISupports 
     {
         // If you prefer lambda functions/functors, you can use this.
-        typedef std::function<void (/*suids::suid, */IIndividualHumanEventContext*)> individual_visit_function_t;
+        typedef std::function<void (IIndividualHumanEventContext*)> individual_visit_function_t;
         virtual void VisitIndividuals(individual_visit_function_t func) = 0;
         virtual int VisitIndividuals(IVisitIndividual* pIndividualVisitImpl) = 0;
 
@@ -81,14 +88,18 @@ namespace Kernel
         virtual bool IsInPolygon( const json::Array &poly ) = 0;
         virtual bool IsInExternalIdSet( const std::list<ExternalNodeId_t>& nodelist ) = 0;
         virtual RANDOMBASE* GetRng() = 0;
-        virtual INodeContext* GetNodeContext() = 0;
 
         virtual int GetIndividualHumanCount() const = 0;
         virtual ExternalNodeId_t GetExternalId() const = 0;
 
+        virtual INodeContext*                GetNodeContext()                = 0;
         virtual INodeInterventionConsumer*   GetNodeInterventionConsumer()   = 0;
         virtual ICampaignCostObserver*       GetCampaignCostObserver()       = 0;
         virtual IIndividualEventBroadcaster* GetIndividualEventBroadcaster() = 0;
+
+        virtual INodeTyphoidInterventionEffects*     GetNodeTyphoidInterventionEffects()     = 0;
+        virtual INodeVectorInterventionEffects*      GetNodeVectorInterventionEffects()      = 0;
+        virtual INodeVectorInterventionEffectsApply* GetNodeVectorInterventionEffectsApply() = 0;
 
         virtual void  IncrementCampaignCost(float cost)                          = 0;
 
@@ -101,9 +112,6 @@ namespace Kernel
         virtual float GetOutboundConnectionModifier()                               const = 0;
         virtual float GetInfectivityMultiplier(TransmissionRoute::Enum txRoute)     const = 0;
     };
-
-    class Simulation;
-    struct IBTNTI;      // BasicTestNodeTargetedIntervention
 
     struct IBTNTIConsumer : public ISupports
     {

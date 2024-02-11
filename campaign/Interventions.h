@@ -33,6 +33,7 @@ namespace Kernel
     struct ISTIInterventionsContainer;
     struct IHIVInterventionsContainer;
     struct ITBInterventionsContainer;
+    struct ITyphoidVaccineEffectsApply;
     struct IDrug;
     struct IHealthSeekingBehavior;
     struct INodeEventContext;
@@ -90,6 +91,7 @@ namespace Kernel
         virtual ISTIInterventionsContainer*   GetContainerSTI()           = 0;
         virtual IHIVInterventionsContainer*   GetContainerHIV()           = 0;
         virtual ITBInterventionsContainer*    GetContainerTB()            = 0;
+        virtual ITyphoidVaccineEffectsApply*  GetContainerTyphoid()       = 0;
 
         virtual ~IIndividualHumanInterventionsContext() {}
     };

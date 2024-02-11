@@ -15,7 +15,6 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 #include "MathFunctions.h"
 #include "RANDOM.h"
 #include "INodeContext.h"
-#include "STIInterventionsContainer.h" // for ISTIBarrierConsumer (which should be in ISTIBarrierConsumer.h) TODO
 #include "IndividualSTI.h"
 #include "ISociety.h"
 #include "IdmString.h"

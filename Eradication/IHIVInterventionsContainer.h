@@ -89,13 +89,6 @@ namespace Kernel
         virtual float GetDrugClearanceRate() = 0;
     };
 
-    class IHIVMTCTEffects : public ISupports
-    {
-        public:
-        virtual void ApplyProbMaternalTransmissionModifier( const ProbabilityNumber &probReduction ) = 0;
-        virtual const ProbabilityNumber& GetProbMaternalTransmissionModifier() const = 0;
-    };
-
     struct IHIVInterventionsContainer : public ISupports
     {
         virtual bool OnArtQuery() const = 0;
@@ -105,6 +98,9 @@ namespace Kernel
         virtual float GetDurationSinceLastStartingART() const = 0;
         virtual const ProbabilityNumber& GetProbMaternalTransmissionModifier() const = 0;
         virtual void BroadcastNewHIVInfection() = 0;
+
+        virtual void ApplyProbMaternalTransmissionModifier( const ProbabilityNumber &probReduction ) = 0;
+
         virtual IHIVDrugEffectsApply* GetHIVDrugEffectApply() = 0;
         virtual IHIVMedicalHistory*   GetHIVMedicalHistory()  = 0;
     };

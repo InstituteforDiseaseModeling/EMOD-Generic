@@ -15,7 +15,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    class IHIVMTCTEffects;
+    struct IHIVInterventionsContainer;
 
     class IDMAPI PMTCT : public BaseIntervention
     {
@@ -34,8 +34,8 @@ namespace Kernel
         virtual void Update(float dt) override;
         virtual bool Distribute(IIndividualHumanInterventionsContext *context, ICampaignCostObserver* const pEC) override;
 
-protected:
-        IHIVMTCTEffects * ivc; // interventions container
+    protected:
+        IHIVInterventionsContainer* ivc;
         NonNegativeFloat timer;
         float efficacy;
 

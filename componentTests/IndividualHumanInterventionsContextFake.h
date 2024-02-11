@@ -59,8 +59,9 @@ public:
         return static_cast<IInterventionConsumer*>(this);
     }
 
-    virtual ISTIInterventionsContainer* GetContainerSTI() { return nullptr; }
-    virtual ITBInterventionsContainer*  GetContainerTB()  { return nullptr; }
+    virtual ISTIInterventionsContainer*   GetContainerSTI()        { return nullptr; }
+    virtual ITBInterventionsContainer*    GetContainerTB()         { return nullptr; }
+    virtual ITyphoidVaccineEffectsApply*  GetContainerTyphoid()    { return nullptr; }
 
     virtual IHIVInterventionsContainer* GetContainerHIV()
     {
@@ -80,6 +81,8 @@ public:
     virtual const ProbabilityNumber&  GetProbMaternalTransmissionModifier() const  { release_assert(false); }
     virtual void                      BroadcastNewHIVInfection()                   { release_assert(false); }
     virtual IHIVDrugEffectsApply*     GetHIVDrugEffectApply()                      { release_assert(false); }
+
+    virtual void                      ApplyProbMaternalTransmissionModifier ( const ProbabilityNumber& probReduction ) { release_assert(false); }
 
     virtual std::list<IDistributableIntervention*> GetInterventionsByType(const std::string &type_name)
     {

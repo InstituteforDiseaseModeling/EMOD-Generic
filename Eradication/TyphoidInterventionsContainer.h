@@ -41,6 +41,8 @@ namespace Kernel
 
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
+        virtual ITyphoidVaccineEffectsApply*  GetContainerTyphoid()  override;
+
         // Typhoid 'Vaccine' Apply/Update/Setter functions
         virtual void ApplyReducedSheddingEffect( float rate ) override; 
         virtual void ApplyReducedDoseEffect( float rate ) override;

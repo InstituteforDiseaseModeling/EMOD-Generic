@@ -50,12 +50,8 @@ namespace Kernel
         // Apply diagnostic test with given specificity/sensitivity
         bool  infected = parent->GetEventContext()->IsInfected();
 
-        IIndividualHumanTB* tb_ind = nullptr;
-        if(parent->QueryInterface( GET_IID( IIndividualHumanTB ), (void**)&tb_ind ) != s_OK)
-        {
-            LOG_WARN("ResistanceDiagnostics works with TB sims ONLY");
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanTB", "IIndividualHuman" );
-        }
+        IIndividualHumanTB* tb_ind = parent->GetIndividualTB();
+        release_assert(tb_ind);
 
         // always return negative if the person is not infected
         if (infected)

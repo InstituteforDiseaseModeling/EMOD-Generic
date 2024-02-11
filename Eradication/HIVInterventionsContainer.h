@@ -22,7 +22,6 @@ namespace Kernel
         , public IHIVCampaignSemaphores
         , public IHIVMedicalHistory
         , public IHIVDrugEffectsApply
-        , public IHIVMTCTEffects
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 

@@ -37,10 +37,7 @@ namespace Kernel
         initConfigTypeMap( "New_STI_CoInfection_Status", &set_flag_to, MSCIS_New_STI_Co_Status_DESC_TEXT, false );
     }
 
-    bool
-    ModifyStiCoInfectionStatus::Configure(
-        const Configuration * inputJson
-    )
+    bool ModifyStiCoInfectionStatus::Configure( const Configuration* inputJson )
     {
         // -----------------------------------------------------------
         // --- Do not use the BaseIntervention::Configure()
@@ -49,17 +46,12 @@ namespace Kernel
         return JsonConfigurable::Configure( inputJson );
     }
 
-    bool ModifyStiCoInfectionStatus::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * pCCO
-    )
+    bool ModifyStiCoInfectionStatus::Distribute( IIndividualHumanInterventionsContext* context, ICampaignCostObserver* pCCO )
     {
         bool success = true;
-        ISTICoInfectionStatusChangeApply * interventions_container = nullptr;
-        if (s_OK != context->QueryInterface(GET_IID(ISTICoInfectionStatusChangeApply), (void**)&interventions_container) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTICoInfectionStatusChangeApply", "IIndividualHumanInterventionsContext" );
-        } 
+        ISTIInterventionsContainer* interventions_container = context->GetContainerSTI();
+        release_assert(interventions_container);
+
         LOG_DEBUG( "Setting/clearing HIV individual's (non-HIV) STI Co-Infection status (flag).\n" );
         if( set_flag_to == true )
         {

@@ -37,7 +37,7 @@ namespace Kernel
         , m_ReducedAcquire(1.0)
         , m_ApplyIfHigherReducedAcquire(false)
         , m_DistrbutedEventTrigger()
-        , m_pCircumcisionConsumer(nullptr)
+        , ivc(nullptr)
         , has_been_applied(false)
     {
         initSimTypes( 2, "STI_SIM", "HIV_SIM" );
@@ -52,25 +52,16 @@ namespace Kernel
         return BaseIntervention::Configure( inputJson );
     }
 
-    bool MaleCircumcision::Distribute( IIndividualHumanInterventionsContext *context,
-                                       ICampaignCostObserver * const pCCO )
+    bool MaleCircumcision::Distribute( IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO )
     {
-        // ------------------------------------------
-        // --- Get the CircumcisionConusmer for later
-        // ------------------------------------------
-        if (s_OK != context->QueryInterface(GET_IID(ISTICircumcisionConsumer), (void**)&m_pCircumcisionConsumer) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTICircumcisionConsumer", "IIndividualHumanInterventionsContext" );
-        }
+        ivc = context->GetContainerSTI();
+        release_assert(ivc);
 
         // -----------------------------------------------------------------
         // --- Make sure the the person is male and not already circumcised
         // -----------------------------------------------------------------
         IIndividualHumanSTI* p_sti = context->GetParent()->GetIndividualSTI();
-        if ( !p_sti )
-        {
-            throw NullPointerException( __FILE__, __LINE__, __FUNCTION__, "p_sti", "IIndividualHumanSTI");
-        }
+        release_assert(p_sti);
 
         if( context->GetParent()->GetEventContext()->GetGender() == Gender::FEMALE )
         {
@@ -99,7 +90,7 @@ namespace Kernel
             // --- distribute the intervention.
             // --- The code is the negative because we want to return false.
             // -----------------------------------------------------------------------------------------------
-            if( !m_ApplyIfHigherReducedAcquire || (m_ReducedAcquire <= m_pCircumcisionConsumer->GetCircumcisedReducedAcquire()) )
+            if( !m_ApplyIfHigherReducedAcquire || (m_ReducedAcquire <= ivc->GetCircumcisedReducedAcquire()) )
             {
                 return false;
             }
@@ -127,7 +118,7 @@ namespace Kernel
 
         if( !has_been_applied )
         {
-            m_pCircumcisionConsumer->ApplyCircumcision( m_ReducedAcquire );
+            ivc->ApplyCircumcision( m_ReducedAcquire );
             has_been_applied = true;
         }
         // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -141,13 +132,9 @@ namespace Kernel
     void MaleCircumcision::SetContextTo( IIndividualHumanContext *context )
     {
         BaseIntervention::SetContextTo( context );
-        // ------------------------------------------
-        // --- Get the CircumcisionConumer for later
-        // ------------------------------------------
-        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(ISTICircumcisionConsumer), (void**)&m_pCircumcisionConsumer) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTICircumcisionConsumer", "IIndividualHumanInterventionsContext" );
-        }
+
+        ivc = context->GetInterventionsContext()->GetContainerSTI();
+        release_assert(ivc);
     }
 
     bool MaleCircumcision::ApplyIfHigherReducedAcquire() const

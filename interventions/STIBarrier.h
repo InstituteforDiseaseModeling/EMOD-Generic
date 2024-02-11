@@ -23,7 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    struct ISTIBarrierConsumer; 
+    struct ISTIInterventionsContainer; 
 
     /* Keep around as an identity solution??? */
     struct ISTIBarrier : public ISupports
@@ -52,7 +52,7 @@ namespace Kernel
         float midyear;
         float rate;
         RelationshipType::Enum rel_type;
-        ISTIBarrierConsumer *ibc;
+        ISTIInterventionsContainer* isticontainer;
 
         DECLARE_SERIALIZABLE(STIBarrier);
     };

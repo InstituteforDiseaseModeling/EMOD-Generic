@@ -42,6 +42,11 @@ namespace Kernel
     {
     }
 
+    ITyphoidVaccineEffectsApply* TyphoidInterventionsContainer::GetContainerTyphoid()
+    {
+        return static_cast<ITyphoidVaccineEffectsApply*>(this);
+    }
+
     void TyphoidInterventionsContainer::Update(float dt)
     {
         //LOG_DEBUG_F( "Resetting clearance_rate for this update for individual %d.\n", parent->GetSuid().data );

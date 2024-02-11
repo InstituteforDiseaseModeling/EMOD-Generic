@@ -19,18 +19,15 @@ namespace Kernel
 {
     class Simulation;
 
-    struct INodeTyphoidInterventionEffectsApply : public ISupports
-    {
-        virtual void ApplyReducedSheddingEffect( float rate, const std::string& properties_raw ) = 0;
-        virtual void ApplyReducedDoseEffect( float rate, const std::string& properties_raw ) = 0;
-        virtual void ApplyReducedNumberExposuresEffect( float rate, const std::string& properties_raw ) = 0;
-    };
-
     struct INodeTyphoidInterventionEffects : public ISupports
     {
-        virtual float GetEnviroDepositAttenuation( const IPKeyValueContainer * props = nullptr ) const = 0;
+        virtual float GetEnviroDepositAttenuation( const IPKeyValueContainer * props = nullptr )   const = 0;
         virtual float GetEnviroExposuresAttenuation( const IPKeyValueContainer * props = nullptr ) const = 0;
-        virtual float GetEnviroDoseAttenuation( const IPKeyValueContainer * props = nullptr ) const = 0;
+        virtual float GetEnviroDoseAttenuation( const IPKeyValueContainer * props = nullptr )      const = 0;
+
+        virtual void ApplyReducedSheddingEffect( float rate, const std::string& properties_raw )         = 0;
+        virtual void ApplyReducedDoseEffect( float rate, const std::string& properties_raw )             = 0;
+        virtual void ApplyReducedNumberExposuresEffect( float rate, const std::string& properties_raw )  = 0;
     };
 
     // The purpose of this class is to the typhoid-specific interventions container for node-level interventions.
@@ -39,7 +36,6 @@ namespace Kernel
     // intervention-specific hard-coded.  
     class NodeTyphoidEventContextHost :
         public NodeEventContextHost,
-        public INodeTyphoidInterventionEffectsApply,
         public INodeTyphoidInterventionEffects
     {
         IMPLEMENT_NO_REFERENCE_COUNTING()
@@ -50,19 +46,17 @@ namespace Kernel
  
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
-        // INodeTyphoidInterventionEffectsApply: these are methods called by the intervention to effect change.  
-        virtual void ApplyReducedSheddingEffect( float rate, const std::string& properties_raw ) override;
-        virtual void ApplyReducedDoseEffect( float rate, const std::string& properties_raw ) override;
-        virtual void ApplyReducedNumberExposuresEffect( float rate, const std::string& properties_raw ) override;
-        
-        // INodeTyphoidInterventionEffects: these are methods called by the node (actually individual!) to 
-        // discover change effects.
-        // NOTE: normally node-level intervention effects get applied to the node, but in this case the effects
-        // are held by the node but applied at the individual level.
+        virtual INodeTyphoidInterventionEffects* GetNodeTyphoidInterventionEffects() override;
+
+        // INodeTyphoidInterventionEffects
         virtual float GetEnviroDepositAttenuation( const IPKeyValueContainer * props = nullptr ) const override;
         virtual float GetEnviroExposuresAttenuation( const IPKeyValueContainer * props = nullptr ) const override;
         virtual float GetEnviroDoseAttenuation( const IPKeyValueContainer * props = nullptr ) const override;
-     
+
+        virtual void ApplyReducedSheddingEffect( float rate, const std::string& properties_raw ) override;
+        virtual void ApplyReducedDoseEffect( float rate, const std::string& properties_raw ) override;
+        virtual void ApplyReducedNumberExposuresEffect( float rate, const std::string& properties_raw ) override;
+
     protected: 
 
     private:

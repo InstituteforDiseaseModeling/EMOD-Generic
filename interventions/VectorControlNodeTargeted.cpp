@@ -12,9 +12,10 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 #include "Exceptions.h"
 #include "InterventionFactory.h"
-#include "NodeVectorEventContext.h" // for INodeVectorInterventionEffectsApply methods
 #include "SimulationConfig.h"
+#include "NodeEventContext.h"
 #include "VectorParameters.h"
+#include "VectorContexts.h"
 #include "DistributionFactory.h"
 
 SETUP_LOGGING( "VectorControlNodeTargeted" )
@@ -108,7 +109,7 @@ namespace Kernel
         return configured;
     }
 
-    void SimpleVectorControlNode::SetContextTo( INodeEventContext *context )
+    void SimpleVectorControlNode::SetContextTo( INodeEventContext* context )
     {
         BaseNodeIntervention::SetContextTo( context );
 
@@ -121,10 +122,7 @@ namespace Kernel
             blocking_effect->SetContextTo( context );
         }
 
-        if (s_OK != context->QueryInterface(GET_IID(INodeVectorInterventionEffectsApply), (void**)&m_pINVIC) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "INodeVectorInterventionEffectsApply", "INodeEventContext" );
-        }
+        m_pINVIC = context->GetNodeVectorInterventionEffectsApply();
     }
 
     bool SimpleVectorControlNode::Distribute( INodeEventContext *pNodeContext, IEventCoordinator2 *pEC )
@@ -249,7 +247,6 @@ namespace Kernel
     void Larvicides::ApplyEffects( float dt )
     {
         release_assert(m_pINVIC);
-
         m_pINVIC->UpdateLarvalKilling( GetHabitatTarget(), GetKilling() );
         m_pINVIC->UpdateLarvalHabitatReduction( GetHabitatTarget(), GetReduction() );
     }
@@ -389,7 +386,6 @@ namespace Kernel
     void IndoorSpaceSpraying::ApplyEffects( float dt )
     {
         release_assert(m_pINVIC);
-
         m_pINVIC->UpdateIndoorKilling( killing );
     }
 
@@ -461,7 +457,6 @@ namespace Kernel
     void SpatialRepellent::ApplyEffects( float dt )
     {
         release_assert(m_pINVIC);
-
         m_pINVIC->UpdateVillageSpatialRepellent( GetReduction() );
     }
 

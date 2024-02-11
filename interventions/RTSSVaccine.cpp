@@ -35,29 +35,19 @@ namespace Kernel
         initConfigTypeMap( "Cost_To_Consumer", &cost_per_unit, RV_Cost_To_Consumer_DESC_TEXT, 0, 999999, 3.75 );
     }
 
-    bool
-    RTSSVaccine::Configure(
-        const Configuration * inputJson
-    )
+    bool RTSSVaccine::Configure( const Configuration* inputJson )
     {
         initConfig( "Antibody_Type", antibody_type, inputJson, MetadataDescriptor::Enum("Antibody_Type", RV_Antibody_Type_DESC_TEXT, MDD_ENUM_ARGS(MalariaAntibodyType)) );
         return BaseIntervention::Configure( inputJson );
     }
 
-    bool
-    RTSSVaccine::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool RTSSVaccine::Distribute( IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO )
     {
         bool distributed = BaseIntervention::Distribute( context, pCCO );
         if( distributed )
         {
-            IMalariaHumanContext * imhc = nullptr;
-            if (s_OK != context->GetParent()->QueryInterface(GET_IID(IMalariaHumanContext), (void**)&imhc) )
-            {
-                throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "imhc", "IMalariaHumanContext", "IIndividualHumanContext" );
-            }
+            IMalariaHumanContext* imhc = context->GetParent()->GetIndividualMalaria();
+            release_assert(imhc);
 
             imhc->GetMalariaSusceptibilityContext()->BoostAntibody( antibody_type, antibody_variant, boosted_antibody_concentration );
         }

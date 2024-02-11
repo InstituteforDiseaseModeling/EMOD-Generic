@@ -52,11 +52,9 @@ namespace Kernel
         }
 
         // Apply diagnostic test with given specificity/sensitivity
-        IIndividualHumanTyphoid * typhoid_ind = nullptr;
-        if(parent->QueryInterface( GET_IID( IIndividualHumanTyphoid ), (void**)&typhoid_ind ) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanTyphoid", "IIndividualHuman" );
-        }
+        IIndividualHumanTyphoid* typhoid_ind = parent->GetIndividualTyphoid();
+        release_assert(typhoid_ind);
+
         bool carrier = typhoid_ind->IsChronicCarrier( false );
         LOG_DEBUG_F( "Individual %d is %s from God-level.\n", parent->GetSuid().data, ( carrier ? "positive" : "negative" ) );
 

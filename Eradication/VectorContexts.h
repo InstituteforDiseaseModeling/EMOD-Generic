@@ -20,6 +20,7 @@ namespace Kernel
     class  VectorMatingStructure;
     struct IVectorPopulationReporting;
     class  VectorProbabilities;
+    class  LarvalHabitatMultiplier;
 
     typedef std::list<IVectorPopulationReporting *> VectorPopulationReportingList_t;
 
@@ -94,6 +95,27 @@ namespace Kernel
         virtual float GetAnimalFeedKilling() = 0;
         virtual float GetOutdoorRestKilling() = 0;
         virtual float GetIndoorKilling() = 0;
+    };
+
+    class INodeVectorInterventionEffectsApply : public ISupports
+    {
+    public:
+        virtual void UpdateLarvalKilling( VectorHabitatType::Enum habitat, float killing ) = 0;
+        virtual void UpdateLarvalHabitatReduction( VectorHabitatType::Enum habitat, float reduction ) = 0;
+        virtual void UpdateLarvalHabitatReduction( const LarvalHabitatMultiplier& lhm ) = 0;
+        virtual void UpdateOutdoorKilling( float killing ) = 0;
+        virtual void UpdateOviTrapKilling(VectorHabitatType::Enum habitat, float killing) = 0;
+        virtual void UpdateVillageSpatialRepellent(float) = 0;
+        virtual void UpdateADIVAttraction(float) = 0;
+        virtual void UpdateADOVAttraction(float) = 0;
+        virtual void UpdatePFVKill(float) = 0;
+        virtual void UpdateOutdoorKillingMale(float) = 0;
+        virtual void UpdateSugarFeedKilling(float) = 0;
+        virtual void UpdateAnimalFeedKilling(float) = 0;
+        virtual void UpdateOutdoorRestKilling(float) = 0;
+        virtual void UpdateIndoorKilling( float ) = 0;
+
+        virtual void ReleaseMosquitoes( NonNegativeFloat cost, const std::string& species, const VectorMatingStructure& genetics, uint32_t number ) = 0;
     };
 
     struct IVectorPopulationReporting : ISupports

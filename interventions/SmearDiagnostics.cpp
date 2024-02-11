@@ -24,9 +24,7 @@ namespace Kernel
 
     IMPLEMENT_FACTORY_REGISTERED(SmearDiagnostic)
 
-    bool SmearDiagnostic::Configure(
-        const Configuration * inputJson
-    )
+    bool SmearDiagnostic::Configure( const Configuration* inputJson )
     {
         return SimpleDiagnostic::Configure( inputJson );
     }
@@ -37,7 +35,7 @@ namespace Kernel
     }
 
     SmearDiagnostic::SmearDiagnostic( const SmearDiagnostic& master )
-    : SimpleDiagnostic( master )
+        : SimpleDiagnostic( master )
     {
     }
 
@@ -51,18 +49,12 @@ namespace Kernel
         LOG_DEBUG("Positive test Result function\n");
 
         // Apply diagnostic test with given specificity/sensitivity
-
-        IIndividualHumanTB* tb_ind = nullptr;
-        if(parent->QueryInterface( GET_IID( IIndividualHumanTB ), (void**)&tb_ind ) != s_OK)
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanTB", "IIndividualHuman" );
-        }
-        bool activeinf = tb_ind->HasActiveInfection() && !tb_ind->HasActivePresymptomaticInfection();
+        IIndividualHumanTB* tb_ind = parent->GetIndividualTB();
+        release_assert(tb_ind);
 
         // always return negative if the person is not infected, intended to be used with GroupEventCoordinator
         // TODO: allow to distribute Smear diagnostic to non-infected individuals?
-
-        if (activeinf)
+        if(tb_ind->HasActiveInfection() && !tb_ind->HasActivePresymptomaticInfection())
         {
             // True positive (sensitivity), or False positive (1-specificity)
             bool smearpos = tb_ind->IsSmearPositive();
@@ -70,7 +62,9 @@ namespace Kernel
             return positiveTest;
         }
         else
-        { return false;}
+        {
+            return false;
+        }
     }
 
     REGISTER_SERIALIZABLE(SmearDiagnostic);

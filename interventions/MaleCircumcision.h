@@ -23,7 +23,7 @@ To view a copy of this license, visit https://creativecommons.org/licenses/by-nc
 
 namespace Kernel
 {
-    struct ISTICircumcisionConsumer;
+    struct ISTIInterventionsContainer;
 
     struct ICircumcision : ISupports
     {
@@ -56,8 +56,9 @@ namespace Kernel
         float m_ReducedAcquire;
         bool m_ApplyIfHigherReducedAcquire;
         EventTrigger::Enum m_DistrbutedEventTrigger;
-        ISTICircumcisionConsumer* m_pCircumcisionConsumer;
         bool has_been_applied;
+
+        ISTIInterventionsContainer* ivc;
 
         DECLARE_SERIALIZABLE(MaleCircumcision);
     };

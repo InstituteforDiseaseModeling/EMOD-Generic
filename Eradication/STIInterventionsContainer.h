@@ -27,9 +27,6 @@ namespace Kernel
     class STIInterventionsContainer
         : public InterventionsContainer
         , public ISTIInterventionsContainer
-        , public ISTIBarrierConsumer
-        , public ISTICircumcisionConsumer 
-        , public ISTICoInfectionStatusChangeApply
     {
         IMPLEMENT_DEFAULT_REFERENCE_COUNTING()
 
@@ -40,22 +37,20 @@ namespace Kernel
         // ISupports
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
 
-        // ISTIBarrierConsumer 
-        virtual void UpdateSTIBarrierProbabilitiesByType( RelationshipType::Enum rel_type, const Sigmoid& config_overrides ) override;
-        virtual const Sigmoid& GetSTIBarrierProbabilitiesByRelType( const IRelationshipParameters* pRelParams ) const override;
-
-        // ISTICircumcisionConsumer 
-        virtual bool IsCircumcised( void ) const override;
-        virtual float GetCircumcisedReducedAcquire() const override;
-        virtual void ApplyCircumcision( float reduceAcquire ) override;
-
         // IIndividualHumanInterventionsContext
         virtual void ChangeProperty( const char *property, const char* new_value) override;
         virtual ISTIInterventionsContainer* GetContainerSTI() override;
 
-        // ISTICoInfectionStatusChangeApply 
+        // ISTIInterventionsContainer
         virtual void SpreadStiCoInfection() override;
         virtual void CureStiCoInfection() override;
+
+        virtual void UpdateSTIBarrierProbabilitiesByType( RelationshipType::Enum rel_type, const Sigmoid& config_overrides ) override;
+        virtual const Sigmoid& GetSTIBarrierProbabilitiesByRelType( const IRelationshipParameters* pRelParams ) const override;
+
+        virtual bool IsCircumcised( void ) const override;
+        virtual float GetCircumcisedReducedAcquire() const override;
+        virtual void ApplyCircumcision( float reduceAcquire ) override;
 
     protected:
         bool is_circumcised;

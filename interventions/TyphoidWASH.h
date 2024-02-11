@@ -39,7 +39,7 @@ namespace Kernel
 
         TyphoidVaccineMode::Enum vaccine_mode;
         float effect;
-        INodeTyphoidInterventionEffectsApply * itvc; // interventions container
+        INodeTyphoidInterventionEffects* itvc; // interventions container
         IWaningEffect* changing_effect;
 
     protected:

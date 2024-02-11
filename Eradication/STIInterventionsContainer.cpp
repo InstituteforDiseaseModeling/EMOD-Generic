@@ -26,9 +26,6 @@ namespace Kernel
 {
     BEGIN_QUERY_INTERFACE_DERIVED(STIInterventionsContainer, InterventionsContainer)
         HANDLE_INTERFACE(ISTIInterventionsContainer)
-        HANDLE_INTERFACE(ISTIBarrierConsumer)
-        HANDLE_INTERFACE(ISTICircumcisionConsumer)
-        HANDLE_INTERFACE(ISTICoInfectionStatusChangeApply)
     END_QUERY_INTERFACE_DERIVED(STIInterventionsContainer, InterventionsContainer)
 
     STIInterventionsContainer::STIInterventionsContainer() 
@@ -79,14 +76,7 @@ namespace Kernel
 
     void STIInterventionsContainer::ApplyCircumcision( float reduceAcquire ) 
     {
-        // Need to get gender
-        IIndividualHuman *ih = nullptr;
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHuman), (void**) &ih) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHuman", "IIndividualHuman" );
-        }
-
-        if( ih->GetGender() == Gender::FEMALE )
+        if( parent->GetIndividual()->GetGender() == Gender::FEMALE )
         {
             throw IllegalOperationException( __FILE__, __LINE__, __FUNCTION__, "Females cannot be circumcised." );
         }
@@ -97,11 +87,9 @@ namespace Kernel
 
     void STIInterventionsContainer::ChangeProperty( const char *prop, const char* new_value)
     {
-        IIndividualHumanSTI *ihsti = nullptr;
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanSTI), (void**) &ihsti) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanContext", "IIndividualHumanSTI" );
-        }
+        IIndividualHumanSTI* ihsti = parent->GetIndividualSTI();
+        release_assert(ihsti);
+
         ihsti->UpdateSTINetworkParams(prop, new_value);
         ihsti->ClearAssortivityIndexes();
 
@@ -110,21 +98,17 @@ namespace Kernel
 
     void STIInterventionsContainer::SpreadStiCoInfection()
     {
-        IIndividualHumanSTI *ihsti = nullptr;
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanSTI), (void**) &ihsti) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanContext", "IIndividualHumanSTI" );
-        }
+        IIndividualHumanSTI* ihsti = parent->GetIndividualSTI();
+        release_assert(ihsti);
+
         ihsti->SetStiCoInfectionState();
     }
 
     void STIInterventionsContainer::CureStiCoInfection()
     {
-        IIndividualHumanSTI *ihsti = nullptr;
-        if( s_OK != parent->QueryInterface(GET_IID(IIndividualHumanSTI), (void**) &ihsti) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "parent", "IIndividualHumanContext", "IIndividualHumanSTI" );
-        }
+        IIndividualHumanSTI* ihsti = parent->GetIndividualSTI();
+        release_assert(ihsti);
+
         ihsti->ClearStiCoInfectionState();
     }
 

@@ -35,8 +35,6 @@ namespace Kernel
         HANDLE_INTERFACE(IHIVInterventionsContainer)
         HANDLE_INTERFACE(IHIVMedicalHistory)
         HANDLE_INTERFACE(IHIVCampaignSemaphores)
-        HANDLE_INTERFACE(ISTICoInfectionStatusChangeApply)
-        HANDLE_INTERFACE(IHIVMTCTEffects)
     END_QUERY_INTERFACE_DERIVED(HIVInterventionsContainer, STIInterventionsContainer)
 
     HIVInterventionsContainer::HIVInterventionsContainer()

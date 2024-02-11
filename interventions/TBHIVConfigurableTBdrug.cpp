@@ -56,17 +56,10 @@ namespace Kernel
     int  TBHIVConfigurableTBdrug::MDRHIVHierarchy() const
     {
 
-        IIndividualHumanTB* tb_patient = nullptr;
-        if (parent->QueryInterface(GET_IID(IIndividualHumanTB), (void**)&tb_patient) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "individual", "IIndvidualHumanTB", "IndividualHuman");
-        }
-
-        IIndividualHumanHIV* hiv_patient = nullptr;
-        if (parent->QueryInterface(GET_IID(IIndividualHumanHIV), (void**)&hiv_patient) != s_OK)
-        {
-            throw QueryInterfaceException(__FILE__, __LINE__, __FUNCTION__, "individual", "IIndvidualHumanHIV", "IndividualHuman");
-        }
+        IIndividualHumanTB*  tb_patient  = parent->GetIndividualTB();
+        IIndividualHumanHIV* hiv_patient = parent->GetIndividualHIV();
+        release_assert(tb_patient);
+        release_assert(hiv_patient);
 
         if (tb_patient->IsMDR())
         {
@@ -101,21 +94,15 @@ namespace Kernel
             {
                 return TBHIVConfigurabeDrugState::LatentHIVNegorPosOnART;
             }
-
         }
-
-
     }
-    bool
-    TBHIVConfigurableTBdrug::Configure(
-        const Configuration * inputJson
-    )
+
+    bool TBHIVConfigurableTBdrug::Configure( const Configuration* inputJson )
     {
         initConfigTypeMap("TB_Drug_Name", &drug_name_string);
         initConfigTypeMap("Latency_Multiplier", &latent_efficacy_multiplier, TB_Latent_Efficacy_Multiplier_DESC_TEXT, 0, 1.0, 1.0);
         initConfigTypeMap("Active_Multiplier", &active_efficacy_multiplier, TB_Active_Efficacy_Multiplier_DESC_TEXT, 0, 1.0, 1.0);
         return GenericDrug::Configure( inputJson );
-
     }
 
     float TBHIVConfigurableTBdrug::GetDrugInactivationRate() const
@@ -236,15 +223,9 @@ namespace Kernel
 
     }
 
-
-    void TBHIVConfigurableTBdrug::ConfigureDrugTreatment( IIndividualHumanInterventionsContext * ivc )  
+    void TBHIVConfigurableTBdrug::ConfigureDrugTreatment( IIndividualHumanInterventionsContext* ivc )
     {
         current_efficacy = 1;
-        IIndividualHumanTB* tb_patient = nullptr;
-        if ( ivc->GetParent()->QueryInterface( GET_IID(IIndividualHumanTB), (void**) &tb_patient ) != s_OK )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "individual", "IIndvidualHumanTB2", "IndividualHuman" );
-        }
 
         auto tbdtMap = TBHIVConfig::GetTBHIVParams()->drugs_map;
 
@@ -282,7 +263,6 @@ namespace Kernel
         //in base class AntiTBDrug, sets current_efficacy to 1 and broadcast that you are starting an intervention
         return AntiTBDrug::ConfigureDrugTreatment( ivc ); 
     }
-
 
     REGISTER_SERIALIZABLE(TBHIVConfigurableTBdrug);
 

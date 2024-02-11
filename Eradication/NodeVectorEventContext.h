@@ -24,45 +24,22 @@ namespace Kernel
 {
     class Simulation;
 
-    class INodeVectorInterventionEffectsApply : public ISupports
-    {
-    public:
-        virtual void UpdateLarvalKilling( VectorHabitatType::Enum habitat, float killing ) = 0;
-        virtual void UpdateLarvalHabitatReduction( VectorHabitatType::Enum habitat, float reduction ) = 0;
-        virtual void UpdateLarvalHabitatReduction( const LarvalHabitatMultiplier& lhm ) = 0;
-        virtual void UpdateOutdoorKilling( float killing ) = 0;
-        virtual void UpdateOviTrapKilling(VectorHabitatType::Enum habitat, float killing) = 0;
-        virtual void UpdateVillageSpatialRepellent(float) = 0;
-        virtual void UpdateADIVAttraction(float) = 0;
-        virtual void UpdateADOVAttraction(float) = 0;
-        virtual void UpdatePFVKill(float) = 0;
-        virtual void UpdateOutdoorKillingMale(float) = 0;
-        virtual void UpdateSugarFeedKilling(float) = 0;
-        virtual void UpdateAnimalFeedKilling(float) = 0;
-        virtual void UpdateOutdoorRestKilling(float) = 0;
-        virtual void UpdateIndoorKilling( float ) = 0;
-    };
-
-    class IMosquitoReleaseConsumer : public ISupports
-    {
-    public:
-        virtual void ReleaseMosquitoes( NonNegativeFloat cost, const std::string& species, const VectorMatingStructure& genetics, uint32_t number ) = 0;
-    };
-
     class NodeVectorEventContextHost :
         public NodeEventContextHost,
         public INodeVectorInterventionEffects,
-        public INodeVectorInterventionEffectsApply,
-        public IMosquitoReleaseConsumer
+        public INodeVectorInterventionEffectsApply
     {
         IMPLEMENT_NO_REFERENCE_COUNTING()
 
     public:
         NodeVectorEventContextHost(Node* _node);
         virtual ~NodeVectorEventContextHost();
-  
+
         virtual QueryResult QueryInterface(iid_t iid, void** pinstance) override;
-       
+
+        virtual INodeVectorInterventionEffects*      GetNodeVectorInterventionEffects()       override;
+        virtual INodeVectorInterventionEffectsApply* GetNodeVectorInterventionEffectsApply()  override;
+
         // INodeVectorInterventionEffectsApply
         virtual void UpdateLarvalKilling( VectorHabitatType::Enum habitat, float killing ) override;
         virtual void UpdateLarvalHabitatReduction( VectorHabitatType::Enum habitat, float reduction ) override;
@@ -78,6 +55,8 @@ namespace Kernel
         virtual void UpdateAnimalFeedKilling(float killing) override;
         virtual void UpdateOutdoorRestKilling(float killing) override;
         virtual void UpdateIndoorKilling(float killing) override;
+
+        virtual void ReleaseMosquitoes( NonNegativeFloat cost, const std::string& species, const VectorMatingStructure& genetics, uint32_t number ) override;
 
         // INodeVectorInterventionEffects;
         virtual float GetLarvalKilling(VectorHabitatType::Enum) override;
@@ -100,8 +79,7 @@ namespace Kernel
 
         LarvalHabitatMultiplier larval_reduction;
 
-        // IMosquitoReleaseConsumer
-        virtual void ReleaseMosquitoes( NonNegativeFloat cost, const std::string& species, const VectorMatingStructure& genetics, uint32_t number ) override;
+
 
     protected: 
         float pLarvalKilling;

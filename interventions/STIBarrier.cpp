@@ -43,26 +43,16 @@ namespace Kernel
         initConfigTypeMap( "Rate", &rate, STI_Barrier_Rate_DESC_TEXT, -100.0, 100.0, 1.0 );
     }
 
-    bool
-    STIBarrier::Configure(
-        const Configuration * inputJson
-    )
+    bool STIBarrier::Configure( const Configuration* inputJson )
     {
         LOG_DEBUG_F( "%s\n", __FUNCTION__ );
         initConfig( "Relationship_Type", rel_type, inputJson, MetadataDescriptor::Enum("Relationship_Type", STI_Barrier_Relationship_Type_DESC_TEXT, MDD_ENUM_ARGS(RelationshipType)) );
         return BaseIntervention::Configure( inputJson );
     }
 
-    bool
-    STIBarrier::Distribute(
-        IIndividualHumanInterventionsContext *context,
-        ICampaignCostObserver * const pCCO
-    )
+    bool STIBarrier::Distribute( IIndividualHumanInterventionsContext* context, ICampaignCostObserver* const pCCO )
     {
-        if (s_OK != context->QueryInterface(GET_IID(ISTIBarrierConsumer), (void**)&ibc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTIBarrierConsumer", "IIndividualHumanInterventionsContext" );
-        }
+        isticontainer = context->GetContainerSTI();
 
         return BaseIntervention::Distribute( context, pCCO );
     }
@@ -73,20 +63,18 @@ namespace Kernel
 
         LOG_DEBUG_F( "%s\n", __FUNCTION__ );
         Sigmoid probs( early, late, midyear, rate );
-        ibc->UpdateSTIBarrierProbabilitiesByType( rel_type, probs );
+
+        release_assert(isticontainer);
+        isticontainer->UpdateSTIBarrierProbabilitiesByType( rel_type, probs );
+
         expired = true;
     }
 
-    void STIBarrier::SetContextTo(
-        IIndividualHumanContext *context
-    )
+    void STIBarrier::SetContextTo( IIndividualHumanContext* context )
     {
         BaseIntervention::SetContextTo( context );
 
-        if (s_OK != context->GetInterventionsContext()->QueryInterface(GET_IID(ISTIBarrierConsumer), (void**)&ibc) )
-        {
-            throw QueryInterfaceException( __FILE__, __LINE__, __FUNCTION__, "context", "ISTIBarrierConsumer", "IIndividualHumanContext" );
-        }
+        isticontainer = context->GetInterventionsContext()->GetContainerSTI();
     }
 
     REGISTER_SERIALIZABLE(STIBarrier);
@@ -100,7 +88,5 @@ namespace Kernel
         ar.labelElement("midyear" ) & barrier.midyear;
         ar.labelElement("rate"    ) & barrier.rate;
         ar.labelElement("rel_type") & (uint32_t&)barrier.rel_type;
-
-        // ibc is set in SetContextTo()
     }
 }
